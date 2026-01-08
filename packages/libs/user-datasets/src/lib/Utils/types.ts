@@ -353,13 +353,6 @@ export type DatasetPatchBody = Record<string, PatchValue<unknown>>
 /**
  * Union type for compatibility between the VDI API and legacy code based on the
  * User Dataset Install Service.
- *
- * The client was previously ported from UDIS to VDI under tight time constraint
- * and uses the different types interchangeably in some methods.
- *
- * To dissolve this type, the dataset list and dataset details store modules
- * need to be untangled as they are both incorrectly typed and using the
- * types incorrectly interchangeably.
  */
 export type LegacyCompatDatasetType = DatasetListEntry | DatasetDetails;
 

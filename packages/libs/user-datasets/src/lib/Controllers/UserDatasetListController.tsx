@@ -10,7 +10,7 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateProjectFilter,
-  updateUserDatasetDetail,
+  updateDatasetListItem,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
@@ -27,14 +27,14 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DataNoun, DatasetListEntry } from '../Utils/types';
+import { DataNoun } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
 
 const ActionCreators = {
   showLoginForm,
   loadUserDatasetList,
-  updateUserDatasetDetail,
+  updateDatasetListItem,
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
@@ -148,7 +148,6 @@ class UserDatasetListController extends PageController<Props> {
     const {
       userDatasetList: {
         userDatasets,
-        userDatasetsById,
         filterByProject,
         sharingDatasetPending,
         sharingModalOpen,
@@ -170,7 +169,7 @@ class UserDatasetListController extends PageController<Props> {
       shareUserDatasets,
       unshareUserDatasets,
       removeUserDataset,
-      updateUserDatasetDetail,
+      updateDatasetListItem,
       updateProjectFilter,
       updateSharingModalState,
       sharingSuccess,
@@ -186,17 +185,14 @@ class UserDatasetListController extends PageController<Props> {
       dataNoun,
       projectId,
       projectName,
-      // numOngoingUploads, // what is this?
       quotaSize,
       enablePublicUserDatasets,
-      userDatasets: userDatasets.map(
-        (id) => userDatasetsById[id].resource as DatasetListEntry
-      ),
+      userDatasets,
       filterByProject,
       shareUserDatasets,
       unshareUserDatasets,
       removeUserDataset,
-      updateUserDatasetDetail,
+      updateDatasetListItem,
       updateProjectFilter,
       sharingDatasetPending,
       shareError,
@@ -213,11 +209,9 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilitySuccess,
     };
 
-    const noDatasetsForThisProject =
-      userDatasets
-        .map((id) => userDatasetsById[id].resource.installTargets)
-        .flat()
-        .indexOf(projectId) === -1;
+    const noDatasetsForThisProject = userDatasets.findIndex(
+      it => it.installTargets.includes(projectId)
+    ) === -1;
 
     return (
       <div className="UserDatasetList-Controller">

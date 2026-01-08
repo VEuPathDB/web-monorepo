@@ -20,7 +20,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetDetails, LegacyCompatDatasetType } from '../Utils/types';
+import { DatasetDetails } from '../Utils/types';
 
 export const key = 'userDatasetDetail';
 
@@ -30,11 +30,11 @@ export const key = 'userDatasetDetail';
  */
 export type UserDatasetEntry = {
   isLoading: boolean;
-  resource?: LegacyCompatDatasetType;
+  resource?: DatasetDetails;
 };
 
 export interface State {
-  userDatasetsById: { [key: string]: UserDatasetEntry };
+  userDatasetDetails?: UserDatasetEntry;
   userDatasetUpdating: boolean;
   userDatasetLoading: boolean;
   userDatasetRemoving: boolean;
@@ -52,7 +52,6 @@ export interface State {
 }
 
 const initialState: State = {
-  userDatasetsById: {},
   userDatasetLoading: false,
   userDatasetUpdating: false,
   userDatasetRemoving: false,
@@ -77,24 +76,16 @@ export function reduce(state: State = initialState, action: Action): State {
     case DETAIL_LOADING:
       return {
         ...state,
-        userDatasetsById: {
-          ...state.userDatasetsById,
-          [action.payload.id]: {
-            isLoading: true,
-          },
-        },
+        userDatasetDetails: { isLoading: true },
       };
 
     case DETAIL_RECEIVED:
       return {
         ...state,
         userDatasetLoading: false,
-        userDatasetsById: {
-          ...state.userDatasetsById,
-          [action.payload.id]: {
-            isLoading: false,
-            resource: action.payload.userDataset,
-          },
+        userDatasetDetails: {
+          isLoading: false,
+          resource: action.payload.userDataset,
         },
       };
 
@@ -116,12 +107,9 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         userDatasetUpdating: false,
-        userDatasetsById: {
-          ...state.userDatasetsById,
-          [action.payload.datasetId]: {
-            isLoading: false,
-            resource: action.payload.userDataset as DatasetDetails,
-          },
+        userDatasetDetails: {
+          isLoading: false,
+          resource: action.payload.userDataset,
         },
       };
 

@@ -43,7 +43,7 @@ import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
 import { Public } from '@material-ui/icons';
 import { Tooltip } from '@veupathdb/coreui';
-import { updateUserDatasetDetail } from "../../Actions/UserDatasetsActions";
+import { updateDatasetListItem } from "../../Actions/UserDatasetsActions";
 import { datasetUserFullName } from '../../Utils/formatting';
 
 export interface DatasetListProps {
@@ -72,7 +72,7 @@ export interface DatasetListProps {
   shareSuccessful: boolean | undefined;
   shareError: Error | undefined;
   removeUserDataset: (dataset: DatasetListEntry) => any;
-  updateUserDatasetDetail: typeof updateUserDatasetDetail;
+  updateDatasetListItem: typeof updateDatasetListItem;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
   dataNoun: DataNoun;
@@ -158,9 +158,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   }
 
   onMetaAttributeSaveFactory<K extends keyof DatasetListEntry>(dataset: DatasetListEntry, attrKey: K) {
-    const { updateUserDatasetDetail } = this.props;
+    const { updateDatasetListItem } = this.props;
     return (value: DatasetListEntry[K]) =>
-      updateUserDatasetDetail(dataset, { [attrKey]: value });
+      updateDatasetListItem(dataset, { [attrKey]: value });
   }
 
   renderSharedWithCell(cellProps: MesaDataCellProps) {
@@ -632,7 +632,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       sharingDatasetPending,
       shareSuccessful,
       shareError,
-      updateUserDatasetDetail,
+      updateDatasetListItem,
       enablePublicUserDatasets,
       updateDatasetCommunityVisibility,
       updateCommunityModalVisibility,
@@ -693,7 +693,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                     sharingDatasetPending={sharingDatasetPending}
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
-                    updateUserDatasetDetail={updateUserDatasetDetail}
+                    updateUserDatasetDetail={updateDatasetListItem}
                   />
                 ) : null}
                 {this.props.communityModalOpen && enablePublicUserDatasets ? (

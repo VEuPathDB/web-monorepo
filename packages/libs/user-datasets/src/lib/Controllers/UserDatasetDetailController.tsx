@@ -28,7 +28,7 @@ import EmptyState from '../Components/EmptyState';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
-import { DataNoun, DatasetDetails, DatasetUser } from '../Utils/types';
+import { DataNoun, DatasetDetails } from '../Utils/types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { User } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
 import { ServiceConfig } from "@veupathdb/wdk-client/lib/Service/ServiceBase";
@@ -87,7 +87,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
   getTitle() {
     const entry =
-      this.props.stateProps.userDatasetsById[this.props.ownProps.id];
+      this.props.stateProps.userDatasetDetails;
     if (entry && entry.resource) {
       return `${this.props.ownProps.detailsPageTitle} ${entry.resource.name}`;
     }
@@ -132,11 +132,11 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   isRenderDataLoaded() {
-    const { id } = this.props.ownProps;
-    const { userDatasetsById, user, questions, config } = this.props.stateProps;
-    const entry = userDatasetsById[id];
-    if (user && user.isGuest) return true;
-    return entry && !entry.isLoading && user && questions && config
+    const { userDatasetDetails: entry, user, questions, config } = this.props.stateProps;
+    if (user && user.isGuest)
+      return true;
+
+    return entry?.isLoading === false && user && questions && config
       ? true
       : false;
   }
@@ -179,7 +179,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const {
       baseUrl,
       detailsPageTitle,
-      id,
       workspaceTitle,
       dataNoun,
       enablePublicUserDatasets,
@@ -198,7 +197,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
     const {
-      userDatasetsById,
+      userDatasetDetails: entry,
       user,
       updateError,
       questions,
@@ -214,12 +213,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilitySuccess,
     } = this.props.stateProps;
 
-    const entry = userDatasetsById[id];
-
     if (entry?.resource == null)
       return <Loading />;
 
-    const userDataset = entry.resource as DatasetDetails;
+    const userDataset = entry.resource;
 
     const isOwner = !!(user && userDataset.owner.userId === user.id);
 

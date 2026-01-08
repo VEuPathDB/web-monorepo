@@ -19,7 +19,6 @@ import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import {
   DatasetDetails,
   DatasetListEntry,
-  LegacyCompatDatasetType,
 } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -40,6 +39,9 @@ export type Action =
   | ListLoadingAction
   | ListErrorReceivedAction
   | ListReceivedAction
+  | ListItemUpdatingAction
+  | ListItemUpdateErrorAction
+  | ListItemUpdateSuccessAction
   | ProjectFilterAction
   | SharingDatasetPendingAction
   | SharingSuccessAction
@@ -102,6 +104,65 @@ export function listErrorReceived(
 ): ListErrorReceivedAction {
   return {
     type: LIST_ERROR_RECEIVED,
+    payload: { error },
+  };
+}
+
+//==============================================================================
+
+export const LIST_ITEM_UPDATING = 'user-datasets/list-item-updating';
+
+export type ListItemUpdatingAction = {
+  type: typeof LIST_ITEM_UPDATING;
+};
+
+export function listItemUpdating(): ListItemUpdatingAction {
+  return {
+    type: LIST_ITEM_UPDATING,
+  };
+}
+
+//==============================================================================
+
+export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success';
+
+export type ListItemUpdateSuccessAction = {
+  type: typeof LIST_ITEM_UPDATE_SUCCESS;
+  payload: {
+    datasetId: string,
+    userDataset: DatasetListEntry;
+  };
+};
+
+export function listItemUpdateSuccess(
+  datasetId: string,
+  userDataset: DatasetListEntry
+): ListItemUpdateSuccessAction {
+  return {
+    type: LIST_ITEM_UPDATE_SUCCESS,
+    payload: {
+      datasetId,
+      userDataset,
+    },
+  };
+}
+
+//==============================================================================
+
+export const LIST_ITEM_UPDATE_ERROR = 'user-datasets/list-item-update-error';
+
+export type ListItemUpdateErrorAction = {
+  type: typeof LIST_ITEM_UPDATE_ERROR;
+  payload: {
+    error: FetchClientError;
+  };
+};
+
+export function listItemUpdateError(
+  error: FetchClientError
+): ListItemUpdateErrorAction {
+  return {
+    type: LIST_ITEM_UPDATE_ERROR,
     payload: { error },
   };
 }
@@ -189,13 +250,13 @@ export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
     datasetId: string,
-    userDataset: LegacyCompatDatasetType;
+    userDataset: DatasetDetails;
   };
 };
 
 export function detailUpdateSuccess(
   datasetId: string,
-  userDataset: LegacyCompatDatasetType
+  userDataset: DatasetDetails
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
@@ -247,18 +308,16 @@ export const DETAIL_REMOVE_SUCCESS = 'user-datasets/detail-remove-success';
 export type DetailRemoveSuccessAction = {
   type: typeof DETAIL_REMOVE_SUCCESS;
   payload: {
-    userDataset: DatasetListEntry ;
+    datasetId: string;
   };
 };
 
 export function detailRemoveSuccess(
-  userDataset: DatasetListEntry,
+  datasetId: string,
 ): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
-    payload: {
-      userDataset,
-    },
+    payload: { datasetId },
   };
 }
 
@@ -442,7 +501,7 @@ export function updateDatasetCommunityVisibility(
             datasetIds.map((datasetId) =>
               wdkService.updateUserDataset(datasetId, {
                 visibility: isVisibleToCommunity ? 'public' : 'private',
-              } as LegacyCompatDatasetType)
+              })
             )
           );
           if (context === 'datasetDetails') {
@@ -470,14 +529,20 @@ type ListAction =
   | ListLoadingAction
   | ListReceivedAction
   | ListErrorReceivedAction;
+type ListItemUpdateAction =
+  | ListItemUpdatingAction
+  | ListItemUpdateErrorAction
+  | ListItemUpdateSuccessAction;
+
 type DetailAction =
   | DetailLoadingAction
   | DetailReceivedAction
   | DetailErrorAction;
-type UpdateAction =
+type DetailUpdateAction =
   | DetailUpdatingAction
   | DetailUpdateSuccessAction
   | DetailUpdateErrorAction;
+
 type RemovalAction =
   | DetailRemovingAction
   | DetailRemoveSuccessAction
@@ -581,16 +646,31 @@ export function unshareUserDatasets(
   ]);
 }
 
-export function updateUserDatasetDetail(
-  userDataset: LegacyCompatDatasetType,
-  patch: Partial<LegacyCompatDatasetType>,
+export function updateDatasetListItem(
+  dataset: DatasetListEntry,
+  patch: Partial<DatasetListEntry>,
 ) {
-  return validateVdiCompatibleThunk<UpdateAction>(({ wdkService }) => [
+  return validateVdiCompatibleThunk<ListItemUpdateAction>(({ wdkService }) => [
+    listItemUpdating(),
+    wdkService
+      .updateUserDataset(dataset.datasetId, patch)
+      .then(
+        () => listItemUpdateSuccess(dataset.datasetId, { ...dataset, ...patch }),
+        listItemUpdateError,
+      )
+  ]);
+}
+
+export function updateUserDatasetDetail(
+  userDataset: DatasetDetails,
+  patch: Partial<DatasetDetails>,
+) {
+  return validateVdiCompatibleThunk<DetailUpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService
       .updateUserDataset(userDataset.datasetId, patch)
       .then(
-        () => detailUpdateSuccess(userDataset.datasetId, { ...userDataset, ...patch } as LegacyCompatDatasetType),
+        () => detailUpdateSuccess(userDataset.datasetId, { ...userDataset, ...patch }),
         detailUpdateError
       ),
   ]);
@@ -607,7 +687,7 @@ export function removeUserDataset(
         .removeUserDataset(userDataset.datasetId)
         .then(
           () => [
-            detailRemoveSuccess(userDataset),
+            detailRemoveSuccess(userDataset.datasetId),
             typeof redirectTo === 'string'
               ? transitionToInternalPage(redirectTo)
               : emptyAction,
