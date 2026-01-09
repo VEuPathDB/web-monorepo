@@ -49,7 +49,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   console.log("Rendering EdaNotebookParameter with props:", props);
 
   // TEMPORARY: We don't have this value coming from the wdk yet.
-  const studyId = datasetIdParamName ?? 'DS_82dc5abc7f';
+  const studyId = datasetIdParamName ?? 'DS_eeca6a5476';
   const notebookType = notebookTypeParamName ?? 'differentialExpressionNotebook';
 
   // we need to maintain the analysis as regular "live" React state somewhere
