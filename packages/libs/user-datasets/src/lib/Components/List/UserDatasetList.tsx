@@ -43,7 +43,10 @@ import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
 import { Public } from '@material-ui/icons';
 import { Tooltip } from '@veupathdb/coreui';
-import { updateDatasetListItem } from "../../Actions/UserDatasetsActions";
+import {
+  removeUserDataset,
+  updateDatasetListItem,
+} from '../../Actions/UserDatasetsActions';
 import { datasetUserFullName } from '../../Utils/formatting';
 
 export interface DatasetListProps {
@@ -71,7 +74,7 @@ export interface DatasetListProps {
   sharingDatasetPending: boolean;
   shareSuccessful: boolean | undefined;
   shareError: Error | undefined;
-  removeUserDataset: (dataset: DatasetListEntry) => any;
+  removeUserDataset: typeof removeUserDataset;
   updateDatasetListItem: typeof updateDatasetListItem;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
@@ -476,7 +479,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
             )
           )
             return;
-          userDatasets.forEach((userDataset) => removeUserDataset(userDataset));
+          userDatasets.forEach((userDataset) => removeUserDataset(userDataset.datasetId));
         },
         element: (
           <ThemedDeleteButton buttonText="Delete" onPress={() => null} />

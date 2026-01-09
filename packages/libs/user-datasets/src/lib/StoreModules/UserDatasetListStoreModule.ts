@@ -109,7 +109,7 @@ export function reduce(state: State = initialState, action: Action): State {
             ...state,
             // replace the old dataset list object with the updated one.
             userDatasets: state.userDatasets.map((it) =>
-              it.datasetId === action.payload.datasetId
+              it.datasetId === action.payload.userDataset.datasetId
                 ? action.payload.userDataset
                 : it,
             ),

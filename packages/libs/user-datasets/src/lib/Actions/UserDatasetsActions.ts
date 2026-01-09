@@ -128,21 +128,16 @@ export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success'
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
   payload: {
-    datasetId: string,
     userDataset: DatasetListEntry;
   };
 };
 
 export function listItemUpdateSuccess(
-  datasetId: string,
   userDataset: DatasetListEntry
 ): ListItemUpdateSuccessAction {
   return {
     type: LIST_ITEM_UPDATE_SUCCESS,
-    payload: {
-      datasetId,
-      userDataset,
-    },
+    payload: { userDataset },
   };
 }
 
@@ -252,19 +247,16 @@ export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
-    datasetId: string,
     userDataset: DatasetDetails;
   };
 };
 
 export function detailUpdateSuccess(
-  datasetId: string,
   userDataset: DatasetDetails
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
     payload: {
-      datasetId,
       userDataset,
     },
   };
@@ -323,7 +315,7 @@ export function detailRemoveSuccess(
   return {
     type: DETAIL_REMOVE_SUCCESS,
     payload: {
-      datasetId
+      datasetId,
     },
   };
 }
@@ -660,7 +652,7 @@ export function updateDatasetListItem(
     wdkService
       .updateUserDataset(dataset.datasetId, patch)
       .then(
-        () => listItemUpdateSuccess(dataset.datasetId, { ...dataset, ...patch }),
+        () => listItemUpdateSuccess({ ...dataset, ...patch }),
         listItemUpdateError,
       )
   ]);
@@ -675,24 +667,24 @@ export function updateUserDatasetDetail(
     wdkService
       .updateUserDataset(userDataset.datasetId, patch)
       .then(
-        () => detailUpdateSuccess(userDataset.datasetId, { ...userDataset, ...patch }),
+        () => detailUpdateSuccess({ ...userDataset, ...patch }),
         detailUpdateError
       ),
   ]);
 }
 
 export function removeUserDataset(
-  userDataset: DatasetListEntry,
+  datasetId: string,
   redirectTo?: string
 ) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),
       wdkService
-        .removeUserDataset(userDataset.datasetId)
+        .removeUserDataset(datasetId)
         .then(
           () => [
-            detailRemoveSuccess(userDataset.datasetId),
+            detailRemoveSuccess(datasetId),
             typeof redirectTo === 'string'
               ? transitionToInternalPage(redirectTo)
               : emptyAction,
