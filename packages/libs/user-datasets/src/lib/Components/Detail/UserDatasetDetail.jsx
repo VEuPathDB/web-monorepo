@@ -236,7 +236,7 @@ class UserDatasetDetail extends React.Component {
                   // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
                   // Hence the regex: /dataset/
                   const ps = q.paramNames.filter((paramName) =>
-                    paramName.match(/dataset/),
+                    paramName.match(/dataset/)
                   );
                   const urlPath = [
                     '',
@@ -437,13 +437,14 @@ class UserDatasetDetail extends React.Component {
 
   renderFileSection() {
     const { userDataset, dataNoun } = this.props;
+    const { files: fileListing } = userDataset;
     const uploadZipFileState = MesaState.create({
       columns: this.getFileTableColumns('upload'),
-      rows: [{ name: 'upload.zip', size: userDataset.files?.upload?.zipSize }],
+      rows: [{ name: 'upload.zip', size: fileListing?.upload?.zipSize }],
     });
     const processedZipFileState = MesaState.create({
       columns: this.getFileTableColumns('data'),
-      rows: [{ name: 'install.zip', size: userDataset.files?.install?.zipSize }],
+      rows: [{ name: 'install.zip', size: fileListing?.install?.zipSize }],
     });
 
     return (
@@ -465,6 +466,7 @@ class UserDatasetDetail extends React.Component {
 
   getFileTableColumns(fileType) {
     const { userDataset, config } = this.props;
+    const { projectId } = config;
     const { status } = userDataset;
     const { wdkService } = this.context;
 
@@ -520,10 +522,11 @@ class UserDatasetDetail extends React.Component {
         headingStyle: { textAlign: 'center' },
         renderCell() {
           const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
-          const enableDownload = fileType === 'upload'
-            ? true
-            : status.install?.find((d) => d.installTarget === config.projectId)
-              ?.dataStatus === 'complete';
+          const enableDownload =
+            fileType === 'upload'
+              ? true
+              : status.install?.find((d) => d.installTarget === projectId)
+                  ?.dataStatus === 'complete';
 
           return (
             <button

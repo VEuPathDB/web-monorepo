@@ -83,8 +83,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   };
 
   getTitle() {
-    const entry =
-      this.props.stateProps.userDatasetDetails;
+    const entry = this.props.stateProps.userDatasetDetails;
     if (entry && entry.resource) {
       return `${this.props.ownProps.detailsPageTitle} ${entry.resource.name}`;
     }
@@ -130,9 +129,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
   isRenderDataLoaded() {
     const { userDatasetDetails: entry, user, questions, config } = this.props.stateProps;
-    if (user && user.isGuest)
-      return true;
-
+    if (user && user.isGuest) return true;
     return entry?.isLoading === false && user && questions && config
       ? true
       : false;

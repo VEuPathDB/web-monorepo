@@ -353,12 +353,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   onRowSelect(row: DatasetListEntry): void {
     const { selectedRows } = this.state;
-
-    if (selectedRows.includes(row.datasetId))
-      return;
-
+    if (selectedRows.includes(row.datasetId)) return;
     const newSelection = [ ...selectedRows, row.datasetId ];
-
     this.setState({ selectedRows: newSelection });
   }
 
@@ -449,9 +445,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
           const affectedUsers: DatasetListShareUser[] = userDatasets.reduce(
             (
               affectedUserList: DatasetListShareUser[],
-              userDataset: DatasetListEntry,
-              ) => {
-
+              userDataset: DatasetListEntry
+            ) => {
               if (!isMyDataset(userDataset)) return affectedUserList;
               if (!userDataset.shares || userDataset.shares.length)
                 return affectedUserList;
@@ -541,11 +536,10 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     const { projectName, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
     if (filterByProject)
-      rows = rows.filter((dataset) => dataset.installTargets.includes(projectName));
+      return rows.filter((dataset) => dataset.installTargets.includes(projectName));
     if (searchTerm && searchTerm.length)
       return this.filterRowsBySearchTerm([...rows], searchTerm);
-    if (sort.columnKey.length)
-      return this.sortRowsByColumnKey([...rows], sort);
+    if (sort.columnKey.length) return this.sortRowsByColumnKey([...rows], sort);
     return [ ...rows ];
   }
 
@@ -566,7 +560,6 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
           data.type.category.toLowerCase();
-
       case 'meta.name':
         return (data: DatasetListEntry) => data.name.toLowerCase();
       default:
@@ -582,9 +575,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     rows: DatasetListEntry[],
     sort: MesaSortObject
   ): DatasetListEntry[] {
-    const mappedValue = this.getColumnSortValueMapper(sort.columnKey);
+    const direction: string = sort.direction;
+    const columnKey: string = sort.columnKey;
+    const mappedValue = this.getColumnSortValueMapper(columnKey);
     const sorted = [...rows].sort(MesaUtils.sortFactory(mappedValue));
-    return sort.direction === 'asc' ? sorted : sorted.reverse();
+    return direction === 'asc' ? sorted : sorted.reverse();
   }
 
   closeSharingModal() {
@@ -604,7 +599,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   render() {
     const { isRowSelected, toggleProjectScope } = this;
     const {
-      userDatasets: rows,
+      userDatasets,
       user,
       projectName,
       shareUserDatasets,
@@ -626,6 +621,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     } = this.props;
     const { uiState, selectedRows, searchTerm } = this.state;
 
+    const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
     const columns = this.getColumns();
     const actions = this.getTableActions();
@@ -643,18 +639,18 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       eventHandlers,
       uiState: {
         ...uiState,
-        emptinessCulprit: rows.length ? 'search' : null,
+        emptinessCulprit: userDatasets.length ? 'search' : null,
       },
     };
 
-    const totalSize = rows
+    const totalSize = userDatasets
       .filter((ud) => ud.owner.userId === user.id)
       .map((ud) => ud.fileSizeTotal ?? 0)
       .reduce(add, 0);
 
     const totalPercent = totalSize / quotaSize;
 
-    const offerProjectToggle = rows.some(({ installTargets }) =>
+    const offerProjectToggle = userDatasets.some(({ installTargets }) =>
       installTargets.some((project) => project !== projectName)
     );
 
@@ -662,7 +658,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       <div className="UserDatasetList">
         <Mesa state={MesaState.create(tableState)}>
           <div className="stack">
-            {rows.length > 0 && (
+            {userDatasets.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {sharingModalOpen && selectedDatasets.length ? (
                   <SharingModal

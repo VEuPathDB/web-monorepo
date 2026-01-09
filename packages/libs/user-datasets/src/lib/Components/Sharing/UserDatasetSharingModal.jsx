@@ -215,8 +215,6 @@ class UserDatasetSharingModal extends React.Component {
     // fleshed out type than the share object in the list view.
     if (this.props.context === 'datasetDetails')
       share = share.recipient;
-
-
     return (
       <div key={index}>
         <span className="faded">Shared with</span> <b>{datasetUserFullName(share)}</b>{' '}
@@ -336,7 +334,6 @@ class UserDatasetSharingModal extends React.Component {
 
   renderShareList({ userDataset }) {
     let { shares } = userDataset;
-
     if (!Array.isArray(shares) || !shares.length)
       return null;
 
