@@ -186,12 +186,20 @@ function DifferentialExpressionConfigDescriptionComponent({
 // Include available methods in this array.
 // 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
 // and we're poised to release it in the future.
-type DifferentialExpressionMethodCitations = { DESeq: ReactNode };
+type DifferentialExpressionMethodCitations = {
+  DESeq: ReactNode;
+  limma: ReactNode;
+};
 const DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS: DifferentialExpressionMethodCitations =
   {
     DESeq: (
       <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8">
         (Love et al., 2014)
+      </a>
+    ),
+    limma: (
+      <a href="https://academic.oup.com/nar/article/43/7/e47/2414268">
+        (Ritchie et al., 2015)
       </a>
     ),
   };
