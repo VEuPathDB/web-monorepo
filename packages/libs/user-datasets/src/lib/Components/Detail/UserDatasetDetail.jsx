@@ -73,25 +73,11 @@ class UserDatasetDetail extends React.Component {
       );
   }
 
-  /**
-   * Sets values within the meta object.
-   *
-   * There are multiple types of metadata fields.
-   * * First, the easy key-value example.
-   *   `this.onMetaSave('name')('my new name');`
-   * * Second, for fields that are arrays of objects, like
-   *   `meta.publications[index].name`, specify the nestedKey and index.
-   *   `this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');`
-   * * Third, for arrays of strings, like `meta.organisms[index]`, just specify
-   *   the index.
-   *   `this.onMetaSave('organisms', undefined, 0)('new organism value');`
-   *
-   * @param key {string} Dataset meta field name.
-   * @param nestedKey {string|undefined}
-   * @param index {number|undefined}
-   *
-   * @return {(value: string|boolean|object) => unknown}
-   */
+  // Sets values within the meta object.
+  // There are multiple types of metadata fields.
+  // First, the easy key-value example. this.onMetaSave('name')('my new name');
+  // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
+  // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
   onMetaSave(key, nestedKey = undefined, index = undefined) {
     this.validateKey(key);
 

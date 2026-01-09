@@ -8,16 +8,9 @@ import {
   type,
   partial,
   string,
-  keyof,
-  boolean,
 } from 'io-ts';
 
 import * as io from 'io-ts';
-
-export const apiServiceConfiguration = io.type({
-  maxUploadSize: io.number,
-  userMaxStorageSize: io.number,
-});
 
 export const bioprojectIDReference = io.intersection([
   io.type({ id: io.string }),
@@ -322,7 +315,6 @@ export type DatasetDetails = io.TypeOf<typeof datasetDetails>;
 export type DatasetListEntry = io.TypeOf<typeof datasetListEntry>;
 export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
 export type DatasetPostDetails = io.TypeOf<typeof datasetPostDetails>;
-export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
 export type DatasetUser = io.TypeOf<typeof partialUser>;
