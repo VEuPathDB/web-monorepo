@@ -162,7 +162,7 @@ class UserDatasetDetail extends React.Component {
         : visibilityMessage || shareMessage);
 
     if (window.confirm(message)) {
-      removeUserDataset(userDataset, baseUrl);
+      removeUserDataset(userDataset.datasetId, baseUrl);
     }
   }
 
@@ -184,6 +184,10 @@ class UserDatasetDetail extends React.Component {
       status?.install?.find((d) => d.projectId === config.projectId)
         ?.dataStatus === 'complete'
     );
+  }
+
+  getGrantedShares() {
+    return this.props.userDataset.shares.filter(it => it.status === 'grant');
   }
 
   getAttributes() {

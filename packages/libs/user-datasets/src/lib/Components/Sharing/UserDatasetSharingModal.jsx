@@ -211,10 +211,6 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderShareItem(share, index, userDataset) {
-    // If we're coming from the dataset details page, the share object is a more
-    // fleshed out type than the share object in the list view.
-    if (this.props.context === 'datasetDetails')
-      share = share.recipient;
     return (
       <div key={index}>
         <span className="faded">Shared with</span> <b>{datasetUserFullName(share)}</b>{' '}
