@@ -54,6 +54,7 @@ export interface ComputeCellDescriptor
   getAdditionalCollectionPredicate?: (
     projectId?: string
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
+  hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -91,7 +92,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Select samples (optional)',
         helperText: (
           <NumberedHeader
-            number={0}
+            number={1}
             text={'Optionally refine samples for differential expression.'}
             color={colors.grey[800]}
           />
@@ -99,24 +100,25 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       },
       {
         type: 'compute',
-        title: 'Configure PCA',
+        title: 'PCA',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
-        helperText: (
-          <NumberedHeader
-            number={1}
-            text={
-              'Use PCA to investigate possible sources of variation in the dataset.'
-            }
-            color={colors.grey[800]}
-          />
-        ),
+        hidden: true, // Hide in UI since config is already known.
         cells: [
           {
             type: 'visualization',
             title: 'PCA Plot',
             visualizationName: 'scatterplot',
             visualizationId: 'pca_1',
+            helperText: (
+              <NumberedHeader
+                number={2}
+                text={
+                  'Use PCA to investigate possible sources of variation in the dataset.'
+                }
+                color={colors.grey[800]}
+              />
+            ),
           },
         ],
       },
@@ -127,7 +129,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         computationId: 'de_1',
         helperText: (
           <NumberedHeader
-            number={2}
+            number={3}
             text={
               'Run a differential expression analysis using DESeq2. Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
             }
@@ -177,7 +179,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             },
             helperText: (
               <NumberedHeader
-                number={3}
+                number={4}
                 text={
                   'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
                 }
@@ -190,7 +192,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Review and run search',
             helperText: (
               <NumberedHeader
-                number={4}
+                number={5}
                 text={
                   'After identifying genes of interest from the volcano plot, run a gene search to review the genes in the Gene Search Results table.'
                 }
