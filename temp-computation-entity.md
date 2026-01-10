@@ -332,18 +332,285 @@ useEffect(() => {
 }, [analysisState.analysis?.descriptor.subset.descriptor, ...]);
 ```
 
+## Notebook Integration - Guided Analysis Workflows
+
+The platform includes a **notebook system** that provides structured, step-by-step workflows for complex analyses. This system extends the entity/collection selection mechanism with additional features tailored for guided workflows.
+
+### Notebook Cell Architecture
+
+Notebooks are composed of different cell types, with **ComputeCellDescriptor** being the primary type for computations:
+
+```typescript
+export interface ComputeCellDescriptor extends NotebookCellDescriptorBase<'compute'> {
+  computationName: string;
+  computationId: string;
+  getAdditionalCollectionPredicate?: (
+    projectId?: string
+  ) => (variableCollection: CollectionVariableTreeNode) => boolean;
+  hidden?: boolean; // Hide cell UI for auto-configured computations
+}
+```
+
+### Key Notebook Features for Entity/Collection Selection
+
+#### 1. **Project-Specific Collection Filtering**
+
+Notebooks can restrict available collections based on the current project using `getAdditionalCollectionPredicate`:
+
+```typescript
+// From wgcnaCorrelationNotebook in NotebookPresets.tsx
+{
+  type: 'compute',
+  computationName: 'correlation',
+  computationId: 'correlation_1',
+  getAdditionalCollectionPredicate:
+    (projectId?: string) =>
+    (variableCollection: CollectionVariableTreeNode) => {
+      // Keep only plasmo eigengenes for PlasmoDB
+      if (projectId === 'PlasmoDB') {
+        return variableCollection.id === 'EUPATH_0005051';
+      }
+      // Keep only host eigengenes for HostDB
+      if (projectId === 'HostDB') {
+        return variableCollection.id === 'EUPATH_0005050';
+      }
+      // In portal, return both
+      return true;
+    },
+}
+```
+
+This predicate is combined with the computation plugin's base `collectionPredicate` to provide **layered filtering**:
+
+```typescript
+// From ComputeNotebookCell.tsx (lines 105-108)
+const additionalCollectionPredicate =
+  getAdditionalCollectionPredicate &&
+  getAdditionalCollectionPredicate(projectId);
+
+// Passed to plugin configuration component (lines 186-187)
+<plugin.configurationComponent
+  additionalCollectionPredicate={additionalCollectionPredicate}
+  // ... other props
+/>
+```
+
+#### 2. **Hidden Auto-Running Computations**
+
+Notebooks can include hidden computations that auto-configure and run without user interaction:
+
+```typescript
+// From differentialExpressionNotebook (lines 101-124)
+{
+  type: 'compute',
+  title: 'PCA',
+  computationName: 'dimensionalityreduction',
+  computationId: 'pca_1',
+  hidden: true, // Hide in UI since config is already known
+  cells: [
+    {
+      type: 'visualization',
+      title: 'PCA Plot',
+      visualizationName: 'scatterplot',
+      visualizationId: 'pca_1',
+    },
+  ],
+}
+```
+
+**Auto-execution logic** (from ComputeNotebookCell.tsx lines 112-117):
+
+```typescript
+useEffect(() => {
+  if (isComputationConfigurationValid && jobStatus === 'no-such-job' && hidden) {
+    console.log("creating job");
+    createJob(); // Automatically run computation
+  }
+}, [isComputationConfigurationValid, jobStatus, createJob, hidden]);
+```
+
+When a hidden computation is fully configured (e.g., PCA with auto-selected collection), it runs automatically in the background, enabling seamless workflows.
+
+#### 3. **Error Handling for Hidden Computes**
+
+Hidden computations show error dialogs when they fail (lines 119-141):
+
+```typescript
+useEffect(() => {
+  if (hidden && jobStatus === 'failed') {
+    setShowErrorDialog(true);
+  }
+}, [hidden, jobStatus]);
+
+<Dialog
+  open={showErrorDialog}
+  onClose={() => setShowErrorDialog(false)}
+  title="Computation failed"
+>
+  <p>
+    The background {cell.title + ' ' || ''}computation has failed.
+    <strong>Please contact us for assistance.</strong>
+  </p>
+  <p>After closing this dialog, you may continue with your search.</p>
+</Dialog>
+```
+
+#### 4. **Custom Configuration Handlers in Notebooks**
+
+Notebooks use a simplified configuration handler instead of the standard `useConfigChangeHandler`:
+
+```typescript
+// From ComputeNotebookCell.tsx (lines 58-93)
+const changeConfigHandler = (propertyName: string, value?: any) => {
+  const updatedConfiguration = {
+    ...(computation.descriptor.configuration || {}),
+    [propertyName]: value,
+  };
+
+  // Check if computation with this config already exists
+  const existingComputation =
+    analysisState.analysis?.descriptor.computations.find(
+      (comp) =>
+        isEqual(comp.computationId, computationId) &&
+        isEqual(comp.descriptor.configuration, updatedConfiguration)
+    );
+
+  if (existingComputation) return; // Don't create duplicate
+
+  // Update computation in state
+  analysisState.setComputations((computations) => {
+    return computations.map((comp) =>
+      comp.computationId === computation.computationId
+        ? { ...comp, descriptor: { ...comp.descriptor, configuration: updatedConfiguration } }
+        : comp
+    );
+  });
+};
+```
+
+This handler is simpler than the workspace version because notebooks:
+- Don't navigate between computation routes
+- Don't need to manage multiple visualizations per computation
+- Use fixed computation IDs defined in the notebook preset
+
+#### 5. **Enhanced VariableCollectionSingleSelect for Notebooks**
+
+The component was enhanced to support notebook workflows (VariableCollectionSingleSelect.tsx):
+
+**String value support** (lines 65-70):
+```typescript
+const handleSelect = useCallback((value?: string) => {
+  if (value == null) { onSelect(); return; }
+  if (value.includes(':')) {
+    const [entityId, collectionId] = value.split(':');
+    onSelect({ entityId, collectionId });
+  } else {
+    onSelect(value); // Support plain string values
+  }
+}, [onSelect]);
+```
+
+**Single-option placeholder** (lines 104-108):
+```typescript
+// If only one option, show as text instead of dropdown
+return items.length === 1 && items[0].items.length === 1 ? (
+  <span style={{ fontWeight: 400, marginRight: 15 }}>
+    {items[0].items[0].display}
+  </span>
+) : (
+  <SingleSelect ... />
+);
+```
+
+### Example: Differential Expression Notebook
+
+The differential expression notebook demonstrates the full notebook selection flow:
+
+```typescript
+// From NotebookPresets.tsx
+differentialExpressionNotebook: {
+  cells: [
+    // Step 1: Optional subsetting
+    { type: 'subset', title: 'Select samples (optional)' },
+
+    // Step 2: Hidden PCA auto-runs when collection is selected
+    {
+      type: 'compute',
+      computationName: 'dimensionalityreduction',
+      computationId: 'pca_1',
+      hidden: true,
+      cells: [
+        { type: 'visualization', visualizationName: 'scatterplot', visualizationId: 'pca_1' }
+      ],
+    },
+
+    // Step 3: User configures DE - selects collection + comparator variable + groups
+    {
+      type: 'compute',
+      computationName: 'differentialexpression',
+      computationId: 'de_1',
+      cells: [
+        { type: 'visualization', visualizationName: 'volcanoplot', visualizationId: 'volcano_1' }
+      ],
+    },
+  ],
+}
+```
+
+**Entity/Collection Selection Flow in Notebook**:
+
+1. **PCA computation** (hidden):
+   - When page loads, `VariableCollectionSingleSelect` shows available RNA-seq collections
+   - If only one collection exists, it's auto-selected (lines 95-100 of VariableCollectionSingleSelect)
+   - Configuration becomes valid → auto-runs via `createJob()`
+   - PCA results populate scatterplot visualization
+
+2. **DE computation** (visible):
+   - User selects same or different collection via `VariableCollectionSingleSelect`
+   - User selects comparator variable via `VariableTreeDropdown`
+   - User defines Group A and Group B values
+   - User clicks "Run Computation"
+   - DE results populate volcano plot
+
+### Notebook Configuration Props
+
+The `ComputationConfigProps` interface was extended to support notebook features (Types.ts):
+
+```typescript
+export interface ComputationConfigProps extends ComputationProps {
+  computation: Computation;
+  visualizationId: string;
+  addNewComputation: (name: string, configuration: unknown) => void;
+  changeConfigHandlerOverride?: (propertyName: string, value: any) => void;
+  showStepNumber?: boolean;
+  showExpandableHelp?: boolean;
+  additionalCollectionPredicate?: (
+    variableCollection: CollectionVariableTreeNode
+  ) => boolean;
+  hideConfigurationComponent?: boolean;
+}
+```
+
+New props for notebooks:
+- **`changeConfigHandlerOverride`**: Custom handler for notebook contexts
+- **`showStepNumber`**: Control numbered headers (usually `false` in notebooks)
+- **`showExpandableHelp`**: Control help sections (usually `false` to avoid nested expandables)
+- **`additionalCollectionPredicate`**: Project-specific collection filtering
+- **`hideConfigurationComponent`**: Completely hide config UI for hidden cells
+
 ## Pattern Consistency Across Plugins
 
 All computation plugins follow the same selection pattern:
 
-| Plugin | Entity Selection | Collection Selection | Additional |
-|--------|------------------|----------------------|------------|
-| **Abundance** | Via collection | Single collection | Ranking method |
-| **AlphaDiv** | Via collection | Single collection | Diversity method |
-| **DifferentiaAbundance** | Via collection + comparator | Single collection | Method, groups |
-| **DifferentialExpression** | Via collection + comparator | Single collection (RNA-seq counts) | Method, groups, p-value floor |
-| **Correlation** | Via 2 collections | Two collections or collection + metadata | Correlation method |
-| **BetaDiv** | Via collection | Single collection | Distance metric |
+| Plugin | Entity Selection | Collection Selection | Additional | Notebook Support |
+|--------|------------------|----------------------|------------|------------------|
+| **Abundance** | Via collection | Single collection | Ranking method | ✓ |
+| **AlphaDiv** | Via collection | Single collection | Diversity method | ✓ |
+| **DifferentiaAbundance** | Via collection + comparator | Single collection | Method, groups | ✓ |
+| **DifferentialExpression** | Via collection + comparator | Single collection (RNA-seq counts) | Method, groups, p-value floor | ✓ |
+| **DimensionalityReduction** (PCA) | Via collection | Single collection | None | ✓ (often hidden in notebooks) |
+| **Correlation** | Via 2 collections | Two collections or collection + metadata | Correlation method | ✓ (WGCNA notebook) |
+| **BetaDiv** | Via collection | Single collection | Distance metric | ✓ |
 
 ## Study Metadata Context
 
@@ -372,6 +639,8 @@ export interface CollectionVariableTreeNode extends VariableTreeNode {
 
 ## Summary: Core Design Principles
 
+### Foundational Principles
+
 1. **Descriptors as Addresses**: Selections stored as minimal `{ entityId, variableId/collectionId }` objects, not full data
 
 2. **Lazy Resolution**: Full objects created on-demand via lookup hooks during rendering
@@ -386,12 +655,35 @@ export interface CollectionVariableTreeNode extends VariableTreeNode {
 
 7. **Smart State Management**: Configuration changes intelligently merge visualizations to existing or new computations
 
-This architecture enables **flexible, type-safe, and efficient selection of any entity/collection combination** while maintaining clean separation between selection UI, state management, and computation logic.
+### Notebook-Specific Extensions
+
+8. **Layered Filtering**: Combine plugin-level predicates with project-specific predicates for granular collection control
+
+9. **Hidden Auto-Execution**: Computations can auto-run when fully configured, enabling seamless multi-step workflows
+
+10. **Context-Appropriate UI**: Single-option collections display as static text; configuration components can be completely hidden
+
+11. **Custom State Handlers**: Notebooks use simplified configuration handlers without routing logic
+
+12. **Graceful Error Recovery**: Hidden computations surface errors via dialogs while allowing users to continue
+
+This architecture enables **flexible, type-safe, and efficient selection of any entity/collection combination** while maintaining clean separation between selection UI, state management, and computation logic. The notebook extensions allow the same selection mechanism to power both **exploratory analysis** (workspace mode) and **guided workflows** (notebook mode).
 
 ## Key Files Referenced
 
+### Core Selection System
+
 - `packages/libs/eda/src/lib/core/components/computations/plugins/differentialExpression.tsx` - Differential expression plugin
+- `packages/libs/eda/src/lib/core/components/computations/plugins/dimensionalityReduction.tsx` - PCA/dimensionality reduction plugin
 - `packages/libs/eda/src/lib/core/components/variableSelectors/VariableCollectionSingleSelect.tsx` - Collection selector UI
 - `packages/libs/eda/src/lib/core/hooks/workspace.ts` - Entity/collection lookup hooks
 - `packages/libs/eda/src/lib/core/utils/study-metadata.ts` - Descriptor resolution utilities
 - `packages/libs/eda/src/lib/core/utils/computation-utils/Utils.ts` - Config change handlers and predicates
+- `packages/libs/eda/src/lib/core/components/computations/Types.ts` - Computation configuration types
+
+### Notebook Integration
+
+- `packages/libs/eda/src/lib/notebook/ComputeNotebookCell.tsx` - Notebook compute cell component with auto-execution
+- `packages/libs/eda/src/lib/notebook/NotebookPresets.tsx` - Notebook definitions (DE, WGCNA, etc.)
+- `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/questions/EdaNotebookQuestionForm.tsx` - Notebook integration with WDK search
+- `packages/sites/genomics-site/webapp/wdkCustomization/js/client/pluginConfig.tsx` - Plugin configuration for genomics site
