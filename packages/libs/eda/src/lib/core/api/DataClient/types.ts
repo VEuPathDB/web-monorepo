@@ -906,9 +906,9 @@ export const MapMarkersOverlayResponse = type({
 export type BinDefinitions = TypeOf<typeof BinDefinitions>;
 export const BinDefinitions = array(
   type({
-    binStart: string,
-    binEnd: string,
-    binLabel: string,
+    min: string,
+    max: string,
+    label: string,
   })
 );
 
@@ -971,13 +971,13 @@ export const StandaloneMapMarkersResponse = type({
         overlayValues: array(
           intersection([
             type({
-              binLabel: string,
+              label: string,
               value: number,
               count: number,
             }),
             partial({
-              binStart: string,
-              binEnd: string,
+              min: string,
+              max: string,
             }),
           ])
         ),
