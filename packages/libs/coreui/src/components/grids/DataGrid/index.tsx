@@ -184,8 +184,6 @@ export default function DataGrid({
                     checked={props.checked ?? false}
                     indeterminate={props.indeterminate ?? false}
                     onChange={props.onChange}
-                    value={''}
-                    name={''}
                     // themeRole={themeRole}
                   />
                 </div>
@@ -204,7 +202,6 @@ export default function DataGrid({
                     checked={row.isSelected}
                     indeterminate={props.indeterminate ?? false}
                     onChange={props.onChange}
-                    name={''}
                     value={row.id}
                     // themeRole={themeRole}
                   />

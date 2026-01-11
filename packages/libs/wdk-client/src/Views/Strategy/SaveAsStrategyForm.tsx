@@ -1,8 +1,12 @@
 import { orderBy } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
-import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaSortObject,
+  MesaStateProps,
+  MesaColumn,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import { preferences, usePreference } from '../../Preferences';
 import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 import { SaveStrategyOptions, StrategySummary } from '../../Utils/WdkUser';
@@ -101,10 +105,16 @@ export default function SaveAsStrategyForm(props: Props) {
     [sort.columnKey],
     [sort.direction]
   );
-  const tableState = MesaState.create({
+  const tableState: MesaStateProps<StrategySummary, string> = {
     rows: mesaRows,
-    columns: mesaColumns,
-    eventHandlers,
+    columns: mesaColumns as MesaColumn<StrategySummary, string>[],
+    eventHandlers: {
+      ...eventHandlers,
+      onRowSelect: (s: StrategySummary) => {
+        setName(s.name);
+        setSelectedStrategyId(s.strategyId);
+      },
+    },
     uiState: { sort },
     options: {
       useStickyHeader: true,
@@ -115,12 +125,8 @@ export default function SaveAsStrategyForm(props: Props) {
           '--TableRow',
           s.strategyId === selectedStrategyId ? 'selected' : 'unselected'
         ),
-      onRowClick: (s: StrategySummary) => {
-        setName(s.name);
-        setSelectedStrategyId(s.strategyId);
-      },
     },
-  });
+  };
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
