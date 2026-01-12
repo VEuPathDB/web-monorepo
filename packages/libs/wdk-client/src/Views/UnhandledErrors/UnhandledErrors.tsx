@@ -43,7 +43,7 @@ function UnhandledErrors(props: Props) {
         <ErrorStatus
           message={
             !errorsToDisplay.isEmpty() && (
-              <details className={cx('--Details')}>
+              <details open className={cx('--Details')}>
                 <summary>Error details</summary>
                 {errorsToDisplay}
               </details>
