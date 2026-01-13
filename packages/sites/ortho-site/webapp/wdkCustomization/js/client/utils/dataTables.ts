@@ -6,10 +6,7 @@ import {
 export type DataTableColumnKey<R> = keyof R & string;
 
 export interface DataTableSortObject<R, K extends DataTableColumnKey<R>>
-  extends MesaSortObject {
-  columnKey: K;
-  direction: 'asc' | 'desc';
-}
+  extends MesaSortObject<K> {}
 
 export interface DataTableColumn<R, K extends DataTableColumnKey<R>>
   extends MesaColumn<R, K> {

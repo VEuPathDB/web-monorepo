@@ -60,7 +60,7 @@ export class Seq<T> {
   }
 
   static of<T>(...values: T[]) {
-    return (values.length === 0 ? Seq.empty() : new Seq(values)) as Seq<T>;
+    return values.length === 0 ? Seq.empty<T>() : new Seq(values);
   }
 
   static from<T>(iterable: Iterable<T>) {
@@ -233,7 +233,7 @@ export class Seq<T> {
     const groupMap = this.reduce((map: Map<S, T[]>, entry: T) => {
       const key = fn(entry);
       if (!map.has(key)) map.set(key, []);
-      const group: T[] = map.get(key) as T[];
+      const group = map.get(key)!;
       group.push(entry);
       return map;
     }, new Map<S, T[]>());

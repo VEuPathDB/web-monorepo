@@ -2,13 +2,15 @@ import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 
 type DefaultColumnKey<Row> = Extract<keyof Row, string>;
 
-export type ChildRowProps<Row> = {
-  rowIndex: number;
-  rowData: Row;
-};
+// Note: childRow is a function that receives two separate arguments, not a props object
+// This matches the original JavaScript API and how RecordTable uses it
+export type ChildRowFunc<Row> = (
+  rowIndex: number,
+  rowData: Row
+) => ReactElement;
 
 export interface MesaStateProps<
-  Row,
+  Row extends Record<PropertyKey, any>,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>
 > {
@@ -16,7 +18,7 @@ export interface MesaStateProps<
   columns: MesaColumn<Row, Key, Value>[];
   filteredRows?: Row[];
   uiState?: {
-    sort?: MesaSortObject;
+    sort?: MesaSortObject<Key extends string ? Key : string>;
     searchQuery?: string;
     filteredRowCount?: number;
     pagination?: {
@@ -29,6 +31,7 @@ export interface MesaStateProps<
     emptinessCulprit?: 'search' | 'nocolumns' | 'filters' | 'nodata';
     expandedRows?: (number | string)[];
     groupBySelected?: boolean;
+    columnOrder?: string[];
   };
   headerWrapperStyle?: CSSProperties;
   options?: {
@@ -43,6 +46,7 @@ export interface MesaStateProps<
     editableColumns?: boolean;
     overflowHeight?: string;
     toolbar?: boolean;
+    columnDefaults?: Partial<MesaColumn<Row, Key>>;
     /**
      * It's possible to render counts in the ActionToolbar and the Toolbar, so be careful not to duplicate.
      * This is because we pass search filters as children to Mesa that renders in the Toolbar if the toolbar
@@ -67,7 +71,7 @@ export interface MesaStateProps<
      * To handle errors gracefully, childRow elements should be wrapped in wdk-client's ErrorBoundary.
      * As a reference, refer to the RecordTable.jsx component in wdk-client.
      */
-    childRow?: (props: ChildRowProps<Row>) => ReactElement<ChildRowProps<Row>>;
+    childRow?: ChildRowFunc<Row>;
     getRowId?: (row: Row) => string | number;
     /**
      * Renders the node in the left margin of the table.
@@ -75,6 +79,9 @@ export interface MesaStateProps<
      * aligns with table rows, etc.
      */
     marginContent?: React.ReactNode;
+    onRowClick?: (row: Row, rowIndex: number) => void;
+    onRowMouseOver?: (row: Row, rowIndex: number) => void;
+    onRowMouseOut?: (row: Row, rowIndex: number) => void;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {
@@ -90,26 +97,29 @@ export interface MesaStateProps<
     onMultipleRowSelect?: (rows: Row[]) => void;
     onMultipleRowDeselect?: (rows: Row[]) => void;
     onColumnReorder?: (columnKey: Key, columnIndex: number) => void;
-    onExpandedRowsChange?: (indexes: number[]) => void;
+    onExpandedRowsChange?: (ids: (string | number)[]) => void;
     onGroupBySelectedChange?: (groupBySelected: boolean) => void;
   };
 }
 
-interface MesaAction<Row, Key = DefaultColumnKey<Row>> {
+export interface MesaAction<
+  Row extends Record<PropertyKey, any>,
+  Key = DefaultColumnKey<Row>
+> {
   selectionRequired?: boolean;
-  element: React.ReactNode;
-  callback?: (row: Row, columns: MesaColumn<Row, Key>[]) => void;
-  handler?: (
+  element: React.ReactNode | ((selection: Row[]) => React.ReactNode);
+  handler?: (row: Row, columns?: MesaColumn<Row, Key>[]) => void;
+  callback?: (
     selection: Row[],
-    columns: MesaColumn<Row, Key>[],
-    rows: Row[]
+    columns?: MesaColumn<Row, Key>[],
+    rows?: Row[]
   ) => void;
 }
 
 type DefaultColumnValue<Row, Key> = Key extends keyof Row ? Row[Key] : unknown;
 
 export interface CellProps<
-  Row,
+  Row extends Record<PropertyKey, any>,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>
 > {
@@ -122,7 +132,7 @@ export interface CellProps<
 }
 
 export interface MesaColumn<
-  Row,
+  Row extends Record<PropertyKey, any>,
   Key = DefaultColumnKey<Row>,
   Value = DefaultColumnValue<Row, Key>
 > {
@@ -135,10 +145,14 @@ export interface MesaColumn<
   resizeable?: boolean;
   moveable?: boolean;
   helpText?: string;
+  htmlHelp?: string;
   style?: CSSProperties;
+  headingStyle?: CSSProperties;
   className?: string;
   width?: CSSProperties['width'];
-  getValue?: (props: { row: Row; index: number }) => Value;
+  hidden?: boolean;
+  truncated?: boolean | string;
+  getValue?: (props: { row: Row; key: Key }) => Value;
   renderCell?: (cellProps: CellProps<Row, Key, Value>) => ReactNode;
   renderHeading?:
     | boolean
@@ -146,9 +160,9 @@ export interface MesaColumn<
         column: MesaColumn<Row, Key>,
         columnIndex: number,
         components: {
-          SortTrigger: ReactElement;
-          HelpTrigger: ReactElement;
-          ClickBoundary: ReactElement;
+          SortTrigger: () => ReactElement | null;
+          HelpTrigger: () => ReactElement | null;
+          ClickBoundary: (props: { children: ReactNode }) => ReactElement;
         }
       ) => ReactNode);
   wrapCustomHeadings?: (props: {

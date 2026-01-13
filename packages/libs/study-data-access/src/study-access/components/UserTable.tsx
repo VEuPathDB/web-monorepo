@@ -7,6 +7,7 @@ import Mesa, { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
+  MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
@@ -16,7 +17,10 @@ import {
 
 import { cx } from './StudyAccess';
 
-export interface Props<R, C extends UserTableColumnKey<R>> {
+export interface Props<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+> {
   rows: R[];
   columns: UserTableColumns<R, C>;
   columnOrder: readonly C[];
@@ -28,34 +32,38 @@ export interface Props<R, C extends UserTableColumnKey<R>> {
   }[];
 }
 
-export type UserTableColumnKey<R> = keyof R & string;
+export type UserTableColumnKey<R extends Record<PropertyKey, any>> = keyof R &
+  string;
 
-export interface UserTableSortObject<R, K extends UserTableColumnKey<R>>
-  extends MesaSortObject {
+export interface UserTableSortObject<
+  R extends Record<PropertyKey, any>,
+  K extends UserTableColumnKey<R>
+> extends MesaSortObject {
   columnKey: K;
   direction: 'asc' | 'desc';
 }
 
 type OrderablePrimimitive = boolean | number | string;
 
-export interface UserTableColumn<R, K extends UserTableColumnKey<R>>
-  extends MesaColumn<R, K> {
+export interface UserTableColumn<
+  R extends Record<PropertyKey, any>,
+  K extends UserTableColumnKey<R>
+> extends MesaColumn<R, K> {
   makeSearchableString?: (value: R[K], row: R) => string;
   makeOrder?: (row: R) => OrderablePrimimitive | OrderablePrimimitive[];
 }
 
-export type UserTableColumns<R, C extends UserTableColumnKey<R>> = {
+export type UserTableColumns<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+> = {
   [K in C]: UserTableColumn<R, K>;
 };
 
-export function UserTable<R, C extends UserTableColumnKey<R>>({
-  actions,
-  columnOrder,
-  columns,
-  rows,
-  idGetter,
-  initialSort,
-}: Props<R, C>) {
+export function UserTable<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>({ actions, columnOrder, columns, rows, idGetter, initialSort }: Props<R, C>) {
   const [selectedRowIds, setSelectedRowIds] = useState(
     () => new Set<number | string>()
   );
@@ -114,7 +122,7 @@ export function UserTable<R, C extends UserTableColumnKey<R>>({
         actions,
         options: mesaOptions,
         eventHandlers: mesaEventHandlers,
-        uiState: mesaUiState,
+        uiState: mesaUiState as MesaStateProps<R, C>['uiState'],
       }),
     [
       actions,
@@ -143,7 +151,10 @@ export function UserTable<R, C extends UserTableColumnKey<R>>({
   );
 }
 
-function makeMesaRows<R, C extends UserTableColumnKey<R>>(
+function makeMesaRows<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(
   rows: Props<R, C>['rows'],
   columns: Props<R, C>['columns'],
   sortUiState: UserTableSortObject<R, C>
@@ -157,7 +168,10 @@ function makeMesaRows<R, C extends UserTableColumnKey<R>>(
     : orderBy(rows, makeOrder, sortDirection);
 }
 
-function useMesaFilteredRows<R, C extends UserTableColumnKey<R>>(
+function useMesaFilteredRows<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(
   rows: Props<R, C>['rows'],
   columns: Props<R, C>['columns'],
   columnOrder: Props<R, C>['columnOrder'],
@@ -201,14 +215,17 @@ function useMesaFilteredRows<R, C extends UserTableColumnKey<R>>(
   );
 }
 
-function makeMesaColumns<R, C extends UserTableColumnKey<R>>(
-  columns: Props<R, C>['columns'],
-  columnOrder: Props<R, C>['columnOrder']
-) {
+function makeMesaColumns<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(columns: Props<R, C>['columns'], columnOrder: Props<R, C>['columnOrder']) {
   return columnOrder.map((columnKey) => columns[columnKey]);
 }
 
-function makeMesaEventHandlers<R, C extends UserTableColumnKey<R>>(
+function makeMesaEventHandlers<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(
   setSortUiState: (newSort: UserTableSortObject<R, C>) => void,
   selectedRowIds: Set<number | string>,
   setSelectedRowIds: (newSelectedRowIds: Set<number | string>) => void,
@@ -261,15 +278,19 @@ function makeMesaEventHandlers<R, C extends UserTableColumnKey<R>>(
   };
 }
 
-function makeMesaUiState<R, C extends UserTableColumnKey<R>>(
-  sort: UserTableSortObject<R, C>
-) {
+function makeMesaUiState<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(sort: UserTableSortObject<R, C>) {
   return {
     sort,
   };
 }
 
-function makeMesaOptions<R, C extends UserTableColumnKey<R>>(
+function makeMesaOptions<
+  R extends Record<PropertyKey, any>,
+  C extends UserTableColumnKey<R>
+>(
   selectedRowIds: Set<number | string>,
   idGetter: Props<R, C>['idGetter'],
   actions: Props<R, C>['actions']

@@ -58,6 +58,8 @@ export type IndividualNode = OntologyNode<{
     help?: string;
     summary?: string;
     description?: string;
+    fullName?: string; // FIXME Remove when the urlSegment/name/fullName saga is resolved
+    urlSegment?: string;
   };
 }>;
 
@@ -72,7 +74,7 @@ export const EMPTY_CATEGORY_TREE_NODE: CategoryTreeNode = {
 export function getId(node: CategoryTreeNode): string {
   return isIndividual(node)
     ? // FIXME Remove `fullName` hack when the urlSegment/name/fullName saga is resolved.
-      node.wdkReference.name || (node.wdkReference as any).fullName
+      node.wdkReference.name || node.wdkReference.fullName || ''
     : `category:${kebabCase(getLabel(node))}`;
 }
 
@@ -258,7 +260,7 @@ export function isQualifying(spec: QualifyingSpec) {
     // We have to cast spec as Record<string, string> to avoid an implicitAny error
     // See http://stackoverflow.com/questions/32968332/how-do-i-prevent-the-error-index-signature-of-object-type-implicitly-has-an-an
     return Object.keys(spec).every((prop) =>
-      nodeHasProperty(prop, (spec as Record<string, string>)[prop] as any, node)
+      nodeHasProperty(prop, (spec as Record<string, string>)[prop], node)
     );
   };
 }

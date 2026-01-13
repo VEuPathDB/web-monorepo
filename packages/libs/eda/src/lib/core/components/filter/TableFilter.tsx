@@ -133,12 +133,15 @@ export function TableFilter({
   const activeField = useMemo(
     () => ({
       // add units
-      display: variableDisplayWithUnit(variable),
-      isRange: false,
+      display: variableDisplayWithUnit(variable) ?? variable.displayName,
+      isRange: false as const,
       parent: variable.parentId,
       precision: 1,
       term: variable.id,
-      type: variable.type,
+      type: (variable.type === 'integer' ? 'number' : variable.type) as
+        | 'string'
+        | 'number'
+        | 'date',
       variableName: variable.providerLabel,
     }),
     [variable]
@@ -209,13 +212,15 @@ export function TableFilter({
     () => ({
       loading: false,
       summary: {
-        valueCounts: sortedDistribution,
-        internalsCount: tableSummary.value?.entitiesCount,
-        internalsFilteredCount: tableSummary.value?.filteredEntitiesCount,
+        term: variable.id,
+        valueCounts: sortedDistribution ?? [],
+        internalsCount: tableSummary.value?.entitiesCount ?? 0,
+        internalsFilteredCount: tableSummary.value?.filteredEntitiesCount ?? 0,
       },
       ...uiState,
     }),
     [
+      variable.id,
       sortedDistribution,
       tableSummary.value?.entitiesCount,
       tableSummary.value?.filteredEntitiesCount,
@@ -337,7 +342,6 @@ export function TableFilter({
           <MembershipField
             displayName={entity.displayNamePlural ?? entity.displayName}
             dataCount={totalEntityCount}
-            filteredDataCount={filteredEntityCount}
             filter={tableFilter}
             activeField={activeField}
             activeFieldState={activeFieldState}

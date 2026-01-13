@@ -2,6 +2,7 @@ import { difference, union } from 'lodash';
 import { map, filter } from 'rxjs/operators';
 import { Favorite, RecordClass } from '../Utils/WdkModel';
 import { MesaState } from '@veupathdb/coreui/lib/components/Mesa';
+import type { MesaStateProps } from '@veupathdb/coreui/lib/components/Mesa/types';
 import {
   TYPE_GETTER,
   SORT_TABLE,
@@ -27,7 +28,7 @@ import { Action } from '../Actions';
 export const key = 'favorites';
 
 export interface State {
-  tableState?: {};
+  tableState?: Partial<MesaStateProps<Favorite>>;
   tableSelection: number[];
   favoritesLoading: boolean;
   loadError: Error | null;
@@ -70,8 +71,8 @@ export function reduce(state: State = initialState, action: Action): State {
       const { setSortDirection, setSortColumnKey } = MesaState;
       const { sortDirection, sortKey } = action.payload;
       const tableState = setSortDirection(
-        setSortColumnKey(state.tableState, sortKey),
-        sortDirection
+        setSortColumnKey(state.tableState || {}, sortKey),
+        sortDirection.toLowerCase() as 'asc' | 'desc'
       );
       return { ...state, tableState };
     }
@@ -163,7 +164,7 @@ export function reduce(state: State = initialState, action: Action): State {
 
     case UPDATE_SEARCH_TERM: {
       const editCoordinates = {};
-      const { tableState } = state;
+      const { tableState = {} } = state;
       const searchText = action.payload;
       const stateWithTerm = Object.assign({}, state, { searchText });
       const predicate = (fav: Favorite) =>
@@ -178,7 +179,7 @@ export function reduce(state: State = initialState, action: Action): State {
 
     case FILTER_BY_TYPE: {
       const editCoordinates = {};
-      const { tableState } = state;
+      const { tableState = {} } = state;
       const filterByType = action.payload;
       const stateWithFilter = Object.assign({}, state, { filterByType });
       const predicate = (fav: Favorite) =>

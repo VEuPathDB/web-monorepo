@@ -15,13 +15,10 @@ import {
   undeleteFavorites,
   loadFavoritesList,
 } from '../Actions/FavoritesActions';
-import _FavoritesList from '../Views/Favorites/FavoritesList';
+import FavoritesList from '../Views/Favorites/FavoritesList';
 import { State } from '../StoreModules/FavoritesListStoreModule';
 import { GlobalData } from '../StoreModules/GlobalData';
 import { RootState } from '../Core/State/Types';
-
-// FIXME Convert FavoritesList to TypeScript
-const FavoritesList: any = _FavoritesList;
 
 // Named map of ActionCreator functions that will be passed
 // as dispatchProps via `connect` below
@@ -88,10 +85,12 @@ class FavoritesListController extends PageController<Props> {
 
     return (
       <FavoritesList
-        {...stateProps}
-        favoritesEvents={dispatchProps}
-        searchBoxPlaceholder="Search Favorites..."
-        searchBoxHelp="All table columns will be searched"
+        {...({
+          ...stateProps,
+          favoritesEvents: dispatchProps,
+          searchBoxPlaceholder: 'Search Favorites...',
+          searchBoxHelp: 'All table columns will be searched',
+        } as any)}
       />
     );
   }

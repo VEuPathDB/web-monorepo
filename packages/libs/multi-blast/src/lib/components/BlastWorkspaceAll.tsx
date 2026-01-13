@@ -50,7 +50,7 @@ interface AllJobsTableProps {
 export function AllJobsTable(props: AllJobsTableProps) {
   const allJobsColumns = useAllJobsColumns();
 
-  const [sort, setSort] = useState<MesaSortObject>({
+  const [sort, setSort] = useState<MesaSortObject<keyof JobRow>>({
     columnKey: 'created',
     direction: 'desc',
   });

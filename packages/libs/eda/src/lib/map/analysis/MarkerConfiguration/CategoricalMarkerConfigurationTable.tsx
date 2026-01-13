@@ -14,6 +14,8 @@ import { SelectedCountsOption } from '../appState';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 
+type ColumnKey = keyof AllValuesDefinition | 'distribution';
+
 type Props<T> = {
   overlayValues: string[];
   onChange: (configuration: T) => void;
@@ -24,7 +26,7 @@ type Props<T> = {
   selectedCountsOption: SelectedCountsOption;
 };
 
-const DEFAULT_SORTING: MesaSortObject = {
+const DEFAULT_SORTING: MesaSortObject<ColumnKey> = {
   columnKey: 'count',
   direction: 'desc',
 };
@@ -42,7 +44,7 @@ export function CategoricalMarkerConfigurationTable<
   allCategoricalValues = [],
   selectedCountsOption,
 }: Props<T>) {
-  const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
+  const [sort, setSort] = useState<MesaSortObject<ColumnKey>>(DEFAULT_SORTING);
   const totalCount = allCategoricalValues?.reduce(
     (prev, curr) => prev + curr.count,
     0
@@ -117,10 +119,7 @@ export function CategoricalMarkerConfigurationTable<
     });
   }
 
-  const tableState: MesaStateProps<
-    AllValuesDefinition,
-    keyof AllValuesDefinition | 'distribution'
-  > = {
+  const tableState: MesaStateProps<AllValuesDefinition, ColumnKey> = {
     options: {
       isRowSelected: (value: AllValuesDefinition) =>
         uncontrolledSelections.has(value.label),
@@ -168,7 +167,7 @@ export function CategoricalMarkerConfigurationTable<
         });
       },
       onSort: (
-        { key: columnKey }: { key: string },
+        { key: columnKey }: { key: ColumnKey },
         direction: MesaSortObject['direction']
       ) => setSort({ columnKey, direction }),
     },

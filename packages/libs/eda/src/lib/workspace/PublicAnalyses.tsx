@@ -245,7 +245,7 @@ function PublicAnalysesTable({
     [filteredRows, tableSort, exampleSort, offerExampleSortControl]
   );
 
-  const columns: MesaColumn<PublicAnalysisRow>[] = useMemo(
+  const columns: MesaColumn<PublicAnalysisRow, string>[] = useMemo(
     () => [
       {
         key: 'studyId',

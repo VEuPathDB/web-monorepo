@@ -23,11 +23,13 @@ const baseColumnSettings: Pick<
     key: 'experimentName',
     renderCell: (cellProps: any) => (
       <Tooltip
-        title={Templates.htmlCell({
-          ...cellProps,
-          key: 'description',
-          value: cellProps.row.description,
-        })}
+        title={
+          Templates.htmlCell({
+            ...cellProps,
+            key: 'description',
+            value: cellProps.row.description,
+          }) ?? ''
+        }
       >
         <a
           title={cellProps.row.description}
