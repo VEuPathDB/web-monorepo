@@ -33,7 +33,7 @@ const buttonStyle: React.CSSProperties = {
   padding: 0,
 };
 
-function CollapsibleSection(props: Props) {
+export function CollapsibleSection(props: Props) {
   const {
     className,
     id,
