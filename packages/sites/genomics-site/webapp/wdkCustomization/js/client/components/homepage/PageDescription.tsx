@@ -51,17 +51,11 @@ function DefaultComponentSiteDescription({ displayName }: DescriptionProps) {
         .
       </p>
       <p>
-        This project is funded by the Fund for Advancement of Science and
-        Medicine,{' '}
-        <a
-          href="https://www.goodventures.org/our-portfolio/grants/university-of-pennsylvania-veupath-database/"
-          target="_blank"
-        >
-          Open Philanthropy
-        </a>{' '}
-        and the Chan Zuckerberg Initiative, with additional support from the
-        Universities of Pennsylvania and Georgia and the Wellcome Trust
-        (Resource Grants 212929 & 218288).
+        This project is funded by voluntary subscriptions from users; bridge
+        funding from Coefficient Giving and a Wellcome Trust discretionary
+        award; additional support from the Universities of Pennsylvania and
+        Georgia; collaborative research grants (Wellcome Trust Discovery Award,
+        BBR24, AccelNet Design/NSF); and charitable donations.
       </p>
     </Fragment>
   );
