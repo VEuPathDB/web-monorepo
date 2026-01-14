@@ -1,0 +1,29 @@
+import React from 'react';
+
+import '../../../Components/Overlays/Modal/Modal.scss';
+import { BodyLayer } from '@veupathdb/coreui/lib/components/Mesa';
+import { useBodyScrollManager } from '../../../Components/Overlays/BodyScrollManager';
+
+type Props = {
+  when?: boolean;
+  wrapperClass?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
+
+function Modal(props: Props) {
+  const { when, wrapperClass, ...otherProps } = props;
+  const active = typeof when === 'undefined' ? true : when;
+  const wrapperClassName =
+    'wdk-Modal-Wrapper' +
+    (active ? ' wdk-Modal-Wrapper--Active' : '') +
+    (wrapperClass ? ' ' + wrapperClass : '');
+
+  useBodyScrollManager(active);
+
+  return (
+    <BodyLayer className={wrapperClassName}>
+      <div {...otherProps} />
+    </BodyLayer>
+  );
+}
+
+export default Modal;
