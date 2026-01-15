@@ -176,7 +176,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   getUserDatasetFiles = async (
     datasetId: string,
-    zipFileType: 'upload' | 'data'
+    zipFileType: 'upload' | 'install'
   ) => {
     // When a form is submitted using the GET method, query params are removed.
     // By using the `input` option, the object will get converted to query params

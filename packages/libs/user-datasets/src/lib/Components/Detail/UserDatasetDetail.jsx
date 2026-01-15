@@ -447,7 +447,7 @@ class UserDatasetDetail extends React.Component {
       rows: [{ name: 'upload.zip', size: fileListing?.upload?.zipSize }],
     });
     const processedZipFileState = MesaState.create({
-      columns: this.getFileTableColumns('data'),
+      columns: this.getFileTableColumns('install'),
       rows: [{ name: 'install.zip', size: fileListing?.install?.zipSize }],
     });
 
