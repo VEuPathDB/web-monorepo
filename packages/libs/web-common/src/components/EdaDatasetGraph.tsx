@@ -132,7 +132,7 @@ export function EdaDatasetGraph(props: Props) {
                   graphIds && {
                     ids: graphIds,
                     // gene id
-                    variableId: 'VAR_bdc8e679',
+                    variableId: 'VEUPATHDB_GENE_ID',
                     entityId: plotConfig.xAxisEntityId,
                     traceName: source_id?.toString(),
                   }
