@@ -530,7 +530,7 @@ class UserDatasetDetail extends React.Component {
             fileType === 'upload'
               ? true
               : status.install?.find((d) => d.installTarget === projectId)
-                  ?.data.status === 'complete';
+                  ?.data?.status === 'complete';
 
           return (
             <button
