@@ -1,7 +1,7 @@
 import {
+  DatasetDependency,
   DatasetUploadTypeConfig,
   DependencyProps,
-  UserDataset,
 } from '@veupathdb/user-datasets/lib/Utils/types';
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
@@ -380,7 +380,7 @@ function ReferenceGenomeDepdency(props: DependencyProps) {
                 resourceVersion: buildNumber,
               };
         })
-        .filter((dep) => dep != null) as UserDataset['dependencies'];
+        .filter((dep) : dep is DatasetDependency => dep != null);                                                                                                                                                    
       onChange(dependencies);
     },
     [buildNumber, fileNameByTerm, onChange]
