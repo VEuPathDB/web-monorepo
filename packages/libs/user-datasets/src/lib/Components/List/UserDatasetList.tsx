@@ -160,7 +160,10 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     this.setState({ searchTerm });
   }
 
-  onMetaAttributeSaveFactory<K extends keyof DatasetListEntry>(dataset: DatasetListEntry, attrKey: K) {
+  onMetaAttributeSaveFactory<K extends keyof DatasetListEntry>(
+    dataset: DatasetListEntry,
+    attrKey: K
+  ) {
     const { updateDatasetListItem } = this.props;
     return (value: DatasetListEntry[K]) =>
       updateDatasetListItem(dataset, { [attrKey]: value });
@@ -338,7 +341,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         key: 'size',
         name: 'Size',
         sortable: true,
-        renderCell: textCell('fileSizeTotal', (size: number) => bytesToHuman(size)),
+        renderCell: textCell('fileSizeTotal', (size: number) =>
+          bytesToHuman(size)
+        ),
       },
       // {
       //   key: 'percentQuotaUsed',
@@ -354,7 +359,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   onRowSelect(row: DatasetListEntry): void {
     const { selectedRows } = this.state;
     if (selectedRows.includes(row.datasetId)) return;
-    const newSelection = [ ...selectedRows, row.datasetId ];
+    const newSelection = [...selectedRows, row.datasetId];
     this.setState({ selectedRows: newSelection });
   }
 
@@ -371,21 +376,22 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     if (!rows.length) return;
     const { selectedRows } = this.state;
     const unselectedRows = rows
-      .filter((dataset: DatasetListEntry) => !selectedRows.includes(dataset.datasetId))
+      .filter(
+        (dataset: DatasetListEntry) => !selectedRows.includes(dataset.datasetId)
+      )
       .map((dataset: DatasetListEntry) => dataset.datasetId);
     if (!unselectedRows.length) return;
-    const newSelection = [
-      ...selectedRows,
-      ...unselectedRows,
-    ];
+    const newSelection = [...selectedRows, ...unselectedRows];
     this.setState({ selectedRows: newSelection });
   }
 
   onMultipleRowDeselect(rows: DatasetListEntry[]): void {
     if (!rows.length) return;
     const { selectedRows } = this.state;
-    const deselectedIds = rows.map(row => row.datasetId);
-    const newSelection = selectedRows.filter(id => !deselectedIds.includes(id));
+    const deselectedIds = rows.map((row) => row.datasetId);
+    const newSelection = selectedRows.filter(
+      (id) => !deselectedIds.includes(id)
+    );
     this.setState({ selectedRows: newSelection });
   }
 
@@ -474,7 +480,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
             )
           )
             return;
-          userDatasets.forEach((userDataset) => removeUserDataset(userDataset.datasetId));
+          userDatasets.forEach((userDataset) =>
+            removeUserDataset(userDataset.datasetId)
+          );
         },
         element: (
           <ThemedDeleteButton buttonText="Delete" onPress={() => null} />
@@ -535,12 +543,27 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     const { searchTerm, uiState } = this.state;
     const { projectName, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
-    if (filterByProject)
-      return rows.filter((dataset) => dataset.installTargets.includes(projectName));
-    if (searchTerm && searchTerm.length)
-      return this.filterRowsBySearchTerm([...rows], searchTerm);
-    if (sort.columnKey.length) return this.sortRowsByColumnKey([...rows], sort);
-    return [ ...rows ];
+
+    let result = rows;
+
+    // Apply project filter
+    if (filterByProject) {
+      result = result.filter((dataset) =>
+        dataset.installTargets.includes(projectName)
+      );
+    }
+
+    // Apply search filter
+    if (searchTerm && searchTerm.length) {
+      result = this.filterRowsBySearchTerm(result, searchTerm);
+    }
+
+    // Apply sort
+    if (sort.columnKey.length) {
+      result = this.sortRowsByColumnKey(result, sort);
+    }
+
+    return result;
   }
 
   filterRowsBySearchTerm(
@@ -565,8 +588,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       default:
         return (data: any, index: number) => {
           return typeof data[columnKey] !== 'undefined'
-          ? data[columnKey]
-          : null;
+            ? data[columnKey]
+            : null;
         };
     }
   }
