@@ -17,7 +17,6 @@ export interface ComputationProps {
 }
 
 export interface ComputationConfigProps extends ComputationProps {
-  // alphadiv abundance
   computation: Computation;
   visualizationId: string;
   addNewComputation: (name: string, configuration: unknown) => void;
@@ -27,6 +26,7 @@ export interface ComputationConfigProps extends ComputationProps {
   additionalCollectionPredicate?: (
     variableCollection: CollectionVariableTreeNode
   ) => boolean; // Additional constraints for allowed collection variables
+  hideConfigurationComponent?: boolean; // Whether to hide the configuration component entirely
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
