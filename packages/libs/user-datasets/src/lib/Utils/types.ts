@@ -318,6 +318,7 @@ export type DatasetPostDetails = io.TypeOf<typeof datasetPostDetails>;
 export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
+export type DatasetZipDetails = io.TypeOf<typeof datasetZipDetails>;
 export type DatasetUser = io.TypeOf<typeof partialUser>;
 
 export type PatchValue<T> = {
