@@ -99,7 +99,7 @@ interface State {
   editingCache: any;
 }
 
-interface MesaDataCellProps {
+export interface MesaDataCellProps {
   row: DatasetListEntry;
   column: MesaColumn<DatasetListEntry>;
   rowIndex: number;

@@ -311,10 +311,11 @@ export const datasetPostDetails = io.intersection([
 
 export type DatasetDependency = io.TypeOf<typeof datasetDependency>;
 export type DatasetDetails = io.TypeOf<typeof datasetDetails>;
-
+export type DatasetFileDetails = io.TypeOf<typeof datasetFileDetails>;
 export type DatasetListEntry = io.TypeOf<typeof datasetListEntry>;
 export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
 export type DatasetPostDetails = io.TypeOf<typeof datasetPostDetails>;
+export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
 export type DatasetUser = io.TypeOf<typeof partialUser>;
@@ -330,6 +331,8 @@ export type DatasetPatchBody = Record<string, PatchValue<unknown>>
  * User Dataset Install Service.
  */
 export type LegacyCompatDatasetType = DatasetListEntry | DatasetDetails;
+
+export type ZipFileType = 'upload' | 'install';
 
 ////////////////////////////////////////////////////////////////////////////////
 
