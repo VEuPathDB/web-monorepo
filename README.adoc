@@ -93,6 +93,59 @@ corepack enable
 
 _Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
 
+=== Development on Cedar Server
+
+If you're working on the cedar development server, you need to address a PATH configuration issue that can shadow Volta's yarn with an older system version.
+
+==== The Issue
+
+Intranet dev site configurations use `etc/setenv` scripts that prepend legacy paths to PATH. This causes the system's old yarn to take precedence over Volta's managed version, breaking the build.
+
+==== The Fix
+
+Edit your dev site's `etc/setenv` file (typically `$BASE_GUS/etc/setenv`) and change any PATH modifications from PREPEND to APPEND pattern:
+
+[source, bash]
+----
+# Change from:
+export PATH=/legacy/path:$PATH
+
+# To:
+export PATH=$PATH:/legacy/path
+----
+
+Specifically, change this line:
+
+[source, bash]
+----
+# From:
+export PATH=$GUS_HOME/bin:$PROJECT_HOME/install/bin:$PATH
+
+# To:
+export PATH=$PATH:$GUS_HOME/bin:$PROJECT_HOME/install/bin
+----
+
+This ensures Volta's yarn (from `~/.volta/bin`) remains first in PATH.
+
+After making this change, start a new shell and run:
+
+[source, shell]
+----
+volta install node
+volta install yarn
+volta install corepack
+corepack enable --install-directory ~/.volta/bin
+----
+
+==== Performance Note
+
+Initial operations on cedar are slower than on development laptops:
+
+- `git clone` of this repository: ~10-15 minutes
+- Initial `yarn install`: ~10-15 minutes
+
+This is normal due to cedar's network and I/O configuration. Subsequent yarn operations are much faster.
+
 === Package Manager Verification
 
 *IMPORTANT:* This project requires Yarn. Using `npm install` will fail with dependency resolution errors because this monorepo uses Yarn-specific features (workspace protocol, etc.) that npm doesn't support.
@@ -102,81 +155,6 @@ The repository includes automatic checks that run before `yarn install` to verif
 - Corepack is properly configured with the correct Yarn version (4.12.0)
 
 If you see errors about wrong Yarn version, refer to the setup instructions above.
-
-=== Legacy Deployment Environments
-
-*WARNING*: This section is ONLY for legacy deployment servers that cannot upgrade to Node.js 24. Development machines should follow the standard Prerequisites above.
-
-==== Dual-Mode Yarn Setup
-
-This repository supports both modern (corepack-managed Yarn 4) and legacy (bundled Yarn 3) environments:
-
-- *Development machines*: Use Yarn 4.12.0 via corepack (as specified in `package.json`)
-- *Legacy deployment servers*: Use bundled Yarn 3.3.1 at `.yarn/releases/yarn-3.3.1.cjs`
-
-==== Deployment on Legacy Systems
-
-If you're deploying to an environment that cannot run Node.js 24 (such as end-of-life CentOS 7), set these environment variables:
-
-On `palm` and other legacy servers, add these exports to `$BASE_GUS/etc/setenv` for persistence, then paste them into your current shell to activate immediately. _(Don't re-source `setenv` - it will duplicate `PATH` entries.)_
-
-[source, bash]
-----
-# Bypass version checks for web-monorepo
-export SKIP_YARN_VERSION_CHECK=true
-export npm_config_engine_strict=false
-
-# Allow lockfile modifications (Yarn 3/4 lockfile format incompatibility)
-export YARN_ENABLE_IMMUTABLE_INSTALLS=false
-----
-
-==== Uncommenting yarnPath for Legacy Deployment
-
-On legacy deployment servers, you must uncomment the yarnPath line in `.yarnrc.yml`:
-
-[source, bash]
-----
-# Edit .yarnrc.yml and change:
-# # yarnPath: .yarn/releases/yarn-3.3.1.cjs
-# to:
-# yarnPath: .yarn/releases/yarn-3.3.1.cjs
-----
-Clarification: you want the `yarnPath: .yarn/releases/yarn-3.3.1.cjs` line to be completely uncommented.
-
-This will make `yarn` commands use the bundled Yarn 3.3.1, even when called from Ant or other build tools. No need to call Yarn with a fully-qualified path.
-
-*CRITICAL*:
-- The uncommented `yarnPath` line in `.yarnrc.yml` must *NEVER* be committed to git. The pre-commit hook will prevent this. Before running `git pull` or `git checkout`, restore the file with `git restore .yarnrc.yml`.
-- The `yarn.lock` file uses Yarn 4 format. When Yarn 3 runs `yarn install`, it will modify checksums in the lockfile. These changes are format-only (no package version changes) but must *NEVER* be committed to git, as they will break Yarn 4 on development machines. A hook should prevent this anyway. Before changing code with `git pull` or `git checkout`, restore the file with `git restore yarn.lock`.
-
-*Security implications*:
-
-- Legacy deployments do NOT benefit from the 7-day package age gate (Yarn 4+ feature)
-- Only use this for deployment servers where you will NOT be running `yarn add` or installing new packages
-- The security measures are designed to protect developer machines from supply chain attacks during package installation
-
-==== Ant Build Workaround
-
-The `YARN_ENABLE_IMMUTABLE_INSTALLS=false` environment variable does not override `yarn --frozen-lockfile` commands in Ant build scripts. To work around this:
-
-*First-time setup after checkout:*
-
-[source, bash]
-----
-cd web-monorepo
-yarn  # This modifies yarn.lock to Yarn 3 format
-# Verify: git status should show yarn.lock as modified
-----
-
-After this initial `yarn` run, subsequent Ant build commands (`rebuilder`, `wb site`, etc.) will succeed because the lockfile is already in the expected format.
-
-*IMPORTANT*: Before running `git pull` or `git checkout`, restore the lockfile:
-[source, bash]
-----
-git restore yarn.lock
-----
-
-After any git operation that changes the repository, run `yarn` again to re-modify the lockfile.
 
 == Quick Start
 
