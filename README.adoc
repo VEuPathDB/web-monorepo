@@ -7,13 +7,19 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 :toc:
 
 == Prerequisites
-* `Node >=24.0.0`
-* `corepack` enabled for Yarn version management
-* Supply chain security environment variable (recommended)
 
-=== Required Environment Variables for Development
+This project requires a system that can handle **Node.js 18.12+** (most Linux distributions from ~2019 onwards, macOS 10.15+, Windows 10+) and on which you can install https://volta.sh/[Volta] for version management (see https://docs.volta.sh/guide/#installing-volta for system requirements)
 
-Add this to your shell profile (`.bashrc`, `.zshrc`, etc.):
+Then the installation process detailed below will be able to bootstrap the following:
+* **Node.js 24+** (specified in package.json for this project)
+* **Corepack** (a Node.js tool that automatically manages package manager versions)
+* **Yarn 4.12.0** (which itself requires Node.js 18.12+)
+
+== Setup
+
+=== Recommended: Supply Chain Security
+
+For supply chain security, add this to your shell profile (`.bashrc`, `.zshrc`, etc.):
 
 [source, bash]
 ----
@@ -74,28 +80,25 @@ To set up Volta with Corepack:
 ----
 # Install volta if you haven't already
 curl https://get.volta.sh | bash
+----
 
-# Install corepack globally and enable it with volta integration
-npm install -g corepack
+Open a new terminal for Volta to take effect
+
+[source, shell]
+----
+volta install node
+volta install yarn
+volta install corepack
 corepack enable --install-directory ~/.volta/bin
 ----
 
 This configuration allows Volta to manage Node versions while Corepack manages Yarn versions based on the `packageManager` field in `package.json`.
 
-=== Setup without Volta
-
-If you're not using Volta, simply enable corepack:
-
-[source, shell]
-----
-corepack enable
-----
-
-_Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
-
 === Development on Cedar Server
 
-If you're working on the cedar development server, you need to address a PATH configuration issue that can shadow Volta's yarn with an older system version.
+Follow the instructions above in a regular terminal (not a dev site environment after sourcing `etc/setenv`) to set up Volta, Node, Yarn and Corepack.
+
+To work smoothly in a dev site environment (any time after sourcing `etc/setenv`), you need to address a PATH configuration issue that can shadow Volta's yarn with an older system version.
 
 ==== The Issue
 
@@ -125,26 +128,9 @@ export PATH=$GUS_HOME/bin:$PROJECT_HOME/install/bin:$PATH
 export PATH=$PATH:$GUS_HOME/bin:$PROJECT_HOME/install/bin
 ----
 
+Now you can 
+
 This ensures Volta's yarn (from `~/.volta/bin`) remains first in PATH.
-
-After making this change, start a new shell and run:
-
-[source, shell]
-----
-volta install node
-volta install yarn
-volta install corepack
-corepack enable --install-directory ~/.volta/bin
-----
-
-==== Performance Note
-
-Initial operations on cedar are slower than on development laptops:
-
-- `git clone` of this repository: ~10-15 minutes
-- Initial `yarn install`: ~10-15 minutes
-
-This is normal due to cedar's network and I/O configuration. Subsequent yarn operations are much faster.
 
 === Package Manager Verification
 
