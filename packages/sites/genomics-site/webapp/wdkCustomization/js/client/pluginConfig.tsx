@@ -95,7 +95,7 @@ const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
 
 const isPhenotypeSubsetSearch: ClientPluginRegistryEntry<any>['test'] = ({
   question,
-}) => question?.queryName === 'GenesByPhenotypeEdaGeneric';
+}) => question?.queryName === 'GenesByEdaSubsetGeneric';
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
