@@ -11,9 +11,9 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 This project requires a system that can handle **Node.js 18.12+** (most Linux distributions from ~2019 onwards, macOS 10.15+, Windows 10+) and on which you can install https://volta.sh/[Volta] for version management (see https://docs.volta.sh/guide/#installing-volta for system requirements)
 
 Then the installation process detailed below will be able to bootstrap the following:
-* **Node.js 24+** (specified in package.json for this project)
-* **Corepack** (a Node.js tool that automatically manages package manager versions)
-* **Yarn 4.12.0** (which itself requires Node.js 18.12+)
+- **Node.js 24+** (specified in package.json for this project)
+- **Corepack** (a Node.js tool that automatically manages package manager versions)
+- **Yarn 4.12.0** (which itself requires Node.js 18.12+)
 
 == Setup
 
