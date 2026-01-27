@@ -6,6 +6,7 @@ import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputContro
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
 import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
+  WdkDependencies,
   WdkDependenciesContext,
 } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
@@ -50,7 +51,7 @@ import { isVdiCompatibleWdkService } from "../../Service";
 
 const classify = makeClassifier('UserDatasetDetail');
 
-interface DetailViewProps {
+export interface DetailViewProps {
   baseUrl: string;
   includeAllLink: boolean;
   includeNameHeader: boolean;
@@ -88,7 +89,7 @@ interface DetailViewProps {
   datasetSize: number;
 }
 
-interface DatasetAttribute {
+export interface DatasetAttribute {
   attribute: string;
   className?: string;
   value: React.ReactNode;
@@ -101,8 +102,6 @@ interface ZipFileRow {
 }
 
 class UserDatasetDetail extends React.Component<DetailViewProps> {
-  static contextType = WdkDependenciesContext;
-  declare context: React.ContextType<typeof WdkDependenciesContext>;
 
   constructor(props: DetailViewProps) {
     super(props);
@@ -548,7 +547,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
     const { userDataset, config } = this.props;
     const { projectId } = config;
     const { status } = userDataset;
-    const { wdkService } = this.context!;
+    const { wdkService } = this.context! as (WdkDependencies);
 
     const fileListElement = userDataset.files[fileType]?.contents?.length && (
       <details style={{ margin: '1em 0 0 0.25em' }}>
@@ -644,7 +643,6 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
   // TypeScript infers that this method returns JSX.Element[].
   // Some classes extending this will return (JSX.Element | null)[].
   // The ReactNode type is better suited, here, since it allows for null values.
-  /** @return {import("react").ReactNode[]} */
   getPageSections() {
     return [this.renderHeaderSection, this.renderFileSection];
   }
