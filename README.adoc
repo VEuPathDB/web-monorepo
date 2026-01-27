@@ -107,29 +107,47 @@ Intranet dev site configurations use `etc/setenv` scripts that prepend legacy pa
 
 ==== The Fix
 
-Edit your dev site's `etc/setenv` file (typically `$BASE_GUS/etc/setenv`) and change any PATH modifications from PREPEND to APPEND pattern:
+Choose one of these approaches:
+
+*Option 1: Add a helper function (Recommended)*
+
+Add this function to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
+
+[source, bash]
+----
+path_prepend() {
+  case ":$PATH:" in
+    *":$1:"*) PATH="$1:${PATH//:$1/}" ;;
+    *)        PATH="$1:$PATH" ;;
+  esac
+}
+----
+
+Then update your standard workflow to include one additional step after sourcing `etc/setenv`:
+
+[source, shell]
+----
+# 1. Start terminal session
+# 2. cd /var/www/PlasmoDB/plasmo.bmaccallum
+# 3. source etc/setenv
+# 4. Restore Volta to front of PATH:
+path_prepend ~/.volta/bin
+----
+
+This avoids modifying shared files and is easy to remember.
+
+*Option 2: Edit etc/setenv directly*
+
+Edit your dev site's `etc/setenv` file (typically `$BASE_GUS/etc/setenv`) to append instead of prepend:
 
 [source, bash]
 ----
 # Change from:
-export PATH=/legacy/path:$PATH
-
-# To:
-export PATH=$PATH:/legacy/path
-----
-
-Specifically, change this line:
-
-[source, bash]
-----
-# From:
 export PATH=$GUS_HOME/bin:$PROJECT_HOME/install/bin:$PATH
 
 # To:
 export PATH=$PATH:$GUS_HOME/bin:$PROJECT_HOME/install/bin
 ----
-
-Now you can 
 
 This ensures Volta's yarn (from `~/.volta/bin`) remains first in PATH.
 
