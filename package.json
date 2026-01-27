@@ -7,7 +7,7 @@
     "packages/sites/*"
   ],
   "scripts": {
-    "preinstall": "echo node tools/scripts/check-package-manager.mjs",
+    "preinstall": "node tools/scripts/check-package-manager.mjs",
     "postinstall": "husky"
   },
   "resolutions": {
