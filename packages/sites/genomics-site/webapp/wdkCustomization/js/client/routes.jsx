@@ -40,7 +40,7 @@ import { Srt } from './components/Srt';
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = ['dataset', 'sample'];
 
 // Used to hardcode a redirect to eda workspace from the datatsets table
-const GAMBIAN_WGCNA_DATASET = 'DS_82dc5abc7f';
+const GAMBIAN_WGCNA_DATASET = 'DS_eeca6a5476';
 
 const projectRegExp = new RegExp('/' + projectId + '$');
 

@@ -22,10 +22,7 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
-import { PublicationInput } from '../UploadForm';
-import OutlinedButton from '@veupathdb/coreui/lib/components/buttons/OutlinedButton';
-import AddIcon from '@material-ui/icons/Add';
-import { FloatingButton, Trash } from '@veupathdb/coreui';
+import {datasetUserFullName} from "../../Utils/formatting";
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -34,7 +31,6 @@ class UserDatasetDetail extends React.Component {
     super(props);
 
     this.onMetaSave = this.onMetaSave.bind(this);
-    this.isMyDataset = this.isMyDataset.bind(this);
     this.validateKey = this.validateKey.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
 
@@ -49,13 +45,6 @@ class UserDatasetDetail extends React.Component {
     this.getFileTableColumns = this.getFileTableColumns.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
     this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
-  }
-
-  isMyDataset() {
-    const { user, userDataset } = this.props;
-    return (
-      user && userDataset && user.id && user.id === userDataset.ownerUserId
-    );
   }
 
   openSharingModal() {
@@ -117,7 +106,7 @@ class UserDatasetDetail extends React.Component {
       let updatedMeta = {};
       if (index !== undefined && Number.isInteger(index) && index >= 0) {
         // Handle nested array case, for example meta.contacts[index].name
-        let arrayField = [...userDataset.meta[key]];
+        let arrayField = [...userDataset[key]];
         const arrayLength = arrayField.length ?? 0;
         if (index <= arrayLength - 1) {
           if (nestedKey !== undefined && typeof nestedKey === 'string') {
@@ -129,16 +118,16 @@ class UserDatasetDetail extends React.Component {
             // Example: meta.organisms
             arrayField[index] = value;
           }
-          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+          updatedMeta = { [key]: arrayField };
         } else {
           // Add new entry to the array
           // We use this case to add new empty objects to the array.
           arrayField.push(value);
-          updatedMeta = { ...userDataset.meta, [key]: arrayField };
+          updatedMeta = { [key]: arrayField };
         }
       } else {
         // Regular key-value update.
-        updatedMeta = { ...userDataset.meta, [key]: value };
+        updatedMeta = { [key]: value };
       }
 
       return updateUserDatasetDetail(userDataset, updatedMeta);
@@ -146,17 +135,16 @@ class UserDatasetDetail extends React.Component {
   }
 
   handleDelete() {
-    const { baseUrl, isOwner, userDataset, removeUserDataset, dataNoun } =
-      this.props;
-    const { sharedWith } = userDataset;
-    const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
+    const { baseUrl, isOwner, userDataset, removeUserDataset, dataNoun } = this.props;
+    const { shares } = userDataset;
+    const shareCount = !Array.isArray(shares) ? null : shares.length;
 
     const question = `Are you sure you want to ${
       isOwner ? 'delete' : 'remove'
     } this ${dataNoun.singular.toLowerCase()}? `;
 
     const visibilityMessage =
-      userDataset.meta.visibility === 'public'
+      userDataset.visibility === 'public'
         ? 'It will no longer be visible to the community'
         : null;
 
@@ -174,7 +162,7 @@ class UserDatasetDetail extends React.Component {
         : visibilityMessage || shareMessage);
 
     if (window.confirm(message)) {
-      removeUserDataset(userDataset, baseUrl);
+      removeUserDataset(userDataset.datasetId, baseUrl);
     }
   }
 
@@ -198,19 +186,21 @@ class UserDatasetDetail extends React.Component {
     );
   }
 
+  getGrantedShares() {
+    return this.props.userDataset.shares.filter(it => it.status === 'grant');
+  }
+
   getAttributes() {
-    const { userDataset, questionMap, dataNoun } = this.props;
+    const { userDataset, isOwner, questionMap, dataNoun } = this.props;
     const { onMetaSave } = this;
-    const { id, type, meta, size, owner, created, sharedWith, status } =
-      userDataset;
-    const { display, name, version } = type;
-    const isOwner = this.isMyDataset();
     const isInstalled = this.isInstalled();
     const questions = Object.values(questionMap).filter(
       (q) =>
         'userDatasetType' in q.properties &&
-        q.properties.userDatasetType.includes(type.name)
+        q.properties.userDatasetType.includes(userDataset.type.name),
     );
+
+    const shares = this.getGrantedShares();
 
     return [
       this.props.includeNameHeader
@@ -219,7 +209,7 @@ class UserDatasetDetail extends React.Component {
             className: classify('Name'),
             value: (
               <SaveableTextEditor
-                value={meta.name}
+                value={userDataset.name}
                 readOnly={!isOwner}
                 onSave={this.onMetaSave('name')}
               />
@@ -239,7 +229,7 @@ class UserDatasetDetail extends React.Component {
           />
         ),
       },
-      !questions || !questions.length || !isInstalled
+      !Array.isArray(questions) || !questions.length || !isInstalled
         ? null
         : {
             attribute: 'Available searches',
@@ -260,7 +250,9 @@ class UserDatasetDetail extends React.Component {
                   ].join('/');
                   const url =
                     urlPath +
-                    (ps.length === 1 ? '?param.' + ps[0] + '=' + id : '');
+                    (ps.length === 1
+                      ? '?param.' + ps[0] + '=' + userDataset.datasetId
+                      : '');
                   return (
                     <li key={q.fullName}>
                       <Link to={url}>{q.displayName}</Link>
@@ -272,17 +264,17 @@ class UserDatasetDetail extends React.Component {
           },
       {
         attribute: 'Owner',
-        value: isOwner ? 'Me' : owner,
+        value: isOwner ? 'Me' : datasetUserFullName(userDataset.owner),
       },
       {
         attribute: 'Visibility',
         value:
-          meta.visibility === 'public' ? (
+          userDataset.visibility === 'public' ? (
             <>
               {' '}
               <Public className="Community-visible" /> This is a "Community{' '}
-              {dataNoun.singular}" made accessible to the public by user {owner}
-              .
+              {dataNoun.singular}" made accessible to the public by user{' '}
+              {datasetUserFullName(userDataset.owner)}.
             </>
           ) : (
             <>
@@ -291,16 +283,16 @@ class UserDatasetDetail extends React.Component {
             </>
           ),
       },
-      !isOwner || !sharedWith || !sharedWith.length
+      !isOwner || !shares.length
         ? null
         : {
             attribute: 'Shared with',
             className: classify('SharedWith'),
             value: (
               <ul>
-                {sharedWith.map((share, index) => (
-                  <li key={`${share.userDisplayName}-${index}`}>
-                    {share.userDisplayName}
+                {shares.map((share, index) => (
+                  <li key={`${share.recipient.userId}}-${index}`}>
+                    {datasetUserFullName(share.recipient)}
                   </li>
                 ))}
               </ul>
@@ -311,7 +303,7 @@ class UserDatasetDetail extends React.Component {
         value: (
           <SaveableTextEditor
             multiLine={true}
-            value={meta.summary}
+            value={userDataset.summary}
             readOnly={!isOwner}
             onSave={onMetaSave('summary')}
             emptyText="No Summary"
@@ -322,7 +314,7 @@ class UserDatasetDetail extends React.Component {
         attribute: 'Description',
         value: (
           <SaveableTextEditor
-            value={meta.description}
+            value={userDataset.description ?? ''}
             multiLine={true}
             readOnly={!isOwner}
             onSave={this.onMetaSave('description')}
@@ -332,361 +324,20 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Created',
-        value: <DateTime datetime={created} />,
+        value: <DateTime datetime={userDataset.created} />,
       },
-      { attribute: 'Data set size', value: bytesToHuman(size) },
-      { attribute: 'ID', value: id },
+      {
+        attribute: 'Data set size',
+        value: bytesToHuman(this.props.datasetSize),
+      },
+      { attribute: 'ID', value: userDataset.datasetId },
       {
         attribute: 'Data type',
         value: (
           <span>
-            {display} ({name} {version})
+            {userDataset.type.category} ({userDataset.type.name}{' '}
+            {userDataset.type.version})
           </span>
-        ),
-      },
-      this.props.showExtraMetadata && {
-        attribute: 'Publications',
-        className: 'NestedFieldsSection',
-        value: (
-          <div className={classify('NestedFields')}>
-            {meta.publications.map((publication, index) => {
-              return (
-                <div className={classify('NestedField')}>
-                  <div className={classify('NestedFieldHeader')}>
-                    <span>Publication {index + 1}</span>
-                    <FloatingButton
-                      text="Remove"
-                      icon={Trash}
-                      onPress={(event) => {
-                        event.preventDefault();
-                        // Remove the organism from the array
-                        const newPublications = [...meta.publications];
-                        newPublications.splice(index, 1); // remove the item at index
-                        this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
-                          publications: newPublications,
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className={classify('NestedFieldValues')}>
-                    <span>PubMed ID: </span>
-                    <SaveableTextEditor
-                      value={publication.pubMedId || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave(
-                        'publications',
-                        'pubMedId',
-                        index
-                      )} // Save PubMed ID for the specific publication entry
-                      emptyText="No PubMed ID"
-                    />
-                    <span>Citation : </span>
-                    <SaveableTextEditor
-                      value={publication.citation || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave(
-                        'publications',
-                        'citation',
-                        index
-                      )} // Save citation for the specific publication entry
-                      emptyText="No Citation"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-            <OutlinedButton
-              text="Add Publication"
-              onPress={(event) => {
-                event.preventDefault();
-                this.onMetaSave(
-                  'publications',
-                  undefined,
-                  meta.publications.length
-                )({ pubMedId: '', citation: '' });
-              }}
-              icon={AddIcon}
-            />
-          </div>
-        ),
-      },
-      this.props.showExtraMetadata && {
-        attribute: 'Contacts',
-        className: 'NestedFieldsSection',
-        value: (
-          <div className={classify('NestedFields')}>
-            {meta.contacts.map((contact, index) => {
-              return (
-                <div className={classify('NestedField')}>
-                  <div className={classify('NestedFieldHeader')}>
-                    <span>Contact {index + 1}</span>
-                    <FloatingButton
-                      text="Remove"
-                      icon={Trash}
-                      onPress={(event) => {
-                        event.preventDefault();
-                        // Remove the organism from the array
-                        const newContacts = [...meta.contacts];
-                        newContacts.splice(index, 1); // remove the item at index
-                        this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
-                          contacts: newContacts,
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className={classify('NestedFieldValues')}>
-                    <span>Name: </span>
-                    <SaveableTextEditor
-                      value={contact.name || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'name', index)}
-                      emptyText="No Contact Name"
-                    />
-                    <span>Email: </span>
-                    <SaveableTextEditor
-                      value={contact.email || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'email', index)}
-                      emptyText="No Contact Email"
-                    />
-                    <span>Affiliation: </span>
-                    <SaveableTextEditor
-                      value={contact.affiliation || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'affiliation', index)}
-                      emptyText="No Contact Affiliation"
-                    />
-                    <span>City: </span>
-                    <SaveableTextEditor
-                      value={contact.city || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'city', index)}
-                      emptyText="No Contact City"
-                    />
-                    <span>State: </span>
-                    <SaveableTextEditor
-                      value={contact.state || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'state', index)}
-                      emptyText="No Contact State"
-                    />
-                    <span>Country: </span>
-                    <SaveableTextEditor
-                      value={contact.country || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'country', index)}
-                      emptyText="No Contact Country"
-                    />
-                    <span>Address: </span>
-                    <SaveableTextEditor
-                      value={contact.address || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('contacts', 'address', index)}
-                      emptyText="No Contact Address"
-                    />
-                    <span>Is Primary: </span>
-                    <RadioList
-                      name={`isPrimary-${index}`}
-                      className="horizontal"
-                      value={contact.isPrimary === true ? 'true' : 'false'}
-                      onChange={(value) => {
-                        this.onMetaSave(
-                          'contacts',
-                          'isPrimary', // this is the key in the hyperlink object
-                          index // the index of the hyperlink in the array
-                        )(value === 'true' ? true : false);
-                      }}
-                      items={[
-                        { value: 'true', display: 'Yes' },
-                        { value: 'false', display: 'No' },
-                      ]}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-            <OutlinedButton
-              text="Add Contact"
-              onPress={(event) => {
-                event.preventDefault();
-                this.onMetaSave(
-                  'contacts',
-                  undefined, // no nested key since we're adding a new contact
-                  meta.contacts.length // add to the end of the array
-                )({
-                  // new contact entry
-                  name: '',
-                  email: '',
-                  affiliation: '',
-                  city: '',
-                  state: '',
-                  country: '',
-                  address: '',
-                  isPrimary: false,
-                });
-              }}
-              icon={AddIcon}
-            />
-          </div>
-        ),
-      },
-      this.props.showExtraMetadata && {
-        attribute: 'Hyperlinks',
-        className: 'NestedFieldsSection',
-        value: (
-          <div className={classify('NestedFields')}>
-            {meta.hyperlinks.map((hyperlink, index) => {
-              return (
-                <div className={classify('NestedField')}>
-                  <div className={classify('NestedFieldHeader')}>
-                    <span>Hyperlink {index + 1}</span>
-                    <FloatingButton
-                      text="Remove"
-                      icon={Trash}
-                      onPress={(event) => {
-                        event.preventDefault();
-                        // Remove the organism from the array
-                        const newHyperlinks = [...meta.hyperlinks];
-                        newHyperlinks.splice(index, 1); // remove the item at index
-                        this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
-                          hyperlinks: newHyperlinks,
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className={classify('NestedFieldValues')}>
-                    <span>URL: </span>
-                    <SaveableTextEditor
-                      value={hyperlink.url || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('hyperlinks', 'url', index)}
-                      emptyText="No Hyperlink URL"
-                    />
-                    <span>Text: </span>
-                    <SaveableTextEditor
-                      value={hyperlink.text || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('hyperlinks', 'text', index)}
-                      emptyText="No Hyperlink Text"
-                    />
-                    <span>Description: </span>
-                    <SaveableTextEditor
-                      value={hyperlink.description || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave(
-                        'hyperlinks',
-                        'description',
-                        index
-                      )}
-                      emptyText="No Hyperlink Description"
-                    />
-                    <span>Is Publication: </span>
-                    <RadioList
-                      name={`isPublication-${index}`}
-                      className="horizontal"
-                      value={
-                        hyperlink.isPublication === true ? 'true' : 'false'
-                      }
-                      onChange={(value) => {
-                        this.onMetaSave(
-                          'hyperlinks',
-                          'isPublication', // this is the key in the hyperlink object
-                          index // the index of the hyperlink in the array
-                        )(value === 'true' ? true : false);
-                      }}
-                      items={[
-                        { value: 'true', display: 'Yes' },
-                        { value: 'false', display: 'No' },
-                      ]}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-            <OutlinedButton
-              text="Add Hyperlink"
-              onPress={(event) => {
-                event.preventDefault();
-                this.onMetaSave(
-                  'hyperlinks',
-                  undefined, // no nested key since we're adding a new hyperlink
-                  meta.hyperlinks.length // add to the end of the array
-                )({
-                  // new hyperlink entry
-                  url: '',
-                  text: '',
-                  description: '',
-                  isPublication: false, // default to false unless specified
-                });
-              }}
-              icon={AddIcon}
-            />
-          </div>
-        ),
-      },
-      this.props.showExtraMetadata && {
-        attribute: 'Organisms',
-        className: 'NestedFieldsSection',
-        value: (
-          <div className={classify('NestedFields')}>
-            <div>
-              {meta.organisms.map((organism, index) => {
-                return (
-                  <div className={classify('NestedFieldValues-Organisms')}>
-                    <span>Organism {index + 1}: </span>
-                    <SaveableTextEditor
-                      value={organism || ''}
-                      multiLine={false}
-                      readOnly={!isOwner}
-                      onSave={this.onMetaSave('organisms', undefined, index)}
-                      emptyText="No Organism"
-                    />
-                    <FloatingButton
-                      text="Remove"
-                      icon={Trash}
-                      onPress={(event) => {
-                        event.preventDefault();
-                        // Remove the organism from the array
-                        const newOrganisms = [...meta.organisms];
-                        newOrganisms.splice(index, 1); // remove the item at index
-                        this.props.updateUserDatasetDetail(userDataset, {
-                          ...userDataset.meta,
-                          organisms: newOrganisms,
-                        });
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <OutlinedButton
-              text="Add Organism"
-              onPress={(event) => {
-                event.preventDefault();
-                this.onMetaSave(
-                  'organisms',
-                  undefined, // no nested key since we're adding a new organism
-                  meta.organisms.length ?? 0 // add to the end of the array
-                )('');
-              }}
-              icon={AddIcon}
-            />
-          </div>
         ),
       },
     ].filter((attr) => attr);
@@ -740,7 +391,7 @@ class UserDatasetDetail extends React.Component {
   }
 
   renderDatasetActions() {
-    const isOwner = this.isMyDataset();
+    const { isOwner } = this.props;
     return (
       <div className={classify('Actions')}>
         {!isOwner ? null : (
@@ -790,13 +441,13 @@ class UserDatasetDetail extends React.Component {
 
   renderFileSection() {
     const { userDataset, dataNoun } = this.props;
-    const { fileListing } = userDataset;
+    const { files: fileListing } = userDataset;
     const uploadZipFileState = MesaState.create({
       columns: this.getFileTableColumns('upload'),
       rows: [{ name: 'upload.zip', size: fileListing?.upload?.zipSize }],
     });
     const processedZipFileState = MesaState.create({
-      columns: this.getFileTableColumns('data'),
+      columns: this.getFileTableColumns('install'),
       rows: [{ name: 'install.zip', size: fileListing?.install?.zipSize }],
     });
 
@@ -820,12 +471,12 @@ class UserDatasetDetail extends React.Component {
   getFileTableColumns(fileType) {
     const { userDataset, config } = this.props;
     const { projectId } = config;
-    const { id, fileListing, status } = userDataset;
+    const { status } = userDataset;
     const { wdkService } = this.context;
 
     const fileListIndex = fileType === 'upload' ? 'upload' : 'install';
 
-    const fileListElement = fileListing[fileListIndex]?.contents?.length && (
+    const fileListElement = userDataset.files[fileListIndex]?.contents?.length && (
       <details style={{ margin: '1em 0 0 0.25em' }}>
         <summary>
           List of {fileType === 'upload' ? 'uploaded' : 'processed'} files:
@@ -837,7 +488,7 @@ class UserDatasetDetail extends React.Component {
             padding: '0 0 0 2em',
           }}
         >
-          {fileListing[fileListIndex].contents.map((file, index) => (
+          {userDataset.files[fileListIndex].contents.map((file, index) => (
             <li key={`${file.fileName}-${index}`}>
               {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
             </li>
@@ -878,8 +529,8 @@ class UserDatasetDetail extends React.Component {
           const enableDownload =
             fileType === 'upload'
               ? true
-              : status.install?.find((d) => d.projectId === projectId)
-                  ?.dataStatus === 'complete';
+              : status.install?.find((d) => d.installTarget === projectId)
+                  ?.data?.status === 'complete';
 
           return (
             <button
@@ -892,7 +543,7 @@ class UserDatasetDetail extends React.Component {
               }
               onClick={(e) => {
                 e.preventDefault();
-                wdkService.getUserDatasetFiles(id, fileType);
+                wdkService.getUserDatasetFiles(userDataset.datasetId, fileType);
               }}
             >
               <Icon fa="save" className="left-side" /> Download
@@ -925,6 +576,7 @@ class UserDatasetDetail extends React.Component {
       shareUserDatasets,
       unshareUserDatasets,
       dataNoun,
+      isOwner,
       sharingModalOpen,
       sharingDatasetPending,
       shareSuccessful,
@@ -944,7 +596,6 @@ class UserDatasetDetail extends React.Component {
           <AllDatasetsLink />
         </NotFound>
       );
-    const isOwner = this.isMyDataset();
 
     return (
       <div className={classify()}>
