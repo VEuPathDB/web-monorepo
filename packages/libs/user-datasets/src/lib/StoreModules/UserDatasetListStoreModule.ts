@@ -1,11 +1,8 @@
-import { difference, omit } from 'lodash';
-
 import {
   Action,
   LIST_LOADING,
   LIST_RECEIVED,
   LIST_ERROR_RECEIVED,
-  DETAIL_UPDATE_SUCCESS,
   DETAIL_REMOVE_SUCCESS,
   SHARING_SUCCESS,
   PROJECT_FILTER,
@@ -16,9 +13,10 @@ import {
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
+  LIST_ITEM_UPDATE_SUCCESS,
 } from '../Actions/UserDatasetsActions';
 
-import { UserDataset } from '../Utils/types';
+import { DatasetListEntry } from '../Utils/types';
 
 export const key = 'userDatasetList';
 
@@ -53,8 +51,7 @@ type ForbiddenState = SharingModalState & {
 
 type CompleteState = SharingModalState & {
   status: 'complete';
-  userDatasets: Array<string | number>;
-  userDatasetsById: Record<string, { isLoading: false; resource: UserDataset }>;
+  userDatasets: Array<DatasetListEntry>;
   filterByProject: boolean;
 };
 
@@ -90,12 +87,7 @@ export function reduce(state: State = initialState, action: Action): State {
         ...state,
         status: 'complete',
         filterByProject: action.payload.filterByProject,
-        userDatasets: action.payload.userDatasets.map((ud) => ud.id),
-        userDatasetsById: action.payload.userDatasets.reduce(
-          (uds, ud) =>
-            Object.assign(uds, { [ud.id]: { loading: false, resource: ud } }),
-          {} as CompleteState['userDatasetsById']
-        ),
+        userDatasets: action.payload.userDatasets,
       };
 
     case LIST_ERROR_RECEIVED:
@@ -111,17 +103,16 @@ export function reduce(state: State = initialState, action: Action): State {
             loadError: action.payload.error,
           };
 
-    case DETAIL_UPDATE_SUCCESS:
+    case LIST_ITEM_UPDATE_SUCCESS:
       return state.status === 'complete'
         ? {
             ...state,
-            userDatasetsById: {
-              ...state.userDatasetsById,
-              [action.payload.userDataset.id]: {
-                isLoading: false,
-                resource: action.payload.userDataset,
-              },
-            },
+            // replace the old dataset list object with the updated one.
+            userDatasets: state.userDatasets.map((it) =>
+              it.datasetId === action.payload.userDataset.datasetId
+                ? action.payload.userDataset
+                : it
+            ),
           }
         : state;
 
@@ -129,12 +120,8 @@ export function reduce(state: State = initialState, action: Action): State {
       return state.status === 'complete'
         ? {
             ...state,
-            userDatasets: difference(state.userDatasets, [
-              action.payload.userDataset.id,
-            ]),
-            userDatasetsById: omit(
-              state.userDatasetsById,
-              action.payload.userDataset.id
+            userDatasets: state.userDatasets.filter(
+              (it) => it.datasetId !== action.payload.datasetId
             ),
           }
         : state;

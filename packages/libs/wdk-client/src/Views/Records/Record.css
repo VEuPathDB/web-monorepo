@@ -39,7 +39,7 @@
 
 .wdk-RecordMain,
 .wdk-RecordSidebar {
-  padding: 2.5em 0;
+  padding: 3em 0;
   transition: margin-left 250ms ease;
   transition: left 250ms ease;
   position: relative;

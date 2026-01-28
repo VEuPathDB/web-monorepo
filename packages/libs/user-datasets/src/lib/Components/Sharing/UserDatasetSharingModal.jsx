@@ -10,6 +10,7 @@ import { Modal } from '@veupathdb/coreui';
 import { isVdiCompatibleWdkService } from '../../Service';
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
+import { datasetUserFullName } from '../../Utils/formatting';
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -49,7 +50,7 @@ class UserDatasetSharingModal extends React.Component {
 
   isMyDataset(dataset) {
     const { user } = this.props;
-    return dataset && dataset.ownerUserId && dataset.ownerUserId === user.id;
+    return dataset && dataset.owner.userId && dataset.owner.userId === user.id;
   }
 
   handleTextChange(recipientInput = null) {
@@ -210,13 +211,15 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderShareItem(share, index, userDataset) {
-    const { user, userDisplayName } = share;
     return (
       <div key={index}>
-        <span className="faded">Shared with</span> <b>{userDisplayName}</b>{' '}
+        <span className="faded">Shared with</span>{' '}
+        <b>{datasetUserFullName(share)}</b>{' '}
         <button
           type="button"
-          onClick={() => this.unshareWithUser(userDataset.id, user)}
+          onClick={() =>
+            this.unshareWithUser(userDataset.datasetId, share.userId)
+          }
           className="link"
         >
           <Icon fa="times-circle unshareRecipient" />
@@ -232,8 +235,7 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderDatasetItem(userDataset) {
-    const { sharedWith, id, meta } = userDataset;
-    const { name } = meta;
+    const { shares, datasetId } = userDataset;
     const isOwner = this.isMyDataset(userDataset);
     const { deselectDataset, dataNoun } = this.props;
 
@@ -242,7 +244,7 @@ class UserDatasetSharingModal extends React.Component {
 
     return (
       <div
-        key={id}
+        key={datasetId}
         className={'UserDatasetSharing-Dataset' + (isOwner ? '' : ' invalid')}
       >
         <div className="UserDatasetSharing-Dataset-Icon">
@@ -250,13 +252,13 @@ class UserDatasetSharingModal extends React.Component {
         </div>
 
         <div className="UserDatasetSharing-Dataset-Details">
-          <h3>{name}</h3>
+          <h3>{userDataset.name}</h3>
           {!isOwner ? (
             <i className="faded danger">
               This {dataNoun.singular.toLowerCase()} has been shared with you.
               Only the owner can share it.
             </i>
-          ) : Array.isArray(sharedWith) && sharedWith.length ? (
+          ) : Array.isArray(shares) && shares.length ? (
             <ShareList userDataset={userDataset} />
           ) : (
             <EmptyState />
@@ -330,12 +332,18 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   renderShareList({ userDataset }) {
-    const { sharedWith } = userDataset;
-    return !Array.isArray(sharedWith) || !sharedWith.length
-      ? null
-      : sharedWith.map((share, index) =>
-          this.renderShareItem(share, index, userDataset)
-        );
+    let { shares } = userDataset;
+    if (!Array.isArray(shares) || !shares.length) return null;
+
+    // Filter out revoked shares when on the dataset details page.
+    if (this.props.context === 'datasetDetails')
+      shares = shares
+        .filter((it) => it.status === 'grant')
+        .map((it) => it.recipient);
+
+    return shares.map((share, index) =>
+      this.renderShareItem(share, index, userDataset)
+    );
   }
 
   renderDatasetList({ datasets }) {
@@ -349,7 +357,7 @@ class UserDatasetSharingModal extends React.Component {
   }
 
   isDatasetShareable(dataset = {}) {
-    return dataset.ownerUserId === this.props.user.id;
+    return dataset.owner.userId === this.props.user.id;
   }
 
   submitShare() {
@@ -359,7 +367,7 @@ class UserDatasetSharingModal extends React.Component {
     const { shareUserDatasets, context } = this.props;
 
     shareUserDatasets(
-      datasets.map(({ id }) => id),
+      datasets.map(({ datasetId }) => datasetId),
       recipients.map(({ id }) => id),
       context
     );

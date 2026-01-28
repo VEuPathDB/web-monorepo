@@ -2,7 +2,7 @@ import { ComponentType } from 'react';
 
 import { connect } from 'react-redux';
 
-import { keyBy } from 'lodash';
+import { add, keyBy } from 'lodash';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
@@ -83,10 +83,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   };
 
   getTitle() {
-    const entry =
-      this.props.stateProps.userDatasetsById[this.props.ownProps.id];
+    const entry = this.props.stateProps.userDatasetDetails;
     if (entry && entry.resource) {
-      return `${this.props.ownProps.detailsPageTitle} ${entry.resource.meta.name}`;
+      return `${this.props.ownProps.detailsPageTitle} ${entry.resource.name}`;
     }
     if (entry && !entry.resource) {
       return `${this.props.ownProps.detailsPageTitle} not found`;
@@ -129,11 +128,14 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   isRenderDataLoaded() {
-    const { id } = this.props.ownProps;
-    const { userDatasetsById, user, questions, config } = this.props.stateProps;
-    const entry = userDatasetsById[id];
+    const {
+      userDatasetDetails: entry,
+      user,
+      questions,
+      config,
+    } = this.props.stateProps;
     if (user && user.isGuest) return true;
-    return entry && !entry.isLoading && user && questions && config
+    return entry?.isLoading === false && user && questions && config
       ? true
       : false;
   }
@@ -176,11 +178,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const {
       baseUrl,
       detailsPageTitle,
-      id,
       workspaceTitle,
       dataNoun,
       enablePublicUserDatasets,
-      showExtraMetadata,
       includeAllLink,
       includeNameHeader,
     } = this.props.ownProps;
@@ -196,7 +196,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
     const {
-      userDatasetsById,
+      userDatasetDetails: entry,
       user,
       updateError,
       questions,
@@ -211,20 +211,23 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
     } = this.props.stateProps;
-    const entry = userDatasetsById[id];
-    const isOwner = !!(
-      user &&
-      entry &&
-      entry.resource &&
-      entry.resource.ownerUserId === user.id
-    );
+
+    if (entry?.resource == null) return <Loading />;
+
+    const userDataset = entry.resource;
+
+    const isOwner = !!(user && userDataset.owner.userId === user.id);
+
+    const size = userDataset.files.upload.contents
+      .map((file) => file.fileSize)
+      .reduce(add, 0);
 
     const props = {
       baseUrl,
       includeAllLink,
       includeNameHeader,
-      user,
-      config,
+      user: user!,
+      config: config!,
       isOwner,
       location: window.location,
       updateError,
@@ -242,7 +245,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       shareSuccessful,
       updateSharingModalState,
       userDataset: entry?.resource,
-      fileListing: entry?.fileListing,
       getQuestionUrl: this.getQuestionUrl,
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,
@@ -255,15 +257,11 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
-      showExtraMetadata,
+      datasetSize: size,
     };
 
-    if (entry?.resource == null) return <Loading />;
-
     const DetailView = this.getDetailView(entry.resource.type);
-    return entry.resource.meta.visibility !== 'public' &&
-      user &&
-      user.isGuest ? (
+    return entry.resource.visibility !== 'public' && user && user.isGuest ? (
       this.renderGuestView()
     ) : (
       <DetailView {...props} />

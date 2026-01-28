@@ -94,7 +94,7 @@ const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
 
 const isPhenotypeSubsetSearch: ClientPluginRegistryEntry<any>['test'] = ({
   question,
-}) => question?.queryName === 'GenesByPhenotypeEdaGeneric';
+}) => question?.queryName === 'GenesByEdaSubsetGeneric';
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
@@ -193,10 +193,12 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => { 
+    test: ({ question }) => {
       console.log(question?.queryName);
-      return question?.queryName === 'GenesByGenericFoldChange' ||
-      question?.queryName === 'GenesByRnaSeqFoldChange'
+      return (
+        question?.queryName === 'GenesByGenericFoldChange' ||
+        question?.queryName === 'GenesByRnaSeqFoldChange'
+      );
     },
     component: EdaNotebookQuestionForm,
   },
@@ -290,7 +292,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
     component: EdaNotebookQuestionForm,
   },
-    {
+  {
     type: 'questionForm',
     test: ({ question }) => question?.queryName === 'GenesByDESeqAnalysis',
     // Possibly GenesByDESeqAnalysis but check.

@@ -10,7 +10,7 @@ import {
   shareUserDatasets,
   unshareUserDatasets,
   updateProjectFilter,
-  updateUserDatasetDetail,
+  updateDatasetListItem,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
@@ -19,20 +19,22 @@ import {
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
-import UserDatasetList from '../Components/List/UserDatasetList';
+import UserDatasetList, {
+  DatasetListProps,
+} from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DataNoun, UserDataset } from '../Utils/types';
+import { DataNoun } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
 
 const ActionCreators = {
   showLoginForm,
   loadUserDatasetList,
-  updateUserDatasetDetail,
+  updateDatasetListItem,
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
@@ -143,7 +145,6 @@ class UserDatasetListController extends PageController<Props> {
     const {
       userDatasetList: {
         userDatasets,
-        userDatasetsById,
         filterByProject,
         sharingDatasetPending,
         sharingModalOpen,
@@ -154,17 +155,18 @@ class UserDatasetListController extends PageController<Props> {
         updateDatasetCommunityVisibilityPending,
         updateDatasetCommunityVisibilitySuccess,
       },
-      userDatasetUpload: { uploads },
     } = this.props.stateProps;
 
-    const numOngoingUploads =
-      uploads != null ? uploads.filter((upload) => upload.isOngoing).length : 0;
+    // This doesn't appear to be used by anything
+    // const numOngoingUploads = uploads != null
+    //   ? uploads.filter((upload) => upload.isOngoing).length
+    //   : 0;
 
     const {
       shareUserDatasets,
       unshareUserDatasets,
       removeUserDataset,
-      updateUserDatasetDetail,
+      updateDatasetListItem,
       updateProjectFilter,
       updateSharingModalState,
       sharingSuccess,
@@ -173,24 +175,21 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
 
-    const listProps = {
+    const listProps: DatasetListProps = {
       baseUrl,
       user,
       location,
       dataNoun,
       projectId,
       projectName,
-      numOngoingUploads,
       quotaSize,
       enablePublicUserDatasets,
-      userDatasets: userDatasets.map(
-        (id) => userDatasetsById[id].resource
-      ) as UserDataset[],
+      userDatasets,
       filterByProject,
       shareUserDatasets,
       unshareUserDatasets,
       removeUserDataset,
-      updateUserDatasetDetail,
+      updateDatasetListItem,
       updateProjectFilter,
       sharingDatasetPending,
       shareError,
@@ -206,11 +205,10 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
     };
+
     const noDatasetsForThisProject =
-      userDatasets
-        .map((id) => userDatasetsById[id].resource.projects)
-        .flat()
-        .indexOf(projectId) === -1;
+      userDatasets.findIndex((it) => it.installTargets.includes(projectId)) ===
+      -1;
 
     return (
       <div className="UserDatasetList-Controller">

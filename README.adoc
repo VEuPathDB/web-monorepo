@@ -141,6 +141,7 @@ On legacy deployment servers, you must uncomment the yarnPath line in `.yarnrc.y
 # to:
 # yarnPath: .yarn/releases/yarn-3.3.1.cjs
 ----
+Clarification: you want the `yarnPath: .yarn/releases/yarn-3.3.1.cjs` line to be completely uncommented.
 
 This will make `yarn` commands use the bundled Yarn 3.3.1, even when called from Ant or other build tools. No need to call Yarn with a fully-qualified path.
 

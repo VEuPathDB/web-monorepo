@@ -7,10 +7,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeEdaRoute } from '../routes';
 import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 import { projectId } from '../config';
-import {
-  UserDataset,
-  UserDatasetVDI,
-} from '@veupathdb/user-datasets/lib/Utils/types';
+import { DatasetListEntry } from '@veupathdb/user-datasets/lib/Utils/types';
 
 export function useDiyDatasets() {
   const [requestTimestamp, setRequestTimestamp] = useState(() => Date.now());
@@ -36,7 +33,7 @@ export function useDiyDatasets() {
       assertIsVdiCompatibleWdkService(wdkService);
       const userDatasets = await wdkService.getCommunityDatasets();
       const unsortedDiyEntries = userDatasets
-        .filter((userDataset) => userDataset.projectIds.includes(projectId))
+        .filter((userDataset) => userDataset.installTargets.includes(projectId))
         .map(userDatasetToMenuItem);
       return orderBy(unsortedDiyEntries, ({ name }) => name);
     },
@@ -53,14 +50,14 @@ export function useDiyDatasets() {
   );
 }
 
-export interface EnrichedUserDataset extends UserDatasetVDI {
+export interface EnrichedUserDataset extends DatasetListEntry {
   wdkDatasetId: string;
   baseEdaRoute: string;
   userDatasetsRoute: string;
 }
 
 function userDatasetToMenuItem(
-  userDataset: UserDatasetVDI
+  userDataset: DatasetListEntry
 ): EnrichedUserDataset {
   const wdkDatasetId = `EDAUD_${userDataset.datasetId}`;
   return {

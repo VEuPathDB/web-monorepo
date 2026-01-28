@@ -355,16 +355,21 @@ export async function uploadGeneListUserDataset(
     }" (${resultWorkspaceUrl}).`;
 
   return await uploadUserDataset(wdkService, {
-    datasetType: 'genelist',
+    details: {
+      name: step.customName,
+      type: {
+        name: 'genelist',
+        version: '1.0',
+      },
+      installTargets: [projectId],
+      summary: `Genes from step "${step.customName}"`,
+      description: datasetDescription,
+      visibility: 'private',
+    },
     dataUploadSelection: {
       type: 'url',
       url: temporaryResultUrl,
     },
-    projects: [projectId],
-    name: step.customName,
-    summary: `Genes from step "${step.customName}"`,
-    description: datasetDescription,
-    visibility: 'private',
   });
 }
 
