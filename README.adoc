@@ -109,17 +109,19 @@ Intranet dev site configurations use `etc/setenv` scripts that prepend legacy pa
 
 Choose one of these approaches:
 
-*Option 1: Add a helper function (Recommended)*
+*Option 1: Using a helper shell function in regular workflow (Recommended)*
 
 Add this function to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
 
 [source, bash]
 ----
+# Prepend directory to PATH, moving it to front if already present elsewhere
 path_prepend() {
-  case ":$PATH:" in
-    *":$1:"*) PATH="$1:${PATH//:$1/}" ;;
-    *)        PATH="$1:$PATH" ;;
-  esac
+  case "$PATH" in "$1":*|"$1"|"") PATH="$1"; return ;; esac  # already first or empty
+  PATH=":$PATH:"          # add sentinels for matching anywhere
+  PATH="${PATH//:$1:/:}"  # remove exact match (colon-bounded)
+  PATH="$1$PATH"          # prepend (leading colon already exists)
+  PATH="${PATH%:}"        # strip trailing colon
 }
 ----
 
