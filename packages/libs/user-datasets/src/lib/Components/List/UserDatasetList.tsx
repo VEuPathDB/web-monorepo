@@ -99,7 +99,7 @@ interface State {
   editingCache: any;
 }
 
-interface MesaDataCellProps {
+export interface MesaDataCellProps {
   row: DatasetListEntry;
   column: MesaColumn<DatasetListEntry>;
   rowIndex: number;
@@ -328,7 +328,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         key: 'created',
         name: 'Created',
         sortable: true,
-        renderCell: textCell('created', (created: number) => (
+        renderCell: textCell('created', (created: string) => (
           <DateTime datetime={created} />
         )),
       },

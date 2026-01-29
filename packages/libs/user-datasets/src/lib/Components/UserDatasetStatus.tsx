@@ -2,14 +2,19 @@ import * as React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
-import { DataNoun, DatasetListEntry, DatasetStatusInfo } from '../Utils/types';
+import {
+  DataNoun,
+  DatasetDetails,
+  DatasetListEntry,
+  DatasetStatusInfo,
+} from '../Utils/types';
 
 // NOTE: The reinstall interval is configured in the VDI service and thus may change
 const VDI_REINSTALL_INTERVAL = 6;
 
 interface Props {
   baseUrl: string;
-  userDataset: DatasetListEntry;
+  userDataset: DatasetListEntry | DatasetDetails;
   projectId: string;
   displayName: string;
   linkToDataset: boolean;

@@ -16,6 +16,7 @@ import {
   datasetDetails,
   DatasetPatchBody,
   LegacyCompatDatasetType,
+  ZipFileType,
 } from '../Utils/types';
 
 import { array } from 'io-ts';
@@ -170,10 +171,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  getUserDatasetFiles = async (
-    datasetId: string,
-    zipFileType: 'upload' | 'install'
-  ) => {
+  getUserDatasetFiles = async (datasetId: string, zipFileType: ZipFileType) => {
     // When a form is submitted using the GET method, query params are removed.
     // By using the `input` option, the object will get converted to query params
     // by the form submission.

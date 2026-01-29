@@ -136,6 +136,7 @@ export interface MesaColumn<
   moveable?: boolean;
   helpText?: string;
   style?: CSSProperties;
+  headingStyle?: CSSProperties;
   className?: string;
   width?: CSSProperties['width'];
   getValue?: (props: { row: Row; index: number }) => Value;
