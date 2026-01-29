@@ -154,6 +154,12 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
   // First, the easy key-value example. this.onMetaSave('name')('my new name');
   // Second, for fields that are arrays of objects, like meta.publications[index].name, specify the nestedKey and index. this.onMetaSave('publications', 'pubMedId', 0)('new pubMedId value');
   // Third, for arrays of strings, like meta.organisms[index], just specify the index. this.onMetaSave('organisms', undefined, 0)('new organism value');
+  //
+  // NOTE: Currently only simple key-value updates (case 1) are used. The complex nested array
+  // cases were possibly removed when publications/contacts fields were temporarily removed from the UI?
+  // If these complex cases are needed again, consider using monocle-ts lenses for type-safe
+  // nested updates instead of manual array manipulation with type casts.
+  // See packages/libs/eda/src/lib/core/hooks/analysis.ts for existing lens usage examples.
   onMetaSave(key: string, nestedKey?: string, index?: number) {
     if (!this.validateKey(key))
       throw new TypeError(`Can't edit meta for invalid key: ${key}`);
