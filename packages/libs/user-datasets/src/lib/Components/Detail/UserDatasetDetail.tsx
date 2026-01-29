@@ -595,8 +595,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
         key: 'download',
         name: 'Download',
         width: '130px',
-        // FIXME: this property is not defined in MesaColumn, and this style is not actually being applied
-        // headingStyle: { textAlign: 'center' },
+        headingStyle: { textAlign: 'center' },
         renderCell() {
           const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
           const enableDownload =
@@ -641,11 +640,15 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
 
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
-  // This is needed to resolve downstream typescript errors.
-  // TypeScript infers that this method returns JSX.Element[].
-  // Some classes extending this will return (JSX.Element | null)[].
-  // The ReactNode type is better suited, here, since it allows for null values.
-  getPageSections() {
+  // Explicit return type is required for two reasons:
+  // 1. JSX component constraint: These functions are used as JSX components (<Section />),
+  //    which must return ReactElement | null (not the broader ReactNode type that includes
+  //    undefined, string, number, etc.).
+  // 2. Hybrid JS/TS compatibility: JavaScript subclasses (like BigwigDatasetDetail.jsx)
+  //    generate .d.ts files from JSDoc annotations. Without an explicit type here,
+  //    TypeScript's inference can conflict with JSDoc-generated types during compilation.
+  // Subclasses may return sections that are conditionally rendered (null).
+  getPageSections(): Array<() => React.ReactElement | null> {
     return [this.renderHeaderSection, this.renderFileSection];
   }
 
