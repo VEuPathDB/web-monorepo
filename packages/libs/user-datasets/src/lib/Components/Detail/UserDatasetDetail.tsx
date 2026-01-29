@@ -24,9 +24,9 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
-import {datasetUserFullName} from "../../Utils/formatting";
-import { User } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
-import { FetchClientError } from "@veupathdb/http-utils";
+import { datasetUserFullName } from '../../Utils/formatting';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { FetchClientError } from '@veupathdb/http-utils';
 import {
   removeUserDataset,
   shareUserDatasets,
@@ -44,10 +44,13 @@ import {
   DatasetShareOffer,
   ZipFileType,
 } from '../../Utils/types';
-import { Question } from "@veupathdb/wdk-client/lib/Utils/WdkModel";
-import { ServiceConfig } from "@veupathdb/wdk-client/lib/Service/ServiceBase";
-import { MesaColumn, MesaStateProps } from "@veupathdb/coreui/lib/components/Mesa/types";
-import { isVdiCompatibleWdkService } from "../../Service";
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
+import {
+  MesaColumn,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
+import { isVdiCompatibleWdkService } from '../../Service';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -102,7 +105,6 @@ interface ZipFileRow {
 }
 
 class UserDatasetDetail extends React.Component<DetailViewProps> {
-
   constructor(props: DetailViewProps) {
     super(props);
 
@@ -156,19 +158,10 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
     if (!this.validateKey(key))
       throw new TypeError(`Can't edit meta for invalid key: ${key}`);
 
-    return (value: any) => {
-      if (
-        typeof value !== 'string' &&
-        typeof value !== 'boolean' &&
-        typeof value !== 'object'
-      ) {
-        throw new TypeError(
-          `onMetaSave: expected input value to be string or boolean or object; got ${typeof value}`,
-        );
-      }
+    return (value: string) => {
       if (index && !Number.isInteger(index)) {
         throw new TypeError(
-          `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`,
+          `onMetaSave: expected index to be an integer; got ${typeof index} with value ${index}`
         );
       }
 
@@ -273,7 +266,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
       (q) =>
         q.properties !== undefined &&
         'userDatasetType' in q.properties &&
-        q.properties.userDatasetType.includes(userDataset.type.name),
+        q.properties.userDatasetType.includes(userDataset.type.name)
     );
 
     const shares = this.getGrantedShares();
@@ -318,7 +311,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
                     // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
                     // Hence the regex: /dataset/
                     const ps = q.paramNames.filter((paramName) =>
-                      paramName.match(/dataset/),
+                      paramName.match(/dataset/)
                     );
                     const urlPath = [
                       '',
@@ -547,7 +540,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
     const { userDataset, config } = this.props;
     const { projectId } = config;
     const { status } = userDataset;
-    const { wdkService } = this.context! as (WdkDependencies);
+    const { wdkService } = this.context! as WdkDependencies;
 
     const fileListElement = userDataset.files[fileType]?.contents?.length && (
       <details style={{ margin: '1em 0 0 0.25em' }}>
@@ -618,7 +611,10 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
               onClick={(e) => {
                 e.preventDefault();
                 if (isVdiCompatibleWdkService(wdkService))
-                  wdkService.getUserDatasetFiles(userDataset.datasetId, fileType);
+                  wdkService.getUserDatasetFiles(
+                    userDataset.datasetId,
+                    fileType
+                  );
               }}
             >
               <Icon fa="save" className="left-side" /> Download
@@ -629,7 +625,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
     ];
 
     return columns.filter(
-      (column): column is MesaColumn<ZipFileRow> => !!column,
+      (column): column is MesaColumn<ZipFileRow> => !!column
     );
   }
 
