@@ -197,10 +197,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
       console.log(question?.queryName);
       return (
         question?.queryName === 'GenesByGenericFoldChange' ||
-        question?.queryName === 'GenesByRnaSeqFoldChange'
+        question?.queryName === 'GenesByRnaSeqFoldChange' ||
+        question?.queryName === 'GenesByUserDatasetRnaSeq',
       );
     },
-    component: EdaNotebookQuestionForm,
+    component: GenericFoldChangeForm,
   },
   {
     type: 'questionForm',
@@ -294,8 +295,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => question?.queryName === 'GenesByDESeqAnalysis',
-    // Possibly GenesByDESeqAnalysis but check.
+    test: ({ question }) => question?.queryName === 'GenesByEdaVizWithCompute',
     component: EdaNotebookQuestionForm,
   },
 ];
