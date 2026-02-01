@@ -2,14 +2,19 @@ import * as React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
-import { DataNoun, UserDataset, UserDatasetVDI } from '../Utils/types';
+import {
+  DataNoun,
+  DatasetDetails,
+  DatasetListEntry,
+  DatasetStatusInfo,
+} from '../Utils/types';
 
 // NOTE: The reinstall interval is configured in the VDI service and thus may change
 const VDI_REINSTALL_INTERVAL = 6;
 
 interface Props {
   baseUrl: string;
-  userDataset: UserDataset;
+  userDataset: DatasetListEntry | DatasetDetails;
   projectId: string;
   displayName: string;
   linkToDataset: boolean;
@@ -42,8 +47,7 @@ const orderedStatuses = [
  **/
 
 function getStatus(
-  status: UserDatasetVDI['status'],
-  importMessages: UserDatasetVDI['importMessages'],
+  status: DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
@@ -57,7 +61,7 @@ function getStatus(
     };
   }
 
-  const importStatus = status.import;
+  const importStatus = status.import.status;
   switch (importStatus) {
     case 'queued':
     case 'in-progress':
@@ -70,7 +74,7 @@ function getStatus(
         content: (
           <>
             This {dataNoun} was rejected as invalid during the import phase:{' '}
-            {importMessages?.join(', ')}
+            {status.import.messages?.join(', ')}
           </>
         ),
         icon: 'exclamation-circle',
@@ -97,11 +101,11 @@ function getStatus(
       icon: 'clock-o',
     };
   } else {
-    const installData = status.install?.find((d) => d.projectId === projectId);
-    const metaStatus = installData?.metaStatus;
-    const metaMessage = installData?.metaMessage ?? '';
-    const dataStatus = installData?.dataStatus;
-    const dataMessage = installData?.dataMessage ?? '';
+    const installData = status.install?.find((d) => d.installTarget === projectId);
+    const metaStatus = installData?.meta.status;
+    const metaMessage = installData?.meta.messages?.join(', ') ?? '';
+    const dataStatus = installData?.data?.status;
+    const dataMessage = installData?.data?.messages?.join(', ') ?? '';
 
     // Returns the "least" status between metaStatus and dataStatus
     const combinedStatus = orderedStatuses.find(
@@ -177,19 +181,18 @@ function getStatus(
 
 export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
-  const { projects, status, importMessages } = userDataset;
+  const { installTargets, status } = userDataset;
   const lowercaseSingularDataNoun = dataNoun.singular.toLowerCase();
 
   const { content, icon: faIcon } = getStatus(
     status,
-    importMessages,
     projectId,
     lowercaseSingularDataNoun,
     displayName,
-    projects
+    installTargets
   );
 
-  const link = `${baseUrl}/${userDataset.id}`;
+  const link = `${baseUrl}/${userDataset.datasetId}`;
   const children = <Icon className="StatusIcon" fa={faIcon} />;
   if (props.useTooltip && props.linkToDataset) {
     return (
