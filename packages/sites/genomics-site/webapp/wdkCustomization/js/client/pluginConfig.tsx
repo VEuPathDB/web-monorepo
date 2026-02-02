@@ -44,7 +44,6 @@ import {
 } from './components/questions/ByLocation';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
-import { GenesByWGCNAModules } from './components/questions/GenesByWGCNAModules';
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
@@ -194,10 +193,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) =>
-      question?.queryName === 'GenesByGenericFoldChange' ||
-      question?.queryName === 'GenesByRnaSeqFoldChange' ||
-      question?.queryName === 'GenesByUserDatasetRnaSeq',
+    test: ({ question }) => 
+        question?.queryName === 'GenesByGenericFoldChange' ||
+        question?.queryName === 'GenesByRnaSeqFoldChange' ||
+        question?.queryName === 'GenesByUserDatasetRnaSeq',
     component: GenericFoldChangeForm,
   },
   {
@@ -288,6 +287,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
+    component: EdaNotebookQuestionForm,
+  },
+  {
+    type: 'questionForm',
+    test: ({ question }) => question?.queryName === 'GenesByEdaVizWithCompute',
     component: EdaNotebookQuestionForm,
   },
 ];
