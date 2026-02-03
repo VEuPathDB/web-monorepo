@@ -23,6 +23,12 @@ export function VariableCollectionSingleSelect(props: Props) {
   const { collectionPredicate, onSelect, value, additionalItemGroups } = props;
   const entities = useStudyEntities();
 
+  console.log('collections', entities
+      .filter(
+        (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
+          !!e.collections?.length
+      ));
+
   const items = useMemo(() => {
     const collectionItems = entities
       .filter(

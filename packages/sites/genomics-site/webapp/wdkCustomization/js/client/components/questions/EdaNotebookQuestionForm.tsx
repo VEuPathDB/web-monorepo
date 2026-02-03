@@ -12,6 +12,9 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     throw new Error('No search defined.');
   }
 
+  console.log('in EdaNotebookQuestionForm with searchName:', searchName);
+  console.log('EDANotebookQuestionForm props:', props);
+
   // We'll use this function throughout the notebook to update any wdk parameters.
   const updateParamValue = useCallback(
     (parameter: Parameter, newParamValue: string) => {
@@ -26,6 +29,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   );
 
   const wdkState: WdkState = {
+    queryName: props.state.question.queryName,
     parameters: props.state.question.parameters,
     paramValues: props.state.paramValues,
     updateParamValue,
@@ -33,8 +37,9 @@ export const EdaNotebookQuestionForm = (props: Props) => {
 
   // An override that renders the notebook instead of any default parameter or parameter group ui.
   // NOTE: this function is run for every visible parameter group. May cause
-  // an issue if the wdk question has multipl parameter groups.
+  // an issue if the wdk question has multiple parameter groups.
   const renderParamGroup = () => {
+    console.log('Rendering EdaNotebookParameter with wdkState:', wdkState);
     return <EdaNotebookParameter value={'test'} wdkState={wdkState} />;
   };
 
