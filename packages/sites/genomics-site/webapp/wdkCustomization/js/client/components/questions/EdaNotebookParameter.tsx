@@ -38,19 +38,31 @@ import {
 
 type EdaNotebookParameterProps = {
   value: string;
-  datasetIdParamName?: string;
-  notebookTypeParamName?: string;
+  datasetIdParamName?: string; // unused; should this be datasetId ?
+  notebookTypeParamName?: string; // unused
   wdkState: WdkState;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
 
-  console.log("Rendering EdaNotebookParameter with props:", props);
+  const datasetIdParamName2 = 'eda_dataset_id';
+  const queryNotebookList = [
+    {
+      queryname: 'GenesByEdaVizWithCompute',
+      notebookname: 'differentialExpressionNotebook',
+    },
+    {
+      queryname: 'GenesByWGCNAModule',
+      notebookname: 'wgcnaCorrelationNotebook',
+    },
+  ];
+  const queryNotebook = queryNotebookList.find(
+    (obj) => obj.queryname === wdkState.queryName
+  );
 
-  // TEMPORARY: We don't have this value coming from the wdk yet.
-  const studyId = datasetIdParamName ?? 'DS_eeca6a5476';
-  const notebookType = notebookTypeParamName ?? 'differentialExpressionNotebook';
+  const studyId = wdkState.paramValues![datasetIdParamName2];
+  const notebookType = queryNotebook!.notebookname;
 
   // we need to maintain the analysis as regular "live" React state somewhere
   const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
