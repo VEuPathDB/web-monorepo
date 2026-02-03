@@ -8,13 +8,29 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa';
 
 import { makeClassifier } from '../UserDatasetUtils';
-import UserDatasetDetail from './UserDatasetDetail';
+import UserDatasetDetail, { DetailViewProps } from './UserDatasetDetail';
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
+import { DatasetDependency, DatasetDetails } from '../../Utils/types';
+import { MesaColumn } from "@veupathdb/coreui/lib/components/Mesa/types";
+import { WdkDependencies } from "@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect";
 
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 
+interface CompatibilityTableRow extends DatasetDependency {
+  project: string;
+}
+
+interface TracksSectionRow {
+  dataFileName: string;
+  main?: any;
+}
+
+interface ComponentStateType extends Record<string, any> {
+  sequenceId?: string;
+}
+
 class BigwigDatasetDetail extends UserDatasetDetail {
-  constructor(props) {
+  constructor(props: DetailViewProps) {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
     this.getTracksTableColumns = this.getTracksTableColumns.bind(this);
@@ -34,9 +50,9 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       userDataset,
       config: { projectId },
     } = this.props;
-    const { wdkService } = this.context;
+    const { wdkService } = this.context! as WdkDependencies;
     const { dependencies } = userDataset;
-    if (!userDataset.projects.includes(projectId)) return;
+    if (!userDataset.installTargets.includes(projectId)) return;
     let genome;
     // There will only ever be one such dependency in this array
     dependencies.forEach(function (dependency) {
@@ -45,7 +61,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
           '-' + dependency.resourceVersion + '_(.*)_Genome'
         );
         const genomeList = dependency.resourceIdentifier.match(regex);
-        genome = genomeList[1];
+        genome = genomeList?.[1];
       }
     });
     if (genome == null) return;
@@ -64,26 +80,25 @@ class BigwigDatasetDetail extends UserDatasetDetail {
       .then((res) => this.setState({ sequenceId: res.records[0].displayName }));
   }
 
-  getTracksTableColumns() {
-    const { userDataset, appUrl, config } = this.props;
-    const { id, meta, dependencies } = userDataset;
-    const name = meta.name;
+  getTracksTableColumns(): Array<MesaColumn<TracksSectionRow>> {
+    const { userDataset, config } = this.props;
+    const { datasetId: id, name, dependencies } = userDataset;
     const { projectId } = config;
 
-    let genome;
+    let genome: string | undefined;
     dependencies.forEach(function (dependency) {
       if (dependency.resourceIdentifier.endsWith('_Genome')) {
         const regex = new RegExp(
           '-' + dependency.resourceVersion + '_(.*)_Genome'
         );
         const genomeList = dependency.resourceIdentifier.match(regex);
-        genome = genomeList[1];
+        genome = genomeList?.[1];
       }
     });
 
     return [
       {
-        key: 'datafileName',
+        key: 'dataFileName',
         name: 'Filename',
         renderCell: ({ row }) => <code>{row.dataFileName}</code>,
       },
@@ -92,10 +107,9 @@ class BigwigDatasetDetail extends UserDatasetDetail {
         name: 'Genome Browser Link',
         renderCell: ({ row }) => (
           <BigwigGBrowseUploader
-            sequenceId={this.state.sequenceId}
+            sequenceId={(this.state as ComponentStateType).sequenceId}
             dataFileName={row.dataFileName}
             datasetId={id}
-            appUrl={appUrl}
             projectId={projectId}
             genome={genome}
             datasetName={name}
@@ -106,24 +120,25 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   renderTracksSection() {
-    const { userDataset, appUrl, projectName, config, fileListing } =
-      this.props;
-    const installFiles = fileListing?.install?.contents
+    const { userDataset, config } = this.props;
+    const { displayName: projectName } = config;
+
+    const rows: Array<TracksSectionRow> = userDataset.files.install
+      ?.contents
       ?.filter((file) => file.fileName.endsWith('.bw'))
-      .map((file) => ({
+      ?.map((file) => ({
         dataFileName: file.fileName,
-      }));
+      })) ?? [];
+
     const { status } = userDataset;
 
-    const rows =
-      installFiles && Array.isArray(installFiles) ? installFiles : [];
-    const columns = this.getTracksTableColumns({ userDataset, appUrl });
+    const columns = this.getTracksTableColumns();
     const tracksTableState = MesaState.create({ rows, columns });
 
     const isInstalled =
-      status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectId === config.projectId)
-        ?.dataStatus === 'complete';
+      status?.import?.status === 'complete' &&
+      status?.install?.find((d) => d.installTarget === config.projectId)
+        ?.data?.status === 'complete';
 
     return !rows.length ? null : isInstalled ? (
       <section>
@@ -187,7 +202,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     const { userDataset, config, dataNoun } = this.props;
     const { projectId } = config;
 
-    const { status, projects } = userDataset;
+    const { status, installTargets: projects } = userDataset;
 
     /**
      * In VDI, we know a dataset is compatible when the site-specific's install status
@@ -197,18 +212,18 @@ class BigwigDatasetDetail extends UserDatasetDetail {
      * indicates `missing-dependency`
      */
     const installStatusForCurrentProject = status.install?.find(
-      (d) => d.projectId === projectId
+      (d) => d.installTarget === projectId
     );
 
     const isTargetingCurrentSite = projects.includes(projectId);
     const isInstalled = [
       userDataset.status.import,
-      installStatusForCurrentProject?.metaStatus,
-      installStatusForCurrentProject?.dataStatus,
+      installStatusForCurrentProject?.meta?.status,
+      installStatusForCurrentProject?.data?.status,
     ].every((status) => status === 'complete');
 
     const isIncompatible =
-      installStatusForCurrentProject?.dataStatus === 'missing-dependency';
+      installStatusForCurrentProject?.data?.status === 'missing-dependency';
 
     if (!isTargetingCurrentSite || (isTargetingCurrentSite && isIncompatible)) {
       return (
@@ -234,9 +249,7 @@ class BigwigDatasetDetail extends UserDatasetDetail {
     }
   }
 
-  getCompatibilityTableColumns() {
-    const { userDataset } = this.props;
-    const { projects } = userDataset;
+  getCompatibilityTableColumns({ installTargets: projects }: DatasetDetails): Array<MesaColumn<CompatibilityTableRow>> {
     return [
       {
         key: 'project',
@@ -265,7 +278,6 @@ class BigwigDatasetDetail extends UserDatasetDetail {
   }
 
   // See note in the base class, UserDatasetDetail
-  /** @return {Array<() => (import("react").ReactElement | null)>} */
   getPageSections() {
     const [headerSection, fileSection] = super.getPageSections();
     return [
