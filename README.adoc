@@ -7,13 +7,20 @@ These are instructions to work with the VEuPathDB UI either by executing a singl
 :toc:
 
 == Prerequisites
-* `Node >=24.0.0`
-* `corepack` enabled for Yarn version management
-* Supply chain security environment variable (recommended)
 
-=== Required Environment Variables for Development
+This project requires a system that can handle **Node.js 18.12+** (most Linux distributions from ~2019 onwards, macOS 10.15+, Windows 10+) and on which you can install https://volta.sh/[Volta] for version management (see https://docs.volta.sh/guide/#installing-volta for system requirements)
 
-Add this to your shell profile (`.bashrc`, `.zshrc`, etc.):
+Then the installation process detailed below will be able to bootstrap the following:
+
+- **Node.js 24+** (specified in package.json for this project)
+- **Corepack** (a Node.js tool that automatically manages package manager versions)
+- **Yarn 4.12.0** (which itself requires Node.js 18.12+)
+
+== Setup
+
+=== Recommended: Supply Chain Security
+
+For supply chain security, add this to your shell profile (`.bashrc`, `.zshrc`, etc.):
 
 [source, bash]
 ----
@@ -74,24 +81,77 @@ To set up Volta with Corepack:
 ----
 # Install volta if you haven't already
 curl https://get.volta.sh | bash
+----
 
-# Install corepack globally and enable it with volta integration
-npm install -g corepack
+Open a new terminal for Volta to take effect
+
+[source, shell]
+----
+volta install node
+volta install yarn
+volta install corepack
 corepack enable --install-directory ~/.volta/bin
 ----
 
 This configuration allows Volta to manage Node versions while Corepack manages Yarn versions based on the `packageManager` field in `package.json`.
 
-=== Setup without Volta
+=== Development on Cedar Server
 
-If you're not using Volta, simply enable corepack:
+Follow the instructions above in a regular terminal (not a dev site environment after sourcing `etc/setenv`) to set up Volta, Node, Yarn and Corepack.
+
+To work smoothly in a dev site environment (any time after sourcing `etc/setenv`), you need to address a PATH configuration issue that can shadow Volta's yarn with an older system version.
+
+==== The Issue
+
+Intranet dev site configurations use `etc/setenv` scripts that prepend legacy paths to PATH. This causes the system's old yarn to take precedence over Volta's managed version, breaking the build.
+
+==== The Fix
+
+Choose one of these approaches:
+
+*Option 1: Using a helper shell function in regular workflow (Recommended)*
+
+Add this function to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
+
+[source, bash]
+----
+# Prepend directory to PATH, moving it to front if already present elsewhere
+path_prepend() {
+  case "$PATH" in "$1":*|"$1"|"") PATH="$1"; return ;; esac  # already first or empty
+  PATH=":$PATH:"          # add sentinels for matching anywhere
+  PATH="${PATH//:$1:/:}"  # remove exact match (colon-bounded)
+  PATH="$1$PATH"          # prepend (leading colon already exists)
+  PATH="${PATH%:}"        # strip trailing colon
+}
+----
+
+Then update your standard workflow to include one additional step after sourcing `etc/setenv`:
 
 [source, shell]
 ----
-corepack enable
+# 1. Start terminal session
+# 2. cd /var/www/PlasmoDB/plasmo.bmaccallum
+# 3. source etc/setenv
+# 4. Restore Volta to front of PATH:
+path_prepend ~/.volta/bin
 ----
 
-_Note: If you have a global `yarn` installation, you may need to uninstall it first to avoid conflicts with corepack._
+This avoids modifying shared files and is easy to remember.
+
+*Option 2: Edit etc/setenv directly*
+
+Edit your dev site's `etc/setenv` file (typically `$BASE_GUS/etc/setenv`) to append instead of prepend:
+
+[source, bash]
+----
+# Change from:
+export PATH=$GUS_HOME/bin:$PROJECT_HOME/install/bin:$PATH
+
+# To:
+export PATH=$PATH:$GUS_HOME/bin:$PROJECT_HOME/install/bin
+----
+
+This ensures Volta's yarn (from `~/.volta/bin`) remains first in PATH.
 
 === Package Manager Verification
 
@@ -102,81 +162,6 @@ The repository includes automatic checks that run before `yarn install` to verif
 - Corepack is properly configured with the correct Yarn version (4.12.0)
 
 If you see errors about wrong Yarn version, refer to the setup instructions above.
-
-=== Legacy Deployment Environments
-
-*WARNING*: This section is ONLY for legacy deployment servers that cannot upgrade to Node.js 24. Development machines should follow the standard Prerequisites above.
-
-==== Dual-Mode Yarn Setup
-
-This repository supports both modern (corepack-managed Yarn 4) and legacy (bundled Yarn 3) environments:
-
-- *Development machines*: Use Yarn 4.12.0 via corepack (as specified in `package.json`)
-- *Legacy deployment servers*: Use bundled Yarn 3.3.1 at `.yarn/releases/yarn-3.3.1.cjs`
-
-==== Deployment on Legacy Systems
-
-If you're deploying to an environment that cannot run Node.js 24 (such as end-of-life CentOS 7), set these environment variables:
-
-On `palm` and other legacy servers, add these exports to `$BASE_GUS/etc/setenv` for persistence, then paste them into your current shell to activate immediately. _(Don't re-source `setenv` - it will duplicate `PATH` entries.)_
-
-[source, bash]
-----
-# Bypass version checks for web-monorepo
-export SKIP_YARN_VERSION_CHECK=true
-export npm_config_engine_strict=false
-
-# Allow lockfile modifications (Yarn 3/4 lockfile format incompatibility)
-export YARN_ENABLE_IMMUTABLE_INSTALLS=false
-----
-
-==== Uncommenting yarnPath for Legacy Deployment
-
-On legacy deployment servers, you must uncomment the yarnPath line in `.yarnrc.yml`:
-
-[source, bash]
-----
-# Edit .yarnrc.yml and change:
-# # yarnPath: .yarn/releases/yarn-3.3.1.cjs
-# to:
-# yarnPath: .yarn/releases/yarn-3.3.1.cjs
-----
-Clarification: you want the `yarnPath: .yarn/releases/yarn-3.3.1.cjs` line to be completely uncommented.
-
-This will make `yarn` commands use the bundled Yarn 3.3.1, even when called from Ant or other build tools. No need to call Yarn with a fully-qualified path.
-
-*CRITICAL*:
-- The uncommented `yarnPath` line in `.yarnrc.yml` must *NEVER* be committed to git. The pre-commit hook will prevent this. Before running `git pull` or `git checkout`, restore the file with `git restore .yarnrc.yml`.
-- The `yarn.lock` file uses Yarn 4 format. When Yarn 3 runs `yarn install`, it will modify checksums in the lockfile. These changes are format-only (no package version changes) but must *NEVER* be committed to git, as they will break Yarn 4 on development machines. A hook should prevent this anyway. Before changing code with `git pull` or `git checkout`, restore the file with `git restore yarn.lock`.
-
-*Security implications*:
-
-- Legacy deployments do NOT benefit from the 7-day package age gate (Yarn 4+ feature)
-- Only use this for deployment servers where you will NOT be running `yarn add` or installing new packages
-- The security measures are designed to protect developer machines from supply chain attacks during package installation
-
-==== Ant Build Workaround
-
-The `YARN_ENABLE_IMMUTABLE_INSTALLS=false` environment variable does not override `yarn --frozen-lockfile` commands in Ant build scripts. To work around this:
-
-*First-time setup after checkout:*
-
-[source, bash]
-----
-cd web-monorepo
-yarn  # This modifies yarn.lock to Yarn 3 format
-# Verify: git status should show yarn.lock as modified
-----
-
-After this initial `yarn` run, subsequent Ant build commands (`rebuilder`, `wb site`, etc.) will succeed because the lockfile is already in the expected format.
-
-*IMPORTANT*: Before running `git pull` or `git checkout`, restore the lockfile:
-[source, bash]
-----
-git restore yarn.lock
-----
-
-After any git operation that changes the repository, run `yarn` again to re-modify the lockfile.
 
 == Quick Start
 

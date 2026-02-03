@@ -12,13 +12,14 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// Check for bypass environment variable for legacy deployment environments
-const skipCheck = process.env.SKIP_YARN_VERSION_CHECK;
-
-if (skipCheck === 'true' || skipCheck === '1') {
-  console.warn('\x1b[33m%s\x1b[0m', '⚠️  SKIP_YARN_VERSION_CHECK enabled - skipping package manager version checks');
-  console.warn('\x1b[2m%s\x1b[0m', 'This should only be used on legacy deployment servers that cannot upgrade Node.js.');
-  process.exit(0);
+// Legacy bypass removed - all deployment servers now support Node.js 24+
+// Historical note: SKIP_YARN_VERSION_CHECK was used for CentOS 7 servers (palm)
+// that could not run Node 24. Those servers are now decommissioned.
+// If you see this variable set in your environment, it can be safely removed.
+if (process.env.SKIP_YARN_VERSION_CHECK) {
+  console.warn('\x1b[33m%s\x1b[0m', '⚠️  Warning: SKIP_YARN_VERSION_CHECK is set but no longer used.');
+  console.warn('\x1b[2m%s\x1b[0m', 'This variable was for legacy servers and can be removed from your environment.');
+  // Continue with normal checks rather than bypassing
 }
 
 // Skip environment variable checks in CI environments (GitHub Actions, etc.)
