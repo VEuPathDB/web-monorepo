@@ -85,7 +85,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   differentialExpressionNotebook: {
     name: 'differentialexpression',
     displayName: 'Differential Expression Notebook',
-    projects: ['PlasmoDB', 'MicrobiomeDB'],
+    projects: ['AmoebaDB', 'CryptoDB', 'FungiDB', 'GiardiaDB', 'HostDB', 'MicrosporidiaDB', 'PiroplasmaDB', 'PlasmoDB', 'ToxoDB', 'TrichDB', 'TriTrypDB', 'VectorBase', 'UniDB', 'MicrobiomeDB'],
     cells: [
       {
         type: 'subset',
@@ -281,7 +281,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     displayName: 'WGCNA Correlation Notebook',
     header:
       "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
-    projects: ['PlasmoDB', 'HostDB'],
+    projects: ['PlasmoDB', 'HostDB', 'UniDB'],
     cells: [
       {
         type: 'compute',
