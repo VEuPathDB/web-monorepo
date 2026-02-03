@@ -74,7 +74,7 @@ export function Error(DefaultComponent: React.ComponentType<Props>) {
               <p>2- If the problem persists, try {resetLink}</p>
               <p>
                 3- Please {contactUsLink} to assist you;{' '}
-                <strong>send us a screenshot of this window.</strong>
+                   send us a screenshot of this window <strong>including the URL bar at the top of your browser.</strong>
               </p>
             </div>
             <div>{props.message}</div>
