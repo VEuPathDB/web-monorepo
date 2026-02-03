@@ -4,6 +4,7 @@ import { Tooltip } from '@veupathdb/coreui';
 
 import {
   DataNoun,
+  DatasetDetails,
   DatasetListEntry,
   DatasetStatusInfo,
 } from '../Utils/types';
@@ -13,7 +14,7 @@ const VDI_REINSTALL_INTERVAL = 6;
 
 interface Props {
   baseUrl: string;
-  userDataset: DatasetListEntry;
+  userDataset: DatasetListEntry | DatasetDetails;
   projectId: string;
   displayName: string;
   linkToDataset: boolean;
