@@ -595,7 +595,6 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
         key: 'download',
         name: 'Download',
         width: '130px',
-        headingStyle: { textAlign: 'center' },
         renderCell() {
           const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
           const enableDownload =
