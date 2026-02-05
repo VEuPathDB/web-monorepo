@@ -75,20 +75,28 @@ function StudyAnswerController(props) {
     />
   );
 
-  const columns = useDiyStudySummaryColumns();
-  const { userStudySummaryRows, communityStudySummaryRows } =
-    useDiyStudySummaryRows();
+  const columns = useUserDatasetsWorkspace
+    ? useDiyStudySummaryColumns()
+    : undefined;
+  const userStudySummaryRows = useUserDatasetsWorkspace
+    ? useDiyStudySummaryRows()
+    : undefined;
+  const communityStudySummaryRows = useUserDatasetsWorkspace
+    ? useDiyStudySummaryRows()
+    : undefined;
 
-  const displayableStudyAttributes = columns.map((col) => {
-    if (col.accessor === 'edaWorkspaceUrl') {
-      return { value: 'name', display: col['Header'] };
-    } else {
-      return {
-        value: col.accessor,
-        display: col['Header'],
-      };
-    }
-  });
+  const displayableStudyAttributes = useUserDatasetsWorkspace
+    ? columns.map((col) => {
+        if (col.accessor === 'edaWorkspaceUrl') {
+          return { value: 'name', display: col['Header'] };
+        } else {
+          return {
+            value: col.accessor,
+            display: col['Header'],
+          };
+        }
+      })
+    : undefined;
 
   const {
     filteredRows: filteredUserStudyRows,
