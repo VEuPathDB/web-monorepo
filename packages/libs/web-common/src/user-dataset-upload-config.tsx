@@ -18,7 +18,7 @@ type ImplementedUploadTypes =
   | 'isasimple'
   | 'bigwigfiles'
   | 'rnaseq'
-  | 'wrangler';
+  | 'phenotype';
 
 export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
   {
@@ -236,8 +236,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
       },
     },
-    wrangler: {
-      type: 'wrangler',
+    phenotype: {
+      type: 'phenotype',
       displayName: 'Phenotype',
       description: `Integrate your Phenotype data in ${projectId}.`,
       uploadTitle: 'Upload My Phenotype data set',
@@ -380,7 +380,7 @@ function ReferenceGenomeDepdency(props: DependencyProps) {
                 resourceVersion: buildNumber,
               };
         })
-        .filter((dep) : dep is DatasetDependency => dep != null);                                                                                                                                                    
+        .filter((dep) : dep is DatasetDependency => dep != null);
       onChange(dependencies);
     },
     [buildNumber, fileNameByTerm, onChange]

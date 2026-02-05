@@ -21,7 +21,7 @@ const UserDatasetRouter = React.lazy(
 
 const availableUploadTypes = userDatasetsUploadTypes.trim()
   ? userDatasetsUploadTypes.split(/,\s*/g)
-  : ['genelist', 'bigwigfiles', 'rnaseq', 'wrangler'];
+  : ['genelist', 'bigwigfiles', 'rnaseq', 'phenotype'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 
