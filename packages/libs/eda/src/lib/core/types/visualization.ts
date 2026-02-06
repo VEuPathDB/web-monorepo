@@ -124,6 +124,7 @@ export const DataElementConstraint = intersection([
     minNumValues: number,
     maxNumValues: number,
     allowMultiValued: boolean,
+    allowedVariableIds: array(string),
     // description isn't yet present for the records visualization
     description: string,
   }),

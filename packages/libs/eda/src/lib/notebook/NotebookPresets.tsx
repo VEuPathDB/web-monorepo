@@ -85,7 +85,22 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   differentialExpressionNotebook: {
     name: 'differentialexpression',
     displayName: 'Differential Expression Notebook',
-    projects: ['AmoebaDB', 'CryptoDB', 'FungiDB', 'GiardiaDB', 'HostDB', 'MicrosporidiaDB', 'PiroplasmaDB', 'PlasmoDB', 'ToxoDB', 'TrichDB', 'TriTrypDB', 'VectorBase', 'UniDB', 'MicrobiomeDB'],
+    projects: [
+      'AmoebaDB',
+      'CryptoDB',
+      'FungiDB',
+      'GiardiaDB',
+      'HostDB',
+      'MicrosporidiaDB',
+      'PiroplasmaDB',
+      'PlasmoDB',
+      'ToxoDB',
+      'TrichDB',
+      'TriTrypDB',
+      'VectorBase',
+      'UniDB',
+      'MicrobiomeDB',
+    ],
     cells: [
       {
         type: 'subset',
@@ -98,30 +113,31 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           />
         ),
       },
-      {
-        type: 'compute',
-        title: 'PCA',
-        computationName: 'dimensionalityreduction',
-        computationId: 'pca_1',
-        hidden: true, // Hide in UI since config is already known.
-        cells: [
-          {
-            type: 'visualization',
-            title: 'PCA Plot',
-            visualizationName: 'scatterplot',
-            visualizationId: 'pca_1',
-            helperText: (
-              <NumberedHeader
-                number={2}
-                text={
-                  'Use PCA to investigate possible sources of variation in the dataset.'
-                }
-                color={colors.grey[800]}
-              />
-            ),
-          },
-        ],
-      },
+      // TEMPORARILY DISABLED: PCA dimensionality reduction pending tall format migration
+      // {
+      //   type: 'compute',
+      //   title: 'PCA',
+      //   computationName: 'dimensionalityreduction',
+      //   computationId: 'pca_1',
+      //   hidden: true, // Hide in UI since config is already known.
+      //   cells: [
+      //     {
+      //       type: 'visualization',
+      //       title: 'PCA Plot',
+      //       visualizationName: 'scatterplot',
+      //       visualizationId: 'pca_1',
+      //       helperText: (
+      //         <NumberedHeader
+      //           number={2}
+      //           text={
+      //             'Use PCA to investigate possible sources of variation in the dataset.'
+      //           }
+      //           color={colors.grey[800]}
+      //         />
+      //       ),
+      //     },
+      //   ],
+      // },
       {
         type: 'compute',
         title: 'Setup DESeq2 Computation',

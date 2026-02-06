@@ -224,7 +224,9 @@ function variableConstraintPredicate(
         constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.isTemporal == null ||
         constraint.isTemporal === variable.isTemporal) &&
-      (constraint.allowMultiValued || !variable.isMultiValued))
+      (constraint.allowMultiValued || !variable.isMultiValued) &&
+      (constraint.allowedVariableIds == null ||
+        constraint.allowedVariableIds.includes(variable.id)))
   );
 }
 
