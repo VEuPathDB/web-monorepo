@@ -7,6 +7,7 @@ import {
 import * as t from 'io-ts';
 import { useState } from 'react';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
+import { EdaBarPlot } from './eda/EdaBarPlot';
 import { Link } from 'react-router-dom';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 
@@ -17,6 +18,11 @@ const PlotConfig = t.type({
   xAxisVariableId: t.string,
   yAxisEntityId: t.string,
   yAxisVariableId: t.string,
+  displaySpecVariableId: t.string,
+  displayMode: t.union([
+    t.literal('highlight'),
+    t.literal('subset'),
+  ]),
 });
 
 const PlotConfigs = t.array(PlotConfig);
@@ -100,13 +106,53 @@ export function EdaDatasetGraph(props: Props) {
             );
           })}
 
-          {default_graph_id !== source_id ? (
-            <div>
-              <strong style={{ color: 'firebrick' }}>WARNING</strong>: This
-              Gene ({source_id as string}) does not have data for this
-              experiment. Instead, we are showing data for this same gene(s)
-              from the reference strain for this species. This may or may NOT
-              accurately represent the gene you are interested in.{' '}
+      {default_graph_id !== source_id ? (
+        <div>
+          <strong style={{ color: 'firebrick' }}>WARNING</strong>: This Gene (
+          {source_id as string}) does not have data for this experiment.
+          Instead, we are showing data for this same gene(s) from the reference
+          strain for this species. This may or may NOT accurately represent the
+          gene you are interested in.{' '}
+        </div>
+      ) : null}
+
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+        }}
+      >
+        {selectedPlotConfigs.map((plotConfig) => {
+          const xAxisVariable = {
+            entityId: plotConfig.xAxisEntityId,
+            variableId: plotConfig.xAxisVariableId,
+          };
+          const yAxisVariable = {
+            entityId: plotConfig.yAxisEntityId,
+            variableId: plotConfig.yAxisVariableId,
+          };
+          const geneDisplaySpec = graphIds && {
+            ids: graphIds,
+            variableId: plotConfig.displaySpecVariableId,
+            entityId: plotConfig.xAxisEntityId,
+            traceName: source_id?.toString(),
+            mode: plotConfig.displayMode,
+          };
+
+          // Conditional rendering based on plot type
+          const PlotComponent = plotConfig.plotType === 'bar'
+            ? EdaBarPlot
+            : EdaScatterPlot;
+
+          return (
+            <div style={{ width: 500 }}>
+              <PlotComponent
+                datasetId={dataset_id as string}
+                xAxisVariable={xAxisVariable}
+                yAxisVariable={yAxisVariable}
+                geneDisplaySpec={geneDisplaySpec}
+                plotTitle={plotConfig.plotName}
+              />
             </div>
           ) : null}
 
