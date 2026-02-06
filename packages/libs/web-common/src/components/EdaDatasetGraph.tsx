@@ -7,6 +7,7 @@ import {
 import * as t from 'io-ts';
 import { useState } from 'react';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
+import { EdaBarPlot } from './eda/EdaBarPlot';
 import { Link } from 'react-router-dom';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 
@@ -17,6 +18,11 @@ const PlotConfig = t.type({
   xAxisVariableId: t.string,
   yAxisEntityId: t.string,
   yAxisVariableId: t.string,
+  displaySpecVariableId: t.string,
+  displayMode: t.union([
+    t.literal('highlight'),
+    t.literal('subset'),
+  ]),
 });
 
 const PlotConfigs = t.array(PlotConfig);
@@ -122,21 +128,26 @@ export function EdaDatasetGraph(props: Props) {
             entityId: plotConfig.yAxisEntityId,
             variableId: plotConfig.yAxisVariableId,
           };
+          const geneDisplaySpec = graphIds && {
+            ids: graphIds,
+            variableId: plotConfig.displaySpecVariableId,
+            entityId: plotConfig.xAxisEntityId,
+            traceName: source_id?.toString(),
+            mode: plotConfig.displayMode,
+          };
+
+          // Conditional rendering based on plot type
+          const PlotComponent = plotConfig.plotType === 'bar'
+            ? EdaBarPlot
+            : EdaScatterPlot;
+
           return (
             <div style={{ width: 500 }}>
-              <EdaScatterPlot
+              <PlotComponent
                 datasetId={dataset_id as string}
                 xAxisVariable={xAxisVariable}
                 yAxisVariable={yAxisVariable}
-                highlightSpec={
-                  graphIds && {
-                    ids: graphIds,
-                    // gene id
-                    variableId: 'VAR_bdc8e679',
-                    entityId: plotConfig.xAxisEntityId,
-                    traceName: source_id?.toString(),
-                  }
-                }
+                geneDisplaySpec={geneDisplaySpec}
                 plotTitle={plotConfig.plotName}
               />
             </div>
