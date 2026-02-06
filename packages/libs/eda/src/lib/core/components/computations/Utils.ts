@@ -404,3 +404,13 @@ export function partialToCompleteCodec<T extends {}>(
 ): t.TypeC<T> {
   return t.type(partialCodec.props);
 }
+
+/**
+ * Stable IDs for gene expression variables in tall format.
+ * These IDs are used to identify specific variables in the differential expression plugin.
+ */
+export const GENE_EXPRESSION_STABLE_IDS = {
+  IDENTIFIER: 'VEUPATHDB_GENE_ID',
+  COUNT: 'SEQUENCE_READ_COUNT',
+  NORMALIZED: 'NORMALIZED_EXPRESSION',
+} as const;
