@@ -384,7 +384,7 @@ export default function makeHeaderMenuItemsFactory(
  */
 function DiyStudiesDaemon(props) {
   useEffect(() => {
-    if (props.isFocused) {
+    if (props.isFocused && props.reloadDiyDatasets !== undefined) {
       props.reloadDiyDatasets();
     }
   }, [props.isFocused, props.reloadDiyDatasets]);

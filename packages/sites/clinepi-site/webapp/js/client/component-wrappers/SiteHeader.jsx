@@ -13,6 +13,11 @@ import { getStaticSiteData } from '../selectors/siteData';
 import logoUrl from 'site/images/symbol-small.png';
 import heroImageUrl from 'site/images/global.jpg';
 
+import {
+  useEda,
+  useUserDatasetsWorkspace,
+} from '@veupathdb/web-common/lib/config';
+
 export default function SiteHeaderWrapper() {
   return function SiteHeader() {
     const [searchTerm, setSearchTerm] = useSessionBackedState(
@@ -24,8 +29,13 @@ export default function SiteHeaderWrapper() {
 
     const permissions = usePermissions();
 
-    const { diyDatasets, communityDatasets, reloadDiyDatasets } =
-      useDiyDatasets();
+    const diyDatasets = useUserDatasetsWorkspace ? useDiyDatasets() : undefined;
+    const communityDatasets = useUserDatasetsWorkspace
+      ? useDiyDatasets()
+      : undefined;
+    const reloadDiyDatasets = useUserDatasetsWorkspace
+      ? useDiyDatasets()
+      : undefined;
 
     // for now, we default to each studies section being open
     const [expandUserStudies, setExpandUserStudies] = useState(true);
