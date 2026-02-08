@@ -29,13 +29,14 @@ export default function SiteHeaderWrapper() {
 
     const permissions = usePermissions();
 
-    const diyDatasets = useUserDatasetsWorkspace ? useDiyDatasets() : undefined;
-    const communityDatasets = useUserDatasetsWorkspace
-      ? useDiyDatasets()
-      : undefined;
-    const reloadDiyDatasets = useUserDatasetsWorkspace
-      ? useDiyDatasets()
-      : undefined;
+    const { diyDatasets, communityDatasets, reloadDiyDatasets } =
+      useUserDatasetsWorkspace
+        ? useDiyDatasets()
+        : {
+            diyDatasets: undefined,
+            communityDatasets: undefined,
+            reloadDiyDatasets: () => {}, // no-op function
+          };
 
     // for now, we default to each studies section being open
     const [expandUserStudies, setExpandUserStudies] = useState(true);
