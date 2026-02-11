@@ -322,6 +322,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               comparisonLabels.map((label, ind) => {
                 return (
                   <Annotation
+                    key={ind}
                     datum={{
                       x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
                       y:

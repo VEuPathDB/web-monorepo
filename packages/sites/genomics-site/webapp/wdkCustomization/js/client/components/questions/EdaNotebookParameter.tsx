@@ -207,8 +207,8 @@ function formatParameterValue(
       }
       return (
         <div style={{ whiteSpace: 'pre-line' }}>
-          {obj.descriptor.subset.descriptor.map((filter) => (
-            <div>
+          {obj.descriptor.subset.descriptor.map((filter, index) => (
+            <div key={index}>
               {filter.variableId}: {formatFilterDisplayValue(filter)}
             </div>
           ))}
