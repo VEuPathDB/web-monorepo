@@ -26,10 +26,10 @@ export type UpdateParamValue = (
 ) => void;
 
 export interface WdkState {
-  queryName?: string;
-  parameters?: Parameter[];
-  paramValues?: ParameterValues;
-  updateParamValue?: UpdateParamValue;
+  queryName: string;
+  parameters: Parameter[];
+  paramValues: ParameterValues;
+  updateParamValue: UpdateParamValue;
 }
 
 interface Props {
