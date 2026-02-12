@@ -21,7 +21,7 @@ import { ToImgopts } from 'plotly.js';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { plotToImage } from './visxVEuPathDB';
-import { GlyphTriangle } from '@visx/visx';
+import { GlyphTriangle } from '@visx/glyph';
 import { Option as NodeLabelProp } from '../components/plotControls/MultiSelect';
 
 import './NetworkPlot.css';

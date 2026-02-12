@@ -24,7 +24,6 @@ import {
   AnnotationLabel,
   Tooltip,
 } from '@visx/xychart';
-import findNearestDatumXY from '@visx/xychart/lib/utils/findNearestDatumXY';
 import { Group } from '@visx/group';
 import {
   gridStyles,
@@ -35,7 +34,7 @@ import {
 } from './visxVEuPathDB';
 import { Polygon } from '@visx/shape';
 import { useContext } from 'react';
-import { PatternLines } from '@visx/visx';
+import { PatternLines } from '@visx/pattern';
 import Spinner from '../components/Spinner';
 // For screenshotting
 import { ToImgopts } from 'plotly.js';
@@ -296,7 +295,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               ],
               zero: false,
             }}
-            findNearestDatumOverride={findNearestDatumXY}
             margin={{
               top: MARGIN_DEFAULT,
               right: showFlooredDataAnnotation ? 150 : MARGIN_DEFAULT + 10,
@@ -429,7 +427,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                 data={data.statistics}
                 {...dataAccessors}
                 colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
-                findNearestDatumOverride={findNearestDatumXY}
               />
             </Group>
             <Tooltip<VolcanoPlotDataPoint>
