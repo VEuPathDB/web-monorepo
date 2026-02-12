@@ -29,7 +29,8 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   );
 
   const wdkState: WdkState = {
-    queryName: props.state.question.queryName,
+    // Safe: pluginConfig.tsx only routes here when queryName matches a known value
+    queryName: props.state.question.queryName!,
     parameters: props.state.question.parameters,
     paramValues: props.state.paramValues,
     updateParamValue,
