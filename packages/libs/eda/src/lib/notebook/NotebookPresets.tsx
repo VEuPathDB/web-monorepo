@@ -235,7 +235,9 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 return <div>No analysis configuration available</div>;
               }
               const differentialExpressionComputation =
-                analysisState.analysis.descriptor.computations[1];
+                analysisState.analysis.descriptor.computations.find(
+                  (c) => c.descriptor.type === 'differentialexpression'
+                );
               if (!differentialExpressionComputation?.visualizations?.length) {
                 return <div>No visualization configuration available</div>;
               }

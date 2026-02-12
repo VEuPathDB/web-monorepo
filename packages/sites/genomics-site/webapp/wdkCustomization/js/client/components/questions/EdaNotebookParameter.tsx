@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
@@ -7,6 +7,7 @@ import {
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
+  useSetterWithCallback,
   EDAWorkspaceContainer,
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
@@ -37,75 +38,44 @@ import {
 } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 
 type EdaNotebookParameterProps = {
-  value: string;
-  datasetIdParamName?: string; // unused; should this be datasetId ?
-  notebookTypeParamName?: string; // unused
   wdkState: WdkState;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
-  const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
+  const { wdkState } = props;
+  const { parameters, paramValues, updateParamValue } = wdkState;
 
-  const datasetIdParamName2 = 'eda_dataset_id';
-  const queryNotebookList = [
-    {
-      queryname: 'GenesByEdaVizWithCompute',
-      notebookname: 'differentialExpressionNotebook',
+  const studyId = paramValues['eda_dataset_id'];
+  const notebookType = paramValues['eda_notebook_type'];
+  const analysisJson = paramValues['eda_analysis_spec'];
+
+  // Deserialize analysis from the WDK param, or create a fresh one.
+  // useMemo ensures we react to external changes (e.g. param resets).
+  const analysisDescriptor = useMemo(() => {
+    const parsed = parseJson(analysisJson);
+    return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
+  }, [analysisJson, studyId]);
+
+  // Persist analysis state back to the eda_analysis_spec WDK parameter
+  const persistAnalysis = useCallback(
+    (analysis: Analysis | NewAnalysis | undefined) => {
+      if (analysis == null) return;
+      const param = parameters.find((p) => p.name === 'eda_analysis_spec');
+      if (param) {
+        updateParamValue(param, JSON.stringify(analysis));
+      }
     },
-    {
-      queryname: 'GenesByWGCNAModule',
-      notebookname: 'wgcnaCorrelationNotebook',
-    },
-  ];
-  const queryNotebook = queryNotebookList.find(
-    (obj) => obj.queryname === wdkState.queryName
+    [parameters, updateParamValue]
   );
 
-  const studyId = wdkState.paramValues![datasetIdParamName2];
-  const notebookType = queryNotebook!.notebookname;
+  const wrappedPersistAnalysis = useSetterWithCallback<
+    Analysis | NewAnalysis | undefined
+  >(analysisDescriptor, persistAnalysis);
 
-  // we need to maintain the analysis as regular "live" React state somewhere
-  const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
-    () => {
-      const parsed = parseJson(value);
-      return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
-    }
+  const analysisState = useAnalysisState(
+    analysisDescriptor,
+    wrappedPersistAnalysis
   );
-
-  // Disabled for now: persistence of analysis state to the 'param'
-  // It should probably be persisted to another 'param' because this
-  // 'param' needs to store the WGCNA module
-
-  //  // Here we periodically send analysis state back upstream to WDK
-  //  const debouncedPersist = useMemo(
-  //    () =>
-  //      debounce(
-  //        (a: Analysis | NewAnalysis | undefined) =>
-  //          onParamValueChange(JSON.stringify(a)),
-  //        500
-  //      ),
-  //    [onParamValueChange]
-  //  );
-  //  useEffect(() => {
-  //    debouncedPersist(analysis);
-  //  }, [analysis, debouncedPersist]);
-  //
-  // useEffect(() => {
-  //   return () => {
-  //     debouncedPersist.cancel();
-  //   };
-  // }, [debouncedPersist]);
-
-  // TO DO (maybe)
-  // Consider watching `value` for updates that happened on the WDK side
-  // and if there's a change that's not deep-equals to `analysis`
-  // call `setAnalysis` with a newly deserialised object.
-  // But probably this never happens? Maybe if the user
-  // has two tabs open?? Good idea to look at what the regular EDA does.
-
-  // debounce clean-up, just to be on the safe side
-  // Create the all-singing, all-dancing analysisState
-  const analysisState = useAnalysisState(analysis, setAnalysis);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
 
