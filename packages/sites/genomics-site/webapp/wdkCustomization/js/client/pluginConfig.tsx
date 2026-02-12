@@ -193,10 +193,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => 
-        question?.queryName === 'GenesByGenericFoldChange' ||
-        question?.queryName === 'GenesByRnaSeqFoldChange' ||
-        question?.queryName === 'GenesByUserDatasetRnaSeq',
+    test: ({ question }) =>
+      question?.queryName === 'GenesByGenericFoldChange' ||
+      question?.queryName === 'GenesByRnaSeqFoldChange' ||
+      question?.queryName === 'GenesByUserDatasetRnaSeq',
     component: GenericFoldChangeForm,
   },
   {
@@ -286,12 +286,9 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => question?.queryName === 'GenesByWGCNAModule',
-    component: EdaNotebookQuestionForm,
-  },
-  {
-    type: 'questionForm',
-    test: ({ question }) => question?.queryName === 'GenesByEdaVizWithCompute',
+    test: ({ question }) =>
+      question?.queryName === 'GenesByWGCNAModule' ||
+      question?.queryName === 'GenesByEdaVizWithCompute',
     component: EdaNotebookQuestionForm,
   },
 ];
