@@ -1,3 +1,4 @@
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient } from '../core/hooks/workspace';
 import { isEqual } from 'lodash';
@@ -228,8 +229,6 @@ export function ComputeNotebookCell(
         })}
     </>
   ) : (
-    <div>
-      <p>"Loading"</p>
-    </div>
+    <Loading />
   );
 }
