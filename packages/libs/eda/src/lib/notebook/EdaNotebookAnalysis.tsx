@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { AnalysisState } from '../core';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
@@ -9,6 +9,7 @@ import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 import { H5 } from '@veupathdb/coreui';
 import colors from '@veupathdb/coreui/lib/definitions/colors';
+import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import {
   Parameter,
   ParameterValues,
@@ -26,10 +27,10 @@ export type UpdateParamValue = (
 ) => void;
 
 export interface WdkState {
-  queryName?: string;
-  parameters?: Parameter[];
-  paramValues?: ParameterValues;
-  updateParamValue?: UpdateParamValue;
+  queryName: string;
+  parameters: Parameter[];
+  paramValues: ParameterValues;
+  updateParamValue: UpdateParamValue;
 }
 
 interface Props {
@@ -124,6 +125,21 @@ export function EdaNotebookAnalysis(props: Props) {
 
   console.log('notebookpreset', notebookPreset);
 
+  // Pre-compute step numbers for all cells with numberedHeader: true.
+  // Uses a depth-first walk so nested cells (e.g. volcano inside DE compute)
+  // get sequential numbers. The Map is stable across partial re-renders.
+  const stepNumbers = useMemo(() => {
+    const map = new Map<NotebookCellDescriptor, number>();
+    let n = 0;
+    (function walk(cells: NotebookCellDescriptor[]) {
+      for (const cell of cells) {
+        if (cell.numberedHeader) map.set(cell, ++n);
+        if ('cells' in cell && cell.cells) walk(cell.cells);
+      }
+    })(notebookPreset.cells);
+    return map;
+  }, [notebookPreset]);
+
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,
   // fetching computations and visualizations from analysisState.analysis where needed.
@@ -134,25 +150,29 @@ export function EdaNotebookAnalysis(props: Props) {
   // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
   //
   return (
-    <div className="EdaNotebook">
-      <div className="Paper">
-        {notebookPreset.header && (
-          <H5 text={notebookPreset.header} color={colors.gray[600]} />
-        )}
-        {analysis.descriptor.computations.length > 0 ? (
-          notebookPreset.cells.map((cell, index) => (
-            <NotebookCell
-              key={index}
-              analysisState={analysisState}
-              wdkState={wdkState}
-              cell={cell}
-              projectId={projectId}
-            />
-          ))
-        ) : (
-          <Loading />
-        )}
+    <ShowHideVariableContextProvider defaultShowOnlyCompatible>
+      <div className="EdaNotebook">
+        <div className="Paper">
+          {notebookPreset.header && (
+            <H5 text={notebookPreset.header} color={colors.gray[600]} />
+          )}
+          {analysis.descriptor.computations.length > 0 ? (
+            notebookPreset.cells.map((cell, index) => (
+              <NotebookCell
+                key={index}
+                analysisState={analysisState}
+                wdkState={wdkState}
+                cell={cell}
+                projectId={projectId}
+                stepNumber={stepNumbers.get(cell)}
+                stepNumbers={stepNumbers}
+              />
+            ))
+          ) : (
+            <Loading />
+          )}
+        </div>
       </div>
-    </div>
+    </ShowHideVariableContextProvider>
   );
 }

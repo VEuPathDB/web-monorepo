@@ -17,6 +17,7 @@ export const useInputStyles = (
     inputGroup: {
       display: 'flex',
       flexDirection: 'column',
+      rowGap: '5px',
     },
     input: {
       display: 'flex',

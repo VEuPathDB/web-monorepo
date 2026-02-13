@@ -356,13 +356,14 @@ export default function SubsetDownloadModal({
           {!tableIsExpanded && (
             <NumberedHeader
               number={2}
-              text={'View table and download'}
               color={
                 selectedVariableDescriptors.length > 0
                   ? primaryColor
                   : 'darkgrey'
               }
-            />
+            >
+              View table and download
+            </NumberedHeader>
           )}
           <span />
           {selectedVariableDescriptors.length > 0 && (
@@ -601,11 +602,9 @@ export default function SubsetDownloadModal({
         >
           <div style={{ marginBottom: headerMarginBottom, height: 30 }}>
             {!tableIsExpanded && (
-              <NumberedHeader
-                number={1}
-                text={'Choose variables'}
-                color={primaryColor}
-              />
+              <NumberedHeader number={1} color={primaryColor}>
+                Choose variables
+              </NumberedHeader>
             )}
           </div>
           <div

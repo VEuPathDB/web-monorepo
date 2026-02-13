@@ -41,8 +41,9 @@ export default function NotebookRoute(props: Props) {
     return makeNewAnalysis(fakeStudyId);
   }, []);
 
-  const [analysis, setAnalysis] =
-    useState<Analysis | NewAnalysis | undefined>(initialAnalysis);
+  const [analysis, setAnalysis] = useState<Analysis | NewAnalysis | undefined>(
+    initialAnalysis
+  );
 
   const analysisState = useAnalysisState(analysis, setAnalysis);
 
@@ -71,7 +72,15 @@ export default function NotebookRoute(props: Props) {
                 <EdaNotebookAnalysis
                   analysisState={analysisState}
                   notebookType="differentialExpressionNotebook"
-                  wdkState={{}}
+                  // TODO: Determine if this standalone dev route is still
+                  // needed now that WDK integration is in place. It may
+                  // have only been useful during early development.
+                  wdkState={{
+                    queryName: '',
+                    parameters: [],
+                    paramValues: {},
+                    updateParamValue: () => {},
+                  }}
                 />
               </EDAWorkspaceContainer>
             )}

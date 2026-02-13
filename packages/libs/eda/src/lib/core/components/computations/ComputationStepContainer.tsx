@@ -8,7 +8,7 @@ type ComputationStepContainer = {
   children: React.ReactChild;
   computationStepInfo: {
     stepNumber: NumberedHeaderProps['number'];
-    stepTitle: NumberedHeaderProps['text'];
+    stepTitle: string;
     color?: NumberedHeaderProps['color'];
   };
   isStepDisabled?: boolean;
@@ -35,9 +35,10 @@ export function ComputationStepContainer(props: ComputationStepContainer) {
       {showStepNumber && (
         <NumberedHeader
           number={computationStepInfo.stepNumber}
-          text={computationStepInfo.stepTitle}
           color={isStepDisabled ? 'darkgrey' : primaryColor}
-        />
+        >
+          {computationStepInfo.stepTitle}
+        </NumberedHeader>
       )}
       {children}
     </div>

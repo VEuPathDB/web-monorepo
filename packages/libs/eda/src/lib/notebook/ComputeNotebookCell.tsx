@@ -1,3 +1,4 @@
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useDataClient } from '../core/hooks/workspace';
 import { isEqual } from 'lodash';
@@ -8,15 +9,23 @@ import { plugins } from '../core/components/computations/plugins';
 import { ComputeCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
-import { FilledButton, OutlinedButton } from '@veupathdb/coreui';
 import { Link } from 'react-router-dom';
+import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, wdkState, projectId } = props;
+  const {
+    analysisState,
+    cell,
+    isDisabled,
+    wdkState,
+    projectId,
+    stepNumber,
+    stepNumbers,
+  } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   console.log('compute name', cell.computationName);
@@ -26,7 +35,7 @@ export function ComputeNotebookCell(
     computationId,
     cells,
     getAdditionalCollectionPredicate,
-    hidden=false,
+    hidden = false,
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
@@ -51,46 +60,40 @@ export function ComputeNotebookCell(
   const plugin = plugins[computation.descriptor.type];
   if (plugin == null) throw new Error('Computation plugin not found.');
 
-  // TO DO: this looks like it needs to be able to handle multiple computations.
-  // Ideally it should also use the functional update form of setComputations.
-  //
-  // We'll use a special, simple changeConfigHandler for the computation configuration
-  const changeConfigHandler = (propertyName: string, value?: any) => {
-    if (!computation || !analysis.descriptor.computations[0]) return;
+  // Update a computation's configuration property. All logic runs inside the
+  // functional update so it always operates on the latest state, avoiding stale
+  // closure issues during the WDK param round-trip.
+  const { setComputations } = analysisState;
+  const changeConfigHandler = useCallback(
+    (propertyName: string, value?: any) => {
+      setComputations((computations) => {
+        const comp = computations.find(
+          (c) => c.computationId === computationId
+        );
+        if (!comp) return computations;
 
-    const updatedConfiguration = {
-      ...(computation.descriptor.configuration &&
-      typeof computation.descriptor.configuration === 'object' // needed to use the spread operator
-        ? computation.descriptor.configuration
-        : {}),
-      [propertyName]: value,
-    };
+        const currentConfig =
+          comp.descriptor.configuration &&
+          typeof comp.descriptor.configuration === 'object'
+            ? comp.descriptor.configuration
+            : {};
 
-    const existingComputation =
-      analysisState.analysis?.descriptor.computations.find(
-        (comp) =>
-          isEqual(comp.computationId, computationId) &&
-          isEqual(comp.descriptor.configuration, updatedConfiguration)
-      );
+        const updatedConfig = { ...currentConfig, [propertyName]: value };
 
-    if (existingComputation) return;
+        if (isEqual(currentConfig, updatedConfig)) return computations;
 
-    const updatedComputation = {
-      ...computation,
-      descriptor: {
-        ...computation.descriptor,
-        configuration: updatedConfiguration,
-      },
-    };
-
-    analysisState.setComputations((computations) => {
-      return computations.map((comp) =>
-        comp.computationId === computation.computationId
-          ? updatedComputation
-          : comp
-      );
-    });
-  };
+        return computations.map((c) =>
+          c.computationId === computationId
+            ? {
+                ...c,
+                descriptor: { ...c.descriptor, configuration: updatedConfig },
+              }
+            : c
+        );
+      });
+    },
+    [setComputations, computationId]
+  );
 
   const { jobStatus, createJob } = useComputeJobStatus(
     analysis,
@@ -101,17 +104,20 @@ export function ComputeNotebookCell(
   const isComputationConfigurationValid = !!plugin?.isConfigurationComplete(
     computation.descriptor.configuration
   );
-  
+
   // Prep any additional restrictions on collections, if defined
   const additionalCollectionPredicate =
     getAdditionalCollectionPredicate &&
     getAdditionalCollectionPredicate(projectId);
-  
-  
+
   // Run the compute if we're all set to go. Useful when there is a default configuration.
   useEffect(() => {
-    if (isComputationConfigurationValid && jobStatus === 'no-such-job' && hidden) {
-      console.log("creating job");
+    if (
+      isComputationConfigurationValid &&
+      jobStatus === 'no-such-job' &&
+      hidden
+    ) {
+      console.log('creating job');
       createJob();
     }
   }, [isComputationConfigurationValid, jobStatus, createJob, hidden]);
@@ -123,7 +129,6 @@ export function ComputeNotebookCell(
     }
   }, [hidden, jobStatus]);
 
-
   return computation && appOverview ? (
     <>
       {/* Error Dialog */}
@@ -133,10 +138,27 @@ export function ComputeNotebookCell(
         aria-labelledby="compute-error-dialog-title"
         title="Computation failed"
       >
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '600px', padding: '1em', alignItems: 'center', fontSize: '1.2em', height: '130px', textAlign: 'center', margin: '0.5em 0' }}>
-            <p>The background {cell.title + ' ' || ''}computation for has failed. <strong>Please <Link to="/contact-us">contact us</Link> for assistance.</strong>
-            </p>
-            <p>After closing this dialog, you may continue with your search.</p>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            width: '600px',
+            padding: '1em',
+            alignItems: 'center',
+            fontSize: '1.2em',
+            height: '130px',
+            textAlign: 'center',
+            margin: '0.5em 0',
+          }}
+        >
+          <p>
+            The background {cell.title + ' ' || ''}computation for has failed.{' '}
+            <strong>
+              Please <Link to="/contact-us">contact us</Link> for assistance.
+            </strong>
+          </p>
+          <p>After closing this dialog, you may continue with your search.</p>
         </div>
       </Dialog>
       {hidden ? (
@@ -157,11 +179,7 @@ export function ComputeNotebookCell(
         />
       ) : (
         <>
-          {cell.helperText && (
-          <div className="NotebookCellHelpText">
-            <span>{cell.helperText}</span>
-          </div>
-          )}
+          <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
           <ExpandablePanel
             title={cell.title}
             subTitle={''}
@@ -169,7 +187,9 @@ export function ComputeNotebookCell(
             themeRole="primary"
           >
             <div
-              className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+              className={
+                'NotebookCellContent' + (isDisabled ? ' disabled' : '')
+              }
             >
               <plugin.configurationComponent
                 analysisState={analysisState}
@@ -209,13 +229,13 @@ export function ComputeNotebookCell(
               isDisabled={isSubCellDisabled}
               wdkState={wdkState}
               computeJobStatus={jobStatus}
+              stepNumber={stepNumbers?.get(subCell)}
+              stepNumbers={stepNumbers}
             />
           );
         })}
     </>
   ) : (
-    <div>
-      <p>"Loading"</p>
-    </div>
+    <Loading />
   );
 }

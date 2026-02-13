@@ -9,6 +9,7 @@ import { VisualizationCellDescriptor } from './NotebookPresets';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
@@ -20,6 +21,7 @@ export function VisualizationNotebookCell(
     expandedPanelState,
     wdkState,
     computeJobStatus,
+    stepNumber,
   } = props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
@@ -99,11 +101,7 @@ export function VisualizationNotebookCell(
 
   return visualization ? (
     <>
-      {cell.helperText && (
-        <div className="NotebookCellHelpText">
-          <span>{cell.helperText}</span>
-        </div>
-      )}
+      <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={cell.title}
         subTitle={''}

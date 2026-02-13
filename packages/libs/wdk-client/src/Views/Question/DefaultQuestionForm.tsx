@@ -110,27 +110,27 @@ export default function DefaultQuestionForm(props: Props) {
     submitting,
   } = state;
 
-  let defaultOnSubmit = useDefaultOnSubmit(
+  const defaultOnSubmit = useDefaultOnSubmit(
     dispatchAction,
     question.urlSegment,
     submissionMetadata,
     false
   );
-  let defaultOnWebservicesLinkClick = useDefaultOnSubmit(
+  const defaultOnWebservicesLinkClick = useDefaultOnSubmit(
     dispatchAction,
     question.urlSegment,
     submissionMetadata,
     true
   );
 
-  let dependentParamsAreUpdating = useDependentParamsAreUpdating(
+  const dependentParamsAreUpdating = useDependentParamsAreUpdating(
     question,
     state.paramsUpdatingDependencies
   );
 
-  let submissionDisabled = dependentParamsAreUpdating;
+  const submissionDisabled = dependentParamsAreUpdating;
 
-  let handleSubmit = React.useCallback(
+  const handleSubmit = React.useCallback(
     (event: React.FormEvent) => {
       if (submissionDisabled || (onSubmit != null && !onSubmit(event))) {
         return false;
@@ -141,7 +141,7 @@ export default function DefaultQuestionForm(props: Props) {
     [onSubmit, defaultOnSubmit, submissionDisabled]
   );
 
-  let handleWebservicesTutorialLinkClick = React.useCallback(
+  const handleWebservicesTutorialLinkClick = React.useCallback(
     (event: React.MouseEvent) => {
       if (onSubmit && !onSubmit(event)) {
         return false;
@@ -152,7 +152,9 @@ export default function DefaultQuestionForm(props: Props) {
     [onSubmit, defaultOnWebservicesLinkClick]
   );
 
-  let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCustomNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     dispatchAction(
       updateCustomQuestionName({
         searchName: question.urlSegment,
@@ -161,7 +163,7 @@ export default function DefaultQuestionForm(props: Props) {
     );
   };
 
-  let handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatchAction(
       updateQuestionWeight({
         searchName: question.urlSegment,
@@ -170,14 +172,14 @@ export default function DefaultQuestionForm(props: Props) {
     );
   };
 
-  let renderParamGroup = props.renderParamGroup
+  const renderParamGroup = props.renderParamGroup
     ? props.renderParamGroup
     : renderDefaultParamGroup;
-  let Description = props.DescriptionComponent || QuestionDescription;
+  const Description = props.DescriptionComponent || QuestionDescription;
 
-  let fullContainerClassName = `${containerClassName || ''} ` + cx();
+  const fullContainerClassName = `${containerClassName || ''} ` + cx();
 
-  let containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (
@@ -206,7 +208,11 @@ export default function DefaultQuestionForm(props: Props) {
           <form onSubmit={handleSubmit} noValidate={!validateForm}>
             {question.groups
               .filter((group) => group.displayType !== 'hidden')
-              .map((group) => renderParamGroup(group, props))}
+              .map((group, index) => (
+                <React.Fragment key={index}>
+                  {renderParamGroup(group, props)}
+                </React.Fragment>
+              ))}
             <SubmitSection
               className={cx('SubmitSection')}
               customName={customName}
@@ -288,8 +294,8 @@ export function renderDefaultParamGroup(
   group: ParameterGroup,
   formProps: Props
 ) {
-  let { state, eventHandlers, parameterElements } = formProps;
-  let { question, groupUIState, paramsUpdatingDependencies } = state;
+  const { state, eventHandlers, parameterElements } = formProps;
+  const { question, groupUIState, paramsUpdatingDependencies } = state;
   const paramDependenciesUpdating = makeParamDependenciesUpdating(
     question,
     paramsUpdatingDependencies
@@ -317,7 +323,7 @@ type DefaultGroupProps = {
 };
 
 export function DefaultGroup(props: DefaultGroupProps) {
-  let {
+  const {
     question,
     group,
     uiState,
@@ -360,7 +366,7 @@ type GroupProps = {
   group: ParameterGroup;
   uiState: any;
   onVisibilityChange: EventHandlers['setGroupVisibility'];
-  children: React.ReactChild;
+  children: React.ReactNode;
 };
 
 export function Group(props: GroupProps) {
@@ -543,7 +549,7 @@ interface SearchNameInputProps {
 }
 
 export function SearchNameInput(props: SearchNameInputProps) {
-  let { customName, handleCustomNameChange } = props;
+  const { customName, handleCustomNameChange } = props;
   return (
     <div>
       <HelpIcon>
@@ -566,7 +572,7 @@ interface WeightInputProps {
 }
 
 export function WeightInput(props: WeightInputProps) {
-  let { weight, handleWeightChange } = props;
+  const { weight, handleWeightChange } = props;
   return (
     <div>
       <HelpIcon>
@@ -603,7 +609,7 @@ interface WebServicesTutorialLinkProps {
 }
 
 function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
-  let { onClick } = props;
+  const { onClick } = props;
   return (
     <div style={{ marginBottom: '5px' }}>
       <Link
@@ -638,7 +644,7 @@ interface SubmitSectionProps {
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
-  let {
+  const {
     className,
     customName,
     handleCustomNameChange,

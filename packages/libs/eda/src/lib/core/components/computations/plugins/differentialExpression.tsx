@@ -4,29 +4,25 @@ import {
   LabeledRange,
   useStudyMetadata,
 } from '../../..';
-import {
-  VariableDescriptor,
-  VariableCollectionDescriptor,
-} from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { isEqual, partial } from 'lodash';
+import { isEqual } from 'lodash';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
   partialToCompleteCodec,
+  GENE_EXPRESSION_STABLE_IDS,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import {
   useDataClient,
   useFindEntityAndVariable,
-  useFindEntityAndVariableCollection,
   useSubsettingClient,
 } from '../../../hooks/workspace';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { Filter } from '../../..';
@@ -39,11 +35,12 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
-import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
+import { InputVariables } from '../../visualizations/InputVariables';
 import { enqueueSnackbar } from 'notistack';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
+import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -79,7 +76,8 @@ const Comparator = t.intersection([
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialExpressionConfig = t.partial({
-  collectionVariable: VariableCollectionDescriptor,
+  identifierVariable: VariableDescriptor,
+  valueVariable: VariableDescriptor,
   comparator: Comparator,
   differentialExpressionMethod: t.string,
   pValueFloor: t.string,
@@ -92,12 +90,66 @@ const CompleteDifferentialExpressionConfig = partialToCompleteCodec(
 // Check to ensure the entirety of the configuration is filled out before enabling the
 // Generate Results button.
 function isCompleteDifferentialExpressionConfig(config: unknown) {
-  return (
-    CompleteDifferentialExpressionConfig.is(config) &&
-    config.comparator.groupA != null &&
-    config.comparator.groupB != null
-  );
+  if (!CompleteDifferentialExpressionConfig.is(config)) return false;
+
+  if (config.identifierVariable == null) return false;
+  if (config.valueVariable == null) return false;
+  if (config.comparator?.groupA == null) return false;
+  if (config.comparator?.groupB == null) return false;
+
+  // Entity compatibility is enforced by InputVariables + constraints
+  // No need for manual validation here
+
+  return true;
 }
+
+/**
+ * Constraints for gene expression variable selection.
+ * Ensures only valid identifier and value variables can be selected,
+ * and enforces entity compatibility between them.
+ */
+const geneExpressionConstraints: DataElementConstraintRecord[] = [
+  {
+    comparatorVariable: {
+      isRequired: true,
+      minNumVars: 1,
+      maxNumVars: 1,
+      description:
+        'Select a metadata variable for group comparison. Must be from a parent entity of the expression data.',
+    },
+    identifierVariable: {
+      isRequired: true,
+      minNumVars: 1,
+      maxNumVars: 1,
+      allowedVariableIds: [GENE_EXPRESSION_STABLE_IDS.IDENTIFIER],
+      description:
+        'Select a gene identifier variable (VEUPATHDB_GENE_ID). Must be on the same entity as the expression data.',
+    },
+    valueVariable: {
+      isRequired: true,
+      minNumVars: 1,
+      maxNumVars: 1,
+      allowedVariableIds: [
+        GENE_EXPRESSION_STABLE_IDS.COUNT,
+        GENE_EXPRESSION_STABLE_IDS.COUNT_SENSE,
+        GENE_EXPRESSION_STABLE_IDS.COUNT_ANTISENSE,
+        GENE_EXPRESSION_STABLE_IDS.NORMALIZED,
+      ],
+      description:
+        'Select expression data: raw counts, sense/antisense counts, or normalized expression. Must be on the same entity as the gene identifier.',
+    },
+  },
+];
+
+/**
+ * Dependency order ensures entity compatibility.
+ * comparatorVariable must be from the same or ancestor entity of the expression data.
+ * identifierVariable and valueVariable must be from the same entity.
+ */
+const geneExpressionDependencyOrder = [
+  ['identifierVariable', 'valueVariable'],
+  ['comparatorVariable'],
+];
 
 export const plugin: ComputationPlugin = {
   configurationComponent: DifferentialExpressionConfiguration,
@@ -142,28 +194,39 @@ function DifferentialExpressionConfigDescriptionComponent({
   computation: Computation;
   filters: Filter[];
 }) {
-  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
   assertComputationWithConfig(computation, DifferentialExpressionConfig);
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { configuration } = computation.descriptor;
-  const collectionVariable =
-    'collectionVariable' in configuration
-      ? configuration.collectionVariable
-      : undefined;
+
+  const identifierVariable = configuration.identifierVariable
+    ? findEntityAndVariable(configuration.identifierVariable)
+    : undefined;
+
+  const valueVariable = configuration.valueVariable
+    ? findEntityAndVariable(configuration.valueVariable)
+    : undefined;
+
   const comparatorVariable = configuration.comparator
     ? findEntityAndVariable(configuration.comparator.variable)
     : undefined;
 
-  const entityAndCollectionVariableTreeNode =
-    findEntityAndVariableCollection(collectionVariable);
-
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Data:{' '}
+        Gene Identifier:{' '}
         <span>
-          {entityAndCollectionVariableTreeNode ? (
-            `${entityAndCollectionVariableTreeNode.entity.displayName} > ${entityAndCollectionVariableTreeNode.variableCollection.displayName}`
+          {identifierVariable ? (
+            `${identifierVariable.entity.displayName} > ${identifierVariable.variable.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
+        </span>
+      </h4>
+      <h4>
+        Expression Data:{' '}
+        <span>
+          {valueVariable ? (
+            `${valueVariable.entity.displayName} > ${valueVariable.variable.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -294,6 +357,14 @@ export function DifferentialExpressionConfiguration(
     );
   }
 
+  const entities = useMemo(
+    () =>
+      studyMetadata?.rootEntity
+        ? entityTreeToArray(studyMetadata.rootEntity)
+        : [],
+    [studyMetadata]
+  );
+
   const selectedComparatorVariable = useMemo(() => {
     if (
       configuration &&
@@ -415,46 +486,74 @@ export function DifferentialExpressionConfiguration(
       <div className={cx()}>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
           <H6>Input Data</H6>
-          <div className={cx('-InputContainer')}>
-            <span>Data</span>
-            <VariableCollectionSingleSelect
-              value={configuration.collectionVariable}
-              onSelect={partial(changeConfigHandler, 'collectionVariable')}
-              collectionPredicate={(collection) => true}
-            />
-          </div>
+          <InputVariables
+            inputs={[
+              {
+                name: 'identifierVariable',
+                label: 'Gene Identifier',
+                role: 'axis',
+                titleOverride: 'Expression Data',
+              },
+              {
+                name: 'valueVariable',
+                label: 'Count type',
+                role: 'axis',
+              },
+              {
+                name: 'comparatorVariable',
+                label: 'Metadata Variable',
+                role: 'stratification',
+                titleOverride: 'Group Comparison',
+              },
+            ]}
+            entities={entities}
+            selectedVariables={{
+              identifierVariable: configuration.identifierVariable,
+              valueVariable: configuration.valueVariable,
+              comparatorVariable: configuration.comparator?.variable,
+            }}
+            onChange={(vars) => {
+              if (
+                vars.identifierVariable !== configuration.identifierVariable
+              ) {
+                changeConfigHandler(
+                  'identifierVariable',
+                  vars.identifierVariable
+                );
+              }
+              if (vars.valueVariable !== configuration.valueVariable) {
+                changeConfigHandler('valueVariable', vars.valueVariable);
+              }
+              if (
+                vars.comparatorVariable !== configuration.comparator?.variable
+              ) {
+                changeConfigHandler(
+                  'comparator',
+                  vars.comparatorVariable
+                    ? {
+                        variable: vars.comparatorVariable as VariableDescriptor,
+                      }
+                    : undefined
+                );
+              }
+            }}
+            constraints={geneExpressionConstraints}
+            dataElementDependencyOrder={geneExpressionDependencyOrder}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables ?? []
+            }
+            toggleStarredVariable={toggleStarredVariable}
+          />
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
-          <H6>Group Comparison</H6>
+          <H6>Group Values</H6>
           <div
             className={cx('-DiffExpressionOuterConfigContainerGroupComparison')}
           >
-            <div className={cx('-InputContainer')}>
-              <span>Metadata Variable</span>
-              <VariableTreeDropdown
-                showClearSelectionButton={false}
-                scope="variableTree"
-                showMultiFilterDescendants
-                starredVariables={
-                  analysisState.analysis?.descriptor.starredVariables
-                }
-                toggleStarredVariable={toggleStarredVariable}
-                entityId={configuration?.comparator?.variable?.entityId}
-                variableId={configuration?.comparator?.variable?.variableId}
-                variableLinkConfig={{
-                  type: 'button',
-                  onClick: (variable) => {
-                    changeConfigHandler('comparator', {
-                      variable: variable as VariableDescriptor,
-                    });
-                  },
-                }}
-              />
-            </div>
             <Tooltip
               title={
                 disableGroupValueSelectors
-                  ? 'Please select a Group Comparison variable first'
+                  ? 'Please select a Metadata Variable first'
                   : ''
               }
             >
@@ -589,12 +688,22 @@ function isEnabledInPicker({
 
   const entities = entityTreeToArray(studyMetadata.rootEntity);
 
-  // Ensure there are collections in this study. Otherwise, disable app
-  const studyHasCollections = entities.some(
-    (entity) => !!entity.collections?.length
+  // Check if we have the required gene expression variables
+  const hasIdentifierVariable = entities.some((entity) =>
+    entity.variables.some(
+      (variable) => variable.id === GENE_EXPRESSION_STABLE_IDS.IDENTIFIER
+    )
   );
 
-  // TODO Remove this temporary override when the data is ready and collections have been verified.
-  // return studyHasCollections;
-  return true;
+  const hasValueVariable = entities.some((entity) =>
+    entity.variables.some(
+      (variable) =>
+        variable.id === GENE_EXPRESSION_STABLE_IDS.COUNT ||
+        variable.id === GENE_EXPRESSION_STABLE_IDS.COUNT_SENSE ||
+        variable.id === GENE_EXPRESSION_STABLE_IDS.COUNT_ANTISENSE ||
+        variable.id === GENE_EXPRESSION_STABLE_IDS.NORMALIZED
+    )
+  );
+
+  return hasIdentifierVariable && hasValueVariable;
 }

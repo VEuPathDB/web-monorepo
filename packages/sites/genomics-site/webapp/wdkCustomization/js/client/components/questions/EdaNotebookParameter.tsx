@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
@@ -37,74 +37,47 @@ import {
 } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 
 type EdaNotebookParameterProps = {
-  value: string;
-  datasetIdParamName?: string; // unused; should this be datasetId ?
-  notebookTypeParamName?: string; // unused
   wdkState: WdkState;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
-  const { value, datasetIdParamName, notebookTypeParamName, wdkState } = props;
+  const { wdkState } = props;
+  const { parameters, paramValues, updateParamValue } = wdkState;
 
-  const datasetIdParamName2 = 'eda_dataset_id';
-  const queryNotebookList = [
-    {
-      queryname: 'GenesByEdaVizWithCompute',
-      notebookname: 'differentialExpressionNotebook',
-    },
-    {
-      queryname: 'GenesByWGCNAModule',
-      notebookname: 'wgcnaCorrelationNotebook',
-    },
-  ];
-  const queryNotebook = queryNotebookList.find(
-    (obj) => obj.queryname === wdkState.queryName
-  );
+  const studyId = paramValues['eda_dataset_id'];
+  const notebookType = paramValues['eda_notebook_type'];
+  const analysisJson = paramValues['eda_analysis_spec'];
 
-  const studyId = wdkState.paramValues![datasetIdParamName2];
-  const notebookType = queryNotebook!.notebookname;
-
-  // we need to maintain the analysis as regular "live" React state somewhere
-  const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
+  // Local state gives immediate re-renders so dependent dropdowns always see
+  // fresh values (fixes rapid-selection stale state bug).
+  const [analysis, setAnalysis] = useState<Analysis | NewAnalysis | undefined>(
     () => {
-      const parsed = parseJson(value);
+      const parsed = parseJson(analysisJson);
       return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
     }
   );
 
-  // Disabled for now: persistence of analysis state to the 'param'
-  // It should probably be persisted to another 'param' because this
-  // 'param' needs to store the WGCNA module
+  // Persist to WDK after each render. updateParamValue and parameters are
+  // stored in refs so they are NOT effect dependencies — this avoids a
+  // feedback loop if WDK produces a new updateParamValue reference on the
+  // re-render triggered by the Redux dispatch.
+  const updateParamValueRef = useRef(updateParamValue);
+  const parametersRef = useRef(parameters);
+  useEffect(() => {
+    updateParamValueRef.current = updateParamValue;
+    parametersRef.current = parameters;
+  });
 
-  //  // Here we periodically send analysis state back upstream to WDK
-  //  const debouncedPersist = useMemo(
-  //    () =>
-  //      debounce(
-  //        (a: Analysis | NewAnalysis | undefined) =>
-  //          onParamValueChange(JSON.stringify(a)),
-  //        500
-  //      ),
-  //    [onParamValueChange]
-  //  );
-  //  useEffect(() => {
-  //    debouncedPersist(analysis);
-  //  }, [analysis, debouncedPersist]);
-  //
-  // useEffect(() => {
-  //   return () => {
-  //     debouncedPersist.cancel();
-  //   };
-  // }, [debouncedPersist]);
+  useEffect(() => {
+    if (analysis == null) return;
+    const param = parametersRef.current.find(
+      (p) => p.name === 'eda_analysis_spec'
+    );
+    if (param) {
+      updateParamValueRef.current(param, JSON.stringify(analysis));
+    }
+  }, [analysis]); // intentionally omitting updateParamValue/parameters (kept current via refs)
 
-  // TO DO (maybe)
-  // Consider watching `value` for updates that happened on the WDK side
-  // and if there's a change that's not deep-equals to `analysis`
-  // call `setAnalysis` with a newly deserialised object.
-  // But probably this never happens? Maybe if the user
-  // has two tabs open?? Good idea to look at what the regular EDA does.
-
-  // debounce clean-up, just to be on the safe side
-  // Create the all-singing, all-dancing analysisState
   const analysisState = useAnalysisState(analysis, setAnalysis);
 
   if (studyId == null) return <div>Could not find eda study id</div>;
@@ -207,8 +180,8 @@ function formatParameterValue(
       }
       return (
         <div style={{ whiteSpace: 'pre-line' }}>
-          {obj.descriptor.subset.descriptor.map((filter) => (
-            <div>
+          {obj.descriptor.subset.descriptor.map((filter, index) => (
+            <div key={index}>
               {filter.variableId}: {formatFilterDisplayValue(filter)}
             </div>
           ))}
