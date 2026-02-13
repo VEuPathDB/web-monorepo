@@ -1,5 +1,59 @@
 # Going Tall: Next Steps for Gene Expression Analysis
 
+## Status Update (2026-02-12): WDK Parameter Persistence
+
+### ✅ Completed: Persist EDA analysis state to `eda_analysis_spec`
+
+`EdaNotebookParameter` now persists analysis state to the WDK `eda_analysis_spec` parameter, following the same `useMemo` + `useSetterWithCallback` + `useAnalysisState` pattern used by `EdaSubsetParameter` in production.
+
+**Changes made:**
+
+1. **`EdaNotebookParameter.tsx`** — Rewrote to read `studyId`, `notebookType`, and analysis state from WDK `paramValues` (`eda_dataset_id`, `eda_notebook_type`, `eda_analysis_spec`). Removed hardcoded `queryNotebookList` lookup, `value` prop, and all commented-out persistence code. Added `useSetterWithCallback`-based persistence.
+
+2. **`EdaNotebookQuestionForm.tsx`** — Removed `value={'test'}` prop, dev console.logs, and added safe `!` for `queryName` (guaranteed by plugin routing).
+
+3. **`WdkState` interface** (`EdaNotebookAnalysis.tsx`) — Made all fields required (they're always provided). Updated `NotebookRoute.tsx` (dev route) with dummy values and TODO.
+
+4. **`WdkParamNotebookCell.tsx`** — Added early `return null` guard for nullish `wdkState`, removed unnecessary `?.` operators.
+
+5. **`ComputeNotebookCell.tsx`** — Rewrote `changeConfigHandler` to do all work inside the `setComputations` functional update (avoids stale closure), wrapped in `useCallback`.
+
+6. **`NotebookPresets.tsx`** — Fixed volcano plot threshold display: find DE computation by `descriptor.type` instead of hardcoded `computations[1]` index (broken since PCA was commented out).
+
+### ⚠️ Remaining Bug: Rapid interaction causes stale state
+
+**Symptom:** If the user selects a "Reference Group" value and quickly moves to "Comparison Group", the second selection doesn't stick. Waiting ~5 seconds between selections works fine.
+
+**Root cause:** The `useMemo` + `useSetterWithCallback` pattern round-trips through WDK Redux (`updateParamValue` → store update → `paramValues` prop change → `useMemo` reparse). During this round-trip, `analysisState.analysis` still reflects the OLD state. The `DifferentialExpressionConfiguration` component assembles the new `comparator` value from render-time `configuration`, so the second dropdown handler reads stale `groupA` (still `undefined`) and overwrites it.
+
+**Proposed fix:** Replace `useMemo` + `useSetterWithCallback` in `EdaNotebookParameter.tsx` with `useState` for immediate local re-renders, plus a `useEffect` for WDK persistence:
+
+```typescript
+// Local state for immediate UI response
+const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
+  () => {
+    const parsed = parseJson(paramValues['eda_analysis_spec']);
+    return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
+  }
+);
+
+// Persist to WDK after each render
+useEffect(() => {
+  if (analysis == null) return;
+  const param = parameters.find((p) => p.name === 'eda_analysis_spec');
+  if (param) {
+    updateParamValue(param, JSON.stringify(analysis));
+  }
+}, [analysis, parameters, updateParamValue]);
+
+// analysisState.analysis = analysis (local, always fresh)
+const analysisState = useAnalysisState(analysis, setAnalysis);
+```
+
+This gives immediate local re-renders (so the second dropdown sees the first selection) while still persisting to WDK. The `EdaSubsetParameter` doesn't have this issue because its interactions are single-action (filter selection), not rapid dependent selections.
+
+---
+
 ## Status Update (2026-02-06)
 
 ### ✅ Completed: Differential Expression Tall Format Migration
