@@ -9,8 +9,27 @@ import FieldFilter from '../../Components/AttributeFilter/FieldFilter';
 /**
  * Filtering UI for server-side filtering.
  */
-function ServerSideAttributeFilter(props) {
-  var { displayName, fieldTree, hideFilterPanel, hideFieldPanel } = props;
+function ServerSideAttributeFilter({
+  displayName = 'Items',
+  hideFilterPanel = false,
+  hideFieldPanel = false,
+  hideGlobalCounts = false,
+  selectByDefault = false,
+  histogramScaleYAxisDefault = true,
+  histogramTruncateYAxisDefault = false,
+  ...restProps
+}) {
+  var { fieldTree } = restProps;
+  const allProps = {
+    displayName,
+    hideFilterPanel,
+    hideFieldPanel,
+    hideGlobalCounts,
+    selectByDefault,
+    histogramScaleYAxisDefault,
+    histogramTruncateYAxisDefault,
+    ...restProps,
+  };
 
   if (fieldTree == null) {
     return <h3>Data is not available for {displayName}.</h3>;
@@ -18,20 +37,20 @@ function ServerSideAttributeFilter(props) {
 
   return (
     <div style={{ overflowX: 'auto', marginRight: '1em' }}>
-      {hideFilterPanel || <FilterList {...props} />}
+      {hideFilterPanel || <FilterList {...allProps} />}
 
       {/* Main selection UI */}
       <div className="filters ui-helper-clearfix">
         {hideFieldPanel || (
           <FieldList
-            autoFocus={props.autoFocus}
-            fieldTree={props.fieldTree}
-            onActiveFieldChange={props.onActiveFieldChange}
-            activeField={props.activeField}
-            valuesMap={props.valuesMap}
+            autoFocus={restProps.autoFocus}
+            fieldTree={restProps.fieldTree}
+            onActiveFieldChange={restProps.onActiveFieldChange}
+            activeField={restProps.activeField}
+            valuesMap={restProps.valuesMap}
           />
         )}
-        <FieldFilter {...props} />
+        <FieldFilter {...allProps} />
       </div>
     </div>
   );
@@ -77,16 +96,6 @@ ServerSideAttributeFilter.propTypes = {
   onMemberSort: PropTypes.func.isRequired,
   onMemberSearch: PropTypes.func.isRequired,
   onRangeScaleChange: PropTypes.func.isRequired,
-};
-
-ServerSideAttributeFilter.defaultProps = {
-  displayName: 'Items',
-  hideFilterPanel: false,
-  hideFieldPanel: false,
-  hideGlobalCounts: false,
-  selectByDefault: false,
-  histogramScaleYAxisDefault: true,
-  histogramTruncateYAxisDefault: false,
 };
 
 export default wrappable(ServerSideAttributeFilter);
