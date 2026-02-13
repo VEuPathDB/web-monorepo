@@ -480,10 +480,11 @@ export function DifferentialExpressionConfiguration(
                 name: 'identifierVariable',
                 label: 'Gene Identifier',
                 role: 'axis',
+                titleOverride: 'Expression Data',
               },
               {
                 name: 'valueVariable',
-                label: 'Expression Data',
+                label: 'Count type',
                 role: 'axis',
               },
             ]}
