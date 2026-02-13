@@ -7,12 +7,16 @@ export const ShowHideVariableContext = createContext({
   ) => {},
 });
 
-// const ShowHideVariableContextProvider: React.FC<React.ReactNode> = ({
-const ShowHideVariableContextProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+interface ShowHideVariableContextProviderProps {
+  defaultShowOnlyCompatible?: boolean;
+  children: React.ReactNode;
+}
+
+const ShowHideVariableContextProvider: React.FC<
+  ShowHideVariableContextProviderProps
+> = ({ defaultShowOnlyCompatible = false, children }) => {
   const [showOnlyCompatibleVariables, setShowOnlyCompatibleVariables] =
-    useState(false);
+    useState(defaultShowOnlyCompatible);
   const setShowOnlyCompatibleVariablesHandler = (
     showOnlyCompatibleVariables: boolean
   ) => setShowOnlyCompatibleVariables(showOnlyCompatibleVariables);

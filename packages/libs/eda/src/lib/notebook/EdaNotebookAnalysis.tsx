@@ -9,6 +9,7 @@ import { Computation } from '../core/types/visualization';
 import { plugins } from '../core/components/computations/plugins';
 import { H5 } from '@veupathdb/coreui';
 import colors from '@veupathdb/coreui/lib/definitions/colors';
+import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import {
   Parameter,
   ParameterValues,
@@ -149,27 +150,29 @@ export function EdaNotebookAnalysis(props: Props) {
   // `notebookState` coming from analysisState.analysis.descriptor.subset.uiSettings[NOTEBOOK_UI_SETTINGS_KEY]
   //
   return (
-    <div className="EdaNotebook">
-      <div className="Paper">
-        {notebookPreset.header && (
-          <H5 text={notebookPreset.header} color={colors.gray[600]} />
-        )}
-        {analysis.descriptor.computations.length > 0 ? (
-          notebookPreset.cells.map((cell, index) => (
-            <NotebookCell
-              key={index}
-              analysisState={analysisState}
-              wdkState={wdkState}
-              cell={cell}
-              projectId={projectId}
-              stepNumber={stepNumbers.get(cell)}
-              stepNumbers={stepNumbers}
-            />
-          ))
-        ) : (
-          <Loading />
-        )}
+    <ShowHideVariableContextProvider defaultShowOnlyCompatible>
+      <div className="EdaNotebook">
+        <div className="Paper">
+          {notebookPreset.header && (
+            <H5 text={notebookPreset.header} color={colors.gray[600]} />
+          )}
+          {analysis.descriptor.computations.length > 0 ? (
+            notebookPreset.cells.map((cell, index) => (
+              <NotebookCell
+                key={index}
+                analysisState={analysisState}
+                wdkState={wdkState}
+                cell={cell}
+                projectId={projectId}
+                stepNumber={stepNumbers.get(cell)}
+                stepNumbers={stepNumbers}
+              />
+            ))
+          ) : (
+            <Loading />
+          )}
+        </div>
       </div>
-    </div>
+    </ShowHideVariableContextProvider>
   );
 }
