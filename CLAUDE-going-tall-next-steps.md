@@ -1,5 +1,18 @@
 # Going Tall: Next Steps for Gene Expression Analysis
 
+## Status Update (2026-02-13): Stale State Fix & UI Tidy
+
+### ✅ Fixed: stale state on rapid dropdown interaction (`EdaNotebookParameter.tsx`)
+
+### ✅ Fixed: `"Loading"` placeholder → `<Loading />` spinner (`ComputeNotebookCell.tsx`)
+
+### ✅ UI: Input Data section labelling tidied (`differentialExpression.tsx`)
+
+- Section heading: "Axis variables" → "Expression Data"
+- Variable label: "Expression Data" → "Count type"
+
+---
+
 ## Status Update (2026-02-12): WDK Parameter Persistence
 
 ### ✅ Completed: Persist EDA analysis state to `eda_analysis_spec`
@@ -20,37 +33,13 @@
 
 6. **`NotebookPresets.tsx`** — Fixed volcano plot threshold display: find DE computation by `descriptor.type` instead of hardcoded `computations[1]` index (broken since PCA was commented out).
 
-### ⚠️ Remaining Bug: Rapid interaction causes stale state
+### ✅ Fixed: Rapid interaction causes stale state
 
-**Symptom:** If the user selects a "Reference Group" value and quickly moves to "Comparison Group", the second selection doesn't stick. Waiting ~5 seconds between selections works fine.
+**Was:** If the user selected a "Reference Group" value and quickly moved to "Comparison Group", the second selection didn't stick.
 
-**Root cause:** The `useMemo` + `useSetterWithCallback` pattern round-trips through WDK Redux (`updateParamValue` → store update → `paramValues` prop change → `useMemo` reparse). During this round-trip, `analysisState.analysis` still reflects the OLD state. The `DifferentialExpressionConfiguration` component assembles the new `comparator` value from render-time `configuration`, so the second dropdown handler reads stale `groupA` (still `undefined`) and overwrites it.
+**Root cause:** The `useMemo` + `useSetterWithCallback` pattern stored state in a `useRef` (no re-render). Child components read render-time props, so the second dropdown handler saw stale `groupA` and overwrote it.
 
-**Proposed fix:** Replace `useMemo` + `useSetterWithCallback` in `EdaNotebookParameter.tsx` with `useState` for immediate local re-renders, plus a `useEffect` for WDK persistence:
-
-```typescript
-// Local state for immediate UI response
-const [analysis, setAnalysis] = useState<NewAnalysis | Analysis | undefined>(
-  () => {
-    const parsed = parseJson(paramValues['eda_analysis_spec']);
-    return NewAnalysis.is(parsed) ? parsed : makeNewAnalysis(studyId);
-  }
-);
-
-// Persist to WDK after each render
-useEffect(() => {
-  if (analysis == null) return;
-  const param = parameters.find((p) => p.name === 'eda_analysis_spec');
-  if (param) {
-    updateParamValue(param, JSON.stringify(analysis));
-  }
-}, [analysis, parameters, updateParamValue]);
-
-// analysisState.analysis = analysis (local, always fresh)
-const analysisState = useAnalysisState(analysis, setAnalysis);
-```
-
-This gives immediate local re-renders (so the second dropdown sees the first selection) while still persisting to WDK. The `EdaSubsetParameter` doesn't have this issue because its interactions are single-action (filter selection), not rapid dependent selections.
+**Fix applied (2026-02-13):** Replaced `useMemo` + `useSetterWithCallback` in `EdaNotebookParameter.tsx` with `useState` for immediate local re-renders, plus a `useEffect` for WDK persistence. `updateParamValue` and `parameters` are held in refs inside the effect to avoid a potential feedback loop from Redux re-renders producing a new `updateParamValue` reference.
 
 ---
 
