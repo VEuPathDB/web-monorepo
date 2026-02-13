@@ -322,11 +322,12 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
           />
           <NumberedHeader
             number={1}
-            text="Find your group or lab"
             color={
               theme?.palette.primary.hue[theme?.palette.primary.level] ?? 'blue'
             }
-          />
+          >
+            Find your group or lab
+          </NumberedHeader>
           <div
             style={{
               marginLeft: '1.5em',
@@ -417,14 +418,15 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
           <NumberedHeader
             number={2}
-            text="Associate your account with your group"
             color={
               localSelection
                 ? theme?.palette.primary.hue[theme?.palette.primary.level] ??
                   'blue'
                 : colors.gray[500]
             }
-          />
+          >
+            Associate your account with your group
+          </NumberedHeader>
           <div
             style={{
               marginLeft: '1.5em',

@@ -2,9 +2,10 @@ import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/Expanda
 import { NotebookCellProps } from './NotebookCell';
 import { TextCellDescriptor } from './NotebookPresets';
 import { useMemo } from 'react';
+import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
-  const { cell, isDisabled, analysisState } = props;
+  const { cell, isDisabled, analysisState, stepNumber } = props;
 
   const { text, title, getDynamicContent } = cell;
 
@@ -15,11 +16,7 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
 
   return (
     <>
-      {cell.helperText && (
-        <div className="NotebookCellHelpText">
-          <span>{cell.helperText}</span>
-        </div>
-      )}
+      <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={title}
         subTitle={''}

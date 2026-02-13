@@ -12,11 +12,20 @@ import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/Expanda
 import { useCallback, useEffect, useState } from 'react';
 import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
 import { Link } from 'react-router-dom';
+import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled, wdkState, projectId } = props;
+  const {
+    analysisState,
+    cell,
+    isDisabled,
+    wdkState,
+    projectId,
+    stepNumber,
+    stepNumbers,
+  } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
   console.log('compute name', cell.computationName);
@@ -170,11 +179,7 @@ export function ComputeNotebookCell(
         />
       ) : (
         <>
-          {cell.helperText && (
-            <div className="NotebookCellHelpText">
-              <span>{cell.helperText}</span>
-            </div>
-          )}
+          <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
           <ExpandablePanel
             title={cell.title}
             subTitle={''}
@@ -224,6 +229,8 @@ export function ComputeNotebookCell(
               isDisabled={isSubCellDisabled}
               wdkState={wdkState}
               computeJobStatus={jobStatus}
+              stepNumber={stepNumbers?.get(subCell)}
+              stepNumbers={stepNumbers}
             />
           );
         })}

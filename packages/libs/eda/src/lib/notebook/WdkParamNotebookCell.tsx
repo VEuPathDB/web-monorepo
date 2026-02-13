@@ -1,6 +1,7 @@
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellProps } from './NotebookCell';
 import { WdkParamCellDescriptor } from './NotebookPresets';
+import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 import { SingleSelect } from '@veupathdb/coreui';
 import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
@@ -9,7 +10,7 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 export function WdkParamNotebookCell(
   props: NotebookCellProps<WdkParamCellDescriptor>
 ) {
-  const { cell, isDisabled, wdkState } = props;
+  const { cell, isDisabled, wdkState, stepNumber } = props;
 
   if (!wdkState) return null;
 
@@ -26,11 +27,7 @@ export function WdkParamNotebookCell(
 
   return (
     <>
-      {cell.helperText && (
-        <div className="NotebookCellHelpText">
-          <span>{cell.helperText}</span>
-        </div>
-      )}
+      <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={title}
         subTitle={''}

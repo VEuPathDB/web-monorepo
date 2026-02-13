@@ -1,7 +1,6 @@
 // Notebook presets
 
 import { ReactNode } from 'react';
-import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 import { colors } from '@material-ui/core';
 import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
@@ -30,6 +29,7 @@ export interface NotebookCellDescriptorBase<T extends string> {
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
+  numberedHeader?: boolean; // If true, helperText will be rendered inside a NumberedHeader with an auto-computed step number
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
 }
 
@@ -105,12 +105,9 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       {
         type: 'subset',
         title: 'Select samples (optional)',
+        numberedHeader: true,
         helperText: (
-          <NumberedHeader
-            number={1}
-            text={'Optionally refine samples for differential expression.'}
-            color={colors.grey[800]}
-          />
+          <span>Optionally refine samples for differential expression.</span>
         ),
       },
       // TEMPORARILY DISABLED: PCA dimensionality reduction pending tall format migration
@@ -126,14 +123,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       //       title: 'PCA Plot',
       //       visualizationName: 'scatterplot',
       //       visualizationId: 'pca_1',
+      //       numberedHeader: true,
       //       helperText: (
-      //         <NumberedHeader
-      //           number={2}
-      //           text={
-      //             'Use PCA to investigate possible sources of variation in the dataset.'
-      //           }
-      //           color={colors.grey[800]}
-      //         />
+      //         <span>
+      //           Use PCA to investigate possible sources of variation in the dataset.
+      //         </span>
       //       ),
       //     },
       //   ],
@@ -143,14 +137,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Setup DESeq2 Computation',
         computationName: 'differentialexpression',
         computationId: 'de_1',
+        numberedHeader: true,
         helperText: (
-          <NumberedHeader
-            number={3}
-            text={
-              'Run a differential expression analysis using DESeq2. Please choose the metadata variable for comparison, and then set up the reference and comparison groups. When all selections have been made, we can run the computation.'
-            }
-            color={colors.grey[800]}
-          />
+          <span>
+            Run a differential expression analysis using DESeq2. Please choose
+            the metadata variable for comparison, and then set up the reference
+            and comparison groups. When all selections have been made, we can
+            run the computation.
+          </span>
         ),
         cells: [
           {
@@ -193,27 +187,25 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 },
               };
             },
+            numberedHeader: true,
             helperText: (
-              <NumberedHeader
-                number={4}
-                text={
-                  'Once the DESeq2 results are ready, a volcano plot will appear below. Set the threshold lines to color the genes based on their significance and fold change.'
-                }
-                color={colors.grey[800]}
-              />
+              <span>
+                Once the DESeq2 results are ready, a volcano plot will appear
+                below. Set the threshold lines to color the genes based on their
+                significance and fold change.
+              </span>
             ),
           },
           {
             type: 'text',
             title: 'Review and run search',
+            numberedHeader: true,
             helperText: (
-              <NumberedHeader
-                number={5}
-                text={
-                  'After identifying genes of interest from the volcano plot, run a gene search to review the genes in the Gene Search Results table.'
-                }
-                color={colors.grey[800]}
-              />
+              <span>
+                After identifying genes of interest from the volcano plot, run a
+                gene search to review the genes in the Gene Search Results
+                table.
+              </span>
             ),
             text: (
               <div
@@ -306,14 +298,12 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Correlation computation',
         computationName: 'correlation',
         computationId: 'correlation_1',
+        numberedHeader: true,
         helperText: (
-          <NumberedHeader
-            number={1}
-            text={
-              'Configure and run a correlation computation between WGCNA module eigengene expression and other features of interest.'
-            }
-            color={colors.grey[800]}
-          />
+          <span>
+            Configure and run a correlation computation between WGCNA module
+            eigengene expression and other features of interest.
+          </span>
         ),
         getAdditionalCollectionPredicate:
           (projectId?: string) =>
@@ -335,14 +325,12 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             title: 'Network visualization of correlation results',
             visualizationName: 'bipartitenetwork',
             visualizationId: 'bipartite_1',
+            numberedHeader: true,
             helperText: (
-              <NumberedHeader
-                number={2}
-                text={
-                  'Visualize the correlation results between the two groups in the network. Click on nodes to highlight them in the network.'
-                }
-                color={colors.grey[800]}
-              />
+              <span>
+                Visualize the correlation results between the two groups in the
+                network. Click on nodes to highlight them in the network.
+              </span>
             ),
             getVizPluginOptions: (
               wdkState: WdkState,
@@ -415,14 +403,12 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'wdkparam',
         title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+        numberedHeader: true,
         helperText: (
-          <NumberedHeader
-            number={3}
-            text={
-              "Find genes within a particular module that are strongly correlated with the module's eigengene."
-            }
-            color={colors.grey[800]}
-          />
+          <span>
+            Find genes within a particular module that are strongly correlated
+            with the module&apos;s eigengene.
+          </span>
         ),
       },
     ],

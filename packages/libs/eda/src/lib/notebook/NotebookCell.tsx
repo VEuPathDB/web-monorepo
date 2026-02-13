@@ -16,6 +16,8 @@ export interface NotebookCellProps<T extends NotebookCellDescriptor> {
   wdkState?: WdkState;
   projectId?: string; // Project ID, ex: PlasmoDB, MicrobiomeDB, etc.
   computeJobStatus?: JobStatus; // Optional status of the compute job, useful for displaying progress or errors.
+  stepNumber?: number; // Auto-computed step number for NumberedHeader display.
+  stepNumbers?: Map<NotebookCellDescriptor, number>; // Map of all cell descriptors to their step numbers (for forwarding to nested cells).
 }
 
 /**

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { AnalysisState } from '../core';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { NotebookCell } from './NotebookCell';
@@ -124,6 +124,21 @@ export function EdaNotebookAnalysis(props: Props) {
 
   console.log('notebookpreset', notebookPreset);
 
+  // Pre-compute step numbers for all cells with numberedHeader: true.
+  // Uses a depth-first walk so nested cells (e.g. volcano inside DE compute)
+  // get sequential numbers. The Map is stable across partial re-renders.
+  const stepNumbers = useMemo(() => {
+    const map = new Map<NotebookCellDescriptor, number>();
+    let n = 0;
+    (function walk(cells: NotebookCellDescriptor[]) {
+      for (const cell of cells) {
+        if (cell.numberedHeader) map.set(cell, ++n);
+        if ('cells' in cell && cell.cells) walk(cell.cells);
+      }
+    })(notebookPreset.cells);
+    return map;
+  }, [notebookPreset]);
+
   //
   // Now we render the notebook directly from the read-only `notebookPreset`,
   // fetching computations and visualizations from analysisState.analysis where needed.
@@ -147,6 +162,8 @@ export function EdaNotebookAnalysis(props: Props) {
               wdkState={wdkState}
               cell={cell}
               projectId={projectId}
+              stepNumber={stepNumbers.get(cell)}
+              stepNumbers={stepNumbers}
             />
           ))
         ) : (

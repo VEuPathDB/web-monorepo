@@ -1,8 +1,8 @@
-import React from 'react';
+import { ReactNode } from 'react';
 
 export type NumberedHeaderProps = {
   number: number;
-  text: string;
+  children: ReactNode;
   color?: string;
 };
 
@@ -48,7 +48,7 @@ export default function NumberedHeader(props: NumberedHeaderProps) {
           fontWeight: 'bold',
         }}
       >
-        {props.text}
+        {props.children}
       </div>
     </div>
   );

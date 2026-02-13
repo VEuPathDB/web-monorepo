@@ -10,11 +10,12 @@ import Subsetting from '../workspace/Subsetting';
 import { NotebookCellProps } from './NotebookCell';
 import { SubsetCellDescriptor } from './NotebookPresets';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
+import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function SubsettingNotebookCell(
   props: NotebookCellProps<SubsetCellDescriptor>
 ) {
-  const { analysisState, cell, isDisabled } = props;
+  const { analysisState, cell, isDisabled, stepNumber } = props;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const varAndEnt = getDefaultVariableDescriptor();
@@ -45,11 +46,7 @@ export function SubsettingNotebookCell(
 
   return (
     <>
-      {cell.helperText && (
-        <div className="NotebookCellHelpText">
-          <span>{cell.helperText}</span>
-        </div>
-      )}
+      <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={cell.title}
         subTitle={''}
