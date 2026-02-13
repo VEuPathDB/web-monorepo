@@ -23,7 +23,6 @@ import {
 } from '../../../hooks/workspace';
 import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import VariableTreeDropdown from '../../variableSelectors/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { Filter } from '../../..';
@@ -111,6 +110,13 @@ function isCompleteDifferentialExpressionConfig(config: unknown) {
  */
 const geneExpressionConstraints: DataElementConstraintRecord[] = [
   {
+    comparatorVariable: {
+      isRequired: true,
+      minNumVars: 1,
+      maxNumVars: 1,
+      description:
+        'Select a metadata variable for group comparison. Must be from a parent entity of the expression data.',
+    },
     identifierVariable: {
       isRequired: true,
       minNumVars: 1,
@@ -137,9 +143,13 @@ const geneExpressionConstraints: DataElementConstraintRecord[] = [
 
 /**
  * Dependency order ensures entity compatibility.
- * Both variables must be selected from the same entity or compatible hierarchy.
+ * comparatorVariable must be from the same or ancestor entity of the expression data.
+ * identifierVariable and valueVariable must be from the same entity.
  */
-const geneExpressionDependencyOrder = [['identifierVariable', 'valueVariable']];
+const geneExpressionDependencyOrder = [
+  ['identifierVariable', 'valueVariable'],
+  ['comparatorVariable'],
+];
 
 export const plugin: ComputationPlugin = {
   configurationComponent: DifferentialExpressionConfiguration,
@@ -489,11 +499,18 @@ export function DifferentialExpressionConfiguration(
                 label: 'Count type',
                 role: 'axis',
               },
+              {
+                name: 'comparatorVariable',
+                label: 'Metadata Variable',
+                role: 'stratification',
+                titleOverride: 'Group Comparison',
+              },
             ]}
             entities={entities}
             selectedVariables={{
               identifierVariable: configuration.identifierVariable,
               valueVariable: configuration.valueVariable,
+              comparatorVariable: configuration.comparator?.variable,
             }}
             onChange={(vars) => {
               if (
@@ -507,6 +524,18 @@ export function DifferentialExpressionConfiguration(
               if (vars.valueVariable !== configuration.valueVariable) {
                 changeConfigHandler('valueVariable', vars.valueVariable);
               }
+              if (
+                vars.comparatorVariable !== configuration.comparator?.variable
+              ) {
+                changeConfigHandler(
+                  'comparator',
+                  vars.comparatorVariable
+                    ? {
+                        variable: vars.comparatorVariable as VariableDescriptor,
+                      }
+                    : undefined
+                );
+              }
             }}
             constraints={geneExpressionConstraints}
             dataElementDependencyOrder={geneExpressionDependencyOrder}
@@ -517,36 +546,14 @@ export function DifferentialExpressionConfiguration(
           />
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
-          <H6>Group Comparison</H6>
+          <H6>Group Values</H6>
           <div
             className={cx('-DiffExpressionOuterConfigContainerGroupComparison')}
           >
-            <div className={cx('-InputContainer')}>
-              <span>Metadata Variable</span>
-              <VariableTreeDropdown
-                showClearSelectionButton={false}
-                scope="variableTree"
-                showMultiFilterDescendants
-                starredVariables={
-                  analysisState.analysis?.descriptor.starredVariables
-                }
-                toggleStarredVariable={toggleStarredVariable}
-                entityId={configuration?.comparator?.variable?.entityId}
-                variableId={configuration?.comparator?.variable?.variableId}
-                variableLinkConfig={{
-                  type: 'button',
-                  onClick: (variable) => {
-                    changeConfigHandler('comparator', {
-                      variable: variable as VariableDescriptor,
-                    });
-                  },
-                }}
-              />
-            </div>
             <Tooltip
               title={
                 disableGroupValueSelectors
-                  ? 'Please select a Group Comparison variable first'
+                  ? 'Please select a Metadata Variable first'
                   : ''
               }
             >
