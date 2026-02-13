@@ -76,10 +76,7 @@ function RecordTableSection(props: Props) {
     >
       <ErrorBoundary>
         <RecordTableDescription
-          ontologyProperties={ontologyProperties}
-          table={table}
-          record={record}
-          recordClass={recordClass}
+          {...({ ontologyProperties, table, record, recordClass } as any)}
         />
         {isError ? (
           <p style={{ color: 'darkred', fontStyle: 'italic' }}>
@@ -89,21 +86,20 @@ function RecordTableSection(props: Props) {
           <p>Loading...</p>
         ) : (
           <RecordTable
-            className={className}
-            value={value}
-            table={table}
-            // @ts-ignore
-            record={record}
-            recordClass={recordClass}
-            expandedRows={tableState.expandedRows}
-            searchTerm={tableState.searchTerm}
-            ontologyProperties={ontologyProperties}
-            onExpandedRowsChange={(expandedRows) =>
-              updateTableState({ ...tableState, expandedRows })
-            }
-            onSearchTermChange={(searchTerm) =>
-              updateTableState({ ...tableState, searchTerm })
-            }
+            {...({
+              className,
+              value,
+              table,
+              record,
+              recordClass,
+              expandedRows: tableState.expandedRows,
+              searchTerm: tableState.searchTerm,
+              ontologyProperties,
+              onExpandedRowsChange: (expandedRows: number[]) =>
+                updateTableState({ ...tableState, expandedRows }),
+              onSearchTermChange: (searchTerm: string) =>
+                updateTableState({ ...tableState, searchTerm }),
+            } as any)}
           />
         )}
       </ErrorBoundary>

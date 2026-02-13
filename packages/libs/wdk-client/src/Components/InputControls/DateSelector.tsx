@@ -1,0 +1,191 @@
+import React from 'react';
+import * as DateUtils from '../../Utils/DateUtils';
+import { DateObject } from '../../Utils/DateUtils';
+
+import '../../Components/InputControls/wdk-DateSelector.scss';
+import Select from '../../Components/InputControls/SingleSelect';
+
+interface Props {
+  value?: string;
+  start?: string;
+  end?: string;
+  onChange?: (value: string) => void;
+  required?: boolean;
+}
+
+interface State {
+  year: number;
+  month: number;
+  day: number;
+  value?: string;
+  start: DateObject;
+  end: DateObject;
+}
+
+class DateSelector extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    let { value, start: startProp, end: endProp } = props;
+
+    let { year, month, day } = DateUtils.isValidDateString(value || '')
+      ? DateUtils.parseDate(value || '')
+      : { year: DateUtils.currentYear, month: 1, day: 1 };
+
+    const start = DateUtils.isValidDateString(startProp || '')
+      ? DateUtils.parseDate(startProp || '')
+      : DateUtils.getEpochStart();
+
+    const end = DateUtils.isValidDateString(endProp || '')
+      ? DateUtils.parseDate(endProp || '')
+      : DateUtils.getEpochEnd();
+
+    let initial = JSON.stringify([year, month, day]);
+    ({ year, month, day } = DateUtils.conformDateToBounds(
+      { year, month, day },
+      { start, end }
+    ));
+
+    // if ('onChange' in props && JSON.stringify([ year, month, day ]) !== initial) {
+    //   props.onChange(DateUtils.formatDate(year, month, day));
+    // };
+
+    this.state = { year, month, day, value, start, end };
+
+    this.handleYearChange = this.handleYearChange.bind(this);
+    this.handleMonthChange = this.handleMonthChange.bind(this);
+    this.handleDayChange = this.handleDayChange.bind(this);
+    this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
+  }
+
+  handleYearChange(year: number): void {
+    year = year * 1;
+    let { month, day, start, end } = this.state;
+    ({ year, month, day } = DateUtils.conformDateToBounds(
+      { year, month, day },
+      { start, end }
+    ));
+
+    let result = DateUtils.formatDate(year, month, day);
+    if (!DateUtils.isValidDateString(result)) return;
+    if ('onChange' in this.props) this.props.onChange?.(result);
+  }
+
+  handleMonthChange(month: number): void {
+    month = month * 1;
+    let { year, day, start, end } = this.state;
+    ({ year, month, day } = DateUtils.conformDateToBounds(
+      { year, month, day },
+      { start, end }
+    ));
+
+    let result = DateUtils.formatDate(year, month, day);
+    if (!DateUtils.isValidDateString(result)) return;
+    if ('onChange' in this.props) this.props.onChange?.(result);
+  }
+
+  handleDayChange(day: number): void {
+    day = day * 1;
+    let { year, month, start, end } = this.state;
+    ({ year, month, day } = DateUtils.conformDateToBounds(
+      { year, month, day },
+      { start, end }
+    ));
+
+    let result = DateUtils.formatDate(year, month, day);
+    if (!DateUtils.isValidDateString(result)) return;
+    if ('onChange' in this.props) this.props.onChange?.(result);
+  }
+
+  componentWillReceiveProps(nextProps: Props): void {
+    let { value, start: startProp, end: endProp } = nextProps;
+    if (value && value === this.props.value && this.state.value) return; // No change
+    let { year, month, day } = DateUtils.parseDate(value || '');
+
+    const start =
+      startProp === this.props.start
+        ? this.state.start
+        : DateUtils.isValidDateString(startProp || '')
+        ? DateUtils.parseDate(startProp || '')
+        : DateUtils.getEpochStart();
+    const end =
+      endProp === this.props.end
+        ? this.state.end
+        : DateUtils.isValidDateString(endProp || '')
+        ? DateUtils.parseDate(endProp || '')
+        : DateUtils.getEpochEnd();
+
+    if (!DateUtils.isValidDateString(value || '')) {
+      let message;
+      if (this.state.value) {
+        message = `<DateSelector> received an invalid {value} property. `;
+        message += `Falling back to existing valid value.`;
+        message += `Provide a {value} prop with a valid 'YYYY-MM-DD' formatted date.`;
+        console.warn(message);
+        return;
+      } else {
+        message = `<DateSelector> received an invalid initial {value} property. `;
+        message += `Provide a {value} prop with a valid 'YYYY-MM-DD' formatted date.`;
+        throw new Error(message);
+      }
+    }
+
+    this.setState({ value, year, month, day, start, end });
+  }
+
+  render(): React.ReactNode {
+    let { value, onChange, required = false } = this.props;
+    let { year, month, day, start, end } = this.state;
+
+    const yearOptions = DateUtils.generateYearList(start.year, end.year).map(
+      (y) => ({
+        value: y.toString(),
+        display: y.toString(),
+        disabled: y < start.year || y > end.year,
+      })
+    );
+    const monthOptions = DateUtils.generateMonthList().map((m) => ({
+      value: m.toString(),
+      display: DateUtils.getMonthName(m),
+      disabled:
+        (year <= start.year && m < start.month) ||
+        (year >= end.year && m > end.month),
+    }));
+    const dayOptions = DateUtils.generateDayListByMonth(month, year).map(
+      (d) => ({
+        value: d.toString(),
+        display: d.toString(),
+        disabled:
+          (year <= start.year && month <= start.month && d < start.day) ||
+          (year >= end.year && month >= end.month && d > end.day),
+      })
+    );
+
+    return (
+      <div className="wdk-DateSelector">
+        <Select
+          value={year.toString()}
+          name="yearSelection"
+          items={yearOptions}
+          onChange={(value: string) => this.handleYearChange(Number(value))}
+          required={required}
+        />
+        <Select
+          value={month.toString()}
+          name="monthSelection"
+          items={monthOptions}
+          onChange={(value: string) => this.handleMonthChange(Number(value))}
+          required={required}
+        />
+        <Select
+          value={day.toString()}
+          name="daySelection"
+          items={dayOptions}
+          onChange={(value: string) => this.handleDayChange(Number(value))}
+          required={required}
+        />
+      </div>
+    );
+  }
+}
+
+export default DateSelector;

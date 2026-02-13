@@ -90,7 +90,7 @@ export default function (props: Props) {
             Build the <em>report</em> component of the GET or POST request
           </div>
           <div className={cx('--ReportPartInstructions')}>
-            <DownloadFormContainer {...props} />
+            <DownloadFormContainer {...(props as any)} />
           </div>
         </div>
         <GeneratedRequests
