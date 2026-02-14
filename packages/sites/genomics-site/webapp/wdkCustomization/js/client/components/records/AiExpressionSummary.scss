@@ -128,10 +128,10 @@ ul.ai-topic {
   }
 
   li.ai-floater-inactive::marker {
-    content: '●  ';
+    content: '\25CF  '; /* '●  ' */
   }
   li.ai-floater-active::marker {
-    content: '▶  ';
+    content: '\25B6  '; /* '▶  ' */
   }
 }
 
