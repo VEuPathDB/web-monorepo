@@ -7,6 +7,7 @@ import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { AnalysisState, CollectionVariableTreeNode } from '../core';
+import { plugins } from '../core/components/computations/plugins';
 import {
   VolcanoPlotConfig,
   VolcanoPlotOptions,
@@ -76,6 +77,7 @@ type PresetNotebook = {
   projects: string[];
   cells: NotebookCellDescriptor[];
   header?: string; // Optional header text for the notebook, to be displayed above the cells.
+  isReady?: (analysisState: AnalysisState) => boolean;
 };
 
 // Preset notebooks
@@ -283,6 +285,13 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
     ],
+    isReady: (analysisState: AnalysisState) => {
+      const config = analysisState.analysis?.descriptor.computations.find(
+        (c: { descriptor: { type: string } }) =>
+          c.descriptor.type === 'differentialexpression'
+      )?.descriptor.configuration;
+      return plugins['differentialexpression'].isConfigurationComplete(config);
+    },
   },
   // WGCNA - only for plasmo. No subsetting cells because of the pre-computed modules and eigengenes.
   // Will be primed and prettified in https://github.com/VEuPathDB/web-monorepo/issues/1381

@@ -38,10 +38,11 @@ interface Props {
   analysisState: AnalysisState;
   notebookType: string;
   wdkState: WdkState;
+  onReadinessChange?: (isReady: boolean) => void;
 }
 
 export function EdaNotebookAnalysis(props: Props) {
-  const { analysisState, notebookType, wdkState } = props;
+  const { analysisState, notebookType, wdkState, onReadinessChange } = props;
   const { analysis, setComputations, addVisualization } = analysisState;
 
   if (analysis == null) throw new Error('Cannot find analysis.');
@@ -49,6 +50,14 @@ export function EdaNotebookAnalysis(props: Props) {
   const notebookPreset = presetNotebooks[notebookType];
   if (notebookPreset == null)
     throw new Error(`Cannot find a notebook preset for ${notebookType}`);
+
+  useEffect(() => {
+    if (!onReadinessChange) return;
+    const ready = notebookPreset.isReady
+      ? notebookPreset.isReady(analysisState)
+      : true;
+    onReadinessChange(ready);
+  }, [analysisState.analysis, notebookPreset, onReadinessChange]);
 
   // Check to ensure the notebook is valid for this project
   const projectId = useWdkService(
