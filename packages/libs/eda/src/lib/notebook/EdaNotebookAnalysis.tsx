@@ -31,6 +31,7 @@ export interface WdkState {
   parameters: Parameter[];
   paramValues: ParameterValues;
   updateParamValue: UpdateParamValue;
+  questionProperties: Record<string, string[]>;
 }
 
 interface Props {
