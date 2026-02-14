@@ -18,59 +18,6 @@ Then the installation process detailed below will be able to bootstrap the follo
 
 == Setup
 
-=== Recommended: Supply Chain Security
-
-For supply chain security, add this to your shell profile (`.bashrc`, `.zshrc`, etc.):
-
-[source, bash]
-----
-# Supply chain security: require packages to be 7+ days old (Yarn 4+ feature)
-export YARN_NPM_MINIMAL_AGE_GATE=10080
-----
-
-*Why this is needed:*
-
-- `YARN_NPM_MINIMAL_AGE_GATE=10080`: Protects against supply chain attacks by requiring NPM packages to be at least 7 days old before installation. This is a Yarn 4+ feature that helps prevent installing packages immediately after publication (when they're most vulnerable to compromise).
-
-[NOTE]
-====
-*Developers have two options for setting this variable*
-
-_Option A: Global shell configuration (simple)_
-
-Add the variable to your shell profile (`.bashrc`, `.zshrc`, etc.) as shown above. This will apply to all Yarn 4+ projects on your system.
-
-_Option B: Per-repository with direnv (recommended)_
-
-Use https://direnv.net/[direnv] to automatically set this variable only when working in this repository:
-
-1. Install direnv for your platform (see https://direnv.net/docs/installation.html[installation instructions])
-
-2. Add the direnv hook to your shell config:
-+
-[source, bash]
-----
-# For bash, add to ~/.bashrc:
-eval "$(direnv hook bash)"
-
-# For zsh, add to ~/.zshrc:
-eval "$(direnv hook zsh)"
-
-# For fish, add to ~/.config/fish/config.fish:
-direnv hook fish | source
-----
-
-3. Enable direnv in this repository:
-+
-[source, shell]
-----
-cp .envrc.example .envrc
-direnv allow
-----
-
-The environment variable will now be set automatically whenever you enter this repository directory.
-====
-
 === Setup with Volta (Recommended)
 
 https://volta.sh/[Volta] is recommended for Node version management. It will automatically use Node 24 when working in this repository.
@@ -157,11 +104,7 @@ This ensures Volta's yarn (from `~/.volta/bin`) remains first in PATH.
 
 *IMPORTANT:* This project requires Yarn. Using `npm install` will fail with dependency resolution errors because this monorepo uses Yarn-specific features (workspace protocol, etc.) that npm doesn't support.
 
-The repository includes automatic checks that run before `yarn install` to verify:
-
-- Corepack is properly configured with the correct Yarn version (4.12.0)
-
-If you see errors about wrong Yarn version, refer to the setup instructions above.
+Corepack enforces the correct Yarn version automatically via the `packageManager` field in `package.json`. If you see errors about wrong Yarn version, refer to the setup instructions above.
 
 == Quick Start
 

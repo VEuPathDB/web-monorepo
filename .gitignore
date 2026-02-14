@@ -79,7 +79,6 @@ typings/
 .env.local
 .env.local~
 
-# direnv configuration (use .envrc.example as template)
 .envrc
 
 # parcel-bundler cache (https://parceljs.org/)

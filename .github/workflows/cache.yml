@@ -22,8 +22,6 @@ jobs:
   cache-yarn:
     name: Generate yarn cache
     runs-on: ubuntu-latest
-    env:
-      YARN_NPM_MINIMAL_AGE_GATE: 10080
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
