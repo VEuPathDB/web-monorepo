@@ -54,10 +54,10 @@ export function EdaNotebookAnalysis(props: Props) {
   useEffect(() => {
     if (!onReadinessChange) return;
     const ready = notebookPreset.isReady
-      ? notebookPreset.isReady(analysisState)
+      ? notebookPreset.isReady({ analysisState, wdkState })
       : true;
     onReadinessChange(ready);
-  }, [analysisState.analysis, notebookPreset, onReadinessChange]);
+  }, [analysisState.analysis, wdkState, notebookPreset, onReadinessChange]);
 
   // Check to ensure the notebook is valid for this project
   const projectId = useWdkService(

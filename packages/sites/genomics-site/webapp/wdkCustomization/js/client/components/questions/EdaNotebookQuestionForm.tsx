@@ -1,7 +1,7 @@
 import DefaultQuestionForm, {
   Props,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WdkState } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
@@ -33,14 +33,23 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     [props.eventHandlers, searchName]
   );
 
-  const wdkState: WdkState = {
-    // Safe: pluginConfig.tsx only routes here when edaNotebookType property is present
-    queryName: props.state.question.queryName!,
-    parameters: props.state.question.parameters,
-    paramValues: props.state.paramValues,
-    updateParamValue,
-    questionProperties: props.state.question.properties ?? {},
-  };
+  const wdkState = useMemo<WdkState>(
+    () => ({
+      // Safe: pluginConfig.tsx only routes here when edaNotebookType property is present
+      queryName: props.state.question.queryName!,
+      parameters: props.state.question.parameters,
+      paramValues: props.state.paramValues,
+      updateParamValue,
+      questionProperties: props.state.question.properties ?? {},
+    }),
+    [
+      props.state.question.queryName,
+      props.state.question.parameters,
+      props.state.paramValues,
+      updateParamValue,
+      props.state.question.properties,
+    ]
+  );
 
   // An override that renders the notebook instead of any default parameter or parameter group ui.
   // NOTE: this function is run for every visible parameter group. May cause

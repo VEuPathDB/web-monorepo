@@ -14,7 +14,7 @@ export function WdkParamNotebookCell(
 
   if (!wdkState) return null;
 
-  const { paramNames, title } = cell;
+  const { paramNames, title, requiredParamNames } = cell;
   const { parameters, paramValues, updateParamValue } = wdkState;
 
   // userInputParameters are the wdk parameters that the user will
@@ -40,6 +40,8 @@ export function WdkParamNotebookCell(
           <div className="WdkParamInputs">
             {userInputParameters.map((param) => {
               const paramCurrentValue = paramValues[param.name];
+              const isRequired =
+                requiredParamNames?.includes(param.name) ?? false;
 
               // There are many param types. The following is not exhaustive.
               if (param.type === 'single-pick-vocabulary') {
@@ -58,7 +60,10 @@ export function WdkParamNotebookCell(
 
                 return (
                   <div className="InputGroup" key={param.name}>
-                    <span>{param.displayName}</span>
+                    <span>
+                      {param.displayName}
+                      {isRequired && <sup>*</sup>}
+                    </span>
                     <SingleSelect
                       items={selectItems}
                       value={paramCurrentValue}
@@ -72,7 +77,10 @@ export function WdkParamNotebookCell(
               } else if (param.type === 'string' && param.isNumber) {
                 return (
                   <div className="InputGroup" key={param.name}>
-                    <span>{param.displayName}</span>
+                    <span>
+                      {param.displayName}
+                      {isRequired && <sup>*</sup>}
+                    </span>
                     <NumberInput
                       value={Number(paramCurrentValue)}
                       minValue={0} // TO DO: Currently not derived from the parameter, though they should be.

@@ -69,7 +69,12 @@ export interface SubsetCellDescriptor
 export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
+  requiredParamNames?: string[]; // Subset of paramNames that are required. Labels will be red with an asterisk until filled.
 }
+
+export type ReadinessContext =
+  | { analysisState: AnalysisState; wdkState?: WdkState }
+  | { analysisState?: AnalysisState; wdkState: WdkState };
 
 type PresetNotebook = {
   name: string;
@@ -77,7 +82,7 @@ type PresetNotebook = {
   projects: string[];
   cells: NotebookCellDescriptor[];
   header?: string; // Optional header text for the notebook, to be displayed above the cells.
-  isReady?: (analysisState: AnalysisState) => boolean;
+  isReady?: (context: ReadinessContext) => boolean;
 };
 
 // Preset notebooks
@@ -285,8 +290,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
     ],
-    isReady: (analysisState: AnalysisState) => {
-      const config = analysisState.analysis?.descriptor.computations.find(
+    isReady: ({ analysisState }) => {
+      const config = analysisState?.analysis?.descriptor.computations.find(
         (c: { descriptor: { type: string } }) =>
           c.descriptor.type === 'differentialexpression'
       )?.descriptor.configuration;
@@ -412,6 +417,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'wdkparam',
         title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+        requiredParamNames: ['wgcnaParam'],
         numberedHeader: true,
         helperText: (
           <span>
@@ -421,6 +427,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
       },
     ],
+    isReady: ({ wdkState }) => {
+      if (!wdkState) return false;
+      const value = wdkState.paramValues['wgcnaParam'];
+      // Target wgcnaParam's index-zero makeshift placeholder ("1_choose_module" => "Choose a Module")
+      if (value == null || value === '' || value.includes('choose_module'))
+        return false;
+      return true;
+    },
   },
   boxplotNotebook: {
     name: 'boxplot',
