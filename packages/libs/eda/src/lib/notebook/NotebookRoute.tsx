@@ -80,6 +80,7 @@ export default function NotebookRoute(props: Props) {
                     parameters: [],
                     paramValues: {},
                     updateParamValue: () => {},
+                    questionProperties: {},
                   }}
                 />
               </EDAWorkspaceContainer>

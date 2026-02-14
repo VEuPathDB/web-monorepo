@@ -26,11 +26,12 @@ export const EdaNotebookQuestionForm = (props: Props) => {
   );
 
   const wdkState: WdkState = {
-    // Safe: pluginConfig.tsx only routes here when queryName matches a known value
+    // Safe: pluginConfig.tsx only routes here when edaNotebookType property is present
     queryName: props.state.question.queryName!,
     parameters: props.state.question.parameters,
     paramValues: props.state.paramValues,
     updateParamValue,
+    questionProperties: props.state.question.properties ?? {},
   };
 
   // An override that renders the notebook instead of any default parameter or parameter group ui.

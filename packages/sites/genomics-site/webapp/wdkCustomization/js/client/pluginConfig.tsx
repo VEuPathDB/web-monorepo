@@ -287,8 +287,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     test: ({ question }) =>
-      question?.queryName === 'GenesByWGCNAModule' ||
-      question?.queryName === 'GenesByEdaVizWithCompute',
+      (question?.properties?.edaNotebookType?.length ?? 0) > 0,
     component: EdaNotebookQuestionForm,
   },
 ];

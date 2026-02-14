@@ -45,7 +45,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   const { parameters, paramValues, updateParamValue } = wdkState;
 
   const studyId = paramValues['eda_dataset_id'];
-  const notebookType = paramValues['eda_notebook_type'];
+  const notebookType = wdkState.questionProperties['edaNotebookType']?.[0];
   const analysisJson = paramValues['eda_analysis_spec'];
 
   // Local state gives immediate re-renders so dependent dropdowns always see
