@@ -7,6 +7,7 @@ import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState } from './EdaNotebookAnalysis';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { AnalysisState, CollectionVariableTreeNode } from '../core';
+import { plugins } from '../core/components/computations/plugins';
 import {
   VolcanoPlotConfig,
   VolcanoPlotOptions,
@@ -68,7 +69,12 @@ export interface SubsetCellDescriptor
 export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
+  requiredParamNames?: string[]; // Subset of paramNames that are required. Labels will be red with an asterisk until filled.
 }
+
+export type ReadinessContext =
+  | { analysisState: AnalysisState; wdkState?: WdkState }
+  | { analysisState?: AnalysisState; wdkState: WdkState };
 
 type PresetNotebook = {
   name: string;
@@ -76,6 +82,7 @@ type PresetNotebook = {
   projects: string[];
   cells: NotebookCellDescriptor[];
   header?: string; // Optional header text for the notebook, to be displayed above the cells.
+  isReady?: (context: ReadinessContext) => boolean;
 };
 
 // Preset notebooks
@@ -283,6 +290,13 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
     ],
+    isReady: ({ analysisState }) => {
+      const config = analysisState?.analysis?.descriptor.computations.find(
+        (c: { descriptor: { type: string } }) =>
+          c.descriptor.type === 'differentialexpression'
+      )?.descriptor.configuration;
+      return plugins['differentialexpression'].isConfigurationComplete(config);
+    },
   },
   // WGCNA - only for plasmo. No subsetting cells because of the pre-computed modules and eigengenes.
   // Will be primed and prettified in https://github.com/VEuPathDB/web-monorepo/issues/1381
@@ -403,6 +417,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         type: 'wdkparam',
         title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
+        requiredParamNames: ['wgcnaParam'],
         numberedHeader: true,
         helperText: (
           <span>
@@ -412,6 +427,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
       },
     ],
+    isReady: ({ wdkState }) => {
+      if (!wdkState) return false;
+      const value = wdkState.paramValues['wgcnaParam'];
+      // Target wgcnaParam's index-zero makeshift placeholder ("1_choose_module" => "Choose a Module")
+      if (value == null || value === '' || value.includes('choose_module'))
+        return false;
+      return true;
+    },
   },
   boxplotNotebook: {
     name: 'boxplot',

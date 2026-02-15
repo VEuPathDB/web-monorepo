@@ -58,6 +58,7 @@ export type Props = {
   resetFormConfig: ResetFormConfig;
   containerClassName?: string;
   searchName?: string;
+  submissionDisabled?: boolean;
 };
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
@@ -128,7 +129,8 @@ export default function DefaultQuestionForm(props: Props) {
     state.paramsUpdatingDependencies
   );
 
-  const submissionDisabled = dependentParamsAreUpdating;
+  const submissionDisabled =
+    dependentParamsAreUpdating || (props.submissionDisabled ?? false);
 
   const handleSubmit = React.useCallback(
     (event: React.FormEvent) => {

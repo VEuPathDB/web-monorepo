@@ -38,10 +38,11 @@ import {
 
 type EdaNotebookParameterProps = {
   wdkState: WdkState;
+  onReadinessChange?: (isReady: boolean) => void;
 };
 
 export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
-  const { wdkState } = props;
+  const { wdkState, onReadinessChange } = props;
   const { parameters, paramValues, updateParamValue } = wdkState;
 
   const studyId = paramValues['eda_dataset_id'];
@@ -102,6 +103,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               analysisState={analysisState}
               notebookType={notebookType}
               wdkState={wdkState}
+              onReadinessChange={onReadinessChange}
             />
           </CoreUIThemeProvider>
         </WorkspaceContainer>
@@ -114,10 +116,11 @@ interface EdaNotebookAdapterProps {
   analysisState: AnalysisState;
   notebookType: string;
   wdkState: WdkState;
+  onReadinessChange?: (isReady: boolean) => void;
 }
 
 function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
-  const { analysisState, wdkState, notebookType } = props;
+  const { analysisState, wdkState, notebookType, onReadinessChange } = props;
   const studyId = analysisState.analysis?.studyId;
 
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
@@ -141,6 +144,7 @@ function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
             analysisState={analysisState}
             notebookType={notebookType}
             wdkState={wdkState}
+            onReadinessChange={onReadinessChange}
           />
         </EDAWorkspaceContainer>
       )}
