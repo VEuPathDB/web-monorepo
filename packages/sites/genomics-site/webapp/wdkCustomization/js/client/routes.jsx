@@ -35,13 +35,11 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { makeAnswerControllerRouteComponent } from '@veupathdb/wdk-client/lib/Core/routes';
 import { Srt } from './components/Srt';
 
+import RecordController from '@veupathdb/wdk-client/lib/Controllers/RecordController';
+
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = ['dataset', 'sample'];
-
-// Used to hardcode a redirect to eda workspace from the datatsets table
-const GAMBIAN_WGCNA_DATASET = 'DS_eeca6a5476';
-
 const projectRegExp = new RegExp('/' + projectId + '$');
 
 /**
@@ -130,6 +128,9 @@ function DownloadsRouteComponent() {
   const localHref = history.createHref({ pathname: path });
   const remoteHrefSuffix = localHref.replace(webAppUrl, '');
   if (!config) return <Loading />;
+  /**
+   * not needed; but we dont have EuPathDB project anymore, it is UniDB now
+   */
   return projectId === 'EuPathDB' ? (
     <div className="Downloads">
       <h1>Download Data Files</h1>
@@ -162,6 +163,16 @@ function DownloadsRouteComponent() {
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
+
+  // Allow guests to access dataset record pages for SEO and public visibility                                                                                             
+  {                                                                                                                                                                        
+    path: '/record/dataset/:primaryKey+',                                                                                                                                  
+    requiresLogin: false,                                                                                                                                                  
+    component: (props) => (                                                                                                                                                
+      <RecordController recordClass="dataset" primaryKey={props.match.params.primaryKey} />
+    ),                                                                                                                                                                     
+  },      
+
   // Allow guests to access All Datasets and All Organisms for SEO and public visibility
   {
     path: '/search/dataset/AllDatasets/result',
@@ -187,17 +198,9 @@ export const wrapRoutes = (ebrcRoutes) => [
 
   {
     path: '/record/organism/:id*',
+    requiresLogin: false,
     component: (props) => (
       <Redirect to={`/record/dataset/${props.match.params.id}`} />
-    ),
-  },
-
-  // hardcodes a redirect from the datasets table to the EDA "study explorer"
-  {
-    path: `/record/dataset/${GAMBIAN_WGCNA_DATASET}`,
-    exact: true,
-    component: () => (
-      <Redirect to={`/workspace/analyses/${GAMBIAN_WGCNA_DATASET}/new`} />
     ),
   },
 
