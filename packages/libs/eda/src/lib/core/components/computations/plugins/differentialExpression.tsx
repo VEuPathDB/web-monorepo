@@ -13,6 +13,7 @@ import {
   assertComputationWithConfig,
   partialToCompleteCodec,
   GENE_EXPRESSION_STABLE_IDS,
+  GENE_EXPRESSION_VALUE_IDS,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -129,12 +130,7 @@ const geneExpressionConstraints: DataElementConstraintRecord[] = [
       isRequired: true,
       minNumVars: 1,
       maxNumVars: 1,
-      allowedVariableIds: [
-        GENE_EXPRESSION_STABLE_IDS.COUNT,
-        GENE_EXPRESSION_STABLE_IDS.COUNT_SENSE,
-        GENE_EXPRESSION_STABLE_IDS.COUNT_ANTISENSE,
-        GENE_EXPRESSION_STABLE_IDS.NORMALIZED,
-      ],
+      allowedVariableIds: [...GENE_EXPRESSION_VALUE_IDS],
       description:
         'Select expression data: raw counts, sense/antisense counts, or normalized expression. Must be on the same entity as the gene identifier.',
     },
@@ -696,12 +692,8 @@ function isEnabledInPicker({
   );
 
   const hasValueVariable = entities.some((entity) =>
-    entity.variables.some(
-      (variable) =>
-        variable.id === GENE_EXPRESSION_STABLE_IDS.COUNT ||
-        variable.id === GENE_EXPRESSION_STABLE_IDS.COUNT_SENSE ||
-        variable.id === GENE_EXPRESSION_STABLE_IDS.COUNT_ANTISENSE ||
-        variable.id === GENE_EXPRESSION_STABLE_IDS.NORMALIZED
+    entity.variables.some((variable) =>
+      GENE_EXPRESSION_VALUE_IDS.includes(variable.id as any)
     )
   );
 

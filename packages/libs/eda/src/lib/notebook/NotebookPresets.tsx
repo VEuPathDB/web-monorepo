@@ -117,28 +117,34 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           <span>Optionally refine samples for differential expression.</span>
         ),
       },
-      // TEMPORARILY DISABLED: PCA dimensionality reduction pending tall format migration
-      // {
-      //   type: 'compute',
-      //   title: 'PCA',
-      //   computationName: 'dimensionalityreduction',
-      //   computationId: 'pca_1',
-      //   hidden: true, // Hide in UI since config is already known.
-      //   cells: [
-      //     {
-      //       type: 'visualization',
-      //       title: 'PCA Plot',
-      //       visualizationName: 'scatterplot',
-      //       visualizationId: 'pca_1',
-      //       numberedHeader: true,
-      //       helperText: (
-      //         <span>
-      //           Use PCA to investigate possible sources of variation in the dataset.
-      //         </span>
-      //       ),
-      //     },
-      //   ],
-      // },
+      {
+        type: 'compute',
+        title: 'PCA',
+        computationName: 'dimensionalityreduction',
+        computationId: 'pca_1',
+        numberedHeader: true,
+        helperText: (
+          <span>
+            Use PCA to investigate possible sources of variation in the dataset.
+            Select the expression data to use for dimensionality reduction.
+          </span>
+        ),
+        cells: [
+          {
+            type: 'visualization',
+            title: 'PCA Plot',
+            visualizationName: 'scatterplot',
+            visualizationId: 'pca_1',
+            numberedHeader: true,
+            helperText: (
+              <span>
+                Use PCA to investigate possible sources of variation in the
+                dataset.
+              </span>
+            ),
+          },
+        ],
+      },
       {
         type: 'compute',
         title: 'Setup DESeq2 Computation',

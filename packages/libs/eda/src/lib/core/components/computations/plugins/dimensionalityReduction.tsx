@@ -1,12 +1,13 @@
-import { StudyEntity, useFindEntityAndVariableCollection, useStudyEntities } from '../../..';
-import { VariableCollectionDescriptor } from '../../../types/variable';
+import { useStudyMetadata, useFindEntityAndVariable, Filter } from '../../..';
+import { VariableDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import {
   useConfigChangeHandler,
   assertComputationWithConfig,
-  isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
+  GENE_EXPRESSION_STABLE_IDS,
+  GENE_EXPRESSION_VALUE_IDS,
 } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
@@ -14,12 +15,13 @@ import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcon
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { VariableCollectionSingleSelect } from '../../variableSelectors/VariableCollectionSingleSelect';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
-import { useEffect, useMemo, useState } from 'react';
-import { ItemGroup } from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { Item } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
+import { useMemo } from 'react';
+import { InputVariables } from '../../visualizations/InputVariables';
+import { useToggleStarredVariable } from '../../../hooks/starredVariables';
+import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
+import { H6 } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -28,12 +30,44 @@ export type DimensionalityReductionConfig = t.TypeOf<
 >;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DimensionalityReductionConfig = t.partial({
-  collectionVariable: VariableCollectionDescriptor,
+  identifierVariable: VariableDescriptor,
+  valueVariable: VariableDescriptor,
 });
 
 const CompleteDimensionalityReductionConfig = partialToCompleteCodec(
   DimensionalityReductionConfig
 );
+
+/**
+ * Constraints for gene expression variable selection.
+ * Ensures only valid identifier and value variables can be selected,
+ * and enforces entity compatibility between them.
+ */
+const geneExpressionConstraints: DataElementConstraintRecord[] = [
+  {
+    identifierVariable: {
+      isRequired: true,
+      minNumVars: 1,
+      maxNumVars: 1,
+      allowedVariableIds: [GENE_EXPRESSION_STABLE_IDS.IDENTIFIER],
+      description: 'Select a gene identifier variable (VEUPATHDB_GENE_ID).',
+    },
+    valueVariable: {
+      isRequired: true,
+      minNumVars: 1,
+      maxNumVars: 1,
+      allowedVariableIds: [...GENE_EXPRESSION_VALUE_IDS],
+      description:
+        'Select expression data: raw counts, sense/antisense counts, or normalized expression.',
+    },
+  },
+];
+
+/**
+ * Dependency order ensures entity compatibility.
+ * identifierVariable and valueVariable must be from the same entity.
+ */
+const geneExpressionDependencyOrder = [['identifierVariable', 'valueVariable']];
 
 export const plugin: ComputationPlugin = {
   configurationComponent: DimensionalityReductionConfiguration,
@@ -47,10 +81,10 @@ export const plugin: ComputationPlugin = {
         getComputedXAxisDetails(config) {
           if (
             DimensionalityReductionConfig.is(config) &&
-            config.collectionVariable
+            config.identifierVariable
           ) {
             return {
-              entityId: config.collectionVariable.entityId,
+              entityId: config.identifierVariable.entityId,
               placeholderDisplayName: 'PCA Axis 1',
               variableId: 'PC1',
             };
@@ -59,10 +93,10 @@ export const plugin: ComputationPlugin = {
         getComputedYAxisDetails(config) {
           if (
             DimensionalityReductionConfig.is(config) &&
-            config.collectionVariable
+            config.identifierVariable
           ) {
             return {
-              entityId: config.collectionVariable.entityId,
+              entityId: config.identifierVariable.entityId,
               placeholderDisplayName: 'PCA Axis 2',
               variableId: 'PC2',
             };
@@ -84,26 +118,40 @@ export const plugin: ComputationPlugin = {
 
 function DimensionalityReductionConfigDescriptionComponent({
   computation,
+  filters,
 }: {
   computation: Computation;
+  filters: Filter[];
 }) {
-  const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
   const { configuration } = computation.descriptor;
-  const collectionVariable =
-    'collectionVariable' in configuration
-      ? configuration.collectionVariable
-      : undefined;
-  const updatedCollectionVariable =
-    findEntityAndVariableCollection(collectionVariable);
+
+  const identifierVariable = configuration.identifierVariable
+    ? findEntityAndVariable(configuration.identifierVariable)
+    : undefined;
+
+  const valueVariable = configuration.valueVariable
+    ? findEntityAndVariable(configuration.valueVariable)
+    : undefined;
 
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
-        Data:{' '}
+        Gene Identifier:{' '}
         <span>
-          {updatedCollectionVariable ? (
-            `${updatedCollectionVariable.entity.displayName} > ${updatedCollectionVariable.variableCollection.displayName}`
+          {identifierVariable ? (
+            `${identifierVariable.entity.displayName} > ${identifierVariable.variable.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
+        </span>
+      </h4>
+      <h4>
+        Expression Data:{' '}
+        <span>
+          {valueVariable ? (
+            `${valueVariable.entity.displayName} > ${valueVariable.variable.displayName}`
           ) : (
             <i>Not selected</i>
           )}
@@ -123,10 +171,14 @@ export function DimensionalityReductionConfiguration(
     visualizationId,
     changeConfigHandlerOverride,
     showStepNumber = true,
-    hideConfigurationComponent = false,
   } = props;
+
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
-  const configuration = computation.descriptor.configuration;
+  const configuration = computation.descriptor
+    .configuration as DimensionalityReductionConfig;
+
+  const studyMetadata = useStudyMetadata();
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
@@ -134,56 +186,18 @@ export function DimensionalityReductionConfiguration(
     visualizationId
   );
 
-  const changeConfigHandler = changeConfigHandlerOverride
-    ? changeConfigHandlerOverride
-    : workspaceChangeConfigHandler;
+  const changeConfigHandler =
+    changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
 
-  const entities = useStudyEntities();
+  const entities = useMemo(
+    () =>
+      studyMetadata?.rootEntity
+        ? entityTreeToArray(studyMetadata.rootEntity)
+        : [],
+    [studyMetadata]
+  );
 
-  const collectionsInStudy = useMemo(() => {
-      const collectionItems = entities
-        .filter(
-          (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
-            !!e.collections?.length
-        )
-        .map((e): ItemGroup<string> => {
-          const collections = e.collections.filter(isNotAbsoluteAbundanceVariableCollection)
-          return {
-            label: e.displayName,
-            items: collections.map(
-              (collection): Item<string> => ({
-                value: `${e.id}:${collection.id}`,
-                display: collection.displayName ?? collection.id,
-              })
-            ),
-          };
-        })
-        .filter((itemGroup) => itemGroup.items.length > 0); // Remove entites that had all their collections fail the collection predicate.
-      return collectionItems;
-    }, [entities]);
-
-    console.log('collectionsInStudy', collectionsInStudy);
-  
-  // This computation only has one input. If there is only one option for the input (one collection),
-  // then we can set it automaticaly. 
-  // With only one collection, it may be useful to hide the entire configuration component (differential expression notebook)
-  useEffect(() => {
-    // If there is only one collection variable, set it automatically
-    // TEMPORARY - until we have the right data, just pretend we only have one by 
-    // using the first collection
-    // if (collectionsInStudy.length === 1) {
-      console.log('only one collection group');
-      changeConfigHandler('collectionVariable', {
-        entityId: collectionsInStudy[0].items[0].value.split(':')[0],
-        collectionId: collectionsInStudy[0].items[0].value.split(':')[1],
-      });
-    // }
-  }, [collectionsInStudy, changeConfigHandler]);
-    
-
-  return hideConfigurationComponent ? (
-    null
-  ) : (
+  return (
     <ComputationStepContainer
       computationStepInfo={{
         stepNumber: 1,
@@ -192,15 +206,46 @@ export function DimensionalityReductionConfiguration(
       showStepNumber={showStepNumber}
     >
       <div className={cx()}>
-        <div className={cx('-InputContainer')}>
-          <span>Data</span>
-          <VariableCollectionSingleSelect
-            value={configuration.collectionVariable}
-            onSelect={(value) => {
-              if (typeof value === 'string') return;
-              changeConfigHandler('collectionVariable', value);
+        <div className={cx('-DiffExpressionOuterConfigContainer')}>
+          <H6>Expression Data</H6>
+          <InputVariables
+            inputs={[
+              {
+                name: 'identifierVariable',
+                label: 'Gene Identifier',
+                role: 'axis',
+                titleOverride: 'Expression Data',
+              },
+              {
+                name: 'valueVariable',
+                label: 'Count type',
+                role: 'axis',
+              },
+            ]}
+            entities={entities}
+            selectedVariables={{
+              identifierVariable: configuration.identifierVariable,
+              valueVariable: configuration.valueVariable,
             }}
-            collectionPredicate={isNotAbsoluteAbundanceVariableCollection}
+            onChange={(vars) => {
+              if (
+                vars.identifierVariable !== configuration.identifierVariable
+              ) {
+                changeConfigHandler(
+                  'identifierVariable',
+                  vars.identifierVariable
+                );
+              }
+              if (vars.valueVariable !== configuration.valueVariable) {
+                changeConfigHandler('valueVariable', vars.valueVariable);
+              }
+            }}
+            constraints={geneExpressionConstraints}
+            dataElementDependencyOrder={geneExpressionDependencyOrder}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables ?? []
+            }
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       </div>
@@ -208,18 +253,25 @@ export function DimensionalityReductionConfiguration(
   );
 }
 
-// For now, dimensionality reduction's only requirement of the study is that it contains
-// at least one collection. This may change in the future or possibly made configurable via the notebook.
+// Dimensionality reduction requires that the study has gene expression variables.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
   if (!studyMetadata) return false;
+
   const entities = entityTreeToArray(studyMetadata.rootEntity);
 
-  // Ensure there are collections in this study. Otherwise, disable app
-  const studyHasCollections = entities.some(
-    (entity) => !!entity.collections?.length
+  const hasIdentifierVariable = entities.some((entity) =>
+    entity.variables.some(
+      (variable) => variable.id === GENE_EXPRESSION_STABLE_IDS.IDENTIFIER
+    )
   );
 
-  return studyHasCollections;
+  const hasValueVariable = entities.some((entity) =>
+    entity.variables.some((variable) =>
+      GENE_EXPRESSION_VALUE_IDS.includes(variable.id as any)
+    )
+  );
+
+  return hasIdentifierVariable && hasValueVariable;
 }
