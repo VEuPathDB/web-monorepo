@@ -12,6 +12,7 @@ import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
+  useComputeClient,
   useDataClient,
   useFindEntityAndVariable,
   useStudyEntities,
@@ -313,6 +314,33 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const computeClient = useComputeClient();
+
+  // Fetch computed variable metadata from /meta endpoint to get correct entity IDs.
+  // The query is disabled (via nullish queryKey values) when there's no computeName
+  // or the job isn't complete yet.
+  const computeName = copmutationAppOverview.computeName;
+  const computeJobComplete =
+    computeJobStatus === 'complete' ? ('complete' as const) : undefined;
+  const computedVarMetadata = useCachedPromise(async () => {
+    const result = await computeClient.getComputedVariableMetadata(
+      computeName!,
+      {
+        studyId,
+        filters: filters ?? [],
+        derivedVariables: [],
+        config: computation.descriptor.configuration,
+      }
+    );
+    return result.variables;
+  }, [
+    computeName,
+    computeJobComplete,
+    studyId,
+    filters,
+    computation.descriptor.configuration,
+  ]);
+
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
@@ -347,11 +375,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [computation.descriptor.configuration, options]
   );
 
+  // Derive correct entity IDs from /meta endpoint (overrides plugin-provided IDs)
+  const metadataXAxisEntityId = computedVarMetadata.value?.find(
+    (v) => v.plotReference === 'xAxis' && v.variableClass === 'computed'
+  )?.variableSpec.entityId;
+
+  console.log({ computedVarMetadata });
+  const metadataYAxisEntityId = computedVarMetadata.value?.find(
+    (v) => v.plotReference === 'yAxis' && v.variableClass === 'computed'
+  )?.variableSpec.entityId;
+
   // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
   // just like native vars (for example, in the variable coverage table).
   const computedXAxisDescriptor = computedXAxisDetails
     ? {
-        entityId: computedXAxisDetails.entityId,
+        entityId: metadataXAxisEntityId ?? computedXAxisDetails.entityId,
         variableId:
           computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
       }
@@ -361,7 +399,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
   const computedYAxisDescriptor = computedYAxisDetails
     ? {
-        entityId: computedYAxisDetails.entityId,
+        entityId: metadataYAxisEntityId ?? computedYAxisDetails.entityId,
         variableId:
           computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
       }
@@ -611,7 +649,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     dataElementDependencyOrder,
     selectedVariables,
     'yAxisVariable',
-    computedYAxisDetails?.entityId
+    metadataYAxisEntityId ?? computedYAxisDetails?.entityId
   );
 
   // set a condition to show log scale/plot mode related banner
@@ -661,7 +699,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const dataRequestDeps =
     // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-    (computedYAxisDetails && computeJobStatus !== 'complete') ||
+    // Also wait for /meta to load so we have correct entity IDs.
+    (computedYAxisDetails &&
+      (computeJobStatus !== 'complete' || computedVarMetadata.pending)) ||
     // the usual conditions for not showing a plot:
     filteredCounts.pending ||
     filteredCounts.value == null ||
