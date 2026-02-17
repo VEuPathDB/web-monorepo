@@ -78,30 +78,6 @@ export const plugin: ComputationPlugin = {
   visualizationPlugins: {
     scatterplot: scatterplotVisualization
       .withOptions({
-        getComputedXAxisDetails(config) {
-          if (
-            DimensionalityReductionConfig.is(config) &&
-            config.identifierVariable
-          ) {
-            return {
-              entityId: config.identifierVariable.entityId,
-              placeholderDisplayName: 'PCA Axis 1',
-              variableId: 'PC1',
-            };
-          }
-        },
-        getComputedYAxisDetails(config) {
-          if (
-            DimensionalityReductionConfig.is(config) &&
-            config.identifierVariable
-          ) {
-            return {
-              entityId: config.identifierVariable.entityId,
-              placeholderDisplayName: 'PCA Axis 2',
-              variableId: 'PC2',
-            };
-          }
-        },
         hideShowMissingnessToggle: true,
         hideTrendlines: true,
         hideFacetInputs: true,
