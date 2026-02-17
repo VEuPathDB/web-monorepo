@@ -118,7 +118,7 @@ export function VisualizationNotebookCell(
               dataElementDependencyOrder={dataElementDependencyOrder}
               visualization={visualization}
               computation={computation}
-              copmutationAppOverview={appOverview}
+              computationAppOverview={appOverview}
               filters={analysis.descriptor.subset.descriptor} // issue #1413
               starredVariables={[]} // to be implemented
               toggleStarredVariable={() => {}}

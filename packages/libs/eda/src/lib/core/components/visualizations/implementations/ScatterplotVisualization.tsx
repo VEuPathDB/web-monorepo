@@ -294,7 +294,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
-    copmutationAppOverview,
+    computationAppOverview,
     visualization,
     updateConfiguration,
     updateThumbnail,
@@ -319,7 +319,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // Fetch computed variable metadata from /meta endpoint to get correct entity IDs.
   // The query is disabled (via nullish queryKey values) when there's no computeName
   // or the job isn't complete yet.
-  const computeName = copmutationAppOverview.computeName;
+  const computeName = computationAppOverview.computeName;
   const computeJobComplete =
     computeJobStatus === 'complete' ? ('complete' as const) : undefined;
   const computedVarMetadata = useCachedPromise(async () => {
@@ -808,7 +808,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
           returnPointIds: options?.returnPointIds ?? true,
         },
-        computeConfig: copmutationAppOverview.computeName
+        computeConfig: computationAppOverview.computeName
           ? computationDescriptor.configuration
           : undefined,
       };
