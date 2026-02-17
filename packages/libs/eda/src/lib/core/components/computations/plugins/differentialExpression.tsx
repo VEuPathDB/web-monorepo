@@ -15,7 +15,6 @@ import {
   GENE_EXPRESSION_STABLE_IDS,
   GENE_EXPRESSION_VALUE_IDS,
 } from '../Utils';
-import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import {
   useDataClient,
@@ -42,6 +41,7 @@ import { InputVariables } from '../../visualizations/InputVariables';
 import { enqueueSnackbar } from 'notistack';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
+import { DifferentialExpressionConfig } from '../../../types/apps';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -60,29 +60,6 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * the future of this app include a lefse diagram, tables of results, adding new computation methods, and
  * strategies to create user-defined collections from the output of the computation.
  */
-
-export type DifferentialExpressionConfig = t.TypeOf<
-  typeof DifferentialExpressionConfig
->;
-
-const Comparator = t.intersection([
-  t.partial({
-    groupA: t.array(LabeledRange),
-    groupB: t.array(LabeledRange),
-  }),
-  t.type({
-    variable: VariableDescriptor,
-  }),
-]);
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const DifferentialExpressionConfig = t.partial({
-  identifierVariable: VariableDescriptor,
-  valueVariable: VariableDescriptor,
-  comparator: Comparator,
-  differentialExpressionMethod: t.string,
-  pValueFloor: t.string,
-});
 
 const CompleteDifferentialExpressionConfig = partialToCompleteCodec(
   DifferentialExpressionConfig
@@ -151,27 +128,31 @@ export const plugin: ComputationPlugin = {
   configurationComponent: DifferentialExpressionConfiguration,
   configurationDescriptionComponent:
     DifferentialExpressionConfigDescriptionComponent,
-  createDefaultConfiguration: () => ({}),
+  createDefaultConfiguration: () => ({
+    pValueFloor: '1e-200',
+    differentialExpressionMethod: Object.keys(
+      DIFFERENTIAL_EXPRESSION_METHODS
+    )[0],
+  }),
   isConfigurationComplete: isCompleteDifferentialExpressionConfig,
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization.withOptions({
+      pointsDisplayNameSingular: 'gene',
+      pointsDisplayNamePlural: 'genes',
       getPlotSubtitle(config) {
         if (
           DifferentialExpressionConfig.is(config) &&
           config.differentialExpressionMethod &&
-          config.differentialExpressionMethod in
-            DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
+          config.differentialExpressionMethod in DIFFERENTIAL_EXPRESSION_METHODS
         ) {
+          const method =
+            DIFFERENTIAL_EXPRESSION_METHODS[
+              config.differentialExpressionMethod as DifferentialExpressionMethodKey
+            ];
           return (
             <span>
-              Differential expression computed using{' '}
-              {config.differentialExpressionMethod}{' '}
-              {
-                DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS[
-                  config.differentialExpressionMethod as keyof typeof DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
-                ]
-              }{' '}
-              with default parameters.
+              Differential expression computed using {method.displayName}{' '}
+              {method.citation} with default parameters.
             </span>
           );
         }
@@ -242,22 +223,24 @@ function DifferentialExpressionConfigDescriptionComponent({
   );
 }
 
-// Include available methods in this array.
-// 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
-// and we're poised to release it in the future.
-type DifferentialExpressionMethodCitations = { DESeq: ReactNode };
-const DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS: DifferentialExpressionMethodCitations =
-  {
-    DESeq: (
+// Method keys must match what the backend expects.
+// limma is coming soon.
+const DIFFERENTIAL_EXPRESSION_METHODS = {
+  DESeq: {
+    displayName: 'DESeq2',
+    citation: (
       <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8">
         (Love et al., 2014)
       </a>
     ),
-  };
+  },
+} as const satisfies Record<
+  string,
+  { displayName: string; citation: ReactNode }
+>;
 
-const DIFFERENTIAL_EXPRESSION_METHODS = Object.keys(
-  DIFFERENTIAL_EXPRESSION_METHOD_CITATIONS
-);
+type DifferentialExpressionMethodKey =
+  keyof typeof DIFFERENTIAL_EXPRESSION_METHODS;
 
 export function DifferentialExpressionConfiguration(
   props: ComputationConfigProps
@@ -338,20 +321,6 @@ export function DifferentialExpressionConfiguration(
     changeConfigHandler,
     configuration.comparator,
   ]);
-
-  // Set the pValueFloor here. May change for other apps.
-  // Note this is intentionally different than the default pValueFloor used in the Volcano component. By default
-  // that component does not floor the data, but we know we want the diff abund computation to use a floor.
-  if (configuration && !configuration.pValueFloor) {
-    changeConfigHandler('pValueFloor', '1e-200');
-  }
-
-  if (configuration && !configuration.differentialExpressionMethod) {
-    changeConfigHandler(
-      'differentialExpressionMethod',
-      DIFFERENTIAL_EXPRESSION_METHODS[0]
-    );
-  }
 
   const entities = useMemo(
     () =>
