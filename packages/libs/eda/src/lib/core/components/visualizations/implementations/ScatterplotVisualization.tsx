@@ -380,7 +380,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     (v) => v.plotReference === 'xAxis' && v.variableClass === 'computed'
   )?.variableSpec.entityId;
 
-  console.log({ computedVarMetadata });
   const metadataYAxisEntityId = computedVarMetadata.value?.find(
     (v) => v.plotReference === 'yAxis' && v.variableClass === 'computed'
   )?.variableSpec.entityId;
