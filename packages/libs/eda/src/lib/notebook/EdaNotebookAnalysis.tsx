@@ -32,6 +32,7 @@ export interface WdkState {
   paramValues: ParameterValues;
   updateParamValue: UpdateParamValue;
   questionProperties: Record<string, string[]>;
+  submitButtonText: string;
 }
 
 interface Props {
@@ -164,7 +165,16 @@ export function EdaNotebookAnalysis(props: Props) {
       <div className="EdaNotebook">
         <div className="Paper">
           {notebookPreset.header && (
-            <H5 text={notebookPreset.header} color={colors.gray[600]} />
+            <H5
+              text={
+                typeof notebookPreset.header === 'function'
+                  ? notebookPreset.header({
+                      submitButtonText: wdkState.submitButtonText,
+                    })
+                  : notebookPreset.header
+              }
+              color={colors.gray[600]}
+            />
           )}
           {analysis.descriptor.computations.length > 0 ? (
             notebookPreset.cells.map((cell, index) => (

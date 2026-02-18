@@ -1,5 +1,6 @@
 import DefaultQuestionForm, {
   Props,
+  getSubmitButtonText,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import React, { useCallback, useMemo, useState } from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
@@ -33,6 +34,11 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     [props.eventHandlers, searchName]
   );
 
+  const submitButtonText = getSubmitButtonText(
+    props.submissionMetadata,
+    props.submitButtonText
+  );
+
   const wdkState = useMemo<WdkState>(
     () => ({
       // Safe: pluginConfig.tsx only routes here when edaNotebookType property is present
@@ -41,6 +47,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
       paramValues: props.state.paramValues,
       updateParamValue,
       questionProperties: props.state.question.properties ?? {},
+      submitButtonText,
     }),
     [
       props.state.question.queryName,
@@ -48,6 +55,7 @@ export const EdaNotebookQuestionForm = (props: Props) => {
       props.state.paramValues,
       updateParamValue,
       props.state.question.properties,
+      submitButtonText,
     ]
   );
 

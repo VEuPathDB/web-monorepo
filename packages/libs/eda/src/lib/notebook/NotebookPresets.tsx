@@ -58,9 +58,13 @@ export interface ComputeCellDescriptor
   hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
 }
 
+export interface TextCellContext {
+  analysisState: AnalysisState;
+  wdkState?: WdkState;
+}
+
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
-  text: ReactNode;
-  getDynamicContent?: (analysisState: AnalysisState) => ReactNode;
+  text: ReactNode | ((context: TextCellContext) => ReactNode);
 }
 
 export interface SubsetCellDescriptor
@@ -81,7 +85,7 @@ type PresetNotebook = {
   displayName: string;
   projects: string[];
   cells: NotebookCellDescriptor[];
-  header?: string; // Optional header text for the notebook, to be displayed above the cells.
+  header?: string | ((context: { submitButtonText: string }) => string); // Optional header text for the notebook, to be displayed above the cells.
   isReady?: (context: ReadinessContext) => boolean;
 };
 
@@ -191,8 +195,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                     }
                     enqueueSnackbar(
                       <span>
-                        Updated <strong>{paramText}</strong> search parameter in
-                        step 3 to: <strong>{newValue}</strong>
+                        Updated <strong>{paramText}</strong> search parameter
+                        to: <strong>{newValue}</strong>
                       </span>,
                       { variant: 'info' }
                     );
@@ -220,22 +224,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 table.
               </span>
             ),
-            text: (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                }}
-              >
-                <h4>
-                  Clicking "Get Answer" below will return genes that meet the
-                  following criteria:
-                </h4>
-              </div>
-            ),
-            getDynamicContent: (analysisState: AnalysisState) => {
-              // Extra guards
+            text: ({ analysisState, wdkState }: TextCellContext) => {
+              const submitButtonText =
+                wdkState?.submitButtonText ?? 'Get Answer';
+
+              // Extra guards for dynamic threshold content
               if (!analysisState.analysis?.descriptor?.computations?.length) {
                 return <div>No analysis configuration available</div>;
               }
@@ -263,32 +256,44 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.5em',
-                    marginTop: '0.5em',
+                    gap: '0.5rem',
                   }}
                 >
-                  <span>
-                    Absolute effect size:{' '}
-                    <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
-                  </span>
-                  <span>
-                    Unadjusted P-value:{' '}
-                    <strong>{volcanoPlotConfig.significanceThreshold}</strong>
-                  </span>
-                  <span>
-                    Gene regulation direction:{' '}
-                    <strong>Up and down regulated</strong>
-                  </span>
-                  <span
+                  <h4>
+                    Clicking "{submitButtonText}" below will return genes that
+                    meet the following criteria:
+                  </h4>
+                  <div
                     style={{
-                      fontStyle: 'italic',
-                      color: colors.grey[800],
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5em',
                       marginTop: '0.5em',
                     }}
                   >
-                    To make adjustments, update the volcano plot settings in
-                    step 3.
-                  </span>
+                    <span>
+                      Absolute effect size:{' '}
+                      <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
+                    </span>
+                    <span>
+                      Unadjusted P-value:{' '}
+                      <strong>{volcanoPlotConfig.significanceThreshold}</strong>
+                    </span>
+                    <span>
+                      Gene regulation direction:{' '}
+                      <strong>Up and down regulated</strong>
+                    </span>
+                    <span
+                      style={{
+                        fontStyle: 'italic',
+                        color: colors.grey[800],
+                        marginTop: '0.5em',
+                      }}
+                    >
+                      To make adjustments, update the volcano plot settings
+                      above.
+                    </span>
+                  </div>
                 </div>
               );
             },
@@ -309,8 +314,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   wgcnaCorrelationNotebook: {
     name: 'wgcnacorrelation',
     displayName: 'WGCNA Correlation Notebook',
-    header:
-      "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
+    header: ({ submitButtonText }) =>
+      `Use steps 1-3 to find a module of interest, then click '${submitButtonText}' to retrieve a list of genes.`,
     projects: ['PlasmoDB', 'HostDB', 'UniDB'],
     cells: [
       {

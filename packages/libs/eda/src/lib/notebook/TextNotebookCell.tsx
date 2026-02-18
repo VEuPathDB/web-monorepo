@@ -5,20 +5,21 @@ import { useMemo } from 'react';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
-  const { cell, isDisabled, analysisState, stepNumber } = props;
+  const { cell, isDisabled, analysisState, wdkState, stepNumber } = props;
 
-  const { text, title, getDynamicContent } = cell;
-
-  const dynamicContent = useMemo(
-    () => getDynamicContent?.(analysisState),
-    [getDynamicContent, analysisState]
+  const content = useMemo(
+    () =>
+      typeof cell.text === 'function'
+        ? cell.text({ analysisState, wdkState })
+        : cell.text,
+    [cell.text, analysisState, wdkState]
   );
 
   return (
     <>
       <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
-        title={title}
+        title={cell.title}
         subTitle={''}
         state="open"
         themeRole="primary"
@@ -26,8 +27,7 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
         <div
           className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
         >
-          {text}
-          {dynamicContent}
+          {content}
         </div>
       </ExpandablePanel>
     </>
