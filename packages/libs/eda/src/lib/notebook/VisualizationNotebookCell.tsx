@@ -10,6 +10,7 @@ import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
+import { NoSubmitOnEnter } from '@veupathdb/components/lib/components/widgets/NoSubmitOnEnter';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
@@ -22,6 +23,7 @@ export function VisualizationNotebookCell(
     wdkState,
     computeJobStatus,
     stepNumber,
+    stepNumbers,
   } = props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
@@ -94,46 +96,54 @@ export function VisualizationNotebookCell(
   const vizOptions = useMemo(
     () => ({
       ...vizPlugin?.options,
-      ...getVizPluginOptions?.(wdkState, enqueueSnackbar),
+      ...getVizPluginOptions?.(wdkState, enqueueSnackbar, stepNumbers),
     }),
-    [wdkState, enqueueSnackbar, getVizPluginOptions, vizPlugin?.options]
+    [
+      wdkState,
+      enqueueSnackbar,
+      getVizPluginOptions,
+      vizPlugin?.options,
+      stepNumbers,
+    ]
   );
 
   return visualization ? (
     <>
       <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
-      <ExpandablePanel
-        title={cell.title}
-        subTitle={''}
-        state={expandedPanelState ?? 'open'}
-        themeRole="primary"
-      >
-        <div
-          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+      <NoSubmitOnEnter>
+        <ExpandablePanel
+          title={cell.title}
+          subTitle={''}
+          state={expandedPanelState ?? 'open'}
+          themeRole="primary"
         >
-          {computation && vizPlugin && (
-            <vizPlugin.fullscreenComponent
-              options={vizOptions}
-              dataElementConstraints={constraints}
-              dataElementDependencyOrder={dataElementDependencyOrder}
-              visualization={visualization}
-              computation={computation}
-              copmutationAppOverview={appOverview}
-              filters={analysis.descriptor.subset.descriptor} // issue #1413
-              starredVariables={[]} // to be implemented
-              toggleStarredVariable={() => {}}
-              updateConfiguration={updateConfiguration}
-              totalCounts={totalCountsResult}
-              filteredCounts={filteredCountsResult}
-              geoConfigs={geoConfigs}
-              otherVizOverviews={[]}
-              computeJobStatus={computeJobStatus}
-              hideInputsAndControls={false}
-              plotContainerStyleOverrides={plotContainerStyleOverrides}
-            />
-          )}
-        </div>
-      </ExpandablePanel>
+          <div
+            className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+          >
+            {computation && vizPlugin && (
+              <vizPlugin.fullscreenComponent
+                options={vizOptions}
+                dataElementConstraints={constraints}
+                dataElementDependencyOrder={dataElementDependencyOrder}
+                visualization={visualization}
+                computation={computation}
+                computationAppOverview={appOverview}
+                filters={analysis.descriptor.subset.descriptor} // issue #1413
+                starredVariables={[]} // to be implemented
+                toggleStarredVariable={() => {}}
+                updateConfiguration={updateConfiguration}
+                totalCounts={totalCountsResult}
+                filteredCounts={filteredCountsResult}
+                geoConfigs={geoConfigs}
+                otherVizOverviews={[]}
+                computeJobStatus={computeJobStatus}
+                hideInputsAndControls={false}
+                plotContainerStyleOverrides={plotContainerStyleOverrides}
+              />
+            )}
+          </div>
+        </ExpandablePanel>
+      </NoSubmitOnEnter>
     </>
   ) : (
     <details>

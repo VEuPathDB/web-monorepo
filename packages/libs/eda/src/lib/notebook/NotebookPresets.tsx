@@ -27,6 +27,7 @@ export type NotebookCellDescriptor =
   | WdkParamCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
+  id: string; // Unique identifier for this cell. Used as key in stepNumbers map.
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
@@ -44,7 +45,8 @@ export interface VisualizationCellDescriptor
   // Useful for adding interactivity between the viz and other notebook cells.
   getVizPluginOptions?: (
     wdkState: WdkState,
-    enqueueSnackbar: EnqueueSnackbar
+    enqueueSnackbar: EnqueueSnackbar,
+    stepNumbers?: Map<string, number>
   ) => Partial<BipartiteNetworkOptions> | Partial<VolcanoPlotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
@@ -58,9 +60,14 @@ export interface ComputeCellDescriptor
   hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
 }
 
+export interface TextCellContext {
+  analysisState: AnalysisState;
+  wdkState?: WdkState;
+  stepNumbers?: Map<string, number>;
+}
+
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
-  text: ReactNode;
-  getDynamicContent?: (analysisState: AnalysisState) => ReactNode;
+  text: ReactNode | ((context: TextCellContext) => ReactNode);
 }
 
 export interface SubsetCellDescriptor
@@ -81,7 +88,12 @@ type PresetNotebook = {
   displayName: string;
   projects: string[];
   cells: NotebookCellDescriptor[];
-  header?: string; // Optional header text for the notebook, to be displayed above the cells.
+  header?:
+    | string
+    | ((context: {
+        submitButtonText: string;
+        stepNumbers: Map<string, number>;
+      }) => string); // Optional header text for the notebook, to be displayed above the cells.
   isReady?: (context: ReadinessContext) => boolean;
 };
 
@@ -110,6 +122,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     ],
     cells: [
       {
+        id: 'de_subset',
         type: 'subset',
         title: 'Select samples (optional)',
         numberedHeader: true,
@@ -117,29 +130,38 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           <span>Optionally refine samples for differential expression.</span>
         ),
       },
-      // TEMPORARILY DISABLED: PCA dimensionality reduction pending tall format migration
-      // {
-      //   type: 'compute',
-      //   title: 'PCA',
-      //   computationName: 'dimensionalityreduction',
-      //   computationId: 'pca_1',
-      //   hidden: true, // Hide in UI since config is already known.
-      //   cells: [
-      //     {
-      //       type: 'visualization',
-      //       title: 'PCA Plot',
-      //       visualizationName: 'scatterplot',
-      //       visualizationId: 'pca_1',
-      //       numberedHeader: true,
-      //       helperText: (
-      //         <span>
-      //           Use PCA to investigate possible sources of variation in the dataset.
-      //         </span>
-      //       ),
-      //     },
-      //   ],
-      // },
       {
+        id: 'de_pca_compute',
+        type: 'compute',
+        title: 'PCA',
+        computationName: 'dimensionalityreduction',
+        computationId: 'pca_1',
+        numberedHeader: true,
+        helperText: (
+          <span>
+            Use PCA to investigate possible sources of variation in the dataset.
+            Select the expression data to use for dimensionality reduction.
+          </span>
+        ),
+        cells: [
+          {
+            id: 'de_pca_plot',
+            type: 'visualization',
+            title: 'PCA Plot',
+            visualizationName: 'scatterplot',
+            visualizationId: 'pca_1',
+            numberedHeader: true,
+            helperText: (
+              <span>
+                Use PCA to investigate possible sources of variation in the
+                dataset.
+              </span>
+            ),
+          },
+        ],
+      },
+      {
+        id: 'de_deseq2_compute',
         type: 'compute',
         title: 'Setup DESeq2 Computation',
         computationName: 'differentialexpression',
@@ -155,45 +177,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
         cells: [
           {
+            id: 'de_volcano',
             type: 'visualization',
             title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
-            getVizPluginOptions: (
-              wdkState: WdkState,
-              enqueueSnackbar: EnqueueSnackbar
-            ) => {
-              return {
-                // When user changes viz config, show snackbar with updated params
-                inputSnackbar: <K extends keyof VolcanoPlotConfig>(
-                  enqueueSnackbar: EnqueueSnackbar,
-                  vizConfigParameter: K,
-                  newValue: VolcanoPlotConfig[K]
-                ) => {
-                  let paramText = '';
-                  // The only two parameters we want to alert the user about are numbers.
-                  if (typeof newValue === 'number') {
-                    switch (vizConfigParameter) {
-                      case 'effectSizeThreshold':
-                        paramText = 'Absolute effect size';
-                        break;
-                      case 'significanceThreshold':
-                        paramText = 'Unadjusted P-value';
-                        break;
-                      default:
-                        paramText = 'Unknown parameter';
-                    }
-                    enqueueSnackbar(
-                      <span>
-                        Updated <strong>{paramText}</strong> search parameter in
-                        step 3 to: <strong>{newValue}</strong>
-                      </span>,
-                      { variant: 'info' }
-                    );
-                  }
-                },
-              };
-            },
             numberedHeader: true,
             helperText: (
               <span>
@@ -204,6 +192,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ),
           },
           {
+            id: 'de_review',
             type: 'text',
             title: 'Review and run search',
             numberedHeader: true,
@@ -214,22 +203,15 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 table.
               </span>
             ),
-            text: (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                }}
-              >
-                <h4>
-                  Clicking "Get Answer" below will return genes that meet the
-                  following criteria:
-                </h4>
-              </div>
-            ),
-            getDynamicContent: (analysisState: AnalysisState) => {
-              // Extra guards
+            text: ({
+              analysisState,
+              wdkState,
+              stepNumbers,
+            }: TextCellContext) => {
+              const submitButtonText =
+                wdkState?.submitButtonText ?? 'Get Answer';
+
+              // Extra guards for dynamic threshold content
               if (!analysisState.analysis?.descriptor?.computations?.length) {
                 return <div>No analysis configuration available</div>;
               }
@@ -257,32 +239,44 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.5em',
-                    marginTop: '0.5em',
+                    gap: '0.5rem',
                   }}
                 >
-                  <span>
-                    Absolute effect size:{' '}
-                    <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
-                  </span>
-                  <span>
-                    Unadjusted P-value:{' '}
-                    <strong>{volcanoPlotConfig.significanceThreshold}</strong>
-                  </span>
-                  <span>
-                    Gene regulation direction:{' '}
-                    <strong>Up and down regulated</strong>
-                  </span>
-                  <span
+                  <h4>
+                    Clicking "{submitButtonText}" below will return genes that
+                    meet the following criteria:
+                  </h4>
+                  <div
                     style={{
-                      fontStyle: 'italic',
-                      color: colors.grey[800],
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5em',
                       marginTop: '0.5em',
                     }}
                   >
-                    To make adjustments, update the volcano plot settings in
-                    step 3.
-                  </span>
+                    <span>
+                      Absolute effect size:{' '}
+                      <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
+                    </span>
+                    <span>
+                      Unadjusted P-value:{' '}
+                      <strong>{volcanoPlotConfig.significanceThreshold}</strong>
+                    </span>
+                    <span>
+                      Gene regulation direction:{' '}
+                      <strong>Up and down regulated</strong>
+                    </span>
+                    <span
+                      style={{
+                        fontStyle: 'italic',
+                        color: colors.grey[800],
+                        marginTop: '0.5em',
+                      }}
+                    >
+                      To make adjustments, update the volcano plot settings in
+                      step {stepNumbers?.get('de_volcano') ?? 'above'}.
+                    </span>
+                  </div>
                 </div>
               );
             },
@@ -303,11 +297,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   wgcnaCorrelationNotebook: {
     name: 'wgcnacorrelation',
     displayName: 'WGCNA Correlation Notebook',
-    header:
-      "Use steps 1-3 to find a module of interest, then click 'Get Answer' to retrieve a list of genes.",
+    header: ({ submitButtonText, stepNumbers }) =>
+      `Use steps 1-${
+        stepNumbers.get('wgcna_params') ?? '?'
+      } to find a module of interest, then click '${submitButtonText}' to retrieve a list of genes.`,
     projects: ['PlasmoDB', 'HostDB', 'UniDB'],
     cells: [
       {
+        id: 'wgcna_correlation_compute',
         type: 'compute',
         title: 'Correlation computation',
         computationName: 'correlation',
@@ -335,6 +332,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           },
         cells: [
           {
+            id: 'wgcna_bipartite',
             type: 'visualization',
             title: 'Network visualization of correlation results',
             visualizationName: 'bipartitenetwork',
@@ -348,7 +346,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ),
             getVizPluginOptions: (
               wdkState: WdkState,
-              enqueueSnackbar: EnqueueSnackbar
+              enqueueSnackbar: EnqueueSnackbar,
+              stepNumbers?: Map<string, number>
             ) => {
               return {
                 additionalOnNodeClickAction: (node: NodeData) => {
@@ -400,10 +399,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   wdkState.updateParamValue(param, moduleName);
 
                   // Open snackbar
+                  const paramStep = stepNumbers?.get('wgcna_params') ?? '?';
                   enqueueSnackbar(
                     <span>
-                      Updated WGNCA module search parameter in step 3 to:{' '}
-                      <strong>{moduleName}</strong>
+                      Updated WGCNA module search parameter in step {paramStep}{' '}
+                      to: <strong>{moduleName}</strong>
                     </span>,
                     { variant: 'info' }
                   );
@@ -414,6 +414,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
       {
+        id: 'wgcna_params',
         type: 'wdkparam',
         title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
@@ -442,6 +443,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     projects: ['MicrobiomeDB'],
     cells: [
       {
+        id: 'boxplot_viz',
         type: 'visualization',
         title: 'Boxplot Visualization',
         visualizationName: 'boxplot',

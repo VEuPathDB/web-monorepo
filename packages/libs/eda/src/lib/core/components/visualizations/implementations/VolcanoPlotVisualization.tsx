@@ -42,7 +42,10 @@ import {
 } from '@veupathdb/components/lib/types/plots/volcanoplot';
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
-import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
+import {
+  DifferentialAbundanceConfig,
+  DifferentialExpressionConfig,
+} from '../../../types/apps';
 import { yellow } from '@material-ui/core/colors';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { significanceColors } from '@veupathdb/components/lib/types/plots';
@@ -89,6 +92,11 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
+const VolcanoComputationConfig = t.union([
+  DifferentialAbundanceConfig,
+  DifferentialExpressionConfig,
+]);
+
 export const volcanoPlotVisualization = createVisualizationPlugin({
   selectorIcon: VolcanoSVG,
   fullscreenComponent: VolcanoPlotViz,
@@ -124,6 +132,9 @@ export interface VolcanoPlotOptions
     vizConfigParameter: K,
     newValue: VolcanoPlotConfig[K]
   ) => void;
+  /** Fallback display names for data points when collectionVariable is not available */
+  pointsDisplayNameSingular?: string;
+  pointsDisplayNamePlural?: string;
 }
 
 // Volcano Plot Visualization
@@ -149,8 +160,14 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
   const { enqueueSnackbar } = useSnackbar();
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const computationConfiguration: DifferentialAbundanceConfig = computation
-    .descriptor.configuration as DifferentialAbundanceConfig;
+
+  const computationConfiguration:
+    | t.TypeOf<typeof VolcanoComputationConfig>
+    | undefined = VolcanoComputationConfig.is(
+    computation.descriptor.configuration
+  )
+    ? computation.descriptor.configuration
+    : undefined;
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
@@ -424,17 +441,16 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
   // Add labels to the extremes of the x axis. These may change in the future based on the type
   // of data. For example, for genes we may want to say Up regulated in...
   const comparisonLabels =
-    computationConfiguration &&
-    computationConfiguration.comparator?.groupA &&
-    computationConfiguration.comparator?.groupB
+    computationConfiguration?.comparator?.groupA &&
+    computationConfiguration?.comparator?.groupB
       ? [
           'Up in ' +
             computationConfiguration.comparator.groupA
-              .map((entry) => entry.label)
+              .map((entry: { label: string }) => entry.label)
               .join(', '),
           'Up in ' +
             computationConfiguration.comparator.groupB
-              .map((entry) => entry.label)
+              .map((entry: { label: string }) => entry.label)
               .join(', '),
         ]
       : [];
@@ -707,12 +723,20 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     </div>
   );
 
-  // If available, grab the annotated display name to describe the points
+  // If available, grab the annotated display name to describe the points.
+  // For diff abundance, look up from the collectionVariable. For diff expression
+  // (which has no collectionVariable), fall back to the option provided by the plugin.
   const findEntityAndVariableCollection = useFindEntityAndVariableCollection();
-  const pointsDisplayName = capitalize(
-    findEntityAndVariableCollection(computationConfiguration.collectionVariable)
-      ?.variableCollection.memberPlural
-  );
+  const collectionVariable = DifferentialAbundanceConfig.is(
+    computationConfiguration
+  )
+    ? computationConfiguration.collectionVariable
+    : undefined;
+  const pointsDisplayName =
+    capitalize(
+      findEntityAndVariableCollection(collectionVariable)?.variableCollection
+        .memberPlural
+    ) || capitalize(options?.pointsDisplayNamePlural);
 
   const legendNode = finalData && countsData && (
     <PlotLegend
@@ -728,16 +752,16 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
           markerColor: significanceColors['inconclusive'],
         },
         {
-          label: `Up in ${computationConfiguration.comparator?.groupB
-            ?.map((entry) => entry.label)
+          label: `Up in ${computationConfiguration?.comparator?.groupB
+            ?.map((entry: { label: string }) => entry.label)
             .join(', ')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['high'],
         },
         {
-          label: `Up in ${computationConfiguration.comparator?.groupA
-            ?.map((entry) => entry.label)
+          label: `Up in ${computationConfiguration?.comparator?.groupA
+            ?.map((entry: { label: string }) => entry.label)
             .join(', ')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,

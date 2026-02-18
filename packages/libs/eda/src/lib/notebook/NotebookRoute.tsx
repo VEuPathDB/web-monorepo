@@ -81,6 +81,7 @@ export default function NotebookRoute(props: Props) {
                     paramValues: {},
                     updateParamValue: () => {},
                     questionProperties: {},
+                    submitButtonText: 'Get Answer',
                   }}
                 />
               </EDAWorkspaceContainer>

@@ -12,6 +12,7 @@ import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
 
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
+  useComputeClient,
   useDataClient,
   useFindEntityAndVariable,
   useStudyEntities,
@@ -293,7 +294,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
-    copmutationAppOverview,
+    computationAppOverview,
     visualization,
     updateConfiguration,
     updateThumbnail,
@@ -313,6 +314,33 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const computeClient = useComputeClient();
+
+  // Fetch computed variable metadata from /meta endpoint to get correct entity IDs.
+  // The query is disabled (via nullish queryKey values) when there's no computeName
+  // or the job isn't complete yet.
+  const computeName = computationAppOverview.computeName;
+  const computeJobComplete =
+    computeJobStatus === 'complete' ? ('complete' as const) : undefined;
+  const computedVarMetadata = useCachedPromise(async () => {
+    const result = await computeClient.getComputedVariableMetadata(
+      computeName!,
+      {
+        studyId,
+        filters: filters ?? [],
+        derivedVariables: [],
+        config: computation.descriptor.configuration,
+      }
+    );
+    return result.variables;
+  }, [
+    computeName,
+    computeJobComplete,
+    studyId,
+    filters,
+    computation.descriptor.configuration,
+  ]);
+
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
@@ -347,25 +375,54 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [computation.descriptor.configuration, options]
   );
 
-  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
-  // just like native vars (for example, in the variable coverage table).
+  // Full metadata for computed axes from /meta endpoint
+  const metadataXAxis = computedVarMetadata.value?.find(
+    (v) => v.plotReference === 'xAxis' && v.variableClass === 'computed'
+  );
+  const metadataYAxis = computedVarMetadata.value?.find(
+    (v) => v.plotReference === 'yAxis' && v.variableClass === 'computed'
+  );
+
+  // If the plugin provides any getComputed*AxisDetails functions, it is the authority
+  // on which axes are computed (e.g. abundance provides Y but not X).
+  // Only fall back to /meta when the plugin provides NO axis detail functions (e.g. PCA).
+  const pluginProvidesAnyAxisDetails =
+    options?.getComputedXAxisDetails != null ||
+    options?.getComputedYAxisDetails != null;
+
+  // Create variable descriptors for computed variables. Plugin functions are authoritative
+  // when present; /meta is used as fallback (e.g. PCA which has no plugin axis functions).
+  // When a plugin provides details, /meta entity IDs still override for correctness.
   const computedXAxisDescriptor = computedXAxisDetails
     ? {
-        entityId: computedXAxisDetails.entityId,
+        entityId:
+          metadataXAxis?.variableSpec.entityId ?? computedXAxisDetails.entityId,
         variableId:
-          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__',
       }
+    : !pluginProvidesAnyAxisDetails && metadataXAxis
+    ? metadataXAxis.variableSpec
     : null;
 
-  // When we only have a computed y axis (and no provided overlay) then the y axis var
-  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
   const computedYAxisDescriptor = computedYAxisDetails
     ? {
-        entityId: computedYAxisDetails.entityId,
+        entityId:
+          metadataYAxis?.variableSpec.entityId ?? computedYAxisDetails.entityId,
         variableId:
-          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__',
       }
+    : !pluginProvidesAnyAxisDetails && metadataYAxis
+    ? metadataYAxis.variableSpec
     : null;
+
+  // True when the axis is fully computed (user doesn't select a variable for it).
+  // Plugin functions are authoritative when present; /meta is used only as fallback (PCA).
+  const hasComputedXAxis =
+    computedXAxisDetails != null ||
+    (!pluginProvidesAnyAxisDetails && metadataXAxis != null);
+  const hasComputedYAxis =
+    computedYAxisDetails != null ||
+    (!pluginProvidesAnyAxisDetails && metadataYAxis != null);
 
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
@@ -611,7 +668,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     dataElementDependencyOrder,
     selectedVariables,
     'yAxisVariable',
-    computedYAxisDetails?.entityId
+    metadataYAxis?.variableSpec.entityId ?? computedYAxisDetails?.entityId
   );
 
   // set a condition to show log scale/plot mode related banner
@@ -660,17 +717,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   const dataRequestDeps =
-    // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-    (computedYAxisDetails && computeJobStatus !== 'complete') ||
+    // Wait for compute job and /meta when there's a computation
+    (computeName &&
+      (computeJobStatus !== 'complete' || computedVarMetadata.pending)) ||
     // the usual conditions for not showing a plot:
     filteredCounts.pending ||
     filteredCounts.value == null ||
     showLogScaleBanner ||
     showContinousOverlayBanner ||
-    // check for required variables when not a compute
-    (computedXAxisDetails == null &&
+    // check for required variables when not computed
+    (!hasComputedXAxis &&
       (vizConfig.xAxisVariable == null || xAxisVariable == null)) ||
-    (computedYAxisDetails == null &&
+    (!hasComputedYAxis &&
       (vizConfig.yAxisVariable == null || yAxisVariable == null))
       ? undefined
       : {
@@ -769,7 +827,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
           returnPointIds: options?.returnPointIds ?? true,
         },
-        computeConfig: copmutationAppOverview.computeName
+        computeConfig: computationAppOverview.computeName
           ? computationDescriptor.configuration
           : undefined,
       };
@@ -2034,13 +2092,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         name: 'xAxisVariable',
         label: 'X-axis',
         role: 'axis',
-        readonlyValue: computedXAxisDetails ? independentAxisLabel : undefined,
+        readonlyValue: hasComputedXAxis ? independentAxisLabel : undefined,
       },
       {
         name: 'yAxisVariable',
         label: 'Y-axis',
         role: 'axis',
-        readonlyValue: computedYAxisDetails ? dependentAxisLabel : undefined,
+        readonlyValue: hasComputedYAxis ? dependentAxisLabel : undefined,
       },
       ...(computedOverlayVariableDescriptor
         ? [
@@ -2077,8 +2135,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     ],
     [
       computedOverlayVariableDescriptor,
-      computedXAxisDetails,
-      computedYAxisDetails,
+      hasComputedXAxis,
+      hasComputedYAxis,
       dependentAxisLabel,
       independentAxisLabel,
       legendTitle,

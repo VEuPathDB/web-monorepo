@@ -32,6 +32,7 @@ export interface WdkState {
   paramValues: ParameterValues;
   updateParamValue: UpdateParamValue;
   questionProperties: Record<string, string[]>;
+  submitButtonText: string;
 }
 
 interface Props {
@@ -139,11 +140,11 @@ export function EdaNotebookAnalysis(props: Props) {
   // Uses a depth-first walk so nested cells (e.g. volcano inside DE compute)
   // get sequential numbers. The Map is stable across partial re-renders.
   const stepNumbers = useMemo(() => {
-    const map = new Map<NotebookCellDescriptor, number>();
+    const map = new Map<string, number>();
     let n = 0;
     (function walk(cells: NotebookCellDescriptor[]) {
       for (const cell of cells) {
-        if (cell.numberedHeader) map.set(cell, ++n);
+        if (cell.numberedHeader) map.set(cell.id, ++n);
         if ('cells' in cell && cell.cells) walk(cell.cells);
       }
     })(notebookPreset.cells);
@@ -164,7 +165,17 @@ export function EdaNotebookAnalysis(props: Props) {
       <div className="EdaNotebook">
         <div className="Paper">
           {notebookPreset.header && (
-            <H5 text={notebookPreset.header} color={colors.gray[600]} />
+            <H5
+              text={
+                typeof notebookPreset.header === 'function'
+                  ? notebookPreset.header({
+                      submitButtonText: wdkState.submitButtonText,
+                      stepNumbers,
+                    })
+                  : notebookPreset.header
+              }
+              color={colors.gray[600]}
+            />
           )}
           {analysis.descriptor.computations.length > 0 ? (
             notebookPreset.cells.map((cell, index) => (
@@ -174,7 +185,7 @@ export function EdaNotebookAnalysis(props: Props) {
                 wdkState={wdkState}
                 cell={cell}
                 projectId={projectId}
-                stepNumber={stepNumbers.get(cell)}
+                stepNumber={stepNumbers.get(cell.id)}
                 stepNumbers={stepNumbers}
               />
             ))

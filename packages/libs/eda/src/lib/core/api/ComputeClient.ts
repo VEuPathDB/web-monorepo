@@ -6,6 +6,7 @@ import {
 } from '@veupathdb/http-utils';
 import { DerivedVariable } from '../types/analysis';
 import { Filter } from '../types/filter';
+import { VariableMapping } from './DataClient/types';
 
 interface ComputeSpec {
   studyId: string;
@@ -28,6 +29,14 @@ export const JobStatusReponse = t.type({
   }),
 });
 
+export type ComputedVariableMetadata = t.TypeOf<
+  typeof ComputedVariableMetadata
+>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const ComputedVariableMetadata = t.type({
+  variables: t.array(VariableMapping),
+});
+
 export class ComputeClient extends FetchClientWithCredentials {
   /**
    * Creates a job for a given compute plugin and spec, if one
@@ -48,6 +57,24 @@ export class ComputeClient extends FetchClientWithCredentials {
     computeSpec: ComputeSpec
   ): Promise<JobStatusReponse> {
     return this.postJobStatus(computeName, computeSpec, true);
+  }
+  getComputedVariableMetadata(
+    computeName: string,
+    computeSpec: ComputeSpec
+  ): Promise<ComputedVariableMetadata> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: `/computes/${computeName}/meta`,
+        body: computeSpec,
+        transformResponse: async (body: unknown) => {
+          // The /meta endpoint may return Content-Type: text/plain,
+          // so the body may arrive as a string rather than parsed JSON.
+          const parsed = typeof body === 'string' ? JSON.parse(body) : body;
+          return ioTransformer(ComputedVariableMetadata)(parsed);
+        },
+      })
+    );
   }
   private postJobStatus(
     computeName: string,
