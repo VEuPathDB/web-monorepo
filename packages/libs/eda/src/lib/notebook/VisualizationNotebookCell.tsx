@@ -10,6 +10,7 @@ import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
+import { NoSubmitOnEnter } from '@veupathdb/components/lib/components/widgets/NoSubmitOnEnter';
 
 export function VisualizationNotebookCell(
   props: NotebookCellProps<VisualizationCellDescriptor>
@@ -100,7 +101,7 @@ export function VisualizationNotebookCell(
   );
 
   return visualization ? (
-    <>
+    <NoSubmitOnEnter>
       <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={cell.title}
@@ -134,7 +135,7 @@ export function VisualizationNotebookCell(
           )}
         </div>
       </ExpandablePanel>
-    </>
+    </NoSubmitOnEnter>
   ) : (
     <details>
       <summary>Loading</summary>
