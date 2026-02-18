@@ -99,7 +99,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               },
             }}
           >
-            <EdaNotebookAdapter
+            <EdaNotebookAnalysis
               analysisState={analysisState}
               notebookType={notebookType}
               wdkState={wdkState}
@@ -109,46 +109,6 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
         </WorkspaceContainer>
       </DocumentationContainer>
     </>
-  );
-}
-
-interface EdaNotebookAdapterProps {
-  analysisState: AnalysisState;
-  notebookType: string;
-  wdkState: WdkState;
-  onReadinessChange?: (isReady: boolean) => void;
-}
-
-function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
-  const { analysisState, wdkState, notebookType, onReadinessChange } = props;
-  const studyId = analysisState.analysis?.studyId;
-
-  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
-  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
-  const dataClient = useConfiguredDataClient(edaServiceUrl);
-  const computeClient = useConfiguredComputeClient(edaServiceUrl);
-
-  return (
-    <div className="EdaSubsettingParameter">
-      {studyId && (
-        <EDAWorkspaceContainer
-          studyId={studyId}
-          analysisClient={analysisClient}
-          subsettingClient={subsettingClient}
-          downloadClient={downloadClient}
-          dataClient={dataClient}
-          computeClient={computeClient}
-        >
-          <EdaNotebookAnalysis
-            analysisState={analysisState}
-            notebookType={notebookType}
-            wdkState={wdkState}
-            onReadinessChange={onReadinessChange}
-          />
-        </EDAWorkspaceContainer>
-      )}
-    </div>
   );
 }
 
