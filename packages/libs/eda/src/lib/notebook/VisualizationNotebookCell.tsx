@@ -101,41 +101,43 @@ export function VisualizationNotebookCell(
   );
 
   return visualization ? (
-    <NoSubmitOnEnter>
+    <>
       <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
-      <ExpandablePanel
-        title={cell.title}
-        subTitle={''}
-        state={expandedPanelState ?? 'open'}
-        themeRole="primary"
-      >
-        <div
-          className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+      <NoSubmitOnEnter>
+        <ExpandablePanel
+          title={cell.title}
+          subTitle={''}
+          state={expandedPanelState ?? 'open'}
+          themeRole="primary"
         >
-          {computation && vizPlugin && (
-            <vizPlugin.fullscreenComponent
-              options={vizOptions}
-              dataElementConstraints={constraints}
-              dataElementDependencyOrder={dataElementDependencyOrder}
-              visualization={visualization}
-              computation={computation}
-              computationAppOverview={appOverview}
-              filters={analysis.descriptor.subset.descriptor} // issue #1413
-              starredVariables={[]} // to be implemented
-              toggleStarredVariable={() => {}}
-              updateConfiguration={updateConfiguration}
-              totalCounts={totalCountsResult}
-              filteredCounts={filteredCountsResult}
-              geoConfigs={geoConfigs}
-              otherVizOverviews={[]}
-              computeJobStatus={computeJobStatus}
-              hideInputsAndControls={false}
-              plotContainerStyleOverrides={plotContainerStyleOverrides}
-            />
-          )}
-        </div>
-      </ExpandablePanel>
-    </NoSubmitOnEnter>
+          <div
+            className={'NotebookCellContent' + (isDisabled ? ' disabled' : '')}
+          >
+            {computation && vizPlugin && (
+              <vizPlugin.fullscreenComponent
+                options={vizOptions}
+                dataElementConstraints={constraints}
+                dataElementDependencyOrder={dataElementDependencyOrder}
+                visualization={visualization}
+                computation={computation}
+                computationAppOverview={appOverview}
+                filters={analysis.descriptor.subset.descriptor} // issue #1413
+                starredVariables={[]} // to be implemented
+                toggleStarredVariable={() => {}}
+                updateConfiguration={updateConfiguration}
+                totalCounts={totalCountsResult}
+                filteredCounts={filteredCountsResult}
+                geoConfigs={geoConfigs}
+                otherVizOverviews={[]}
+                computeJobStatus={computeJobStatus}
+                hideInputsAndControls={false}
+                plotContainerStyleOverrides={plotContainerStyleOverrides}
+              />
+            )}
+          </div>
+        </ExpandablePanel>
+      </NoSubmitOnEnter>
+    </>
   ) : (
     <details>
       <summary>Loading</summary>
