@@ -203,7 +203,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                 table.
               </span>
             ),
-            text: ({ analysisState, wdkState }: TextCellContext) => {
+            text: ({
+              analysisState,
+              wdkState,
+              stepNumbers,
+            }: TextCellContext) => {
               const submitButtonText =
                 wdkState?.submitButtonText ?? 'Get Answer';
 
@@ -269,8 +273,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                         marginTop: '0.5em',
                       }}
                     >
-                      To make adjustments, update the volcano plot settings
-                      above.
+                      To make adjustments, update the volcano plot settings in
+                      step {stepNumbers?.get('de_volcano') ?? 'above'}.
                     </span>
                   </div>
                 </div>
