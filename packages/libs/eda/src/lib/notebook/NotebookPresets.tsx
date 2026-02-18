@@ -372,19 +372,24 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   // Do nothing if the node they clicked on is
                   // not from the group of modules in the param.
                   // Here we assume the structure of the vocabulary coming from the wdk.
-                  const allowedValues = param.vocabulary
-                    .filter(
-                      (item): item is [string, string, null] =>
-                        Array.isArray(item) && item.length === 3
-                    )
-                    .map((item: [string, string, null]) =>
-                      item[0].toLowerCase()
-                    );
+                  const allowedValues = param.vocabulary.filter(
+                    (item): item is [string, string, null] =>
+                      Array.isArray(item) && item.length === 3
+                  );
                   if (allowedValues.length === 0) return;
-                  if (!allowedValues.includes(moduleName)) {
-                    // TO DO: notify user if they've clicked on a "wrong" node? Needs UX.
-                    return;
-                  }
+
+                  // Match the clicked node to a vocabulary value. The node label
+                  // (e.g. "module_4_17nov2025_pfal3d7") may be a suffix of the
+                  // vocabulary value (e.g. "p_module_4_17nov2025_pfal3d7") due to
+                  // a data-side prefix, so use case-insensitive endsWith for
+                  // matching but preserve the original vocabulary value for the
+                  // param update.
+                  const matchedEntry = allowedValues.find((item) => {
+                    const v = item[0].toLowerCase();
+                    return v === moduleName || v.endsWith('_' + moduleName);
+                  });
+                  if (!matchedEntry) return;
+                  const matchedValue = matchedEntry[0];
 
                   // Do nothing if the module they clicked on is already selected.
                   const currentValue = wdkState.paramValues?.[param.name];
@@ -396,14 +401,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   }
 
                   // Update module name in the wdk param store
-                  wdkState.updateParamValue(param, moduleName);
+                  wdkState.updateParamValue(param, matchedValue);
 
                   // Open snackbar
                   const paramStep = stepNumbers?.get('wgcna_params') ?? '?';
                   enqueueSnackbar(
                     <span>
                       Updated WGCNA module search parameter in step {paramStep}{' '}
-                      to: <strong>{moduleName}</strong>
+                      to: <strong>{matchedValue}</strong>
                     </span>,
                     { variant: 'info' }
                   );
