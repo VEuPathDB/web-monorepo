@@ -26,11 +26,14 @@ const ServiceAccessPanel: React.FC<Props> = () => {
   return (
     <div>
       <h2>VEuPathDB Web Services Access</h2>
-      <p style={{ maxWidth: '60%' }}>
+      <p style={{ fontSize: '1.3em', maxWidth: '100%' }}>
         VEuPathDB provides a REST API enabling users to programmatically query
         and analyize data, download results, even create multi-step search
         strategies. These HTTP resources require registration and a valid API
-        Key. Your key is provided below. <a href={serviceHelpUrl}>Click here</a>{' '}
+        Key. Your key is provided below.{' '}
+        <a style={{ cursor: 'pointer' }} href={serviceHelpUrl}>
+          Click here
+        </a>{' '}
         to learn how to use it to access web services.
       </p>
       <h3>Your Personal API Key</h3>
@@ -39,9 +42,10 @@ const ServiceAccessPanel: React.FC<Props> = () => {
       </a>
       <blockquote
         style={{
-          backgroundColor: 'lightgrey',
+          padding: '10px',
+          backgroundColor: '#E8E8E8',
           overflowWrap: 'break-word',
-          maxWidth: '40%',
+          maxWidth: '60%',
         }}
       >
         {token}
