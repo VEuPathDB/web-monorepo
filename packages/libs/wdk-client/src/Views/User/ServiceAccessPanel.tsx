@@ -11,7 +11,9 @@ const getAuthorizationToken = (): string | undefined => {
   }
 };
 
-const ServiceAccessPanel: React.FC<void> = () => {
+interface Props {}
+
+const ServiceAccessPanel: React.FC<Props> = () => {
   let token =
     getAuthorizationToken() ||
     'Your authorization token is not currently available.';
