@@ -5,14 +5,15 @@ import { useMemo } from 'react';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
-  const { cell, isDisabled, analysisState, wdkState, stepNumber } = props;
+  const { cell, isDisabled, analysisState, wdkState, stepNumber, stepNumbers } =
+    props;
 
   const content = useMemo(
     () =>
       typeof cell.text === 'function'
-        ? cell.text({ analysisState, wdkState })
+        ? cell.text({ analysisState, wdkState, stepNumbers })
         : cell.text,
-    [cell.text, analysisState, wdkState]
+    [cell.text, analysisState, wdkState, stepNumbers]
   );
 
   return (

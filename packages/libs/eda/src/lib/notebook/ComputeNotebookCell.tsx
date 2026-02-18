@@ -229,7 +229,7 @@ export function ComputeNotebookCell(
               isDisabled={isSubCellDisabled}
               wdkState={wdkState}
               computeJobStatus={jobStatus}
-              stepNumber={stepNumbers?.get(subCell)}
+              stepNumber={stepNumbers?.get(subCell.id)}
               stepNumbers={stepNumbers}
             />
           );

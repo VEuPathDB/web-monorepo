@@ -27,6 +27,7 @@ export type NotebookCellDescriptor =
   | WdkParamCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
+  id: string; // Unique identifier for this cell. Used as key in stepNumbers map.
   type: T;
   title: string;
   cells?: NotebookCellDescriptor[];
@@ -44,7 +45,8 @@ export interface VisualizationCellDescriptor
   // Useful for adding interactivity between the viz and other notebook cells.
   getVizPluginOptions?: (
     wdkState: WdkState,
-    enqueueSnackbar: EnqueueSnackbar
+    enqueueSnackbar: EnqueueSnackbar,
+    stepNumbers?: Map<string, number>
   ) => Partial<BipartiteNetworkOptions> | Partial<VolcanoPlotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
@@ -61,6 +63,7 @@ export interface ComputeCellDescriptor
 export interface TextCellContext {
   analysisState: AnalysisState;
   wdkState?: WdkState;
+  stepNumbers?: Map<string, number>;
 }
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
@@ -85,7 +88,12 @@ type PresetNotebook = {
   displayName: string;
   projects: string[];
   cells: NotebookCellDescriptor[];
-  header?: string | ((context: { submitButtonText: string }) => string); // Optional header text for the notebook, to be displayed above the cells.
+  header?:
+    | string
+    | ((context: {
+        submitButtonText: string;
+        stepNumbers: Map<string, number>;
+      }) => string); // Optional header text for the notebook, to be displayed above the cells.
   isReady?: (context: ReadinessContext) => boolean;
 };
 
@@ -114,6 +122,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     ],
     cells: [
       {
+        id: 'de_subset',
         type: 'subset',
         title: 'Select samples (optional)',
         numberedHeader: true,
@@ -122,6 +131,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
       },
       {
+        id: 'de_pca_compute',
         type: 'compute',
         title: 'PCA',
         computationName: 'dimensionalityreduction',
@@ -135,6 +145,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
         cells: [
           {
+            id: 'de_pca_plot',
             type: 'visualization',
             title: 'PCA Plot',
             visualizationName: 'scatterplot',
@@ -150,6 +161,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
       {
+        id: 'de_deseq2_compute',
         type: 'compute',
         title: 'Setup DESeq2 Computation',
         computationName: 'differentialexpression',
@@ -165,45 +177,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
         cells: [
           {
+            id: 'de_volcano',
             type: 'visualization',
             title: 'Examine DESeq2 Results with Volcano Plot',
             visualizationName: 'volcanoplot',
             visualizationId: 'volcano_1',
-            getVizPluginOptions: (
-              wdkState: WdkState,
-              enqueueSnackbar: EnqueueSnackbar
-            ) => {
-              return {
-                // When user changes viz config, show snackbar with updated params
-                inputSnackbar: <K extends keyof VolcanoPlotConfig>(
-                  enqueueSnackbar: EnqueueSnackbar,
-                  vizConfigParameter: K,
-                  newValue: VolcanoPlotConfig[K]
-                ) => {
-                  let paramText = '';
-                  // The only two parameters we want to alert the user about are numbers.
-                  if (typeof newValue === 'number') {
-                    switch (vizConfigParameter) {
-                      case 'effectSizeThreshold':
-                        paramText = 'Absolute effect size';
-                        break;
-                      case 'significanceThreshold':
-                        paramText = 'Unadjusted P-value';
-                        break;
-                      default:
-                        paramText = 'Unknown parameter';
-                    }
-                    enqueueSnackbar(
-                      <span>
-                        Updated <strong>{paramText}</strong> search parameter
-                        to: <strong>{newValue}</strong>
-                      </span>,
-                      { variant: 'info' }
-                    );
-                  }
-                },
-              };
-            },
             numberedHeader: true,
             helperText: (
               <span>
@@ -214,6 +192,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ),
           },
           {
+            id: 'de_review',
             type: 'text',
             title: 'Review and run search',
             numberedHeader: true,
@@ -314,11 +293,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
   wgcnaCorrelationNotebook: {
     name: 'wgcnacorrelation',
     displayName: 'WGCNA Correlation Notebook',
-    header: ({ submitButtonText }) =>
-      `Use steps 1-3 to find a module of interest, then click '${submitButtonText}' to retrieve a list of genes.`,
+    header: ({ submitButtonText, stepNumbers }) =>
+      `Use steps 1-${
+        stepNumbers.get('wgcna_params') ?? '?'
+      } to find a module of interest, then click '${submitButtonText}' to retrieve a list of genes.`,
     projects: ['PlasmoDB', 'HostDB', 'UniDB'],
     cells: [
       {
+        id: 'wgcna_correlation_compute',
         type: 'compute',
         title: 'Correlation computation',
         computationName: 'correlation',
@@ -346,6 +328,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           },
         cells: [
           {
+            id: 'wgcna_bipartite',
             type: 'visualization',
             title: 'Network visualization of correlation results',
             visualizationName: 'bipartitenetwork',
@@ -359,7 +342,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             ),
             getVizPluginOptions: (
               wdkState: WdkState,
-              enqueueSnackbar: EnqueueSnackbar
+              enqueueSnackbar: EnqueueSnackbar,
+              stepNumbers?: Map<string, number>
             ) => {
               return {
                 additionalOnNodeClickAction: (node: NodeData) => {
@@ -411,10 +395,11 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
                   wdkState.updateParamValue(param, moduleName);
 
                   // Open snackbar
+                  const paramStep = stepNumbers?.get('wgcna_params') ?? '?';
                   enqueueSnackbar(
                     <span>
-                      Updated WGNCA module search parameter in step 3 to:{' '}
-                      <strong>{moduleName}</strong>
+                      Updated WGCNA module search parameter in step {paramStep}{' '}
+                      to: <strong>{moduleName}</strong>
                     </span>,
                     { variant: 'info' }
                   );
@@ -425,6 +410,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
       {
+        id: 'wgcna_params',
         type: 'wdkparam',
         title: 'Run gene search',
         paramNames: ['wgcnaParam', 'wgcna_correlation_cutoff'],
@@ -453,6 +439,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
     projects: ['MicrobiomeDB'],
     cells: [
       {
+        id: 'boxplot_viz',
         type: 'visualization',
         title: 'Boxplot Visualization',
         visualizationName: 'boxplot',

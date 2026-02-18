@@ -23,6 +23,7 @@ export function VisualizationNotebookCell(
     wdkState,
     computeJobStatus,
     stepNumber,
+    stepNumbers,
   } = props;
   const { analysis, updateVisualization } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
@@ -95,9 +96,15 @@ export function VisualizationNotebookCell(
   const vizOptions = useMemo(
     () => ({
       ...vizPlugin?.options,
-      ...getVizPluginOptions?.(wdkState, enqueueSnackbar),
+      ...getVizPluginOptions?.(wdkState, enqueueSnackbar, stepNumbers),
     }),
-    [wdkState, enqueueSnackbar, getVizPluginOptions, vizPlugin?.options]
+    [
+      wdkState,
+      enqueueSnackbar,
+      getVizPluginOptions,
+      vizPlugin?.options,
+      stepNumbers,
+    ]
   );
 
   return visualization ? (
