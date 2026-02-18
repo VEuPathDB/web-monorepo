@@ -6,14 +6,15 @@
   }
 
   .Paper {
-    /* A4 dimensions */
+    /* A4 dimensions
     --paper-width: 2480px;
     --paper-height: 3508px;
     --paper-scale: 0.5;
 
     width: calc(var(--paper-width) * var(--paper-scale));
+    padding: 0 1em; */
+
     margin: 1em auto;
-    padding: 0 1em;
 
     > * + * {
       margin-block-start: 1rem;
