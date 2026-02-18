@@ -1,4 +1,4 @@
-import ScatterPlot from '@veupathdb/components/lib/plots/ScatterPlot';
+import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
   useDataClient,
@@ -7,13 +7,11 @@ import {
   useSubsettingClient,
 } from '@veupathdb/eda/lib/core';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
-import { scatterplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/ScatterplotVisualization';
+import { barplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/BarplotVisualization';
 import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
-import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
-import pluralize from 'pluralize';
 
 interface GeneDisplaySpec {
   ids: string[];
@@ -32,11 +30,11 @@ interface Props {
 }
 
 /**
- * A simplified EDA ScatterPlot component.
+ * A simplified EDA BarPlot component.
  *
  * This will render a plot and a legend.
  */
-export function EdaScatterPlot(props: Props) {
+export function EdaBarPlot(props: Props) {
   const { datasetId } = props;
   return (
     <DocumentationContainer>
@@ -45,7 +43,7 @@ export function EdaScatterPlot(props: Props) {
         edaServiceUrl={edaServiceUrl}
         className=""
       >
-        <ScatterPlotAdapter {...props} />
+        <BarPlotAdapter {...props} />
       </WorkspaceContainer>
     </DocumentationContainer>
   );
@@ -58,7 +56,7 @@ interface AdapterProps {
   plotTitle?: string;
 }
 
-function ScatterPlotAdapter(props: AdapterProps) {
+function BarPlotAdapter(props: AdapterProps) {
   const { xAxisVariable, yAxisVariable, geneDisplaySpec, plotTitle } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
@@ -78,77 +76,36 @@ function ScatterPlotAdapter(props: AdapterProps) {
           ]
         : [];
 
-      const scatterplotDataResponse$ = dataClient.getScatterplot(
-        'xyrelationships',
+      const barplotDataResponse$ = dataClient.getBarplot(
+        'pass',
         {
           studyId,
           filters,
           config: {
             outputEntityId: xAxisVariable.entityId,
-            valueSpec: 'raw',
+            valueSpec: 'count',
             xAxisVariable,
             yAxisVariable,
-            returnPointIds: true,
           },
         }
       );
 
-      // Get highlight data only if in highlight mode
-      const highlightDataResponse$ =
-        geneDisplaySpec?.mode === 'highlight' && geneDisplaySpec.ids.length > 0
-          ? subsettingClient.getTabularData(studyId, geneDisplaySpec.entityId, {
-              filters: [
-                {
-                  type: 'stringSet',
-                  entityId: geneDisplaySpec.entityId,
-                  variableId: geneDisplaySpec.variableId,
-                  stringSet: geneDisplaySpec.ids,
-                },
-              ],
-              outputVariableIds: [geneDisplaySpec.variableId],
-            })
-          : undefined;
+      const barplotDataResponse = await barplotDataResponse$;
 
-      const [scatterplotDataResponse, highlightDataResponse] =
-        await Promise.all([scatterplotDataResponse$, highlightDataResponse$]);
+      const xAxisVar = findEntityAndVariable(xAxisVariable);
+      const yAxisVar = findEntityAndVariable(yAxisVariable);
 
-      const highlightVar = findEntityAndVariable({
-        variableId: geneDisplaySpec?.variableId || '',
-        entityId: geneDisplaySpec?.entityId || '',
-      });
+      if (!xAxisVar || !yAxisVar) {
+        throw new Error('Could not find x or y axis variable');
+      }
 
-      const highlightIds = highlightDataResponse?.slice(1).map((row) => row[0]);
-
-      const highlightedPointsDetails: HighlightedPointsDetails = {
-        pointIds: highlightIds ?? [],
-        highlightTraceName: geneDisplaySpec?.traceName,
-        nonHighlightTraceName: highlightVar
-          ? `All ${pluralize(
-              highlightVar?.variable.displayName.toLowerCase(),
-              2
-            )}`
-          : undefined,
-      };
-
-      return scatterplotResponseToData(
-        scatterplotDataResponse,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        'xyrelationships',
-        undefined,
-        undefined,
-        // Pass highlight details only in highlight mode
-        geneDisplaySpec?.mode === 'highlight' && highlightIds
-          ? highlightedPointsDetails
-          : undefined
-      ).dataSetProcess;
+      return barplotResponseToData(
+        barplotDataResponse,
+        xAxisVar.variable,
+        yAxisVar.variable
+      );
     },
-    ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, geneDisplaySpec]
+    ['BarPlotAdapter', studyId, xAxisVariable, yAxisVariable, geneDisplaySpec]
   );
 
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
@@ -163,14 +120,17 @@ function ScatterPlotAdapter(props: AdapterProps) {
   }
 
   return (
-    <ScatterPlot
+    <Barplot
       interactive
       showSpinner={data.pending}
-      markerBodyOpacity={1}
       data={data.value}
       dependentAxisLabel={yAxisEntityAndVariable?.variable.displayName}
       independentAxisLabel={xAxisEntityAndVariable?.variable.displayName}
-      title={plotTitle}
+      displayLegend={false}
+      spacingOptions={{
+        marginLeft: 100,
+        marginRight: 50,
+      }}
     />
   );
 }
