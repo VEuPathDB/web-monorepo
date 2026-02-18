@@ -12,7 +12,7 @@ const SECTION_KEYS = [
   'serviceAccess',
   'security',
 ] as const;
-export type SectionKey = typeof SECTION_KEYS[number];
+export type SectionKey = (typeof SECTION_KEYS)[number];
 
 interface Section {
   key: SectionKey;
@@ -50,7 +50,7 @@ const ProfileNavigationSection: React.FC<ProfileNavigationSectionProps> = ({
     },
     {
       key: 'serviceAccess',
-      label: 'Service Access',
+      label: 'Web Services Access',
       icon: <i className="fa fa-key"></i>,
     },
     {
