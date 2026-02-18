@@ -14,14 +14,14 @@ const getAuthorizationToken = (): string | undefined => {
 interface Props {}
 
 const ServiceAccessPanel: React.FC<Props> = () => {
-  let token =
+  const token =
     getAuthorizationToken() ||
     'Your authorization token is not currently available.';
-  let appPath = document.location.pathname.substring(
+  const appPath = document.location.pathname.substring(
     0,
     document.location.pathname.indexOf('/app') + 4
   );
-  let serviceHelpUrl =
+  const serviceHelpUrl =
     appPath + '/static-content/content/VEuPathDB/webServices.html';
   return (
     <div>
@@ -46,6 +46,7 @@ const ServiceAccessPanel: React.FC<Props> = () => {
           backgroundColor: '#E8E8E8',
           overflowWrap: 'break-word',
           maxWidth: '60%',
+          fontFamily: 'monospace',
         }}
       >
         {token}
