@@ -10,30 +10,10 @@ import { plugins } from '../core/components/computations/plugins';
 import { H5 } from '@veupathdb/coreui';
 import colors from '@veupathdb/coreui/lib/definitions/colors';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
-import {
-  Parameter,
-  ParameterValues,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { UpdateParamValue, WdkState } from './Types';
 
-// const NOTEBOOK_UI_SETTINGS_KEY = '@@NOTEBOOK@@';
-
-// Type of function that we'll call updateWdkParamValue. It's
-// adapted from one called updateParamValue used around the wdk and used
-// to update values of parameters that come from the wdk.
-export type UpdateParamValue = (
-  parameter: Parameter,
-  newParamValue: string
-) => void;
-
-export interface WdkState {
-  queryName: string;
-  parameters: Parameter[];
-  paramValues: ParameterValues;
-  updateParamValue: UpdateParamValue;
-  questionProperties: Record<string, string[]>;
-  submitButtonText: string;
-}
+export type { UpdateParamValue, WdkState };
 
 interface Props {
   analysisState: AnalysisState;
@@ -131,10 +111,7 @@ export function EdaNotebookAnalysis(props: Props) {
     // This ensures that updates are queued and applied in order, even across
     // multiple recursive calls.
     notebookPreset.cells.forEach((cell) => processCell(cell));
-    console.log('createdcells');
   }, [analysis, setComputations, addVisualization, notebookPreset]);
-
-  console.log('notebookpreset', notebookPreset);
 
   // Pre-compute step numbers for all cells with numberedHeader: true.
   // Uses a depth-first walk so nested cells (e.g. volcano inside DE compute)

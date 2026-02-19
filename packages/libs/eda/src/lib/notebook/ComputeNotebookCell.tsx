@@ -28,7 +28,6 @@ export function ComputeNotebookCell(
   } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
-  console.log('compute name', cell.computationName);
 
   const {
     computationName,
@@ -117,7 +116,6 @@ export function ComputeNotebookCell(
       jobStatus === 'no-such-job' &&
       hidden
     ) {
-      console.log('creating job');
       createJob();
     }
   }, [isComputationConfigurationValid, jobStatus, createJob, hidden]);

@@ -3,16 +3,9 @@ import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
-  AnalysisState,
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
-  EDAWorkspaceContainer,
-  useConfiguredAnalysisClient,
-  useConfiguredSubsettingClient,
-  useConfiguredDownloadClient,
-  useConfiguredDataClient,
-  useConfiguredComputeClient,
 } from '@veupathdb/eda/lib/core';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
@@ -31,10 +24,8 @@ import {
 import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
 import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
-import {
-  EdaNotebookAnalysis,
-  WdkState,
-} from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import { WdkState } from '@veupathdb/eda/lib/notebook/Types';
 
 type EdaNotebookParameterProps = {
   wdkState: WdkState;
