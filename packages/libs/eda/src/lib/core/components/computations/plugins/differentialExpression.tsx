@@ -38,7 +38,7 @@ import {
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { InputVariables } from '../../visualizations/InputVariables';
-import { enqueueSnackbar } from 'notistack';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
@@ -258,6 +258,7 @@ export function DifferentialExpressionConfiguration(
   const configuration = computation.descriptor
     .configuration as DifferentialExpressionConfig;
   const studyMetadata = useStudyMetadata();
+  const { enqueueSnackbar } = useSnackbar();
   const dataClient = useDataClient();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;

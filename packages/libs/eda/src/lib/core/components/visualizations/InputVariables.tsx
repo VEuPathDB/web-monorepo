@@ -18,6 +18,11 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/coreui';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
+// Direct import (not useSnackbar hook) is intentional here: InputVariables is a
+// generic component that may render without a SnackbarProvider. The direct import
+// fails silently in that case, which is fine — the auto-clear still works. Prefer
+// the useSnackbar hook from @veupathdb/coreui in components where a provider is
+// guaranteed (e.g. plugin config components).
 import { enqueueSnackbar } from 'notistack';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
