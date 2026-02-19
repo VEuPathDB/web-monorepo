@@ -106,7 +106,7 @@ export function SharedComputeInputsNotebookCell(
       <ExpandablePanel
         title={cell.title}
         subTitle={''}
-        state="open"
+        state={cell.initialPanelState ?? 'open'}
         themeRole="primary"
       >
         <div

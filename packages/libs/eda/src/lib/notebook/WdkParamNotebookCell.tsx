@@ -31,7 +31,7 @@ export function WdkParamNotebookCell(
       <ExpandablePanel
         title={title}
         subTitle={''}
-        state="open"
+        state={cell.initialPanelState ?? 'open'}
         themeRole="primary"
       >
         <div

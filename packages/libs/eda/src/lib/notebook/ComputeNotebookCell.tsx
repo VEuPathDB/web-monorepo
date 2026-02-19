@@ -37,6 +37,7 @@ export function ComputeNotebookCell(
     hidden = false,
     sharedInputNames,
     sharedInputsCellId,
+    initialPanelState = 'open',
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
@@ -58,7 +59,7 @@ export function ComputeNotebookCell(
 
   const systemState: 'open' | 'closed' = hasUnsetSharedInputs
     ? 'closed'
-    : 'open';
+    : initialPanelState;
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [panelState, setPanelState] = useState<'open' | 'closed'>(systemState);
@@ -67,10 +68,12 @@ export function ComputeNotebookCell(
   >(systemState);
 
   useEffect(() => {
-    const s: 'open' | 'closed' = hasUnsetSharedInputs ? 'closed' : 'open';
+    const s: 'open' | 'closed' = hasUnsetSharedInputs
+      ? 'closed'
+      : initialPanelState;
     setPanelState(s);
     setChildrenPanelState(s);
-  }, [hasUnsetSharedInputs]);
+  }, [hasUnsetSharedInputs, initialPanelState]);
 
   // fetch 'apps'
   const dataClient = useDataClient();

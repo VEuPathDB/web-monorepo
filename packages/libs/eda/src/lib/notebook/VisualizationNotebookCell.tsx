@@ -114,7 +114,7 @@ export function VisualizationNotebookCell(
         <ExpandablePanel
           title={cell.title}
           subTitle={''}
-          state={expandedPanelState ?? 'open'}
+          state={expandedPanelState ?? cell.initialPanelState ?? 'open'}
           themeRole="primary"
         >
           <div

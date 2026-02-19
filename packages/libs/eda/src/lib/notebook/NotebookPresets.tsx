@@ -40,6 +40,7 @@ export interface NotebookCellDescriptorBase<T extends string> {
   cells?: NotebookCellDescriptor[];
   numberedHeader?: boolean; // If true, helperText will be rendered inside a NumberedHeader with an auto-computed step number
   helperText?: ReactNode; // Optional information to display above the cell. Instead of a full text cell, use this for quick help and titles.
+  initialPanelState?: 'open' | 'closed'; // Initial open/closed state of the cell's ExpandablePanel. Defaults to 'open'.
 }
 
 type EnqueueSnackbar = ReturnType<typeof useSnackbar>['enqueueSnackbar'];
@@ -161,6 +162,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         id: 'de_subset',
         type: 'subset',
         title: 'Select samples (optional)',
+        initialPanelState: 'closed',
         numberedHeader: true,
         helperText: (
           <span>Optionally refine samples for differential expression.</span>
