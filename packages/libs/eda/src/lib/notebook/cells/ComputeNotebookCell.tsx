@@ -63,16 +63,12 @@ export function ComputeNotebookCell(
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [panelState, setPanelState] = useState<'open' | 'closed'>(systemState);
-  const [childrenPanelState, setChildrenPanelState] = useState<
-    'open' | 'closed'
-  >(systemState);
 
   useEffect(() => {
     const s: 'open' | 'closed' = hasUnsetSharedInputs
       ? 'closed'
       : initialPanelState;
     setPanelState(s);
-    setChildrenPanelState(s);
   }, [hasUnsetSharedInputs, initialPanelState]);
 
   // fetch 'apps'
@@ -152,6 +148,24 @@ export function ComputeNotebookCell(
       createJob();
     }
   }, [isComputationConfigurationValid, jobStatus, createJob, hidden]);
+
+  // Computes manage the collapse/expand state of child visualizations
+  // visualizations are always by default 'closed' until their computations are ready
+  const systemChildState =
+    isComputationConfigurationValid && jobStatus === 'complete'
+      ? 'open'
+      : 'closed';
+
+  const [childrenPanelState, setChildrenPanelState] = useState<
+    'open' | 'closed'
+  >(systemChildState);
+
+  // Expand child visualization(s) if the compute is complete
+  useEffect(() => {
+    if (isComputationConfigurationValid && jobStatus === 'complete') {
+      setChildrenPanelState('open');
+    }
+  }, [isComputationConfigurationValid, jobStatus]);
 
   // Show error dialog when hidden compute fails
   useEffect(() => {
