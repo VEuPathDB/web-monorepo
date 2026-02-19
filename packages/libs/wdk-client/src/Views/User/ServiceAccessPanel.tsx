@@ -53,7 +53,7 @@ const ServiceAccessPanel: React.FC<Props> = () => {
           fontFamily: 'monospace',
         }}
       >
-        {token || 'Your authorization token is not currently available.'}
+        {token || 'Your API Key is not currently available.'}
       </blockquote>
     </div>
   );
