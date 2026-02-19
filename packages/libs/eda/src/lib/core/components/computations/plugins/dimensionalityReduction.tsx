@@ -198,7 +198,7 @@ export function DimensionalityReductionConfiguration(
     >
       <div className={cx()}>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
-          <H6>Expression Data</H6>
+          <H6>Input Data</H6>
           <InputVariables
             inputs={[
               {

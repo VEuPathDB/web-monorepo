@@ -220,7 +220,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       {
         id: 'de_deseq2_compute',
         type: 'compute',
-        title: 'Setup DESeq2 Computation',
+        title: 'Set up DESeq2 Computation',
         computationName: 'differentialexpression',
         computationId: 'de_1',
         sharedInputNames: ['identifierVariable', 'valueVariable'],
