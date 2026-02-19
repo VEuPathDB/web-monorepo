@@ -167,6 +167,12 @@ export interface Props {
   /** Fixed width applied to all input labels, so that dropdowns align vertically.
    * Overrides the built-in stratification-variable label width when provided. */
   labelWidth?: CSSProperties['width'];
+  /**
+   * When true, automatically selects an input when exactly one variable
+   * satisfies the constraints (i.e. only one valid choice exists).
+   * Auto-selected inputs are rendered as readonly — no dropdown is shown.
+   */
+  autoSelectWhenPossible?: boolean;
 }
 
 export function InputVariables(props: Props) {
@@ -187,6 +193,7 @@ export function InputVariables(props: Props) {
     customSections,
     flexDirection,
     labelWidth,
+    autoSelectWhenPossible,
   } = props;
   const classes = useInputStyles(flexDirection);
   const handleChange = (
@@ -248,6 +255,36 @@ export function InputVariables(props: Props) {
       ]
     );
 
+  // When autoSelectWhenPossible is enabled, find inputs that have exactly one
+  // enabled (non-disabled) variable — these can be auto-selected for the user.
+  const singleEnabledVariableByInput = useMemo<
+    Record<string, VariableDescriptor | undefined>
+  >(() => {
+    if (!autoSelectWhenPossible || !entities.length) return {};
+
+    // entities is already a flat array (via entityTreeToArray)
+    const allVariables: VariableDescriptor[] = entities.flatMap((entity) =>
+      entity.variables
+        .filter((v) => v.type !== 'category')
+        .map((v) => ({ entityId: entity.id, variableId: v.id }))
+    );
+
+    const result: Record<string, VariableDescriptor | undefined> = {};
+    for (const input of inputs) {
+      if (input.readonlyValue) continue;
+      const disabled = disabledVariablesByInputName[input.name];
+      if (!disabled) continue;
+      const enabled = allVariables.filter(
+        (v) =>
+          !disabled.some(
+            (d) => d.entityId === v.entityId && d.variableId === v.variableId
+          )
+      );
+      result[input.name] = enabled.length === 1 ? enabled[0] : undefined;
+    }
+    return result;
+  }, [autoSelectWhenPossible, entities, inputs, disabledVariablesByInputName]);
+
   // Auto-clear selected variables that violate constraints.
   // This handles externally-triggered changes (e.g. shared cell changing entity)
   // as well as any other scenario where selections become invalid.
@@ -287,6 +324,27 @@ export function InputVariables(props: Props) {
       { variant: 'info' }
     );
   }, [disabledVariablesByInputName, selectedVariables, inputs, onChange]);
+
+  // Auto-select inputs that have exactly one valid variable when autoSelectWhenPossible is on.
+  useEffect(() => {
+    if (!autoSelectWhenPossible) return;
+
+    const autoSelections: VariablesByInputName = {};
+    for (const input of inputs) {
+      if (selectedVariables[input.name] != null) continue; // already chosen
+      const sole = singleEnabledVariableByInput[input.name];
+      if (sole) autoSelections[input.name] = sole;
+    }
+
+    if (Object.keys(autoSelections).length === 0) return;
+    onChange({ ...selectedVariables, ...autoSelections });
+  }, [
+    autoSelectWhenPossible,
+    singleEnabledVariableByInput,
+    selectedVariables,
+    inputs,
+    onChange,
+  ]);
 
   const hasMultipleStratificationValues =
     inputs.filter((input) => input.role === 'stratification').length > 1;
@@ -371,7 +429,16 @@ export function InputVariables(props: Props) {
                         )}
                       </div>
                     </Tooltip>
-                    {input.providedOptionalVariable ? (
+                    {autoSelectWhenPossible &&
+                    singleEnabledVariableByInput[input.name] != null &&
+                    selectedVariables[input.name] != null ? (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {findEntityAndVariable(
+                          entities,
+                          selectedVariables[input.name]
+                        )?.variable.displayName ?? ''}
+                      </span>
+                    ) : input.providedOptionalVariable ? (
                       // render a radio button to choose between provided and nothing
                       // check if provided var is in disabledVariablesByInputName[input.name]
                       // and disable radio input if needed

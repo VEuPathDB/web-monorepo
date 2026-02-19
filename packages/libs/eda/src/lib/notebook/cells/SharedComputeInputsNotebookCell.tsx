@@ -125,6 +125,7 @@ export function SharedComputeInputsNotebookCell(
                 starredVariables={analysis.descriptor.starredVariables ?? []}
                 toggleStarredVariable={toggleStarredVariable}
                 labelWidth="9em"
+                autoSelectWhenPossible
               />
             </div>
           </div>
