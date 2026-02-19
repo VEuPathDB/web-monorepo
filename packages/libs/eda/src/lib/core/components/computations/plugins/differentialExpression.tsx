@@ -497,6 +497,7 @@ export function DifferentialExpressionConfiguration(
                 label: 'Metadata Variable',
                 role: 'stratification',
                 titleOverride: 'Group Comparison',
+                styleOverride: { minWidth: '30em' },
               },
             ]}
             entities={entities}
