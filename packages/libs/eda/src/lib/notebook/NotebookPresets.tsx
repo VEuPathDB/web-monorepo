@@ -97,6 +97,28 @@ export interface SharedComputeInputsCellDescriptor
   dataElementDependencyOrder?: string[][];
 }
 
+// For any ComputeCellDescriptor that has a sharedInputsCellId but no explicit
+// sharedInputNames, derive sharedInputNames from the referenced SharedComputeInputsCell.
+function withResolvedSharedInputNames(
+  cells: NotebookCellDescriptor[]
+): NotebookCellDescriptor[] {
+  const sharedInputsMap = new Map(
+    cells
+      .filter(isSharedComputeInputsCellDescriptor)
+      .map((c) => [c.id, c.inputNames] as const)
+  );
+  return cells.map((cell) =>
+    isComputeCellDescriptor(cell) &&
+    cell.sharedInputsCellId &&
+    !cell.sharedInputNames
+      ? {
+          ...cell,
+          sharedInputNames: sharedInputsMap.get(cell.sharedInputsCellId),
+        }
+      : cell
+  );
+}
+
 type PresetNotebook = {
   name: string;
   displayName: string;
@@ -134,7 +156,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       'UniDB',
       'MicrobiomeDB',
     ],
-    cells: [
+    cells: withResolvedSharedInputNames([
       {
         id: 'de_subset',
         type: 'subset',
@@ -194,7 +216,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'PCA',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
-        sharedInputNames: ['identifierVariable', 'valueVariable'],
         sharedInputsCellId: 'de_shared_inputs',
         numberedHeader: true,
         helperText: (
@@ -225,7 +246,6 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Set up DESeq2 Computation',
         computationName: 'differentialexpression',
         computationId: 'de_1',
-        sharedInputNames: ['identifierVariable', 'valueVariable'],
         sharedInputsCellId: 'de_shared_inputs',
         numberedHeader: true,
         helperText: (
@@ -344,7 +364,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
           },
         ],
       },
-    ],
+    ]),
     isReady: ({ analysisState }) => {
       const config = analysisState?.analysis?.descriptor.computations.find(
         (c: { descriptor: { type: string } }) =>
