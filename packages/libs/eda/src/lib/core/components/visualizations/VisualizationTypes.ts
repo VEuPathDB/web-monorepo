@@ -30,7 +30,7 @@ export interface VisualizationProps<Options = undefined> {
   updateConfiguration: (configuration: unknown) => void;
   updateThumbnail?: (source: string) => void;
   computation: Computation;
-  copmutationAppOverview: ComputationAppOverview;
+  computationAppOverview: ComputationAppOverview;
   filters?: Filter[];
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;

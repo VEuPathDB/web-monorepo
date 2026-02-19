@@ -99,6 +99,7 @@ const plotReferenceValue = union([
     geo: null,
     latitude: null,
     longitude: null,
+    undefined: null,
   }),
   nullType,
 ]);

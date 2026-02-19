@@ -4,10 +4,7 @@ import {
   LabeledRange,
   useStudyMetadata,
 } from '../../..';
-import {
-  VariableDescriptor,
-  VariableCollectionDescriptor,
-} from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
@@ -17,7 +14,6 @@ import {
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
 } from '../Utils';
-import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import {
   useDataClient,
@@ -44,6 +40,7 @@ import { VariableCollectionSingleSelect } from '../../variableSelectors/Variable
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
+import { DifferentialAbundanceConfig } from '../../../types/apps';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -62,28 +59,6 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
  * the future of this app include a lefse diagram, tables of results, adding new computation methods, and
  * strategies to create user-defined collections from the output of the computation.
  */
-
-export type DifferentialAbundanceConfig = t.TypeOf<
-  typeof DifferentialAbundanceConfig
->;
-
-const Comparator = t.intersection([
-  t.partial({
-    groupA: t.array(LabeledRange),
-    groupB: t.array(LabeledRange),
-  }),
-  t.type({
-    variable: VariableDescriptor,
-  }),
-]);
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const DifferentialAbundanceConfig = t.partial({
-  collectionVariable: VariableCollectionDescriptor,
-  comparator: Comparator,
-  differentialAbundanceMethod: t.string,
-  pValueFloor: t.string,
-});
 
 const CompleteDifferentialAbundanceConfig = partialToCompleteCodec(
   DifferentialAbundanceConfig

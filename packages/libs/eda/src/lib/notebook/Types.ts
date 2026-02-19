@@ -2,7 +2,10 @@ import React from 'react';
 import { AnalysisState } from '../core/hooks/analysis';
 import { VariableDescriptor } from '../core/types/variable';
 import { ComputationAppOverview } from '../core/types/visualization';
-import { JobStatus } from '../core/components/computations/ComputeJobStatusHook';
+import {
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export interface NotebookCellBase<T extends string> {
   type: T;
@@ -52,6 +55,26 @@ export interface NotebookCellComponentProps<T extends NotebookCell['type']> {
   updateCell: (cell: Omit<Partial<NotebookCellOfType<T>>, 'type'>) => void;
   isDisabled?: boolean; // Indicates if the cell is disabled (e.g., during loading).
 }
+
+// ---- WDK integration types ----
+
+export type UpdateParamValue = (
+  parameter: Parameter,
+  newParamValue: string
+) => void;
+
+export interface WdkState {
+  queryName: string;
+  parameters: Parameter[];
+  paramValues: ParameterValues;
+  updateParamValue: UpdateParamValue;
+  questionProperties: Record<string, string[]>;
+  submitButtonText: string;
+}
+
+export type ReadinessContext =
+  | { analysisState: AnalysisState; wdkState?: WdkState }
+  | { analysisState?: AnalysisState; wdkState: WdkState };
 
 // Type guards
 export function isSubsettingCell(

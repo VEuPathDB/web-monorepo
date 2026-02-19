@@ -1,18 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
-  AnalysisState,
   makeNewAnalysis,
   NewAnalysis,
   useAnalysisState,
-  EDAWorkspaceContainer,
-  useConfiguredAnalysisClient,
-  useConfiguredSubsettingClient,
-  useConfiguredDownloadClient,
-  useConfiguredDataClient,
-  useConfiguredComputeClient,
 } from '@veupathdb/eda/lib/core';
 import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
@@ -24,17 +16,15 @@ import colors, {
 } from '@veupathdb/coreui/lib/definitions/colors';
 import './EdaSubsetParameter.scss';
 import {
-  defaultFormatParameterValue,
   DefaultStepDetailsContent,
   LeafStepDetailsContentProps,
 } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
-import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
-import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
-import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
 import {
-  EdaNotebookAnalysis,
-  WdkState,
-} from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+  parseJson,
+  formatEdaAnalysisParameterValue,
+} from '@veupathdb/eda/lib/notebook/Utils';
+import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import { WdkState } from '@veupathdb/eda/lib/notebook/Types';
 
 type EdaNotebookParameterProps = {
   wdkState: WdkState;
@@ -99,7 +89,7 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
               },
             }}
           >
-            <EdaNotebookAdapter
+            <EdaNotebookAnalysis
               analysisState={analysisState}
               notebookType={notebookType}
               wdkState={wdkState}
@@ -112,86 +102,11 @@ export function EdaNotebookParameter(props: EdaNotebookParameterProps) {
   );
 }
 
-interface EdaNotebookAdapterProps {
-  analysisState: AnalysisState;
-  notebookType: string;
-  wdkState: WdkState;
-  onReadinessChange?: (isReady: boolean) => void;
-}
-
-function EdaNotebookAdapter(props: EdaNotebookAdapterProps) {
-  const { analysisState, wdkState, notebookType, onReadinessChange } = props;
-  const studyId = analysisState.analysis?.studyId;
-
-  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
-  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
-  const dataClient = useConfiguredDataClient(edaServiceUrl);
-  const computeClient = useConfiguredComputeClient(edaServiceUrl);
-
-  return (
-    <div className="EdaSubsettingParameter">
-      {studyId && (
-        <EDAWorkspaceContainer
-          studyId={studyId}
-          analysisClient={analysisClient}
-          subsettingClient={subsettingClient}
-          downloadClient={downloadClient}
-          dataClient={dataClient}
-          computeClient={computeClient}
-        >
-          <EdaNotebookAnalysis
-            analysisState={analysisState}
-            notebookType={notebookType}
-            wdkState={wdkState}
-            onReadinessChange={onReadinessChange}
-          />
-        </EDAWorkspaceContainer>
-      )}
-    </div>
-  );
-}
-
 export function EdaNotebookStepDetails(props: LeafStepDetailsContentProps) {
   return (
     <DefaultStepDetailsContent
       {...props}
-      formatParameterValue={formatParameterValue}
+      formatParameterValue={formatEdaAnalysisParameterValue}
     />
   );
-}
-
-//
-// TO DO: adapt for notebook
-//
-// this function returns a brief summary of the search/analysis
-// for the edit/revise popup
-//
-function formatParameterValue(
-  parameter: Parameter,
-  value: string | undefined,
-  datasetParamItems: Record<string, DatasetItem[]> | undefined
-) {
-  if (parameter.name === 'eda_analysis_spec' && value != null) {
-    const obj = parseJson(value);
-    if (NewAnalysis.is(obj) || Analysis.is(obj)) {
-      if (obj.descriptor.subset.descriptor.length === 0) {
-        return (
-          <div>
-            <em>No filters applied.</em>
-          </div>
-        );
-      }
-      return (
-        <div style={{ whiteSpace: 'pre-line' }}>
-          {obj.descriptor.subset.descriptor.map((filter, index) => (
-            <div key={index}>
-              {filter.variableId}: {formatFilterDisplayValue(filter)}
-            </div>
-          ))}
-        </div>
-      );
-    }
-  }
-  return defaultFormatParameterValue(parameter, value, datasetParamItems);
 }

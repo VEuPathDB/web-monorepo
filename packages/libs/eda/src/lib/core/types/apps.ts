@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import * as t from 'io-ts';
-import { VariableCollectionDescriptor } from './variable';
-import { FeaturePrefilterThresholds } from '../api/DataClient/types';
+import { VariableCollectionDescriptor, VariableDescriptor } from './variable';
+import {
+  FeaturePrefilterThresholds,
+  LabeledRange,
+} from '../api/DataClient/types';
 import { partialToCompleteCodec } from '../components/computations/Utils';
 
 export type CorrelationInputData = t.TypeOf<typeof CorrelationInputData>;
@@ -37,3 +40,40 @@ export const SelfCorrelationConfig = t.partial({
 export const CompleteSelfCorrelationConfig = partialToCompleteCodec(
   SelfCorrelationConfig
 );
+
+// Differential abundance and expression
+
+const Comparator = t.intersection([
+  t.partial({
+    groupA: t.array(LabeledRange),
+    groupB: t.array(LabeledRange),
+  }),
+  t.type({
+    variable: VariableDescriptor,
+  }),
+]);
+
+export type DifferentialExpressionConfig = t.TypeOf<
+  typeof DifferentialExpressionConfig
+>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DifferentialExpressionConfig = t.partial({
+  identifierVariable: VariableDescriptor,
+  valueVariable: VariableDescriptor,
+  comparator: Comparator,
+  differentialExpressionMethod: t.string,
+  pValueFloor: t.string,
+});
+
+export type DifferentialAbundanceConfig = t.TypeOf<
+  typeof DifferentialAbundanceConfig
+>;
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const DifferentialAbundanceConfig = t.partial({
+  collectionVariable: VariableCollectionDescriptor,
+  comparator: Comparator,
+  differentialAbundanceMethod: t.string,
+  pValueFloor: t.string,
+});
