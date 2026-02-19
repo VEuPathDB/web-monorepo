@@ -161,11 +161,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
       {
         id: 'de_subset',
         type: 'subset',
-        title: 'Select samples (optional)',
+        title: 'Select Samples (optional)',
         initialPanelState: 'closed',
         numberedHeader: true,
         helperText: (
-          <span>Optionally refine samples for differential expression.</span>
+          <span>
+            Optionally remove samples, e.g. outliers identified in the PCA step
+            below.
+          </span>
         ),
       },
       {
@@ -206,23 +209,21 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         dataElementDependencyOrder: [['identifierVariable', 'valueVariable']],
         numberedHeader: true,
         helperText: (
-          <span>
-            Select the gene expression data to use for PCA and differential
-            expression analysis.
-          </span>
+          <span>Select the gene expression data for this analysis.</span>
         ),
       },
       {
         id: 'de_pca_compute',
         type: 'compute',
-        title: 'PCA',
+        title: 'Set up PCA Computation',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
         sharedInputsCellId: 'de_shared_inputs',
         numberedHeader: true,
         helperText: (
           <span>
-            Use PCA to investigate possible sources of variation in the dataset.
+            Configure and run a PCA to explore sources of variation across
+            samples.
           </span>
         ),
         cells: [
@@ -235,8 +236,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             numberedHeader: true,
             helperText: (
               <span>
-                Use PCA to investigate possible sources of variation in the
-                dataset.
+                Color samples by metadata variables to explore batch effects and
+                other sources of variation.
               </span>
             ),
           },
@@ -252,10 +253,9 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         numberedHeader: true,
         helperText: (
           <span>
-            Run a differential expression analysis using DESeq2. Choose the
-            metadata variable for comparison, and then set up the reference and
-            comparison groups. When all selections have been made, we can run
-            the computation.
+            Configure and run DESeq2 to test for differential expression between
+            two groups of samples. Select a metadata variable, then define the
+            reference and comparison groups.
           </span>
         ),
         cells: [
@@ -268,23 +268,18 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             numberedHeader: true,
             helperText: (
               <span>
-                Once the DESeq2 results are ready, a volcano plot will appear
-                below. Set the threshold lines to color the genes based on their
-                significance and fold change.
+                Use the threshold lines to highlight genes by significance and
+                fold change.
               </span>
             ),
           },
           {
             id: 'de_review',
             type: 'text',
-            title: 'Review and run search',
+            title: 'Review and Run Search',
             numberedHeader: true,
             helperText: (
-              <span>
-                After identifying genes of interest from the volcano plot, run a
-                gene search to review the genes in the Gene Search Results
-                table.
-              </span>
+              <span>Review your thresholds and run the gene search.</span>
             ),
             text: ({
               analysisState,
