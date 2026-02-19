@@ -17,7 +17,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { InputVariables } from '../../visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
@@ -147,6 +147,7 @@ export function DimensionalityReductionConfiguration(
     visualizationId,
     changeConfigHandlerOverride,
     showStepNumber = true,
+    readonlyInputNames,
   } = props;
 
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
@@ -164,6 +165,20 @@ export function DimensionalityReductionConfiguration(
 
   const changeConfigHandler =
     changeConfigHandlerOverride ?? workspaceChangeConfigHandler;
+
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+
+  // Helper to get display name for a variable descriptor (used for read-only labels)
+  const getVariableDisplayName = useCallback(
+    (varDescriptor: any) => {
+      if (!varDescriptor) return undefined;
+      const result = findEntityAndVariable(varDescriptor);
+      if (!result) return undefined;
+      return `${result.entity.displayName} > ${result.variable.displayName}`;
+    },
+    [findEntityAndVariable]
+  );
 
   const entities = useMemo(
     () =>
@@ -183,7 +198,7 @@ export function DimensionalityReductionConfiguration(
     >
       <div className={cx()}>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
-          <H6>Expression Data</H6>
+          <H6>Input Data</H6>
           <InputVariables
             inputs={[
               {
@@ -191,11 +206,26 @@ export function DimensionalityReductionConfiguration(
                 label: 'Gene Identifier',
                 role: 'axis',
                 titleOverride: 'Expression Data',
+                ...(readonlyInputNames?.includes('identifierVariable')
+                  ? {
+                      readonlyValue:
+                        getVariableDisplayName(
+                          configuration.identifierVariable
+                        ) ?? 'Not selected',
+                    }
+                  : {}),
               },
               {
                 name: 'valueVariable',
                 label: 'Count type',
                 role: 'axis',
+                ...(readonlyInputNames?.includes('valueVariable')
+                  ? {
+                      readonlyValue:
+                        getVariableDisplayName(configuration.valueVariable) ??
+                        'Not selected',
+                    }
+                  : {}),
               },
             ]}
             entities={entities}
@@ -205,6 +235,7 @@ export function DimensionalityReductionConfiguration(
             }}
             onChange={(vars) => {
               if (
+                !readonlyInputNames?.includes('identifierVariable') &&
                 vars.identifierVariable !== configuration.identifierVariable
               ) {
                 changeConfigHandler(
@@ -212,7 +243,10 @@ export function DimensionalityReductionConfiguration(
                   vars.identifierVariable
                 );
               }
-              if (vars.valueVariable !== configuration.valueVariable) {
+              if (
+                !readonlyInputNames?.includes('valueVariable') &&
+                vars.valueVariable !== configuration.valueVariable
+              ) {
                 changeConfigHandler('valueVariable', vars.valueVariable);
               }
             }}
@@ -222,6 +256,7 @@ export function DimensionalityReductionConfiguration(
               analysisState.analysis?.descriptor.starredVariables ?? []
             }
             toggleStarredVariable={toggleStarredVariable}
+            labelWidth="12em"
           />
         </div>
       </div>
