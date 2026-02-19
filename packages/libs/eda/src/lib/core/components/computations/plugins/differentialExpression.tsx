@@ -352,7 +352,6 @@ export function DifferentialExpressionConfiguration(
   useEffect(() => {
     const currentEntityId = configuration.identifierVariable?.entityId;
     if (
-      prevIdentifierEntityId.current != null &&
       currentEntityId != null &&
       prevIdentifierEntityId.current !== currentEntityId &&
       configuration.comparator
