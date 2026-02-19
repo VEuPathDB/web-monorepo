@@ -256,6 +256,7 @@ export function DimensionalityReductionConfiguration(
               analysisState.analysis?.descriptor.starredVariables ?? []
             }
             toggleStarredVariable={toggleStarredVariable}
+            labelWidth="12em"
           />
         </div>
       </div>

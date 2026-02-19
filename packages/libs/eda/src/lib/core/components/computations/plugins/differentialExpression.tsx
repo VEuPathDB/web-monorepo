@@ -540,6 +540,7 @@ export function DifferentialExpressionConfiguration(
               analysisState.analysis?.descriptor.starredVariables ?? []
             }
             toggleStarredVariable={toggleStarredVariable}
+            labelWidth="12em"
           />
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
