@@ -1,18 +1,18 @@
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useDataClient } from '../core/hooks/workspace';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useDataClient } from '../../core/hooks/workspace';
 import { isEqual } from 'lodash';
-import { RunComputeButton } from '../core/components/computations/RunComputeButton';
-import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
-import { NotebookCell, NotebookCellProps } from './NotebookCell';
-import { plugins } from '../core/components/computations/plugins';
-import { ComputeCellDescriptor } from './Types';
-import { useCachedPromise } from '../core/hooks/cachedPromise';
+import { RunComputeButton } from '../../core/components/computations/RunComputeButton';
+import { useComputeJobStatus } from '../../core/components/computations/ComputeJobStatusHook';
+import { NotebookCell, NotebookCellProps } from '../NotebookCell';
+import { plugins } from '../../core/components/computations/plugins';
+import { ComputeCellDescriptor } from '../Types';
+import { useCachedPromise } from '../../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { useCallback, useEffect, useState } from 'react';
 import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
 import { Link } from 'react-router-dom';
-import { NotebookCellPreHeader } from './NotebookCellPreHeader';
+import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>

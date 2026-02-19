@@ -1,16 +1,16 @@
 import { useMemo, useState } from 'react';
-import { useEntityCounts } from '../core/hooks/entityCounts';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
 import {
   useGetDefaultVariableDescriptor,
   useStudyEntities,
-} from '../core/hooks/workspace';
-import { VariableLinkConfig } from '../core/components/VariableLink';
-import FilterChipList from '../core/components/FilterChipList';
-import Subsetting from '../workspace/Subsetting';
-import { NotebookCellProps } from './NotebookCell';
-import { SubsetCellDescriptor } from './Types';
+} from '../../core/hooks/workspace';
+import { VariableLinkConfig } from '../../core/components/VariableLink';
+import FilterChipList from '../../core/components/FilterChipList';
+import Subsetting from '../../workspace/Subsetting';
+import { NotebookCellProps } from '../NotebookCell';
+import { SubsetCellDescriptor } from '../Types';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { NotebookCellPreHeader } from './NotebookCellPreHeader';
+import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
 
 export function SubsettingNotebookCell(
   props: NotebookCellProps<SubsetCellDescriptor>

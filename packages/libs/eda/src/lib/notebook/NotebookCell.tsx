@@ -1,11 +1,11 @@
 import { AnalysisState } from '../core';
-import { SubsettingNotebookCell } from './SubsettingNotebookCell';
-import { TextNotebookCell } from './TextNotebookCell';
-import { VisualizationNotebookCell } from './VisualizationNotebookCell';
-import { ComputeNotebookCell } from './ComputeNotebookCell';
+import { SubsettingNotebookCell } from './cells/SubsettingNotebookCell';
+import { TextNotebookCell } from './cells/TextNotebookCell';
+import { VisualizationNotebookCell } from './cells/VisualizationNotebookCell';
+import { ComputeNotebookCell } from './cells/ComputeNotebookCell';
 import { NotebookCellDescriptor } from './Types';
-import { WdkParamNotebookCell } from './WdkParamNotebookCell';
-import { SharedComputeInputsNotebookCell } from './SharedComputeInputsNotebookCell';
+import { WdkParamNotebookCell } from './cells/WdkParamNotebookCell';
+import { SharedComputeInputsNotebookCell } from './cells/SharedComputeInputsNotebookCell';
 import { WdkState } from './EdaNotebookAnalysis';
 import { JobStatus } from '../core/components/computations/ComputeJobStatusHook';
 

@@ -1,8 +1,8 @@
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { NotebookCellProps } from './NotebookCell';
-import { TextCellDescriptor } from './Types';
+import { NotebookCellProps } from '../NotebookCell';
+import { TextCellDescriptor } from '../Types';
 import { useState, useEffect, useMemo } from 'react';
-import { NotebookCellPreHeader } from './NotebookCellPreHeader';
+import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
   const { cell, isDisabled, analysisState, wdkState, stepNumber, stepNumbers } =
