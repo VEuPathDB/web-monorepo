@@ -124,6 +124,7 @@ export function SharedComputeInputsNotebookCell(
                 dataElementDependencyOrder={dataElementDependencyOrder}
                 starredVariables={analysis.descriptor.starredVariables ?? []}
                 toggleStarredVariable={toggleStarredVariable}
+                labelWidth="9em"
               />
             </div>
           </div>

@@ -164,6 +164,9 @@ export interface Props {
   /** output entity, required for toggle switch label */
   outputEntity?: StudyEntity;
   flexDirection?: CSSProperties['flexDirection'];
+  /** Fixed width applied to all input labels, so that dropdowns align vertically.
+   * Overrides the built-in stratification-variable label width when provided. */
+  labelWidth?: CSSProperties['width'];
 }
 
 export function InputVariables(props: Props) {
@@ -183,6 +186,7 @@ export function InputVariables(props: Props) {
     outputEntity,
     customSections,
     flexDirection,
+    labelWidth,
   } = props;
   const classes = useInputStyles(flexDirection);
   const handleChange = (
@@ -330,23 +334,26 @@ export function InputVariables(props: Props) {
                     >
                       <div
                         className={classes.label}
-                        style={
-                          !input.readonlyValue &&
+                        style={{
+                          ...(labelWidth != null
+                            ? { width: labelWidth, flexShrink: 0 }
+                            : input.role === 'stratification' &&
+                              hasMultipleStratificationValues &&
+                              !(
+                                input.readonlyValue &&
+                                !input.providedOptionalVariable
+                              )
+                            ? multipleStratificationVariableLabelStyle
+                            : undefined),
+                          ...(!input.readonlyValue &&
                           !input.isNonNullable &&
-                          constraints &&
-                          constraints.length &&
+                          constraints?.length &&
                           constraints[0][input.name]?.isRequired &&
                           (!selectedVariables[input.name] ||
                             invalidInputs.includes(input))
                             ? requiredInputLabelStyle
-                            : input.role === 'stratification' &&
-                              hasMultipleStratificationValues
-                            ? input.readonlyValue &&
-                              !input.providedOptionalVariable
-                              ? undefined
-                              : multipleStratificationVariableLabelStyle
-                            : undefined
-                        }
+                            : undefined),
+                        }}
                       >
                         {input.label +
                           (input.readonlyValue &&
