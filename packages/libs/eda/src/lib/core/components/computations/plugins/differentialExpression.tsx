@@ -289,11 +289,6 @@ export function DifferentialExpressionConfiguration(
 
   useEffect(() => {
     if (
-      !configuration.comparator ||
-      (!configuration.comparator.groupA && !configuration.comparator.groupB)
-    )
-      return;
-    if (
       previousSubset.current &&
       !isEqual(
         previousSubset.current,
@@ -303,20 +298,25 @@ export function DifferentialExpressionConfiguration(
       previousSubset.current =
         analysisState.analysis?.descriptor.subset.descriptor;
 
-      // Reset the groupA and groupB values.
-      changeConfigHandler('comparator', {
-        variable: configuration.comparator.variable,
-        groupA: undefined,
-        groupB: undefined,
-      });
+      if (
+        configuration.comparator &&
+        (configuration.comparator.groupA || configuration.comparator.groupB)
+      ) {
+        // Reset the groupA and groupB values.
+        changeConfigHandler('comparator', {
+          variable: configuration.comparator.variable,
+          groupA: undefined,
+          groupB: undefined,
+        });
 
-      enqueueSnackbar(
-        <span>
-          Reset differential expression group A and B values due to changed
-          subset.
-        </span>,
-        { variant: 'info' }
-      );
+        enqueueSnackbar(
+          <span>
+            Reset differential expression reference and comparison group
+            specification due to changed subset.
+          </span>,
+          { variant: 'info' }
+        );
+      }
     }
   }, [
     analysisState.analysis?.descriptor.subset.descriptor,
