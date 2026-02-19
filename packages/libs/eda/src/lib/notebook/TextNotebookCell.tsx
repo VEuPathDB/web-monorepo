@@ -1,7 +1,7 @@
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellProps } from './NotebookCell';
 import { TextCellDescriptor } from './NotebookPresets';
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 
 export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
@@ -16,13 +16,26 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
     [cell.text, analysisState, wdkState, stepNumbers]
   );
 
+  const resolvedState = cell.panelStateResolver
+    ? cell.panelStateResolver({ analysisState, wdkState, stepNumbers })
+    : cell.initialPanelState ?? 'open';
+
+  const [panelState, setPanelState] = useState<'open' | 'closed'>(
+    resolvedState
+  );
+
+  useEffect(() => {
+    setPanelState(resolvedState);
+  }, [resolvedState]);
+
   return (
     <>
       <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={cell.title}
         subTitle={''}
-        state={cell.initialPanelState ?? 'open'}
+        state={panelState}
+        onStateChange={setPanelState}
         themeRole="primary"
       >
         <div

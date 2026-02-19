@@ -23,6 +23,16 @@ import {
 // that is outside AnalysisState and WdkState
 export const NOTEBOOK_UI_STATE_KEY = '@@NOTEBOOK_WDK_PARAMS@@';
 
+function isDEReadyToReviewAndSubmit(
+  analysisState: AnalysisState | undefined
+): boolean {
+  const config = analysisState?.analysis?.descriptor.computations.find(
+    (c: { descriptor: { type: string } }) =>
+      c.descriptor.type === 'differentialexpression'
+  )?.descriptor.configuration;
+  return plugins['differentialexpression'].isConfigurationComplete(config);
+}
+
 // The descriptors contain just enough information to render the cells when given the
 // appropriate context, such as analysis state.
 export type NotebookCellDescriptor =
@@ -78,6 +88,7 @@ export interface TextCellContext {
 
 export interface TextCellDescriptor extends NotebookCellDescriptorBase<'text'> {
   text: ReactNode | ((context: TextCellContext) => ReactNode);
+  panelStateResolver?: (context: TextCellContext) => 'open' | 'closed';
 }
 
 export interface SubsetCellDescriptor
@@ -281,6 +292,8 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
             helperText: (
               <span>Review your thresholds and run the gene search.</span>
             ),
+            panelStateResolver: ({ analysisState }: TextCellContext) =>
+              isDEReadyToReviewAndSubmit(analysisState) ? 'open' : 'closed',
             text: ({
               analysisState,
               wdkState,
@@ -362,13 +375,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ],
       },
     ]),
-    isReady: ({ analysisState }) => {
-      const config = analysisState?.analysis?.descriptor.computations.find(
-        (c: { descriptor: { type: string } }) =>
-          c.descriptor.type === 'differentialexpression'
-      )?.descriptor.configuration;
-      return plugins['differentialexpression'].isConfigurationComplete(config);
-    },
+    isReady: ({ analysisState }) => isDEReadyToReviewAndSubmit(analysisState),
   },
   // WGCNA - only for plasmo. No subsetting cells because of the pre-computed modules and eigengenes.
   // Will be primed and prettified in https://github.com/VEuPathDB/web-monorepo/issues/1381
