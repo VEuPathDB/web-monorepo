@@ -4,7 +4,7 @@ import { entityTreeToArray } from '../core/utils/study-metadata';
 import { InputVariables } from '../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { NotebookCellProps } from './NotebookCell';
-import { SharedComputeInputsCellDescriptor } from './NotebookPresets';
+import { SharedComputeInputsCellDescriptor } from './Types';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 import { H6 } from '@veupathdb/coreui';

@@ -8,7 +8,7 @@ import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 import Subsetting from '../workspace/Subsetting';
 import { NotebookCellProps } from './NotebookCell';
-import { SubsetCellDescriptor } from './NotebookPresets';
+import { SubsetCellDescriptor } from './Types';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellPreHeader } from './NotebookCellPreHeader';
 

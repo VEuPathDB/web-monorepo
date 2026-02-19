@@ -5,7 +5,7 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 import { plugins } from '../core/components/computations/plugins';
 import { PlotContainerStyleOverrides } from '../core/components/visualizations/VisualizationTypes';
 import { NotebookCellProps } from './NotebookCell';
-import { VisualizationCellDescriptor } from './NotebookPresets';
+import { VisualizationCellDescriptor } from './Types';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';

@@ -6,7 +6,7 @@ import { RunComputeButton } from '../core/components/computations/RunComputeButt
 import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell, NotebookCellProps } from './NotebookCell';
 import { plugins } from '../core/components/computations/plugins';
-import { ComputeCellDescriptor } from './NotebookPresets';
+import { ComputeCellDescriptor } from './Types';
 import { useCachedPromise } from '../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { useCallback, useEffect, useState } from 'react';

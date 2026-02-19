@@ -3,7 +3,7 @@ import { SubsettingNotebookCell } from './SubsettingNotebookCell';
 import { TextNotebookCell } from './TextNotebookCell';
 import { VisualizationNotebookCell } from './VisualizationNotebookCell';
 import { ComputeNotebookCell } from './ComputeNotebookCell';
-import { NotebookCellDescriptor } from './NotebookPresets';
+import { NotebookCellDescriptor } from './Types';
 import { WdkParamNotebookCell } from './WdkParamNotebookCell';
 import { SharedComputeInputsNotebookCell } from './SharedComputeInputsNotebookCell';
 import { WdkState } from './EdaNotebookAnalysis';
