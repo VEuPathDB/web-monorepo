@@ -6,7 +6,7 @@ import { BipartiteNetworkOptions } from '../core/components/visualizations/imple
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { WdkState, ReadinessContext } from './Types';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import { AnalysisState, CollectionVariableTreeNode } from '../core';
+import { AnalysisState, CollectionVariableTreeNode, Filter } from '../core';
 import { plugins } from '../core/components/computations/plugins';
 import {
   VolcanoPlotConfig,
@@ -18,6 +18,8 @@ import {
   GENE_EXPRESSION_STABLE_IDS,
   GENE_EXPRESSION_VALUE_IDS,
 } from '../core/components/computations/Utils';
+import { useFindEntityAndVariable } from '../core/hooks/workspace';
+import { DifferentialExpressionConfig } from '../core/types/apps';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -144,6 +146,204 @@ type PresetNotebook = {
       }) => string); // Optional header text for the notebook, to be displayed above the cells.
   isReady?: (context: ReadinessContext) => boolean;
 };
+
+// Helper components for DEReviewContent
+
+function ReviewCard({
+  title,
+  complete,
+  incompleteHint,
+  children,
+}: {
+  title: string;
+  complete?: boolean;
+  incompleteHint?: string;
+  children?: ReactNode;
+}) {
+  const isIncomplete = complete === false;
+  return (
+    <div
+      style={{
+        border: `1px solid ${
+          isIncomplete ? colors.orange[300] : colors.grey[300]
+        }`,
+        borderRadius: 4,
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0.4rem 0.75rem',
+          background: isIncomplete
+            ? colors.orange[50]
+            : complete
+            ? colors.green[50]
+            : colors.grey[50],
+        }}
+      >
+        <strong>{title}</strong>
+        {complete === true && (
+          <span style={{ color: colors.green[700], fontSize: '0.85em' }}>
+            ✅ Complete
+          </span>
+        )}
+        {complete === false && (
+          <span style={{ color: colors.orange[800], fontSize: '0.85em' }}>
+            ⚠ Action needed
+          </span>
+        )}
+      </div>
+      <div
+        style={{
+          padding: '0.5rem 0.75rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.25rem',
+        }}
+      >
+        {isIncomplete && incompleteHint ? (
+          <span style={{ color: colors.orange[800] }}>{incompleteHint}</span>
+        ) : (
+          children
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ReviewRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ display: 'flex', gap: '0.5rem' }}>
+      <span style={{ color: colors.grey[600], minWidth: '10rem' }}>
+        {label}:
+      </span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function DEReviewContent({ analysisState, stepNumbers }: TextCellContext) {
+  const deComputation = analysisState?.analysis?.descriptor.computations.find(
+    (c) => c.descriptor.type === 'differentialexpression'
+  );
+  const deConfig = DifferentialExpressionConfig.is(
+    deComputation?.descriptor.configuration
+  )
+    ? (deComputation?.descriptor.configuration as DifferentialExpressionConfig)
+    : undefined;
+
+  const volcanoPlotConfig = VolcanoPlotConfig.is(
+    deComputation?.visualizations?.[0]?.descriptor?.configuration
+  )
+    ? (deComputation?.visualizations?.[0]?.descriptor
+        ?.configuration as VolcanoPlotConfig)
+    : undefined;
+
+  const filters =
+    (analysisState?.analysis?.descriptor?.subset?.descriptor as Filter[]) ?? [];
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+
+  const identifierVarInfo = deConfig?.identifierVariable
+    ? findEntityAndVariable(deConfig.identifierVariable)
+    : undefined;
+  const valueVarInfo = deConfig?.valueVariable
+    ? findEntityAndVariable(deConfig.valueVariable)
+    : undefined;
+  const comparatorVarInfo = deConfig?.comparator?.variable
+    ? findEntityAndVariable(deConfig.comparator.variable)
+    : undefined;
+
+  const hasExpressionData = identifierVarInfo != null && valueVarInfo != null;
+  const hasGroupComparison =
+    comparatorVarInfo != null &&
+    deConfig?.comparator?.groupA != null &&
+    deConfig?.comparator?.groupB != null;
+
+  const groupALabels = deConfig?.comparator?.groupA
+    ?.map((r) => r.label)
+    .join(', ');
+  const groupBLabels = deConfig?.comparator?.groupB
+    ?.map((r) => r.label)
+    .join(', ');
+
+  const sharedInputsStep = stepNumbers?.get('de_shared_inputs');
+  const deseq2Step = stepNumbers?.get('de_deseq2_compute');
+  const volcanoStep = stepNumbers?.get('de_volcano');
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <ReviewCard
+        title="Expression Data"
+        complete={hasExpressionData}
+        incompleteHint={
+          sharedInputsStep
+            ? `Complete in step ${sharedInputsStep}`
+            : 'Complete the expression data step above'
+        }
+      >
+        <ReviewRow
+          label="Gene Identifier"
+          value={
+            identifierVarInfo
+              ? `${identifierVarInfo.entity.displayName} > ${identifierVarInfo.variable.displayName}`
+              : '—'
+          }
+        />
+        <ReviewRow
+          label="Count type"
+          value={
+            valueVarInfo
+              ? `${valueVarInfo.entity.displayName} > ${valueVarInfo.variable.displayName}`
+              : '—'
+          }
+        />
+      </ReviewCard>
+
+      <ReviewCard
+        title="Group Comparison"
+        complete={hasGroupComparison}
+        incompleteHint={
+          deseq2Step
+            ? `Complete in step ${deseq2Step}`
+            : 'Complete the DESeq2 configuration step above'
+        }
+      >
+        <ReviewRow
+          label="Metadata variable"
+          value={comparatorVarInfo?.variable.displayName ?? '—'}
+        />
+        <ReviewRow label="Reference group (A)" value={groupALabels ?? '—'} />
+        <ReviewRow label="Comparison group (B)" value={groupBLabels ?? '—'} />
+      </ReviewCard>
+
+      <ReviewCard title="Volcano Thresholds">
+        <ReviewRow
+          label="|Effect size| ≥"
+          value={String(volcanoPlotConfig?.effectSizeThreshold ?? '—')}
+        />
+        <ReviewRow
+          label="p-value ≤"
+          value={String(volcanoPlotConfig?.significanceThreshold ?? '—')}
+        />
+        <ReviewRow label="Direction" value="Up and down regulated" />
+        {volcanoStep && (
+          <p
+            style={{
+              fontStyle: 'italic',
+              color: colors.grey[800],
+              margin: '0.5em 0 0',
+            }}
+          >
+            Adjust thresholds in step {volcanoStep}.
+          </p>
+        )}
+      </ReviewCard>
+    </div>
+  );
+}
 
 // Preset notebooks
 // Note - Using differential abundance as practice for differential expression
@@ -298,79 +498,13 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
               analysisState,
               wdkState,
               stepNumbers,
-            }: TextCellContext) => {
-              const submitButtonText =
-                wdkState?.submitButtonText ?? 'Get Answer';
-
-              // Extra guards for dynamic threshold content
-              if (!analysisState.analysis?.descriptor?.computations?.length) {
-                return <div>No analysis configuration available</div>;
-              }
-              const differentialExpressionComputation =
-                analysisState.analysis.descriptor.computations.find(
-                  (c) => c.descriptor.type === 'differentialexpression'
-                );
-              if (!differentialExpressionComputation?.visualizations?.length) {
-                return <div>No visualization configuration available</div>;
-              }
-
-              const volcanoPlotConfig =
-                differentialExpressionComputation.visualizations[0].descriptor
-                  .configuration;
-
-              if (
-                !volcanoPlotConfig ||
-                !VolcanoPlotConfig.is(volcanoPlotConfig)
-              ) {
-                return <div>No configuration</div>;
-              }
-
-              return (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <h4>
-                    Clicking "{submitButtonText}" below will return genes that
-                    meet the following criteria:
-                  </h4>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.5em',
-                      marginTop: '0.5em',
-                    }}
-                  >
-                    <span>
-                      Absolute effect size:{' '}
-                      <strong>{volcanoPlotConfig.effectSizeThreshold}</strong>
-                    </span>
-                    <span>
-                      Unadjusted P-value:{' '}
-                      <strong>{volcanoPlotConfig.significanceThreshold}</strong>
-                    </span>
-                    <span>
-                      Gene regulation direction:{' '}
-                      <strong>Up and down regulated</strong>
-                    </span>
-                    <span
-                      style={{
-                        fontStyle: 'italic',
-                        color: colors.grey[800],
-                        marginTop: '0.5em',
-                      }}
-                    >
-                      To make adjustments, update the volcano plot settings in
-                      step {stepNumbers?.get('de_volcano') ?? 'above'}.
-                    </span>
-                  </div>
-                </div>
-              );
-            },
+            }: TextCellContext) => (
+              <DEReviewContent
+                analysisState={analysisState}
+                wdkState={wdkState}
+                stepNumbers={stepNumbers}
+              />
+            ),
           },
         ],
       },
