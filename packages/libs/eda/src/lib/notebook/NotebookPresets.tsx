@@ -12,6 +12,12 @@ import {
   VolcanoPlotConfig,
   VolcanoPlotOptions,
 } from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
+import { InputSpec } from '../core/components/visualizations/InputVariables';
+import { DataElementConstraintRecord } from '../core/utils/data-element-constraints';
+import {
+  GENE_EXPRESSION_STABLE_IDS,
+  GENE_EXPRESSION_VALUE_IDS,
+} from '../core/components/computations/Utils';
 
 // this is currently not used but may be one day when we need to store user state
 // that is outside AnalysisState and WdkState
@@ -24,7 +30,8 @@ export type NotebookCellDescriptor =
   | ComputeCellDescriptor
   | TextCellDescriptor
   | SubsetCellDescriptor
-  | WdkParamCellDescriptor;
+  | WdkParamCellDescriptor
+  | SharedComputeInputsCellDescriptor;
 
 export interface NotebookCellDescriptorBase<T extends string> {
   id: string; // Unique identifier for this cell. Used as key in stepNumbers map.
@@ -58,6 +65,7 @@ export interface ComputeCellDescriptor
     projectId?: string
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
   hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
+  sharedInputNames?: string[]; // Input names managed by a SharedComputeInputsNotebookCell. Plugins render these as read-only.
 }
 
 export interface TextCellContext {
@@ -77,6 +85,15 @@ export interface WdkParamCellDescriptor
   extends NotebookCellDescriptorBase<'wdkparam'> {
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
   requiredParamNames?: string[]; // Subset of paramNames that are required. Labels will be red with an asterisk until filled.
+}
+
+export interface SharedComputeInputsCellDescriptor
+  extends NotebookCellDescriptorBase<'sharedcomputeinputs'> {
+  computationIds: string[]; // Computation IDs whose configs will be updated (e.g. ['pca_1', 'de_1'])
+  inputNames: string[]; // Config property names this cell manages (e.g. ['identifierVariable', 'valueVariable'])
+  inputs: InputSpec[]; // Passed to InputVariables for rendering
+  constraints?: DataElementConstraintRecord[];
+  dataElementDependencyOrder?: string[][];
 }
 
 type PresetNotebook = {
@@ -127,16 +144,60 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         ),
       },
       {
+        id: 'de_shared_inputs',
+        type: 'sharedcomputeinputs',
+        title: 'Select Expression Data',
+        computationIds: ['pca_1', 'de_1'],
+        inputNames: ['identifierVariable', 'valueVariable'],
+        inputs: [
+          {
+            name: 'identifierVariable',
+            label: 'Gene Identifier',
+            role: 'axis',
+            titleOverride: 'Expression Data',
+          },
+          {
+            name: 'valueVariable',
+            label: 'Count type',
+            role: 'axis',
+          },
+        ],
+        constraints: [
+          {
+            identifierVariable: {
+              isRequired: true,
+              minNumVars: 1,
+              maxNumVars: 1,
+              allowedVariableIds: [GENE_EXPRESSION_STABLE_IDS.IDENTIFIER],
+            },
+            valueVariable: {
+              isRequired: true,
+              minNumVars: 1,
+              maxNumVars: 1,
+              allowedVariableIds: [...GENE_EXPRESSION_VALUE_IDS],
+            },
+          },
+        ],
+        dataElementDependencyOrder: [['identifierVariable', 'valueVariable']],
+        numberedHeader: true,
+        helperText: (
+          <span>
+            Select the gene expression data to use for PCA and differential
+            expression analysis.
+          </span>
+        ),
+      },
+      {
         id: 'de_pca_compute',
         type: 'compute',
         title: 'PCA',
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
+        sharedInputNames: ['identifierVariable', 'valueVariable'],
         numberedHeader: true,
         helperText: (
           <span>
             Use PCA to investigate possible sources of variation in the dataset.
-            Select the expression data to use for dimensionality reduction.
           </span>
         ),
         cells: [
@@ -162,13 +223,14 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         title: 'Setup DESeq2 Computation',
         computationName: 'differentialexpression',
         computationId: 'de_1',
+        sharedInputNames: ['identifierVariable', 'valueVariable'],
         numberedHeader: true,
         helperText: (
           <span>
-            Run a differential expression analysis using DESeq2. Please choose
-            the metadata variable for comparison, and then set up the reference
-            and comparison groups. When all selections have been made, we can
-            run the computation.
+            Run a differential expression analysis using DESeq2. Choose the
+            metadata variable for comparison, and then set up the reference and
+            comparison groups. When all selections have been made, we can run
+            the computation.
           </span>
         ),
         cells: [
@@ -471,6 +533,12 @@ export function isComputeCellDescriptor(
   cellDescriptor: NotebookCellDescriptorBase<string>
 ): cellDescriptor is ComputeCellDescriptor {
   return cellDescriptor.type === 'compute';
+}
+
+export function isSharedComputeInputsCellDescriptor(
+  cellDescriptor: NotebookCellDescriptorBase<string>
+): cellDescriptor is SharedComputeInputsCellDescriptor {
+  return cellDescriptor.type === 'sharedcomputeinputs';
 }
 
 export function isSubsetCellDescriptor(

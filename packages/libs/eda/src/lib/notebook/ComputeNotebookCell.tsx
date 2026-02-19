@@ -35,6 +35,7 @@ export function ComputeNotebookCell(
     cells,
     getAdditionalCollectionPredicate,
     hidden = false,
+    sharedInputNames,
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
@@ -173,6 +174,7 @@ export function ComputeNotebookCell(
           showStepNumber: false,
           showExpandableHelp: false, // no expandable sections within an expandable element.
           additionalCollectionPredicate,
+          readonlyInputNames: sharedInputNames,
         };
 
         if (hidden) {

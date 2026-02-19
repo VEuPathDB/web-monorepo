@@ -21,7 +21,7 @@ import {
   useFindEntityAndVariable,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
@@ -252,6 +252,7 @@ export function DifferentialExpressionConfiguration(
     visualizationId,
     changeConfigHandlerOverride,
     showStepNumber = true,
+    readonlyInputNames,
   } = props;
 
   const configuration = computation.descriptor
@@ -329,6 +330,50 @@ export function DifferentialExpressionConfiguration(
         : [],
     [studyMetadata]
   );
+
+  // Helper to get display name for a variable descriptor (used for read-only labels)
+  const getVariableDisplayName = useCallback(
+    (varDescriptor: any) => {
+      if (!varDescriptor) return undefined;
+      const result = findEntityAndVariable(varDescriptor);
+      if (!result) return undefined;
+      return `${result.entity.displayName} > ${result.variable.displayName}`;
+    },
+    [findEntityAndVariable]
+  );
+
+  // When identifierVariable's entity changes, clear comparator (variable + groups).
+  // This handles changes from both the shared cell and the plugin's own UI.
+  // Only update the ref when entityId is non-null so that clearing the variable
+  // (setting entityId to undefined) doesn't erase our memory of the last entity.
+  const prevIdentifierEntityId = useRef(
+    configuration.identifierVariable?.entityId
+  );
+  useEffect(() => {
+    const currentEntityId = configuration.identifierVariable?.entityId;
+    if (
+      prevIdentifierEntityId.current != null &&
+      currentEntityId != null &&
+      prevIdentifierEntityId.current !== currentEntityId &&
+      configuration.comparator
+    ) {
+      changeConfigHandler('comparator', undefined);
+      enqueueSnackbar(
+        <span>
+          Reset differential expression comparator due to changed expression
+          data entity.
+        </span>,
+        { variant: 'info' }
+      );
+    }
+    if (currentEntityId != null) {
+      prevIdentifierEntityId.current = currentEntityId;
+    }
+  }, [
+    configuration.identifierVariable?.entityId,
+    configuration.comparator,
+    changeConfigHandler,
+  ]);
 
   const selectedComparatorVariable = useMemo(() => {
     if (
@@ -458,11 +503,26 @@ export function DifferentialExpressionConfiguration(
                 label: 'Gene Identifier',
                 role: 'axis',
                 titleOverride: 'Expression Data',
+                ...(readonlyInputNames?.includes('identifierVariable')
+                  ? {
+                      readonlyValue:
+                        getVariableDisplayName(
+                          configuration.identifierVariable
+                        ) ?? 'Not selected',
+                    }
+                  : {}),
               },
               {
                 name: 'valueVariable',
                 label: 'Count type',
                 role: 'axis',
+                ...(readonlyInputNames?.includes('valueVariable')
+                  ? {
+                      readonlyValue:
+                        getVariableDisplayName(configuration.valueVariable) ??
+                        'Not selected',
+                    }
+                  : {}),
               },
               {
                 name: 'comparatorVariable',
@@ -479,6 +539,7 @@ export function DifferentialExpressionConfiguration(
             }}
             onChange={(vars) => {
               if (
+                !readonlyInputNames?.includes('identifierVariable') &&
                 vars.identifierVariable !== configuration.identifierVariable
               ) {
                 changeConfigHandler(
@@ -486,7 +547,10 @@ export function DifferentialExpressionConfiguration(
                   vars.identifierVariable
                 );
               }
-              if (vars.valueVariable !== configuration.valueVariable) {
+              if (
+                !readonlyInputNames?.includes('valueVariable') &&
+                vars.valueVariable !== configuration.valueVariable
+              ) {
                 changeConfigHandler('valueVariable', vars.valueVariable);
               }
               if (

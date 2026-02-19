@@ -5,6 +5,7 @@ import { VisualizationNotebookCell } from './VisualizationNotebookCell';
 import { ComputeNotebookCell } from './ComputeNotebookCell';
 import { NotebookCellDescriptor } from './NotebookPresets';
 import { WdkParamNotebookCell } from './WdkParamNotebookCell';
+import { SharedComputeInputsNotebookCell } from './SharedComputeInputsNotebookCell';
 import { WdkState } from './EdaNotebookAnalysis';
 import { JobStatus } from '../core/components/computations/ComputeJobStatusHook';
 
@@ -36,6 +37,8 @@ export function NotebookCell(props: NotebookCellProps<NotebookCellDescriptor>) {
       return <ComputeNotebookCell {...props} cell={cell} />;
     case 'wdkparam':
       return <WdkParamNotebookCell {...props} cell={cell} />;
+    case 'sharedcomputeinputs':
+      return <SharedComputeInputsNotebookCell {...props} cell={cell} />;
     default:
       return null;
   }
