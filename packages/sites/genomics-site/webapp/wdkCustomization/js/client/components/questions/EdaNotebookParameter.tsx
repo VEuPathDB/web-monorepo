@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import {
   Analysis,
@@ -17,13 +16,13 @@ import colors, {
 } from '@veupathdb/coreui/lib/definitions/colors';
 import './EdaSubsetParameter.scss';
 import {
-  defaultFormatParameterValue,
   DefaultStepDetailsContent,
   LeafStepDetailsContentProps,
 } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
-import { formatFilterDisplayValue } from '@veupathdb/eda/lib/core/utils/study-metadata';
-import { DatasetItem } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
-import { parseJson } from '@veupathdb/eda/lib/notebook/Utils';
+import {
+  parseJson,
+  formatEdaAnalysisParameterValue,
+} from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 import { WdkState } from '@veupathdb/eda/lib/notebook/Types';
 
@@ -107,42 +106,7 @@ export function EdaNotebookStepDetails(props: LeafStepDetailsContentProps) {
   return (
     <DefaultStepDetailsContent
       {...props}
-      formatParameterValue={formatParameterValue}
+      formatParameterValue={formatEdaAnalysisParameterValue}
     />
   );
-}
-
-//
-// TO DO: adapt for notebook
-//
-// this function returns a brief summary of the search/analysis
-// for the edit/revise popup
-//
-function formatParameterValue(
-  parameter: Parameter,
-  value: string | undefined,
-  datasetParamItems: Record<string, DatasetItem[]> | undefined
-) {
-  if (parameter.name === 'eda_analysis_spec' && value != null) {
-    const obj = parseJson(value);
-    if (NewAnalysis.is(obj) || Analysis.is(obj)) {
-      if (obj.descriptor.subset.descriptor.length === 0) {
-        return (
-          <div>
-            <em>No filters applied.</em>
-          </div>
-        );
-      }
-      return (
-        <div style={{ whiteSpace: 'pre-line' }}>
-          {obj.descriptor.subset.descriptor.map((filter, index) => (
-            <div key={index}>
-              {filter.variableId}: {formatFilterDisplayValue(filter)}
-            </div>
-          ))}
-        </div>
-      );
-    }
-  }
-  return defaultFormatParameterValue(parameter, value, datasetParamItems);
 }

@@ -159,61 +159,60 @@ export function ComputeNotebookCell(
           <p>After closing this dialog, you may continue with your search.</p>
         </div>
       </Dialog>
-      {hidden ? (
-        <plugin.configurationComponent
-          analysisState={analysisState}
-          computation={computation}
-          totalCounts={totalCountsResult}
-          filteredCounts={filteredCountsResult}
-          visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
-          addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
-          computationAppOverview={appOverview}
-          geoConfigs={[]}
-          changeConfigHandlerOverride={changeConfigHandler}
-          showStepNumber={false}
-          showExpandableHelp={false} // no expandable sections within an expandable element.
-          additionalCollectionPredicate={additionalCollectionPredicate}
-          hideConfigurationComponent={true}
-        />
-      ) : (
-        <>
-          <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
-          <ExpandablePanel
-            title={cell.title}
-            subTitle={''}
-            state="open"
-            themeRole="primary"
-          >
-            <div
-              className={
-                'NotebookCellContent' + (isDisabled ? ' disabled' : '')
-              }
+      {(() => {
+        const sharedPluginProps = {
+          analysisState,
+          computation,
+          totalCounts: totalCountsResult,
+          filteredCounts: filteredCountsResult,
+          visualizationId: 'not_used', // irrelevant because we have our own changeConfigHandler
+          addNewComputation: () => {}, // also irrelevant for us because we add the computation elsewhere
+          computationAppOverview: appOverview,
+          geoConfigs: [],
+          changeConfigHandlerOverride: changeConfigHandler,
+          showStepNumber: false,
+          showExpandableHelp: false, // no expandable sections within an expandable element.
+          additionalCollectionPredicate,
+        };
+
+        if (hidden) {
+          return (
+            <plugin.configurationComponent
+              {...sharedPluginProps}
+              hideConfigurationComponent={true}
+            />
+          );
+        }
+
+        return (
+          <>
+            <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
+            <ExpandablePanel
+              title={cell.title}
+              subTitle={''}
+              state="open"
+              themeRole="primary"
             >
-              <plugin.configurationComponent
-                analysisState={analysisState}
-                computation={computation}
-                totalCounts={totalCountsResult}
-                filteredCounts={filteredCountsResult}
-                visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
-                addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
-                computationAppOverview={appOverview}
-                geoConfigs={[]}
-                changeConfigHandlerOverride={changeConfigHandler}
-                showStepNumber={false}
-                showExpandableHelp={false} // no expandable sections within an expandable element.
-                additionalCollectionPredicate={additionalCollectionPredicate}
-                hideConfigurationComponent={false}
-              />
-              <RunComputeButton
-                computationAppOverview={appOverview}
-                status={jobStatus}
-                isConfigured={isComputationConfigurationValid}
-                createJob={createJob}
-              />
-            </div>
-          </ExpandablePanel>
-        </>
-      )}
+              <div
+                className={
+                  'NotebookCellContent' + (isDisabled ? ' disabled' : '')
+                }
+              >
+                <plugin.configurationComponent
+                  {...sharedPluginProps}
+                  hideConfigurationComponent={false}
+                />
+                <RunComputeButton
+                  computationAppOverview={appOverview}
+                  status={jobStatus}
+                  isConfigured={isComputationConfigurationValid}
+                  createJob={createJob}
+                />
+              </div>
+            </ExpandablePanel>
+          </>
+        );
+      })()}
       {cells &&
         cells.map((subCell, index) => {
           const isSubCellDisabled =
