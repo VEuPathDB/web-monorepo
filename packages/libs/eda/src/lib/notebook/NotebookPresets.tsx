@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { colors } from '@material-ui/core';
 import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
-import { WdkState } from './EdaNotebookAnalysis';
+import { WdkState, ReadinessContext } from './Types';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { AnalysisState, CollectionVariableTreeNode } from '../core';
 import { plugins } from '../core/components/computations/plugins';
@@ -78,10 +78,6 @@ export interface WdkParamCellDescriptor
   paramNames: string[]; // Param names from the wdk query. These must match exactly or the notebook will err.
   requiredParamNames?: string[]; // Subset of paramNames that are required. Labels will be red with an asterisk until filled.
 }
-
-export type ReadinessContext =
-  | { analysisState: AnalysisState; wdkState?: WdkState }
-  | { analysisState?: AnalysisState; wdkState: WdkState };
 
 type PresetNotebook = {
   name: string;
