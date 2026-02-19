@@ -342,38 +342,6 @@ export function DifferentialExpressionConfiguration(
     [findEntityAndVariable]
   );
 
-  // When identifierVariable's entity changes, clear comparator (variable + groups).
-  // This handles changes from both the shared cell and the plugin's own UI.
-  // Only update the ref when entityId is non-null so that clearing the variable
-  // (setting entityId to undefined) doesn't erase our memory of the last entity.
-  const prevIdentifierEntityId = useRef(
-    configuration.identifierVariable?.entityId
-  );
-  useEffect(() => {
-    const currentEntityId = configuration.identifierVariable?.entityId;
-    if (
-      currentEntityId != null &&
-      prevIdentifierEntityId.current !== currentEntityId &&
-      configuration.comparator
-    ) {
-      changeConfigHandler('comparator', undefined);
-      enqueueSnackbar(
-        <span>
-          Reset differential expression comparator due to changed expression
-          data entity.
-        </span>,
-        { variant: 'info' }
-      );
-    }
-    if (currentEntityId != null) {
-      prevIdentifierEntityId.current = currentEntityId;
-    }
-  }, [
-    configuration.identifierVariable?.entityId,
-    configuration.comparator,
-    changeConfigHandler,
-  ]);
-
   const selectedComparatorVariable = useMemo(() => {
     if (
       configuration &&

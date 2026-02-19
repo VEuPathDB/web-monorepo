@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -18,6 +18,7 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/coreui';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
+import { enqueueSnackbar } from 'notistack';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -237,6 +238,46 @@ export function InputVariables(props: Props) {
         variablesForConstraints,
       ]
     );
+
+  // Auto-clear selected variables that violate constraints.
+  // This handles externally-triggered changes (e.g. shared cell changing entity)
+  // as well as any other scenario where selections become invalid.
+  useEffect(() => {
+    const inputsToClear: string[] = [];
+
+    for (const input of inputs) {
+      // Skip readonly inputs — managed externally
+      if (input.readonlyValue) continue;
+
+      const selected = selectedVariables[input.name];
+      if (selected == null) continue;
+
+      const disabled = disabledVariablesByInputName[input.name];
+      if (!disabled?.length) continue;
+
+      if (disabled.some((d) => isEqual(d, selected))) {
+        inputsToClear.push(input.name);
+      }
+    }
+
+    if (inputsToClear.length === 0) return;
+
+    const updated = { ...selectedVariables };
+    for (const name of inputsToClear) {
+      updated[name] = undefined;
+    }
+    onChange(updated);
+
+    const labels = inputsToClear.map(
+      (name) => inputs.find((i) => i.name === name)?.label ?? name
+    );
+    enqueueSnackbar(
+      `Cleared ${labels.join(
+        ', '
+      )} — no longer compatible with current selections.`,
+      { variant: 'info' }
+    );
+  }, [disabledVariablesByInputName, selectedVariables, inputs, onChange]);
 
   const hasMultipleStratificationValues =
     inputs.filter((input) => input.role === 'stratification').length > 1;
