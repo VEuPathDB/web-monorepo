@@ -36,12 +36,41 @@ export function ComputeNotebookCell(
     getAdditionalCollectionPredicate,
     hidden = false,
     sharedInputNames,
+    sharedInputsCellId,
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
   );
   if (computation == null) throw new Error('Cannot find computation.');
+
+  const hasUnsetSharedInputs =
+    sharedInputNames != null &&
+    sharedInputNames.some(
+      (name) =>
+        !(computation.descriptor.configuration as Record<string, unknown>)?.[
+          name
+        ]
+    );
+
+  const sharedInputsStepNumber = sharedInputsCellId
+    ? stepNumbers?.get(sharedInputsCellId)
+    : undefined;
+
+  const systemState: 'open' | 'closed' = hasUnsetSharedInputs
+    ? 'closed'
+    : 'open';
+
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [panelState, setPanelState] = useState<'open' | 'closed'>(systemState);
+  const [childrenPanelState, setChildrenPanelState] = useState<
+    'open' | 'closed'
+  >(systemState);
+
+  useEffect(() => {
+    const s: 'open' | 'closed' = hasUnsetSharedInputs ? 'closed' : 'open';
+    setPanelState(s);
+    setChildrenPanelState(s);
+  }, [hasUnsetSharedInputs]);
 
   // fetch 'apps'
   const dataClient = useDataClient();
@@ -189,10 +218,15 @@ export function ComputeNotebookCell(
         return (
           <>
             <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
+            {hasUnsetSharedInputs && sharedInputsStepNumber != null && (
+              <p className="SharedInputsHint">
+                Complete step {sharedInputsStepNumber} to enable this analysis.
+              </p>
+            )}
             <ExpandablePanel
               title={cell.title}
               subTitle={''}
-              state="open"
+              state={panelState}
               themeRole="primary"
             >
               <div
@@ -230,6 +264,7 @@ export function ComputeNotebookCell(
               computeJobStatus={jobStatus}
               stepNumber={stepNumbers?.get(subCell.id)}
               stepNumbers={stepNumbers}
+              expandedPanelState={childrenPanelState}
             />
           );
         })}

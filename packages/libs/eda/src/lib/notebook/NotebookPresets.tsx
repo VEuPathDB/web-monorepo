@@ -66,6 +66,7 @@ export interface ComputeCellDescriptor
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
   hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
   sharedInputNames?: string[]; // Input names managed by a SharedComputeInputsNotebookCell. Plugins render these as read-only.
+  sharedInputsCellId?: string; // ID of the SharedComputeInputsCell that owns sharedInputNames. Used to auto-collapse this cell when shared inputs are not yet set.
 }
 
 export interface TextCellContext {
@@ -194,6 +195,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         computationName: 'dimensionalityreduction',
         computationId: 'pca_1',
         sharedInputNames: ['identifierVariable', 'valueVariable'],
+        sharedInputsCellId: 'de_shared_inputs',
         numberedHeader: true,
         helperText: (
           <span>
@@ -224,6 +226,7 @@ export const presetNotebooks: Record<string, PresetNotebook> = {
         computationName: 'differentialexpression',
         computationId: 'de_1',
         sharedInputNames: ['identifierVariable', 'valueVariable'],
+        sharedInputsCellId: 'de_shared_inputs',
         numberedHeader: true,
         helperText: (
           <span>

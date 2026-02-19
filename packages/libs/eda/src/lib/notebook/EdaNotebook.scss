@@ -156,6 +156,12 @@
       }
     }
 
+    .SharedInputsHint {
+      margin: 0.5em 0 0.75em;
+      font-style: italic;
+      color: color-mix(in srgb, var(--coreui-color-primary) 60%, #555);
+    }
+
     .NotebookCellContent {
       padding: 2em;
     }
