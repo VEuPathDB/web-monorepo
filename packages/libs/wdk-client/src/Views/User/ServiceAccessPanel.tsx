@@ -29,11 +29,13 @@ const ServiceAccessPanel: React.FC<Props> = () => {
         and analyize data, download results, even create multi-step search
         strategies. These HTTP resources require registration and a valid API
         Key. Your personal key is provided below. Please do not share it with
-        others.{' '}
+        others.
+      </p>
+      <p>
         <a style={{ cursor: 'pointer' }} href={serviceHelpUrl}>
           Click here
         </a>{' '}
-        to learn how to use it to access web services.
+        to learn more about accessing web services.
       </p>
       <h3>Your Personal API Key</h3>
       {token && (
