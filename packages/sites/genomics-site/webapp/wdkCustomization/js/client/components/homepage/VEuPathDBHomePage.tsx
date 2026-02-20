@@ -640,7 +640,7 @@ const useHeaderMenuItems = (
             exclude: [EuPathDB],
           },
         },
-        {
+       /* {
           key: 'maps-workspace',
           display: 'My interactive maps',
           type: 'reactRoute',
@@ -648,7 +648,7 @@ const useHeaderMenuItems = (
           metadata: {
             test: () => Boolean(showInteractiveMaps),
           },
-        },
+        },*/
         {
           key: 'public-strategies',
           display: 'Public search strategies',
