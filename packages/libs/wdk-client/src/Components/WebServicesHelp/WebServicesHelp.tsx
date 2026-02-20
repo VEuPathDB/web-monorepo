@@ -119,6 +119,29 @@ function GeneratedRequests({
 }: GeneratedRequestsProps) {
   return (
     <div className={cx('--GeneratedRequestsContainer')}>
+      <div className={cx('--StepHeader')}>Find and apply your API Key</div>
+      <div className={cx('--ApiKeyLookupAndUse')}>
+        <p>
+          To access VEuPathDB Web Services, you must be a registered user. All
+          HTTP requests must be accompanied by an authorization token (API Key).
+        </p>
+        <p>
+          Your personal API Key can be found{' '}
+          <Link to={'/user/profile#serviceAccess'}>here</Link>.
+        </p>
+        <p>
+          Learn how to add it to requests{' '}
+          <Link to={'/static-content/content/VEuPathDB/webServices.html'}>
+            here
+          </Link>
+          .
+        </p>
+        <p>
+          Note: the GET request below will work in the browser because VEuPathDB
+          sites automatically append your API Key. However, to access endpoints
+          programmatically, you will need to manually include it.
+        </p>
+      </div>
       <div className={cx('--StepHeader')}>Here is your GET or POST</div>
       <div className={cx('--GeneratedRequests')}>
         <div className={cx('--GeneratedGetRequest')}>
