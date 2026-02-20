@@ -21,7 +21,7 @@ import {
   useFindEntityAndVariable,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
@@ -38,7 +38,7 @@ import {
 import { IsEnabledInPickerParams } from '../../visualizations/VisualizationTypes';
 import { entityTreeToArray } from '../../../utils/study-metadata';
 import { InputVariables } from '../../visualizations/InputVariables';
-import { enqueueSnackbar } from 'notistack';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
@@ -252,11 +252,13 @@ export function DifferentialExpressionConfiguration(
     visualizationId,
     changeConfigHandlerOverride,
     showStepNumber = true,
+    readonlyInputNames,
   } = props;
 
   const configuration = computation.descriptor
     .configuration as DifferentialExpressionConfig;
   const studyMetadata = useStudyMetadata();
+  const { enqueueSnackbar } = useSnackbar();
   const dataClient = useDataClient();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -287,11 +289,6 @@ export function DifferentialExpressionConfiguration(
 
   useEffect(() => {
     if (
-      !configuration.comparator ||
-      (!configuration.comparator.groupA && !configuration.comparator.groupB)
-    )
-      return;
-    if (
       previousSubset.current &&
       !isEqual(
         previousSubset.current,
@@ -301,20 +298,25 @@ export function DifferentialExpressionConfiguration(
       previousSubset.current =
         analysisState.analysis?.descriptor.subset.descriptor;
 
-      // Reset the groupA and groupB values.
-      changeConfigHandler('comparator', {
-        variable: configuration.comparator.variable,
-        groupA: undefined,
-        groupB: undefined,
-      });
+      if (
+        configuration.comparator &&
+        (configuration.comparator.groupA || configuration.comparator.groupB)
+      ) {
+        // Reset the groupA and groupB values.
+        changeConfigHandler('comparator', {
+          variable: configuration.comparator.variable,
+          groupA: undefined,
+          groupB: undefined,
+        });
 
-      enqueueSnackbar(
-        <span>
-          Reset differential expression group A and B values due to changed
-          subset.
-        </span>,
-        { variant: 'info' }
-      );
+        enqueueSnackbar(
+          <span>
+            Reset differential expression reference and comparison group
+            specification due to changed subset.
+          </span>,
+          { variant: 'info' }
+        );
+      }
     }
   }, [
     analysisState.analysis?.descriptor.subset.descriptor,
@@ -328,6 +330,17 @@ export function DifferentialExpressionConfiguration(
         ? entityTreeToArray(studyMetadata.rootEntity)
         : [],
     [studyMetadata]
+  );
+
+  // Helper to get display name for a variable descriptor (used for read-only labels)
+  const getVariableDisplayName = useCallback(
+    (varDescriptor: any) => {
+      if (!varDescriptor) return undefined;
+      const result = findEntityAndVariable(varDescriptor);
+      if (!result) return undefined;
+      return `${result.entity.displayName} > ${result.variable.displayName}`;
+    },
+    [findEntityAndVariable]
   );
 
   const selectedComparatorVariable = useMemo(() => {
@@ -458,17 +471,33 @@ export function DifferentialExpressionConfiguration(
                 label: 'Gene Identifier',
                 role: 'axis',
                 titleOverride: 'Expression Data',
+                ...(readonlyInputNames?.includes('identifierVariable')
+                  ? {
+                      readonlyValue:
+                        getVariableDisplayName(
+                          configuration.identifierVariable
+                        ) ?? 'Not selected',
+                    }
+                  : {}),
               },
               {
                 name: 'valueVariable',
                 label: 'Count type',
                 role: 'axis',
+                ...(readonlyInputNames?.includes('valueVariable')
+                  ? {
+                      readonlyValue:
+                        getVariableDisplayName(configuration.valueVariable) ??
+                        'Not selected',
+                    }
+                  : {}),
               },
               {
                 name: 'comparatorVariable',
                 label: 'Metadata Variable',
                 role: 'stratification',
                 titleOverride: 'Group Comparison',
+                styleOverride: { minWidth: '30em' },
               },
             ]}
             entities={entities}
@@ -479,6 +508,7 @@ export function DifferentialExpressionConfiguration(
             }}
             onChange={(vars) => {
               if (
+                !readonlyInputNames?.includes('identifierVariable') &&
                 vars.identifierVariable !== configuration.identifierVariable
               ) {
                 changeConfigHandler(
@@ -486,7 +516,10 @@ export function DifferentialExpressionConfiguration(
                   vars.identifierVariable
                 );
               }
-              if (vars.valueVariable !== configuration.valueVariable) {
+              if (
+                !readonlyInputNames?.includes('valueVariable') &&
+                vars.valueVariable !== configuration.valueVariable
+              ) {
                 changeConfigHandler('valueVariable', vars.valueVariable);
               }
               if (
@@ -508,6 +541,7 @@ export function DifferentialExpressionConfiguration(
               analysisState.analysis?.descriptor.starredVariables ?? []
             }
             toggleStarredVariable={toggleStarredVariable}
+            labelWidth="12em"
           />
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>

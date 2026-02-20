@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo } from 'react';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -18,6 +18,12 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/coreui';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
+// Direct import (not useSnackbar hook) is intentional here: InputVariables is a
+// generic component that may render without a SnackbarProvider. The direct import
+// fails silently in that case, which is fine — the auto-clear still works. Prefer
+// the useSnackbar hook from @veupathdb/coreui in components where a provider is
+// guaranteed (e.g. plugin config components).
+import { enqueueSnackbar } from 'notistack';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -158,6 +164,15 @@ export interface Props {
   /** output entity, required for toggle switch label */
   outputEntity?: StudyEntity;
   flexDirection?: CSSProperties['flexDirection'];
+  /** Fixed width applied to all input labels, so that dropdowns align vertically.
+   * Overrides the built-in stratification-variable label width when provided. */
+  labelWidth?: CSSProperties['width'];
+  /**
+   * When true, automatically selects an input when exactly one variable
+   * satisfies the constraints (i.e. only one valid choice exists).
+   * Auto-selected inputs are rendered as readonly — no dropdown is shown.
+   */
+  autoSelectWhenPossible?: boolean;
 }
 
 export function InputVariables(props: Props) {
@@ -177,6 +192,8 @@ export function InputVariables(props: Props) {
     outputEntity,
     customSections,
     flexDirection,
+    labelWidth,
+    autoSelectWhenPossible,
   } = props;
   const classes = useInputStyles(flexDirection);
   const handleChange = (
@@ -238,6 +255,97 @@ export function InputVariables(props: Props) {
       ]
     );
 
+  // When autoSelectWhenPossible is enabled, find inputs that have exactly one
+  // enabled (non-disabled) variable — these can be auto-selected for the user.
+  const singleEnabledVariableByInput = useMemo<
+    Record<string, VariableDescriptor | undefined>
+  >(() => {
+    if (!autoSelectWhenPossible || !entities.length) return {};
+
+    // entities is already a flat array (via entityTreeToArray)
+    const allVariables: VariableDescriptor[] = entities.flatMap((entity) =>
+      entity.variables
+        .filter((v) => v.type !== 'category')
+        .map((v) => ({ entityId: entity.id, variableId: v.id }))
+    );
+
+    const result: Record<string, VariableDescriptor | undefined> = {};
+    for (const input of inputs) {
+      if (input.readonlyValue) continue;
+      const disabled = disabledVariablesByInputName[input.name];
+      if (!disabled) continue;
+      const enabled = allVariables.filter(
+        (v) =>
+          !disabled.some(
+            (d) => d.entityId === v.entityId && d.variableId === v.variableId
+          )
+      );
+      result[input.name] = enabled.length === 1 ? enabled[0] : undefined;
+    }
+    return result;
+  }, [autoSelectWhenPossible, entities, inputs, disabledVariablesByInputName]);
+
+  // Auto-clear selected variables that violate constraints.
+  // This handles externally-triggered changes (e.g. shared cell changing entity)
+  // as well as any other scenario where selections become invalid.
+  useEffect(() => {
+    const inputsToClear: string[] = [];
+
+    for (const input of inputs) {
+      // Skip readonly inputs — managed externally
+      if (input.readonlyValue) continue;
+
+      const selected = selectedVariables[input.name];
+      if (selected == null) continue;
+
+      const disabled = disabledVariablesByInputName[input.name];
+      if (!disabled?.length) continue;
+
+      if (disabled.some((d) => isEqual(d, selected))) {
+        inputsToClear.push(input.name);
+      }
+    }
+
+    if (inputsToClear.length === 0) return;
+
+    const updated = { ...selectedVariables };
+    for (const name of inputsToClear) {
+      updated[name] = undefined;
+    }
+    onChange(updated);
+
+    const labels = inputsToClear.map(
+      (name) => inputs.find((i) => i.name === name)?.label ?? name
+    );
+    enqueueSnackbar(
+      `Cleared ${labels.join(
+        ', '
+      )} — no longer compatible with current selections.`,
+      { variant: 'info' }
+    );
+  }, [disabledVariablesByInputName, selectedVariables, inputs, onChange]);
+
+  // Auto-select inputs that have exactly one valid variable when autoSelectWhenPossible is on.
+  useEffect(() => {
+    if (!autoSelectWhenPossible) return;
+
+    const autoSelections: VariablesByInputName = {};
+    for (const input of inputs) {
+      if (selectedVariables[input.name] != null) continue; // already chosen
+      const sole = singleEnabledVariableByInput[input.name];
+      if (sole) autoSelections[input.name] = sole;
+    }
+
+    if (Object.keys(autoSelections).length === 0) return;
+    onChange({ ...selectedVariables, ...autoSelections });
+  }, [
+    autoSelectWhenPossible,
+    singleEnabledVariableByInput,
+    selectedVariables,
+    inputs,
+    onChange,
+  ]);
+
   const hasMultipleStratificationValues =
     inputs.filter((input) => input.role === 'stratification').length > 1;
 
@@ -265,135 +373,159 @@ export function InputVariables(props: Props) {
               )}
               {inputs
                 .filter((input) => input.role === inputRole)
-                .map((input) => (
-                  <div
-                    key={input.name}
-                    className={classes.input}
-                    style={input.readonlyValue ? {} : input.styleOverride}
-                  >
-                    <Tooltip
-                      title={
-                        !input.readonlyValue &&
-                        !input.isNonNullable &&
-                        constraints &&
-                        constraints.length &&
-                        constraints[0][input.name]?.isRequired
-                          ? 'Required parameter'
-                          : ''
-                      }
+                .map((input) => {
+                  const isAutoReadonly =
+                    autoSelectWhenPossible &&
+                    singleEnabledVariableByInput[input.name] != null &&
+                    selectedVariables[input.name] != null;
+                  return (
+                    <div
+                      key={input.name}
+                      className={classes.input}
+                      style={input.readonlyValue ? {} : input.styleOverride}
                     >
-                      <div
-                        className={classes.label}
-                        style={
+                      <Tooltip
+                        title={
                           !input.readonlyValue &&
+                          !isAutoReadonly &&
                           !input.isNonNullable &&
                           constraints &&
                           constraints.length &&
-                          constraints[0][input.name]?.isRequired &&
-                          (!selectedVariables[input.name] ||
-                            invalidInputs.includes(input))
-                            ? requiredInputLabelStyle
-                            : input.role === 'stratification' &&
-                              hasMultipleStratificationValues
-                            ? input.readonlyValue &&
-                              !input.providedOptionalVariable
-                              ? undefined
-                              : multipleStratificationVariableLabelStyle
-                            : undefined
+                          constraints[0][input.name]?.isRequired
+                            ? 'Required parameter'
+                            : ''
                         }
                       >
-                        {input.label +
-                          (input.readonlyValue &&
-                          !input.providedOptionalVariable
-                            ? ' (fixed)'
-                            : '')}
-                        {!input.readonlyValue &&
-                        !input.isNonNullable &&
-                        constraints &&
-                        constraints.length &&
-                        constraints[0][input.name]?.isRequired ? (
-                          <sup>*</sup>
-                        ) : (
-                          ''
-                        )}
-                      </div>
-                    </Tooltip>
-                    {input.providedOptionalVariable ? (
-                      // render a radio button to choose between provided and nothing
-                      // check if provided var is in disabledVariablesByInputName[input.name]
-                      // and disable radio input if needed
-                      <RadioButtonGroup
-                        disabledList={
-                          disabledVariablesByInputName[input.name].find(
-                            (variable) =>
-                              isEqual(variable, input.providedOptionalVariable)
-                          )
-                            ? ['provided']
-                            : []
-                        }
-                        options={['none', 'provided']}
-                        optionLabels={[
-                          'None',
-                          input.readonlyValue ?? 'Provided',
-                        ]}
-                        selectedOption={
-                          selectedVariables[input.name] ? 'provided' : 'none'
-                        }
-                        onOptionSelected={(selection) =>
-                          handleChange(
-                            input.name,
-                            selection === 'none'
-                              ? undefined
-                              : input.providedOptionalVariable
-                          )
-                        }
-                      />
-                    ) : input.readonlyValue ? (
-                      <span style={{ height: '32px', lineHeight: '32px' }}>
-                        {input.readonlyValue}
-                      </span>
-                    ) : (
-                      <VariableTreeDropdown
-                        showClearSelectionButton={
-                          input.isNonNullable
-                            ? false
-                            : input.showClearSelectionButton ?? true
-                        }
-                        scope="variableTree"
-                        showMultiFilterDescendants
-                        disabledVariables={
-                          disabledVariablesByInputName[input.name]
-                        }
-                        customDisabledVariableMessage={
-                          (constraints &&
-                            constraints.length &&
-                            constraints[0][input.name]?.description) ||
-                          undefined
-                        }
-                        starredVariables={starredVariables}
-                        toggleStarredVariable={toggleStarredVariable}
-                        entityId={
-                          invalidInputs.includes(input)
-                            ? undefined
-                            : selectedVariables[input.name]?.entityId
-                        }
-                        variableId={
-                          invalidInputs.includes(input)
-                            ? undefined
-                            : selectedVariables[input.name]?.variableId
-                        }
-                        variableLinkConfig={{
-                          type: 'button',
-                          onClick: (variable) =>
+                        <div
+                          className={classes.label}
+                          style={{
+                            ...(labelWidth != null
+                              ? { width: labelWidth, flexShrink: 0 }
+                              : input.role === 'stratification' &&
+                                hasMultipleStratificationValues &&
+                                !(
+                                  input.readonlyValue &&
+                                  !input.providedOptionalVariable
+                                )
+                              ? multipleStratificationVariableLabelStyle
+                              : undefined),
+                            ...(!input.readonlyValue &&
+                            !isAutoReadonly &&
+                            !input.isNonNullable &&
+                            constraints?.length &&
+                            constraints[0][input.name]?.isRequired &&
+                            (!selectedVariables[input.name] ||
+                              invalidInputs.includes(input))
+                              ? requiredInputLabelStyle
+                              : undefined),
+                          }}
+                        >
+                          {input.label +
+                            (isAutoReadonly
+                              ? ' (only\u00a0option)'
+                              : input.readonlyValue &&
+                                !input.providedOptionalVariable
+                              ? ' (fixed)'
+                              : '')}
+                          {!input.readonlyValue &&
+                          !isAutoReadonly &&
+                          !input.isNonNullable &&
+                          constraints &&
+                          constraints.length &&
+                          constraints[0][input.name]?.isRequired ? (
+                            <sup>*</sup>
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </Tooltip>
+                      {isAutoReadonly ? (
+                        <span style={{ height: '32px', lineHeight: '32px' }}>
+                          {findEntityAndVariable(
+                            entities,
+                            selectedVariables[input.name]
+                          )?.variable.displayName ?? ''}
+                        </span>
+                      ) : input.providedOptionalVariable ? (
+                        // render a radio button to choose between provided and nothing
+                        // check if provided var is in disabledVariablesByInputName[input.name]
+                        // and disable radio input if needed
+                        <RadioButtonGroup
+                          disabledList={
+                            disabledVariablesByInputName[input.name].find(
+                              (variable) =>
+                                isEqual(
+                                  variable,
+                                  input.providedOptionalVariable
+                                )
+                            )
+                              ? ['provided']
+                              : []
+                          }
+                          options={['none', 'provided']}
+                          optionLabels={[
+                            'None',
+                            input.readonlyValue ?? 'Provided',
+                          ]}
+                          selectedOption={
+                            selectedVariables[input.name] ? 'provided' : 'none'
+                          }
+                          onOptionSelected={(selection) =>
                             handleChange(
                               input.name,
-                              variable as VariableDescriptor
-                            ),
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
+                              selection === 'none'
+                                ? undefined
+                                : input.providedOptionalVariable
+                            )
+                          }
+                        />
+                      ) : input.readonlyValue ? (
+                        <span style={{ height: '32px', lineHeight: '32px' }}>
+                          {input.readonlyValue}
+                        </span>
+                      ) : (
+                        <VariableTreeDropdown
+                          showClearSelectionButton={
+                            input.isNonNullable
+                              ? false
+                              : input.showClearSelectionButton ?? true
+                          }
+                          scope="variableTree"
+                          showMultiFilterDescendants
+                          disabledVariables={
+                            disabledVariablesByInputName[input.name]
+                          }
+                          customDisabledVariableMessage={
+                            (constraints &&
+                              constraints.length &&
+                              constraints[0][input.name]?.description) ||
+                            undefined
+                          }
+                          starredVariables={starredVariables}
+                          toggleStarredVariable={toggleStarredVariable}
+                          entityId={
+                            invalidInputs.includes(input)
+                              ? undefined
+                              : selectedVariables[input.name]?.entityId
+                          }
+                          variableId={
+                            invalidInputs.includes(input)
+                              ? undefined
+                              : selectedVariables[input.name]?.variableId
+                          }
+                          variableLinkConfig={{
+                            type: 'button',
+                            onClick: (variable) =>
+                              handleChange(
+                                input.name,
+                                variable as VariableDescriptor
+                              ),
+                          }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               {
                 // slightly hacky add-on for the stratification section
                 // it could possibly be done using a custom section?
