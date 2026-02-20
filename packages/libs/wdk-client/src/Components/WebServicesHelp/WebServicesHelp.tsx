@@ -124,9 +124,13 @@ function GeneratedRequests({
         <p>
           To access VEuPathDB Web Services, you must be a registered user. All
           HTTP requests must be accompanied by an authorization token (API Key).
+        </p>
+        <p>
           Your personal API Key can be found{' '}
-          <Link to={'/user/profile#serviceAccess'}>here</Link>. Learn how to add
-          it to requests{' '}
+          <Link to={'/user/profile#serviceAccess'}>here</Link>.
+        </p>
+        <p>
+          Learn how to add it to requests{' '}
           <Link to={'/static-content/content/VEuPathDB/webServices.html'}>
             here
           </Link>
