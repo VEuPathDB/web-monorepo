@@ -5,6 +5,32 @@ var alias = {
   site: process.cwd() + '/webapp',
 };
 
+/**
+ * Suppresses "No serializer registered for ProvidedDependency" cache warnings.
+ * These arise because ify-loader processes node_modules files that also receive
+ * a ProvidedDependency injection from ProvidePlugin (for process/browser).
+ * Webpack's filesystem cache can't serialize ProvidedDependency in that context,
+ * but the build and runtime behaviour are unaffected - only the cache entry for
+ * those modules is skipped.
+ */
+class SuppressProvidedDependencyCacheWarnings {
+  apply(compiler) {
+    compiler.hooks.infrastructureLog.tap(
+      'SuppressProvidedDependencyCacheWarnings',
+      (origin, type, args) => {
+        if (
+          origin === 'webpack.cache.PackFileCacheStrategy' &&
+          type === 'warn' &&
+          args.length > 0 &&
+          String(args[0]).includes('ProvidedDependency')
+        ) {
+          return true; // returning true suppresses this log entry
+        }
+      }
+    );
+  }
+}
+
 module.exports = function configure(additionalConfig) {
   return baseConfig.merge([
     {
@@ -42,6 +68,7 @@ module.exports = function configure(additionalConfig) {
         new baseConfig.webpack.ProvidePlugin({
           process: 'process/browser',
         }),
+        new SuppressProvidedDependencyCacheWarnings(),
       ],
 
       // Map external libraries Wdk exposes so we can do things like:
