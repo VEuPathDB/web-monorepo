@@ -214,9 +214,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
 
     const isOwner = !!(user && userDataset.owner.userId === user.id);
 
-    const size = userDataset.files.upload.contents
-      .map(file => file.fileSize)
-      .reduce(add, 0)
+    const size = userDataset.files.upload?.contents
+      ?.map(file => file.fileSize)
+      ?.reduce(add, 0)
+      ?? 0;
 
     const props = {
       baseUrl,

@@ -89,7 +89,7 @@ export const partialUser = io.intersection([
   }),
 ]);
 
-export const datasetListShareUser = io.type({
+const datasetListShareUser = io.type({
   userId: io.number,
   firstName: io.string,
   lastName: io.string,
@@ -97,23 +97,38 @@ export const datasetListShareUser = io.type({
   accepted: io.boolean,
 });
 
-export const datasetStatusInfo = io.intersection([
-  io.type({ import: datasetImportStatusDetails }),
-  io.partial({ install: io.array(datasetInstallStatusMap) }),
+const datasetUploadStatusCode = io.union([
+  io.literal('running'),
+  io.literal('success'),
+  io.literal('rejected'),
+  io.literal('failed'),
 ]);
 
-export const datasetTypeInput = io.type({
+const datasetUploadStatusInfo = io.intersection([
+  io.type({ status: datasetUploadStatusCode }),
+  io.partial({ message: io.string }),
+])
+
+const datasetStatusInfo = io.intersection([
+  io.type({ upload: datasetUploadStatusInfo }),
+  io.partial({
+    import: datasetImportStatusDetails,
+    install: io.array(datasetInstallStatusMap)
+  }),
+]);
+
+const datasetTypeInput = io.type({
   name: io.string,
   version: io.string,
 });
 
-export const datasetTypeOutput = io.type({
+const datasetTypeOutput = io.type({
   name: io.string,
   version: io.string,
   category: io.string,
 });
 
-export const datasetVisibility = io.union([
+const datasetVisibility = io.union([
   io.literal('private'),
   io.literal('protected'),
   io.literal('public'),
@@ -158,14 +173,12 @@ const datasetZipDetails = io.type({
   contents: io.array(datasetFileDetails),
 });
 
-export const datasetFileListing = io.intersection([
-  io.type({ upload: datasetZipDetails }),
-  io.partial({
-    install: datasetZipDetails,
-    documents: io.array(datasetFileDetails),
-    variableProperties: io.array(datasetFileDetails),
-  }),
-]);
+export const datasetFileListing = io.partial({
+  upload: datasetZipDetails,
+  install: datasetZipDetails,
+  documents: io.array(datasetFileDetails),
+  variableProperties: io.array(datasetFileDetails),
+});
 
 export const datasetFundingAward = io.type({
   agency: io.string,
@@ -319,6 +332,8 @@ export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
 export type DatasetZipDetails = io.TypeOf<typeof datasetZipDetails>;
+export type DatasetUploadStatusCode = io.TypeOf<typeof datasetUploadStatusCode>;
+export type DatasetUploadStatusInfo = io.TypeOf<typeof datasetUploadStatusInfo>;
 export type DatasetUser = io.TypeOf<typeof partialUser>;
 
 export type PatchValue<T> = {

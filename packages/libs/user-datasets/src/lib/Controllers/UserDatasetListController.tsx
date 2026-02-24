@@ -52,7 +52,7 @@ type StateProps = Pick<
   'userDatasetList' | 'userDatasetUpload' | 'globalData'
 >;
 type DispatchProps = typeof ActionCreators;
-interface OwnProps extends RouteComponentProps<{}> {
+interface OwnProps extends RouteComponentProps {
   baseUrl: string;
   hasDirectUpload: boolean;
   helpRoute: string;

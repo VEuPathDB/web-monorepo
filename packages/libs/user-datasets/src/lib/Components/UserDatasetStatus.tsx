@@ -7,6 +7,7 @@ import {
   DatasetDetails,
   DatasetListEntry,
   DatasetStatusInfo,
+  DatasetUploadStatusInfo,
 } from '../Utils/types';
 
 // NOTE: The reinstall interval is configured in the VDI service and thus may change
@@ -54,6 +55,7 @@ function getStatus(
   projects: string[]
 ): { content: React.ReactNode; icon: string } {
   const isTargetingCurrentSite = projects.includes(projectId);
+
   if (!isTargetingCurrentSite) {
     return {
       content: `This ${dataNoun} was uploaded and installed in a different VEuPathDB project.`,
@@ -61,36 +63,97 @@ function getStatus(
     };
   }
 
-  const importStatus = status.import.status;
-  switch (importStatus) {
-    case 'queued':
-    case 'in-progress':
+  if (status.upload.status !== 'success')
+    return getUploadStatus(status.upload, dataNoun)
+  else
+    return getPostUploadStatus(status, projectId, dataNoun, projectDisplayName);
+}
+
+const queuedStatus = (dataNoun: string) => ({
+  content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
+  icon: 'clock-o',
+});
+
+function getUploadStatus(
+  details: DatasetUploadStatusInfo,
+  dataNoun: string,
+): { content: React.ReactNode; icon: string; } {
+  switch (details.status) {
+    case 'running':
+      return queuedStatus(dataNoun);
+
+    case 'rejected':
+      return {
+        content: <>
+          This {dataNoun} was rejected during initial upload processing:{' '}
+          {details.message}
+        </>,
+        icon: 'exclamation-circle',
+      };
+
+    case 'failed':
+      return {
+        content: <>
+          Initial processing of your uploaded {dataNoun} failed. Please try
+          uploading your {dataNoun} again. If the problem persists, please let
+          us know through our{' '}
+          <Link to="/contact-us" target="_blank">
+            support form
+          </Link>
+          .
+        </>,
+        icon: 'times-circle',
+      };
+
+    default:
       return {
         content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
         icon: 'clock-o',
       };
+  }
+}
+
+/**
+ * Build dataset status details from information that is only available after
+ * the target dataset upload has been successfully processed.
+ *
+ * This info consists of the "import phase" data preprocessing step, and the
+ * data install step for all install target projects.
+ */
+function getPostUploadStatus(
+  status: DatasetStatusInfo,
+  projectId: string,
+  dataNoun: string,
+  projectDisplayName: string,
+): { content: React.ReactNode; icon: string } {
+  const importStatus = status.import?.status;
+  switch (importStatus) {
+    case null:
+    case 'queued':
+    case 'in-progress':
+      return {
+        content: `This ${dataNoun} is queued. Please check again soon (reload` +
+          "the page).",
+        icon: 'clock-o',
+      };
     case 'invalid':
       return {
-        content: (
-          <>
-            This {dataNoun} was rejected as invalid during the import phase:{' '}
-            {status.import.messages?.join(', ')}
-          </>
-        ),
+        content: <>
+          This {dataNoun} was rejected as invalid during the import phase:{' '}
+          {status.import!.messages?.join(', ')}
+        </>,
         icon: 'exclamation-circle',
       };
     case 'failed':
       return {
-        content: (
-          <>
-            Failed during the import phase. If the problem persists, please let
-            us know through our{' '}
-            <Link to="/contact-us" target="_blank">
-              support form
-            </Link>
-            .
-          </>
-        ),
+        content: <>
+          Failed during the import phase. If the problem persists, please let
+          us know through our{' '}
+          <Link to="/contact-us" target="_blank">
+            support form
+          </Link>
+          .
+        </>,
         icon: 'times-circle',
       };
   }
@@ -101,7 +164,9 @@ function getStatus(
       icon: 'clock-o',
     };
   } else {
-    const installData = status.install?.find((d) => d.installTarget === projectId);
+    const installData = status.install?.find(
+      (d) => d.installTarget === projectId
+    );
     const metaStatus = installData?.meta.status;
     const metaMessage = installData?.meta.messages?.join(', ') ?? '';
     const dataStatus = installData?.data?.status;
@@ -125,49 +190,41 @@ function getStatus(
         };
       case 'failed-validation':
         return {
-          content: (
-            <>
-              This {dataNoun} was rejected as invalid during the install phase:{' '}
-              {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
-            </>
-          ),
+          content: <>
+            This {dataNoun} was rejected as invalid during the install phase:{' '}
+            {metaMessage}
+            {metaMessage.length && dataMessage.length ? '; ' : ''}
+            {dataMessage}
+          </>,
           icon: 'exclamation-circle',
         };
       case 'failed-installation':
         return {
-          content: (
-            <>
-              Failed during the install phase. If the problem persists, please
-              let us know through our{' '}
-              <Link to="/contact-us" target="_blank">
-                support form
-              </Link>
-              .
-            </>
-          ),
+          content: <>
+            Failed during the install phase. If the problem persists, please
+            let us know through our{' '}
+            <Link to="/contact-us" target="_blank">
+              support form
+            </Link>
+            .
+          </>,
           icon: 'times-circle',
         };
       case 'ready-for-reinstall':
         return {
-          content: (
-            <>
-              This {dataNoun} will be reinstalled within{' '}
-              {VDI_REINSTALL_INTERVAL} hours. Please check again soon.
-            </>
-          ),
+          content: <>
+            This {dataNoun} will be reinstalled within {VDI_REINSTALL_INTERVAL}
+            hours. Please check again soon.
+          </>,
           icon: 'minus-circle',
         };
       case 'missing-dependency':
         return {
-          content: (
-            <>
-              This {dataNoun} is incompatible: {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
-            </>
-          ),
+          content: <>
+            This {dataNoun} is incompatible: {metaMessage}
+            {metaMessage.length && dataMessage.length ? '; ' : ''}
+            {dataMessage}
+          </>,
           icon: 'exclamation-circle',
         };
       default:
