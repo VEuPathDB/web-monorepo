@@ -1,5 +1,7 @@
 var baseConfig = require('@veupathdb/base-webpack-config');
 
+const CssCharsetPlugin = require('css-charset-webpack-plugin');
+
 // Create webpack alias configuration object
 var alias = {
   site: process.cwd() + '/webapp',
@@ -22,7 +24,7 @@ class SuppressProvidedDependencyCacheWarnings {
           origin === 'webpack.cache.PackFileCacheStrategy' &&
           type === 'warn' &&
           args.length > 0 &&
-          String(args[0]).includes('ProvidedDependency')
+          String(args[0]).includes('Skipped not serializable cache item')
         ) {
           return true; // returning true suppresses this log entry
         }
@@ -69,6 +71,7 @@ module.exports = function configure(additionalConfig) {
           process: 'process/browser',
         }),
         new SuppressProvidedDependencyCacheWarnings(),
+        new CssCharsetPlugin({ charset: 'utf-8' }),
       ],
 
       // Map external libraries Wdk exposes so we can do things like:
