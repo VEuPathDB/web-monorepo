@@ -23,12 +23,6 @@ export function VariableCollectionSingleSelect(props: Props) {
   const { collectionPredicate, onSelect, value, additionalItemGroups } = props;
   const entities = useStudyEntities();
 
-  console.log('collections', entities
-      .filter(
-        (e): e is StudyEntity & Required<Pick<StudyEntity, 'collections'>> =>
-          !!e.collections?.length
-      ));
-
   const items = useMemo(() => {
     const collectionItems = entities
       .filter(
@@ -77,12 +71,19 @@ export function VariableCollectionSingleSelect(props: Props) {
 
     // Handle different types of values we may see (either VariableCollectionDescriptors or strings)
     if (isVariableCollectionDescriptor(value)) {
-      const collection = entities
-        .find((e) => e.id === value.entityId)
-        ?.collections?.find((c) => c.id === value.collectionId);
-      return (
-        collection?.displayName ?? `Unknown collection: ${value.collectionId}`
+      const entity = entities.find((e) => e.id === value.entityId);
+      const collection = entity?.collections?.find(
+        (c) => c.id === value.collectionId
       );
+      const collectionName =
+        collection?.displayName ?? `Unknown collection: ${value.collectionId}`;
+      // Prefix with entity name when multiple entities have collections, to disambiguate
+      const entitiesWithCollections = entities.filter(
+        (e) => !!e.collections?.length
+      );
+      return entitiesWithCollections.length > 1 && entity?.displayName
+        ? `${entity.displayName} > ${collectionName}`
+        : collectionName;
     } else {
       const valueDisplay = items
         .flatMap((group) => group.items)
