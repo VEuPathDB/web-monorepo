@@ -26,14 +26,17 @@ export function ResultTableError(props: Props) {
     <div className="wdk-Error" style={style}>
       <p>{message}</p>
       {isDelayedResult || (
-        <p>
-          This may be caused by an incompatible column selection. We're working
-          on a fix, but in the meantime you can reset to the default columns.
-        </p>
+        <>
+          <p>
+            This may be caused by an incompatible column selection. We're
+            working on a fix, but in the meantime you can reset to the default
+            columns.
+          </p>
+          <button style={buttonStyle} onClick={props.onReset}>
+            Reset to Default Columns
+          </button>
+        </>
       )}
-      <button style={buttonStyle} onClick={props.onReset}>
-        Reset to Default Columns
-      </button>
     </div>
   );
 }
