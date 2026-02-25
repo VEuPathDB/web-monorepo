@@ -513,7 +513,6 @@ function BipartiteNetworkViz(
                 vizConfig.significanceThreshold ??
                 DEFAULT_SIGNIFICANCE_THRESHOLD
               }
-              containerStyles={{ marginLeft: 10 }}
               step={0.001}
               applyWarningStyles={cleanedData && cleanedData.nodes.length === 0}
             />
