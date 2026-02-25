@@ -277,7 +277,6 @@ export const ServiceBase = (serviceUrl: string) => {
             // If the response is that of a delayed result, throw a DelayedResultError
             if (delayedResultValidation.status === 'ok') {
               throw new DelayedResultError(
-                'We are still processing your result. Please return to this page later.',
                 response.headers.get('x-log-marker') ?? uuid()
               );
             }

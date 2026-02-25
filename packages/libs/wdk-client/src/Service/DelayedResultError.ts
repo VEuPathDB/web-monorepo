@@ -1,7 +1,10 @@
+export const DELAYED_RESULT_MESSAGE =
+  'Your results are not yet available. Please return to this page later.';
+
 export class DelayedResultError extends Error {
   name = 'DelayedResultError';
-  constructor(message: string, public logMarker: string) {
-    super(message);
+  constructor(public logMarker: string) {
+    super(DELAYED_RESULT_MESSAGE);
   }
 }
 
