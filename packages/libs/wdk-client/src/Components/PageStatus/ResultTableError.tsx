@@ -19,24 +19,23 @@ const buttonStyle: React.CSSProperties = {
 
 export function ResultTableError(props: Props) {
   let isDelayedResult = props.message === DELAYED_RESULT_MESSAGE;
-  let message = isDelayedResult
-    ? props.message
-    : 'Error: content could not be loaded (' + props.message + ')';
+  let content = isDelayedResult ? (
+    <p>{props.message}</p>
+  ) : (
+    <>
+      <p>Error: content could not be loaded ({props.message})</p>
+      <p>
+        This may be caused by an incompatible column selection. We're working on
+        a fix, but in the meantime you can reset to the default columns.
+      </p>
+      <button style={buttonStyle} onClick={props.onReset}>
+        Reset to Default Columns
+      </button>
+    </>
+  );
   return (
     <div className="wdk-Error" style={style}>
-      <p>{message}</p>
-      {isDelayedResult || (
-        <>
-          <p>
-            This may be caused by an incompatible column selection. We're
-            working on a fix, but in the meantime you can reset to the default
-            columns.
-          </p>
-          <button style={buttonStyle} onClick={props.onReset}>
-            Reset to Default Columns
-          </button>
-        </>
-      )}
+      {content}
     </div>
   );
 }
