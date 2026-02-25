@@ -3,7 +3,7 @@ export const DELAYED_RESULT_MESSAGE =
 
 export class DelayedResultError extends Error {
   name = 'DelayedResultError';
-  constructor(public logMarker: string) {
+  constructor(_message: string, public logMarker: string) {
     super(DELAYED_RESULT_MESSAGE);
   }
 }
