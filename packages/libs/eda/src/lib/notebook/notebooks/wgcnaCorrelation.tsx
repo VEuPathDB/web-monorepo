@@ -99,14 +99,9 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
                 if (!matchedEntry) return;
                 const matchedValue = matchedEntry[0];
 
-                // Do nothing if the module they clicked on is already selected.
+                // Do nothing if the module they clicked on is already selected (toggle off).
                 const currentValue = wdkState.paramValues?.[param.name];
-                if (
-                  typeof currentValue === 'string' &&
-                  currentValue.toLowerCase() === moduleName
-                ) {
-                  return;
-                }
+                if (currentValue === matchedValue) return;
 
                 // Update module name in the wdk param store
                 wdkState.updateParamValue(param, matchedValue);
