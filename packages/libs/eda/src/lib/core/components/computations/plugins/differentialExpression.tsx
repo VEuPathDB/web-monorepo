@@ -42,6 +42,8 @@ import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnack
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
+import { useEntityCounts } from '../../../hooks/entityCounts';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -253,6 +255,44 @@ const DIFFERENTIAL_EXPRESSION_METHODS = {
 type DifferentialExpressionMethodKey =
   keyof typeof DIFFERENTIAL_EXPRESSION_METHODS;
 
+function makeGroupFilter(
+  variable: VariableDescriptor,
+  ranges: LabeledRange[]
+): Filter | undefined {
+  if (!ranges.length) return undefined;
+  const isContinuous = ranges[0].min != null;
+  if (!isContinuous) {
+    return {
+      type: 'stringSet',
+      entityId: variable.entityId,
+      variableId: variable.variableId,
+      stringSet: ranges.map((r) => r.label),
+    };
+  }
+  const mins = ranges.map((r) => parseFloat(r.min!));
+  const maxes = ranges.map((r) => parseFloat(r.max!));
+  return {
+    type: 'numberRange',
+    entityId: variable.entityId,
+    variableId: variable.variableId,
+    min: Math.min(...mins),
+    max: Math.max(...maxes),
+  };
+}
+
+function hasDiscontinuousBins(ranges: LabeledRange[]): boolean {
+  if (ranges.length <= 1) return false;
+  const sorted = [...ranges]
+    .filter((r) => r.min != null && r.max != null)
+    .sort((a, b) => parseFloat(a.min!) - parseFloat(b.min!));
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const currentMax = parseFloat(sorted[i].max!);
+    const nextMin = parseFloat(sorted[i + 1].min!);
+    if (Math.abs(currentMax - nextMin) > 1e-10) return true;
+  }
+  return false;
+}
+
 export function DifferentialExpressionConfiguration(
   props: ComputationConfigProps
 ) {
@@ -425,6 +465,55 @@ export function DifferentialExpressionConfiguration(
     studyMetadata.id,
   ]);
 
+  // Per-group sample counts.
+  // Depend only on each group's own array + the variable so that changing one
+  // group does not cause the other group's filter to recompute (and trigger a
+  // spurious debounce / "loading..." flash in the sibling count display).
+  const comparatorVariable = configuration.comparator?.variable;
+  const groupASelection = configuration.comparator?.groupA;
+  const groupBSelection = configuration.comparator?.groupB;
+
+  const groupAFilter = useMemo(() => {
+    if (!comparatorVariable || !groupASelection?.length) return undefined;
+    return makeGroupFilter(comparatorVariable, groupASelection);
+  }, [comparatorVariable, groupASelection]);
+
+  const groupBFilter = useMemo(() => {
+    if (!comparatorVariable || !groupBSelection?.length) return undefined;
+    return makeGroupFilter(comparatorVariable, groupBSelection);
+  }, [comparatorVariable, groupBSelection]);
+
+  const groupAFilters = useMemo(
+    () => (groupAFilter ? [...(filters ?? []), groupAFilter] : undefined),
+    [filters, groupAFilter]
+  );
+  const groupBFilters = useMemo(
+    () => (groupBFilter ? [...(filters ?? []), groupBFilter] : undefined),
+    [filters, groupBFilter]
+  );
+
+  const groupACounts = useEntityCounts(groupAFilters);
+  const groupBCounts = useEntityCounts(groupBFilters);
+
+  const rootEntityId = studyMetadata.rootEntity.id;
+  const groupACount =
+    groupAFilter != null ? groupACounts.value?.[rootEntityId] : undefined;
+  const groupBCount =
+    groupBFilter != null ? groupBCounts.value?.[rootEntityId] : undefined;
+  const groupACountPending = groupAFilter != null && groupACounts.pending;
+  const groupBCountPending = groupBFilter != null && groupBCounts.pending;
+
+  const isContinuous =
+    configuration.comparator?.groupA?.[0]?.min != null ||
+    configuration.comparator?.groupB?.[0]?.min != null;
+  const discontinuousWarning =
+    isContinuous &&
+    (hasDiscontinuousBins(configuration.comparator?.groupA ?? []) ||
+      hasDiscontinuousBins(configuration.comparator?.groupB ?? []))
+      ? 'Did you mean to select non-contiguous bins? You may continue with these ' +
+        'selections but please be aware that sample counts may be incorrect.'
+      : undefined;
+
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
   const disableGroupValueSelectors = !configuration?.comparator?.variable;
@@ -557,6 +646,11 @@ export function DifferentialExpressionConfiguration(
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
           <H6>Group Values</H6>
+          {discontinuousWarning && (
+            <Banner
+              banner={{ type: 'warning', message: discontinuousWarning }}
+            />
+          )}
           <div
             className={cx('-DiffExpressionOuterConfigContainerGroupComparison')}
           >
@@ -573,7 +667,16 @@ export function DifferentialExpressionConfiguration(
                   disableGroupValueSelectors && 'disabled'
                 )}
               >
-                <span>Reference Group</span>
+                <span>
+                  Reference Group
+                  {groupACountPending
+                    ? ' (loading...)'
+                    : groupACount != null
+                    ? ` — ${groupACount.toLocaleString()} sample${
+                        groupACount !== 1 ? 's' : ''
+                      }`
+                    : ''}
+                </span>
                 <ValuePicker
                   allowedValues={
                     !continuousVariableBins.pending
@@ -636,7 +739,16 @@ export function DifferentialExpressionConfiguration(
                     ? { tooltip: 'Swap Group A and Group B values' }
                     : {})}
                 />
-                <span>Comparison Group</span>
+                <span>
+                  Comparison Group
+                  {groupBCountPending
+                    ? ' (loading...)'
+                    : groupBCount != null
+                    ? ` — ${groupBCount.toLocaleString()} sample${
+                        groupBCount !== 1 ? 's' : ''
+                      }`
+                    : ''}
+                </span>
                 <ValuePicker
                   allowedValues={
                     !continuousVariableBins.pending
