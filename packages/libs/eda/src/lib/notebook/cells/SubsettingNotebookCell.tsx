@@ -46,16 +46,29 @@ export function SubsettingNotebookCell(
   );
 
   const subTitle = useMemo(() => {
-    if (filteredCountsResult.pending) return 'Please wait...';
+    if (filteredCountsResult.pending || totalCountsResult.pending)
+      return 'Please wait...';
     const rootEntity = entities[0];
-    if (!rootEntity || filteredCountsResult.value == null) return undefined;
-    const count = filteredCountsResult.value[rootEntity.id];
-    if (count == null) return undefined;
-    return `${count.toLocaleString()} ${makeEntityDisplayName(
-      rootEntity,
-      count !== 1
-    )}`;
-  }, [entities, filteredCountsResult.pending, filteredCountsResult.value]);
+    if (
+      !rootEntity ||
+      filteredCountsResult.value == null ||
+      totalCountsResult.value == null
+    )
+      return undefined;
+    const filteredCount = filteredCountsResult.value[rootEntity.id];
+    const totalCount = totalCountsResult.value[rootEntity.id];
+    if (filteredCount == null || totalCount == null) return undefined;
+    const entityLabel = makeEntityDisplayName(rootEntity, totalCount !== 1);
+    if (filteredCount === totalCount)
+      return `${totalCount.toLocaleString()} ${entityLabel}`;
+    return `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()} ${entityLabel}`;
+  }, [
+    entities,
+    filteredCountsResult.pending,
+    filteredCountsResult.value,
+    totalCountsResult.pending,
+    totalCountsResult.value,
+  ]);
 
   return (
     <>
