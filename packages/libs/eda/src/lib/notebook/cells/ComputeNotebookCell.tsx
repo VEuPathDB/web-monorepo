@@ -134,9 +134,13 @@ export function ComputeNotebookCell(
   );
 
   const { rootEntity } = useStudyMetadata();
-  const rootEntityFilteredCount = filteredCountsResult.value?.[rootEntity.id];
-  const countWarning = plugin.getCountWarning?.(
-    rootEntityFilteredCount,
+  const countGating = plugin.getCountWarning?.(
+    {
+      root: {
+        pending: filteredCountsResult.pending,
+        value: filteredCountsResult.value?.[rootEntity.id],
+      },
+    },
     computation.descriptor.configuration
   );
 
@@ -267,7 +271,7 @@ export function ComputeNotebookCell(
                   status={jobStatus}
                   isConfigured={isComputationConfigurationValid}
                   createJob={createJob}
-                  countWarning={countWarning}
+                  countGating={countGating}
                 />
               </div>
             </ExpandablePanel>

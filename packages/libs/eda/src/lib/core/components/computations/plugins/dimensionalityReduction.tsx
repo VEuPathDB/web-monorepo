@@ -90,10 +90,16 @@ export const plugin: ComputationPlugin = {
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
     'These visualizations are only available for studies with compatible assay data.',
-  getCountWarning(rootEntityFilteredCount) {
-    if (rootEntityFilteredCount != null && rootEntityFilteredCount < 2)
-      return 'At least 2 samples are required to run dimensionality reduction.';
-    return undefined;
+  getCountWarning(counts) {
+    const root = counts['root'];
+    if (!root || root.pending || root.value == null) return { type: 'pending' };
+    if (root.value < 2)
+      return {
+        type: 'warning',
+        message:
+          'At least 2 samples are required to run dimensionality reduction.',
+      };
+    return { type: 'ok' };
   },
 };
 

@@ -65,12 +65,23 @@ export interface ComputationPlugin {
     collection: CollectionVariableTreeNode
   ) => boolean;
   /**
-   * Optional. Called with the current filtered count for the root (sample) entity.
-   * Returns a warning string to display (and disable the run button), or undefined
-   * if counts are sufficient.
+   * Optional. Called with a map of named filtered count states.
+   * Currently always contains `'root'` (the root/sample entity count).
+   * Future use: group-level counts (e.g. `'group_A'`, `'group_B'`) for DESeq.
+   * Returns a gating result: ok, pending (counts still loading), or a warning string.
    */
   getCountWarning?: (
-    rootEntityFilteredCount: number | undefined,
+    counts: Record<string, FilteredCountState>,
     configuration: unknown
-  ) => string | undefined;
+  ) => CountGatingResult;
 }
+
+export type FilteredCountState = {
+  pending: boolean;
+  value: number | undefined;
+};
+
+export type CountGatingResult =
+  | { type: 'ok' }
+  | { type: 'pending' }
+  | { type: 'warning'; message: string };

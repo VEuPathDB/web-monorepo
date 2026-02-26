@@ -6,13 +6,14 @@ import { JobStatus } from './ComputeJobStatusHook';
 import { removeParentheticals } from '../../utils/string-formatters';
 import './plugins/Plugins.scss';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { CountGatingResult } from './Types';
 
 interface Props {
   computationAppOverview: ComputationAppOverview;
   status?: JobStatus;
   isConfigured: boolean;
   createJob: () => void;
-  countWarning?: string;
+  countGating?: CountGatingResult;
 }
 
 export function RunComputeButton(props: Props) {
@@ -21,13 +22,13 @@ export function RunComputeButton(props: Props) {
     status,
     isConfigured,
     createJob,
-    countWarning,
+    countGating,
   } = props;
 
   return computationAppOverview.computeName ? (
     <div className="RunComputeButtonContainer">
-      {countWarning && (
-        <Banner banner={{ type: 'warning', message: countWarning }} />
+      {countGating?.type === 'warning' && (
+        <Banner banner={{ type: 'warning', message: countGating.message }} />
       )}
       <div className="RunComputeButton">
         <FilledButton
@@ -39,7 +40,8 @@ export function RunComputeButton(props: Props) {
           textTransform="none"
           onPress={createJob}
           disabled={
-            !!countWarning ||
+            countGating?.type === 'warning' ||
+            countGating?.type === 'pending' ||
             !status ||
             !['no-such-job', 'expired'].includes(status)
           }

@@ -162,10 +162,16 @@ export const plugin: ComputationPlugin = {
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
     'These visualizations are only available for studies with compatible assay data.',
-  getCountWarning(rootEntityFilteredCount) {
-    if (rootEntityFilteredCount != null && rootEntityFilteredCount < 4)
-      return 'At least 4 samples are required to run differential expression analysis.';
-    return undefined;
+  getCountWarning(counts) {
+    const root = counts['root'];
+    if (!root || root.pending || root.value == null) return { type: 'pending' };
+    if (root.value < 4)
+      return {
+        type: 'warning',
+        message:
+          'At least 4 samples are required to run differential expression analysis.',
+      };
+    return { type: 'ok' };
   },
 };
 
