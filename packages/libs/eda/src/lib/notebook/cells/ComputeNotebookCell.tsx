@@ -1,6 +1,6 @@
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { useDataClient } from '../../core/hooks/workspace';
+import { useDataClient, useStudyMetadata } from '../../core/hooks/workspace';
 import { isEqual } from 'lodash';
 import { RunComputeButton } from '../../core/components/computations/RunComputeButton';
 import { useComputeJobStatus } from '../../core/components/computations/ComputeJobStatusHook';
@@ -133,6 +133,13 @@ export function ComputeNotebookCell(
     computation.descriptor.configuration
   );
 
+  const { rootEntity } = useStudyMetadata();
+  const rootEntityFilteredCount = filteredCountsResult.value?.[rootEntity.id];
+  const countWarning = plugin.getCountWarning?.(
+    rootEntityFilteredCount,
+    computation.descriptor.configuration
+  );
+
   // Prep any additional restrictions on collections, if defined
   const additionalCollectionPredicate =
     getAdditionalCollectionPredicate &&
@@ -260,6 +267,7 @@ export function ComputeNotebookCell(
                   status={jobStatus}
                   isConfigured={isComputationConfigurationValid}
                   createJob={createJob}
+                  countWarning={countWarning}
                 />
               </div>
             </ExpandablePanel>

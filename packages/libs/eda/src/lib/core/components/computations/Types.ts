@@ -64,4 +64,13 @@ export interface ComputationPlugin {
   additionalCollectionPredicate?: (
     collection: CollectionVariableTreeNode
   ) => boolean;
+  /**
+   * Optional. Called with the current filtered count for the root (sample) entity.
+   * Returns a warning string to display (and disable the run button), or undefined
+   * if counts are sufficient.
+   */
+  getCountWarning?: (
+    rootEntityFilteredCount: number | undefined,
+    configuration: unknown
+  ) => string | undefined;
 }

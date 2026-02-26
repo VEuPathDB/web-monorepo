@@ -5,44 +5,61 @@ import { Tooltip } from '@veupathdb/coreui';
 import { JobStatus } from './ComputeJobStatusHook';
 import { removeParentheticals } from '../../utils/string-formatters';
 import './plugins/Plugins.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   computationAppOverview: ComputationAppOverview;
   status?: JobStatus;
   isConfigured: boolean;
   createJob: () => void;
+  countWarning?: string;
 }
 
 export function RunComputeButton(props: Props) {
-  const { computationAppOverview, status, isConfigured, createJob } = props;
+  const {
+    computationAppOverview,
+    status,
+    isConfigured,
+    createJob,
+    countWarning,
+  } = props;
 
   return computationAppOverview.computeName ? (
-    <div className="RunComputeButton">
-      <FilledButton
-        themeRole="primary"
-        // Remove any parentheticals from the button text
-        text={`Generate ${removeParentheticals(
-          computationAppOverview.displayName
-        )} results`}
-        textTransform="none"
-        onPress={createJob}
-        disabled={!status || !['no-such-job', 'expired'].includes(status)}
-      />
-      <div
-        style={{
-          display: 'inline-flex',
-          gap: '.5em',
-          fontWeight: 'bold',
-        }}
-      >
-        Status:{' '}
-        {status ? (
-          <StatusIcon status={status} showLabel />
-        ) : isConfigured ? (
-          'Loading...'
-        ) : (
-          'Not configured'
-        )}
+    <div className="RunComputeButtonContainer">
+      {countWarning && (
+        <Banner banner={{ type: 'warning', message: countWarning }} />
+      )}
+      <div className="RunComputeButton">
+        <FilledButton
+          themeRole="primary"
+          // Remove any parentheticals from the button text
+          text={`Generate ${removeParentheticals(
+            computationAppOverview.displayName
+          )} results`}
+          textTransform="none"
+          onPress={createJob}
+          disabled={
+            !!countWarning ||
+            !status ||
+            !['no-such-job', 'expired'].includes(status)
+          }
+        />
+        <div
+          style={{
+            display: 'inline-flex',
+            gap: '.5em',
+            fontWeight: 'bold',
+          }}
+        >
+          Status:{' '}
+          {status ? (
+            <StatusIcon status={status} showLabel />
+          ) : isConfigured ? (
+            'Loading...'
+          ) : (
+            'Not configured'
+          )}
+        </div>
       </div>
     </div>
   ) : null;
