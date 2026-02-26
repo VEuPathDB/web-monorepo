@@ -2,6 +2,7 @@ import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isTaxonomicVariableCollection,
@@ -121,18 +122,19 @@ const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   assertComputationWithConfig(computation, SelfCorrelationConfig);
 
   const { configuration } = computation.descriptor;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

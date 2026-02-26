@@ -679,7 +679,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             >
               <plugin.configurationComponent
                 analysisState={analysisState}
-                computation={computation}
+                computationId={computation.computationId}
                 visualizationId={viz.visualizationId}
                 computationAppOverview={computationAppOverview}
                 totalCounts={totalCounts}

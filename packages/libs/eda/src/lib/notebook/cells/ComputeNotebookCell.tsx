@@ -106,7 +106,14 @@ export function ComputeNotebookCell(
             ? comp.descriptor.configuration
             : {};
 
-        const updatedConfig = { ...currentConfig, [propertyName]: value };
+        const resolvedValue =
+          typeof value === 'function'
+            ? value((currentConfig as Record<string, any>)[propertyName])
+            : value;
+        const updatedConfig = {
+          ...currentConfig,
+          [propertyName]: resolvedValue,
+        };
 
         if (isEqual(currentConfig, updatedConfig)) return computations;
 
@@ -220,7 +227,7 @@ export function ComputeNotebookCell(
       {(() => {
         const sharedPluginProps = {
           analysisState,
-          computation,
+          computationId,
           totalCounts: totalCountsResult,
           filteredCounts: filteredCountsResult,
           visualizationId: 'not_used', // irrelevant because we have our own changeConfigHandler

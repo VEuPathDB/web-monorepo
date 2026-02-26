@@ -3,6 +3,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   partialToCompleteCodec,
@@ -153,7 +154,7 @@ export function DimensionalityReductionConfiguration(
 ) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
@@ -161,6 +162,7 @@ export function DimensionalityReductionConfiguration(
     readonlyInputNames,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   assertComputationWithConfig(computation, DimensionalityReductionConfig);
   const configuration = computation.descriptor
     .configuration as DimensionalityReductionConfig;
@@ -170,7 +172,7 @@ export function DimensionalityReductionConfiguration(
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

@@ -3,6 +3,7 @@ import { useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isFunctionalCollection,
@@ -175,18 +176,19 @@ export function CorrelationAssayAssayConfiguration(
 ) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   assertComputationWithConfig(computation, CorrelationConfig);
 
   const { configuration } = computation.descriptor;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

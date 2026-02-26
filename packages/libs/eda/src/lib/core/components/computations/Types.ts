@@ -17,10 +17,13 @@ export interface ComputationProps {
 }
 
 export interface ComputationConfigProps extends ComputationProps {
-  computation: Computation;
+  computationId: string;
   visualizationId: string;
   addNewComputation: (name: string, configuration: unknown) => void;
-  changeConfigHandlerOverride?: (propertyName: string, value: any) => void;
+  changeConfigHandlerOverride?: (
+    propertyName: string,
+    value: any | ((current: any) => any)
+  ) => void;
   showStepNumber?: boolean; // Whether to show step number (NumberedHeader)
   showExpandableHelp?: boolean; // If computation has expandable help, determines whether or not to show it.
   additionalCollectionPredicate?: (

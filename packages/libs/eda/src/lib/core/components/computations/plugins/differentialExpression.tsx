@@ -9,6 +9,7 @@ import { volcanoPlotVisualization } from '../../visualizations/implementations/V
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   partialToCompleteCodec,
@@ -298,7 +299,7 @@ export function DifferentialExpressionConfiguration(
 ) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
@@ -306,6 +307,7 @@ export function DifferentialExpressionConfiguration(
     readonlyInputNames,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   const configuration = computation.descriptor
     .configuration as DifferentialExpressionConfig;
   const studyMetadata = useStudyMetadata();
@@ -320,7 +322,7 @@ export function DifferentialExpressionConfiguration(
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 
@@ -354,11 +356,11 @@ export function DifferentialExpressionConfiguration(
         (configuration.comparator.groupA || configuration.comparator.groupB)
       ) {
         // Reset the groupA and groupB values.
-        changeConfigHandler('comparator', {
-          variable: configuration.comparator.variable,
+        changeConfigHandler('comparator', (currentComparator: any) => ({
+          ...currentComparator,
           groupA: undefined,
           groupB: undefined,
-        });
+        }));
 
         enqueueSnackbar(
           <span>
@@ -693,16 +695,17 @@ export function DifferentialExpressionConfiguration(
                     ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable: configuration.comparator.variable,
-                      groupA: newValues.length
-                        ? groupValueOptions?.filter((option) =>
-                            newValues.includes(option.label)
-                          )
-                        : undefined,
-                      groupB: configuration.comparator.groupB ?? undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupA: newValues.length
+                          ? groupValueOptions?.filter((option) =>
+                              newValues.includes(option.label)
+                            )
+                          : undefined,
+                      })
+                    );
                   }}
                   disabledCheckboxTooltipContent="Value either already selected in Group B or has no data in the subset"
                   showClearSelectionButton={false}
@@ -714,13 +717,14 @@ export function DifferentialExpressionConfiguration(
                   text=""
                   themeRole="primary"
                   onPress={() => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
-                      groupA: configuration?.comparator?.groupB ?? undefined,
-                      groupB: configuration?.comparator?.groupA ?? undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupA: currentComparator?.groupB ?? undefined,
+                        groupB: currentComparator?.groupA ?? undefined,
+                      })
+                    );
                   }}
                   styleOverrides={{
                     container: {
@@ -765,17 +769,17 @@ export function DifferentialExpressionConfiguration(
                     ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
-                      groupA: configuration?.comparator?.groupA ?? undefined,
-                      groupB: newValues.length
-                        ? groupValueOptions?.filter((option) =>
-                            newValues.includes(option.label)
-                          )
-                        : undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupB: newValues.length
+                          ? groupValueOptions?.filter((option) =>
+                              newValues.includes(option.label)
+                            )
+                          : undefined,
+                      })
+                    );
                   }}
                   disabledCheckboxTooltipContent="Value either already selected in Group A or has no data in the subset"
                   showClearSelectionButton={false}
@@ -789,16 +793,6 @@ export function DifferentialExpressionConfiguration(
       </div>
     </ComputationStepContainer>
   );
-}
-
-function assertConfigWithComparator(
-  configuration: DifferentialExpressionConfig
-): asserts configuration is Required<DifferentialExpressionConfig> {
-  if (configuration.comparator == null) {
-    throw new Error(
-      'Unexpected condition: `configuration.comparator.variable` is not defined.'
-    );
-  }
 }
 
 // Differential expression requires that the study

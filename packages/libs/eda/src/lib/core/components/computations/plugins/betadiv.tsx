@@ -4,6 +4,7 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -130,16 +131,17 @@ const BETA_DIV_DISSIMILARITY_METHODS = [
 export function BetaDivConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
   } = props;
+  const computation = useComputation(analysisState, computationId);
   assertComputationWithConfig(computation, BetaDivConfig);
   const configuration = computation.descriptor.configuration;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 
