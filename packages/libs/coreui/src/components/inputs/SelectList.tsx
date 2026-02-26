@@ -66,11 +66,11 @@ export default function SelectList<T extends string>({
    */
   useEffect(() => {
     setSelected(value);
-    if (instantUpdate) return; // we don't want the button text changing on every click
+    if (instantUpdate && value.length) return; // we don't want the button text changing on every click
     setButtonDisplayContent(
       getDisplayContent(value, items, defaultButtonDisplayContent)
     );
-  }, [value, items, defaultButtonDisplayContent]);
+  }, [value, items, defaultButtonDisplayContent, instantUpdate]);
 
   const buttonLabel = (
     <span
