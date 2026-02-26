@@ -6,10 +6,11 @@ import { RunComputeButton } from '../../core/components/computations/RunComputeB
 import { useComputeJobStatus } from '../../core/components/computations/ComputeJobStatusHook';
 import { NotebookCell, NotebookCellProps } from '../NotebookCell';
 import { plugins } from '../../core/components/computations/plugins';
+import type { CountGatingResult } from '../../core/components/computations/Types';
 import { ComputeCellDescriptor } from '../Types';
 import { useCachedPromise } from '../../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
 import { Link } from 'react-router-dom';
 import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
@@ -141,7 +142,7 @@ export function ComputeNotebookCell(
   );
 
   const { rootEntity } = useStudyMetadata();
-  const countGating = plugin.getCountWarning?.(
+  const pluginCountGating = plugin.getCountWarning?.(
     {
       root: {
         pending: filteredCountsResult.pending,
@@ -150,6 +151,26 @@ export function ComputeNotebookCell(
     },
     computation.descriptor.configuration
   );
+
+  // Per-group count gating reported by the configuration component
+  const [configCountGating, setConfigCountGating] = useState<
+    CountGatingResult | undefined
+  >();
+
+  // Merge: take the more severe of pluginCountGating and configCountGating.
+  // Severity: warning > pending > ok > undefined
+  const countGating = useMemo(() => {
+    const results = [pluginCountGating, configCountGating].filter(
+      (r): r is CountGatingResult => r != null
+    );
+    if (results.some((r) => r.type === 'warning'))
+      return results.find((r) => r.type === 'warning');
+    if (results.some((r) => r.type === 'pending'))
+      return results.find((r) => r.type === 'pending');
+    if (results.some((r) => r.type === 'ok'))
+      return results.find((r) => r.type === 'ok');
+    return pluginCountGating;
+  }, [pluginCountGating, configCountGating]);
 
   // Prep any additional restrictions on collections, if defined
   const additionalCollectionPredicate =
@@ -239,6 +260,7 @@ export function ComputeNotebookCell(
           showExpandableHelp: false, // no expandable sections within an expandable element.
           additionalCollectionPredicate,
           readonlyInputNames: sharedInputNames,
+          onCountGatingChange: setConfigCountGating,
         };
 
         if (hidden) {

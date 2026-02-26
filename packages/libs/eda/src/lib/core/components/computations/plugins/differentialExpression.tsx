@@ -305,6 +305,7 @@ export function DifferentialExpressionConfiguration(
     changeConfigHandlerOverride,
     showStepNumber = true,
     readonlyInputNames,
+    onCountGatingChange,
   } = props;
 
   const computation = useComputation(analysisState, computationId);
@@ -506,6 +507,57 @@ export function DifferentialExpressionConfiguration(
   const groupACountPending = groupAFilter != null && groupACounts.pending;
   const groupBCountPending = groupBFilter != null && groupBCounts.pending;
 
+  // Report per-group count gating to the parent (e.g. ComputeNotebookCell)
+  useEffect(() => {
+    if (!onCountGatingChange) return;
+
+    // No groups selected yet — no gating needed
+    if (groupAFilter == null && groupBFilter == null) {
+      onCountGatingChange(undefined);
+      return;
+    }
+
+    if (groupACountPending || groupBCountPending) {
+      onCountGatingChange({ type: 'pending' });
+      return;
+    }
+
+    const warnings: string[] = [];
+    if (groupAFilter != null && groupACount != null && groupACount < 2) {
+      warnings.push(
+        `Reference group has ${groupACount} sample${
+          groupACount !== 1 ? 's' : ''
+        }`
+      );
+    }
+    if (groupBFilter != null && groupBCount != null && groupBCount < 2) {
+      warnings.push(
+        `Comparison group has ${groupBCount} sample${
+          groupBCount !== 1 ? 's' : ''
+        }`
+      );
+    }
+
+    if (warnings.length) {
+      onCountGatingChange({
+        type: 'warning',
+        message: `${warnings.join(
+          '; '
+        )}. Each group requires at least 2 samples.`,
+      });
+    } else {
+      onCountGatingChange({ type: 'ok' });
+    }
+  }, [
+    onCountGatingChange,
+    groupAFilter,
+    groupBFilter,
+    groupACount,
+    groupBCount,
+    groupACountPending,
+    groupBCountPending,
+  ]);
+
   const isContinuous =
     configuration.comparator?.groupA?.[0]?.min != null ||
     configuration.comparator?.groupB?.[0]?.min != null;
@@ -672,13 +724,16 @@ export function DifferentialExpressionConfiguration(
               >
                 <span>
                   Reference Group
-                  {groupACountPending
-                    ? ' (loading...)'
-                    : groupACount != null
-                    ? ` — ${groupACount.toLocaleString()} sample${
-                        groupACount !== 1 ? 's' : ''
-                      }`
-                    : ''}
+                  <br />
+                  <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
+                    {groupACountPending
+                      ? 'Please wait...'
+                      : groupACount != null
+                      ? `${groupACount.toLocaleString()} sample${
+                          groupACount !== 1 ? 's' : ''
+                        }`
+                      : ''}
+                  </span>
                 </span>
                 <ValuePicker
                   allowedValues={
@@ -747,13 +802,16 @@ export function DifferentialExpressionConfiguration(
                 />
                 <span>
                   Comparison Group
-                  {groupBCountPending
-                    ? ' (loading...)'
-                    : groupBCount != null
-                    ? ` — ${groupBCount.toLocaleString()} sample${
-                        groupBCount !== 1 ? 's' : ''
-                      }`
-                    : ''}
+                  <br />
+                  <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
+                    {groupBCountPending
+                      ? 'Please wait...'
+                      : groupBCount != null
+                      ? `${groupBCount.toLocaleString()} sample${
+                          groupBCount !== 1 ? 's' : ''
+                        }`
+                      : ''}
+                  </span>
                 </span>
                 <ValuePicker
                   allowedValues={

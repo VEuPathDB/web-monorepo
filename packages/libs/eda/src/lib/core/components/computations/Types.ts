@@ -31,6 +31,7 @@ export interface ComputationConfigProps extends ComputationProps {
   ) => boolean; // Additional constraints for allowed collection variables
   hideConfigurationComponent?: boolean; // Whether to hide the configuration component entirely
   readonlyInputNames?: string[]; // Input names managed externally (e.g. by SharedComputeInputsNotebookCell). Plugins render these as read-only.
+  onCountGatingChange?: (result: CountGatingResult | undefined) => void; // Callback for config-level count gating (e.g. per-group sample counts)
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
