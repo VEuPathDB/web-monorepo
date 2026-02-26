@@ -140,6 +140,13 @@ exports.merge = function merge(additionalConfig) {
             optimizationBailout: true,
             modules: false,
           },
+          ignoreWarnings: [
+            // Suppress false-positive CJS→ESM interop warnings for compiled
+            // packages that use `exports.default` with `__esModule: true`.
+            // Webpack's static analyzer only sees `__esModule` as an export
+            // but the default import still resolves correctly at runtime.
+            /\(possible exports: __esModule\)/,
+          ],
         },
       ].concat(
         typeof additionalConfig === 'function'

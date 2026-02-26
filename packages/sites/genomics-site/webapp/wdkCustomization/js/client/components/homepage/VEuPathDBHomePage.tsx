@@ -489,6 +489,15 @@ const useHeaderMenuItems = (
           },
         },
         {
+          key: 'toxo-rflp',
+          display: 'RFLP Genotypes',
+          type: 'reactRoute',
+          url: '/workspace/analyses/DS_6d31c76b75/new',
+          metadata: {
+            include: [ToxoDB,UniDB],
+          },
+        },
+        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',

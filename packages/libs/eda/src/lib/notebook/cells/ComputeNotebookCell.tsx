@@ -1,18 +1,18 @@
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { useEntityCounts } from '../core/hooks/entityCounts';
-import { useDataClient } from '../core/hooks/workspace';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useDataClient } from '../../core/hooks/workspace';
 import { isEqual } from 'lodash';
-import { RunComputeButton } from '../core/components/computations/RunComputeButton';
-import { useComputeJobStatus } from '../core/components/computations/ComputeJobStatusHook';
-import { NotebookCell, NotebookCellProps } from './NotebookCell';
-import { plugins } from '../core/components/computations/plugins';
-import { ComputeCellDescriptor } from './NotebookPresets';
-import { useCachedPromise } from '../core/hooks/cachedPromise';
+import { RunComputeButton } from '../../core/components/computations/RunComputeButton';
+import { useComputeJobStatus } from '../../core/components/computations/ComputeJobStatusHook';
+import { NotebookCell, NotebookCellProps } from '../NotebookCell';
+import { plugins } from '../../core/components/computations/plugins';
+import { ComputeCellDescriptor } from '../Types';
+import { useCachedPromise } from '../../core/hooks/cachedPromise';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { useCallback, useEffect, useState } from 'react';
 import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
 import { Link } from 'react-router-dom';
-import { NotebookCellPreHeader } from './NotebookCellPreHeader';
+import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -28,7 +28,6 @@ export function ComputeNotebookCell(
   } = props;
   const { analysis } = analysisState;
   if (analysis == null) throw new Error('Cannot find analysis.');
-  console.log('compute name', cell.computationName);
 
   const {
     computationName,
@@ -36,12 +35,41 @@ export function ComputeNotebookCell(
     cells,
     getAdditionalCollectionPredicate,
     hidden = false,
+    sharedInputNames,
+    sharedInputsCellId,
+    initialPanelState = 'open',
   } = cell;
   const computation = analysis.descriptor.computations.find(
     (comp) => comp.computationId === computationId
   );
   if (computation == null) throw new Error('Cannot find computation.');
+
+  const hasUnsetSharedInputs =
+    sharedInputNames != null &&
+    sharedInputNames.some(
+      (name) =>
+        !(computation.descriptor.configuration as Record<string, unknown>)?.[
+          name
+        ]
+    );
+
+  const sharedInputsStepNumber = sharedInputsCellId
+    ? stepNumbers?.get(sharedInputsCellId)
+    : undefined;
+
+  const systemState: 'open' | 'closed' = hasUnsetSharedInputs
+    ? 'closed'
+    : initialPanelState;
+
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [panelState, setPanelState] = useState<'open' | 'closed'>(systemState);
+
+  useEffect(() => {
+    const s: 'open' | 'closed' = hasUnsetSharedInputs
+      ? 'closed'
+      : initialPanelState;
+    setPanelState(s);
+  }, [hasUnsetSharedInputs, initialPanelState]);
 
   // fetch 'apps'
   const dataClient = useDataClient();
@@ -117,10 +145,27 @@ export function ComputeNotebookCell(
       jobStatus === 'no-such-job' &&
       hidden
     ) {
-      console.log('creating job');
       createJob();
     }
   }, [isComputationConfigurationValid, jobStatus, createJob, hidden]);
+
+  // Computes manage the collapse/expand state of child visualizations
+  // visualizations are always by default 'closed' until their computations are ready
+  const systemChildState =
+    isComputationConfigurationValid && jobStatus === 'complete'
+      ? 'open'
+      : 'closed';
+
+  const [childrenPanelState, setChildrenPanelState] = useState<
+    'open' | 'closed'
+  >(systemChildState);
+
+  // Expand child visualization(s) if the compute is complete
+  useEffect(() => {
+    if (isComputationConfigurationValid && jobStatus === 'complete') {
+      setChildrenPanelState('open');
+    }
+  }, [isComputationConfigurationValid, jobStatus]);
 
   // Show error dialog when hidden compute fails
   useEffect(() => {
@@ -161,61 +206,66 @@ export function ComputeNotebookCell(
           <p>After closing this dialog, you may continue with your search.</p>
         </div>
       </Dialog>
-      {hidden ? (
-        <plugin.configurationComponent
-          analysisState={analysisState}
-          computation={computation}
-          totalCounts={totalCountsResult}
-          filteredCounts={filteredCountsResult}
-          visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
-          addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
-          computationAppOverview={appOverview}
-          geoConfigs={[]}
-          changeConfigHandlerOverride={changeConfigHandler}
-          showStepNumber={false}
-          showExpandableHelp={false} // no expandable sections within an expandable element.
-          additionalCollectionPredicate={additionalCollectionPredicate}
-          hideConfigurationComponent={true}
-        />
-      ) : (
-        <>
-          <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
-          <ExpandablePanel
-            title={cell.title}
-            subTitle={''}
-            state="open"
-            themeRole="primary"
-          >
-            <div
-              className={
-                'NotebookCellContent' + (isDisabled ? ' disabled' : '')
-              }
+      {(() => {
+        const sharedPluginProps = {
+          analysisState,
+          computation,
+          totalCounts: totalCountsResult,
+          filteredCounts: filteredCountsResult,
+          visualizationId: 'not_used', // irrelevant because we have our own changeConfigHandler
+          addNewComputation: () => {}, // also irrelevant for us because we add the computation elsewhere
+          computationAppOverview: appOverview,
+          geoConfigs: [],
+          changeConfigHandlerOverride: changeConfigHandler,
+          showStepNumber: false,
+          showExpandableHelp: false, // no expandable sections within an expandable element.
+          additionalCollectionPredicate,
+          readonlyInputNames: sharedInputNames,
+        };
+
+        if (hidden) {
+          return (
+            <plugin.configurationComponent
+              {...sharedPluginProps}
+              hideConfigurationComponent={true}
+            />
+          );
+        }
+
+        return (
+          <>
+            <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
+            {hasUnsetSharedInputs && sharedInputsStepNumber != null && (
+              <p className="SharedInputsHint">
+                Complete step {sharedInputsStepNumber} to enable this analysis.
+              </p>
+            )}
+            <ExpandablePanel
+              title={cell.title}
+              subTitle={''}
+              state={panelState}
+              themeRole="primary"
             >
-              <plugin.configurationComponent
-                analysisState={analysisState}
-                computation={computation}
-                totalCounts={totalCountsResult}
-                filteredCounts={filteredCountsResult}
-                visualizationId="not_used" // irrelevant because we have our own changeConfigHandler
-                addNewComputation={() => {}} // also irrelevant for us because we add the computation elsewhere
-                computationAppOverview={appOverview}
-                geoConfigs={[]}
-                changeConfigHandlerOverride={changeConfigHandler}
-                showStepNumber={false}
-                showExpandableHelp={false} // no expandable sections within an expandable element.
-                additionalCollectionPredicate={additionalCollectionPredicate}
-                hideConfigurationComponent={false}
-              />
-              <RunComputeButton
-                computationAppOverview={appOverview}
-                status={jobStatus}
-                isConfigured={isComputationConfigurationValid}
-                createJob={createJob}
-              />
-            </div>
-          </ExpandablePanel>
-        </>
-      )}
+              <div
+                className={
+                  'NotebookCellContent' + (isDisabled ? ' disabled' : '')
+                }
+              >
+                <plugin.configurationComponent
+                  {...sharedPluginProps}
+                  hideConfigurationComponent={false}
+                />
+                <RunComputeButton
+                  computationAppOverview={appOverview}
+                  status={jobStatus}
+                  isConfigured={isComputationConfigurationValid}
+                  createJob={createJob}
+                />
+              </div>
+            </ExpandablePanel>
+          </>
+        );
+      })()}
       {cells &&
         cells.map((subCell, index) => {
           const isSubCellDisabled =
@@ -231,6 +281,7 @@ export function ComputeNotebookCell(
               computeJobStatus={jobStatus}
               stepNumber={stepNumbers?.get(subCell.id)}
               stepNumbers={stepNumbers}
+              expandedPanelState={childrenPanelState}
             />
           );
         })}

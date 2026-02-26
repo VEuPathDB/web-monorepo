@@ -5,7 +5,7 @@ import DefaultQuestionForm, {
 import React, { useCallback, useMemo, useState } from 'react';
 import { EdaNotebookParameter } from './EdaNotebookParameter';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { WdkState } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
+import { WdkState } from '@veupathdb/eda/lib/notebook/Types';
 import { presetNotebooks } from '@veupathdb/eda/lib/notebook/NotebookPresets';
 
 export const EdaNotebookQuestionForm = (props: Props) => {

@@ -3,6 +3,7 @@ import { Prompt } from 'react-router-dom';
 import { wrappable } from '../../Utils/ComponentUtils';
 import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
 import UserIdentity from '../../Views/User/UserIdentity';
+import ServiceAccessPanel from '../../Views/User/ServiceAccessPanel';
 import UserSubscriptionManagement from '../../Views/User/UserSubscriptionManagement';
 import ProfileNavigationSection, {
   SectionKey,
@@ -250,6 +251,12 @@ function UserAccountForm(props: UserAccountFormProps) {
             />
             {saveButton}
           </form>
+        );
+      case 'serviceAccess':
+        return (
+          <div className="wdk-UserProfile-profileForm">
+            <ServiceAccessPanel {...props} />
+          </div>
         );
       case 'security':
         return (

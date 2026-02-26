@@ -1,6 +1,6 @@
 import NumberedHeader from '@veupathdb/coreui/lib/components/forms/NumberedHeader';
 import { colors } from '@material-ui/core';
-import { NotebookCellDescriptorBase } from './NotebookPresets';
+import { NotebookCellDescriptorBase } from './Types';
 
 interface Props {
   cell: NotebookCellDescriptorBase<string>;

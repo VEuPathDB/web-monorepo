@@ -27,6 +27,7 @@ export interface ComputationConfigProps extends ComputationProps {
     variableCollection: CollectionVariableTreeNode
   ) => boolean; // Additional constraints for allowed collection variables
   hideConfigurationComponent?: boolean; // Whether to hide the configuration component entirely
+  readonlyInputNames?: string[]; // Input names managed externally (e.g. by SharedComputeInputsNotebookCell). Plugins render these as read-only.
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
