@@ -1,4 +1,5 @@
 import React from 'react';
+import { DELAYED_RESULT_MESSAGE } from '../../Service/DelayedResultError';
 
 export interface Props {
   message: string;
@@ -17,8 +18,11 @@ const buttonStyle: React.CSSProperties = {
 };
 
 export function ResultTableError(props: Props) {
-  return (
-    <div className="wdk-Error" style={style}>
+  let isDelayedResult = props.message === DELAYED_RESULT_MESSAGE;
+  let content = isDelayedResult ? (
+    <p>{props.message}</p>
+  ) : (
+    <>
       <p>Error: content could not be loaded ({props.message})</p>
       <p>
         This may be caused by an incompatible column selection. We're working on
@@ -27,6 +31,11 @@ export function ResultTableError(props: Props) {
       <button style={buttonStyle} onClick={props.onReset}>
         Reset to Default Columns
       </button>
+    </>
+  );
+  return (
+    <div className="wdk-Error" style={style}>
+      {content}
     </div>
   );
 }
