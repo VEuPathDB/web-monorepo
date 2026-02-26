@@ -19,7 +19,10 @@ export function useEntityCounts(filters?: Filter[]) {
   // debounce to prevent a back end call for each click on a filter checkbox
   const debouncedFilters = useDebounce(filters, 2000);
 
-  return usePromise<Record<string, number>>(
+  // True during the debounce window: filters have changed but the API call hasn't started yet.
+  const stalePending = filters !== debouncedFilters;
+
+  const result = usePromise<Record<string, number>>(
     useCallback(async () => {
       if (isStubEntity(rootEntity))
         return {
@@ -47,4 +50,9 @@ export function useEntityCounts(filters?: Filter[]) {
       return Object.fromEntries(countsEntries);
     }, [rootEntity, entities, subsettingClient, id, debouncedFilters])
   );
+
+  // Note: the merging of stalePending may change the behaviour of
+  // count-based spinners - no data integrity issues, just potentially more spinning
+  // during the debounce window
+  return { ...result, pending: result.pending || stalePending };
 }
