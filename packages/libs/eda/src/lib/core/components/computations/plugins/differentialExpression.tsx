@@ -43,7 +43,7 @@ import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnack
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
-import { useEntityCounts } from '../../../hooks/entityCounts';
+import { useGroupCounts } from '../../../hooks/groupCounts';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
@@ -256,31 +256,6 @@ const DIFFERENTIAL_EXPRESSION_METHODS = {
 type DifferentialExpressionMethodKey =
   keyof typeof DIFFERENTIAL_EXPRESSION_METHODS;
 
-function makeGroupFilter(
-  variable: VariableDescriptor,
-  ranges: LabeledRange[]
-): Filter | undefined {
-  if (!ranges.length) return undefined;
-  const isContinuous = ranges[0].min != null;
-  if (!isContinuous) {
-    return {
-      type: 'stringSet',
-      entityId: variable.entityId,
-      variableId: variable.variableId,
-      stringSet: ranges.map((r) => r.label),
-    };
-  }
-  const mins = ranges.map((r) => parseFloat(r.min!));
-  const maxes = ranges.map((r) => parseFloat(r.max!));
-  return {
-    type: 'numberRange',
-    entityId: variable.entityId,
-    variableId: variable.variableId,
-    min: Math.min(...mins),
-    max: Math.max(...maxes),
-  };
-}
-
 function hasDiscontinuousBins(ranges: LabeledRange[]): boolean {
   if (ranges.length <= 1) return false;
   const sorted = [...ranges]
@@ -471,41 +446,19 @@ export function DifferentialExpressionConfiguration(
   ]);
 
   // Per-group sample counts.
-  // Depend only on each group's own array + the variable so that changing one
-  // group does not cause the other group's filter to recompute (and trigger a
-  // spurious debounce / "loading..." flash in the sibling count display).
-  const groupASelection = configuration.comparator?.groupA;
-  const groupBSelection = configuration.comparator?.groupB;
-
-  const groupAFilter = useMemo(() => {
-    if (!comparatorVariable || !groupASelection?.length) return undefined;
-    return makeGroupFilter(comparatorVariable, groupASelection);
-  }, [comparatorVariable, groupASelection]);
-
-  const groupBFilter = useMemo(() => {
-    if (!comparatorVariable || !groupBSelection?.length) return undefined;
-    return makeGroupFilter(comparatorVariable, groupBSelection);
-  }, [comparatorVariable, groupBSelection]);
-
-  const groupAFilters = useMemo(
-    () => (groupAFilter ? [...(filters ?? []), groupAFilter] : undefined),
-    [filters, groupAFilter]
+  const {
+    groupACount,
+    groupBCount,
+    groupACountPending,
+    groupBCountPending,
+    groupAFilter,
+    groupBFilter,
+  } = useGroupCounts(
+    comparatorVariable,
+    configuration.comparator?.groupA,
+    configuration.comparator?.groupB,
+    filters
   );
-  const groupBFilters = useMemo(
-    () => (groupBFilter ? [...(filters ?? []), groupBFilter] : undefined),
-    [filters, groupBFilter]
-  );
-
-  const groupACounts = useEntityCounts(groupAFilters);
-  const groupBCounts = useEntityCounts(groupBFilters);
-
-  const rootEntityId = studyMetadata.rootEntity.id;
-  const groupACount =
-    groupAFilter != null ? groupACounts.value?.[rootEntityId] : undefined;
-  const groupBCount =
-    groupBFilter != null ? groupBCounts.value?.[rootEntityId] : undefined;
-  const groupACountPending = groupAFilter != null && groupACounts.pending;
-  const groupBCountPending = groupBFilter != null && groupBCounts.pending;
 
   // Report per-group count gating to the parent (e.g. ComputeNotebookCell)
   useEffect(() => {
