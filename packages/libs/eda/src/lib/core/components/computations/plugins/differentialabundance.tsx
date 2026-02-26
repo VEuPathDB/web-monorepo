@@ -275,7 +275,7 @@ export function DifferentialAbundanceConfiguration(
       !ContinuousVariableDataShape.is(
         selectedComparatorVariable?.variable.dataShape
       ) ||
-      configuration.comparator == null
+      configuration.comparator?.variable == null
     )
       return;
 
@@ -289,7 +289,7 @@ export function DifferentialAbundanceConfiguration(
     const bins = await getBinRanges(binRangeProps);
     return bins;
   }, [
-    configuration?.comparator,
+    configuration.comparator?.variable,
     filters,
     selectedComparatorVariable,
     studyMetadata.id,
@@ -426,6 +426,7 @@ export function DifferentialAbundanceConfiguration(
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}
@@ -491,6 +492,7 @@ export function DifferentialAbundanceConfiguration(
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
               </div>
             </Tooltip>

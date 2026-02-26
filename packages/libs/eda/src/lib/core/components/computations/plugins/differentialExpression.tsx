@@ -441,19 +441,21 @@ export function DifferentialExpressionConfiguration(
     return variableDistribution;
   }, [configuration.comparator, filters, studyMetadata.id]);
 
+  const comparatorVariable = configuration.comparator?.variable;
+
   // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = useCachedPromise(async () => {
     if (
       !ContinuousVariableDataShape.is(
         selectedComparatorVariable?.variable.dataShape
       ) ||
-      configuration.comparator == null
+      comparatorVariable == null
     )
       return;
 
     const binRangeProps: GetBinRangesProps = {
       studyId: studyMetadata.id,
-      ...configuration.comparator.variable,
+      ...comparatorVariable,
       filters: filters ?? [],
       dataClient,
       binningMethod: 'quantile',
@@ -461,7 +463,7 @@ export function DifferentialExpressionConfiguration(
     const bins = await getBinRanges(binRangeProps);
     return bins;
   }, [
-    configuration?.comparator,
+    comparatorVariable,
     filters,
     selectedComparatorVariable,
     studyMetadata.id,
@@ -471,7 +473,6 @@ export function DifferentialExpressionConfiguration(
   // Depend only on each group's own array + the variable so that changing one
   // group does not cause the other group's filter to recompute (and trigger a
   // spurious debounce / "loading..." flash in the sibling count display).
-  const comparatorVariable = configuration.comparator?.variable;
   const groupASelection = configuration.comparator?.groupA;
   const groupBSelection = configuration.comparator?.groupB;
 
@@ -711,6 +712,7 @@ export function DifferentialExpressionConfiguration(
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}
@@ -785,6 +787,7 @@ export function DifferentialExpressionConfiguration(
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
               </div>
             </Tooltip>

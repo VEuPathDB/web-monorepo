@@ -13,6 +13,9 @@ export type ValuePickerProps = {
   showClearSelectionButton?: boolean;
   /** Show loading spinner */
   isLoading?: boolean;
+  /** If true, call onSelectedValuesChange on every checkbox tick
+   *  instead of waiting for the popover to close. */
+  instantUpdate?: boolean;
 };
 
 const EMPTY_ALLOWED_VALUES_ARRAY: string[] = [];
@@ -28,6 +31,7 @@ export function ValuePicker({
   disableInput = false,
   showClearSelectionButton = true,
   isLoading = false,
+  instantUpdate = false,
 }: ValuePickerProps) {
   const items = allowedValues.map((value) => ({
     display: <span>{value}</span>,
@@ -45,6 +49,7 @@ export function ValuePicker({
         disabledCheckboxTooltipContent={disabledCheckboxTooltipContent}
         isDisabled={disableInput}
         isLoading={isLoading}
+        instantUpdate={instantUpdate}
       />
       {showClearSelectionButton && (
         <ClearSelectionButton
