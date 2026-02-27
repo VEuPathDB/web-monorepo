@@ -41,6 +41,7 @@ import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
+import { FindNearestDatumXYProvider } from './FindNearestDatumXYProvider';
 import './VolcanoPlot.css';
 
 export interface RawDataMinMaxValues {
@@ -302,6 +303,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               bottom: MARGIN_DEFAULT + 20, // Bottom annotations can get long
             }}
           >
+            <FindNearestDatumXYProvider>
             {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
             <Grid numTicks={6} lineStyle={gridStyles} />
             <Axis
@@ -555,6 +557,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                 fill={truncationBarFill ?? "url('#lines')"}
               />
             )}
+            </FindNearestDatumXYProvider>
           </XYChart>
           {showSpinner && <Spinner />}
         </div>
