@@ -4,7 +4,7 @@ import ScatterPlot, {
 } from '@veupathdb/components/lib/plots/ScatterPlot';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
 
@@ -154,6 +154,10 @@ import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/pl
 
 import { Override } from '../../../types/utility';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
+import { useSubsettingClient } from '../../../hooks/workspace';
+import ScatterPlotAnnotationTooltip, {
+  AnnotationRow,
+} from './ScatterPlotAnnotationTooltip';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -289,6 +293,9 @@ interface Options
   returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
   sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
   defaultMarkerSize?: number; // Default marker size in px (Plotly default is 6)
+  /** Enable pinnable annotation tooltips that show entity metadata on point click.
+   * Requires returnPointIds to also be true. */
+  enableAnnotationTooltip?: boolean;
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -1429,6 +1436,152 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     defaultMarkerSize: options?.defaultMarkerSize,
   };
 
+  // --- Annotation tooltip ---
+  const enableAnnotationTooltip = options?.enableAnnotationTooltip ?? false;
+  const subsettingClient = useSubsettingClient();
+
+  // Get the root entity and its variables for annotation display
+  const rootEntity = studyMetadata.rootEntity;
+  const annotationVariables = useMemo(() => {
+    if (!enableAnnotationTooltip) return [];
+    // Get all non-hidden Variable nodes on the root entity, excluding category nodes and merge keys
+    return rootEntity.variables.filter(
+      (v): v is Variable =>
+        Variable.is(v) &&
+        !v.hideFrom?.includes('variableTree') &&
+        !v.hideFrom?.includes('everywhere') &&
+        !v.isMergeKey
+    );
+  }, [enableAnnotationTooltip, rootEntity.variables]);
+
+  // Build the output variable IDs for the tabular data request
+  const annotationVariableIds = useMemo(
+    () => annotationVariables.map((v) => v.id),
+    [annotationVariables]
+  );
+
+  // Fetch tabular data for all root entity variables
+  const annotationData = useCachedPromise(
+    async () => {
+      const response = await subsettingClient.getTabularData(
+        studyId,
+        rootEntity.id,
+        {
+          filters: filters ?? [],
+          outputVariableIds: annotationVariableIds,
+          reportConfig: {
+            headerFormat: 'standard',
+            trimTimeFromDateVars: true,
+          },
+        }
+      );
+      // Build a lookup map: entityId -> { variableId: value }
+      // Response is string[][] where first row is headers
+      if (response.length < 2) return new Map<string, Record<string, string>>();
+      const headers = response[0];
+      // Find the column index for the entity's PK (first column is always the target entity PK)
+      const pkColIndex = 0;
+      const lookup = new Map<string, Record<string, string>>();
+      for (let rowIdx = 1; rowIdx < response.length; rowIdx++) {
+        const row = response[rowIdx];
+        const entityPkValue = row[pkColIndex];
+        const record: Record<string, string> = {};
+        for (let colIdx = 0; colIdx < headers.length; colIdx++) {
+          record[headers[colIdx]] = row[colIdx];
+        }
+        lookup.set(entityPkValue, record);
+      }
+      return lookup;
+    },
+    [
+      enableAnnotationTooltip ? 'annotationData' : null,
+      studyId,
+      rootEntity.id,
+      filters,
+      annotationVariableIds,
+    ],
+    5 * 60 * 1000 // 5 minute cache
+  );
+
+  // Pinned tooltip state
+  const [pinnedAnnotation, setPinnedAnnotation] = useState<{
+    pointId: string;
+    x: number;
+    y: number;
+  } | null>(null);
+  const pinnedTooltipRef = useRef<HTMLDivElement>(null);
+  const plotWrapperRef = useRef<HTMLDivElement>(null);
+
+  // Dismiss pinned tooltip on click-away (outside both the tooltip and the plot)
+  useEffect(() => {
+    if (!pinnedAnnotation) return;
+    function handleClickAway(e: MouseEvent) {
+      const target = e.target as Node;
+      if (pinnedTooltipRef.current?.contains(target)) return;
+      if (plotWrapperRef.current?.contains(target)) return;
+      setPinnedAnnotation(null);
+    }
+    const timeout = setTimeout(
+      () => document.addEventListener('pointerdown', handleClickAway),
+      0
+    );
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener('pointerdown', handleClickAway);
+    };
+  }, [pinnedAnnotation]);
+
+  // Handle Plotly click events for annotation tooltip.
+  // react-plotly.js onClick provides a PlotMouseEvent with points[] and event.
+  const handlePlotlyClick = useCallback(
+    (event: any) => {
+      if (!enableAnnotationTooltip) return;
+      const point = event.points?.[0];
+      if (!point) return;
+      const pointId = point.customdata as string | undefined;
+      if (!pointId) {
+        setPinnedAnnotation(null);
+        return;
+      }
+      // Get the click position relative to the plot wrapper
+      const plotWrapper = plotWrapperRef.current;
+      if (!plotWrapper) return;
+      const rect = plotWrapper.getBoundingClientRect();
+      const mouseEvent = event.event as MouseEvent | undefined;
+      if (!mouseEvent) {
+        setPinnedAnnotation(null);
+        return;
+      }
+      setPinnedAnnotation({
+        pointId,
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top,
+      });
+    },
+    [enableAnnotationTooltip]
+  );
+
+  // Build annotation rows for the pinned point
+  const pinnedAnnotationRows: AnnotationRow[] = useMemo(() => {
+    if (!pinnedAnnotation || !annotationData.value) return [];
+    const record = annotationData.value.get(pinnedAnnotation.pointId);
+    if (!record) return [];
+    return annotationVariables
+      .map((v) => {
+        const headerKey = `${rootEntity.id}.${v.id}`;
+        const value = record[headerKey];
+        return value != null
+          ? { displayName: v.displayName, value }
+          : undefined;
+      })
+      .filter((r): r is AnnotationRow => r != null);
+  }, [
+    pinnedAnnotation,
+    annotationData.value,
+    annotationVariables,
+    rootEntity.id,
+  ]);
+
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1443,13 +1596,28 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           checkedLegendItems={checkedLegendItems}
         />
       ) : (
-        <ScatterPlot
-          {...scatterplotProps}
-          ref={plotRef}
-          data={data.value?.dataSetProcess}
-          checkedLegendItems={checkedLegendItems}
-          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
-        />
+        <div ref={plotWrapperRef} style={{ position: 'relative' }}>
+          <ScatterPlot
+            {...scatterplotProps}
+            ref={plotRef}
+            data={data.value?.dataSetProcess}
+            checkedLegendItems={checkedLegendItems}
+            markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
+            {...(enableAnnotationTooltip
+              ? { onClick: handlePlotlyClick }
+              : {})}
+          />
+          {enableAnnotationTooltip && pinnedAnnotation && (
+            <ScatterPlotAnnotationTooltip
+              ref={pinnedTooltipRef}
+              annotations={pinnedAnnotationRows}
+              loading={annotationData.pending}
+              x={pinnedAnnotation.x}
+              y={pinnedAnnotation.y}
+              onClose={() => setPinnedAnnotation(null)}
+            />
+          )}
+        </div>
       )}
     </>
   );
