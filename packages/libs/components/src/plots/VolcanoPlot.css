@@ -1,5 +1,16 @@
 .visx-tooltip {
   z-index: 1;
+  /* Hide the first frame to mask visx's snap-to-datum repositioning flash */
+  animation: visx-tooltip-fadein 0ms 150ms both;
+}
+
+@keyframes visx-tooltip-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .VolcanoPlotTooltip {

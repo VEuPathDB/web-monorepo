@@ -331,15 +331,16 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const pinnedTooltipRef = useRef<HTMLDivElement>(null);
 
   // Dismiss pinned tooltip on click-away
+  // Dismiss pinned tooltip on click-away (outside both the tooltip and the plot)
   useEffect(() => {
     if (!pinnedDatum) return;
     function handleClickAway(e: MouseEvent) {
-      if (
-        pinnedTooltipRef.current &&
-        !pinnedTooltipRef.current.contains(e.target as Node)
-      ) {
-        setPinnedDatum(null);
-      }
+      const target = e.target as Node;
+      // Ignore clicks inside the pinned tooltip or the plot area —
+      // the plot's own onClick handles pin/dismiss within the plot.
+      if (pinnedTooltipRef.current?.contains(target)) return;
+      if (plotRef.current?.contains(target)) return;
+      setPinnedDatum(null);
     }
     // Delay listener so the click that pinned doesn't immediately dismiss
     const timeout = setTimeout(
@@ -501,12 +502,19 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         }
       }
 
-      if (nearestDatum) {
+      // Only pin if click is within 20px of the nearest point; otherwise dismiss
+      const MAX_PIN_DISTANCE = 20;
+      if (
+        nearestDatum &&
+        nearestDistSq <= MAX_PIN_DISTANCE * MAX_PIN_DISTANCE
+      ) {
         setPinnedDatum({
           datum: nearestDatum,
           x: svgPoint.x,
           y: svgPoint.y,
         });
+      } else {
+        setPinnedDatum(null);
       }
     },
     [
@@ -698,90 +706,89 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   }
                 />
               </Group>
-              {!pinnedDatum && (
-                <Tooltip<VolcanoPlotDataPoint>
-                  snapTooltipToDatumX
-                  snapTooltipToDatumY
-                  showVerticalCrosshair
-                  showHorizontalCrosshair
-                  horizontalCrosshairStyle={{ stroke: 'red' }}
-                  verticalCrosshairStyle={{ stroke: 'red' }}
-                  unstyled
-                  applyPositionStyle
-                  renderTooltip={(d) => {
-                    const data = d.tooltipData?.nearestDatum?.datum;
-                    /**
-                     * Notes regarding colors in the tooltips:
-                     *  1. We use the data point's significanceColor property for background color
-                     *  2. For color contrast reasons, color for text and hr's border is set conditionally:
-                     *      - if significanceColor matches the 'inconclusive' color (grey), we use black
-                     *      - else, we use white
-                     *   (white font meets contrast ratio threshold (min 3:1 for UI-y things) w/ #AC3B4E (red) and #0E8FAB (blue))
-                     */
-                    const color =
-                      data?.significanceColor ===
-                      significanceColors['inconclusive']
-                        ? 'black'
-                        : 'white';
-                    return (
+              <Tooltip<VolcanoPlotDataPoint>
+                snapTooltipToDatumX
+                snapTooltipToDatumY
+                showVerticalCrosshair={!pinnedDatum}
+                showHorizontalCrosshair={!pinnedDatum}
+                horizontalCrosshairStyle={{ stroke: 'red' }}
+                verticalCrosshairStyle={{ stroke: 'red' }}
+                unstyled
+                applyPositionStyle
+                renderTooltip={(d) => {
+                  if (pinnedDatum) return null;
+                  const data = d.tooltipData?.nearestDatum?.datum;
+                  /**
+                   * Notes regarding colors in the tooltips:
+                   *  1. We use the data point's significanceColor property for background color
+                   *  2. For color contrast reasons, color for text and hr's border is set conditionally:
+                   *      - if significanceColor matches the 'inconclusive' color (grey), we use black
+                   *      - else, we use white
+                   *   (white font meets contrast ratio threshold (min 3:1 for UI-y things) w/ #AC3B4E (red) and #0E8FAB (blue))
+                   */
+                  const color =
+                    data?.significanceColor ===
+                    significanceColors['inconclusive']
+                      ? 'black'
+                      : 'white';
+                  return (
+                    <div
+                      className="VolcanoPlotTooltip"
+                      style={{
+                        color,
+                        background: data?.significanceColor,
+                      }}
+                    >
+                      <ul>
+                        {data?.displayLabels
+                          ? data.displayLabels.map((label) => (
+                              <li key={label}>
+                                <span>{label}</span>
+                              </li>
+                            ))
+                          : data?.pointIDs?.map((id) => (
+                              <li key={id}>
+                                <span>{id}</span>
+                              </li>
+                            ))}
+                      </ul>
                       <div
-                        className="VolcanoPlotTooltip"
-                        style={{
-                          color,
-                          background: data?.significanceColor,
-                        }}
-                      >
-                        <ul>
-                          {data?.displayLabels
-                            ? data.displayLabels.map((label) => (
-                                <li key={label}>
-                                  <span>{label}</span>
-                                </li>
-                              ))
-                            : data?.pointIDs?.map((id) => (
-                                <li key={id}>
-                                  <span>{id}</span>
-                                </li>
-                              ))}
-                        </ul>
-                        <div
-                          className="pseudo-hr"
-                          style={{ borderBottom: `1px solid ${color}` }}
-                        ></div>
-                        <ul>
-                          <li>
-                            <span>{effectSizeLabel}:</span> {data?.effectSize}
-                          </li>
-                          <li>
-                            <span>P Value:</span>{' '}
-                            {data?.pValue
-                              ? Number(data.pValue) <=
+                        className="pseudo-hr"
+                        style={{ borderBottom: `1px solid ${color}` }}
+                      ></div>
+                      <ul>
+                        <li>
+                          <span>{effectSizeLabel}:</span> {data?.effectSize}
+                        </li>
+                        <li>
+                          <span>P Value:</span>{' '}
+                          {data?.pValue
+                            ? Number(data.pValue) <=
+                              statisticsFloors.pValueFloor
+                              ? '<= ' + statisticsFloors.pValueFloor
+                              : data?.pValue
+                            : 'n/a'}
+                        </li>
+                        <li>
+                          <span>Adjusted P Value:</span>{' '}
+                          {data?.adjustedPValue
+                            ? statisticsFloors.adjustedPValueFloor &&
+                              Number(data.adjustedPValue) <=
+                                statisticsFloors.adjustedPValueFloor &&
+                              Number(data.pValue) <=
                                 statisticsFloors.pValueFloor
-                                ? '<= ' + statisticsFloors.pValueFloor
-                                : data?.pValue
-                              : 'n/a'}
-                          </li>
-                          <li>
-                            <span>Adjusted P Value:</span>{' '}
-                            {data?.adjustedPValue
-                              ? statisticsFloors.adjustedPValueFloor &&
-                                Number(data.adjustedPValue) <=
-                                  statisticsFloors.adjustedPValueFloor &&
-                                Number(data.pValue) <=
-                                  statisticsFloors.pValueFloor
-                                ? '<= ' + statisticsFloors.adjustedPValueFloor
-                                : data?.adjustedPValue
-                              : 'n/a'}
-                          </li>
-                        </ul>
-                        <div className="VolcanoPlotTooltip__hint">
-                          Click point to pin &amp; copy
-                        </div>
+                              ? '<= ' + statisticsFloors.adjustedPValueFloor
+                              : data?.adjustedPValue
+                            : 'n/a'}
+                        </li>
+                      </ul>
+                      <div className="VolcanoPlotTooltip__hint">
+                        Click point to pin &amp; copy
                       </div>
-                    );
-                  }}
-                />
-              )}
+                    </div>
+                  );
+                }}
+              />
 
               {/* Truncation indicators */}
               {/* Example from https://airbnb.io/visx/docs/pattern */}
