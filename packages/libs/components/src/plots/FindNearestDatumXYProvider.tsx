@@ -29,8 +29,8 @@ export function FindNearestDatumXYProvider({
   const { xScale, yScale, dataRegistry } = useContext(DataContext);
 
   // Use refs so the stable callback always accesses the latest values
-  const showTooltipRef = useRef(tooltipContext.showTooltip);
-  showTooltipRef.current = tooltipContext.showTooltip;
+  const showTooltipRef = useRef(tooltipContext?.showTooltip);
+  showTooltipRef.current = tooltipContext?.showTooltip;
 
   const xScaleRef = useRef(xScale);
   xScaleRef.current = xScale;
@@ -50,12 +50,13 @@ export function FindNearestDatumXYProvider({
       const currentShowTooltip = showTooltipRef.current;
 
       if (
+        !currentShowTooltip ||
         !params?.svgPoint ||
         !currentXScale ||
         !currentYScale ||
         !currentDataRegistry
       ) {
-        currentShowTooltip(params);
+        currentShowTooltip?.(params);
         return;
       }
 
@@ -110,6 +111,11 @@ export function FindNearestDatumXYProvider({
     },
     [] // Stable callback: uses refs for latest values
   );
+
+  // If no tooltip context is available, render children without the provider
+  if (!tooltipContext) {
+    return <>{children}</>;
+  }
 
   return (
     <TooltipContext.Provider
