@@ -98,7 +98,7 @@ function DEReviewContent({
       {isReady && (
         <p style={{ margin: 0 }}>
           Click <strong>"{submitButtonText}"</strong> below to retrieve genes
-          matching the criteria below.
+          matching the following criteria:
         </p>
       )}
       <ReviewCard
