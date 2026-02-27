@@ -12,7 +12,7 @@ import {
   DependentAxisLogScaleDefault,
 } from '../types/plots';
 // add Shape for truncation
-import { Layout, Shape, Axis, LayoutAxis } from 'plotly.js';
+import { Layout, Shape, Axis, LayoutAxis, Font } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
 // import truncation util functions
@@ -132,8 +132,8 @@ const ScatterPlot = makePlotlyPlotComponent(
         font: {
           // Increase font weight for better readability with lighter overlay colors.
           // Cast needed because @types/plotly.js may not include 'weight' yet.
-          weight: 700 as any,
-        },
+          weight: 700,
+        } as Partial<Font>,
       },
       xaxis: {
         title: independentAxisLabel,
