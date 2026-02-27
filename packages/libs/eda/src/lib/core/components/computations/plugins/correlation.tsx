@@ -7,6 +7,7 @@ import {
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -184,7 +185,7 @@ const DEFAULT_STANDARD_DEVIATION_THRESHOLD = 0;
 export function CorrelationConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
@@ -193,6 +194,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
     additionalCollectionPredicate = () => true,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   const configuration = computation.descriptor
     .configuration as CorrelationConfig;
 
@@ -200,7 +202,7 @@ export function CorrelationConfiguration(props: ComputationConfigProps) {
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

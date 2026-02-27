@@ -9,6 +9,7 @@ import { volcanoPlotVisualization } from '../../visualizations/implementations/V
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   partialToCompleteCodec,
@@ -42,6 +43,8 @@ import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnack
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
+import { useGroupCounts } from '../../../hooks/groupCounts';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -242,19 +245,34 @@ const DIFFERENTIAL_EXPRESSION_METHODS = {
 type DifferentialExpressionMethodKey =
   keyof typeof DIFFERENTIAL_EXPRESSION_METHODS;
 
+function hasDiscontinuousBins(ranges: LabeledRange[]): boolean {
+  if (ranges.length <= 1) return false;
+  const sorted = [...ranges]
+    .filter((r) => r.min != null && r.max != null)
+    .sort((a, b) => parseFloat(a.min!) - parseFloat(b.min!));
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const currentMax = parseFloat(sorted[i].max!);
+    const nextMin = parseFloat(sorted[i + 1].min!);
+    if (Math.abs(currentMax - nextMin) > 1e-10) return true;
+  }
+  return false;
+}
+
 export function DifferentialExpressionConfiguration(
   props: ComputationConfigProps
 ) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
     showStepNumber = true,
     readonlyInputNames,
+    onCountGatingChange,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   const configuration = computation.descriptor
     .configuration as DifferentialExpressionConfig;
   const studyMetadata = useStudyMetadata();
@@ -269,7 +287,7 @@ export function DifferentialExpressionConfiguration(
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 
@@ -303,11 +321,11 @@ export function DifferentialExpressionConfiguration(
         (configuration.comparator.groupA || configuration.comparator.groupB)
       ) {
         // Reset the groupA and groupB values.
-        changeConfigHandler('comparator', {
-          variable: configuration.comparator.variable,
+        changeConfigHandler('comparator', (currentComparator: any) => ({
+          ...currentComparator,
           groupA: undefined,
           groupB: undefined,
-        });
+        }));
 
         enqueueSnackbar(
           <span>
@@ -388,19 +406,21 @@ export function DifferentialExpressionConfiguration(
     return variableDistribution;
   }, [configuration.comparator, filters, studyMetadata.id]);
 
+  const comparatorVariable = configuration.comparator?.variable;
+
   // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = useCachedPromise(async () => {
     if (
       !ContinuousVariableDataShape.is(
         selectedComparatorVariable?.variable.dataShape
       ) ||
-      configuration.comparator == null
+      comparatorVariable == null
     )
       return;
 
     const binRangeProps: GetBinRangesProps = {
       studyId: studyMetadata.id,
-      ...configuration.comparator.variable,
+      ...comparatorVariable,
       filters: filters ?? [],
       dataClient,
       binningMethod: 'quantile',
@@ -408,11 +428,88 @@ export function DifferentialExpressionConfiguration(
     const bins = await getBinRanges(binRangeProps);
     return bins;
   }, [
-    configuration?.comparator,
+    comparatorVariable,
     filters,
     selectedComparatorVariable,
     studyMetadata.id,
   ]);
+
+  // Per-group sample counts.
+  const {
+    groupACount,
+    groupBCount,
+    groupACountPending,
+    groupBCountPending,
+    groupAFilter,
+    groupBFilter,
+  } = useGroupCounts(
+    comparatorVariable,
+    configuration.comparator?.groupA,
+    configuration.comparator?.groupB,
+    filters
+  );
+
+  // Report per-group count gating to the parent (e.g. ComputeNotebookCell)
+  useEffect(() => {
+    if (!onCountGatingChange) return;
+
+    // No groups selected yet — no gating needed
+    if (groupAFilter == null && groupBFilter == null) {
+      onCountGatingChange(undefined);
+      return;
+    }
+
+    if (groupACountPending || groupBCountPending) {
+      onCountGatingChange({ type: 'pending' });
+      return;
+    }
+
+    const warnings: string[] = [];
+    if (groupAFilter != null && groupACount != null && groupACount < 2) {
+      warnings.push(
+        `Reference group has ${groupACount} sample${
+          groupACount !== 1 ? 's' : ''
+        }`
+      );
+    }
+    if (groupBFilter != null && groupBCount != null && groupBCount < 2) {
+      warnings.push(
+        `Comparison group has ${groupBCount} sample${
+          groupBCount !== 1 ? 's' : ''
+        }`
+      );
+    }
+
+    if (warnings.length) {
+      onCountGatingChange({
+        type: 'warning',
+        message: `${warnings.join(
+          '; '
+        )}. Each group requires at least 2 samples.`,
+      });
+    } else {
+      onCountGatingChange({ type: 'ok' });
+    }
+  }, [
+    onCountGatingChange,
+    groupAFilter,
+    groupBFilter,
+    groupACount,
+    groupBCount,
+    groupACountPending,
+    groupBCountPending,
+  ]);
+
+  const isContinuous =
+    configuration.comparator?.groupA?.[0]?.min != null ||
+    configuration.comparator?.groupB?.[0]?.min != null;
+  const discontinuousWarning =
+    isContinuous &&
+    (hasDiscontinuousBins(configuration.comparator?.groupA ?? []) ||
+      hasDiscontinuousBins(configuration.comparator?.groupB ?? []))
+      ? 'Did you mean to select non-contiguous bins? You may continue with these ' +
+        'selections but please be aware that sample counts may be incorrect.'
+      : undefined;
 
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
@@ -542,10 +639,16 @@ export function DifferentialExpressionConfiguration(
             }
             toggleStarredVariable={toggleStarredVariable}
             labelWidth="12em"
+            flexDirection="column"
           />
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
           <H6>Group Values</H6>
+          {discontinuousWarning && (
+            <Banner
+              banner={{ type: 'warning', message: discontinuousWarning }}
+            />
+          )}
           <div
             className={cx('-DiffExpressionOuterConfigContainerGroupComparison')}
           >
@@ -561,8 +664,24 @@ export function DifferentialExpressionConfiguration(
                   '-InputContainer',
                   disableGroupValueSelectors && 'disabled'
                 )}
+                style={{
+                  flexWrap: 'wrap',
+                  justifyContent: 'end', // see flexGrow below also
+                }}
               >
-                <span>Reference Group</span>
+                <span>
+                  Reference Group
+                  <br />
+                  <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
+                    {groupACountPending
+                      ? 'Please wait...'
+                      : groupACount != null
+                      ? `${groupACount.toLocaleString()} sample${
+                          groupACount !== 1 ? 's' : ''
+                        }`
+                      : ''}
+                  </span>
+                </span>
                 <ValuePicker
                   allowedValues={
                     !continuousVariableBins.pending
@@ -579,34 +698,37 @@ export function DifferentialExpressionConfiguration(
                     ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable: configuration.comparator.variable,
-                      groupA: newValues.length
-                        ? groupValueOptions?.filter((option) =>
-                            newValues.includes(option.label)
-                          )
-                        : undefined,
-                      groupB: configuration.comparator.groupB ?? undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupA: newValues.length
+                          ? groupValueOptions?.filter((option) =>
+                              newValues.includes(option.label)
+                            )
+                          : undefined,
+                      })
+                    );
                   }}
                   disabledCheckboxTooltipContent="Value either already selected in Group B or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}
                   text=""
                   themeRole="primary"
                   onPress={() => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
-                      groupA: configuration?.comparator?.groupB ?? undefined,
-                      groupB: configuration?.comparator?.groupA ?? undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupA: currentComparator?.groupB ?? undefined,
+                        groupB: currentComparator?.groupA ?? undefined,
+                      })
+                    );
                   }}
                   styleOverrides={{
                     container: {
@@ -625,7 +747,19 @@ export function DifferentialExpressionConfiguration(
                     ? { tooltip: 'Swap Group A and Group B values' }
                     : {})}
                 />
-                <span>Comparison Group</span>
+                <span style={{ flexGrow: 1 }}>
+                  Comparison Group
+                  <br />
+                  <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
+                    {groupBCountPending
+                      ? 'Please wait...'
+                      : groupBCount != null
+                      ? `${groupBCount.toLocaleString()} sample${
+                          groupBCount !== 1 ? 's' : ''
+                        }`
+                      : ''}
+                  </span>
+                </span>
                 <ValuePicker
                   allowedValues={
                     !continuousVariableBins.pending
@@ -642,22 +776,23 @@ export function DifferentialExpressionConfiguration(
                     ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
-                      groupA: configuration?.comparator?.groupA ?? undefined,
-                      groupB: newValues.length
-                        ? groupValueOptions?.filter((option) =>
-                            newValues.includes(option.label)
-                          )
-                        : undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupB: newValues.length
+                          ? groupValueOptions?.filter((option) =>
+                              newValues.includes(option.label)
+                            )
+                          : undefined,
+                      })
+                    );
                   }}
                   disabledCheckboxTooltipContent="Value either already selected in Group A or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
               </div>
             </Tooltip>
@@ -666,16 +801,6 @@ export function DifferentialExpressionConfiguration(
       </div>
     </ComputationStepContainer>
   );
-}
-
-function assertConfigWithComparator(
-  configuration: DifferentialExpressionConfig
-): asserts configuration is Required<DifferentialExpressionConfig> {
-  if (configuration.comparator == null) {
-    throw new Error(
-      'Unexpected condition: `configuration.comparator.variable` is not defined.'
-    );
-  }
 }
 
 // Differential expression requires that the study

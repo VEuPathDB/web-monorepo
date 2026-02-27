@@ -6,6 +6,7 @@ import { scatterplotVisualization } from '../../visualizations/implementations/S
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -122,16 +123,17 @@ const ALPHA_DIV_METHODS = [
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
   } = props;
+  const computation = useComputation(analysisState, computationId);
   assertComputationWithConfig(computation, AlphaDivConfig);
   const configuration = computation.descriptor.configuration;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

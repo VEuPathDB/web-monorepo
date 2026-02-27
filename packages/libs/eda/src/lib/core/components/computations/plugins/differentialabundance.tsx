@@ -9,6 +9,7 @@ import { volcanoPlotVisualization } from '../../visualizations/implementations/V
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -179,12 +180,13 @@ export function DifferentialAbundanceConfiguration(
 ) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
     changeConfigHandlerOverride,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   const configuration = computation.descriptor
     .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
@@ -198,7 +200,7 @@ export function DifferentialAbundanceConfiguration(
 
   const workspaceChangeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 
@@ -273,7 +275,7 @@ export function DifferentialAbundanceConfiguration(
       !ContinuousVariableDataShape.is(
         selectedComparatorVariable?.variable.dataShape
       ) ||
-      configuration.comparator == null
+      configuration.comparator?.variable == null
     )
       return;
 
@@ -287,7 +289,7 @@ export function DifferentialAbundanceConfiguration(
     const bins = await getBinRanges(binRangeProps);
     return bins;
   }, [
-    configuration?.comparator,
+    configuration.comparator?.variable,
     filters,
     selectedComparatorVariable,
     studyMetadata.id,
@@ -408,34 +410,37 @@ export function DifferentialAbundanceConfiguration(
                     ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable: configuration.comparator.variable,
-                      groupA: newValues.length
-                        ? groupValueOptions?.filter((option) =>
-                            newValues.includes(option.label)
-                          )
-                        : undefined,
-                      groupB: configuration.comparator.groupB ?? undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupA: newValues.length
+                          ? groupValueOptions?.filter((option) =>
+                              newValues.includes(option.label)
+                            )
+                          : undefined,
+                      })
+                    );
                   }}
                   disabledCheckboxTooltipContent="Value either already selected in Group B or has no data in the subset"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}
                   text=""
                   themeRole="primary"
                   onPress={() => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
-                      groupA: configuration?.comparator?.groupB ?? undefined,
-                      groupB: configuration?.comparator?.groupA ?? undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupA: currentComparator?.groupB ?? undefined,
+                        groupB: currentComparator?.groupA ?? undefined,
+                      })
+                    );
                   }}
                   styleOverrides={{
                     container: {
@@ -471,22 +476,23 @@ export function DifferentialAbundanceConfiguration(
                     ...(disabledVariableValues ?? []), // Remove filtered values
                   ]}
                   onSelectedValuesChange={(newValues) => {
-                    assertConfigWithComparator(configuration);
-                    changeConfigHandler('comparator', {
-                      variable:
-                        configuration?.comparator?.variable ?? undefined,
-                      groupA: configuration?.comparator?.groupA ?? undefined,
-                      groupB: newValues.length
-                        ? groupValueOptions?.filter((option) =>
-                            newValues.includes(option.label)
-                          )
-                        : undefined,
-                    });
+                    changeConfigHandler(
+                      'comparator',
+                      (currentComparator: any) => ({
+                        ...currentComparator,
+                        groupB: newValues.length
+                          ? groupValueOptions?.filter((option) =>
+                              newValues.includes(option.label)
+                            )
+                          : undefined,
+                      })
+                    );
                   }}
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
                   isLoading={continuousVariableBins.pending}
+                  instantUpdate
                 />
               </div>
             </Tooltip>
@@ -495,16 +501,6 @@ export function DifferentialAbundanceConfiguration(
       </div>
     </ComputationStepContainer>
   );
-}
-
-function assertConfigWithComparator(
-  configuration: DifferentialAbundanceConfig
-): asserts configuration is Required<DifferentialAbundanceConfig> {
-  if (configuration.comparator == null) {
-    throw new Error(
-      'Unexpected condition: `configuration.comparator.variable` is not defined.'
-    );
-  }
 }
 
 // Differential abundance requires that the study
