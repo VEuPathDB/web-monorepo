@@ -12,13 +12,12 @@ import {
   DependentAxisLogScaleDefault,
 } from '../types/plots';
 // add Shape for truncation
-import { Layout, Shape, Axis, LayoutAxis, Font } from 'plotly.js';
+import { Layout, Shape } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
-import { logScaleDtick } from '../utils/logscale-dtick';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
 import './ScatterPlot.scss';
