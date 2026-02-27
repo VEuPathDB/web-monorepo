@@ -48,6 +48,8 @@ export interface ScatterPlotProps
   dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
   /** marker color opacity: range from 0 to 1 */
   markerBodyOpacity?: number;
+  /** default marker size in px (Plotly default is 6) */
+  defaultMarkerSize?: number;
 }
 
 const EmptyScatterPlotData: ScatterPlotData = {
@@ -75,6 +77,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       independentAxisLogScale = independentAxisLogScaleDefault,
       dependentAxisLogScale = DependentAxisLogScaleDefault,
       markerBodyOpacity,
+      defaultMarkerSize,
       ...restProps
     } = props;
 
@@ -125,6 +128,13 @@ const ScatterPlot = makePlotlyPlotComponent(
 
     const layout: Partial<Layout> = {
       hovermode: 'closest',
+      hoverlabel: {
+        font: {
+          // Increase font weight for better readability with lighter overlay colors.
+          // Cast needed because @types/plotly.js may not include 'weight' yet.
+          weight: 700 as any,
+        },
+      },
       xaxis: {
         title: independentAxisLabel,
         // truncation
@@ -190,7 +200,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       shapes: truncatedAxisHighlighting,
     };
 
-    // change data here for marker opacity
+    // change data here for marker opacity and default marker size
     const finalData = useMemo(() => {
       return data.series.map((d: any) => ({
         ...d,
@@ -216,6 +226,10 @@ const ScatterPlot = makePlotlyPlotComponent(
                       '%'
                   ).result.css()
               : d.marker.color,
+          // apply defaultMarkerSize if no explicit size is set on the series
+          ...(defaultMarkerSize != null && d.marker?.size == null
+            ? { size: defaultMarkerSize }
+            : {}),
           // need to set marker.line for a transparent case (opacity != 1)
           line:
             d.marker == null
@@ -231,7 +245,7 @@ const ScatterPlot = makePlotlyPlotComponent(
                 },
         },
       }));
-    }, [data, markerBodyOpacity]);
+    }, [data, markerBodyOpacity, defaultMarkerSize]);
 
     return {
       data: finalData,

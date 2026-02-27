@@ -288,6 +288,7 @@ interface Options
   hideLogScale?: boolean;
   returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
   sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
+  defaultMarkerSize?: number; // Default marker size in px (Plotly default is 6)
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -1425,6 +1426,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     // need to define markerColorOpacity for faceted plot
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
+    defaultMarkerSize: options?.defaultMarkerSize,
   };
 
   const plotNode = (
