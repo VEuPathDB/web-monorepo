@@ -21,6 +21,7 @@ import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { logScaleDtick } from '../utils/logscale-dtick';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
+import './ScatterPlot.scss';
 
 export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
@@ -128,13 +129,7 @@ const ScatterPlot = makePlotlyPlotComponent(
 
     const layout: Partial<Layout> = {
       hovermode: 'closest',
-      hoverlabel: {
-        font: {
-          // Increase font weight for better readability with lighter overlay colors.
-          // Cast needed because @types/plotly.js may not include 'weight' yet.
-          weight: 700,
-        } as Partial<Font>,
-      },
+      // hover overlay label font styling in ScatterPlot.scss
       xaxis: {
         title: independentAxisLabel,
         // truncation
