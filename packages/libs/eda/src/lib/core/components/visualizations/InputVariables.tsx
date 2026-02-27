@@ -441,10 +441,15 @@ export function InputVariables(props: Props) {
                       </Tooltip>
                       {isAutoReadonly ? (
                         <span style={{ height: '32px', lineHeight: '32px' }}>
-                          {findEntityAndVariable(
-                            entities,
-                            selectedVariables[input.name]
-                          )?.variable.displayName ?? ''}
+                          {(() => {
+                            const foundEnV = findEntityAndVariable(
+                              entities,
+                              selectedVariables[input.name]
+                            );
+                            return foundEnV
+                              ? `${foundEnV.entity.displayName} > ${foundEnV.variable.displayName}`
+                              : '';
+                          })()}
                         </span>
                       ) : input.providedOptionalVariable ? (
                         // render a radio button to choose between provided and nothing

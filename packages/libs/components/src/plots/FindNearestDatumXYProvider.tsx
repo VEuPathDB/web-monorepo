@@ -106,7 +106,7 @@ export function FindNearestDatumXYProvider({
           ...nearestResult,
         });
       } else {
-        currentShowTooltip(params);
+        return;
       }
     },
     [] // Stable callback: uses refs for latest values
