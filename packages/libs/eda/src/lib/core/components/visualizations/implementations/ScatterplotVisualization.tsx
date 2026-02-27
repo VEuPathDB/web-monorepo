@@ -1440,19 +1440,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const enableAnnotationTooltip = options?.enableAnnotationTooltip ?? false;
   const subsettingClient = useSubsettingClient();
 
-  // Get the root entity and its variables for annotation display
-  const rootEntity = studyMetadata.rootEntity;
+  // Get the output entity and its variables for annotation display
   const annotationVariables = useMemo(() => {
-    if (!enableAnnotationTooltip) return [];
-    // Get all non-hidden Variable nodes on the root entity, excluding category nodes and merge keys
-    return rootEntity.variables.filter(
+    if (!enableAnnotationTooltip || !outputEntity) return [];
+    // Get all non-hidden Variable nodes on the output entity, excluding category nodes and merge keys
+    return outputEntity.variables.filter(
       (v): v is Variable =>
         Variable.is(v) &&
         !v.hideFrom?.includes('variableTree') &&
         !v.hideFrom?.includes('everywhere') &&
         !v.isMergeKey
     );
-  }, [enableAnnotationTooltip, rootEntity.variables]);
+  }, [enableAnnotationTooltip, outputEntity]);
 
   // Build the output variable IDs for the tabular data request
   const annotationVariableIds = useMemo(
@@ -1460,12 +1459,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [annotationVariables]
   );
 
-  // Fetch tabular data for all root entity variables
+  // Fetch tabular data for all output entity variables
   const annotationData = useCachedPromise(
     async () => {
       const response = await subsettingClient.getTabularData(
         studyId,
-        rootEntity.id,
+        outputEntity!.id,
         {
           filters: filters ?? [],
           outputVariableIds: annotationVariableIds,
@@ -1496,7 +1495,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [
       enableAnnotationTooltip ? 'annotationData' : null,
       studyId,
-      rootEntity.id,
+      outputEntity?.id,
       filters,
       annotationVariableIds,
     ],
@@ -1563,12 +1562,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // Build annotation rows for the pinned point
   const pinnedAnnotationRows: AnnotationRow[] = useMemo(() => {
-    if (!pinnedAnnotation || !annotationData.value) return [];
+    if (!pinnedAnnotation || !annotationData.value || !outputEntity) return [];
     const record = annotationData.value.get(pinnedAnnotation.pointId);
     if (!record) return [];
     return annotationVariables
       .map((v) => {
-        const headerKey = `${rootEntity.id}.${v.id}`;
+        const headerKey = `${outputEntity.id}.${v.id}`;
         const value = record[headerKey];
         return value != null
           ? { displayName: v.displayName, value }
@@ -1579,7 +1578,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     pinnedAnnotation,
     annotationData.value,
     annotationVariables,
-    rootEntity.id,
+    outputEntity,
   ]);
 
   const plotNode = (

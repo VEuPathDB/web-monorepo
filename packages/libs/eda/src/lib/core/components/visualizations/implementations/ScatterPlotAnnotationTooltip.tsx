@@ -57,13 +57,15 @@ const ScatterPlotAnnotationTooltip = forwardRef<
           No annotations available
         </div>
       ) : (
-        <table>
-          <tbody>
-            {annotations.map((row) => (
-              <AnnotationRowItem key={row.displayName} row={row} />
-            ))}
-          </tbody>
-        </table>
+        <div className="ScatterAnnotationTooltip__body">
+          <table>
+            <tbody>
+              {annotations.map((row) => (
+                <AnnotationRowItem key={row.displayName} row={row} />
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       <div className="ScatterAnnotationTooltip__hint">

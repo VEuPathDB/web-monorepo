@@ -30,25 +30,30 @@
   opacity: 1;
 }
 
-.ScatterAnnotationTooltip > table {
+.ScatterAnnotationTooltip__body {
+  max-height: 168px; /* ~6 rows */
+  overflow-y: auto;
+}
+
+.ScatterAnnotationTooltip__body > table {
   border-collapse: collapse;
   width: 100%;
   margin: 0;
 }
 
-.ScatterAnnotationTooltip > table td {
+.ScatterAnnotationTooltip__body > table td {
   padding: 2px 0;
   vertical-align: top;
   line-height: 1.4;
 }
 
-.ScatterAnnotationTooltip > table td:first-child {
+.ScatterAnnotationTooltip__body > table td:first-child {
   font-weight: bold;
   white-space: nowrap;
   padding-right: 8px;
 }
 
-.ScatterAnnotationTooltip > table td:nth-child(2) {
+.ScatterAnnotationTooltip__body > table td:nth-child(2) {
   word-break: break-word;
 }
 
