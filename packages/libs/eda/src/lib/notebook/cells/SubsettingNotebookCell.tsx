@@ -11,6 +11,7 @@ import { NotebookCellProps } from '../NotebookCell';
 import { SubsetCellDescriptor } from '../Types';
 import ExpandablePanel from '@veupathdb/coreui/lib/components/containers/ExpandablePanel';
 import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
+import { makeEntityDisplayName } from '../../core/utils/study-metadata';
 
 export function SubsettingNotebookCell(
   props: NotebookCellProps<SubsetCellDescriptor>
@@ -44,12 +45,37 @@ export function SubsettingNotebookCell(
     analysisState.analysis?.descriptor.subset.descriptor
   );
 
+  const subTitle = useMemo(() => {
+    if (filteredCountsResult.pending || totalCountsResult.pending)
+      return 'Please wait...';
+    const rootEntity = entities[0];
+    if (
+      !rootEntity ||
+      filteredCountsResult.value == null ||
+      totalCountsResult.value == null
+    )
+      return undefined;
+    const filteredCount = filteredCountsResult.value[rootEntity.id];
+    const totalCount = totalCountsResult.value[rootEntity.id];
+    if (filteredCount == null || totalCount == null) return undefined;
+    const entityLabel = makeEntityDisplayName(rootEntity, totalCount !== 1);
+    if (filteredCount === totalCount)
+      return `${totalCount.toLocaleString()} ${entityLabel}`;
+    return `${filteredCount.toLocaleString()} of ${totalCount.toLocaleString()} ${entityLabel}`;
+  }, [
+    entities,
+    filteredCountsResult.pending,
+    filteredCountsResult.value,
+    totalCountsResult.pending,
+    totalCountsResult.value,
+  ]);
+
   return (
     <>
       <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
       <ExpandablePanel
         title={cell.title}
-        subTitle={''}
+        subTitle={subTitle ?? ''}
         state={cell.initialPanelState ?? 'open'}
         themeRole="primary"
       >

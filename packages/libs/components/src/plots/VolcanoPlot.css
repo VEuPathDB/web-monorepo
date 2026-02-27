@@ -1,5 +1,16 @@
 .visx-tooltip {
   z-index: 1;
+  /* Hide the first frame to mask visx's snap-to-datum repositioning flash */
+  animation: visx-tooltip-fadein 0ms 150ms both;
+}
+
+@keyframes visx-tooltip-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .VolcanoPlotTooltip {
@@ -25,4 +36,99 @@
 
 .VolcanoPlotTooltip > ul > li > span {
   font-weight: bold;
+}
+
+.VolcanoPlotTooltip__hint {
+  margin-top: 6px;
+  font-size: 10px;
+  opacity: 0.75;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Pinned tooltip */
+.VolcanoPlotPinnedTooltip {
+  position: absolute;
+  z-index: 2;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+  transform: translate(10px, -100%);
+  max-width: 300px;
+}
+
+.VolcanoPlotPinnedTooltip > .pseudo-hr {
+  margin: 5px auto;
+  height: 1px;
+  width: 100%;
+}
+
+.VolcanoPlotPinnedTooltip > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.5em;
+  font-weight: normal;
+}
+
+.VolcanoPlotPinnedTooltip > ul > li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.VolcanoPlotPinnedTooltip > ul > li > span {
+  font-weight: bold;
+}
+
+.VolcanoPlotPinnedTooltip__close-btn {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.VolcanoPlotPinnedTooltip__close-btn:hover {
+  opacity: 1;
+}
+
+.VolcanoPlotPinnedTooltip__copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.7;
+  color: inherit;
+  line-height: 1;
+}
+
+.VolcanoPlotPinnedTooltip__copy-btn:focus,
+.VolcanoPlotPinnedTooltip__copy-btn:active {
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.VolcanoPlotPinnedTooltip__copy-btn:hover {
+  opacity: 1;
+}
+
+.VolcanoPlotPinnedTooltip__hint {
+  margin-top: 4px;
+  font-size: 10px;
+  opacity: 0.65;
+  text-align: center;
+  font-style: italic;
 }

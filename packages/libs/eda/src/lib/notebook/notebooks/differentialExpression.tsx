@@ -11,6 +11,7 @@ import { useFindEntityAndVariable } from '../../core/hooks/workspace';
 import { DifferentialExpressionConfig } from '../../core/types/apps';
 import { PresetNotebook, TextCellContext } from '../Types';
 import { ReviewCard, ReviewRow } from '../components/ReviewCard';
+import { useGroupCounts } from '../../core/hooks/groupCounts';
 import { withResolvedSharedInputNames } from './utils';
 
 function isDEReadyToReviewAndSubmit(
@@ -71,6 +72,20 @@ function DEReviewContent({
     ?.map((r) => r.label)
     .join(', ');
 
+  const { groupACount, groupBCount, groupACountPending, groupBCountPending } =
+    useGroupCounts(
+      deConfig?.comparator?.variable,
+      deConfig?.comparator?.groupA,
+      deConfig?.comparator?.groupB,
+      filters
+    );
+
+  const formatCount = (count: number | undefined, pending: boolean): string => {
+    if (pending) return ' (please wait...)';
+    if (count == null) return '';
+    return ` (${count.toLocaleString()} sample${count !== 1 ? 's' : ''})`;
+  };
+
   const sharedInputsStep = stepNumbers?.get('de_shared_inputs');
   const deseq2Step = stepNumbers?.get('de_deseq2_compute');
   const volcanoStep = stepNumbers?.get('de_volcano');
@@ -83,7 +98,7 @@ function DEReviewContent({
       {isReady && (
         <p style={{ margin: 0 }}>
           Click <strong>"{submitButtonText}"</strong> below to retrieve genes
-          matching the criteria below.
+          matching the following criteria:
         </p>
       )}
       <ReviewCard
@@ -126,8 +141,22 @@ function DEReviewContent({
           label="Metadata variable"
           value={comparatorVarInfo?.variable.displayName ?? '—'}
         />
-        <ReviewRow label="Reference group (A)" value={groupALabels ?? '—'} />
-        <ReviewRow label="Comparison group (B)" value={groupBLabels ?? '—'} />
+        <ReviewRow
+          label="Reference group (A)"
+          value={
+            groupALabels
+              ? groupALabels + formatCount(groupACount, groupACountPending)
+              : '—'
+          }
+        />
+        <ReviewRow
+          label="Comparison group (B)"
+          value={
+            groupBLabels
+              ? groupBLabels + formatCount(groupBCount, groupBCountPending)
+              : '—'
+          }
+        />
       </ReviewCard>
 
       <ReviewCard title="Volcano Thresholds">

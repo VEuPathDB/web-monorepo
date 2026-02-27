@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   Computation,
   Visualization,
@@ -220,23 +220,43 @@ export function assertComputationWithConfig<ConfigType>(
   pipe(decoder.decode(computation), fold(onLeft, onRight));
 }
 
-export function useConfigChangeHandler<ConfigType>(
+export function useComputation(
   analysisState: AnalysisState,
-  computation: Computation<ConfigType>,
+  computationId: string
+): Computation {
+  return useMemo(() => {
+    const comp = analysisState.analysis?.descriptor.computations.find(
+      (c) => c.computationId === computationId
+    );
+    if (!comp) throw new Error(`Cannot find computation: ${computationId}`);
+    return comp;
+  }, [analysisState.analysis?.descriptor.computations, computationId]);
+}
+
+export function useConfigChangeHandler(
+  analysisState: AnalysisState,
+  computationId: string,
   visualizationId: string
 ) {
+  const computation = useComputation(analysisState, computationId);
   const { url } = useRouteMatch();
   const history = useHistory();
   return useCallback(
-    (
-      propertyName: keyof ConfigType,
-      value: ConfigType[typeof propertyName]
-    ) => {
+    (propertyName: string, value: any | ((current: any) => any)) => {
       const { configuration } = computation.descriptor;
+      const resolvedValue =
+        typeof value === 'function'
+          ? (value as Function)(
+              (configuration as Record<string, any>)?.[propertyName]
+            )
+          : value;
       handleConfigurationChanges(
         analysisState,
         computation,
-        { ...configuration, [propertyName]: value },
+        {
+          ...(configuration as Record<string, any>),
+          [propertyName]: resolvedValue,
+        },
         visualizationId,
         url,
         history

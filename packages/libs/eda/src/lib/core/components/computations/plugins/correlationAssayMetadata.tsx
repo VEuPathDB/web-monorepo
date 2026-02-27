@@ -3,6 +3,7 @@ import { VariableTreeNode, useFindEntityAndVariableCollection } from '../../..';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { partial } from 'lodash';
 import {
+  useComputation,
   useConfigChangeHandler,
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
@@ -146,11 +147,12 @@ export function CorrelationAssayMetadataConfiguration(
 ) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
   } = props;
 
+  const computation = useComputation(analysisState, computationId);
   const configuration = computation.descriptor
     .configuration as CorrelationConfig;
 
@@ -158,7 +160,7 @@ export function CorrelationAssayMetadataConfiguration(
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

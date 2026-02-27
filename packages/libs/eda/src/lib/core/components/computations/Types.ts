@@ -17,10 +17,13 @@ export interface ComputationProps {
 }
 
 export interface ComputationConfigProps extends ComputationProps {
-  computation: Computation;
+  computationId: string;
   visualizationId: string;
   addNewComputation: (name: string, configuration: unknown) => void;
-  changeConfigHandlerOverride?: (propertyName: string, value: any) => void;
+  changeConfigHandlerOverride?: (
+    propertyName: string,
+    value: any | ((current: any) => any)
+  ) => void;
   showStepNumber?: boolean; // Whether to show step number (NumberedHeader)
   showExpandableHelp?: boolean; // If computation has expandable help, determines whether or not to show it.
   additionalCollectionPredicate?: (
@@ -28,6 +31,7 @@ export interface ComputationConfigProps extends ComputationProps {
   ) => boolean; // Additional constraints for allowed collection variables
   hideConfigurationComponent?: boolean; // Whether to hide the configuration component entirely
   readonlyInputNames?: string[]; // Input names managed externally (e.g. by SharedComputeInputsNotebookCell). Plugins render these as read-only.
+  onCountGatingChange?: (result: CountGatingResult | undefined) => void; // Callback for config-level count gating (e.g. per-group sample counts)
 }
 
 export interface ComputationOverviewProps extends ComputationProps {}
@@ -64,4 +68,24 @@ export interface ComputationPlugin {
   additionalCollectionPredicate?: (
     collection: CollectionVariableTreeNode
   ) => boolean;
+  /**
+   * Optional. Called with a map of named filtered count states.
+   * Currently always contains `'root'` (the root/sample entity count).
+   * Future use: group-level counts (e.g. `'group_A'`, `'group_B'`) for DESeq.
+   * Returns a gating result: ok, pending (counts still loading), or a warning string.
+   */
+  getCountWarning?: (
+    counts: Record<string, FilteredCountState>,
+    configuration: unknown
+  ) => CountGatingResult;
 }
+
+export type FilteredCountState = {
+  pending: boolean;
+  value: number | undefined;
+};
+
+export type CountGatingResult =
+  | { type: 'ok' }
+  | { type: 'pending' }
+  | { type: 'warning'; message: string };

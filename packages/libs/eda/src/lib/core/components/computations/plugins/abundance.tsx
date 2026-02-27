@@ -8,6 +8,7 @@ import {
   assertComputationWithConfig,
   isNotAbsoluteAbundanceVariableCollection,
   partialToCompleteCodec,
+  useComputation,
   useConfigChangeHandler,
 } from '../Utils';
 import * as t from 'io-ts';
@@ -150,16 +151,17 @@ const ABUNDANCE_METHODS = [
 export function AbundanceConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
-    computation,
+    computationId,
     analysisState,
     visualizationId,
   } = props;
+  const computation = useComputation(analysisState, computationId);
   assertComputationWithConfig(computation, AbundanceConfig);
   const configuration = computation.descriptor.configuration;
 
   const changeConfigHandler = useConfigChangeHandler(
     analysisState,
-    computation,
+    computationId,
     visualizationId
   );
 

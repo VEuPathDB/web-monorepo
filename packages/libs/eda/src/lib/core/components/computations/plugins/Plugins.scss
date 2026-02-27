@@ -83,6 +83,11 @@
   }
 }
 
+.RunComputeButtonContainer {
+  display: flex;
+  flex-direction: column;
+}
+
 .RunComputeButton {
   display: flex;
   gap: 1em;

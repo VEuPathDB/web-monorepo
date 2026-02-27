@@ -5,44 +5,63 @@ import { Tooltip } from '@veupathdb/coreui';
 import { JobStatus } from './ComputeJobStatusHook';
 import { removeParentheticals } from '../../utils/string-formatters';
 import './plugins/Plugins.scss';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { CountGatingResult } from './Types';
 
 interface Props {
   computationAppOverview: ComputationAppOverview;
   status?: JobStatus;
   isConfigured: boolean;
   createJob: () => void;
+  countGating?: CountGatingResult;
 }
 
 export function RunComputeButton(props: Props) {
-  const { computationAppOverview, status, isConfigured, createJob } = props;
+  const {
+    computationAppOverview,
+    status,
+    isConfigured,
+    createJob,
+    countGating,
+  } = props;
 
   return computationAppOverview.computeName ? (
-    <div className="RunComputeButton">
-      <FilledButton
-        themeRole="primary"
-        // Remove any parentheticals from the button text
-        text={`Generate ${removeParentheticals(
-          computationAppOverview.displayName
-        )} results`}
-        textTransform="none"
-        onPress={createJob}
-        disabled={!status || !['no-such-job', 'expired'].includes(status)}
-      />
-      <div
-        style={{
-          display: 'inline-flex',
-          gap: '.5em',
-          fontWeight: 'bold',
-        }}
-      >
-        Status:{' '}
-        {status ? (
-          <StatusIcon status={status} showLabel />
-        ) : isConfigured ? (
-          'Loading...'
-        ) : (
-          'Not configured'
-        )}
+    <div className="RunComputeButtonContainer">
+      {countGating?.type === 'warning' && (
+        <Banner banner={{ type: 'warning', message: countGating.message }} />
+      )}
+      <div className="RunComputeButton">
+        <FilledButton
+          themeRole="primary"
+          // Remove any parentheticals from the button text
+          text={`Generate ${removeParentheticals(
+            computationAppOverview.displayName
+          )} results`}
+          textTransform="none"
+          onPress={createJob}
+          disabled={
+            countGating?.type === 'warning' ||
+            countGating?.type === 'pending' ||
+            !status ||
+            !['no-such-job', 'expired'].includes(status)
+          }
+        />
+        <div
+          style={{
+            display: 'inline-flex',
+            gap: '.5em',
+            fontWeight: 'bold',
+          }}
+        >
+          Status:{' '}
+          {status ? (
+            <StatusIcon status={status} showLabel />
+          ) : isConfigured ? (
+            'Loading...'
+          ) : (
+            'Not configured'
+          )}
+        </div>
       </div>
     </div>
   ) : null;
