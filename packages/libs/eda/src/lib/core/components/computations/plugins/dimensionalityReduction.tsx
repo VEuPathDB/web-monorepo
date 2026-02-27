@@ -85,6 +85,7 @@ export const plugin: ComputationPlugin = {
         hideLogScale: true,
         returnPointIds: false,
         sendComputedVariablesInRequest: true,
+        defaultMarkerSize: 8,
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },

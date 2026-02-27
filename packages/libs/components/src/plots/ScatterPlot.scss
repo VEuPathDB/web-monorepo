@@ -1,0 +1,20 @@
+/* make plotly overlay labels more legible */
+
+$hovertext-shadow-offset: 0.05em;
+$hovertext-shadow-color: #777;
+
+$hso: $hovertext-shadow-offset;
+$nhso: -$hovertext-shadow-offset;
+
+div.plot-container.plotly
+  div.user-select-none.svg-container
+  svg.main-svg
+  g.hoverlayer
+  g.hovertext
+  text.name {
+  font-weight: 500;
+  text-shadow: $hso 0 $hovertext-shadow-color, $nhso 0 $hovertext-shadow-color,
+    0 $hso $hovertext-shadow-color, 0 $nhso $hovertext-shadow-color;
+
+  letter-spacing: 0.06em;
+}
