@@ -21,7 +21,6 @@ export function useOutputEntity(
   const findEntityAndVariable = useFindEntityAndVariable();
   const entities = useStudyEntities();
   return useMemo(() => {
-    console.log({ providedEntityId });
     if (providedEntityId)
       return entities.find((e) => e.id === providedEntityId);
     const variableNames = dataElementDependencyOrder?.flat() ?? [

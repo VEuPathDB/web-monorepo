@@ -3,8 +3,10 @@ import {
   forwardRef,
   Ref,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from 'react';
 import {
   VolcanoPlotData,
@@ -144,6 +146,143 @@ function TruncationRectangle(props: TruncationRectangleProps) {
   );
 }
 
+interface PinnedTooltipProps {
+  datum: VolcanoPlotDataPoint;
+  x: number;
+  y: number;
+  effectSizeLabel: string;
+  statisticsFloors: StatisticsFloors;
+  onClose: () => void;
+}
+
+const PinnedTooltip = forwardRef<HTMLDivElement, PinnedTooltipProps>(
+  function PinnedTooltip(
+    { datum, x, y, effectSizeLabel, statisticsFloors, onClose },
+    ref
+  ) {
+    const [copied, setCopied] = useState(false);
+
+    const labels = datum.displayLabels ?? datum.pointIDs ?? [];
+    const labelText = labels.join(', ');
+
+    const handleCopy = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        navigator.clipboard.writeText(labelText).then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        });
+      },
+      [labelText]
+    );
+
+    const color =
+      datum.significanceColor === significanceColors['inconclusive']
+        ? 'black'
+        : 'white';
+
+    return (
+      <div
+        ref={ref}
+        className="VolcanoPlotPinnedTooltip"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          left: x,
+          top: y,
+          color,
+          background: datum.significanceColor,
+        }}
+      >
+        <button
+          type="button"
+          className="VolcanoPlotPinnedTooltip__close-btn"
+          onClick={(e) => {
+            e.preventDefault();
+            onClose();
+          }}
+          style={{ color }}
+          aria-label="Dismiss pinned tooltip"
+        >
+          &times;
+        </button>
+        <ul>
+          {labels.map((label) => (
+            <li key={label}>
+              <span>{label}</span>
+              <button
+                type="button"
+                className="VolcanoPlotPinnedTooltip__copy-btn"
+                onClick={handleCopy}
+                title="Copy to clipboard"
+              >
+                {copied ? (
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                ) : (
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div
+          className="pseudo-hr"
+          style={{ borderBottom: `1px solid ${color}` }}
+        ></div>
+        <ul>
+          <li>
+            <span>{effectSizeLabel}:</span> {datum.effectSize}
+          </li>
+          <li>
+            <span>P Value:</span>{' '}
+            {datum.pValue
+              ? Number(datum.pValue) <= statisticsFloors.pValueFloor
+                ? '<= ' + statisticsFloors.pValueFloor
+                : datum.pValue
+              : 'n/a'}
+          </li>
+          <li>
+            <span>Adjusted P Value:</span>{' '}
+            {datum.adjustedPValue
+              ? statisticsFloors.adjustedPValueFloor &&
+                Number(datum.adjustedPValue) <=
+                  statisticsFloors.adjustedPValueFloor &&
+                Number(datum.pValue) <= statisticsFloors.pValueFloor
+                ? '<= ' + statisticsFloors.adjustedPValueFloor
+                : datum.adjustedPValue
+              : 'n/a'}
+          </li>
+        </ul>
+        <div className="VolcanoPlotPinnedTooltip__hint">
+          Click a point to pin this tooltip
+        </div>
+      </div>
+    );
+  }
+);
+
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
  * The standard volcano plot has -log2(Fold Change) as the x axis and -log10(raw p value)
@@ -182,6 +321,36 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     }),
     [toImage]
   );
+
+  // Pinned tooltip state
+  const [pinnedDatum, setPinnedDatum] = useState<{
+    datum: VolcanoPlotDataPoint;
+    x: number;
+    y: number;
+  } | null>(null);
+  const pinnedTooltipRef = useRef<HTMLDivElement>(null);
+
+  // Dismiss pinned tooltip on click-away
+  useEffect(() => {
+    if (!pinnedDatum) return;
+    function handleClickAway(e: MouseEvent) {
+      if (
+        pinnedTooltipRef.current &&
+        !pinnedTooltipRef.current.contains(e.target as Node)
+      ) {
+        setPinnedDatum(null);
+      }
+    }
+    // Delay listener so the click that pinned doesn't immediately dismiss
+    const timeout = setTimeout(
+      () => document.addEventListener('pointerdown', handleClickAway),
+      0
+    );
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener('pointerdown', handleClickAway);
+    };
+  }, [pinnedDatum]);
 
   const effectSizeLabel = data.effectSizeLabel;
 
@@ -263,6 +432,100 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     },
   };
 
+  // Handle click-to-pin: find nearest datum using Euclidean distance in SVG space
+  const handlePlotClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const svg = plotRef.current?.querySelector('svg');
+      if (!svg) return;
+
+      // Convert client coords to SVG coords
+      const point = svg.createSVGPoint();
+      point.x = e.clientX;
+      point.y = e.clientY;
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const svgPoint = point.matrixTransform(ctm.inverse());
+
+      // Find nearest datum by Euclidean distance using the same accessors as the chart
+      // We need to convert data values to the same SVG pixel space.
+      // XYChart renders an inner svg, so we read scales from the rendered axes.
+      // Simpler: we can read the viewBox / dimensions and build a linear scale ourselves.
+      // But even simpler: visx XYChart exposes scales via DataContext — however we're
+      // outside the XYChart here. Instead, we can compute pixel positions from the
+      // SVG's own coordinate system by reading the axis tick positions...
+      //
+      // Actually the simplest reliable approach: the SVG rendered by XYChart has known
+      // margins and domains. We can map data coords to SVG coords using linear interpolation.
+      const svgWidth = svg.clientWidth || svg.getBoundingClientRect().width;
+      const svgHeight = svg.clientHeight || svg.getBoundingClientRect().height;
+      const marginLeft = MARGIN_DEFAULT + 10;
+      const marginRight = showFlooredDataAnnotation ? 150 : MARGIN_DEFAULT + 10;
+      const marginTop = MARGIN_DEFAULT;
+      const marginBottom = MARGIN_DEFAULT + 20;
+      const plotWidth = svgWidth - marginLeft - marginRight;
+      const plotHeight = svgHeight - marginTop - marginBottom;
+
+      const xDomainMin = xAxisMin - showXMinTruncationBar * xTruncationBarWidth;
+      const xDomainMax = xAxisMax + showXMaxTruncationBar * xTruncationBarWidth;
+      const yDomainMin =
+        yAxisMin - showYMinTruncationBar * yTruncationBarHeight;
+      const yDomainMax =
+        yAxisMax + showYMaxTruncationBar * yTruncationBarHeight;
+
+      function toSvgX(val: number) {
+        return (
+          marginLeft +
+          ((val - xDomainMin) / (xDomainMax - xDomainMin)) * plotWidth
+        );
+      }
+      function toSvgY(val: number) {
+        // y axis is inverted: higher data values -> lower SVG y
+        return (
+          marginTop +
+          ((yDomainMax - val) / (yDomainMax - yDomainMin)) * plotHeight
+        );
+      }
+
+      let nearestDatum: VolcanoPlotDataPoint | null = null;
+      let nearestDistSq = Infinity;
+
+      for (const d of data.statistics) {
+        const px = toSvgX(dataAccessors.xAccessor(d));
+        const py = toSvgY(dataAccessors.yAccessor(d));
+        const dx = px - svgPoint.x;
+        const dy = py - svgPoint.y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < nearestDistSq) {
+          nearestDistSq = distSq;
+          nearestDatum = d;
+        }
+      }
+
+      if (nearestDatum) {
+        setPinnedDatum({
+          datum: nearestDatum,
+          x: svgPoint.x,
+          y: svgPoint.y,
+        });
+      }
+    },
+    [
+      data.statistics,
+      dataAccessors,
+      xAxisMin,
+      xAxisMax,
+      yAxisMin,
+      yAxisMax,
+      showXMinTruncationBar,
+      showXMaxTruncationBar,
+      showYMinTruncationBar,
+      showYMaxTruncationBar,
+      xTruncationBarWidth,
+      yTruncationBarHeight,
+      showFlooredDataAnnotation,
+    ]
+  );
+
   // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
   return (
     <>
@@ -272,7 +535,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
       >
         <div
           ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work with domToImage
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', cursor: 'pointer' }}
+          onClick={handlePlotClick}
         >
           {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
@@ -304,262 +568,284 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             }}
           >
             <FindNearestDatumXYProvider>
-            {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
-            <Grid numTicks={6} lineStyle={gridStyles} />
-            <Axis
-              orientation="left"
-              label="-log10 Raw P Value"
-              {...axisStyles}
-            />
-            <Axis
-              orientation="bottom"
-              label={effectSizeLabel}
-              {...axisStyles}
-            />
+              {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
+              <Grid numTicks={6} lineStyle={gridStyles} />
+              <Axis
+                orientation="left"
+                label="-log10 Raw P Value"
+                {...axisStyles}
+              />
+              <Axis
+                orientation="bottom"
+                label={effectSizeLabel}
+                {...axisStyles}
+              />
 
-            {/* X axis annotations */}
-            {comparisonLabels &&
-              comparisonLabels.map((label, ind) => {
-                return (
-                  <Annotation
-                    key={ind}
-                    datum={{
-                      x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
-                      y:
-                        yAxisMin - showYMinTruncationBar * yTruncationBarHeight,
-                    }}
-                    dx={0}
-                    dy={-15}
-                    {...xyAccessors}
-                  >
-                    <AnnotationLabel
-                      subtitle={truncateWithEllipsis(label, 30)}
-                      horizontalAnchor="middle"
-                      verticalAnchor="start"
-                      showAnchorLine={false}
-                      showBackground={false}
-                      maxWidth={100}
-                    />
-                  </Annotation>
-                );
-              })}
+              {/* X axis annotations */}
+              {comparisonLabels &&
+                comparisonLabels.map((label, ind) => {
+                  return (
+                    <Annotation
+                      key={ind}
+                      datum={{
+                        x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
+                        y:
+                          yAxisMin -
+                          showYMinTruncationBar * yTruncationBarHeight,
+                      }}
+                      dx={0}
+                      dy={-15}
+                      {...xyAccessors}
+                    >
+                      <AnnotationLabel
+                        subtitle={truncateWithEllipsis(label, 30)}
+                        horizontalAnchor="middle"
+                        verticalAnchor="start"
+                        showAnchorLine={false}
+                        showBackground={false}
+                        maxWidth={100}
+                      />
+                    </Annotation>
+                  );
+                })}
 
-            {/* Draw threshold lines as annotations below the data points. The
+              {/* Draw threshold lines as annotations below the data points. The
           annotations use XYChart's theme and dimension context.
           The Annotation component holds the context for its children, which is why
           we make a new Annotation component for each line.
           Another option would be to make Line with LineSeries, but the default hover response
           is on the points instead of the line connecting them. */}
 
-            {/* Draw horizontal significance threshold */}
-            {significanceThreshold && showSignificanceThresholdLine && (
-              <Annotation
-                datum={{
-                  x: 0, // horizontal line so x could be anything
-                  y: -Math.log10(Number(significanceThreshold)),
-                }}
-                {...xyAccessors}
-              >
-                <AnnotationLineSubject
-                  orientation="horizontal"
-                  {...thresholdLineStyles}
-                />
-              </Annotation>
-            )}
-            {/* Draw both vertical effect size threshold lines */}
-            {effectSizeThreshold && (
-              <>
-                {showNegativeFoldChangeThresholdLine && (
-                  <Annotation
-                    datum={{
-                      x: -effectSizeThreshold,
-                      y: 0, // vertical line so y could be anything
-                    }}
-                    {...xyAccessors}
-                  >
-                    <AnnotationLineSubject {...thresholdLineStyles} />
-                  </Annotation>
-                )}
-                {showPositiveFoldChangeThresholdLine && (
-                  <Annotation
-                    datum={{
-                      x: effectSizeThreshold,
-                      y: 0, // vertical line so y could be anything
-                    }}
-                    {...xyAccessors}
-                  >
-                    <AnnotationLineSubject {...thresholdLineStyles} />
-                  </Annotation>
-                )}
-              </>
-            )}
+              {/* Draw horizontal significance threshold */}
+              {significanceThreshold && showSignificanceThresholdLine && (
+                <Annotation
+                  datum={{
+                    x: 0, // horizontal line so x could be anything
+                    y: -Math.log10(Number(significanceThreshold)),
+                  }}
+                  {...xyAccessors}
+                >
+                  <AnnotationLineSubject
+                    orientation="horizontal"
+                    {...thresholdLineStyles}
+                  />
+                </Annotation>
+              )}
+              {/* Draw both vertical effect size threshold lines */}
+              {effectSizeThreshold && (
+                <>
+                  {showNegativeFoldChangeThresholdLine && (
+                    <Annotation
+                      datum={{
+                        x: -effectSizeThreshold,
+                        y: 0, // vertical line so y could be anything
+                      }}
+                      {...xyAccessors}
+                    >
+                      <AnnotationLineSubject {...thresholdLineStyles} />
+                    </Annotation>
+                  )}
+                  {showPositiveFoldChangeThresholdLine && (
+                    <Annotation
+                      datum={{
+                        x: effectSizeThreshold,
+                        y: 0, // vertical line so y could be anything
+                      }}
+                      {...xyAccessors}
+                    >
+                      <AnnotationLineSubject {...thresholdLineStyles} />
+                    </Annotation>
+                  )}
+                </>
+              )}
 
-            {/* infinity y data annotation line */}
-            {showFlooredDataAnnotation && (
-              <Annotation
-                datum={{
-                  x: xAxisMax,
-                  y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
-                }}
-                {...xyAccessors}
-              >
-                <AnnotationLineSubject
-                  {...thresholdLineStyles}
-                  orientation="horizontal"
-                />
-                <AnnotationLabel
-                  title={'Values above this line are capped'}
-                  titleFontWeight={200}
-                  titleFontSize={12}
-                  horizontalAnchor="start"
-                  verticalAnchor="middle"
-                  showAnchorLine={false}
-                  showBackground={false}
-                />
-              </Annotation>
-            )}
+              {/* infinity y data annotation line */}
+              {showFlooredDataAnnotation && (
+                <Annotation
+                  datum={{
+                    x: xAxisMax,
+                    y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
+                  }}
+                  {...xyAccessors}
+                >
+                  <AnnotationLineSubject
+                    {...thresholdLineStyles}
+                    orientation="horizontal"
+                  />
+                  <AnnotationLabel
+                    title={'Values above this line are capped'}
+                    titleFontWeight={200}
+                    titleFontSize={12}
+                    horizontalAnchor="start"
+                    verticalAnchor="middle"
+                    showAnchorLine={false}
+                    showBackground={false}
+                  />
+                </Annotation>
+              )}
 
-            {/* The data itself */}
-            {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
+              {/* The data itself */}
+              {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
             down to those elements, but I haven't found it yet */}
-            <Group opacity={markerBodyOpacity}>
-              <GlyphSeries
-                dataKey={'data'} // unique key
-                data={data.statistics}
-                {...dataAccessors}
-                colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
-              />
-            </Group>
-            <Tooltip<VolcanoPlotDataPoint>
-              snapTooltipToDatumX
-              snapTooltipToDatumY
-              showVerticalCrosshair
-              showHorizontalCrosshair
-              horizontalCrosshairStyle={{ stroke: 'red' }}
-              verticalCrosshairStyle={{ stroke: 'red' }}
-              unstyled
-              applyPositionStyle
-              renderTooltip={(d) => {
-                const data = d.tooltipData?.nearestDatum?.datum;
-                /**
-                 * Notes regarding colors in the tooltips:
-                 *  1. We use the data point's significanceColor property for background color
-                 *  2. For color contrast reasons, color for text and hr's border is set conditionally:
-                 *      - if significanceColor matches the 'inconclusive' color (grey), we use black
-                 *      - else, we use white
-                 *   (white font meets contrast ratio threshold (min 3:1 for UI-y things) w/ #AC3B4E (red) and #0E8FAB (blue))
-                 */
-                const color =
-                  data?.significanceColor === significanceColors['inconclusive']
-                    ? 'black'
-                    : 'white';
-                return (
-                  <div
-                    className="VolcanoPlotTooltip"
-                    style={{
-                      color,
-                      background: data?.significanceColor,
-                    }}
-                  >
-                    <ul>
-                      {data?.displayLabels
-                        ? data.displayLabels.map((label) => (
-                            <li key={label}>
-                              <span>{label}</span>
-                            </li>
-                          ))
-                        : data?.pointIDs?.map((id) => (
-                            <li key={id}>
-                              <span>{id}</span>
-                            </li>
-                          ))}
-                    </ul>
-                    <div
-                      className="pseudo-hr"
-                      style={{ borderBottom: `1px solid ${color}` }}
-                    ></div>
-                    <ul>
-                      <li>
-                        <span>{effectSizeLabel}:</span> {data?.effectSize}
-                      </li>
-                      <li>
-                        <span>P Value:</span>{' '}
-                        {data?.pValue
-                          ? Number(data.pValue) <= statisticsFloors.pValueFloor
-                            ? '<= ' + statisticsFloors.pValueFloor
-                            : data?.pValue
-                          : 'n/a'}
-                      </li>
-                      <li>
-                        <span>Adjusted P Value:</span>{' '}
-                        {data?.adjustedPValue
-                          ? statisticsFloors.adjustedPValueFloor &&
-                            Number(data.adjustedPValue) <=
-                              statisticsFloors.adjustedPValueFloor &&
-                            Number(data.pValue) <= statisticsFloors.pValueFloor
-                            ? '<= ' + statisticsFloors.adjustedPValueFloor
-                            : data?.adjustedPValue
-                          : 'n/a'}
-                      </li>
-                    </ul>
-                  </div>
-                );
-              }}
-            />
+              <Group opacity={markerBodyOpacity}>
+                <GlyphSeries
+                  dataKey={'data'} // unique key
+                  data={data.statistics}
+                  {...dataAccessors}
+                  colorAccessor={(d: VolcanoPlotDataPoint) =>
+                    d.significanceColor
+                  }
+                />
+              </Group>
+              {!pinnedDatum && (
+                <Tooltip<VolcanoPlotDataPoint>
+                  snapTooltipToDatumX
+                  snapTooltipToDatumY
+                  showVerticalCrosshair
+                  showHorizontalCrosshair
+                  horizontalCrosshairStyle={{ stroke: 'red' }}
+                  verticalCrosshairStyle={{ stroke: 'red' }}
+                  unstyled
+                  applyPositionStyle
+                  renderTooltip={(d) => {
+                    const data = d.tooltipData?.nearestDatum?.datum;
+                    /**
+                     * Notes regarding colors in the tooltips:
+                     *  1. We use the data point's significanceColor property for background color
+                     *  2. For color contrast reasons, color for text and hr's border is set conditionally:
+                     *      - if significanceColor matches the 'inconclusive' color (grey), we use black
+                     *      - else, we use white
+                     *   (white font meets contrast ratio threshold (min 3:1 for UI-y things) w/ #AC3B4E (red) and #0E8FAB (blue))
+                     */
+                    const color =
+                      data?.significanceColor ===
+                      significanceColors['inconclusive']
+                        ? 'black'
+                        : 'white';
+                    return (
+                      <div
+                        className="VolcanoPlotTooltip"
+                        style={{
+                          color,
+                          background: data?.significanceColor,
+                        }}
+                      >
+                        <ul>
+                          {data?.displayLabels
+                            ? data.displayLabels.map((label) => (
+                                <li key={label}>
+                                  <span>{label}</span>
+                                </li>
+                              ))
+                            : data?.pointIDs?.map((id) => (
+                                <li key={id}>
+                                  <span>{id}</span>
+                                </li>
+                              ))}
+                        </ul>
+                        <div
+                          className="pseudo-hr"
+                          style={{ borderBottom: `1px solid ${color}` }}
+                        ></div>
+                        <ul>
+                          <li>
+                            <span>{effectSizeLabel}:</span> {data?.effectSize}
+                          </li>
+                          <li>
+                            <span>P Value:</span>{' '}
+                            {data?.pValue
+                              ? Number(data.pValue) <=
+                                statisticsFloors.pValueFloor
+                                ? '<= ' + statisticsFloors.pValueFloor
+                                : data?.pValue
+                              : 'n/a'}
+                          </li>
+                          <li>
+                            <span>Adjusted P Value:</span>{' '}
+                            {data?.adjustedPValue
+                              ? statisticsFloors.adjustedPValueFloor &&
+                                Number(data.adjustedPValue) <=
+                                  statisticsFloors.adjustedPValueFloor &&
+                                Number(data.pValue) <=
+                                  statisticsFloors.pValueFloor
+                                ? '<= ' + statisticsFloors.adjustedPValueFloor
+                                : data?.adjustedPValue
+                              : 'n/a'}
+                          </li>
+                        </ul>
+                        <div className="VolcanoPlotTooltip__hint">
+                          Click point to pin &amp; copy
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
+              )}
 
-            {/* Truncation indicators */}
-            {/* Example from https://airbnb.io/visx/docs/pattern */}
-            {!truncationBarFill && (
-              <PatternLines
-                id="lines"
-                height={5}
-                width={5}
-                stroke={'black'}
-                strokeWidth={1}
-                orientation={['diagonal']}
-                background="#FFF"
-              />
-            )}
-            {showXMinTruncationBar && (
-              <TruncationRectangle
-                x1={xAxisMin - xTruncationBarWidth}
-                x2={xAxisMin}
-                y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
-                y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
-                fill={truncationBarFill ?? "url('#lines')"}
-              />
-            )}
-            {showXMaxTruncationBar && (
-              <TruncationRectangle
-                x1={xAxisMax}
-                x2={xAxisMax + xTruncationBarWidth}
-                y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
-                y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
-                fill={truncationBarFill ?? "url('#lines')"}
-              />
-            )}
-            {showYMaxTruncationBar && (
-              <TruncationRectangle
-                x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
-                x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
-                y1={yAxisMax}
-                y2={yAxisMax + yTruncationBarHeight}
-                fill={truncationBarFill ?? "url('#lines')"}
-              />
-            )}
-            {showYMinTruncationBar && (
-              <TruncationRectangle
-                x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
-                x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
-                y1={yAxisMin - yTruncationBarHeight}
-                y2={yAxisMin}
-                fill={truncationBarFill ?? "url('#lines')"}
-              />
-            )}
+              {/* Truncation indicators */}
+              {/* Example from https://airbnb.io/visx/docs/pattern */}
+              {!truncationBarFill && (
+                <PatternLines
+                  id="lines"
+                  height={5}
+                  width={5}
+                  stroke={'black'}
+                  strokeWidth={1}
+                  orientation={['diagonal']}
+                  background="#FFF"
+                />
+              )}
+              {showXMinTruncationBar && (
+                <TruncationRectangle
+                  x1={xAxisMin - xTruncationBarWidth}
+                  x2={xAxisMin}
+                  y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
+                  y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
+                  fill={truncationBarFill ?? "url('#lines')"}
+                />
+              )}
+              {showXMaxTruncationBar && (
+                <TruncationRectangle
+                  x1={xAxisMax}
+                  x2={xAxisMax + xTruncationBarWidth}
+                  y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
+                  y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
+                  fill={truncationBarFill ?? "url('#lines')"}
+                />
+              )}
+              {showYMaxTruncationBar && (
+                <TruncationRectangle
+                  x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
+                  x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
+                  y1={yAxisMax}
+                  y2={yAxisMax + yTruncationBarHeight}
+                  fill={truncationBarFill ?? "url('#lines')"}
+                />
+              )}
+              {showYMinTruncationBar && (
+                <TruncationRectangle
+                  x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
+                  x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
+                  y1={yAxisMin - yTruncationBarHeight}
+                  y2={yAxisMin}
+                  fill={truncationBarFill ?? "url('#lines')"}
+                />
+              )}
             </FindNearestDatumXYProvider>
           </XYChart>
           {showSpinner && <Spinner />}
+          {pinnedDatum && (
+            <PinnedTooltip
+              ref={pinnedTooltipRef}
+              datum={pinnedDatum.datum}
+              x={pinnedDatum.x}
+              y={pinnedDatum.y}
+              effectSizeLabel={effectSizeLabel}
+              statisticsFloors={statisticsFloors}
+              onClose={() => setPinnedDatum(null)}
+            />
+          )}
         </div>
       </div>
       <ExportPlotToImageButton toImage={toImage} filename="Volcano" />
