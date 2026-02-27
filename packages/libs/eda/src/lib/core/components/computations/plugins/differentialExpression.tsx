@@ -639,6 +639,7 @@ export function DifferentialExpressionConfiguration(
             }
             toggleStarredVariable={toggleStarredVariable}
             labelWidth="12em"
+            flexDirection="column"
           />
         </div>
         <div className={cx('-DiffExpressionOuterConfigContainer')}>
@@ -663,6 +664,10 @@ export function DifferentialExpressionConfiguration(
                   '-InputContainer',
                   disableGroupValueSelectors && 'disabled'
                 )}
+                style={{
+                  flexWrap: 'wrap',
+                  justifyContent: 'end', // see flexGrow below also
+                }}
               >
                 <span>
                   Reference Group
@@ -742,7 +747,7 @@ export function DifferentialExpressionConfiguration(
                     ? { tooltip: 'Swap Group A and Group B values' }
                     : {})}
                 />
-                <span>
+                <span style={{ flexGrow: 1 }}>
                   Comparison Group
                   <br />
                   <span style={{ fontWeight: 'normal', fontStyle: 'italic' }}>
