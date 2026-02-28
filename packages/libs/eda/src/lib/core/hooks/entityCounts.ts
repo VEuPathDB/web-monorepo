@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { Filter } from '../types/filter';
 import {
   useStudyEntities,
@@ -27,23 +26,13 @@ export function useEntityCounts(filters?: Filter[]) {
       return {
         [STUB_ENTITY.id]: 0,
       };
+    // Errors propagate to react-query's retry/error handling via useCachedPromise
     const countsEntries = await Promise.all(
       entities.map(
         (entity): Promise<[string, number]> =>
           subsettingClient
             .getEntityCount(id, entity.id, debouncedFilters ?? [])
-            .then(
-              ({ count }) => [entity.id, count],
-              (error) => {
-                console.warn(
-                  'Could not load count for entity',
-                  entity.id,
-                  entity.displayName
-                );
-                console.error(error);
-                return [entity.id, 0];
-              }
-            )
+            .then(({ count }) => [entity.id, count])
       )
     );
     return Object.fromEntries(countsEntries);
