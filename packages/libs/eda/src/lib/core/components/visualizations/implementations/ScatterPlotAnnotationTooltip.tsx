@@ -1,5 +1,5 @@
-import { forwardRef, useCallback, useState } from 'react';
-import './ScatterPlotAnnotationTooltip.css';
+import { useCallback, useState } from 'react';
+import './ScatterPlotAnnotationTooltip.scss';
 
 /** A single row of annotation data: variable display name + value */
 export interface AnnotationRow {
@@ -7,57 +7,54 @@ export interface AnnotationRow {
   value: string;
 }
 
-interface ScatterPlotAnnotationTooltipProps {
+interface AnnotationPanelProps {
   /** Rows of annotation data (variable displayName -> value) */
   annotations: AnnotationRow[];
   /** Whether annotation data is still loading */
   loading?: boolean;
-  /** Pixel position relative to the plot container */
-  x: number;
-  y: number;
-  /** Called when the user dismisses the tooltip */
-  onClose: () => void;
+  /** Whether a point is currently pinned */
+  isPinned?: boolean;
+  /** Called to clear a pinned point */
+  onClear?: () => void;
 }
 
 /**
- * A pinnable tooltip for Plotly scatterplots that shows entity annotation data.
- * Styled similarly to the VolcanoPlot pinned tooltip but with a vertical table
- * layout of variable name/value pairs with individual copy buttons.
+ * Sidebar panel that displays entity annotation data for a hovered or pinned
+ * scatterplot point. Renders as a card in the right sidebar column above
+ * BirdsEyeView.
  */
-const ScatterPlotAnnotationTooltip = forwardRef<
-  HTMLDivElement,
-  ScatterPlotAnnotationTooltipProps
->(function ScatterPlotAnnotationTooltip(
-  { annotations, loading, x, y, onClose },
-  ref
-) {
+export default function AnnotationPanel({
+  annotations,
+  loading,
+  isPinned,
+  onClear,
+}: AnnotationPanelProps) {
   return (
-    <div
-      ref={ref}
-      className="ScatterAnnotationTooltip"
-      onClick={(e) => e.stopPropagation()}
-      style={{ left: x, top: y }}
-    >
-      <button
-        type="button"
-        className="ScatterAnnotationTooltip__close-btn"
-        onClick={(e) => {
-          e.preventDefault();
-          onClose();
-        }}
-        aria-label="Dismiss tooltip"
-      >
-        &times;
-      </button>
+    <div className="AnnotationPanel">
+      <div className="AnnotationPanel__header">
+        <span className="AnnotationPanel__title">Sample Details</span>
+        {isPinned && (
+          <button
+            type="button"
+            className="AnnotationPanel__unpin-btn"
+            onClick={onClear}
+            title="Unpin and return to hover mode"
+          >
+            Unpin
+          </button>
+        )}
+      </div>
 
       {loading ? (
-        <div className="ScatterAnnotationTooltip__loading">Loading...</div>
+        <div className="AnnotationPanel__placeholder">
+          Loading annotation data...
+        </div>
       ) : annotations.length === 0 ? (
-        <div className="ScatterAnnotationTooltip__loading">
-          No annotations available
+        <div className="AnnotationPanel__placeholder">
+          Hover over a point to see sample details. Click to pin.
         </div>
       ) : (
-        <div className="ScatterAnnotationTooltip__body">
+        <div className="AnnotationPanel__body">
           <table>
             <tbody>
               {annotations.map((row) => (
@@ -67,13 +64,9 @@ const ScatterPlotAnnotationTooltip = forwardRef<
           </table>
         </div>
       )}
-
-      <div className="ScatterAnnotationTooltip__hint">
-        Click a point to pin this tooltip
-      </div>
     </div>
   );
-});
+}
 
 function AnnotationRowItem({ row }: { row: AnnotationRow }) {
   const [copied, setCopied] = useState(false);
@@ -97,7 +90,7 @@ function AnnotationRowItem({ row }: { row: AnnotationRow }) {
         {row.value}
         <button
           type="button"
-          className="ScatterAnnotationTooltip__copy-btn"
+          className="AnnotationPanel__copy-btn"
           onClick={handleCopy}
           title="Copy to clipboard"
         >
@@ -134,5 +127,3 @@ function AnnotationRowItem({ row }: { row: AnnotationRow }) {
     </tr>
   );
 }
-
-export default ScatterPlotAnnotationTooltip;

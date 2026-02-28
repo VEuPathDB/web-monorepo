@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Variable, StudyEntity } from '../types/study';
 import { Filter } from '../types/filter';
 import { useCachedPromise } from './cachedPromise';
@@ -32,9 +32,12 @@ interface UseAnnotationTooltipProps {
 }
 
 /**
- * Hook that encapsulates all annotation tooltip behaviour for a Plotly
- * scatterplot: fetching the tabular annotation data for the output entity,
- * managing pinned-tooltip state, and handling Plotly click / click-away events.
+ * Hook that encapsulates annotation tooltip behaviour for a Plotly scatterplot:
+ * fetching tabular annotation data for the output entity, managing hover and
+ * pinned-point state, and providing Plotly event handlers.
+ *
+ * The active point (whose annotations are displayed) is the pinned point if
+ * one exists, otherwise the hovered point.
  */
 export function useAnnotationTooltip({
   enabled,
@@ -78,7 +81,9 @@ export function useAnnotationTooltip({
       );
       // Build a lookup map: entityPK -> { header: value }
       // Response is string[][] where first row is headers
-      if (response.length < 2) return new Map<string, Record<string, string>>();
+      if (response.length < 2) {
+        return new Map<string, Record<string, string>>();
+      }
       const headers = response[0];
       const pkColIndex = 0;
       const lookup = new Map<string, Record<string, string>>();
@@ -103,87 +108,65 @@ export function useAnnotationTooltip({
     5 * 60 * 1000 // 5 minute cache
   );
 
-  // Pinned tooltip state
-  const [pinnedAnnotation, setPinnedAnnotation] = useState<{
-    pointId: string;
-    x: number;
-    y: number;
-  } | null>(null);
-  const pinnedTooltipRef = useRef<HTMLDivElement>(null);
-  const plotWrapperRef = useRef<HTMLDivElement>(null);
+  // Hover and pinned state
+  const [hoveredPointId, setHoveredPointId] = useState<string | null>(null);
+  const [pinnedPointId, setPinnedPointId] = useState<string | null>(null);
 
-  // Dismiss on click-away
-  useEffect(() => {
-    if (!pinnedAnnotation) return;
-    function handleClickAway(e: MouseEvent) {
-      const target = e.target as Node;
-      if (pinnedTooltipRef.current?.contains(target)) return;
-      if (plotWrapperRef.current?.contains(target)) return;
-      setPinnedAnnotation(null);
-    }
-    const timeout = setTimeout(
-      () => document.addEventListener('pointerdown', handleClickAway),
-      0
-    );
-    return () => {
-      clearTimeout(timeout);
-      document.removeEventListener('pointerdown', handleClickAway);
-    };
-  }, [pinnedAnnotation]);
+  const activePointId = pinnedPointId ?? hoveredPointId;
 
-  // Plotly click handler
-  const handlePlotlyClick = useCallback(
+  // Plotly event handlers
+  const handlePlotlyHover = useCallback(
     (event: any) => {
       if (!enabled) return;
-      const point = event.points?.[0];
-      if (!point) return;
-      const pointId = point.customdata as string | undefined;
-      if (!pointId) {
-        setPinnedAnnotation(null);
-        return;
-      }
-      const plotWrapper = plotWrapperRef.current;
-      if (!plotWrapper) return;
-      const rect = plotWrapper.getBoundingClientRect();
-      const mouseEvent = event.event as MouseEvent | undefined;
-      if (!mouseEvent) {
-        setPinnedAnnotation(null);
-        return;
-      }
-      setPinnedAnnotation({
-        pointId,
-        x: mouseEvent.clientX - rect.left,
-        y: mouseEvent.clientY - rect.top,
-      });
+      const pointId = event.points?.[0]?.customdata as string | undefined;
+      if (pointId) setHoveredPointId(pointId);
     },
     [enabled]
   );
 
-  // Build annotation rows for the pinned point
+  const handlePlotlyUnhover = useCallback(() => {
+    setHoveredPointId(null);
+  }, []);
+
+  const handlePlotlyClick = useCallback(
+    (event: any) => {
+      if (!enabled) return;
+      const pointId = event.points?.[0]?.customdata as string | undefined;
+      if (!pointId) {
+        setPinnedPointId(null);
+        return;
+      }
+      // Toggle: clicking the already-pinned point unpins it
+      setPinnedPointId((prev) => (prev === pointId ? null : pointId));
+    },
+    [enabled]
+  );
+
+  const clearPin = useCallback(() => setPinnedPointId(null), []);
+
+  // Build annotation rows for the active point
   const annotationRows: AnnotationRow[] = useMemo(() => {
-    if (!pinnedAnnotation || !annotationData.value || !outputEntity) return [];
-    const record = annotationData.value.get(pinnedAnnotation.pointId);
+    if (!activePointId || !annotationData.value || !outputEntity) return [];
+    const record = annotationData.value.get(activePointId);
     if (!record) return [];
     return annotationVariables
       .map((v) => {
-        const headerKey = `${outputEntity.id}.${v.id}`;
-        const raw = record[headerKey];
+        const raw = record[v.id];
         return raw != null
           ? { displayName: v.displayName, value: formatCellValue(raw) }
           : undefined;
       })
       .filter((r): r is AnnotationRow => r != null);
-  }, [pinnedAnnotation, annotationData.value, annotationVariables, outputEntity]);
-
-  const dismissTooltip = useCallback(() => setPinnedAnnotation(null), []);
+  }, [activePointId, annotationData.value, annotationVariables, outputEntity]);
 
   return {
     annotationRows,
     loading: annotationData.pending,
-    pinnedAnnotation,
+    isPinned: pinnedPointId != null,
+    activePointId,
+    handlePlotlyHover,
+    handlePlotlyUnhover,
     handlePlotlyClick,
-    dismissTooltip,
-    pinnedTooltipRef,
-    plotWrapperRef,
+    clearPin,
   };
 }

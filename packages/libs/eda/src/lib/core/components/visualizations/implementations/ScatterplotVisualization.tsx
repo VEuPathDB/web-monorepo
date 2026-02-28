@@ -155,7 +155,7 @@ import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/pl
 import { Override } from '../../../types/utility';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { useAnnotationTooltip } from '../../../hooks/annotationTooltip';
-import ScatterPlotAnnotationTooltip from './ScatterPlotAnnotationTooltip';
+import AnnotationPanel from './ScatterPlotAnnotationTooltip';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -1439,11 +1439,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
     annotationRows,
     loading: annotationLoading,
-    pinnedAnnotation,
+    isPinned,
+    handlePlotlyHover,
+    handlePlotlyUnhover,
     handlePlotlyClick,
-    dismissTooltip,
-    pinnedTooltipRef,
-    plotWrapperRef,
+    clearPin,
   } = useAnnotationTooltip({
     enabled: enableAnnotationTooltip,
     studyId,
@@ -1465,28 +1465,31 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           checkedLegendItems={checkedLegendItems}
         />
       ) : (
-        <div ref={plotWrapperRef} style={{ position: 'relative' }}>
-          <ScatterPlot
-            {...scatterplotProps}
-            ref={plotRef}
-            data={data.value?.dataSetProcess}
-            checkedLegendItems={checkedLegendItems}
-            markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
-            {...(enableAnnotationTooltip
-              ? { onClick: handlePlotlyClick }
-              : {})}
-          />
-          {enableAnnotationTooltip && pinnedAnnotation && (
-            <ScatterPlotAnnotationTooltip
-              ref={pinnedTooltipRef}
-              annotations={annotationRows}
-              loading={annotationLoading}
-              x={pinnedAnnotation.x}
-              y={pinnedAnnotation.y}
-              onClose={dismissTooltip}
-            />
-          )}
-        </div>
+        <ScatterPlot
+          {...scatterplotProps}
+          ref={plotRef}
+          data={
+            enableAnnotationTooltip && data.value?.dataSetProcess
+              ? {
+                  series: (
+                    data.value.dataSetProcess as ScatterPlotData
+                  ).series.map((s) => ({
+                    ...s,
+                    hoverinfo: 'none' as const,
+                  })),
+                }
+              : data.value?.dataSetProcess
+          }
+          checkedLegendItems={checkedLegendItems}
+          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
+          {...(enableAnnotationTooltip
+            ? {
+                onHover: handlePlotlyHover,
+                onUnhover: handlePlotlyUnhover,
+                onClick: handlePlotlyClick,
+              }
+            : {})}
+        />
       )}
     </>
   );
@@ -2025,6 +2028,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const tableGroupNode = (
     <>
+      {enableAnnotationTooltip &&
+        !data.pending &&
+        totalCounts.value &&
+        filteredCounts.value && (
+          <AnnotationPanel
+            annotations={annotationRows}
+            loading={annotationLoading}
+            isPinned={isPinned}
+            onClear={clearPin}
+          />
+        )}
       <BirdsEyeView
         completeCasesAllVars={
           data.pending ? undefined : data.value?.completeCasesAllVars
