@@ -292,7 +292,10 @@ interface Options
   sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
   defaultMarkerSize?: number; // Default marker size in px (Plotly default is 6)
   /** Enable pinnable annotation tooltips that show entity metadata on point click.
-   * Requires returnPointIds to also be true. */
+   * Requires returnPointIds to also be true, and the backend plugin to honour it.
+   * Note: currently this will also DISABLE the birds' eye view and completeness table.
+   * (because for PCA everything was always complete - easy to make this more configurable in future as needed)
+   */
   enableAnnotationTooltip?: boolean;
 }
 
