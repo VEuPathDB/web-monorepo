@@ -2037,6 +2037,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             loading={annotationLoading}
             isPinned={isPinned}
             onClear={clearPin}
+            entityDisplayName={outputEntity?.displayName}
           />
         )}
       <BirdsEyeView

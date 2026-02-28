@@ -1,9 +1,12 @@
 .AnnotationPanel {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: #fff;
+  border: 1px solid #bfbfbf;
+  background: #fafafa;
   font-size: 12px;
   margin-bottom: 10px;
+  height: 150px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
 .AnnotationPanel__header {
@@ -14,6 +17,7 @@
   border-bottom: 1px solid #eee;
   background: #f8f8f8;
   border-radius: 4px 4px 0 0;
+  flex-shrink: 0;
 }
 
 .AnnotationPanel__title {
@@ -29,11 +33,11 @@
   cursor: pointer;
   padding: 1px 6px;
   color: #555;
-}
 
-.AnnotationPanel__unpin-btn:hover {
-  background: #eee;
-  color: #333;
+  &:hover {
+    background: #eee;
+    color: #333;
+  }
 }
 
 .AnnotationPanel__placeholder {
@@ -41,34 +45,38 @@
   font-style: italic;
   color: #888;
   text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .AnnotationPanel__body {
-  max-height: 200px;
+  flex: 1;
   overflow-y: auto;
   padding: 4px 10px;
-}
 
-.AnnotationPanel__body > table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 0;
-}
+  > table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0;
 
-.AnnotationPanel__body > table td {
-  padding: 2px 0;
-  vertical-align: top;
-  line-height: 1.4;
-}
+    td {
+      padding: 2px 0;
+      vertical-align: top;
+      line-height: 1.4;
+    }
 
-.AnnotationPanel__body > table td:first-child {
-  font-weight: bold;
-  white-space: nowrap;
-  padding-right: 8px;
-}
+    td:first-child {
+      font-weight: bold;
+      white-space: nowrap;
+      padding-right: 8px;
+    }
 
-.AnnotationPanel__body > table td:nth-child(2) {
-  word-break: break-word;
+    td:nth-child(2) {
+      word-break: break-word;
+    }
+  }
 }
 
 .AnnotationPanel__copy-btn {
@@ -84,15 +92,15 @@
   color: #333;
   line-height: 1;
   vertical-align: middle;
-}
 
-.AnnotationPanel__copy-btn:focus,
-.AnnotationPanel__copy-btn:active {
-  outline: none;
-  background: transparent;
-  box-shadow: none;
-}
+  &:focus,
+  &:active {
+    outline: none;
+    background: transparent;
+    box-shadow: none;
+  }
 
-.AnnotationPanel__copy-btn:hover {
-  opacity: 1;
+  &:hover {
+    opacity: 1;
+  }
 }

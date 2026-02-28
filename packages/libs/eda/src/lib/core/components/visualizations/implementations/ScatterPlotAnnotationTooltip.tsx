@@ -16,6 +16,8 @@ interface AnnotationPanelProps {
   isPinned?: boolean;
   /** Called to clear a pinned point */
   onClear?: () => void;
+  /** Display name for the entity, defaults to 'Sample' */
+  entityDisplayName?: string;
 }
 
 /**
@@ -28,11 +30,14 @@ export default function AnnotationPanel({
   loading,
   isPinned,
   onClear,
+  entityDisplayName = 'Sample',
 }: AnnotationPanelProps) {
   return (
     <div className="AnnotationPanel">
       <div className="AnnotationPanel__header">
-        <span className="AnnotationPanel__title">Sample Details</span>
+        <span className="AnnotationPanel__title">
+          {entityDisplayName} Details
+        </span>
         {isPinned && (
           <button
             type="button"
@@ -51,7 +56,7 @@ export default function AnnotationPanel({
         </div>
       ) : annotations.length === 0 ? (
         <div className="AnnotationPanel__placeholder">
-          Hover over a point to see sample details. Click to pin.
+          Hover over a point to see detailed annotations. Click to pin.
         </div>
       ) : (
         <div className="AnnotationPanel__body">
