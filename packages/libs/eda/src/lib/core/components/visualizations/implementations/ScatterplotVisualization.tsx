@@ -154,6 +154,8 @@ import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/pl
 
 import { Override } from '../../../types/utility';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
+import { useAnnotationTooltip } from '../../../hooks/annotationTooltip';
+import AnnotationPanel from './ScatterPlotAnnotationTooltip';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -289,6 +291,12 @@ interface Options
   returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
   sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
   defaultMarkerSize?: number; // Default marker size in px (Plotly default is 6)
+  /** Enable pinnable annotation tooltips that show entity metadata on point click.
+   * Requires returnPointIds to also be true, and the backend plugin to honour it.
+   * Note: currently this will also DISABLE the birds' eye view and completeness table.
+   * (because for PCA everything was always complete - easy to make this more configurable in future as needed)
+   */
+  enableAnnotationTooltip?: boolean;
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -1429,6 +1437,23 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     defaultMarkerSize: options?.defaultMarkerSize,
   };
 
+  // --- Annotation tooltip ---
+  const enableAnnotationTooltip = options?.enableAnnotationTooltip ?? false;
+  const {
+    annotationRows,
+    loading: annotationLoading,
+    isPinned,
+    handlePlotlyHover,
+    handlePlotlyUnhover,
+    handlePlotlyClick,
+    clearPin,
+  } = useAnnotationTooltip({
+    enabled: enableAnnotationTooltip,
+    studyId,
+    outputEntity,
+    filters,
+  });
+
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1446,9 +1471,27 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         <ScatterPlot
           {...scatterplotProps}
           ref={plotRef}
-          data={data.value?.dataSetProcess}
+          data={
+            enableAnnotationTooltip && data.value?.dataSetProcess
+              ? {
+                  series: (
+                    data.value.dataSetProcess as ScatterPlotData
+                  ).series.map((s) => ({
+                    ...s,
+                    hoverinfo: 'none' as const,
+                  })),
+                }
+              : data.value?.dataSetProcess
+          }
           checkedLegendItems={checkedLegendItems}
           markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
+          {...(enableAnnotationTooltip
+            ? {
+                onHover: handlePlotlyHover,
+                onUnhover: handlePlotlyUnhover,
+                onClick: handlePlotlyClick,
+              }
+            : {})}
         />
       )}
     </>
@@ -1986,92 +2029,101 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       />
     ));
 
-  const tableGroupNode = (
-    <>
-      <BirdsEyeView
-        completeCasesAllVars={
-          data.pending ? undefined : data.value?.completeCasesAllVars
-        }
-        completeCasesAxesVars={
-          data.pending ? undefined : data.value?.completeCasesAxesVars
-        }
-        outputEntity={outputEntity}
-        stratificationIsActive={
-          overlayVariable != null || computedOverlayVariableDescriptor != null
-        }
-        enableSpinner={
-          xAxisVariable != null && yAxisVariable != null && !data.error
-        }
-        totalCounts={totalCounts.value}
-        filteredCounts={filteredCounts.value}
+  const tableGroupNode =
+    enableAnnotationTooltip && !data.pending && outputEntity ? (
+      <AnnotationPanel
+        annotations={annotationRows}
+        loading={annotationLoading}
+        isPinned={isPinned}
+        onClear={clearPin}
+        entityDisplayName={outputEntity.displayName}
       />
-      <VariableCoverageTable
-        completeCases={
-          data.value && !data.pending ? data.value?.completeCases : undefined
-        }
-        filteredCounts={filteredCounts}
-        outputEntityId={outputEntity?.id}
-        variableSpecs={[
-          {
-            role: 'X-axis',
-            required: true,
-            display: independentAxisLabel,
-            variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
-          },
-          {
-            role: 'Y-axis',
-            required: isVariableDescriptor(computedOverlayVariableDescriptor)
-              ? !computedOverlayVariableDescriptor?.variableId
-              : isVariableCollectionDescriptor(
-                  computedOverlayVariableDescriptor
-                )
-              ? !computedOverlayVariableDescriptor?.collectionId
-              : false,
-            display: dependentAxisLabel,
-            variable:
-              !computedOverlayVariableDescriptor && computedYAxisDescriptor
-                ? computedYAxisDescriptor
-                : vizConfig.yAxisVariable,
-          },
-          {
-            role: 'Overlay',
-            required: !!computedOverlayVariableDescriptor,
-            display: legendTitle,
-            variable:
-              (isVariableDescriptor(computedOverlayVariableDescriptor) ||
-                isVariableCollectionDescriptor(
-                  computedOverlayVariableDescriptor
-                )) &&
-              computedOverlayVariableDescriptor != null
-                ? computedOverlayVariableDescriptor
-                : vizConfig.overlayVariable,
-          },
-          ...additionalVariableCoverageTableRows,
-          {
-            role: 'Facet',
-            display: variableDisplayWithUnit(facetVariable),
-            variable: vizConfig.facetVariable,
-          },
-        ]}
-      />
-      {/* R-square table component: only display when overlay and/or facet variable exist */}
-      {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
-        data.value != null &&
-        !data.pending &&
-        (vizConfig.overlayVariable != null ||
-          vizConfig.facetVariable != null) && (
-          <ScatterplotRsquareTable
-            typedData={
-              !isFaceted(data.value.dataSetProcess)
-                ? { isFaceted: false, data: data.value.dataSetProcess.series }
-                : { isFaceted: true, data: data.value.dataSetProcess.facets }
-            }
-            overlayVariable={overlayVariable}
-            facetVariable={facetVariable}
-          />
-        )}
-    </>
-  );
+    ) : (
+      <>
+        <BirdsEyeView
+          completeCasesAllVars={
+            data.pending ? undefined : data.value?.completeCasesAllVars
+          }
+          completeCasesAxesVars={
+            data.pending ? undefined : data.value?.completeCasesAxesVars
+          }
+          outputEntity={outputEntity}
+          stratificationIsActive={
+            overlayVariable != null || computedOverlayVariableDescriptor != null
+          }
+          enableSpinner={
+            xAxisVariable != null && yAxisVariable != null && !data.error
+          }
+          totalCounts={totalCounts.value}
+          filteredCounts={filteredCounts.value}
+        />
+        <VariableCoverageTable
+          completeCases={
+            data.value && !data.pending ? data.value?.completeCases : undefined
+          }
+          filteredCounts={filteredCounts}
+          outputEntityId={outputEntity?.id}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              required: true,
+              display: independentAxisLabel,
+              variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              required: isVariableDescriptor(computedOverlayVariableDescriptor)
+                ? !computedOverlayVariableDescriptor?.variableId
+                : isVariableCollectionDescriptor(
+                    computedOverlayVariableDescriptor
+                  )
+                ? !computedOverlayVariableDescriptor?.collectionId
+                : false,
+              display: dependentAxisLabel,
+              variable:
+                !computedOverlayVariableDescriptor && computedYAxisDescriptor
+                  ? computedYAxisDescriptor
+                  : vizConfig.yAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              required: !!computedOverlayVariableDescriptor,
+              display: legendTitle,
+              variable:
+                (isVariableDescriptor(computedOverlayVariableDescriptor) ||
+                  isVariableCollectionDescriptor(
+                    computedOverlayVariableDescriptor
+                  )) &&
+                computedOverlayVariableDescriptor != null
+                  ? computedOverlayVariableDescriptor
+                  : vizConfig.overlayVariable,
+            },
+            ...additionalVariableCoverageTableRows,
+            {
+              role: 'Facet',
+              display: variableDisplayWithUnit(facetVariable),
+              variable: vizConfig.facetVariable,
+            },
+          ]}
+        />
+        {/* R-square table component: only display when overlay and/or facet variable exist */}
+        {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
+          data.value != null &&
+          !data.pending &&
+          (vizConfig.overlayVariable != null ||
+            vizConfig.facetVariable != null) && (
+            <ScatterplotRsquareTable
+              typedData={
+                !isFaceted(data.value.dataSetProcess)
+                  ? { isFaceted: false, data: data.value.dataSetProcess.series }
+                  : { isFaceted: true, data: data.value.dataSetProcess.facets }
+              }
+              overlayVariable={overlayVariable}
+              facetVariable={facetVariable}
+            />
+          )}
+      </>
+    );
 
   // plot subtitle
   const plotSubtitle =

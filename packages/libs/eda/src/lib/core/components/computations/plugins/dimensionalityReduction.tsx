@@ -83,9 +83,10 @@ export const plugin: ComputationPlugin = {
         hideTrendlines: true,
         hideFacetInputs: true,
         hideLogScale: true,
-        returnPointIds: false,
+        returnPointIds: true,
         sendComputedVariablesInRequest: true,
         defaultMarkerSize: 8,
+        enableAnnotationTooltip: true,
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },

@@ -194,10 +194,12 @@ const ScatterPlot = makePlotlyPlotComponent(
       shapes: truncatedAxisHighlighting,
     };
 
-    // change data here for marker opacity and default marker size
+    // change data here for marker opacity, default marker size, and customdata
     const finalData = useMemo(() => {
       return data.series.map((d: any) => ({
         ...d,
+        // Pass pointIds as Plotly customdata so click handlers can identify points
+        ...(d.pointIds ? { customdata: d.pointIds } : {}),
         marker: {
           ...d.marker,
           color:

@@ -40,6 +40,8 @@ export type ScatterPlotDataSeries = {
   opacity?: number;
   /** add a prop to check whether smoothed mean exists */
   hasSmoothedMeanData?: boolean;
+  /** point IDs for identifying individual data points (passed as Plotly customdata) */
+  pointIds?: string[];
 };
 
 export type ScatterPlotData = {
