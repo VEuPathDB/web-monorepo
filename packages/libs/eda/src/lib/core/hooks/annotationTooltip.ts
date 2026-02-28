@@ -5,6 +5,25 @@ import { useCachedPromise } from './cachedPromise';
 import { useSubsettingClient } from './workspace';
 import { AnnotationRow } from '../components/visualizations/implementations/ScatterPlotAnnotationTooltip';
 
+/**
+ * Decode a tabular data cell value for display.
+ * Multi-valued EDA variables come back as JSON-encoded arrays, e.g.
+ * '["val1","val2"]'. Single values are plain strings or numbers.
+ */
+function formatCellValue(raw: string): string {
+  if (raw.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.join(', ');
+      }
+    } catch {
+      // not valid JSON — fall through to return raw
+    }
+  }
+  return raw;
+}
+
 interface UseAnnotationTooltipProps {
   enabled: boolean;
   studyId: string;
@@ -148,9 +167,9 @@ export function useAnnotationTooltip({
     return annotationVariables
       .map((v) => {
         const headerKey = `${outputEntity.id}.${v.id}`;
-        const value = record[headerKey];
-        return value != null
-          ? { displayName: v.displayName, value }
+        const raw = record[headerKey];
+        return raw != null
+          ? { displayName: v.displayName, value: formatCellValue(raw) }
           : undefined;
       })
       .filter((r): r is AnnotationRow => r != null);
