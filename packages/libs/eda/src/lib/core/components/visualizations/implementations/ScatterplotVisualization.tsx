@@ -2028,18 +2028,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const tableGroupNode = (
     <>
-      {enableAnnotationTooltip &&
-        !data.pending &&
-        totalCounts.value &&
-        filteredCounts.value && (
-          <AnnotationPanel
-            annotations={annotationRows}
-            loading={annotationLoading}
-            isPinned={isPinned}
-            onClear={clearPin}
-            entityDisplayName={outputEntity?.displayName}
-          />
-        )}
+      {enableAnnotationTooltip && !data.pending && outputEntity && (
+        <AnnotationPanel
+          annotations={annotationRows}
+          loading={annotationLoading}
+          isPinned={isPinned}
+          onClear={clearPin}
+          entityDisplayName={outputEntity.displayName}
+        />
+      )}
       <BirdsEyeView
         completeCasesAllVars={
           data.pending ? undefined : data.value?.completeCasesAllVars
