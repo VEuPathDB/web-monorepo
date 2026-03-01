@@ -422,7 +422,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       this.props;
     return [
       {
-        callback: (rows: DatasetListEntry[]) => {},
+        callback: (_: DatasetListEntry[]) => {},
         element: (
           <ThemedGrantAccessButton
             buttonText={`Grant Access to ${dataNoun.plural}`}
@@ -586,7 +586,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       case 'meta.name':
         return (data: DatasetListEntry) => data.name.toLowerCase();
       default:
-        return (data: any, index: number) => {
+        return (data: any, _: number) => {
           return typeof data[columnKey] !== 'undefined'
             ? data[columnKey]
             : null;
