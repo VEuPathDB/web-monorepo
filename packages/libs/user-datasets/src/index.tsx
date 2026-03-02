@@ -55,8 +55,8 @@ initialize({
           workspaceTitle="My Data Sets"
           uploadTypeConfig={uploadTypeConfig}
           dataNoun={{
-            singular: 'Data set',
-            plural: 'Data sets',
+            singular: 'Dataset',
+            plural: 'Datasets',
           }}
         />
       ),
