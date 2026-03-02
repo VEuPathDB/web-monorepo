@@ -70,7 +70,7 @@ export function EDAWorkspaceHeading({
         {isStudyExplorerWorkspace ? (
           <div>
             <H3 additionalStyles={{ padding: 0, fontWeight: 500 }}>
-              <em>Study Explorer</em>
+              <em>Dataset Explorer</em>
             </H3>
             <H4 additionalStyles={{ fontWeight: 400 }}>
               {safeHtml(studyRecord.displayName)}
