@@ -104,7 +104,7 @@ interface ZipFileRow {
   download?: React.ReactNode;
 }
 
-class UserDatasetDetail extends React.Component<DetailViewProps> {
+class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
   constructor(props: DetailViewProps) {
     super(props);
 
@@ -644,7 +644,7 @@ class UserDatasetDetail extends React.Component<DetailViewProps> {
   // 1. JSX component constraint: These functions are used as JSX components (<Section />),
   //    which must return ReactElement | null (not the broader ReactNode type that includes
   //    undefined, string, number, etc.).
-  // 2. Hybrid JS/TS compatibility: JavaScript subclasses (like BigwigDatasetDetail.jsx)
+  // 2. Hybrid JS/TS compatibility: JavaScript subclasses (like BigwigDatasetDetail.tsx)
   //    generate .d.ts files from JSDoc annotations. Without an explicit type here,
   //    TypeScript's inference can conflict with JSDoc-generated types during compilation.
   // Subclasses may return sections that are conditionally rendered (null).
