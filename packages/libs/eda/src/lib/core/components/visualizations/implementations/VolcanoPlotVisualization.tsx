@@ -558,7 +558,10 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
   ]);
 
   // @ts-ignore
-  const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
+  const plotNode =
+    computeJobStatus === 'complete' ? (
+      <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />
+    ) : null;
 
   const controlsNode = (
     <div style={{ margin: '1em 1em 2em 1em' }}>
