@@ -14,7 +14,11 @@ import {
   VolcanoPlotStats,
 } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
-import { SignificanceColors, significanceColors } from '../types/plots';
+import {
+  SignificanceColors,
+  significanceColors,
+  PlotRef,
+} from '../types/plots';
 import {
   XYChart,
   Axis,
@@ -289,7 +293,7 @@ const PinnedTooltip = forwardRef<HTMLDivElement, PinnedTooltipProps>(
  * on the y axis. The volcano plot also colors the points based on their
  * significance and magnitude change to make it easy to spot significantly up or down-regulated genes or taxa.
  */
-function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
+function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
   const {
     data = EmptyVolcanoPlotData,
     independentAxisRange,
@@ -313,7 +317,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     return plotToImage(plotRef.current, imgOpts);
   }, []);
 
-  useImperativeHandle<HTMLDivElement, any>(
+  useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({
       // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function

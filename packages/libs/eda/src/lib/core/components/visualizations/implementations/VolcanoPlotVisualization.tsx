@@ -559,7 +559,6 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
 
   const plotNode =
     computeJobStatus === 'complete' ? (
-      // @ts-ignore
       <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />
     ) : null;
 
