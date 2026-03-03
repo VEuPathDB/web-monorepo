@@ -106,9 +106,7 @@ export interface VolcanoPlotProps {
   statisticsFloors?: StatisticsFloors;
 }
 
-const EmptyVolcanoPlotStats: VolcanoPlotStats = [
-  { effectSize: '0', pValue: '1' },
-];
+const EmptyVolcanoPlotStats: VolcanoPlotStats = [];
 
 const EmptyVolcanoPlotData: VolcanoPlotData = {
   effectSizeLabel: 'log2(FoldChange)',
@@ -318,9 +316,13 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
   // "XYChart has a zero width or height" warning that fires when the container is
   // measured before the browser has laid it out (e.g. inside a collapsible panel).
   const chartWidth =
-    typeof containerStyles.width === 'number' ? containerStyles.width : undefined;
+    typeof containerStyles.width === 'number'
+      ? containerStyles.width
+      : undefined;
   const chartHeight =
-    typeof containerStyles.height === 'number' ? containerStyles.height : undefined;
+    typeof containerStyles.height === 'number'
+      ? containerStyles.height
+      : undefined;
 
   const toImage = useCallback(async (imgOpts: ToImgopts) => {
     return plotToImage(plotRef.current, imgOpts);
