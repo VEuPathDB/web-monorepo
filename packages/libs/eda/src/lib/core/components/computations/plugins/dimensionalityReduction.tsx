@@ -33,6 +33,7 @@ export type DimensionalityReductionConfig = t.TypeOf<
 export const DimensionalityReductionConfig = t.partial({
   identifierVariable: VariableDescriptor,
   valueVariable: VariableDescriptor,
+  normalize: t.boolean,
 });
 
 const CompleteDimensionalityReductionConfig = partialToCompleteCodec(

@@ -149,6 +149,7 @@ export interface ComputeCellDescriptor
     projectId?: string
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
   hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
+  configOverrides?: Record<string, unknown>; // Extra config values merged with plugin defaults (e.g. { normalize: true }).
   sharedInputNames?: string[]; // Input names managed by a SharedComputeInputsNotebookCell. Plugins render these as read-only.
   sharedInputsCellId?: string; // ID of the SharedComputeInputsCell that owns sharedInputNames. Used to auto-collapse this cell when shared inputs are not yet set.
 }
