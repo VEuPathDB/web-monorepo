@@ -557,10 +557,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     setTruncatedDependentAxisWarning,
   ]);
 
-  const plotNode =
-    computeJobStatus === 'complete' ? (
-      <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />
-    ) : null;
+  const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
   const controlsNode = (
     <div style={{ margin: '1em 1em 2em 1em' }}>
