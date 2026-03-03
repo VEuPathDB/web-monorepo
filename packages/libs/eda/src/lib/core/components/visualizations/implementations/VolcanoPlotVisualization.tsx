@@ -557,7 +557,6 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     setTruncatedDependentAxisWarning,
   ]);
 
-  // @ts-ignore
   const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
   const controlsNode = (

@@ -14,7 +14,11 @@ import {
   VolcanoPlotStats,
 } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
-import { SignificanceColors, significanceColors } from '../types/plots';
+import {
+  SignificanceColors,
+  significanceColors,
+  PlotRef,
+} from '../types/plots';
 import {
   XYChart,
   Axis,
@@ -102,9 +106,7 @@ export interface VolcanoPlotProps {
   statisticsFloors?: StatisticsFloors;
 }
 
-const EmptyVolcanoPlotStats: VolcanoPlotStats = [
-  { effectSize: '0', pValue: '1' },
-];
+const EmptyVolcanoPlotStats: VolcanoPlotStats = [];
 
 const EmptyVolcanoPlotData: VolcanoPlotData = {
   effectSizeLabel: 'log2(FoldChange)',
@@ -289,7 +291,7 @@ const PinnedTooltip = forwardRef<HTMLDivElement, PinnedTooltipProps>(
  * on the y axis. The volcano plot also colors the points based on their
  * significance and magnitude change to make it easy to spot significantly up or down-regulated genes or taxa.
  */
-function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
+function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
   const {
     data = EmptyVolcanoPlotData,
     independentAxisRange,
@@ -309,11 +311,24 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
 
+  // When containerStyles provides numeric pixel dimensions, pass them directly to
+  // XYChart so it skips ParentSize/ResizeObserver entirely. This prevents the
+  // "XYChart has a zero width or height" warning that fires when the container is
+  // measured before the browser has laid it out (e.g. inside a collapsible panel).
+  const chartWidth =
+    typeof containerStyles.width === 'number'
+      ? containerStyles.width
+      : undefined;
+  const chartHeight =
+    typeof containerStyles.height === 'number'
+      ? containerStyles.height
+      : undefined;
+
   const toImage = useCallback(async (imgOpts: ToImgopts) => {
     return plotToImage(plotRef.current, imgOpts);
   }, []);
 
-  useImperativeHandle<HTMLDivElement, any>(
+  useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({
       // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function
@@ -550,6 +565,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
           <XYChart
+            width={chartWidth}
+            height={chartHeight}
             xScale={{
               type: 'linear',
               // showTruncationBar vars are 0 or 1, so we only expand the x axis by xTruncationBarWidth when a bar will be drawn
