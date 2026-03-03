@@ -253,6 +253,7 @@ export const differentialExpressionNotebook: PresetNotebook = {
       title: 'Set up PCA Computation',
       computationName: 'dimensionalityreduction',
       computationId: 'pca_1',
+      configOverrides: { normalize: true },
       sharedInputsCellId: 'de_shared_inputs',
       numberedHeader: true,
       helperText: (
