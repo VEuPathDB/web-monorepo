@@ -313,6 +313,15 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
 
+  // When containerStyles provides numeric pixel dimensions, pass them directly to
+  // XYChart so it skips ParentSize/ResizeObserver entirely. This prevents the
+  // "XYChart has a zero width or height" warning that fires when the container is
+  // measured before the browser has laid it out (e.g. inside a collapsible panel).
+  const chartWidth =
+    typeof containerStyles.width === 'number' ? containerStyles.width : undefined;
+  const chartHeight =
+    typeof containerStyles.height === 'number' ? containerStyles.height : undefined;
+
   const toImage = useCallback(async (imgOpts: ToImgopts) => {
     return plotToImage(plotRef.current, imgOpts);
   }, []);
@@ -554,6 +563,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
           <XYChart
+            width={chartWidth}
+            height={chartHeight}
             xScale={{
               type: 'linear',
               // showTruncationBar vars are 0 or 1, so we only expand the x axis by xTruncationBarWidth when a bar will be drawn
