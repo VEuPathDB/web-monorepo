@@ -95,6 +95,7 @@ const geneExpressionConstraints: DataElementConstraintRecord[] = [
       isRequired: true,
       minNumVars: 1,
       maxNumVars: 1,
+      minNumValues: 2,
       description:
         'Select a metadata variable for group comparison. Must be from a parent entity of the expression data.',
     },
