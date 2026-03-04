@@ -10,16 +10,13 @@ import {
   DifferentialAnalysisReviewContent,
 } from './differentialAnalysisReview';
 
-export const differentialExpressionNotebook: PresetNotebook = {
-  name: 'differentialexpression',
-  displayName: 'Differential Expression Notebook',
-  projects: [
-    ...GENOMICS_PROJECTS,
-    'UniDB' /* 'MicrobiomeDB' probably inappropriate */,
-  ],
+export const antibodyArrayNotebook: PresetNotebook = {
+  name: 'antibodyArrayNotebook',
+  displayName: 'Antibody Array Notebook',
+  projects: [...GENOMICS_PROJECTS, 'UniDB'],
   cells: withResolvedSharedInputNames([
     {
-      id: 'de_subset',
+      id: 'ab_subset',
       type: 'subset',
       title: 'Select Samples (optional)',
       initialPanelState: 'closed',
@@ -32,9 +29,9 @@ export const differentialExpressionNotebook: PresetNotebook = {
       ),
     },
     {
-      id: 'de_shared_inputs',
+      id: 'ab_shared_inputs',
       type: 'sharedcomputeinputs',
-      title: 'Select Expression Data',
+      title: 'Select Antibody Array Data',
       computationIds: ['pca_1', 'de_1'],
       inputNames: ['identifierVariable', 'valueVariable'],
       inputs: [
@@ -42,11 +39,11 @@ export const differentialExpressionNotebook: PresetNotebook = {
           name: 'identifierVariable',
           label: 'Gene Identifier',
           role: 'axis',
-          titleOverride: 'Expression Data',
+          titleOverride: 'Antibody Data',
         },
         {
           name: 'valueVariable',
-          label: 'Count type',
+          label: 'Signal type',
           role: 'axis',
         },
       ],
@@ -69,17 +66,17 @@ export const differentialExpressionNotebook: PresetNotebook = {
       dataElementDependencyOrder: [['identifierVariable', 'valueVariable']],
       numberedHeader: true,
       helperText: (
-        <span>Select the gene expression data for this analysis.</span>
+        <span>Select the antibody array data for this analysis.</span>
       ),
     },
     {
-      id: 'de_pca_compute',
+      id: 'ab_pca_compute',
       type: 'compute',
       title: 'Set up PCA Computation',
       computationName: 'dimensionalityreduction',
       computationId: 'pca_1',
-      configOverrides: { normalize: true },
-      sharedInputsCellId: 'de_shared_inputs',
+      configOverrides: { normalize: false },
+      sharedInputsCellId: 'ab_shared_inputs',
       numberedHeader: true,
       helperText: (
         <span>
@@ -89,7 +86,7 @@ export const differentialExpressionNotebook: PresetNotebook = {
       ),
       cells: [
         {
-          id: 'de_pca_plot',
+          id: 'ab_pca_plot',
           type: 'visualization',
           title: 'PCA Plot',
           visualizationName: 'scatterplot',
@@ -105,42 +102,43 @@ export const differentialExpressionNotebook: PresetNotebook = {
       ],
     },
     {
-      id: 'de_deseq2_compute',
+      id: 'ab_limma_compute',
       type: 'compute',
-      title: 'Set up DESeq2 Computation',
+      title: 'Set up Limma Computation',
       computationName: 'differentialexpression',
       computationId: 'de_1',
-      sharedInputsCellId: 'de_shared_inputs',
+      configOverrides: { differentialExpressionMethod: 'limma' },
+      sharedInputsCellId: 'ab_shared_inputs',
       numberedHeader: true,
       helperText: (
         <span>
-          Configure and run DESeq2 to test for differential expression between
-          two groups of samples. Select a metadata variable, then define the
-          reference and comparison groups.
+          Configure and run Limma to test for differential protein abundance
+          between two groups of samples. Select a metadata variable, then define
+          the reference and comparison groups.
         </span>
       ),
       cells: [
         {
-          id: 'de_volcano',
+          id: 'ab_volcano',
           type: 'visualization',
-          title: 'Examine DESeq2 Results with Volcano Plot',
+          title: 'Examine Limma Results with Volcano Plot',
           visualizationName: 'volcanoplot',
           visualizationId: 'volcano_1',
           numberedHeader: true,
           helperText: (
             <span>
-              Use the threshold lines to highlight genes by significance and
+              Use the threshold lines to highlight proteins by significance and
               fold change.
             </span>
           ),
         },
         {
-          id: 'de_review',
+          id: 'ab_review',
           type: 'text',
           title: 'Review and Run Search',
           numberedHeader: true,
           helperText: (
-            <span>Review your thresholds and run the gene search.</span>
+            <span>Review your thresholds and run the protein search.</span>
           ),
           panelStateResolver: ({ analysisState }: TextCellContext) =>
             isDEReadyToReviewAndSubmit(analysisState) ? 'open' : 'closed',
@@ -149,6 +147,12 @@ export const differentialExpressionNotebook: PresetNotebook = {
               analysisState={analysisState}
               wdkState={wdkState}
               stepNumbers={stepNumbers}
+              expressionDataTitle="Antibody Data"
+              identifierLabel="Gene Identifier"
+              valueLabel="Signal type"
+              sharedInputsCellId="ab_shared_inputs"
+              computeCellId="ab_limma_compute"
+              volcanoCellId="ab_volcano"
             />
           ),
         },
