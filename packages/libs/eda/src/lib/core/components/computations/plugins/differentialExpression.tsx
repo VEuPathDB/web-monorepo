@@ -573,7 +573,7 @@ export function DifferentialExpressionConfiguration(
             inputs={[
               {
                 name: 'identifierVariable',
-                label: 'Gene Identifier',
+                label: 'Gene identifier',
                 role: 'axis',
                 titleOverride: 'Expression Data',
                 ...(readonlyInputNames?.includes('identifierVariable')
@@ -587,7 +587,7 @@ export function DifferentialExpressionConfiguration(
               },
               {
                 name: 'valueVariable',
-                label: 'Count type',
+                label: 'Measurement type',
                 role: 'axis',
                 ...(readonlyInputNames?.includes('valueVariable')
                   ? {
@@ -599,7 +599,7 @@ export function DifferentialExpressionConfiguration(
               },
               {
                 name: 'comparatorVariable',
-                label: 'Metadata Variable',
+                label: 'Metadata variable',
                 role: 'stratification',
                 titleOverride: 'Group Comparison',
                 styleOverride: { minWidth: '30em' },

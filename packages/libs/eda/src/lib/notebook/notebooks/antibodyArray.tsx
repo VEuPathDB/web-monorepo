@@ -37,13 +37,13 @@ export const antibodyArrayNotebook: PresetNotebook = {
       inputs: [
         {
           name: 'identifierVariable',
-          label: 'Gene Identifier',
+          label: 'Gene identifier',
           role: 'axis',
           titleOverride: 'Antibody Data',
         },
         {
           name: 'valueVariable',
-          label: 'Signal type',
+          label: 'Measurement type',
           role: 'axis',
         },
       ],
