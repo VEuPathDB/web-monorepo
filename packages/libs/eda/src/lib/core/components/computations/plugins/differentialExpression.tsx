@@ -227,13 +227,20 @@ function DifferentialExpressionConfigDescriptionComponent({
 }
 
 // Method keys must match what the backend expects.
-// limma is coming soon.
 const DIFFERENTIAL_EXPRESSION_METHODS = {
   DESeq: {
     displayName: 'DESeq2',
     citation: (
       <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8">
         (Love et al., 2014)
+      </a>
+    ),
+  },
+  limma: {
+    displayName: 'limma',
+    citation: (
+      <a href="https://academic.oup.com/nar/article/43/7/e47/2414268">
+        (Ritchie et al., 2015)
       </a>
     ),
   },
