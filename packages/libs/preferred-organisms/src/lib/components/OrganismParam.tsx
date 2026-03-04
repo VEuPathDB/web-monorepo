@@ -12,7 +12,10 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { CheckboxTreeProps } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { Tooltip } from '@veupathdb/coreui';
 
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  getLeaves,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   CheckBoxEnumParam,
   EnumParam,
@@ -68,17 +71,15 @@ export const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 export const MAX_RECOMMENDED_PROPERTY = 'maxRecommended';
 export const MAX_RECOMMENDED_MSG_PROPERTY = 'maxRecommendedMsg';
 
-interface OrganismParamProps<
-  T extends Parameter,
-  S = void,
-> extends DefaultParamProps<T, S> {
+interface OrganismParamProps<T extends Parameter, S = void>
+  extends DefaultParamProps<T, S> {
   isSearchPage?: boolean;
 }
 
 export function OrganismParam(props: OrganismParamProps<Parameter, State>) {
   if (!isOrganismParamProps(props)) {
     throw new Error(
-      `Tried to render non-organism parameter ${props.parameter.name} with OrganismParam.`,
+      `Tried to render non-organism parameter ${props.parameter.name} with OrganismParam.`
     );
   }
 
@@ -92,7 +93,7 @@ export function OrganismParam(props: OrganismParamProps<Parameter, State>) {
 }
 
 export function ValidatedOrganismParam(
-  props: OrganismParamProps<EnumParam, State>,
+  props: OrganismParamProps<EnumParam, State>
 ) {
   return props.parameter.displayType === 'treeBox' ? (
     <TreeBoxOrganismEnumParam
@@ -106,31 +107,42 @@ export function ValidatedOrganismParam(
 }
 
 function TreeBoxOrganismEnumParam(
-  props: OrganismParamProps<TreeBoxEnumParam, State>,
+  props: OrganismParamProps<TreeBoxEnumParam, State>
 ) {
   const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] =
     useState<boolean>(false);
 
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
-  // Extract maxRecommended and apply the gate
+  // Extract maxRecommended before computing leafTerms
   const maxRecommended = Number(
-    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0],
+    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0]
   );
   const maxRecommendedMsg =
     props.parameter.properties?.[MAX_RECOMMENDED_MSG_PROPERTY]?.[0];
+
+  // useRestrictSelectedValues (inside this hook) only ever reduces selections,
+  // so pass raw onChange — it can never trigger the gate.
+  const paramWithPrunedVocab = useTreeBoxParamWithPrunedVocab(
+    props.parameter,
+    selectedValues,
+    onChange,
+    props.isSearchPage
+  );
+
+  const leafTerms = useMemo(() => {
+    const leaves = getLeaves(
+      paramWithPrunedVocab.vocabulary,
+      (node) => node.children
+    );
+    return new Set(leaves.map((node) => node.data.term));
+  }, [paramWithPrunedVocab.vocabulary]);
 
   const { wrappedOnChange, modalElement } = useMaxRecommendedGate(
     onChange,
     maxRecommended,
     maxRecommendedMsg,
-  );
-
-  const paramWithPrunedVocab = useTreeBoxParamWithPrunedVocab(
-    props.parameter,
-    selectedValues,
-    wrappedOnChange,
-    props.isSearchPage,
+    leafTerms
   );
 
   const { maxSelectedCount } = paramWithPrunedVocab;
@@ -139,12 +151,12 @@ function TreeBoxOrganismEnumParam(
 
   const shouldHighlightReferenceOrganisms =
     props.parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(
-      HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY,
+      HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY
     ) ?? false;
 
   const renderNode = useRenderOrganismNode(
     shouldHighlightReferenceOrganisms ? referenceStrains : undefined,
-    undefined,
+    undefined
   );
   const searchPredicate = useOrganismSearchPredicate(referenceStrains);
 
@@ -194,7 +206,7 @@ function TreeBoxOrganismEnumParam(
       searchPredicate,
       showOnlyReferenceOrganisms,
       referenceStrains,
-    ],
+    ]
   );
 
   return (
@@ -217,13 +229,13 @@ function TreeBoxOrganismEnumParam(
 }
 
 function FlatOrganismEnumParam(
-  props: OrganismParamProps<FlatEnumParam, State>,
+  props: OrganismParamProps<FlatEnumParam, State>
 ) {
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
   // Extract maxRecommended and apply the gate
   const maxRecommended = Number(
-    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0],
+    props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0]
   );
   const maxRecommendedMsg =
     props.parameter.properties?.[MAX_RECOMMENDED_MSG_PROPERTY]?.[0];
@@ -231,14 +243,14 @@ function FlatOrganismEnumParam(
   const { wrappedOnChange, modalElement } = useMaxRecommendedGate(
     onChange,
     maxRecommended,
-    maxRecommendedMsg,
+    maxRecommendedMsg
   );
 
   const paramWithPrunedVocab = useFlatParamWithPrunedVocab(
     props.parameter,
     selectedValues,
     wrappedOnChange,
-    props.isSearchPage,
+    props.isSearchPage
   );
 
   return (
@@ -257,12 +269,12 @@ function useTreeBoxParamWithPrunedVocab(
   parameter: TreeBoxEnumParam,
   selectedValues: string[],
   onChange: (newValue: string[]) => void,
-  isSearchPage?: boolean,
+  isSearchPage?: boolean
 ) {
   const preferredValues = usePreferredValues(
     parameter,
     selectedValues,
-    isSearchPage,
+    isSearchPage
   );
 
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
@@ -284,7 +296,7 @@ function useTreeBoxParamWithPrunedVocab(
         ? pruneDescendantNodes(
             (node) =>
               node.children.length > 0 || preferredValues.has(node.data.term),
-            prunedVocabulary,
+            prunedVocabulary
           )
         : prunedVocabulary;
 
@@ -300,7 +312,7 @@ function useTreeBoxParamWithPrunedVocab(
     selectedValues,
     onChange,
     preferredValues,
-    paramWithPrunedVocab,
+    paramWithPrunedVocab
   );
 
   return paramWithPrunedVocab;
@@ -310,12 +322,12 @@ function useFlatParamWithPrunedVocab(
   parameter: FlatEnumParam,
   selectedValues: string[],
   onChange: (newValue: string[]) => void,
-  isSearchPage?: boolean,
+  isSearchPage?: boolean
 ) {
   const preferredValues = usePreferredValues(
     parameter,
     selectedValues,
-    isSearchPage,
+    isSearchPage
   );
 
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
@@ -328,7 +340,7 @@ function useFlatParamWithPrunedVocab(
       ? {
           ...parameter,
           vocabulary: parameter.vocabulary.filter(([term]) =>
-            preferredValues.has(term),
+            preferredValues.has(term)
           ),
         }
       : parameter;
@@ -338,14 +350,14 @@ function useFlatParamWithPrunedVocab(
     selectedValues,
     onChange,
     preferredValues,
-    paramWithPrunedVocab,
+    paramWithPrunedVocab
   );
 
   return paramWithPrunedVocab;
 }
 
 function useEnumParamSelectedValues(
-  props: OrganismParamProps<EnumParam, State>,
+  props: OrganismParamProps<EnumParam, State>
 ) {
   const paramIsMultiPick = isMultiPick(props.parameter);
 
@@ -353,8 +365,8 @@ function useEnumParamSelectedValues(
     return paramIsMultiPick
       ? toMultiValueArray(props.value)
       : props.value == null || props.value === ''
-        ? []
-        : [props.value];
+      ? []
+      : [props.value];
   }, [paramIsMultiPick, props.value]);
 
   const transformValue = useCallback(
@@ -365,7 +377,7 @@ function useEnumParamSelectedValues(
         return newValue.length === 0 ? '' : newValue[0];
       }
     },
-    [paramIsMultiPick],
+    [paramIsMultiPick]
   );
 
   const onParamValueChange = props.onParamValueChange;
@@ -374,7 +386,7 @@ function useEnumParamSelectedValues(
     (newValue: string[]) => {
       onParamValueChange(transformValue(newValue));
     },
-    [onParamValueChange, transformValue],
+    [onParamValueChange, transformValue]
   );
 
   return {
@@ -386,7 +398,7 @@ function useEnumParamSelectedValues(
 function usePreferredValues(
   parameter: EnumParam,
   selectedValues: string[],
-  isSearchPageProp?: boolean,
+  isSearchPageProp?: boolean
 ) {
   const [preferredOrganisms] = usePreferredOrganismsState();
   const preferredSpecies = usePreferredSpecies();
@@ -413,9 +425,9 @@ function usePreferredValues(
         initialSelectedValuesRef.current,
         parameter.vocabulary,
         isSearchPage,
-        findPreferenceType(parameter),
+        findPreferenceType(parameter)
       ),
-    [parameter, isSearchPage, preferredOrganisms, preferredSpecies],
+    [parameter, isSearchPage, preferredOrganisms, preferredSpecies]
   );
 
   return preferredValues;
@@ -425,7 +437,7 @@ function useRestrictSelectedValues(
   selectedValues: string[],
   onChange: (newValue: string[]) => void,
   preferredValues: Set<string>,
-  parameter: EnumParam,
+  parameter: EnumParam
 ) {
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
@@ -450,7 +462,7 @@ function useRestrictSelectedValues(
       !hasEmptyVocabularly(parameter)
     ) {
       const preferredSelectedValues = selectedValues.filter((selectedValue) =>
-        preferredValues.has(selectedValue),
+        preferredValues.has(selectedValue)
       );
 
       if (preferredSelectedValues.length !== selectedValues.length) {
@@ -468,7 +480,7 @@ function useRestrictSelectedValues(
 }
 
 function isOrganismParamProps<S = void>(
-  props: OrganismParamProps<Parameter, S>,
+  props: OrganismParamProps<Parameter, S>
 ): props is OrganismParamProps<EnumParam, S> {
   return isPropsType(props, isOrganismParam);
 }
@@ -482,7 +494,7 @@ export function isOrganismParam(parameter: Parameter): parameter is EnumParam {
 
 function findShouldOnlyShowPreferredOrganisms(parameter: Parameter) {
   return parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(
-    SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY,
+    SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY
   );
 }
 
@@ -506,7 +518,7 @@ function findPreferredValues(
   selectedValues: string[],
   vocabulary: EnumParam['vocabulary'],
   isSearchPage: boolean,
-  preferenceType: 'organism' | 'species',
+  preferenceType: 'organism' | 'species'
 ) {
   const basePreferredValues =
     preferenceType === 'organism' ? preferredOrganismValues : preferredSpecies;
@@ -522,7 +534,7 @@ function findPreferredValues(
 
 function findPreferredDescendants(
   vocabRoot: TreeBoxVocabNode,
-  preferredValues: Set<string>,
+  preferredValues: Set<string>
 ) {
   const preferredDescendants = new Set<string>();
 
