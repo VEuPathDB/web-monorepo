@@ -93,7 +93,7 @@ function AnnotationRowItem({ row }: { row: AnnotationRow }) {
       <td>{row.displayName}:</td>
       <td>
         {row.value}
-        {row.value && (
+        {row.value != null && (
           <button
             type="button"
             className="AnnotationPanel__copy-btn"
