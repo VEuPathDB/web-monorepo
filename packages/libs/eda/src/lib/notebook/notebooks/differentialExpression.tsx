@@ -40,13 +40,13 @@ export const differentialExpressionNotebook: PresetNotebook = {
       inputs: [
         {
           name: 'identifierVariable',
-          label: 'Gene Identifier',
+          label: 'Gene identifier',
           role: 'axis',
           titleOverride: 'Expression Data',
         },
         {
           name: 'valueVariable',
-          label: 'Count type',
+          label: 'Measurement type',
           role: 'axis',
         },
       ],
@@ -78,7 +78,7 @@ export const differentialExpressionNotebook: PresetNotebook = {
       title: 'Set up PCA Computation',
       computationName: 'dimensionalityreduction',
       computationId: 'pca_1',
-      configOverrides: { normalize: true },
+      configOverrides: { dataFormat: 'rawCounts' as const },
       sharedInputsCellId: 'de_shared_inputs',
       numberedHeader: true,
       helperText: (
