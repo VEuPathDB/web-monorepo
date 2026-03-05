@@ -2032,101 +2032,101 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       />
     ));
 
-  const tableGroupNode =
-    enableAnnotationTooltip && !data.pending && outputEntity ? (
-      <AnnotationPanel
-        annotations={annotationRows}
-        loading={annotationLoading}
-        isPinned={isPinned}
-        onClear={clearPin}
-        entityDisplayName={outputEntity.displayName}
+  const tableGroupNode = (
+    <>
+      {enableAnnotationTooltip && !data.pending && outputEntity && (
+        <AnnotationPanel
+          annotations={annotationRows}
+          loading={annotationLoading}
+          isPinned={isPinned}
+          onClear={clearPin}
+          entityDisplayName={outputEntity.displayName}
+        />
+      )}
+      <BirdsEyeView
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
+        outputEntity={outputEntity}
+        stratificationIsActive={
+          overlayVariable != null || computedOverlayVariableDescriptor != null
+        }
+        enableSpinner={
+          xAxisVariable != null && yAxisVariable != null && !data.error
+        }
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
       />
-    ) : (
-      <>
-        <BirdsEyeView
-          completeCasesAllVars={
-            data.pending ? undefined : data.value?.completeCasesAllVars
-          }
-          completeCasesAxesVars={
-            data.pending ? undefined : data.value?.completeCasesAxesVars
-          }
-          outputEntity={outputEntity}
-          stratificationIsActive={
-            overlayVariable != null || computedOverlayVariableDescriptor != null
-          }
-          enableSpinner={
-            xAxisVariable != null && yAxisVariable != null && !data.error
-          }
-          totalCounts={totalCounts.value}
-          filteredCounts={filteredCounts.value}
-        />
-        <VariableCoverageTable
-          completeCases={
-            data.value && !data.pending ? data.value?.completeCases : undefined
-          }
-          filteredCounts={filteredCounts}
-          outputEntityId={outputEntity?.id}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              required: true,
-              display: independentAxisLabel,
-              variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              required: isVariableDescriptor(computedOverlayVariableDescriptor)
-                ? !computedOverlayVariableDescriptor?.variableId
-                : isVariableCollectionDescriptor(
-                    computedOverlayVariableDescriptor
-                  )
-                ? !computedOverlayVariableDescriptor?.collectionId
-                : false,
-              display: dependentAxisLabel,
-              variable:
-                !computedOverlayVariableDescriptor && computedYAxisDescriptor
-                  ? computedYAxisDescriptor
-                  : vizConfig.yAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              required: !!computedOverlayVariableDescriptor,
-              display: legendTitle,
-              variable:
-                (isVariableDescriptor(computedOverlayVariableDescriptor) ||
-                  isVariableCollectionDescriptor(
-                    computedOverlayVariableDescriptor
-                  )) &&
-                computedOverlayVariableDescriptor != null
-                  ? computedOverlayVariableDescriptor
-                  : vizConfig.overlayVariable,
-            },
-            ...additionalVariableCoverageTableRows,
-            {
-              role: 'Facet',
-              display: variableDisplayWithUnit(facetVariable),
-              variable: vizConfig.facetVariable,
-            },
-          ]}
-        />
-        {/* R-square table component: only display when overlay and/or facet variable exist */}
-        {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
-          data.value != null &&
-          !data.pending &&
-          (vizConfig.overlayVariable != null ||
-            vizConfig.facetVariable != null) && (
-            <ScatterplotRsquareTable
-              typedData={
-                !isFaceted(data.value.dataSetProcess)
-                  ? { isFaceted: false, data: data.value.dataSetProcess.series }
-                  : { isFaceted: true, data: data.value.dataSetProcess.facets }
-              }
-              overlayVariable={overlayVariable}
-              facetVariable={facetVariable}
-            />
-          )}
-      </>
-    );
+      <VariableCoverageTable
+        completeCases={
+          data.value && !data.pending ? data.value?.completeCases : undefined
+        }
+        filteredCounts={filteredCounts}
+        outputEntityId={outputEntity?.id}
+        variableSpecs={[
+          {
+            role: 'X-axis',
+            required: true,
+            display: independentAxisLabel,
+            variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
+          },
+          {
+            role: 'Y-axis',
+            required: isVariableDescriptor(computedOverlayVariableDescriptor)
+              ? !computedOverlayVariableDescriptor?.variableId
+              : isVariableCollectionDescriptor(
+                  computedOverlayVariableDescriptor
+                )
+              ? !computedOverlayVariableDescriptor?.collectionId
+              : false,
+            display: dependentAxisLabel,
+            variable:
+              !computedOverlayVariableDescriptor && computedYAxisDescriptor
+                ? computedYAxisDescriptor
+                : vizConfig.yAxisVariable,
+          },
+          {
+            role: 'Overlay',
+            required: !!computedOverlayVariableDescriptor,
+            display: legendTitle,
+            variable:
+              (isVariableDescriptor(computedOverlayVariableDescriptor) ||
+                isVariableCollectionDescriptor(
+                  computedOverlayVariableDescriptor
+                )) &&
+              computedOverlayVariableDescriptor != null
+                ? computedOverlayVariableDescriptor
+                : vizConfig.overlayVariable,
+          },
+          ...additionalVariableCoverageTableRows,
+          {
+            role: 'Facet',
+            display: variableDisplayWithUnit(facetVariable),
+            variable: vizConfig.facetVariable,
+          },
+        ]}
+      />
+      {/* R-square table component: only display when overlay and/or facet variable exist */}
+      {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
+        data.value != null &&
+        !data.pending &&
+        (vizConfig.overlayVariable != null ||
+          vizConfig.facetVariable != null) && (
+          <ScatterplotRsquareTable
+            typedData={
+              !isFaceted(data.value.dataSetProcess)
+                ? { isFaceted: false, data: data.value.dataSetProcess.series }
+                : { isFaceted: true, data: data.value.dataSetProcess.facets }
+            }
+            overlayVariable={overlayVariable}
+            facetVariable={facetVariable}
+          />
+        )}
+    </>
+  );
 
   // plot subtitle
   const plotSubtitle =
