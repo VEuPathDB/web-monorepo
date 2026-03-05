@@ -66,6 +66,9 @@ export function useComputeJobStatus(
   //
   // A mutable ref is used for checking the job status so that the `useState`
   // `jobStatus` variable does not need to be included as a dependency.
+  //
+  // Transient errors (e.g. backend 500s) are retried up to MAX_RETRIES times
+  // with exponential backoff before the error is rethrown to the caller.
   useEffect(() => {
     if (
       !debouncedJobStatusDeps.computeName ||
@@ -91,14 +94,28 @@ export function useComputeJobStatus(
       if (!cancelled) setJobStatus(status);
     }
 
-    // Start a loop to check if a job status should be requested every second
+    // Start a loop to check if a job status should be requested every second.
+    // Consecutive errors are retried with exponential backoff; after
+    // MAX_RETRIES failures the error is rethrown so React's error boundary
+    // can surface it to the user.
+    const MAX_RETRIES = 3;
     async function loop() {
+      let consecutiveErrors = 0;
       while (!cancelled) {
         if (
           sharedJobStatusRef.current == null ||
           !isTerminalStatus(sharedJobStatusRef.current)
         ) {
-          await updateJobStatus();
+          try {
+            await updateJobStatus();
+            consecutiveErrors = 0;
+          } catch (e) {
+            consecutiveErrors++;
+            if (consecutiveErrors >= MAX_RETRIES) throw e;
+            // Exponential backoff: 1 s, 2 s, 4 s, …
+            await delay(1000 * Math.pow(2, consecutiveErrors - 1));
+            continue;
+          }
         }
         await delay(1000);
       }
