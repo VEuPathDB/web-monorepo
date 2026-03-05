@@ -243,7 +243,6 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
-    markerBodyOpacity: 0.5,
   };
 }
 
@@ -291,6 +290,7 @@ interface Options
   returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
   sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
   defaultMarkerSize?: number; // Default marker size in px (Plotly default is 6)
+  defaultMarkerOpacity?: number; // Our default is 0.5
   /** Enable pinnable annotation tooltips that show entity metadata on point click.
    * Requires returnPointIds to also be true, and the backend plugin to honour it.
    * Note: currently this will also DISABLE the birds' eye view and completeness table.
@@ -1392,6 +1392,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  const markerBodyOpacity =
+    vizConfig.markerBodyOpacity ?? options?.defaultMarkerOpacity ?? 0.5;
+
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
@@ -1432,7 +1435,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? plotSpacingOptions
       : undefined,
     // need to define markerColorOpacity for faceted plot
-    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
+    markerBodyOpacity,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
     defaultMarkerSize: options?.defaultMarkerSize,
   };
@@ -1484,7 +1487,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               : data.value?.dataSetProcess
           }
           checkedLegendItems={checkedLegendItems}
-          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
+          markerBodyOpacity={markerBodyOpacity}
           {...(enableAnnotationTooltip
             ? {
                 onHover: handlePlotlyHover,
@@ -1729,7 +1732,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         minimum={0}
         maximum={1}
         step={0.1}
-        value={vizConfig.markerBodyOpacity ?? 0.5}
+        value={markerBodyOpacity}
         debounceRateMs={250}
         onChange={(newValue: number) => {
           onMarkerBodyOpacityChange(newValue);

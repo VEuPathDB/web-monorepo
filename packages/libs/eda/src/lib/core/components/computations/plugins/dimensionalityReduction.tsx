@@ -88,6 +88,7 @@ export const plugin: ComputationPlugin = {
         sendComputedVariablesInRequest: true,
         defaultMarkerSize: 8,
         enableAnnotationTooltip: true,
+        defaultMarkerOpacity: 1.0,
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },
