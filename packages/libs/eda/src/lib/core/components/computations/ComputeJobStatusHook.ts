@@ -10,6 +10,8 @@ import { useDebounce } from '../../hooks/debouncing';
 
 export type JobStatus = JobStatusReponse['status'] | 'requesting';
 
+const MAX_RETRIES = 3;
+
 /**
  * Polls the compute service for the status of a compute's job.
  */
@@ -98,7 +100,6 @@ export function useComputeJobStatus(
     // Consecutive errors are retried with exponential backoff; after
     // MAX_RETRIES failures the error is rethrown so React's error boundary
     // can surface it to the user.
-    const MAX_RETRIES = 3;
     async function loop() {
       let consecutiveErrors = 0;
       while (!cancelled) {
