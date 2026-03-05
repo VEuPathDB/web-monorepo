@@ -55,7 +55,7 @@ export function RunComputeButton(props: Props) {
         >
           Status:{' '}
           {countGating?.type === 'pending' ? (
-            <i>Confirming analysis requirements...</i>
+            <i>Please wait. Confirming analysis requirements...</i>
           ) : status ? (
             <StatusIcon status={status} showLabel />
           ) : isConfigured ? (
