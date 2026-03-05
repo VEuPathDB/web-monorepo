@@ -49,7 +49,6 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
     getChangeHandler(fieldName, updateFormUiState, formUiState);
   return (
     <div style={{ maxWidth: '800px' }}>
-      <ReporterSortMessage scope={scope} />
       <CategoriesCheckboxTree
         title="Choose Columns:"
         leafType="columns"
