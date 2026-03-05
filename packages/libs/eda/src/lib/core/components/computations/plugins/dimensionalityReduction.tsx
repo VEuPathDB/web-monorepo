@@ -234,7 +234,7 @@ export function DimensionalityReductionConfiguration(
               },
               {
                 name: 'valueVariable',
-                label: 'Count type',
+                label: 'Measurement type',
                 role: 'axis',
                 ...(readonlyInputNames?.includes('valueVariable')
                   ? {
