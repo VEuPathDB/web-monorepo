@@ -1,4 +1,5 @@
 import React, {
+
   FunctionComponent,
   useCallback,
   useEffect,
@@ -590,7 +591,7 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           url: `/pubcrawler/${displayName}`,
         },
-        {
+        /*{
           key: 'toxo-rflp',
           display: 'RFLP Genotypes',
           type: 'reactRoute',
@@ -598,7 +599,7 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ToxoDB,UniDB],
           },
-        },
+        },*/
         {
           key: 'srt',
           display: 'Sequence retrieval',
