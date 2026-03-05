@@ -162,22 +162,6 @@ const PinnedTooltip = forwardRef<HTMLDivElement, PinnedTooltipProps>(
     { datum, x, y, effectSizeLabel, statisticsFloors, onClose },
     ref
   ) {
-    const [copied, setCopied] = useState(false);
-
-    const labels = datum.displayLabels ?? datum.pointIDs ?? [];
-    const labelText = labels.join(', ');
-
-    const handleCopy = useCallback(
-      (e: React.MouseEvent) => {
-        e.preventDefault();
-        navigator.clipboard.writeText(labelText).then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500);
-        });
-      },
-      [labelText]
-    );
-
     const color =
       datum.significanceColor === significanceColors['inconclusive']
         ? 'black'
@@ -207,79 +191,13 @@ const PinnedTooltip = forwardRef<HTMLDivElement, PinnedTooltipProps>(
         >
           &times;
         </button>
-        <ul>
-          {labels.map((label) => (
-            <li key={label}>
-              <span>{label}</span>
-              <button
-                type="button"
-                className="VolcanoPlotPinnedTooltip__copy-btn"
-                onClick={handleCopy}
-                title="Copy to clipboard"
-              >
-                {copied ? (
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
-                )}
-              </button>
-            </li>
-          ))}
-        </ul>
-        <div
-          className="pseudo-hr"
-          style={{ borderBottom: `1px solid ${color}` }}
-        ></div>
-        <ul>
-          <li>
-            <span>{effectSizeLabel}:</span> {datum.effectSize}
-          </li>
-          <li>
-            <span>P Value:</span>{' '}
-            {datum.pValue
-              ? Number(datum.pValue) <= statisticsFloors.pValueFloor
-                ? '<= ' + statisticsFloors.pValueFloor
-                : datum.pValue
-              : 'n/a'}
-          </li>
-          <li>
-            <span>Adjusted P Value:</span>{' '}
-            {datum.adjustedPValue
-              ? statisticsFloors.adjustedPValueFloor &&
-                Number(datum.adjustedPValue) <=
-                  statisticsFloors.adjustedPValueFloor &&
-                Number(datum.pValue) <= statisticsFloors.pValueFloor
-                ? '<= ' + statisticsFloors.adjustedPValueFloor
-                : datum.adjustedPValue
-              : 'n/a'}
-          </li>
-        </ul>
-        <div className="VolcanoPlotPinnedTooltip__hint">
-          Click a point to pin this tooltip
-        </div>
+        <TooltipBody
+          datum={datum}
+          effectSizeLabel={effectSizeLabel}
+          statisticsFloors={statisticsFloors}
+          color={color}
+          showCopyButtons
+        />
       </div>
     );
   }
@@ -734,17 +652,10 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
                 applyPositionStyle
                 renderTooltip={(d) => {
                   if (pinnedDatum) return null;
-                  const data = d.tooltipData?.nearestDatum?.datum;
-                  /**
-                   * Notes regarding colors in the tooltips:
-                   *  1. We use the data point's significanceColor property for background color
-                   *  2. For color contrast reasons, color for text and hr's border is set conditionally:
-                   *      - if significanceColor matches the 'inconclusive' color (grey), we use black
-                   *      - else, we use white
-                   *   (white font meets contrast ratio threshold (min 3:1 for UI-y things) w/ #AC3B4E (red) and #0E8FAB (blue))
-                   */
+                  const datum = d.tooltipData?.nearestDatum?.datum;
+                  if (!datum) return null;
                   const color =
-                    data?.significanceColor ===
+                    datum.significanceColor ===
                     significanceColors['inconclusive']
                       ? 'black'
                       : 'white';
@@ -753,55 +664,16 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
                       className="VolcanoPlotTooltip"
                       style={{
                         color,
-                        background: data?.significanceColor,
+                        background: datum.significanceColor,
                       }}
                     >
-                      <ul>
-                        {data?.displayLabels
-                          ? data.displayLabels.map((label) => (
-                              <li key={label}>
-                                <span>{label}</span>
-                              </li>
-                            ))
-                          : data?.pointIDs?.map((id) => (
-                              <li key={id}>
-                                <span>{id}</span>
-                              </li>
-                            ))}
-                      </ul>
-                      <div
-                        className="pseudo-hr"
-                        style={{ borderBottom: `1px solid ${color}` }}
-                      ></div>
-                      <ul>
-                        <li>
-                          <span>{effectSizeLabel}:</span> {data?.effectSize}
-                        </li>
-                        <li>
-                          <span>P Value:</span>{' '}
-                          {data?.pValue
-                            ? Number(data.pValue) <=
-                              statisticsFloors.pValueFloor
-                              ? '<= ' + statisticsFloors.pValueFloor
-                              : data?.pValue
-                            : 'n/a'}
-                        </li>
-                        <li>
-                          <span>Adjusted P Value:</span>{' '}
-                          {data?.adjustedPValue
-                            ? statisticsFloors.adjustedPValueFloor &&
-                              Number(data.adjustedPValue) <=
-                                statisticsFloors.adjustedPValueFloor &&
-                              Number(data.pValue) <=
-                                statisticsFloors.pValueFloor
-                              ? '<= ' + statisticsFloors.adjustedPValueFloor
-                              : data?.adjustedPValue
-                            : 'n/a'}
-                        </li>
-                      </ul>
-                      <div className="VolcanoPlotTooltip__hint">
-                        Click point to pin &amp; copy
-                      </div>
+                      <TooltipBody
+                        datum={datum}
+                        effectSizeLabel={effectSizeLabel}
+                        statisticsFloors={statisticsFloors}
+                        color={color}
+                        showHint
+                      />
                     </div>
                   );
                 }}
@@ -873,6 +745,123 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
         </div>
       </div>
       <ExportPlotToImageButton toImage={toImage} filename="Volcano" />
+    </>
+  );
+}
+
+interface TooltipBodyProps {
+  datum: VolcanoPlotDataPoint;
+  effectSizeLabel: string;
+  statisticsFloors: StatisticsFloors;
+  color: string;
+  /** Show per-label copy-to-clipboard buttons (pinned tooltip) */
+  showCopyButtons?: boolean;
+  /** Show "Click point to pin & copy" hint (hover tooltip) */
+  showHint?: boolean;
+}
+
+function TooltipBody({
+  datum,
+  effectSizeLabel,
+  statisticsFloors,
+  color,
+  showCopyButtons = false,
+  showHint = false,
+}: TooltipBodyProps) {
+  const [copied, setCopied] = useState(false);
+  const labels = datum.displayLabels ?? datum.pointIDs ?? [];
+  const labelText = labels.join(', ');
+
+  const handleCopy = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      navigator.clipboard.writeText(labelText).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      });
+    },
+    [labelText]
+  );
+
+  return (
+    <>
+      <ul>
+        {labels.map((label) => (
+          <li key={label}>
+            <span>{label}</span>
+            {showCopyButtons && (
+              <button
+                type="button"
+                className="VolcanoPlotPinnedTooltip__copy-btn"
+                onClick={handleCopy}
+                title="Copy to clipboard"
+              >
+                {copied ? (
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                ) : (
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                )}
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div
+        className="pseudo-hr"
+        style={{ borderBottom: `1px solid ${color}` }}
+      ></div>
+      <ul>
+        <li>
+          <span>{effectSizeLabel}:</span> {datum.effectSize}
+        </li>
+        <li>
+          <span>P Value:</span>{' '}
+          {datum.pValue
+            ? Number(datum.pValue) <= statisticsFloors.pValueFloor
+              ? '<= ' + statisticsFloors.pValueFloor
+              : datum.pValue
+            : 'n/a'}
+        </li>
+        <li>
+          <span>Adjusted P Value:</span>{' '}
+          {datum.adjustedPValue
+            ? statisticsFloors.adjustedPValueFloor &&
+              Number(datum.adjustedPValue) <=
+                statisticsFloors.adjustedPValueFloor &&
+              Number(datum.pValue) <= statisticsFloors.pValueFloor
+              ? '<= ' + statisticsFloors.adjustedPValueFloor
+              : datum.adjustedPValue
+            : 'n/a'}
+        </li>
+      </ul>
+      {showHint && (
+        <div className="VolcanoPlotTooltip__hint">
+          Click point to pin &amp; copy
+        </div>
+      )}
     </>
   );
 }

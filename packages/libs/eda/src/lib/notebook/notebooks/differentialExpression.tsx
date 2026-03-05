@@ -101,6 +101,9 @@ export const differentialExpressionNotebook: PresetNotebook = {
               other sources of variation.
             </span>
           ),
+          // RNA-Seq annotations generally don't have missing data
+          // so we keep the user interface as simple as possible
+          getVizPluginOptions: () => ({ hideCoverageData: true }),
         },
       ],
     },

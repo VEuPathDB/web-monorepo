@@ -243,7 +243,6 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
-    markerBodyOpacity: 0.5,
   };
 }
 
@@ -268,7 +267,7 @@ export const ScatterplotConfig = t.partial({
   markerBodyOpacity: t.number,
 });
 
-interface Options
+export interface ScatterplotOptions
   extends LayoutOptions,
     TitleOptions,
     OverlayOptions,
@@ -291,13 +290,19 @@ interface Options
   returnPointIds?: boolean; // Determines whether the backend should return the ids of each point in the scatterplot
   sendComputedVariablesInRequest?: boolean; // Determines whether computed variable descriptors should be sent to the backend in the data request.
   defaultMarkerSize?: number; // Default marker size in px (Plotly default is 6)
+  defaultMarkerOpacity?: number; // Our default is 0.5
   /** Enable pinnable annotation tooltips that show entity metadata on point click.
    * Requires returnPointIds to also be true, and the backend plugin to honour it.
-   * Note: currently this will also DISABLE the birds' eye view and completeness table.
-   * (because for PCA everything was always complete - easy to make this more configurable in future as needed)
    */
   enableAnnotationTooltip?: boolean;
+  /** Hide the BirdsEyeView and VariableCoverageTable components. Useful when
+   * coverage data is not meaningful (e.g. a PCA plot where all samples are always used).
+   */
+  hideCoverageData?: boolean;
 }
+
+// Keep a local alias so the rest of the file doesn't need renaming.
+type Options = ScatterplotOptions;
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
@@ -1392,6 +1397,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  const markerBodyOpacity =
+    vizConfig.markerBodyOpacity ?? options?.defaultMarkerOpacity ?? 0.5;
+
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
@@ -1432,7 +1440,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? plotSpacingOptions
       : undefined,
     // need to define markerColorOpacity for faceted plot
-    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
+    markerBodyOpacity,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
     defaultMarkerSize: options?.defaultMarkerSize,
   };
@@ -1484,7 +1492,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               : data.value?.dataSetProcess
           }
           checkedLegendItems={checkedLegendItems}
-          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
+          markerBodyOpacity={markerBodyOpacity}
           {...(enableAnnotationTooltip
             ? {
                 onHover: handlePlotlyHover,
@@ -1729,7 +1737,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         minimum={0}
         maximum={1}
         step={0.1}
-        value={vizConfig.markerBodyOpacity ?? 0.5}
+        value={markerBodyOpacity}
         debounceRateMs={250}
         onChange={(newValue: number) => {
           onMarkerBodyOpacityChange(newValue);
@@ -2029,17 +2037,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       />
     ));
 
-  const tableGroupNode =
-    enableAnnotationTooltip && !data.pending && outputEntity ? (
-      <AnnotationPanel
-        annotations={annotationRows}
-        loading={annotationLoading}
-        isPinned={isPinned}
-        onClear={clearPin}
-        entityDisplayName={outputEntity.displayName}
-      />
-    ) : (
-      <>
+  const tableGroupNode = (
+    <>
+      {enableAnnotationTooltip && !data.pending && outputEntity && (
+        <AnnotationPanel
+          annotations={annotationRows}
+          loading={annotationLoading}
+          isPinned={isPinned}
+          onClear={clearPin}
+          entityDisplayName={outputEntity.displayName}
+        />
+      )}
+      {!options?.hideCoverageData && (
         <BirdsEyeView
           completeCasesAllVars={
             data.pending ? undefined : data.value?.completeCasesAllVars
@@ -2057,6 +2066,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           totalCounts={totalCounts.value}
           filteredCounts={filteredCounts.value}
         />
+      )}
+      {!options?.hideCoverageData && (
         <VariableCoverageTable
           completeCases={
             data.value && !data.pending ? data.value?.completeCases : undefined
@@ -2106,24 +2117,25 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             },
           ]}
         />
-        {/* R-square table component: only display when overlay and/or facet variable exist */}
-        {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
-          data.value != null &&
-          !data.pending &&
-          (vizConfig.overlayVariable != null ||
-            vizConfig.facetVariable != null) && (
-            <ScatterplotRsquareTable
-              typedData={
-                !isFaceted(data.value.dataSetProcess)
-                  ? { isFaceted: false, data: data.value.dataSetProcess.series }
-                  : { isFaceted: true, data: data.value.dataSetProcess.facets }
-              }
-              overlayVariable={overlayVariable}
-              facetVariable={facetVariable}
-            />
-          )}
-      </>
-    );
+      )}
+      {/* R-square table component: only display when overlay and/or facet variable exist */}
+      {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
+        data.value != null &&
+        !data.pending &&
+        (vizConfig.overlayVariable != null ||
+          vizConfig.facetVariable != null) && (
+          <ScatterplotRsquareTable
+            typedData={
+              !isFaceted(data.value.dataSetProcess)
+                ? { isFaceted: false, data: data.value.dataSetProcess.series }
+                : { isFaceted: true, data: data.value.dataSetProcess.facets }
+            }
+            overlayVariable={overlayVariable}
+            facetVariable={facetVariable}
+          />
+        )}
+    </>
+  );
 
   // plot subtitle
   const plotSubtitle =

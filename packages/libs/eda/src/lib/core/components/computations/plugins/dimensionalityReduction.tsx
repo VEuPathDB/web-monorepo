@@ -88,6 +88,7 @@ export const plugin: ComputationPlugin = {
         sendComputedVariablesInRequest: true,
         defaultMarkerSize: 8,
         enableAnnotationTooltip: true,
+        defaultMarkerOpacity: 1.0,
       })
       .withSelectorIcon(ScatterBetadivSVG),
   },
@@ -233,7 +234,7 @@ export function DimensionalityReductionConfiguration(
               },
               {
                 name: 'valueVariable',
-                label: 'Count type',
+                label: 'Measurement type',
                 role: 'axis',
                 ...(readonlyInputNames?.includes('valueVariable')
                   ? {
