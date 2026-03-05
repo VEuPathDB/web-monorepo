@@ -41,7 +41,10 @@ import { entityTreeToArray } from '../../../utils/study-metadata';
 import { InputVariables } from '../../visualizations/InputVariables';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
-import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
+import {
+  DataElementConstraintRecord,
+  ancestorEntitiesForEntityId,
+} from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
 import { useGroupCounts } from '../../../hooks/groupCounts';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -120,7 +123,7 @@ const geneExpressionConstraints: DataElementConstraintRecord[] = [
 
 /**
  * Dependency order ensures entity compatibility.
- * comparatorVariable must be from the same or ancestor entity of the expression data.
+ * comparatorVariable must be from an ancestor entity of the expression data.
  * identifierVariable and valueVariable must be from the same entity.
  */
 const geneExpressionDependencyOrder = [
@@ -357,6 +360,22 @@ export function DifferentialExpressionConfiguration(
         : [],
     [studyMetadata]
   );
+
+  // Restrict comparatorVariable to strict ancestor entities of the identifier variable's entity.
+  const additionalDisabledVariables = useMemo(() => {
+    const idVar = configuration.identifierVariable;
+    if (!idVar) return undefined;
+    const ancestors = ancestorEntitiesForEntityId(idVar.entityId, entities);
+    const strictAncestorIds = new Set(
+      ancestors.filter((e) => e.id !== idVar.entityId).map((e) => e.id)
+    );
+    const disabled = entities
+      .filter((e) => !strictAncestorIds.has(e.id))
+      .flatMap((e) =>
+        e.variables.map((v) => ({ entityId: e.id, variableId: v.id }))
+      );
+    return { comparatorVariable: disabled };
+  }, [configuration.identifierVariable, entities]);
 
   // Helper to get display name for a variable descriptor (used for read-only labels)
   const getVariableDisplayName = useCallback(
@@ -642,6 +661,7 @@ export function DifferentialExpressionConfiguration(
             }}
             constraints={geneExpressionConstraints}
             dataElementDependencyOrder={geneExpressionDependencyOrder}
+            additionalDisabledVariables={additionalDisabledVariables}
             starredVariables={
               analysisState.analysis?.descriptor.starredVariables ?? []
             }
