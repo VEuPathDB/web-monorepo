@@ -731,9 +731,11 @@ export function DifferentialExpressionConfiguration(
                       (currentComparator: any) => ({
                         ...currentComparator,
                         groupA: newValues.length
-                          ? groupValueOptions?.filter((option) =>
-                              newValues.includes(option.label)
-                            )
+                          ? groupValueOptions
+                              ?.filter((option) =>
+                                newValues.includes(option.label)
+                              )
+                              .sort((a, b) => a.label.localeCompare(b.label))
                           : undefined,
                       })
                     );
@@ -753,8 +755,16 @@ export function DifferentialExpressionConfiguration(
                       'comparator',
                       (currentComparator: any) => ({
                         ...currentComparator,
-                        groupA: currentComparator?.groupB ?? undefined,
-                        groupB: currentComparator?.groupA ?? undefined,
+                        groupA: currentComparator?.groupB
+                          ?.slice()
+                          .sort((a: LabeledRange, b: LabeledRange) =>
+                            a.label.localeCompare(b.label)
+                          ) ?? undefined,
+                        groupB: currentComparator?.groupA
+                          ?.slice()
+                          .sort((a: LabeledRange, b: LabeledRange) =>
+                            a.label.localeCompare(b.label)
+                          ) ?? undefined,
                       })
                     );
                   }}
@@ -809,9 +819,11 @@ export function DifferentialExpressionConfiguration(
                       (currentComparator: any) => ({
                         ...currentComparator,
                         groupB: newValues.length
-                          ? groupValueOptions?.filter((option) =>
-                              newValues.includes(option.label)
-                            )
+                          ? groupValueOptions
+                              ?.filter((option) =>
+                                newValues.includes(option.label)
+                              )
+                              .sort((a, b) => a.label.localeCompare(b.label))
                           : undefined,
                       })
                     );
