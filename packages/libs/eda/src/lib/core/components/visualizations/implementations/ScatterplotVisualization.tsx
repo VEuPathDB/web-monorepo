@@ -267,7 +267,7 @@ export const ScatterplotConfig = t.partial({
   markerBodyOpacity: t.number,
 });
 
-interface Options
+export interface ScatterplotOptions
   extends LayoutOptions,
     TitleOptions,
     OverlayOptions,
@@ -293,11 +293,16 @@ interface Options
   defaultMarkerOpacity?: number; // Our default is 0.5
   /** Enable pinnable annotation tooltips that show entity metadata on point click.
    * Requires returnPointIds to also be true, and the backend plugin to honour it.
-   * Note: currently this will also DISABLE the birds' eye view and completeness table.
-   * (because for PCA everything was always complete - easy to make this more configurable in future as needed)
    */
   enableAnnotationTooltip?: boolean;
+  /** Hide the BirdsEyeView and VariableCoverageTable components. Useful when
+   * coverage data is not meaningful (e.g. a PCA plot where all samples are always used).
+   */
+  hideCoverageData?: boolean;
 }
+
+// Keep a local alias so the rest of the file doesn't need renaming.
+type Options = ScatterplotOptions;
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
   const {
@@ -2043,72 +2048,76 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           entityDisplayName={outputEntity.displayName}
         />
       )}
-      <BirdsEyeView
-        completeCasesAllVars={
-          data.pending ? undefined : data.value?.completeCasesAllVars
-        }
-        completeCasesAxesVars={
-          data.pending ? undefined : data.value?.completeCasesAxesVars
-        }
-        outputEntity={outputEntity}
-        stratificationIsActive={
-          overlayVariable != null || computedOverlayVariableDescriptor != null
-        }
-        enableSpinner={
-          xAxisVariable != null && yAxisVariable != null && !data.error
-        }
-        totalCounts={totalCounts.value}
-        filteredCounts={filteredCounts.value}
-      />
-      <VariableCoverageTable
-        completeCases={
-          data.value && !data.pending ? data.value?.completeCases : undefined
-        }
-        filteredCounts={filteredCounts}
-        outputEntityId={outputEntity?.id}
-        variableSpecs={[
-          {
-            role: 'X-axis',
-            required: true,
-            display: independentAxisLabel,
-            variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
-          },
-          {
-            role: 'Y-axis',
-            required: isVariableDescriptor(computedOverlayVariableDescriptor)
-              ? !computedOverlayVariableDescriptor?.variableId
-              : isVariableCollectionDescriptor(
-                  computedOverlayVariableDescriptor
-                )
-              ? !computedOverlayVariableDescriptor?.collectionId
-              : false,
-            display: dependentAxisLabel,
-            variable:
-              !computedOverlayVariableDescriptor && computedYAxisDescriptor
-                ? computedYAxisDescriptor
-                : vizConfig.yAxisVariable,
-          },
-          {
-            role: 'Overlay',
-            required: !!computedOverlayVariableDescriptor,
-            display: legendTitle,
-            variable:
-              (isVariableDescriptor(computedOverlayVariableDescriptor) ||
-                isVariableCollectionDescriptor(
-                  computedOverlayVariableDescriptor
-                )) &&
-              computedOverlayVariableDescriptor != null
-                ? computedOverlayVariableDescriptor
-                : vizConfig.overlayVariable,
-          },
-          ...additionalVariableCoverageTableRows,
-          {
-            role: 'Facet',
-            display: variableDisplayWithUnit(facetVariable),
-            variable: vizConfig.facetVariable,
-          },
-        ]}
-      />
+      {!options?.hideCoverageData && (
+        <BirdsEyeView
+          completeCasesAllVars={
+            data.pending ? undefined : data.value?.completeCasesAllVars
+          }
+          completeCasesAxesVars={
+            data.pending ? undefined : data.value?.completeCasesAxesVars
+          }
+          outputEntity={outputEntity}
+          stratificationIsActive={
+            overlayVariable != null || computedOverlayVariableDescriptor != null
+          }
+          enableSpinner={
+            xAxisVariable != null && yAxisVariable != null && !data.error
+          }
+          totalCounts={totalCounts.value}
+          filteredCounts={filteredCounts.value}
+        />
+      )}
+      {!options?.hideCoverageData && (
+        <VariableCoverageTable
+          completeCases={
+            data.value && !data.pending ? data.value?.completeCases : undefined
+          }
+          filteredCounts={filteredCounts}
+          outputEntityId={outputEntity?.id}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              required: true,
+              display: independentAxisLabel,
+              variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              required: isVariableDescriptor(computedOverlayVariableDescriptor)
+                ? !computedOverlayVariableDescriptor?.variableId
+                : isVariableCollectionDescriptor(
+                    computedOverlayVariableDescriptor
+                  )
+                ? !computedOverlayVariableDescriptor?.collectionId
+                : false,
+              display: dependentAxisLabel,
+              variable:
+                !computedOverlayVariableDescriptor && computedYAxisDescriptor
+                  ? computedYAxisDescriptor
+                  : vizConfig.yAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              required: !!computedOverlayVariableDescriptor,
+              display: legendTitle,
+              variable:
+                (isVariableDescriptor(computedOverlayVariableDescriptor) ||
+                  isVariableCollectionDescriptor(
+                    computedOverlayVariableDescriptor
+                  )) &&
+                computedOverlayVariableDescriptor != null
+                  ? computedOverlayVariableDescriptor
+                  : vizConfig.overlayVariable,
+            },
+            ...additionalVariableCoverageTableRows,
+            {
+              role: 'Facet',
+              display: variableDisplayWithUnit(facetVariable),
+              variable: vizConfig.facetVariable,
+            },
+          ]}
+        />
+      )}
       {/* R-square table component: only display when overlay and/or facet variable exist */}
       {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
         data.value != null &&
