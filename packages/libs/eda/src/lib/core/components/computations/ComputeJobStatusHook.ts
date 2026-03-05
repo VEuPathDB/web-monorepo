@@ -6,6 +6,7 @@ import { useComputeClient, useStudyMetadata } from '../../hooks/workspace';
 import { Analysis, NewAnalysis } from '../../types/analysis';
 import { plugins } from './plugins';
 import { Computation } from '../../types/visualization';
+import { useDebounce } from '../../hooks/debouncing';
 
 export type JobStatus = JobStatusReponse['status'] | 'requesting';
 
@@ -45,6 +46,7 @@ export function useComputeJobStatus(
 
   // Use a state variable to track current dependencies
   const [jobStatusDeps, setJobStatusDeps] = useState(nextJobStatusDeps);
+  const debouncedJobStatusDeps = useDebounce(jobStatusDeps, 2000);
 
   // Conditonally update jobStatusDeps and clear current jobStatus if deps
   // changed. This keeps the job status in sync with the current deps.
@@ -66,8 +68,8 @@ export function useComputeJobStatus(
   // `jobStatus` variable does not need to be included as a dependency.
   useEffect(() => {
     if (
-      !jobStatusDeps.computeName ||
-      !computePlugin.isConfigurationComplete(jobStatusDeps.config)
+      !debouncedJobStatusDeps.computeName ||
+      !computePlugin.isConfigurationComplete(debouncedJobStatusDeps.config)
     )
       return;
     // Track if effect has been "cancelled"
@@ -81,10 +83,10 @@ export function useComputeJobStatus(
 
     // Fetch the job status and update state
     async function updateJobStatus() {
-      if (jobStatusDeps.computeName == null) return;
+      if (debouncedJobStatusDeps.computeName == null) return;
       const { status } = await computeClient.getJobStatus(
-        jobStatusDeps.computeName,
-        omit(jobStatusDeps, 'computeName')
+        debouncedJobStatusDeps.computeName,
+        omit(debouncedJobStatusDeps, 'computeName')
       );
       if (!cancelled) setJobStatus(status);
     }
@@ -101,18 +103,19 @@ export function useComputeJobStatus(
         await delay(1000);
       }
     }
-  }, [computeClient, computePlugin, jobStatusDeps]);
+  }, [computeClient, computePlugin, debouncedJobStatusDeps]);
 
   const createJob = useCallback(async () => {
-    if (!computePlugin.isConfigurationComplete(jobStatusDeps.config)) return;
+    if (!computePlugin.isConfigurationComplete(debouncedJobStatusDeps.config))
+      return;
     setJobStatus('requesting');
-    if (jobStatusDeps.computeName == null) return;
+    if (debouncedJobStatusDeps.computeName == null) return;
     const { status } = await computeClient.createJob(
-      jobStatusDeps.computeName,
-      omit(jobStatusDeps, 'computeName')
+      debouncedJobStatusDeps.computeName,
+      omit(debouncedJobStatusDeps, 'computeName')
     );
     setJobStatus(status);
-  }, [computePlugin, computeClient, jobStatusDeps]);
+  }, [computePlugin, computeClient, debouncedJobStatusDeps]);
 
   return { computation, jobStatus, createJob };
 }
