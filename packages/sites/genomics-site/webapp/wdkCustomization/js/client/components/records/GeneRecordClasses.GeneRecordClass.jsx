@@ -258,6 +258,9 @@ function RecordOverview(props) {
             <dt>Location</dt>
             <dd>{r('location_text')}</dd>
 
+	    <dt>Ortholog Group</dt>
+            <dd>{r('orthomcl_link')}</dd>
+
             <dt className="space-above">Species</dt>
             <dd>
               <i>{r('genus_species')}</i>
