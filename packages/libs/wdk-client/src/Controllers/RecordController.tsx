@@ -58,6 +58,7 @@ type OwnProps = {
   attributes?: string[];
   tables?: string[];
   compressedUI?: boolean;
+  hideRecordOverview?: boolean;
 };
 type Props = { ownProps: OwnProps } & StateProps & DispatchProps;
 

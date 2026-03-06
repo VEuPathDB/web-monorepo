@@ -147,6 +147,26 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/embed-record-new/:recordClass/:primaryKey+',
+    isFullscreen: true,
+    component: (
+      props: RouteComponentProps<{ recordClass: string; primaryKey: string }>
+    ) => {
+      const { attributes = '', tables = '' } = parseQueryString(props);
+      return (
+        <RecordController
+          recordClass={props.match.params.recordClass}
+          primaryKey={props.match.params.primaryKey}
+          attributes={attributes ? attributes.split(',') : undefined}
+          tables={tables ? tables.split(',') : undefined}
+          compressedUI
+          hideRecordOverview
+        />
+      );
+    },
+  },
+
+  {
     path: '/step/:stepId(\\d+)/download',
     component: (props: RouteComponentProps<{ stepId: string }>) => {
       const { format, summaryView } = parseQueryString(props);

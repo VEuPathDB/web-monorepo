@@ -184,6 +184,7 @@ class RecordUI extends Component {
           record={this.props.record}
           recordClass={this.props.recordClass}
           headerActions={this.props.headerActions}
+          hideRecordOverview={this.props.ownProps.hideRecordOverview}
         />
         <div className="wdk-RecordSidebarContainer">
           <div className="wdk-RecordSidebar">
