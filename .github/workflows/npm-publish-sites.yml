@@ -50,14 +50,13 @@ jobs:
       - run: |
           git_tag="${GITHUB_REF_NAME#v}"
           if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "build_node_env=production" >> $GITHUB_ENV
+            echo "bundle_target=bundle:npm" >> $GITHUB_ENV
           else
-            echo "build_node_env=development" >> $GITHUB_ENV
+            echo "bundle_target=bundle:dev" >> $GITHUB_ENV
           fi
-      - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
+      - run: yarn nx ${{ env.bundle_target }} @veupathdb/${{matrix.dir}}
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
-          NODE_ENV: ${{ env.build_node_env }}
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF_NAME#v}
         # figure out how to tag the release on npm - sets env.npm_tag
       - run: |
