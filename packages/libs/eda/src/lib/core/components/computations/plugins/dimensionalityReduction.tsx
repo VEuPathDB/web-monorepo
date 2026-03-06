@@ -22,7 +22,7 @@ import { useCallback, useMemo } from 'react';
 import { InputVariables } from '../../visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
-import { H6 } from '@veupathdb/coreui';
+import { H6, SingleSelect } from '@veupathdb/coreui';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -39,6 +39,14 @@ export const DimensionalityReductionConfig = t.partial({
 const CompleteDimensionalityReductionConfig = partialToCompleteCodec(
   DimensionalityReductionConfig
 );
+
+export const dataFormatDisplayNames: Record<
+  NonNullable<DimensionalityReductionConfig['dataFormat']>,
+  string
+> = {
+  rawCounts: 'Raw counts',
+  normalizedValues: 'Normalized values',
+};
 
 /**
  * Constraints for gene expression variable selection.
@@ -75,7 +83,7 @@ export const plugin: ComputationPlugin = {
   configurationComponent: DimensionalityReductionConfiguration,
   configurationDescriptionComponent:
     DimensionalityReductionConfigDescriptionComponent,
-  createDefaultConfiguration: () => ({}),
+  createDefaultConfiguration: () => ({ dataFormat: 'normalizedValues' }),
   isConfigurationComplete: CompleteDimensionalityReductionConfig.is,
   visualizationPlugins: {
     scatterplot: scatterplotVisualization
@@ -274,6 +282,47 @@ export function DimensionalityReductionConfiguration(
             }
             toggleStarredVariable={toggleStarredVariable}
             labelWidth="12em"
+            customSections={[
+              {
+                order: 60,
+                content: (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        width: '12em',
+                        flexShrink: 0,
+                        marginRight: '1ex',
+                        cursor: 'default',
+                      }}
+                    >
+                      Data format
+                    </div>
+                    {readonlyInputNames?.includes('dataFormat') ? (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {configuration.dataFormat
+                          ? dataFormatDisplayNames[configuration.dataFormat]
+                          : 'Not selected'}
+                      </span>
+                    ) : (
+                      <SingleSelect
+                        items={Object.entries(dataFormatDisplayNames).map(
+                          ([value, display]) => ({ value, display })
+                        )}
+                        value={configuration.dataFormat ?? ''}
+                        onSelect={(value) =>
+                          changeConfigHandler('dataFormat', value)
+                        }
+                        buttonDisplayContent={
+                          configuration.dataFormat
+                            ? dataFormatDisplayNames[configuration.dataFormat]
+                            : 'Select data format'
+                        }
+                      />
+                    )}
+                  </div>
+                ),
+              },
+            ]}
           />
         </div>
       </div>

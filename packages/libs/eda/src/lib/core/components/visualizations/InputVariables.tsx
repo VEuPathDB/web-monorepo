@@ -103,7 +103,8 @@ const multipleStratificationVariableLabelStyle = {
   width: '45px',
 };
 
-interface CustomSectionSpec extends SectionSpec {
+interface CustomSectionSpec extends Omit<SectionSpec, 'title'> {
+  title?: ReactNode;
   content: ReactNode;
 }
 
@@ -569,7 +570,12 @@ export function InputVariables(props: Props) {
       {customSections?.map(({ order, title, content }) => (
         <div key={order} className={classes.inputGroup} style={{ order }}>
           <div className={classes.fullRow}>
-            <h4>{title}</h4>
+            <h4
+              aria-hidden={title == null}
+              style={title == null ? { visibility: 'hidden' } : undefined}
+            >
+              {title ?? '\u00a0'}
+            </h4>
           </div>
           {content}
         </div>

@@ -76,6 +76,7 @@ export const antibodyArrayNotebook: PresetNotebook = {
       computationName: 'dimensionalityreduction',
       computationId: 'pca_1',
       configOverrides: { dataFormat: 'normalizedValues' as const },
+      readonlyInputNames: ['dataFormat'],
       sharedInputsCellId: 'ab_shared_inputs',
       numberedHeader: true,
       helperText: (

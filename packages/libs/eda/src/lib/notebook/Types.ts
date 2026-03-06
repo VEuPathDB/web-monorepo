@@ -157,6 +157,7 @@ export interface ComputeCellDescriptor
   configOverrides?: Record<string, unknown>; // Extra config values merged with plugin defaults (e.g. { normalize: true }).
   sharedInputNames?: string[]; // Input names managed by a SharedComputeInputsNotebookCell. Plugins render these as read-only.
   sharedInputsCellId?: string; // ID of the SharedComputeInputsCell that owns sharedInputNames. Used to auto-collapse this cell when shared inputs are not yet set.
+  readonlyInputNames?: string[]; // Additional input names that are pre-configured and should be rendered read-only, independent of sharedInputNames.
 }
 
 export interface TextCellContext {

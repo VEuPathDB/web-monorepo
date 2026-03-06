@@ -79,6 +79,7 @@ export const differentialExpressionNotebook: PresetNotebook = {
       computationName: 'dimensionalityreduction',
       computationId: 'pca_1',
       configOverrides: { dataFormat: 'rawCounts' as const },
+      readonlyInputNames: ['dataFormat'],
       sharedInputsCellId: 'de_shared_inputs',
       numberedHeader: true,
       helperText: (
