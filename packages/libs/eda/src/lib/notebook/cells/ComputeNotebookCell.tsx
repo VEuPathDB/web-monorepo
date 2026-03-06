@@ -38,6 +38,7 @@ export function ComputeNotebookCell(
     hidden = false,
     sharedInputNames,
     sharedInputsCellId,
+    readonlyInputNames,
     initialPanelState = 'open',
   } = cell;
   const computation = analysis.descriptor.computations.find(
@@ -259,7 +260,10 @@ export function ComputeNotebookCell(
           showStepNumber: false,
           showExpandableHelp: false, // no expandable sections within an expandable element.
           additionalCollectionPredicate,
-          readonlyInputNames: sharedInputNames,
+          readonlyInputNames: [
+            ...(sharedInputNames ?? []),
+            ...(readonlyInputNames ?? []),
+          ],
           onCountGatingChange: setConfigCountGating,
         };
 
