@@ -13,10 +13,11 @@ export function RecordHeading(DefaultComponent) {
     return (
       <React.Fragment>
         <DynamicRecordHeading {...props} />
-        {renderWithCustomElements(props.record.attributes.record_overview, {
-          className: 'eupathdb-RecordOverviewContainer',
-          innerRef: props.overviewRef,
-        })}
+        {!props.hideRecordOverview &&
+          renderWithCustomElements(props.record.attributes.record_overview, {
+            className: 'eupathdb-RecordOverviewContainer',
+            innerRef: props.overviewRef,
+          })}
       </React.Fragment>
     );
   };
