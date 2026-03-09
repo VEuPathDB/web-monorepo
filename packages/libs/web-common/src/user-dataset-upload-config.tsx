@@ -263,7 +263,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             The file should contain:
             <ul>
               <li>Meaningful column headers</li>
-              <li>A gene Id column with header "Gene ID"</li>
+              <li>A gene Id column with header "geneID"</li>
               <li>
                 Valid gene Ids should:
                 <ul>

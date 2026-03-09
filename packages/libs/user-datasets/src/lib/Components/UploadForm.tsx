@@ -494,7 +494,7 @@ function UploadForm({
         }
       </div>
       <button type="submit" className="btn" disabled={submitting}>
-        Upload Data Set
+        Upload Dataset
       </button>
       <Modal
         visible={submitting && Boolean(uploadProgress)}
