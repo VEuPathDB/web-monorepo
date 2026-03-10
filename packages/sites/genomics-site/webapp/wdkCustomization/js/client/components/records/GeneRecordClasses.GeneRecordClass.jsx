@@ -325,7 +325,10 @@ function RecordOverview(props) {
             <Shortcuts {...props} />
           </div>
           <div className="eupathdb-RecordOverviewItem">
-            Also see {r('source_id')} in the{' '}
+	      Also see{' '} 
+	   <a href={`${webAppUrl}/app/record/gene/${record.attributes['source_id']}`} target="_blank">
+               {r('source_id')}
+	   </a> in the{' '}
             <a href={record.attributes['jbrowseLink']} target="_blank">
               Genome Browser
             </a>
