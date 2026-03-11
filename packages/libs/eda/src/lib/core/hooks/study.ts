@@ -194,7 +194,7 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
       const studyId = permissions.perDataset[datasetId]?.studyId;
       if (studyId == null) {
         throw new Error(
-          `An EDA Study ID could not be found for the Data Set ${datasetId}.`
+          `An EDA Study ID could not be found for the Dataset ${datasetId}.`
         );
       }
       try {
