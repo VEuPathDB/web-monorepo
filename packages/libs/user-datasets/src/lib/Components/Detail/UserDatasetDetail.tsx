@@ -404,7 +404,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
           value: <DateTime datetime={userDataset.created} />,
         },
         {
-          attribute: 'Data set size',
+          attribute: 'Dataset size',
           value: bytesToHuman(this.props.datasetSize),
         },
         { attribute: 'ID', value: userDataset.datasetId },

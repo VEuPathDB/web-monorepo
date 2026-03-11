@@ -26,7 +26,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       type: 'rnaseq',
       displayName: 'Normalized RNA-Seq',
       description: `Integrate your Normalized RNA-Seq data in ${projectId}.`,
-      uploadTitle: 'Upload My Normalized RNA-Seq Data Set',
+      uploadTitle: 'Upload My Normalized RNA-Seq Dataset',
       formConfig: {
         summary: {
           inputProps: {
@@ -46,10 +46,10 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            <b>Upload your Normalized RNA-Seq data set</b>
+            <b>Upload your Normalized RNA-Seq dataset</b>
             <br />
             <br />
-            To upload your data set:
+            To upload your dataset:
             <ol>
               <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
               <li>compress the set of files, not a folder containing them.</li>
@@ -110,7 +110,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       type: 'bigwigfiles',
       displayName: 'bigWig',
       description: `Integrate your bigWig data in ${projectId}.`,
-      uploadTitle: 'Upload My bigWig Data Set',
+      uploadTitle: 'Upload My bigWig Dataset',
       formConfig: {
         summary: {
           inputProps: {
@@ -170,7 +170,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       type: 'biom',
       displayName: 'BIOM',
       description: `Integrate your BIOM study data in ${projectId}.`,
-      uploadTitle: 'Upload My Data Set',
+      uploadTitle: 'Upload My Dataset',
       formConfig: {
         summary: {
           inputProps: {
@@ -240,7 +240,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       type: 'phenotype',
       displayName: 'Phenotype',
       description: `Integrate your Phenotype data in ${projectId}.`,
-      uploadTitle: 'Upload My Phenotype data set',
+      uploadTitle: 'Upload My Phenotype Dataset',
       formConfig: {
         summary: {
           inputProps: {
@@ -258,7 +258,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             Upload your phenotype data in a tab delimited file.
             <br />
             The file name should be &lt; 100 chars and use only letters,
-            numbers, spaces and dashes.
+            numbers, spaces and dashes. The extension can be .txt or .tsv.
             <br />
             The file should contain:
             <ul>
@@ -267,13 +267,15 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               <li>
                 Valid gene Ids should:
                 <ul>
-                  <li>include only these charatacers [a-zA-Z0-9().:_-]*$</li>
+                  <li>include only these characters [a-zA-Z0-9().:_-]*$</li>
                   <li>have at least one alphabetical character</li>
                   <li>be at most 40 characters</li>
                 </ul>
+                Invalid IDs will be discarded.
               </li>
+              <li>At least one numeric column</li>
+            <br />The file will be rejected if there are duplicated IDs.
             </ul>
-            Rows with invalid IDs will be discarded.
           </p>
         ),
         uploadMethodConfig: {
