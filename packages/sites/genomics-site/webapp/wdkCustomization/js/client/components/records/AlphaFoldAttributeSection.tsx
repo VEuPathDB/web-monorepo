@@ -64,9 +64,12 @@ export function AlphaFoldRecordSection(props: Props) {
     if (!props.isCollapsed && hasDataUrl && dataUrlStatus === null) {
       setDataUrlStatus('loading');
 
-      // Make a HEAD request to check if the file exists
+      // Make a GET request with range header to check if the file exists (HEAD can cause CORS issues)
       if (dataUrl !== null) {
-        fetch(dataUrl, { method: 'HEAD' })
+        fetch(dataUrl, {
+	    method: 'GET',
+            headers: { 'Range': 'bytes=0-0' }
+          })
           .then((response) => {
             if (response.ok) {
               setDataUrlStatus('valid');
