@@ -52,6 +52,9 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { isVdiCompatibleWdkService } from '../../Service';
 
+// needed for eda searches, to covert vdi ID to wdk ID
+import { diyUserDatasetIdToWdkRecordId }  from  '../../Utils/diyDatasets';
+
 const classify = makeClassifier('UserDatasetDetail');
 
 export interface DetailViewProps {
@@ -328,7 +331,9 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
                     const url =
                       urlPath +
                       (ps.length === 1
-                        ? '?param.' + ps[0] + '=' + userDataset.datasetId
+                        ? '?param.' + ps[0] + '=' + (userDataset.type.name==='phenotype' 
+                                                      ? diyUserDatasetIdToWdkRecordId(userDataset.datasetId) 
+                                                      : userDataset.datasetId)
                         : '');
                     return (
                       <li key={q.fullName}>
@@ -404,7 +409,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
           value: <DateTime datetime={userDataset.created} />,
         },
         {
-          attribute: 'Dataset size',
+          attribute: 'Data set size',
           value: bytesToHuman(this.props.datasetSize),
         },
         { attribute: 'ID', value: userDataset.datasetId },

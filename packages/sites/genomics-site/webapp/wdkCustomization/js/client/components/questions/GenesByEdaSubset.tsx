@@ -7,10 +7,12 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export function GenesByEdaSubset(props: Props) {
   const datasetId = props.state.paramValues['eda_dataset_id'];
+  const recordclass = (datasetId.startsWith('DS_') == false) ? 'userdataset' : 'dataset';
+
   const datasetRecord = useWdkService(
     async (wdkService) => {
       if (datasetId == null) return;
-      return wdkService.getRecord('dataset', [
+      return wdkService.getRecord(recordclass, [
         { name: 'dataset_id', value: datasetId },
       ]);
     },
