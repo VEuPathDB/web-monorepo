@@ -154,46 +154,11 @@ export function EdaDatasetGraph(props: Props) {
                 plotTitle={plotConfig.plotName}
               />
             </div>
-          ) : null}
-
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-            }}
-          >
-            {selectedPlotConfigs.map((plotConfig) => {
-              const xAxisVariable = {
-                entityId: plotConfig.xAxisEntityId,
-                variableId: plotConfig.xAxisVariableId,
-              };
-              const yAxisVariable = {
-                entityId: plotConfig.yAxisEntityId,
-                variableId: plotConfig.yAxisVariableId,
-              };
-              return (
-                <div style={{ width: 500 }}>
-                  <EdaScatterPlot
-                    datasetId={dataset_id as string}
-                    xAxisVariable={xAxisVariable}
-                    yAxisVariable={yAxisVariable}
-                    highlightSpec={
-                      graphIds && {
-                        ids: graphIds,
-                        // gene id
-                        variableId: 'VEUPATHDB_GENE_ID',
-                        entityId: plotConfig.xAxisEntityId,
-                        traceName: source_id?.toString(),
-                      }
-                    }
-                    plotTitle={plotConfig.plotName}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
+          );
+        })}
+      </div>
+    </>
+  )}
       <div>
         <div style={{ display: 'flex', gap: '3ex' }}>
           {/* <h4>
