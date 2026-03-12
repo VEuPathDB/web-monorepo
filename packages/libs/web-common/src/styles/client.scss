@@ -124,6 +124,33 @@ td.wdk-DataTableCell__thumbnail {
   border-bottom: 1px solid #aaa;
 }
 
+.collapseAllSections {
+  position: absolute;
+  right: 0px;
+  top: 1em;
+}
+
+.wdk-Compressed {
+  .eupathdb-RecordOverview {
+    border-bottom: none;
+  }
+
+  .wdk-RecordMain {
+    max-width: 100%;
+    margin-left: 0em;
+    margin-right: 2em;
+    overflow: auto;
+  }
+
+  .collapseAllSections {
+    position: relative;
+    right: unset;
+    top: unset;
+    max-width: max-content;
+    margin-left: auto;
+  }
+}
+
 .eupathdb-RecordOverviewTitle {
   display: flex;
   flex-wrap: wrap;
@@ -409,6 +436,9 @@ td.wdk-DataTableCell__thumbnail {
 
 div.RecordAttribution {
   padding-top: 60px;
+  hr {
+    color: #ccc;
+  }
 }
 
 div.eupathdb-content {
