@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
 import { Link } from 'react-router-dom';
 import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
+import { red } from '@veupathdb/coreui/lib/definitions/colors';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -280,7 +281,10 @@ export function ComputeNotebookCell(
           <>
             <NotebookCellPreHeader cell={cell} stepNumber={stepNumber} />
             {hasUnsetSharedInputs && sharedInputsStepNumber != null && (
-              <p className="SharedInputsHint">
+              <p
+                className="SharedInputsHint"
+                style={panelState === 'open' ? { color: red[600] } : undefined}
+              >
                 Complete step {sharedInputsStepNumber} to enable this analysis.
               </p>
             )}
@@ -288,6 +292,7 @@ export function ComputeNotebookCell(
               title={cell.title}
               subTitle={''}
               state={panelState}
+              onStateChange={setPanelState}
               themeRole="primary"
             >
               <div
