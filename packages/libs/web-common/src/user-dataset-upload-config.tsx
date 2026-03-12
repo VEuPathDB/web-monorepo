@@ -218,6 +218,34 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       description: `Integrate your gene list in ${projectId}.`,
       uploadTitle: 'Upload My Gene List',
       formConfig: {
+        renderInfo: () => (
+          <p className="formInfo">
+            Upload a file containing gene IDs. Gene IDs needs to be valid and be separated by valid delimiters.
+            <br />
+            Gene lists can also be added from search strategy result pages. 
+            Simply click on the "Send to" menu and choose the "My Data Sets" option to install the gene list in My Data Sets.
+            <br /><br />
+            The file name should be &lt; 100 chars and use only letters,
+            numbers, spaces and dashes. The extension can be .txt or .tsv.
+            <br /><br />
+            Valid gene Ids should:
+              <ul>
+                <li>include only these characters [a-zA-Z0-9().:_-]*$</li>
+                <li>have at least one alphabetical character</li>
+                <li>be at most 40 characters</li>
+              </ul>
+            Invalid IDs will be discarded.
+            <br /><br />
+            Valid delimiters are:
+              <ul>
+                <li>white space (newline, space, tab)</li>
+                <li>comma</li>
+                <li>semi-colon</li>
+              </ul>
+            <br /><br />
+            The file will be rejected if there are duplicated IDs.
+          </p>
+        ),
         uploadMethodConfig: {
           result: {
             offerStrategyUpload: false,
@@ -274,8 +302,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
                 Invalid IDs will be discarded.
               </li>
               <li>At least one numeric column</li>
-            <br />The file will be rejected if there are duplicated IDs.
             </ul>
+            <br />The file will be rejected if there are duplicated IDs.
           </p>
         ),
         uploadMethodConfig: {
