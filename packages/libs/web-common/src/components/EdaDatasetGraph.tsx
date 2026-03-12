@@ -61,11 +61,20 @@ export function EdaDatasetGraph(props: Props) {
     dataTable,
   } = props;
 
-  const plotConfigs = parseJson(plot_configs_json as string);
-
   const [selectedPlotsIndex, setSelectedPlotsIndex] = useState([0]);
   const [dataTableCollapsed, setDataTableCollapsed] = useState(false);
 
+  // simple type guarding against `AttributeValue` fields not being `string`
+  if (
+    typeof plot_configs_json !== 'string' ||
+    typeof dataset_id !== 'string' ||
+    typeof source_id !== 'string'
+  ) {
+    console.error('EdaDatasetGraph: bad props');
+    return null;
+  }
+
+  const plotConfigs = parseJson(plot_configs_json);
   const showGraph =
     plotConfigs != null && plotConfigs.length > 0 && has_graph_data;
 
@@ -102,11 +111,11 @@ export function EdaDatasetGraph(props: Props) {
 
           {default_graph_id !== source_id ? (
             <div>
-              <strong style={{ color: 'firebrick' }}>WARNING</strong>: This
-              Gene ({source_id as string}) does not have data for this
-              experiment. Instead, we are showing data for this same gene(s)
-              from the reference strain for this species. This may or may NOT
-              accurately represent the gene you are interested in.{' '}
+              <strong style={{ color: 'firebrick' }}>WARNING</strong>: This Gene
+              ({source_id}) does not have data for this experiment. Instead, we
+              are showing data for this same gene(s) from the reference strain
+              for this species. This may or may NOT accurately represent the
+              gene you are interested in.{' '}
             </div>
           ) : null}
 
@@ -128,7 +137,7 @@ export function EdaDatasetGraph(props: Props) {
               return (
                 <div style={{ width: 500 }}>
                   <EdaScatterPlot
-                    datasetId={dataset_id as string}
+                    datasetId={dataset_id}
                     xAxisVariable={xAxisVariable}
                     yAxisVariable={yAxisVariable}
                     highlightSpec={
@@ -137,7 +146,7 @@ export function EdaDatasetGraph(props: Props) {
                         // gene id
                         variableId: 'VEUPATHDB_GENE_ID',
                         entityId: plotConfig.xAxisEntityId,
-                        traceName: source_id?.toString(),
+                        traceName: source_id,
                       }
                     }
                     plotTitle={plotConfig.plotName}
