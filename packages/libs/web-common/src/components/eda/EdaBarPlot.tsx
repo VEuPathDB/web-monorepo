@@ -84,8 +84,9 @@ function BarPlotAdapter(props: AdapterProps) {
           config: {
             outputEntityId: xAxisVariable.entityId,
             valueSpec: 'count',
+            barMode: 'group',
             xAxisVariable,
-            yAxisVariable,
+            overlayVariable: yAxisVariable,
           },
         }
       );
