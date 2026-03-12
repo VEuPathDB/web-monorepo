@@ -97,14 +97,10 @@ function Shortcuts(props) {
     ]
   );
 
-  // Get field present in record instance. This is leveraging the fact that
+  // Get fields present in record instance. This is leveraging the fact that
   // we filter the category tree in the store based on the contents of
-  // MetaTable.
-  const instanceFields = new Set(
-    preorderSeq(categoryTree)
-      .filter((node) => !node.children.length)
-      .map((node) => node.properties.name[0])
-  );
+  // MetaTable. Computed by the parent (RecordOverview) and passed down.
+  const { instanceFields } = props;
 
   const transcriptomicsThumbnail = {
     displayName: 'Transcriptomics',
@@ -192,7 +188,13 @@ function Shortcuts(props) {
 }
 
 function RecordOverview(props) {
-  const { record } = props;
+  const { record, categoryTree } = props;
+  const instanceFields = new Set(
+    preorderSeq(categoryTree)
+      .filter((node) => !node.children.length)
+      .map((node) => node.properties.name[0])
+  );
+  const isEmbedRecord = !instanceFields.has('UserComments');
 
   function r(attributeName) {
     if (!(attributeName in record.attributes)) {
@@ -283,7 +285,14 @@ function RecordOverview(props) {
             <dt className="space-above">User Comments</dt>
             <dd>
               <div data-show-num-user-comments="+1" data-label="User Comments">
-                <a href="#UserComments">
+                <a
+                  href={
+                    isEmbedRecord
+                      ? `${webAppUrl}/app/record/gene/${record.attributes['source_id']}#UserComments`
+                      : '#UserComments'
+                  }
+                  target={isEmbedRecord ? '_blank' : undefined}
+                >
                   View{' '}
                   <span className="eupathdb-GeneOverviewHighlighted">
                     {r('num_user_comments')}
@@ -322,16 +331,20 @@ function RecordOverview(props) {
           </div>
           <div className="eupathdb-ThumbnailsTitle">Shortcuts</div>
           <div className="eupathdb-ThumbnailsContainer">
-            <Shortcuts {...props} />
+            <Shortcuts {...props} instanceFields={instanceFields} />
           </div>
           <div className="eupathdb-RecordOverviewItem">
             Also see{' '}
-            <a
-              href={`${webAppUrl}/app/record/gene/${record.attributes['source_id']}`}
-              target="_blank"
-            >
-              {r('source_id')}
-            </a>{' '}
+            {isEmbedRecord ? (
+              <a
+                href={`${webAppUrl}/app/record/gene/${record.attributes['source_id']}`}
+                target="_blank"
+              >
+                {r('source_id')}
+              </a>
+            ) : (
+              r('source_id')
+            )}{' '}
             in the{' '}
             <a href={record.attributes['jbrowseLink']} target="_blank">
               Genome Browser
