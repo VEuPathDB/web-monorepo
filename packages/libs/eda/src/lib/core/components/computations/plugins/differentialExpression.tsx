@@ -22,7 +22,14 @@ import {
   useFindEntityAndVariable,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
@@ -527,6 +534,8 @@ export function DifferentialExpressionConfiguration(
     groupBCountPending,
   ]);
 
+  const [groupSwapCounter, setGroupSwapCounter] = useState(0);
+
   const isContinuous =
     configuration.comparator?.groupA?.[0]?.min != null ||
     configuration.comparator?.groupB?.[0]?.min != null;
@@ -711,6 +720,7 @@ export function DifferentialExpressionConfiguration(
                   </span>
                 </span>
                 <ValuePicker
+                  key={`GroupA-${groupSwapCounter}`}
                   allowedValues={
                     !continuousVariableBins.pending
                       ? groupValueOptions?.map((option) => option.label)
@@ -757,6 +767,9 @@ export function DifferentialExpressionConfiguration(
                         groupB: currentComparator?.groupA ?? undefined,
                       })
                     );
+                    // increment a counter to force component rerenders via key change
+                    // (this makes sure the button display text updates)
+                    setGroupSwapCounter((prev) => prev + 1);
                   }}
                   styleOverrides={{
                     container: {
@@ -789,6 +802,7 @@ export function DifferentialExpressionConfiguration(
                   </span>
                 </span>
                 <ValuePicker
+                  key={`GroupB-${groupSwapCounter}`}
                   allowedValues={
                     !continuousVariableBins.pending
                       ? groupValueOptions?.map((option) => option.label)
