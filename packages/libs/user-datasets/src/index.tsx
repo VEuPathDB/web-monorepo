@@ -50,9 +50,9 @@ initialize({
       component: () => (
         <UserDatasetRouter
           availableUploadTypes={availableUploadTypes}
-          detailsPageTitle="My Data Set"
+          detailsPageTitle="My Dataset"
           helpRoute="/help"
-          workspaceTitle="My Data Sets"
+          workspaceTitle="My Datasets"
           uploadTypeConfig={uploadTypeConfig}
           dataNoun={{
             singular: 'Dataset',
@@ -77,7 +77,7 @@ initialize({
             hasDirectUpload={hasDirectUpload}
             projectName={projectName}
             quotaSize={quotaSize}
-            workspaceTitle="My Data Sets"
+            workspaceTitle="My Datasets"
           />
         );
       },
