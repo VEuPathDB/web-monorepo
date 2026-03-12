@@ -12,14 +12,7 @@ import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
-
-interface GeneDisplaySpec {
-  ids: string[];
-  variableId: string;
-  entityId: string;
-  traceName?: string;
-  mode: 'highlight' | 'subset';
-}
+import { filtersFromGeneDisplaySpec, GeneDisplaySpec } from './geneDisplaySpec';
 
 interface Props {
   datasetId: string;
@@ -41,7 +34,7 @@ export function EdaBarPlot(props: Props) {
       <WorkspaceContainer
         studyId={datasetId}
         edaServiceUrl={edaServiceUrl}
-        className=""
+        className="EdaBarPlot"
       >
         <BarPlotAdapter {...props} />
       </WorkspaceContainer>
@@ -64,32 +57,19 @@ function BarPlotAdapter(props: AdapterProps) {
   const findEntityAndVariable = useFindEntityAndVariable();
   const data = useCachedPromise(
     async function getData() {
-      // Construct filters array if in subset mode
-      const filters = geneDisplaySpec?.mode === 'subset' && geneDisplaySpec.ids.length > 0
-        ? [
-            {
-              type: 'stringSet' as const,
-              entityId: geneDisplaySpec.entityId,
-              variableId: geneDisplaySpec.variableId,
-              stringSet: geneDisplaySpec.ids,
-            }
-          ]
-        : [];
+      const filters = filtersFromGeneDisplaySpec(geneDisplaySpec);
 
-      const barplotDataResponse$ = dataClient.getBarplot(
-        'pass',
-        {
-          studyId,
-          filters,
-          config: {
-            outputEntityId: xAxisVariable.entityId,
-            valueSpec: 'count',
-            barMode: 'group',
-            xAxisVariable,
-            overlayVariable: yAxisVariable,
-          },
-        }
-      );
+      const barplotDataResponse$ = dataClient.getBarplot('pass', {
+        studyId,
+        filters,
+        config: {
+          outputEntityId: xAxisVariable.entityId,
+          valueSpec: 'count',
+          barMode: 'group',
+          xAxisVariable,
+          overlayVariable: yAxisVariable,
+        },
+      });
 
       const barplotDataResponse = await barplotDataResponse$;
 
@@ -109,7 +89,12 @@ function BarPlotAdapter(props: AdapterProps) {
       // Fill in missing vocabulary labels with zero so all categories
       // are shown even when the subsetted gene has no data for them.
       const vocabulary = xAxisVar.variable.vocabulary;
-      if (!isFaceted(data) && vocabulary && vocabulary.length > 0 && data.series.length > 0) {
+      if (
+        !isFaceted(data) &&
+        vocabulary &&
+        vocabulary.length > 0 &&
+        data.series.length > 0
+      ) {
         return {
           ...data,
           series: data.series.map((series) => {

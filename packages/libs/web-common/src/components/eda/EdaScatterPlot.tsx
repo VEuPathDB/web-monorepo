@@ -14,14 +14,7 @@ import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContai
 import { edaServiceUrl } from '../../config';
 import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
 import pluralize from 'pluralize';
-
-interface GeneDisplaySpec {
-  ids: string[];
-  variableId: string;
-  entityId: string;
-  traceName?: string;
-  mode: 'highlight' | 'subset';
-}
+import { filtersFromGeneDisplaySpec, GeneDisplaySpec } from './geneDisplaySpec';
 
 interface Props {
   datasetId: string;
@@ -66,17 +59,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
   const findEntityAndVariable = useFindEntityAndVariable();
   const data = useCachedPromise(
     async function getData() {
-      // Construct filters array if in subset mode
-      const filters = geneDisplaySpec?.mode === 'subset' && geneDisplaySpec.ids.length > 0
-        ? [
-            {
-              type: 'stringSet' as const,
-              entityId: geneDisplaySpec.entityId,
-              variableId: geneDisplaySpec.variableId,
-              stringSet: geneDisplaySpec.ids,
-            }
-          ]
-        : [];
+      const filters = filtersFromGeneDisplaySpec(geneDisplaySpec);
 
       const scatterplotDataResponse$ = dataClient.getScatterplot(
         'xyrelationships',
@@ -148,7 +131,13 @@ function ScatterPlotAdapter(props: AdapterProps) {
           : undefined
       ).dataSetProcess;
     },
-    ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, geneDisplaySpec]
+    [
+      'ScatterPlotAdapter',
+      studyId,
+      xAxisVariable,
+      yAxisVariable,
+      geneDisplaySpec,
+    ]
   );
 
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
