@@ -258,7 +258,7 @@ function RecordOverview(props) {
             <dt>Location</dt>
             <dd>{r('location_text')}</dd>
 
-	    <dt>Ortholog Group</dt>
+            <dt>Ortholog Group</dt>
             <dd>{r('orthomcl_link')}</dd>
 
             <dt className="space-above">Species</dt>
@@ -325,10 +325,14 @@ function RecordOverview(props) {
             <Shortcuts {...props} />
           </div>
           <div className="eupathdb-RecordOverviewItem">
-	      Also see{' '} 
-	   <a href={`${webAppUrl}/app/record/gene/${record.attributes['source_id']}`} target="_blank">
-               {r('source_id')}
-	   </a> in the{' '}
+            Also see{' '}
+            <a
+              href={`${webAppUrl}/app/record/gene/${record.attributes['source_id']}`}
+              target="_blank"
+            >
+              {r('source_id')}
+            </a>{' '}
+            in the{' '}
             <a href={record.attributes['jbrowseLink']} target="_blank">
               Genome Browser
             </a>
@@ -352,13 +356,7 @@ export const RecordMainSection = connect(null)(
       <div>
         <React.Fragment>
           {props.depth == null && (
-            <div
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: '1em',
-              }}
-            >
+            <div className="collapseAllSections">
               <i className="fa fa-exclamation-triangle" />
               &nbsp;
               <button
