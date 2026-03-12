@@ -100,11 +100,32 @@ function BarPlotAdapter(props: AdapterProps) {
         throw new Error('Could not find x or y axis variable');
       }
 
-      return barplotResponseToData(
+      const data = barplotResponseToData(
         barplotDataResponse,
         xAxisVar.variable,
         yAxisVar.variable
       );
+
+      // Fill in missing vocabulary labels with zero so all categories
+      // are shown even when the subsetted gene has no data for them.
+      const vocabulary = xAxisVar.variable.vocabulary;
+      if (!isFaceted(data) && vocabulary && vocabulary.length > 0 && data.series.length > 0) {
+        return {
+          ...data,
+          series: data.series.map((series) => {
+            const labelToValue = new Map(
+              series.label.map((l: string, i: number) => [l, series.value[i]])
+            );
+            return {
+              ...series,
+              label: vocabulary,
+              value: vocabulary.map((v) => labelToValue.get(v) ?? 0),
+            };
+          }),
+        };
+      }
+
+      return data;
     },
     ['BarPlotAdapter', studyId, xAxisVariable, yAxisVariable, geneDisplaySpec]
   );

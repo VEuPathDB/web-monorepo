@@ -145,7 +145,7 @@ export function EdaDatasetGraph(props: Props) {
             : EdaScatterPlot;
 
           return (
-            <div style={{ width: 500 }}>
+            <div style={{ width: plotConfig.plotType === 'bar' ? 800 : 500 }}>
               <PlotComponent
                 datasetId={dataset_id as string}
                 xAxisVariable={xAxisVariable}
