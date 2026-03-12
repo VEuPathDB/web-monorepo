@@ -633,7 +633,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'user-data-sets',
-          display: 'My data sets',
+          display: 'My datasets',
           type: 'reactRoute',
           url: '/workspace/datasets',
           metadata: {
@@ -681,7 +681,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'datasets',
-          display: `Data sets in ${displayName}`,
+          display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
         },
@@ -890,7 +890,7 @@ const useHeaderMenuItems = (
             },
             {
               key: 'datasets-in-progress',
-              display: 'Data Sets we are working on',
+              display: 'Datasets we are working on',
               type: 'reactRoute',
               url: makeStaticPageRoute('/dataInprogress.html'),
             },
