@@ -66,6 +66,7 @@ export function ComputeNotebookCell(
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [panelState, setPanelState] = useState<'open' | 'closed'>(systemState);
+  const [userPanelState, setUserPanelState] = useState(panelState);
 
   useEffect(() => {
     const s: 'open' | 'closed' = hasUnsetSharedInputs
@@ -283,7 +284,9 @@ export function ComputeNotebookCell(
             {hasUnsetSharedInputs && sharedInputsStepNumber != null && (
               <p
                 className="SharedInputsHint"
-                style={panelState === 'open' ? { color: red[600] } : undefined}
+                style={
+                  userPanelState === 'open' ? { color: red[600] } : undefined
+                }
               >
                 Complete step {sharedInputsStepNumber} to enable this analysis.
               </p>
@@ -292,7 +295,7 @@ export function ComputeNotebookCell(
               title={cell.title}
               subTitle={''}
               state={panelState}
-              onStateChange={setPanelState}
+              onStateChange={setUserPanelState}
               themeRole="primary"
             >
               <div
