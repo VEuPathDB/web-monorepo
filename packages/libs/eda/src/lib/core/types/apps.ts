@@ -43,6 +43,14 @@ export const CompleteSelfCorrelationConfig = partialToCompleteCodec(
 
 // Differential abundance and expression
 
+export const DifferentialExpressionMethod = t.union([
+  t.literal('DESeq'),
+  t.literal('limma'),
+]);
+export type DifferentialExpressionMethod = t.TypeOf<
+  typeof DifferentialExpressionMethod
+>;
+
 const Comparator = t.intersection([
   t.partial({
     groupA: t.array(LabeledRange),
@@ -62,7 +70,7 @@ export const DifferentialExpressionConfig = t.partial({
   identifierVariable: VariableDescriptor,
   valueVariable: VariableDescriptor,
   comparator: Comparator,
-  differentialExpressionMethod: t.string,
+  differentialExpressionMethod: DifferentialExpressionMethod,
   pValueFloor: t.string,
 });
 

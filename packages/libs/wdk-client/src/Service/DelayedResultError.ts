@@ -1,5 +1,5 @@
 export const DELAYED_RESULT_MESSAGE =
-  'Your results are not yet available. Please return to this page later.';
+  'Your results are not yet available. They will show when available. Please return to this page later.';
 
 export class DelayedResultError extends Error {
   name = 'DelayedResultError';

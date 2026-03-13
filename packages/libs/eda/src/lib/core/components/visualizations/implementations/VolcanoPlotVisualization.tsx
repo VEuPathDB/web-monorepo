@@ -557,7 +557,6 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     setTruncatedDependentAxisWarning,
   ]);
 
-  // @ts-ignore
   const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
   const controlsNode = (
@@ -798,23 +797,30 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
             containerStyles={{ marginRight: 10 }}
           />
 
-          <NumberInput
-            label="P-Value"
-            onValueChange={(newValue?: NumberOrDate) => {
-              updateVizConfig({ significanceThreshold: Number(newValue) });
-              options?.inputSnackbar &&
-                typeof newValue === 'number' &&
-                options.inputSnackbar(
-                  enqueueSnackbar,
-                  'significanceThreshold',
-                  newValue
-                );
-            }}
-            minValue={0}
-            value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
-            containerStyles={{ marginLeft: 10 }}
-            step={0.001}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <NumberInput
+              label="P-value"
+              onValueChange={(newValue?: NumberOrDate) => {
+                updateVizConfig({ significanceThreshold: Number(newValue) });
+                options?.inputSnackbar &&
+                  typeof newValue === 'number' &&
+                  options.inputSnackbar(
+                    enqueueSnackbar,
+                    'significanceThreshold',
+                    newValue
+                  );
+              }}
+              minValue={0}
+              value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
+              containerStyles={{ marginLeft: 10 }}
+              step={0.001}
+            />
+            <div style={{ marginLeft: '10px' }}>
+              <i>
+                Threshold uses raw p-value. Adjusted p-value shown in tooltips.
+              </i>
+            </div>
+          </div>
         </LabelledGroup>
       )}
 

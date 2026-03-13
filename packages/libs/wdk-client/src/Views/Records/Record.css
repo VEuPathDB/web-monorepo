@@ -342,3 +342,8 @@ h2.wdk-RecordNavigationSectionHeader {
 .wdk-Compressed .wdk-RecordSidebar {
   display: none;
 }
+
+/* Without some spacing these look a bit strange */
+.wdk-Compressed .wdk-CollapsibleSection {
+  margin-bottom: 1em;
+}

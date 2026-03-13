@@ -51,7 +51,7 @@ function renderSourceVersion(version, newcategory) {
         <HelpIcon>
           {'The source versions for the assembly, ' +
             'structural annotation and functional annotation.  ' +
-            'See the Data Set Release History table for more details.'}
+            'See the Dataset Release History table for more details.'}
         </HelpIcon>
       </span>
     );

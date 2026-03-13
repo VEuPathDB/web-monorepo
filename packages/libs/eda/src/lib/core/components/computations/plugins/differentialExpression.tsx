@@ -22,7 +22,14 @@ import {
   useFindEntityAndVariable,
   useSubsettingClient,
 } from '../../../hooks/workspace';
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
@@ -41,7 +48,10 @@ import { entityTreeToArray } from '../../../utils/study-metadata';
 import { InputVariables } from '../../visualizations/InputVariables';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
-import { DataElementConstraintRecord } from '../../../utils/data-element-constraints';
+import {
+  DataElementConstraintRecord,
+  ancestorEntitiesForEntityId,
+} from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
 import { useGroupCounts } from '../../../hooks/groupCounts';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -95,6 +105,7 @@ const geneExpressionConstraints: DataElementConstraintRecord[] = [
       isRequired: true,
       minNumVars: 1,
       maxNumVars: 1,
+      minNumValues: 2,
       description:
         'Select a metadata variable for group comparison. Must be from a parent entity of the expression data.',
     },
@@ -119,7 +130,7 @@ const geneExpressionConstraints: DataElementConstraintRecord[] = [
 
 /**
  * Dependency order ensures entity compatibility.
- * comparatorVariable must be from the same or ancestor entity of the expression data.
+ * comparatorVariable must be from an ancestor entity of the expression data.
  * identifierVariable and valueVariable must be from the same entity.
  */
 const geneExpressionDependencyOrder = [
@@ -227,13 +238,20 @@ function DifferentialExpressionConfigDescriptionComponent({
 }
 
 // Method keys must match what the backend expects.
-// limma is coming soon.
 const DIFFERENTIAL_EXPRESSION_METHODS = {
   DESeq: {
     displayName: 'DESeq2',
     citation: (
       <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8">
         (Love et al., 2014)
+      </a>
+    ),
+  },
+  limma: {
+    displayName: 'limma',
+    citation: (
+      <a href="https://academic.oup.com/nar/article/43/7/e47/2414268">
+        (Ritchie et al., 2015)
       </a>
     ),
   },
@@ -349,6 +367,22 @@ export function DifferentialExpressionConfiguration(
         : [],
     [studyMetadata]
   );
+
+  // Restrict comparatorVariable to strict ancestor entities of the identifier variable's entity.
+  const additionalDisabledVariables = useMemo(() => {
+    const idVar = configuration.identifierVariable;
+    if (!idVar) return undefined;
+    const ancestors = ancestorEntitiesForEntityId(idVar.entityId, entities);
+    const strictAncestorIds = new Set(
+      ancestors.filter((e) => e.id !== idVar.entityId).map((e) => e.id)
+    );
+    const disabled = entities
+      .filter((e) => !strictAncestorIds.has(e.id))
+      .flatMap((e) =>
+        e.variables.map((v) => ({ entityId: e.id, variableId: v.id }))
+      );
+    return { comparatorVariable: disabled };
+  }, [configuration.identifierVariable, entities]);
 
   // Helper to get display name for a variable descriptor (used for read-only labels)
   const getVariableDisplayName = useCallback(
@@ -500,6 +534,8 @@ export function DifferentialExpressionConfiguration(
     groupBCountPending,
   ]);
 
+  const [groupSwapCounter, setGroupSwapCounter] = useState(0);
+
   const isContinuous =
     configuration.comparator?.groupA?.[0]?.min != null ||
     configuration.comparator?.groupB?.[0]?.min != null;
@@ -565,7 +601,7 @@ export function DifferentialExpressionConfiguration(
             inputs={[
               {
                 name: 'identifierVariable',
-                label: 'Gene Identifier',
+                label: 'Gene identifier',
                 role: 'axis',
                 titleOverride: 'Expression Data',
                 ...(readonlyInputNames?.includes('identifierVariable')
@@ -579,7 +615,7 @@ export function DifferentialExpressionConfiguration(
               },
               {
                 name: 'valueVariable',
-                label: 'Count type',
+                label: 'Measurement type',
                 role: 'axis',
                 ...(readonlyInputNames?.includes('valueVariable')
                   ? {
@@ -591,7 +627,7 @@ export function DifferentialExpressionConfiguration(
               },
               {
                 name: 'comparatorVariable',
-                label: 'Metadata Variable',
+                label: 'Metadata variable',
                 role: 'stratification',
                 titleOverride: 'Group Comparison',
                 styleOverride: { minWidth: '30em' },
@@ -634,6 +670,7 @@ export function DifferentialExpressionConfiguration(
             }}
             constraints={geneExpressionConstraints}
             dataElementDependencyOrder={geneExpressionDependencyOrder}
+            additionalDisabledVariables={additionalDisabledVariables}
             starredVariables={
               analysisState.analysis?.descriptor.starredVariables ?? []
             }
@@ -683,6 +720,7 @@ export function DifferentialExpressionConfiguration(
                   </span>
                 </span>
                 <ValuePicker
+                  key={`GroupA-${groupSwapCounter}`}
                   allowedValues={
                     !continuousVariableBins.pending
                       ? groupValueOptions?.map((option) => option.label)
@@ -729,6 +767,9 @@ export function DifferentialExpressionConfiguration(
                         groupB: currentComparator?.groupA ?? undefined,
                       })
                     );
+                    // increment a counter to force component rerenders via key change
+                    // (this makes sure the button display text updates)
+                    setGroupSwapCounter((prev) => prev + 1);
                   }}
                   styleOverrides={{
                     container: {
@@ -761,6 +802,7 @@ export function DifferentialExpressionConfiguration(
                   </span>
                 </span>
                 <ValuePicker
+                  key={`GroupB-${groupSwapCounter}`}
                   allowedValues={
                     !continuousVariableBins.pending
                       ? groupValueOptions?.map((option) => option.label)

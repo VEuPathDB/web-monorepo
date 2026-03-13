@@ -1,4 +1,5 @@
 import React, {
+
   FunctionComponent,
   useCallback,
   useEffect,
@@ -489,15 +490,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'toxo-rflp',
-          display: 'RFLP Genotypes',
-          type: 'reactRoute',
-          url: '/workspace/analyses/DS_6d31c76b75/new',
-          metadata: {
-            include: [ToxoDB,UniDB],
-          },
-        },
-        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
@@ -599,6 +591,15 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           url: `/pubcrawler/${displayName}`,
         },
+        /*{
+          key: 'toxo-rflp',
+          display: 'RFLP Genotypes',
+          type: 'reactRoute',
+          url: '/workspace/analyses/DS_6d31c76b75/new',
+          metadata: {
+            include: [ToxoDB,UniDB],
+          },
+        },*/
         {
           key: 'srt',
           display: 'Sequence retrieval',
@@ -632,7 +633,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'user-data-sets',
-          display: 'My data sets',
+          display: 'My datasets',
           type: 'reactRoute',
           url: '/workspace/datasets',
           metadata: {
@@ -680,7 +681,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'datasets',
-          display: `Data sets in ${displayName}`,
+          display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
         },
@@ -889,7 +890,7 @@ const useHeaderMenuItems = (
             },
             {
               key: 'datasets-in-progress',
-              display: 'Data Sets we are working on',
+              display: 'Datasets we are working on',
               type: 'reactRoute',
               url: makeStaticPageRoute('/dataInprogress.html'),
             },

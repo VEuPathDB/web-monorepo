@@ -261,7 +261,7 @@ export default function DefaultQuestionForm(props: Props) {
                 ...standardTabs,
                 {
                   key: 'datasets',
-                  display: 'View Data Sets Used',
+                  display: 'View Datasets Used',
                   content: props.DatasetsComponent(),
                 },
               ]
