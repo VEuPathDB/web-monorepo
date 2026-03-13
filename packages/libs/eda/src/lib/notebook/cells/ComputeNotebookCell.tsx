@@ -15,6 +15,8 @@ import Dialog from '@veupathdb/wdk-client/lib/Components/Overlays/Dialog';
 import { Link } from 'react-router-dom';
 import { NotebookCellPreHeader } from '../NotebookCellPreHeader';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
+import { useDeepValue } from '../../core/hooks/immutability';
+import { useDebounce } from '../../core/hooks/debouncing';
 
 export function ComputeNotebookCell(
   props: NotebookCellProps<ComputeCellDescriptor>
@@ -66,6 +68,7 @@ export function ComputeNotebookCell(
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [panelState, setPanelState] = useState<'open' | 'closed'>(systemState);
+  const [userPanelState, setUserPanelState] = useState(panelState);
 
   useEffect(() => {
     const s: 'open' | 'closed' = hasUnsetSharedInputs
@@ -84,10 +87,16 @@ export function ComputeNotebookCell(
   const appOverview =
     apps && apps.value?.apps.find((app) => app.name === computationName);
 
-  const totalCountsResult = useEntityCounts();
-  const filteredCountsResult = useEntityCounts(
-    analysis.descriptor.subset.descriptor
+  // Debounce filters so child cells and entity counts don't react to every
+  // rapid filter change. useComputeJobStatus receives the original (un-debounced)
+  // analysis and handles its own debouncing internally.
+  const debouncedFilters = useDebounce(
+    useDeepValue(analysis.descriptor.subset.descriptor),
+    2000
   );
+
+  const totalCountsResult = useEntityCounts();
+  const filteredCountsResult = useEntityCounts(debouncedFilters);
   const plugin = plugins[computation.descriptor.type];
   if (plugin == null) throw new Error('Computation plugin not found.');
 
@@ -215,6 +224,26 @@ export function ComputeNotebookCell(
     }
   }, [hidden, jobStatus]);
 
+  // Wrap analysisState with debounced filters for child cells.
+  // useComputeJobStatus above receives the original analysis so it can apply
+  // its own internal debounce independently.
+  const debouncedAnalysisState = useMemo(
+    () => ({
+      ...analysisState,
+      analysis: {
+        ...analysis,
+        descriptor: {
+          ...analysis.descriptor,
+          subset: {
+            ...analysis.descriptor.subset,
+            descriptor: debouncedFilters ?? [],
+          },
+        },
+      },
+    }),
+    [analysisState, analysis, debouncedFilters]
+  );
+
   return computation && appOverview ? (
     <>
       {/* Error Dialog */}
@@ -283,7 +312,9 @@ export function ComputeNotebookCell(
             {hasUnsetSharedInputs && sharedInputsStepNumber != null && (
               <p
                 className="SharedInputsHint"
-                style={panelState === 'open' ? { color: red[600] } : undefined}
+                style={
+                  userPanelState === 'open' ? { color: red[600] } : undefined
+                }
               >
                 Complete step {sharedInputsStepNumber} to enable this analysis.
               </p>
@@ -292,7 +323,7 @@ export function ComputeNotebookCell(
               title={cell.title}
               subTitle={''}
               state={panelState}
-              onStateChange={setPanelState}
+              onStateChange={setUserPanelState}
               themeRole="primary"
             >
               <div
@@ -324,7 +355,7 @@ export function ComputeNotebookCell(
           return (
             <NotebookCell
               key={index}
-              analysisState={analysisState}
+              analysisState={debouncedAnalysisState}
               cell={subCell}
               isDisabled={isSubCellDisabled}
               wdkState={wdkState}
