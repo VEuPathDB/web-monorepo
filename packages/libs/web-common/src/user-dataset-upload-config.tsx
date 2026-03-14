@@ -222,8 +222,9 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
           <p className="formInfo">
             Upload a file containing gene IDs. Gene IDs needs to be valid and be separated by valid delimiters.
             <br />
-            Gene lists can also be added from search strategy result pages. 
-            Simply click on the "Send to" menu and choose the "My Data Sets" option to install the gene list in My Data Sets.
+            Gene lists can also be added from a search strategy result page. 
+            Click on the "Send to" menu near the "Download" button,  
+              and choose the "My Datasets" option to install the gene list in My Datasets.
             <br /><br />
             The file name should be &lt; 100 chars and use only letters,
             numbers, spaces and dashes. The extension can be .txt or .tsv.
@@ -313,8 +314,8 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be a tab-delimited .txt file File must be less than
-                  xxGB
+                  File must be a tab-delimited .txt or .tsv file. 
+                  <br />File must be less than xxGB.
                 </div>
               </>
             ),

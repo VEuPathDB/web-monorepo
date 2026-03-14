@@ -171,7 +171,7 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
               >
                 <div>
                   <IconAlt fa="files-o fa-fw" />{' '}
-                  <span style={{ marginLeft: '0.5em' }}>My Data Sets</span>
+                  <span style={{ marginLeft: '0.5em' }}>My Datasets</span>
                 </div>
               </Tooltip>
             ),
@@ -191,7 +191,7 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
                       ? recordClass.displayName
                       : recordClass.displayNamePlural}{' '}
                     in step "{resultType.step.customName}" was uploaded to{' '}
-                    <Link to="/workspace/datasets">My Data Sets</Link>.
+                    <Link to="/workspace/datasets">My Datasets</Link>.
                     <br />
                     It will be ready for use once we have finished installing it
                     in {projectDisplayName}.
@@ -210,7 +210,7 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
                   <div>
                     An error occurred while trying to upload the contents of
                     step "{resultType.step.customName}" to{' '}
-                    <Link to="/workspace/datasets">My Data Sets</Link>.
+                    <Link to="/workspace/datasets">My Datasets</Link>.
                     <br />
                     Please try again, and{' '}
                     <Link target="_blank" to="/contact-us">

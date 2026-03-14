@@ -85,9 +85,9 @@ export const userDatasetRoutes: RouteEntry[] = [
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
             availableUploadTypes={availableUploadTypes}
-            detailsPageTitle="My Study"
+            detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
-            workspaceTitle="My Studies"
+            workspaceTitle="My Datasets"
             uploadTypeConfig={uploadTypeConfig}
             detailComponentsByTypeName={detailComponentsByTypeName}
             helpTabContents={

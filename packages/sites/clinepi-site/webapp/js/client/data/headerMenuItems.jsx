@@ -140,7 +140,7 @@ export default function makeHeaderMenuItemsFactory(
                             isVisible: filteredUserStudies.length > 0,
                             text: (
                               <CollapsibleDetailsSection
-                                summary="My studies"
+                                summary="My datasets"
                                 collapsibleDetails={filteredUserStudies.map(
                                   (study, idx) => (
                                     <DIYStudyMenuItem
@@ -228,7 +228,7 @@ export default function makeHeaderMenuItemsFactory(
             ...(useUserDatasetsWorkspace
               ? [
                   {
-                    text: 'My Studies',
+                    text: 'My Datasets',
                     route: '/workspace/datasets',
                   },
                 ]
