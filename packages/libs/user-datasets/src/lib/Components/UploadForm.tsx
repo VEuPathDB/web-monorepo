@@ -185,7 +185,7 @@ function UploadForm({
     }
 
     if (resultUploadConfig == null) {
-      throw new Error('This data set type does not support result uploads.');
+      throw new Error('This dataset type does not support result uploads.');
     }
 
     if (stepId == null) {
@@ -408,7 +408,7 @@ function UploadForm({
           <TextBox
             type="input"
             id="data-set-name"
-            placeholder="name of the data set"
+            placeholder="name of the dataset"
             {...nameInputProps}
             required
             value={name}
@@ -422,7 +422,7 @@ function UploadForm({
           <TextArea
             type="input"
             id="data-set-summary"
-            placeholder="brief summary of the data set contents in a few sentences"
+            placeholder="brief summary of the dataset contents in a few sentences"
             required={summaryRequired}
             rows={2}
             {...summaryInputProps}
@@ -439,7 +439,7 @@ function UploadForm({
           </FieldLabel>
           <TextArea
             id="data-set-description"
-            placeholder="longer description of the data set contents"
+            placeholder="longer description of the dataset contents"
             required={descriptionRequired}
             rows={6}
             {...descriptionInputProps}
@@ -581,7 +581,7 @@ function ErrorMessage({ errors }: { errors: string[] }) {
         type: 'error',
         message: (
           <div style={{ lineHeight: 1.5 }}>
-            <span>Could not upload data set</span>
+            <span>Could not upload dataset</span>
             {errors.map((error, index) => (
               <div key={index}>{error}</div>
             ))}

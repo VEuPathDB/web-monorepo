@@ -186,7 +186,7 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
               dispatch(
                 enqueueStrategyNotificationAction(
                   <div>
-                    A data set with the{' '}
+                    A dataset with the{' '}
                     {resultType.step.estimatedSize === 1
                       ? recordClass.displayName
                       : recordClass.displayNamePlural}{' '}

@@ -503,7 +503,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     ) : filterByProject ? (
       <React.Fragment>
         <p>
-          You have no <b>{projectName}</b> data sets.
+          You have no <b>{projectName}</b> datasets.
         </p>
         <br />
         <button
