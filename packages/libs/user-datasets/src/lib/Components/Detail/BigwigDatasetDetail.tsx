@@ -148,7 +148,7 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
       </section>
     ) : (
       <section>
-        This data set isn't installed to {config.projectId} or contains no files.
+        This dataset isn't installed to {config.projectId} or contains no files.
       </section>
     );
   }

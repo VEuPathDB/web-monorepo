@@ -4,6 +4,8 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import tutStep2 from './images/tut-step-2.jpg';
 import tutStep3 from './images/tut-step-3.jpg';
 
+// Pretty sure this file is not in use, help is now coming from static content
+
 interface Props {
   hasDirectUpload: boolean;
   projectName: string;

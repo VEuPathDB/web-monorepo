@@ -48,14 +48,14 @@ export const userDatasetRoutes: RouteEntry[] = [
           <UserDatasetRouter
             enablePublicUserDatasets={!!communityDatasetsEnabled}
             availableUploadTypes={availableUploadTypes}
-            detailsPageTitle="My Data Set"
+            detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
-            workspaceTitle="My Data Sets"
+            workspaceTitle="My Datasets"
             uploadTypeConfig={uploadTypeConfig}
             helpTabContents={
               <ExternalContentController url={helpTabContentUrl} />
             }
-            dataNoun={{ singular: 'Data Set', plural: 'Data Sets' }}
+            dataNoun={{ singular: 'Dataset', plural: 'Datasets' }}
             showExtraMetadata={!!showExtraMetadata}
           />
         </Suspense>

@@ -10,17 +10,17 @@ function NoDatasetsMessage({ baseUrl, hasDirectUpload, helpRoute }: Props) {
   return (
     <div className="UserDataset-NoDatasets">
       <div className="UserDataset-NoDatasets__lead">
-        You do not have any data sets.
+        You do not have any datasets.
       </div>
       <ul>
         {hasDirectUpload ? (
           <li>
-            Try adding a data set using the{' '}
+            Try adding a dataset using the{' '}
             <Link to={`${baseUrl}/new`}>New upload</Link> section above.
           </li>
         ) : (
           <li>
-            To add a data set, go to{' '}
+            To add a dataset, go to{' '}
             <a href="https://veupathdb.globusgenomics.org">VEuPathDB Galaxy</a>.
           </li>
         )}
