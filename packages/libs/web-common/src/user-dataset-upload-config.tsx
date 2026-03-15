@@ -30,13 +30,13 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       formConfig: {
         summary: {
           inputProps: {
-            placeholder: 'brief summary of the study in a few sentences',
+            placeholder: 'brief summary of the dataset in a few sentences',
           },
         },
         description: {
           inputProps: {
             required: false,
-            placeholder: 'optional longer description of the summary',
+            placeholder: 'optional longer description of the dataset',
           },
         },
         dependencies: {
@@ -46,9 +46,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            <b>Upload your Normalized RNA-Seq dataset</b>
-            <br />
-            <br />
             To upload your dataset:
             <ol>
               <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
@@ -93,12 +90,12 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         ),
         uploadMethodConfig: {
           file: {
-            maxSizeBytes: 10 * 1000 * 1000 * 1000, // 10GB
+            maxSizeBytes: 1 * 1000 * 1000 * 1000, // 1GB
             render: ({ fieldNode }) => (
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 10GB
+                  File must be less than 1GB.
                 </div>
               </>
             ),
@@ -120,7 +117,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         description: {
           inputProps: {
             required: false,
-            placeholder: 'optional longer description of the summary.',
+            placeholder: 'optional longer description of the dataset',
           },
         },
         dependencies: {
@@ -130,7 +127,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         },
         renderInfo: () => (
           <p className="formInfo">
-            We accept .bw files in the{' '}
+            We accept .bw or .bigwig files in the{' '}
             <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
               bigWig format
             </a>
@@ -144,10 +141,6 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
                 above.
               </li>
               <li>Each individual file cannot be &gt; 500MB.</li>
-              <li>
-                Please restrict the .bw file names to &lt; 100 chars and use
-                only letters, numbers, spaces and dashes.
-              </li>
             </ul>
           </p>
         ),
@@ -158,7 +151,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 10GB
+                  File must be less than 1GB.
                 </div>
               </>
             ),
@@ -218,41 +211,54 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
       description: `Integrate your gene list in ${projectId}.`,
       uploadTitle: 'Upload My Gene List',
       formConfig: {
+        summary: {
+          inputProps: {
+            placeholder: 'brief summary in a few sentences',
+          },
+        },
+        description: {
+          inputProps: {
+            required: false,
+            placeholder: 'optional longer description of the dataset',
+          },
+        },
         renderInfo: () => (
           <p className="formInfo">
-            Upload a file containing gene IDs. Gene IDs needs to be valid and be
-            separated by valid delimiters.
-            <br />
-            Gene lists can also be added from search strategy result pages.
-            Simply click on the "Send to" menu and choose the "My Data Sets"
-            option to install the gene list in My Data Sets.
-            <br />
-            <br />
-            The file name should be &lt; 100 chars and use only letters,
-            numbers, spaces and dashes. The extension can be .txt or .tsv.
-            <br />
-            <br />
-            Valid gene Ids should:
-            <ul>
-              <li>include only these characters [a-zA-Z0-9().:_-]*$</li>
-              <li>have at least one alphabetical character</li>
-              <li>be at most 40 characters</li>
-            </ul>
-            Invalid IDs will be discarded.
-            <br />
-            <br />
+            Upload a file containing gene IDs. Gene IDs need to be valid and be separated by valid delimiters.
+            <br /><br />
+            Valid gene IDs should:
+              <ul>
+                <li>include only these characters [a-zA-Z0-9().:_-]</li>
+                <li>have at least one alphabetical character</li>
+                <li>be at most 80 characters</li>
+              </ul>
+            Invalid IDs and duplicated IDs will be discarded.
+            <br /><br />
             Valid delimiters are:
-            <ul>
-              <li>white space (newline, space, tab)</li>
-              <li>comma</li>
-              <li>semi-colon</li>
-            </ul>
+              <ul>
+                <li>white space (newline, space, tab)</li>
+                <li>comma</li>
+                <li>semi-colon</li>
+              </ul>
             <br />
-            <br />
-            The file will be rejected if there are duplicated IDs.
+            <i>Gene lists can also be added from a search strategy result page:
+            click on the "Send to" menu near the "Download" button,
+            and choose the "My Datasets" option to install the gene list in My Datasets.</i>
           </p>
         ),
         uploadMethodConfig: {
+          file: {
+            maxSizeBytes: 1 * 1000 * 1000 * 1000, // 1GB
+            render: ({ fieldNode }) => (
+              <>
+                {fieldNode}
+                <div style={{ marginTop: '0.25em' }}>
+                  File must be a text, comma or tab-delimited .txt, .csv or .tsv file.
+                  <br />File size must be less than 1GB.
+                </div>
+              </>
+            ),
+          },
           result: {
             offerStrategyUpload: false,
             compatibleRecordTypes: {
@@ -284,44 +290,36 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         description: {
           inputProps: {
             required: false,
-            placeholder: 'optional longer description of the summary.',
+            placeholder: 'optional longer description of the dataset',
           },
         },
         renderInfo: () => (
           <p className="formInfo">
-            Upload your phenotype data in a tab delimited file.
-            <br />
-            The file name should be &lt; 100 chars and use only letters,
-            numbers, spaces and dashes. The extension can be .txt or .tsv.
-            <br />
-            The file should contain:
+            Upload a tab delimited file containing valid gene IDs and their values.
+            <br />The file will be rejected if there are duplicated IDs.
+            <br /><br />The file should contain:
             <ul>
-              <li>Meaningful column headers</li>
-              <li>A gene Id column with header "geneID"</li>
-              <li>
-                Valid gene Ids should:
-                <ul>
-                  <li>include only these characters [a-zA-Z0-9().:_-]*$</li>
-                  <li>have at least one alphabetical character</li>
-                  <li>be at most 40 characters</li>
-                </ul>
-                Invalid IDs will be discarded.
-              </li>
+              <li>A gene ID column with header "geneID"</li>
               <li>At least one numeric column</li>
             </ul>
-            <br />
-            The file will be rejected if there are duplicated IDs.
+            <br />Valid gene IDs should:
+              <ul>
+                <li>include only these characters [a-zA-Z0-9().:_-]</li>
+                <li>have at least one alphabetical character</li>
+                <li>be at most 80 characters</li>
+              </ul>
+            Invalid IDs will be discarded.
           </p>
         ),
         uploadMethodConfig: {
           file: {
-            maxSizeBytes: 10 * 1000 * 1000 * 1000, // 10GB
+            maxSizeBytes: 1 * 1000 * 1000 * 1000, // 1GB
             render: ({ fieldNode }) => (
               <>
                 {fieldNode}
                 <div style={{ marginTop: '0.25em' }}>
-                  File must be a tab-delimited .txt file File must be less than
-                  xxGB
+                  File must be a tab-delimited .txt or .tsv file. 
+                  <br />File must be less than 1GB.
                 </div>
               </>
             ),

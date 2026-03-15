@@ -325,7 +325,7 @@ export function RecordTableDescription(DefaultComponent) {
                   }),
                 }}
               >
-                <i className="fa fa-database" /> Data sets
+                <i className="fa fa-database" /> Datasets
               </Link>
             )}
           </div>

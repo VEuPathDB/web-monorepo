@@ -275,7 +275,7 @@ function RecordOverview(props) {
                 style={{ fontSize: '90%', marginLeft: '1em' }}
                 to={`/record/dataset/${record.attributes['dataset_id']}`}
               >
-                <i className="fa fa-database"></i> Data set
+                <i className="fa fa-database"></i> Dataset
               </Link>
             </dd>
 
