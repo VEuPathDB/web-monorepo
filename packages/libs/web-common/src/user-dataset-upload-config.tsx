@@ -415,7 +415,7 @@ function ReferenceGenomeDepdency(props: DependencyProps) {
                 resourceVersion: buildNumber,
               };
         })
-        .filter((dep) : dep is DatasetDependency => dep != null);
+        .filter((dep): dep is DatasetDependency => dep != null);
       onChange(dependencies);
     },
     [buildNumber, fileNameByTerm, onChange]
