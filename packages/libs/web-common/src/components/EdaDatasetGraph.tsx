@@ -56,93 +56,107 @@ export function EdaDatasetGraph(props: Props) {
       graph_ids,
       source_id,
       default_graph_id,
+      has_graph_data,
     },
     dataTable,
   } = props;
 
-  const plotConfigs = parseJson(plot_configs_json as string);
-
   const [selectedPlotsIndex, setSelectedPlotsIndex] = useState([0]);
-  const [dataTableCollapsed, setDataTableCollapsed] = useState(true);
+  const [dataTableCollapsed, setDataTableCollapsed] = useState(false);
 
-  if (plotConfigs == null) {
-    return <div>Could not parse plot_configs_json</div>;
+  // simple type guarding against `AttributeValue` fields not being `string`
+  if (
+    typeof plot_configs_json !== 'string' ||
+    typeof dataset_id !== 'string' ||
+    typeof source_id !== 'string'
+  ) {
+    console.error('EdaDatasetGraph: bad props');
+    return null;
   }
+
+  const plotConfigs = parseJson(plot_configs_json);
+  const showGraph =
+    plotConfigs != null && plotConfigs.length > 0 && has_graph_data;
 
   const graphIds = graph_ids?.toString().split(/\s*,\s*/);
 
-  const selectedPlotConfigs = plotConfigs.filter((_, index) =>
-    selectedPlotsIndex.includes(index)
-  );
+  const selectedPlotConfigs =
+    plotConfigs != null
+      ? plotConfigs.filter((_, index) => selectedPlotsIndex.includes(index))
+      : [];
 
   return (
     <div>
-      <h4>Choose graph(s) to display</h4>
-      {plotConfigs.map((plotConfig, index) => {
-        return (
-          <label key={plotConfig.plotName}>
-            <input
-              type="checkbox"
-              checked={selectedPlotsIndex.includes(index)}
-              onChange={(e) => {
-                setSelectedPlotsIndex((current) => {
-                  return e.target.checked
-                    ? current.concat(index).sort()
-                    : current.filter((i) => i !== index);
-                });
-              }}
-            />{' '}
-            {plotConfig.plotName}{' '}
-          </label>
-        );
-      })}
+      {showGraph && plotConfigs && (
+        <>
+          <h4>Choose graph(s) to display</h4>
+          {plotConfigs.map((plotConfig, index) => {
+            return (
+              <label key={plotConfig.plotName}>
+                <input
+                  type="checkbox"
+                  checked={selectedPlotsIndex.includes(index)}
+                  onChange={(e) => {
+                    setSelectedPlotsIndex((current) => {
+                      return e.target.checked
+                        ? current.concat(index).sort()
+                        : current.filter((i) => i !== index);
+                    });
+                  }}
+                />{' '}
+                {plotConfig.plotName}{' '}
+              </label>
+            );
+          })}
 
-      {default_graph_id !== source_id ? (
-        <div>
-          <strong style={{ color: 'firebrick' }}>WARNING</strong>: This Gene (
-          {source_id as string}) does not have data for this experiment.
-          Instead, we are showing data for this same gene(s) from the reference
-          strain for this species. This may or may NOT accurately represent the
-          gene you are interested in.{' '}
-        </div>
-      ) : null}
-
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-        }}
-      >
-        {selectedPlotConfigs.map((plotConfig) => {
-          const xAxisVariable = {
-            entityId: plotConfig.xAxisEntityId,
-            variableId: plotConfig.xAxisVariableId,
-          };
-          const yAxisVariable = {
-            entityId: plotConfig.yAxisEntityId,
-            variableId: plotConfig.yAxisVariableId,
-          };
-          return (
-            <div style={{ width: 500 }}>
-              <EdaScatterPlot
-                datasetId={dataset_id as string}
-                xAxisVariable={xAxisVariable}
-                yAxisVariable={yAxisVariable}
-                highlightSpec={
-                  graphIds && {
-                    ids: graphIds,
-                    // gene id
-                    variableId: 'VEUPATHDB_GENE_ID',
-                    entityId: plotConfig.xAxisEntityId,
-                    traceName: source_id?.toString(),
-                  }
-                }
-                plotTitle={plotConfig.plotName}
-              />
+          {default_graph_id !== source_id ? (
+            <div>
+              <strong style={{ color: 'firebrick' }}>WARNING</strong>: This Gene
+              ({source_id}) does not have data for this experiment. Instead, we
+              are showing data for this same gene(s) from the reference strain
+              for this species. This may or may NOT accurately represent the
+              gene you are interested in.{' '}
             </div>
-          );
-        })}
-      </div>
+          ) : null}
+
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+            }}
+          >
+            {selectedPlotConfigs.map((plotConfig) => {
+              const xAxisVariable = {
+                entityId: plotConfig.xAxisEntityId,
+                variableId: plotConfig.xAxisVariableId,
+              };
+              const yAxisVariable = {
+                entityId: plotConfig.yAxisEntityId,
+                variableId: plotConfig.yAxisVariableId,
+              };
+              return (
+                <div style={{ width: 500 }}>
+                  <EdaScatterPlot
+                    datasetId={dataset_id}
+                    xAxisVariable={xAxisVariable}
+                    yAxisVariable={yAxisVariable}
+                    highlightSpec={
+                      graphIds && {
+                        ids: graphIds,
+                        // gene id
+                        variableId: 'VEUPATHDB_GENE_ID',
+                        entityId: plotConfig.xAxisEntityId,
+                        traceName: source_id,
+                      }
+                    }
+                    plotTitle={plotConfig.plotName}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
       <div>
         <div style={{ display: 'flex', gap: '3ex' }}>
           {/* <h4>
