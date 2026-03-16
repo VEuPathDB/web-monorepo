@@ -1,5 +1,4 @@
 import React, {
-
   FunctionComponent,
   useCallback,
   useEffect,
@@ -650,7 +649,7 @@ const useHeaderMenuItems = (
             exclude: [EuPathDB],
           },
         },
-       /* {
+        /* {
           key: 'maps-workspace',
           display: 'My interactive maps',
           type: 'reactRoute',
