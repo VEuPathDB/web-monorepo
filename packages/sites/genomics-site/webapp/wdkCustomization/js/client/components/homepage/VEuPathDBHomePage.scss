@@ -61,6 +61,17 @@
       content: $logo;
     }
 
+    .ebrc-HeaderBrandingContainer {
+      .vpdb-BetaBadge {
+        position: absolute;
+        bottom: 64px;
+        right: 54px;
+        width: 30px;
+        height: auto;
+        pointer-events: none;
+      }
+    }
+
     &__collapsed {
       box-shadow: unset;
 
@@ -75,6 +86,12 @@
       .vpdb-HeaderBranding {
         content: $small-logo;
       }
+
+      .ebrc-HeaderBrandingContainer .vpdb-BetaBadge {
+        width: 20px;
+        bottom: 36px;
+        right: 28px;
+      }
     }
 
     @media screen and (max-width: $cramped-header-width) {
@@ -88,6 +105,12 @@
 
       .vpdb-HeaderBranding {
         content: $small-logo;
+      }
+
+      .ebrc-HeaderBrandingContainer .vpdb-BetaBadge {
+        width: 20px;
+        bottom: 36px;
+        right: 28px;
       }
     }
   }
