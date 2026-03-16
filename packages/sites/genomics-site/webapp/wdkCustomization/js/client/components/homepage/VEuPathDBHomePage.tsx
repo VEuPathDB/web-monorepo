@@ -237,10 +237,15 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
     });
   }, [setClosedBanners]);
 
+  const isBetaSite = window.location.hostname.startsWith('beta');
+
   const branding = (
     <>
       <Link to="/">
-        <div className={vpdbCx('HeaderBranding')}></div>
+        <div className={vpdbCx('HeaderBranding')} />
+        {isBetaSite && (
+          <img className={vpdbCx('BetaBadge')} src={betaImage} alt="beta" />
+        )}
       </Link>
       <div className={vpdbCx('HeaderBrandingSuperscript')}>
         {props.buildNumber && <span>Release {props.buildNumber}</span>}
