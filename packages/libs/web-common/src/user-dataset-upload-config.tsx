@@ -301,6 +301,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             <ul>
               <li>A gene ID column with header "geneID"</li>
               <li>At least one numeric column</li>
+              <li>Values no longer than 1000 characters; should not contain newlines</li>
             </ul>
             <br />Valid gene IDs should:
               <ul>
