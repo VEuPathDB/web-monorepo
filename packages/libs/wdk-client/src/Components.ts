@@ -68,6 +68,7 @@ import UnhandledErrors from './Views/UnhandledErrors/UnhandledErrors';
 import RecordNavigationSection from './Views/Records/RecordNavigation/RecordNavigationSection';
 import { SearchInputSelector } from './Views/Strategy/SearchInputSelector';
 import CollapsibleDetailsSection from './Components/Display/CollapsibleDetailsSection';
+import { DelayedDisplay } from './Components/Display/DelayedDisplay';
 
 export { NewIcon } from './Core/Style/Icons/NewIcon';
 export { BetaIcon } from './Core/Style/Icons/BetaIcon';
@@ -85,6 +86,7 @@ export {
   CommonModal,
   DateRangeSelector,
   DateSelector,
+  DelayedDisplay,
   Dialog,
   DownloadForm,
   Error,

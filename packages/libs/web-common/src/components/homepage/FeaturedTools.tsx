@@ -8,7 +8,11 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { keyBy } from 'lodash';
-import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  IconAlt,
+  DelayedDisplay,
+} from '@veupathdb/wdk-client/lib/Components';
 
 import { combineClassNames } from '../../components/homepage/Utils';
 import { useCommunitySiteProjectUrl } from '../../hooks/staticData';
@@ -48,10 +52,12 @@ type Result<T> =
 
 function useFeaturedToolMetadata(): Result<FeaturedToolMetadata> | undefined {
   const communitySiteUrl = useCommunitySiteProjectUrl();
-  const [featuredToolResponseData, setFeaturedToolResponseData] =
-    useState<FeaturedToolResponseData | undefined>(undefined);
-  const [featuredToolError, setFeaturedToolError] =
-    useState<string | undefined>(undefined);
+  const [featuredToolResponseData, setFeaturedToolResponseData] = useState<
+    FeaturedToolResponseData | undefined
+  >(undefined);
+  const [featuredToolError, setFeaturedToolError] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     if (communitySiteUrl != null) {
@@ -136,7 +142,9 @@ export const FeaturedTools = () => {
       {!toolMetadata ? (
         <Loading />
       ) : toolMetadata.status === 'error' ? (
-        <ContentError message={toolMetadata.message} />
+        <DelayedDisplay delayMs={2000}>
+          <ContentError message={toolMetadata.message} />
+        </DelayedDisplay>
       ) : (
         <div className={cx('List')}>
           <FeaturedToolList
