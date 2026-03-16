@@ -77,7 +77,7 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
               </li>
             </ol>
             Optionally, you may include <b>bigWig files</b> (.bw extension) in
-            your comprresed file:
+            your compressed file:
             <ol>
               <li>
                 they are not required but will allow visualization in the genome
