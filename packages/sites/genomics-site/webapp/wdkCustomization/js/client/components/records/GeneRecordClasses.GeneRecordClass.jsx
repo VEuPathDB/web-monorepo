@@ -467,6 +467,10 @@ const EdaPhenotypeChildRow = makeDatasetGraphChildRow({
   dataTableName: 'EdaPhenotypeGraphsDataTable',
   DatasetGraphComponent: EdaDatasetGraph,
 });
+const EdaCellularLocalizationChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaCellularLocalizationGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
 const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
   dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
   DatasetGraphComponent: DatasetGraph,
@@ -503,9 +507,17 @@ export function RecordTable(props) {
     case 'PhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />;
 
-    case 'EdaPhenotypeGraphs':
+    case 'EdaPhenotypeDatasets':
       return (
         <props.DefaultComponent {...props} childRow={EdaPhenotypeChildRow} />
+      );
+
+    case 'EdaCellularLocalizationDatasets':
+      return (
+        <props.DefaultComponent
+          {...props}
+          childRow={EdaCellularLocalizationChildRow}
+        />
       );
 
     case 'UserDatasetsTranscriptomicsGraphs':
@@ -672,10 +684,29 @@ function SNPsAlignment(props) {
 const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
   props
 ) {
-  let { phenotype } = props.rowData;
+  const {
+    asexual_phenotype,
+    gametocyte_phenotype,
+    ookinete_phenotype,
+    oocyst_phenotype,
+    sporozoite_phenotype,
+    liver_stage_phenotype,
+  } = props.rowData;
+  const phenotypes = [
+    { label: 'Asexual', value: asexual_phenotype },
+    { label: 'Gametocyte', value: gametocyte_phenotype },
+    { label: 'Ookinete', value: ookinete_phenotype },
+    { label: 'Oocyst', value: oocyst_phenotype },
+    { label: 'Sporozoite', value: sporozoite_phenotype },
+    { label: 'Liver Stage', value: liver_stage_phenotype },
+  ].filter(({ value }) => value != null);
   return (
     <div>
-      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
+      {phenotypes.map(({ label, value }) => (
+        <div key={label}>
+          <b>{label} Phenotype</b>: {safeHtml(value)}
+        </div>
+      ))}
     </div>
   );
 });
