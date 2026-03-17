@@ -121,7 +121,9 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
 
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
-    location.pathname.includes('workspace/analyses');
+    location.pathname.includes('workspace/analyses') ||
+    location.pathname.startsWith('/jbrowse') ||
+    location.pathname.startsWith('/pathfinder');
 
   useEffect(() => {
     if (isHomePage && props.displayName) {
