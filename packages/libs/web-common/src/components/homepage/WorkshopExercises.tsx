@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  IconAlt,
+  DelayedDisplay,
+} from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { combineClassNames } from '../../components/homepage/Utils';
@@ -151,7 +155,9 @@ export const WorkshopExercises = () => {
       {!cardMetadata ? (
         <Loading />
       ) : cardMetadata.status === 'error' ? (
-        <ContentError message={cardMetadata.message} />
+        <DelayedDisplay delayMs={2000}>
+          <ContentError message={cardMetadata.message} />
+        </DelayedDisplay>
       ) : (
         <CardList cardMetadata={cardMetadata.value} isExpanded={isExpanded} />
       )}
