@@ -296,12 +296,17 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
         renderInfo: () => (
           <p className="formInfo">
             Upload a tab delimited file containing valid gene IDs and their values.
-            <br />The file will be rejected if there are duplicated IDs.
             <br /><br />The file should contain:
             <ul>
               <li>A gene ID column with header "geneID"</li>
               <li>At least one numeric column</li>
               <li>Values no longer than 1000 characters; should not contain newlines</li>
+            </ul>
+            The file will be rejected if there are duplicated IDs.
+            <br /><br />We will consider a column numeric when all values are numbers. 
+            <ul>
+              <li>Use a dot for decimals, commas will be removed.</li>
+              <li>Scientific format is allowed.</li>
             </ul>
             <br />Valid gene IDs should:
               <ul>
