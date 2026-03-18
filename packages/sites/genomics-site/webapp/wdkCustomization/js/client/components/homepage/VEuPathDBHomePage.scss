@@ -65,7 +65,7 @@
       .vpdb-BetaBadge {
         position: absolute;
         bottom: 64px;
-        right: 54px;
+        left: calc(#{$superscript-position-left} - 80px);
         width: 30px;
         height: auto;
         pointer-events: none;
@@ -90,7 +90,11 @@
       .ebrc-HeaderBrandingContainer .vpdb-BetaBadge {
         width: 20px;
         bottom: 36px;
-        right: 28px;
+        @if ($superscript-position-left-small) {
+          left: calc(#{$superscript-position-left-small} - 20px);
+        } @else {
+          left: calc(#{$superscript-position-left} - 48px);
+        }
       }
     }
 
@@ -110,7 +114,11 @@
       .ebrc-HeaderBrandingContainer .vpdb-BetaBadge {
         width: 20px;
         bottom: 36px;
-        right: 28px;
+        @if ($superscript-position-left-small) {
+          left: calc(#{$superscript-position-left-small} - 20px);
+        } @else {
+          left: calc(#{$superscript-position-left} - 48px);
+        }
       }
     }
   }
