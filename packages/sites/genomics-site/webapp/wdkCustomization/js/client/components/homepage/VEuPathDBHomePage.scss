@@ -91,7 +91,7 @@
         width: 20px;
         bottom: 36px;
         @if ($superscript-position-left-small) {
-          left: calc(#{$superscript-position-left-small} - 20px);
+          left: calc(#{$superscript-position-left-small} - 15px);
         } @else {
           left: calc(#{$superscript-position-left} - 48px);
         }
@@ -115,7 +115,7 @@
         width: 20px;
         bottom: 36px;
         @if ($superscript-position-left-small) {
-          left: calc(#{$superscript-position-left-small} - 20px);
+          left: calc(#{$superscript-position-left-small} - 15px);
         } @else {
           left: calc(#{$superscript-position-left} - 48px);
         }
