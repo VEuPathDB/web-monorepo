@@ -16,6 +16,18 @@ export function userIsSubscribed(
   );
 }
 
+export function userWasSubscribed(
+  user: User,
+  subscriptionGroups: SubscriptionGroup[] | undefined
+): boolean {
+  if (user.isGuest) return false;
+  let group = subscriptionGroups?.find(
+    (g: SubscriptionGroup) =>
+      g.subscriptionToken === user.properties?.['subscriptionToken']
+  );
+  return group != null && group.activeStatus == 'expired';
+}
+
 export function userIsClassParticipant(user: User): boolean {
   return !user.isGuest && user.properties?.['groupType'] === 'class';
 }
