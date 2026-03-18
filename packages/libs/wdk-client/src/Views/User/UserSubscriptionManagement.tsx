@@ -159,6 +159,17 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               Class participant <em>(subscription not required)</em>
             </h4>
           </>
+        ) : validGroup && validGroup.activeStatus == 'expired' ? (
+          <>
+            {showSubscriptionProds && (
+              <Icon
+                fa="exclamation-triangle"
+                className="wdk-UserProfile-StatusIcon--warning"
+                style={{ color: warning[600], fontSize: '1.2em' }}
+              />
+            )}
+            <h4 style={{ fontWeight: 400 }}>Subscription expired</h4>
+          </>
         ) : (
           <>
             {showSubscriptionProds && (
