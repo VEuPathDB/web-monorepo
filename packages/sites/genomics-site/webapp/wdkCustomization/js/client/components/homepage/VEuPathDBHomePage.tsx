@@ -625,7 +625,19 @@ const useHeaderMenuItems = (
           key: 'user-data-sets',
           display: 'My data sets',
           type: 'reactRoute',
+          url: makeStaticPageRoute(`/content/${displayName}/datasets.html`),
+          metadata: {
+            exclude: [UniDB],
+          },
+        },
+        {
+          key: 'user-data-sets',
+          display: 'My data sets',
+          type: 'reactRoute',
           url: makeStaticPageRoute('/diy.html'),
+          metadata: {
+            include: [UniDB],
+          },
         },
         {
           key: 'favorites',
