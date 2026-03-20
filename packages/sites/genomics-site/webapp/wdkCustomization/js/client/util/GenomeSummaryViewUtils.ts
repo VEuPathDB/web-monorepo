@@ -135,7 +135,7 @@ const toFeatureModel = (
   endFormatted: feature.end.toLocaleString(),
 });
 
-const PORTAL_SITE_PROJECT_ID = 'EuPathDB';
+const PORTAL_SITE_PROJECT_ID = 'UniDB';
 
 export function useIsPortalSite() {
   const config = useWdkService((wdkService) => wdkService.getConfig(), []);

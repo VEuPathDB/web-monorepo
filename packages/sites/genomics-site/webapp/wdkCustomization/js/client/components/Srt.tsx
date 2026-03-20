@@ -235,10 +235,10 @@ export function Srt() {
             supply. <br />
             (If instead you would like to download sequences in bulk, please
             visit our{' '}
-            {projectId === 'EuPathDB'
+            {projectId === 'UniDB'
               ? ' file download section in your component site of interest, eg: '
               : ''}
-            {projectId === 'EuPathDB' ? (
+            {projectId === 'UniDB' ? (
               <a
                 href="https://plasmodb.org/plasmo/app/downloads/"
                 target="_blank"

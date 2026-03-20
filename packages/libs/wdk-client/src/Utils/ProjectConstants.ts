@@ -1,5 +1,7 @@
 /**
  * VEuPathDB project identifiers
+ * are we listing here project names or displayNames?
+ * it seems displayNames since we have VEuPathDB and not EUPathDB
  */
 
 export const GENOMICS_PROJECTS = [
@@ -21,6 +23,7 @@ export const GENOMICS_PROJECTS = [
 export const OTHER_PROJECTS = [
   'OrthoMCL',
   'ClinEpiDB',
+  'dataExplorer',
   'MicrobiomeDB',
 ] as const;
 

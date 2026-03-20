@@ -164,7 +164,7 @@ const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
-  const isPortal = projectId === 'EuPathDB';
+  const isPortal = projectId === 'UniDB';
   const ResolvedRecordLink = RecordClassSpecificRecordlink(
     makePortalRecordLink(WdkRecordLink)
   );
@@ -177,7 +177,7 @@ export function RecordLink(WdkRecordLink) {
 }
 
 function makePortalRecordLink(WdkRecordLink) {
-  if (projectId !== 'EuPathDB') return WdkRecordLink;
+  if (projectId !== 'UniDB') return WdkRecordLink;
   return function PortalRecordLink(props) {
     const { recordId, recordClass } = props;
     const projectIdPart = recordId.find((part) => part.name === 'project_id');
@@ -186,7 +186,7 @@ function makePortalRecordLink(WdkRecordLink) {
     if (
       projectUrls == null ||
       projectIdPart == null ||
-      projectIdPart.value === 'EuPathDB' ||
+      projectIdPart.value === 'UniDB' ||
       projectUrls[projectIdPart.value] == null
     )
       return <WdkRecordLink {...props} />;

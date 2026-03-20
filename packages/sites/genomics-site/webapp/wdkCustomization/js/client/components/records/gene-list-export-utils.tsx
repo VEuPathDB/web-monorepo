@@ -250,8 +250,8 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
     () =>
       [...GENOMICS_PROJECTS].filter(
         (id) =>
-          (projectId !== 'EuPathDB' && id === 'VEuPathDB') ||
-          (projectId === 'EuPathDB' && id !== 'VEuPathDB')
+          (projectId !== 'UniDB' && id === 'VEuPathDB') ||
+          (projectId === 'UniDB' && id !== 'VEuPathDB')
       ),
     [projectId]
   );
@@ -275,7 +275,7 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
                 resultType.step,
                 new URL(
                   'app',
-                  id === 'VEuPathDB' ? projectUrls.EuPathDB : projectUrls[id]
+                  id === 'VEuPathDB' ? projectUrls.UniDB : projectUrls[id]
                 ).toString()
               )
             ),
@@ -291,7 +291,7 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
                     <a
                       href={
                         id === 'VEuPathDB'
-                          ? projectUrls.EuPathDB
+                          ? projectUrls.UniDB
                           : `https://${id}.org/${id}`
                       }
                       target="_blank"

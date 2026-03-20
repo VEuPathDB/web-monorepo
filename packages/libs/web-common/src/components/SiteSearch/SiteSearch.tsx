@@ -1518,7 +1518,7 @@ function makeRecordLink(
   )}`;
 
   // use standard link if not in portal, or if no organism present
-  if (projectId !== 'EuPathDB' || document.organism == null) {
+  if (projectId !== 'UniDB' || document.organism == null) {
     return {
       route,
       text,
