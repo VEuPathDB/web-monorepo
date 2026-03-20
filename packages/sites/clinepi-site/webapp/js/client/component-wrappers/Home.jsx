@@ -2,12 +2,12 @@ import React, { useContext, useMemo } from 'react';
 import { useAnalysisList } from '@veupathdb/eda/lib/core/hooks/analysis';
 import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { edaServiceUrl } from '../../config';
-import { Showcase } from '../../App/Showcase';
-import { News } from '../../App/NewsSidebar';
-import { FeaturedTools } from '../../components/homepage/FeaturedTools';
+import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
+import { Showcase } from '@veupathdb/web-common/lib/App/Showcase';
+import { News } from '@veupathdb/web-common/lib/App/NewsSidebar';
+import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
 
-import './HomePage.scss';
+import '@veupathdb/web-common/lib/App/Home/HomePage.scss';
 
 export default function HomePage({
   newsSidebar,
