@@ -91,7 +91,7 @@ export default function makeHeaderMenuItemsFactory(
       mainMenu: [
         {
           id: 'studies',
-          text: 'Studies',
+          text: 'Datasets',
           children: ({ isFocused }) =>
             [
               {
@@ -106,7 +106,7 @@ export default function makeHeaderMenuItemsFactory(
                         className="ebrc-icon-table"
                         style={studyTableIconStyle}
                       ></i>{' '}
-                      Study summaries table
+                      Datasets summaries table
                     </div>
                   </>
                 ),
@@ -331,7 +331,7 @@ export default function makeHeaderMenuItemsFactory(
           text: 'About',
           children: [
             {
-              text: 'About ClinEpiDB',
+              text: 'About dataExplorer',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`,
             },
             {
@@ -343,7 +343,7 @@ export default function makeHeaderMenuItemsFactory(
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`,
             },
             {
-              text: 'Submit Data to ClinEpiDB',
+              text: 'Submit Data to dataExplorer',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/submit.html`,
             },
             {
@@ -351,7 +351,7 @@ export default function makeHeaderMenuItemsFactory(
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/access_and_use.html`,
             },
             {
-              text: 'Publications about ClinEpiDB',
+              text: 'Publications about dataExplorer',
               url: 'https://gatesopenresearch.org/articles/3-1661',
               target: '_blank',
             },
