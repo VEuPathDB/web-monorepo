@@ -7,16 +7,11 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { projectId } from '../../config';
 import Pathfinder from '../Pathfinder';
 
-const PATHFINDER_PORT =
-  '__PATHFINDER_PORT__' in window
-    ? (window as any).__PATHFINDER_PORT__
-    : '3000';
-
 export const PathfinderController = () => {
   usePathfinderDocumentTitle();
 
   const siteId = (projectId ?? 'veupathdb').toLowerCase();
-  const src = `${window.location.protocol}//${window.location.hostname}:${PATHFINDER_PORT}?embedded=true&siteId=${siteId}`;
+  const src = `/pathfinder-app?embedded=true&siteId=${siteId}`;
 
   return <Pathfinder src={src} />;
 };
