@@ -85,8 +85,8 @@ export default function SiteHeaderWrapper() {
           heroImagePosition="left 33%"
           titleFirstPart="data"
 	  titleSecPart="Explorer"
-          subTitle="Dataset Resources"
-          tagline="Share. Access. Discover. Visualize. FAIR data by design."
+          subTitle="FAIR by design"
+          tagline="Share, access, discover, and visualize."
           getSiteData={getStaticSiteData}
           makeHeaderMenuItems={makeHeaderMenuItems}
           searchTerm={searchTerm}
