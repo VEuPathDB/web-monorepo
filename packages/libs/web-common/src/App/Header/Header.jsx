@@ -49,7 +49,8 @@ class Header extends React.Component {
       actions,
       heroImageUrl,
       heroImagePosition,
-      titleWithoutDB,
+      titleFirstPart,
+      titleSecPart,
       subTitle,
       tagline,
       logoUrl,
@@ -68,8 +69,9 @@ class Header extends React.Component {
             siteConfig={siteConfig}
             siteData={siteData}
             user={user}
-            titleWithoutDB={titleWithoutDB}
-            subTitle={subTitle}
+            titleFirstPart={titleFirstPart}
+	    titleSecPart={titleSecPart}   
+	    subTitle={subTitle}
             logoUrl={logoUrl}
             heroImageUrl={heroImageUrl}
             tagline={tagline}

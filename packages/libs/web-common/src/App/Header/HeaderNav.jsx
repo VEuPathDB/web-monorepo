@@ -53,7 +53,8 @@ class HeaderNav extends React.Component {
       siteConfig,
       user,
       actions,
-      titleWithoutDB,
+      titleFirstPart,
+      titleSecPart,
       logoUrl,
       heroImageUrl,
     } = this.props;
@@ -71,7 +72,7 @@ class HeaderNav extends React.Component {
         <div>
           <h2 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>{titleWithoutDB}</mark>DB
+              <mark>{titleFirstPart}</mark>{titleSecPart}
             </Link>
           </h2>
         </div>
@@ -107,7 +108,7 @@ class HeaderNav extends React.Component {
     );
   }
 
-  renderBranding({ config = {}, titleWithoutDB, subTitle, logoUrl }) {
+  renderBranding({ config = {}, titleFirstPart, titleSecPart, subTitle, logoUrl }) {
     const { buildNumber, releaseDate } = config;
 
     return (
@@ -118,8 +119,8 @@ class HeaderNav extends React.Component {
         <div className="box stack">
           <h1 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>{titleWithoutDB}</mark>DB
-            </Link>
+              <mark>{titleFirstPart}</mark>{titleSecPart}
+	    </Link>
           </h1>
           <p>
             {subTitle} <br />

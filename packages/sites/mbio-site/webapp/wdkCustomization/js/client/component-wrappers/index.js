@@ -136,7 +136,8 @@ function SiteHeader() {
       logoUrl={logoUrl}
       heroImageUrl={heroImageUrl}
       heroImagePosition="left top"
-      titleWithoutDB="Microbiome"
+      titleFirstPart="Microbiome"
+      titleSecPart="DB"
       subTitle="A Microbiome Resource"
       tagline="A data-mining platform for interrogating microbiome experiments"
       getSiteData={getSiteData}
