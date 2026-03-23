@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  * @type {*[]}
  */
 const EMAIL_PREFERENCE_DATA_CLINEPI = [
-  { value: 'preference_global_email_clinepidb', display: 'ClinEpiDB' },
+  { value: 'preference_global_email_clinepidb', display: 'dataExplorer' },
   { value: 'preference_global_email_microbiomedb', display: 'MicrobiomeDB' },
   { value: 'preference_global_email_apidb', display: 'VEuPathDB' },
 ];

@@ -22,7 +22,6 @@ export const GENOMICS_PROJECTS = [
 
 export const OTHER_PROJECTS = [
   'OrthoMCL',
-  'ClinEpiDB',
   'dataExplorer',
   'MicrobiomeDB',
 ] as const;

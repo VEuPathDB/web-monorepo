@@ -1,3 +1,5 @@
+// UNUSED????
+//
 import { get } from 'lodash';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { SHOW_GALAXY_PAGE_PREFERENCE } from '@veupathdb/web-common/lib/controllers/GalaxyTermsController';

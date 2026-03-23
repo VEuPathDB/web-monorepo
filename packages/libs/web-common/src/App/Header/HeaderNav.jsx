@@ -201,7 +201,7 @@ class HeaderNav extends React.Component {
           <div>
             <Branding {...this.props} />
           </div>
-          <div style={{ marginRight: 'auto', alignSelf: 'center' }}>
+          <div style={{ alignSelf: 'center' }}>
             <h3 dangerouslySetInnerHTML={{ __html: tagline }} />
           </div>
           <a href="https://veupathdb.org" target="_blank">
