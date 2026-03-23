@@ -90,11 +90,11 @@ export default function makeHeaderMenuItemsFactory(
     return {
       mainMenu: [
         {
-          id: 'studies',
+          id: 'datasets',
           text: 'Datasets',
           children: ({ isFocused }) =>
             [
-              {
+              /*{
                 text: (
                   <>
                     <DiyStudiesDaemon
@@ -111,7 +111,7 @@ export default function makeHeaderMenuItemsFactory(
                   </>
                 ),
                 route: '/search/dataset/Studies/result',
-              },
+              },*/
               {
                 text: (
                   <StudyMenuSearch
@@ -140,7 +140,7 @@ export default function makeHeaderMenuItemsFactory(
                             isVisible: filteredUserStudies.length > 0,
                             text: (
                               <CollapsibleDetailsSection
-                                summary="My datasets"
+                                summary="My Datasets"
                                 collapsibleDetails={filteredUserStudies.map(
                                   (study, idx) => (
                                     <DIYStudyMenuItem
@@ -197,7 +197,7 @@ export default function makeHeaderMenuItemsFactory(
                             isVisible: filteredCommunityStudies.length > 0,
                             text: (
                               <CollapsibleDetailsSection
-                                summary="Community studies"
+                                summary="Community-Contributed Datasets"
                                 collapsibleDetails={filteredCommunityStudies.map(
                                   (study, idx) => (
                                     <DIYStudyMenuItem
@@ -221,18 +221,26 @@ export default function makeHeaderMenuItemsFactory(
           id: 'workspace',
           text: 'Workspace',
           children: [
-            {
-              text: 'My Analyses',
-              route: makeEdaRoute(),
-            },
+            ...(useUserDatasetsWorkspace
+              ? [ 
+                  { 
+                    text: 'Upload Dataset',
+                    route: '/workspace/datasets/new',
+                  },
+                ]
+              : []),
             ...(useUserDatasetsWorkspace
               ? [
                   {
-                    text: 'My Datasets',
+                    text: 'Manage My Datasets',
                     route: '/workspace/datasets',
                   },
                 ]
               : []),
+            {
+              text: 'My Analyses',
+              route: makeEdaRoute(),
+            },
             {
               text: 'Public Analyses',
               route: `${makeEdaRoute()}/public`,
@@ -335,23 +343,23 @@ export default function makeHeaderMenuItemsFactory(
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`,
             },
             {
-              text: 'News',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`,
+              text: 'Why use dataExplorer',
+              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/whyDataExplorer.html`,
             },
             {
               text: 'FAQ',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`,
             },
-            {
+            /*{
               text: 'Submit Data to dataExplorer',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/submit.html`,
-            },
+            },*/
             {
               text: 'Data Access & Use Policy',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/access_and_use.html`,
             },
             {
-              text: 'Publications about dataExplorer',
+              text: 'Publications about ClinEpiDB',
               url: 'https://gatesopenresearch.org/articles/3-1661',
               target: '_blank',
             },
@@ -359,6 +367,10 @@ export default function makeHeaderMenuItemsFactory(
               text: 'Publications that use our resource',
               url: 'https://scholar.google.com/scholar?hl=en&q=ClinEpiDB',
               target: '_blank',
+            },
+            {
+              text: 'News',
+              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`,
             },
             {
               text: 'Features coming soon',
