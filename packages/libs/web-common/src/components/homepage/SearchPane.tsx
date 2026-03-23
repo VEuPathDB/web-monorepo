@@ -23,6 +23,7 @@ import {
   getDisplayName,
   getTargetType,
   getRecordClassUrlSegment,
+  getNodeId,
   isIndividual,
   getFormattedTooltipContent,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
@@ -175,11 +176,12 @@ export const SearchCheckboxTree = wrappable(
         <SearchPaneNode
           node={node}
           questionsByUrlSegment={questionsByUrlSegment}
+          expandedBranches={expandedBranches}
           path={path}
           type={type}
         />
       ),
-      [questionsByUrlSegment]
+      [questionsByUrlSegment, expandedBranches]
     );
 
     return !searchTree ? (
@@ -228,6 +230,7 @@ const renderNoResults = (searchTerm: string) => (
 interface SearchPaneNodeProps {
   questionsByUrlSegment: Record<string, Question>;
   node: CategoryTreeNode;
+  expandedBranches: string[];
   path: number[] | undefined;
   type?: 'searchPane' | 'headerMenu';
 }
@@ -235,10 +238,13 @@ interface SearchPaneNodeProps {
 function SearchPaneNode({
   questionsByUrlSegment = {},
   node,
+  expandedBranches,
   path,
   type = 'searchPane',
 }: SearchPaneNodeProps) {
-  const [offerTooltip, setOfferTooltip] = useState(true);
+  const [offerTooltip, setOfferTooltip] = useState(
+    () => !expandedBranches.includes(getNodeId(node))
+  );
 
   const nodeMetadata =
     isIndividual(node) && getTargetType(node) === 'search'
@@ -300,6 +306,7 @@ function SearchPaneNode({
           textDecoration: 'underline',
         },
       }}
+      onClick={() => setOfferTooltip((prev) => !prev)}
     >
       {displayName}
     </span>
@@ -307,8 +314,10 @@ function SearchPaneNode({
 
   const tooltipContent = getFormattedTooltipContent(node);
 
-  return tooltipContent && offerTooltip ? (
-    <Tooltip title={tooltipContent}>{displayElement}</Tooltip>
+  return tooltipContent ? (
+    <Tooltip title={offerTooltip ? tooltipContent : ''}>
+      {displayElement}
+    </Tooltip>
   ) : (
     displayElement
   );
