@@ -368,6 +368,7 @@ export default function makeHeaderMenuItemsFactory(
               url: 'https://scholar.google.com/scholar?hl=en&q=ClinEpiDB',
               target: '_blank',
             },
+            ...socialLinks,
             {
               text: 'News',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`,
@@ -376,7 +377,6 @@ export default function makeHeaderMenuItemsFactory(
               text: 'Features coming soon',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/newfeatures.html`,
             },
-            ...socialLinks,
           ],
         },
         {
