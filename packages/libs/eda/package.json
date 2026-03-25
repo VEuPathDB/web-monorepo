@@ -109,9 +109,5 @@
     "stream-browserify": "^3.0.0",
     "typescript": "^4.3.4",
     "web-vitals": "^0.2.4"
-  },
-  "volta": {
-    "node": "14.19.3",
-    "yarn": "1.22.11"
   }
 }
