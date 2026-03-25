@@ -66,7 +66,7 @@ export default function HeaderCell({
       {...headerGroup.getHeaderProps()}
       {...(sortable &&
         headerGroup.getSortByToggleProps({
-          sectionHeader: 'Click to toggle sorting and Shift-Click to multi-sort',
+          title: 'Click to toggle sorting and Shift-Click to multi-sort',
         }))}
       css={{
         padding: 0,
