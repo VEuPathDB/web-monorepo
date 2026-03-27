@@ -15,6 +15,7 @@ import {
   FILTERS_PARAM,
 } from './SiteSearchConstants';
 import { TypeAheadInput } from './TypeAheadInput';
+import { siteSearchServiceUrl } from '../../config';
 import { useRecentSearches } from './SiteSearchHooks';
 
 import './SiteSearch.scss';
@@ -28,13 +29,9 @@ const preventEventWith = (callback: () => void) => (event: React.FormEvent) => {
 
 export interface Props {
   placeholderText?: string;
-  siteSearchURL: string,
 }
 
-export const SiteSearchInput = wrappable(function ({
-  placeholderText,
-  siteSearchURL,
-}: Props) {
+export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
   const location = useLocation();
   const history = useHistory();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -153,7 +150,7 @@ export const SiteSearchInput = wrappable(function ({
         <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />
       ))}
       <TypeAheadInput
-        siteSearchURL={siteSearchURL}
+        siteSearchURL={siteSearchServiceUrl}
         inputReference={inputRef}
         searchString={searchString}
         placeHolderText={placeholderText}

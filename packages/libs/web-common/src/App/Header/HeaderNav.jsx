@@ -72,7 +72,8 @@ class HeaderNav extends React.Component {
         <div>
           <h2 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>{titleFirstPart}</mark>{titleSecPart}
+              <mark>{titleFirstPart}</mark>
+              {titleSecPart}
             </Link>
           </h2>
         </div>
@@ -93,7 +94,7 @@ class HeaderNav extends React.Component {
                 maxWidth: '35em',
               }}
             >
-              <SiteSearchInput siteSearchURL={siteSearchServiceUrl} />
+              <SiteSearchInput />
             </div>
           )}
         </div>
@@ -108,7 +109,13 @@ class HeaderNav extends React.Component {
     );
   }
 
-  renderBranding({ config = {}, titleFirstPart, titleSecPart, subTitle, logoUrl }) {
+  renderBranding({
+    config = {},
+    titleFirstPart,
+    titleSecPart,
+    subTitle,
+    logoUrl,
+  }) {
     const { buildNumber, releaseDate } = config;
 
     return (
@@ -119,8 +126,9 @@ class HeaderNav extends React.Component {
         <div className="box stack">
           <h1 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
-              <mark>{titleFirstPart}</mark>{titleSecPart}
-	    </Link>
+              <mark>{titleFirstPart}</mark>
+              {titleSecPart}
+            </Link>
           </h1>
           <p>
             {subTitle} <br />
@@ -229,7 +237,7 @@ class HeaderNav extends React.Component {
                 flexGrow: 1,
               }}
             >
-              <SiteSearchInput siteSearchURL={siteSearchServiceUrl} />
+              <SiteSearchInput />
             </div>
           )}
           <div style={{ display: 'flex' }}>
