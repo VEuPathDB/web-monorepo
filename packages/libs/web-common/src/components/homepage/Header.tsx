@@ -23,7 +23,6 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { UserMenu, UserMenuGuest } from '../../App/UserMenu';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
 import { SiteSearchInput } from '../../components/SiteSearch/SiteSearchInput';
-import { SITE_SEARCH_ROUTE } from '../SiteSearch/SiteSearchConstants';
 
 import { webAppUrl } from '../../config';
 
@@ -196,7 +195,7 @@ const HeaderView = withRouter(
             dismissSubmenus={dismissSubmenus}
           />
         </div>
-        <SiteSearchInput siteSearchURL={webAppUrl + SITE_SEARCH_ROUTE} />
+        <SiteSearchInput />
         {user && !user.isGuest ? (
           <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
         ) : (
