@@ -290,7 +290,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         sortable: true,
         name: 'VEuPathDB Websites',
         renderCell(cellProps: MesaDataCellProps) {
-          const newInstallTargets = cellProps.row.installTargets.map(val => val === 'UniDB' ? 'VEuPathDB' : val);
+          const newInstallTargets = cellProps.row.installTargets.map(val => val === 'UniDB' ? 'VEuPathDB' : (val === 'ClinEpiDB' ? 'dataExplorer' :  val) );
           return newInstallTargets.join(', ');
         },
       },
