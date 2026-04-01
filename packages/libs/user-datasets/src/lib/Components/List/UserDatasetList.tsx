@@ -290,7 +290,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         sortable: true,
         name: 'VEuPathDB Websites',
         renderCell(cellProps: MesaDataCellProps) {
-          return cellProps.row.installTargets.join(', ');
+          const newInstallTargets = cellProps.row.installTargets.map(val => val === 'UniDB' ? 'VEuPathDB' : val);
+          return newInstallTargets.join(', ');
         },
       },
       {
@@ -541,7 +542,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   filterAndSortRows(rows: DatasetListEntry[]): DatasetListEntry[] {
     const { searchTerm, uiState } = this.state;
-    const { projectName, filterByProject } = this.props;
+    const { projectName, projectId, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
 
     let result = rows;
@@ -549,7 +550,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     // Apply project filter
     if (filterByProject) {
       result = result.filter((dataset) =>
-        dataset.installTargets.includes(projectName)
+        dataset.installTargets.includes(projectId)
       );
     }
 
@@ -625,6 +626,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       userDatasets,
       user,
       projectName,
+      projectId,
       shareUserDatasets,
       unshareUserDatasets,
       filterByProject,
@@ -674,7 +676,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     const totalPercent = totalSize / quotaSize;
 
     const offerProjectToggle = userDatasets.some(({ installTargets }) =>
-      installTargets.some((project) => project !== projectName)
+      installTargets.some((project) => project !== projectId)
     );
 
     return (
