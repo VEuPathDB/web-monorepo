@@ -75,7 +75,7 @@ const News = ({ twitterUrls, news, error }) => {
               See all news
             </Link>
           </div>
-          {twitterUrls.map((twitterUrl) => (
+          {twitterUrls.filter(Boolean).map((twitterUrl) => (
             <TwitterTimeline
               key={twitterUrl}
               theme="light"
