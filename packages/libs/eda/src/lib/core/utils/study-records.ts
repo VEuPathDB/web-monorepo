@@ -32,7 +32,7 @@ export async function getWdkStudyRecords(
   const { wdkService, subsettingClient, studyAccessApi } = deps;
   const attributes = options?.attributes ?? EMPTY_ARRAY;
   const tables = options?.tables ?? EMPTY_ARRAY;
-  const searchName = options?.searchName ?? 'Studies';
+  const searchName = options?.searchName ?? 'AllDatasets';
 
   const [permissions, recordClass] = await Promise.all([
     cachedPermissionCheck(await wdkService.getCurrentUser(), studyAccessApi),

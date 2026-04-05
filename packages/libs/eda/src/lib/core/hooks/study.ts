@@ -91,7 +91,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
             { dataset_id: datasetId }
           );
           return {
-            displayName: 'Fake Study',
+            displayName: 'unknown Dataset',
             id: [{ name: 'dataset_id', value: datasetId }],
             recordClassName: STUDY_RECORD_CLASS_NAME,
             attributes: attrs,
