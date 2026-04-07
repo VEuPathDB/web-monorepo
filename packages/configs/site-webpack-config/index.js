@@ -1,6 +1,44 @@
 var baseConfig = require('@veupathdb/base-webpack-config');
 
-const CssCharsetPlugin = require('css-charset-webpack-plugin');
+/**
+ * Prepends @charset "utf-8" to CSS assets, removing any existing @charset
+ * declarations first.  Runs AFTER SourceMapDevToolPlugin (stage 500) so that
+ * CSS source-map files have already been extracted — replacing the asset with
+ * a RawSource at this point is safe.
+ *
+ * (The third-party css-charset-webpack-plugin ran at STAGE_OPTIMIZE = 100,
+ *  which destroyed the ConcatSource/SourceMapSource before source maps could
+ *  be written.)
+ */
+class CssCharsetPlugin {
+  constructor({ charset = 'utf-8' } = {}) {
+    this.charset = charset;
+  }
+  apply(compiler) {
+    const { Compilation } = compiler.webpack;
+    compiler.hooks.thisCompilation.tap('CssCharsetPlugin', (compilation) => {
+      compilation.hooks.processAssets.tap(
+        {
+          name: 'CssCharsetPlugin',
+          stage: Compilation.PROCESS_ASSETS_STAGE_DEV_TOOLING + 1,
+        },
+        () => {
+          const { RawSource } = compiler.webpack.sources;
+          for (const asset of compilation.getAssets()) {
+            if (!/\.css$/i.test(asset.name)) continue;
+            const css = asset.source.source().toString();
+            if (/^\s*@charset\s+["'][^"']+["'];/i.test(css)) continue;
+            const cleaned = css.replace(/@charset\s+["'][^"']+["'];?/gi, '');
+            compilation.updateAsset(
+              asset.name,
+              new RawSource(`@charset "${this.charset}";\n\n${cleaned}`)
+            );
+          }
+        }
+      );
+    });
+  }
+}
 
 // Create webpack alias configuration object
 var alias = {
@@ -71,7 +109,7 @@ module.exports = function configure(additionalConfig) {
           process: 'process/browser',
         }),
         new SuppressProvidedDependencyCacheWarnings(),
-        new CssCharsetPlugin({ charset: 'utf-8' }),
+        new CssCharsetPlugin(),
       ],
 
       // Map external libraries Wdk exposes so we can do things like:
