@@ -23,25 +23,33 @@ class CssCharsetPlugin {
           stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
         },
         () => {
-          const { ConcatSource, RawSource } = compiler.webpack.sources;
+          const { ConcatSource, RawSource, ReplaceSource } =
+            compiler.webpack.sources;
           for (const asset of compilation.getAssets()) {
             if (!/\.css$/i.test(asset.name)) continue;
             const css = asset.source.source().toString();
             if (/^\s*@charset\s+["'][^"']+["'];/i.test(css)) continue;
 
             if (/@charset\s+["'][^"']+["'];?/i.test(css)) {
-              // Must rewrite content to strip embedded @charset — this
-              // replaces the asset with a RawSource and loses the source map.
-              console.warn(
-                `[CssCharsetPlugin] ${asset.name} contains an embedded @charset ` +
-                  `declaration which is not needed (the build injects one ` +
-                  `automatically). Stripping it requires a full rewrite, so ` +
-                  `the CSS source map for this asset will be lost.`
-              );
-              const cleaned = css.replace(/@charset\s+["'][^"']+["'];?/gi, '');
+              // Strip embedded @charset declarations using ReplaceSource so the
+              // source map is preserved (ReplaceSource adjusts mappings around
+              // the removed ranges, unlike a full RawSource rewrite).
+              const replaceSource = new ReplaceSource(asset.source);
+              const charsetRe = /@charset\s+["'][^"']+["'];?/gi;
+              let match;
+              while ((match = charsetRe.exec(css)) !== null) {
+                replaceSource.replace(
+                  match.index,
+                  match.index + match[0].length - 1,
+                  ''
+                );
+              }
               compilation.updateAsset(
                 asset.name,
-                new RawSource(`@charset "${this.charset}";\n\n${cleaned}`)
+                new ConcatSource(
+                  new RawSource(`@charset "${this.charset}";\n\n`),
+                  replaceSource
+                )
               );
             } else {
               // Common case: just prepend, preserving the original source maps
