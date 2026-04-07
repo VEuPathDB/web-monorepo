@@ -46,11 +46,11 @@ export function useSubscriptionGroups(): SubscriptionGroup[] | undefined {
   return data;
 }
 
-export function expireSubscriptionGroupsByLead() {
+export function useExpireSubscriptionGroupsByLead() {
   const queryClient = useQueryClient();
 
   // invalidate and force refetch a query
-  queryClient.invalidateQueries({
+  return () => queryClient.invalidateQueries({
     queryKey: ['subscriptionGroupsWithMembers'],
     refetchType: 'all' // refetch both active and inactive queries
   });
