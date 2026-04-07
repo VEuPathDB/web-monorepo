@@ -5,6 +5,9 @@ import {
 } from '../Service/Mixins/OauthService';
 import { useWdkDependenciesContext } from './WdkDependenciesEffect';
 
+// key for react-query caching of subscription groups; shared by create and expire
+const SUBSCRIPTION_GROUPS_WITH_MEMBERS_QUERY_KEY = 'subscriptionGroupsWithMembers';
+
 /**
  * Hook to fetch subscription groups and group info from the API with react-query caching.
  * Note: wdkService caching is all-or-nothing. We need something in between, so
@@ -51,7 +54,7 @@ export function useExpireSubscriptionGroupsByLead() {
 
   // invalidate and force refetch a query
   return () => queryClient.invalidateQueries({
-    queryKey: ['subscriptionGroupsWithMembers'],
+    queryKey: [SUBSCRIPTION_GROUPS_WITH_MEMBERS_QUERY_KEY],
     refetchType: 'all' // refetch both active and inactive queries
   });
 }
@@ -62,7 +65,7 @@ export function useSubscriptionGroupsByLead():
   const { wdkService } = useWdkDependenciesContext();
 
   const { data } = useQuery({
-    queryKey: ['subscriptionGroupsWithMembers'],
+    queryKey: [SUBSCRIPTION_GROUPS_WITH_MEMBERS_QUERY_KEY],
     queryFn: async () => {
       if (!wdkService) {
         throw new Error('WDK service not available');
