@@ -100,8 +100,14 @@ exports.merge = function merge(additionalConfig) {
                 test: /\.scss$/,
                 use: [
                   { loader: MiniCssExtractPlugin.loader },
-                  { loader: 'css-loader', options: { sourceMap: true } },
-                  { loader: 'sass-loader', options: { sourceMap: true } },
+                  {
+                    loader: 'css-loader',
+                    options: { sourceMap: true, url: false },
+                  },
+                  {
+                    loader: 'sass-loader',
+                    options: { sourceMap: true, url: false },
+                  },
                 ],
               },
 
@@ -109,7 +115,10 @@ exports.merge = function merge(additionalConfig) {
                 test: /\.css$/,
                 use: [
                   { loader: MiniCssExtractPlugin.loader },
-                  { loader: 'css-loader', options: { sourceMap: true } },
+                  {
+                    loader: 'css-loader',
+                    options: { sourceMap: true, url: false },
+                  },
                 ],
               },
 
