@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
-import { expireSubscriptionGroupsByLead, useExpireSubscriptionGroupsByLead, useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
+import { useExpireSubscriptionGroupsByLead, useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
 import { useWdkService } from '../../Hooks/WdkServiceHook';
 import { useNonNullableContext } from '../../Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '../../Hooks/WdkDependenciesEffect';
