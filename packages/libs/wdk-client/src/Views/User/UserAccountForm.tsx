@@ -235,7 +235,6 @@ function UserAccountForm(props: UserAccountFormProps) {
             saveButton={saveButton}
             formStatus={displayedFormStatus}
             showSubscriptionProds={showSubscriptionProds}
-            getRemoveUserFromGroupFunction={getRemoveUserFromGroupFunction}
           />
         );
       case 'preferences':

@@ -22,7 +22,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
-import { useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
+import { expireSubscriptionGroupsByLead, useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
+import { useWdkService } from '../../Hooks/WdkServiceHook';
+import { useNonNullableContext } from '../../Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '../../Hooks/WdkDependenciesEffect';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -35,7 +38,6 @@ interface UserSubscriptionManagementProps {
   onSuccess: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   showSubscriptionProds?: boolean;
-  getRemoveUserFromGroupFunction: (userId: number, groupId: number) => () => void;
 }
 
 type Option = {
@@ -50,8 +52,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   saveButton,
   onSuccess,
   formStatus,
-  showSubscriptionProds,
-  getRemoveUserFromGroupFunction
+  showSubscriptionProds
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
@@ -133,6 +134,18 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   const isClassParticipant = userIsClassParticipant(user);
 
   let managedGroups = useSubscriptionGroupsByLead();
+
+  let getRemoveUserFromGroupFunction = (userId: number, groupId: number) => {
+    return () => {
+      const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+      wdkService.removeUserFromGroup(userId, groupId).then(() => {
+        // After removing a user from a group, refetch the groups that the user is a lead of to update the member list
+        expireSubscriptionGroupsByLead();
+      }).catch((error: any) => {
+        console.error('Failed to remove user from group:', error);
+      });
+    };
+  };
 
   return (
     <div className="wdk-UserProfile-profileForm">
@@ -304,7 +317,6 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                         onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId)}
                       />
                       <span className="h4-style-light">
-                        {/*<i className="fa fa-trash" aria-hidden="true" onClick={() => removeUserFromGroup(u.userId, group.groupId)}></i>*/}
                         {u.name} ({u.organization})
 
                       </span>

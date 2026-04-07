@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   SubscriptionGroup,
   SubscriptionGroupWithMembers,
@@ -44,6 +44,16 @@ export function useSubscriptionGroups(): SubscriptionGroup[] | undefined {
   });
 
   return data;
+}
+
+export function expireSubscriptionGroupsByLead() {
+  const queryClient = useQueryClient();
+
+  // invalidate and force refetch a query
+  queryClient.invalidateQueries({
+    queryKey: ['subscriptionGroupsWithMembers'],
+    refetchType: 'all' // refetch both active and inactive queries
+  });
 }
 
 export function useSubscriptionGroupsByLead():
