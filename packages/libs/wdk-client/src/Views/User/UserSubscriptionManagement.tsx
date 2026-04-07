@@ -135,9 +135,10 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
 
   let managedGroups = useSubscriptionGroupsByLead();
 
+  // function factory to create user removal event handlers
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   let getRemoveUserFromGroupFunction = (userId: number, groupId: number) => {
     return () => {
-      const { wdkService } = useNonNullableContext(WdkDependenciesContext);
       wdkService.removeUserFromGroup(userId, groupId).then(() => {
         // After removing a user from a group, refetch the groups that the user is a lead of to update the member list
         expireSubscriptionGroupsByLead();
