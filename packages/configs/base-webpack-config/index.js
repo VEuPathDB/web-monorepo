@@ -125,11 +125,11 @@ exports.merge = function merge(additionalConfig) {
                 ],
               },
 
-              // inlines images as base64
+              // inlines small assets as base64, emits larger ones as files
               {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
-                loader: 'url-loader',
-                options: { limit: 100000 },
+                type: 'asset',
+                parser: { dataUrlCondition: { maxSize: 100000 } },
               },
             ],
           },
