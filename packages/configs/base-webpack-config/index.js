@@ -102,12 +102,12 @@ exports.merge = function merge(additionalConfig) {
                   { loader: MiniCssExtractPlugin.loader },
                   {
                     loader: 'css-loader',
-                    options: { sourceMap: true, url: false },
+                    options: {
+                      sourceMap: true,
+                      url: { filter: (url) => !url.startsWith('/') },
+                    },
                   },
-                  {
-                    loader: 'sass-loader',
-                    options: { sourceMap: true, url: false },
-                  },
+                  { loader: 'sass-loader', options: { sourceMap: true } },
                 ],
               },
 
@@ -117,7 +117,10 @@ exports.merge = function merge(additionalConfig) {
                   { loader: MiniCssExtractPlugin.loader },
                   {
                     loader: 'css-loader',
-                    options: { sourceMap: true, url: false },
+                    options: {
+                      sourceMap: true,
+                      url: { filter: (url) => !url.startsWith('/') },
+                    },
                   },
                 ],
               },
