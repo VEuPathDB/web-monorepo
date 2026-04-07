@@ -317,7 +317,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                         {u.name} ({u.organization})
                         <Icon
                           fa="trash"
-                          style={{ color: 'black', fontSize: '1.2em' }}
+                          style={{ paddingLeft: '0.5em', color: 'black', fontSize: '1.2em', cursor: 'pointer' }}
                           onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId)}
                         />
                       </span>
