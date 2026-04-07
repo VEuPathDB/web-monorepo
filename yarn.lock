@@ -8319,7 +8319,7 @@ __metadata:
   dependencies:
     mini-css-extract-plugin: "npm:^2.7.6"
     webpack: "npm:^5.84.1"
-    webpack-merge: "npm:^4.2.2"
+    webpack-merge: "npm:^5.7.3"
   peerDependencies:
     "@babel/core": ^7.0.0
     babel-loader: ^8.0.5
@@ -8482,7 +8482,6 @@ __metadata:
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^5.1.1"
     webpack-dev-server: "npm:^4.15.0"
-    webpack-merge: "npm:^4.2.2"
   languageName: unknown
   linkType: soft
 
@@ -8832,7 +8831,6 @@ __metadata:
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^5.1.1"
     webpack-dev-server: "npm:^4.15.0"
-    webpack-merge: "npm:^4.2.2"
   languageName: unknown
   linkType: soft
 
@@ -8916,7 +8914,6 @@ __metadata:
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^5.1.1"
     webpack-dev-server: "npm:^4.15.0"
-    webpack-merge: "npm:^4.2.2"
   languageName: unknown
   linkType: soft
 
@@ -9074,7 +9071,6 @@ __metadata:
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^5.1.1"
     webpack-dev-server: "npm:^4.15.0"
-    webpack-merge: "npm:^4.2.2"
   languageName: unknown
   linkType: soft
 
@@ -38750,15 +38746,6 @@ __metadata:
   peerDependencies:
     webpack: ^4.44.2 || ^5.47.0
   checksum: 10/d7b0fa36579bf7b6b093103b1484b7af1df76bc2691a08680b0d2cbbebfda6313749b63f19905e964f27c64f27c138bac0216d483df8acd41a1c5f0048fb123e
-  languageName: node
-  linkType: hard
-
-"webpack-merge@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "webpack-merge@npm:4.2.2"
-  dependencies:
-    lodash: "npm:^4.17.15"
-  checksum: 10/93b59d623f7badca46af265162495278ef79c254f8b31bfcc740f25dda11712383f59b2d25c9c309bbe4ad7688e6871c80e6b2ed9035f0fc8d5a1c150f667b03
   languageName: node
   linkType: hard
 

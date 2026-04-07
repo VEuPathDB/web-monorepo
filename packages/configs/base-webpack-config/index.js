@@ -9,7 +9,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
+const { merge: webpackMerge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isModern = process.env.BROWSERSLIST_ENV === 'modern';
 const outputSubDir = isModern ? 'modern' : 'legacy';
@@ -29,7 +29,7 @@ exports.webpack = webpack;
 exports.merge = function merge(additionalConfig) {
   return function (env, argv) {
     const isDevelopment = argv.mode !== 'production';
-    return webpackMerge.smart(
+    return webpackMerge(
       [
         {
           bail: true,
