@@ -225,6 +225,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             </div>
           );
         }
+
         return (
           <UserSubscriptionManagement
             user={user}
@@ -234,6 +235,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             saveButton={saveButton}
             formStatus={displayedFormStatus}
             showSubscriptionProds={showSubscriptionProds}
+            getRemoveUserFromGroupFunction={getRemoveUserFromGroupFunction}
           />
         );
       case 'preferences':

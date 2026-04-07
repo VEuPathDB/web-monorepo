@@ -35,6 +35,7 @@ interface UserSubscriptionManagementProps {
   onSuccess: () => void;
   formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error';
   showSubscriptionProds?: boolean;
+  getRemoveUserFromGroupFunction: (userId: number, groupId: number) => () => void;
 }
 
 type Option = {
@@ -50,6 +51,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   onSuccess,
   formStatus,
   showSubscriptionProds,
+  getRemoveUserFromGroupFunction
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
@@ -296,8 +298,15 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                 {group.members.length > 0 ? (
                   group.members.map((u) => (
                     <>
+                      <Icon
+                        fa="fa-trash"
+                        style={{ color: 'black', fontSize: '1.2em' }}
+                        onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId)}
+                      />
                       <span className="h4-style-light">
+                        {/*<i className="fa fa-trash" aria-hidden="true" onClick={() => removeUserFromGroup(u.userId, group.groupId)}></i>*/}
                         {u.name} ({u.organization})
+
                       </span>
                       {/* Extra div added so that the members all show up in the right column */}
                       <div></div>
