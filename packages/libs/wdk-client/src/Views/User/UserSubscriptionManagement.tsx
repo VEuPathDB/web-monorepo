@@ -318,12 +318,14 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                     <>
                       <span className="h4-style-light">
                         {u.name} ({u.organization})
-                        <Icon
-                          fa="trash"
-                          style={{ paddingLeft: '0.5em', color: 'black', fontSize: '1.2em', cursor: 'pointer' }}
-                          onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId, u.name, group.groupName)}
-                          title="Remove this user from this group"
-                        />
+                        {u.userId !== user.id && (
+                          <Icon
+                            fa="trash"
+                            style={{ paddingLeft: '0.5em', color: 'black', fontSize: '1.2em', cursor: 'pointer' }}
+                            onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId, u.name, group.groupName)}
+                            title="Remove this user from this group"
+                          />
+                        )}
                       </span>
                       {/* Extra div added so that the members all show up in the right column */}
                       <div></div>
