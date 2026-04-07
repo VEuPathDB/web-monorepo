@@ -540,6 +540,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               themeRole="primary"
               onSuccess={() => {
                 setShowConfirmModal(false);
+                expireSubscriptionGroupsByLead();
                 onSuccess();
               }}
               savedStateDuration={1000}
