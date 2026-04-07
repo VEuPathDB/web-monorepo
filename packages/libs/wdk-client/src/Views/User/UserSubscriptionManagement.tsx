@@ -271,9 +271,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               color: colors.gray[700],
             }}
           >
-            If you would like to make updates to the subscription group(s) you
-            manage, such as removing members or editing the group name, please
-            contact us at <strong>subscriptions@veupathdb.org</strong>
+            You can remove users from the subscription group(s) you manage using the trash icons
+            below.  If you would like to make any other updates, e.g. editing the group name,
+            please contact us at <strong>subscriptions@veupathdb.org</strong>
           </span>
           {managedGroups.map((group) => (
             <div style={{ marginTop: '1em' }}>
