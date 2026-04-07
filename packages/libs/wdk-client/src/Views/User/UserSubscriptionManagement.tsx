@@ -138,8 +138,11 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   // function factory to create user removal event handlers
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const expireSubscriptionGroupsByLead = useExpireSubscriptionGroupsByLead();
-  let getRemoveUserFromGroupFunction = (userId: number, groupId: number) => {
+  let getRemoveUserFromGroupFunction = (userId: number, groupId: number, userName: string, groupName: string) => {
     return () => {
+      if (!confirm(`Are you sure you want to remove ${userName} from ${groupName}?`)) {
+        return;
+      }
       wdkService.removeUserFromGroup(userId, groupId).then(() => {
         // After removing a user from a group, refetch the groups that the user is a lead of to update the member list
         expireSubscriptionGroupsByLead();
@@ -318,7 +321,8 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                         <Icon
                           fa="trash"
                           style={{ paddingLeft: '0.5em', color: 'black', fontSize: '1.2em', cursor: 'pointer' }}
-                          onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId)}
+                          onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId, u.name, group.groupName)}
+                          title="Remove this user from this group"
                         />
                       </span>
                       {/* Extra div added so that the members all show up in the right column */}
