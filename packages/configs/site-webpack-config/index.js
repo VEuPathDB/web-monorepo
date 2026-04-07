@@ -2,13 +2,13 @@ var baseConfig = require('@veupathdb/base-webpack-config');
 
 /**
  * Prepends @charset "utf-8" to CSS assets, removing any existing @charset
- * declarations first.  Runs AFTER SourceMapDevToolPlugin (stage 500) so that
- * CSS source-map files have already been extracted — replacing the asset with
- * a RawSource at this point is safe.
+ * declarations first.  Uses ConcatSource to preserve source-map data so that
+ * SourceMapDevToolPlugin (stage 500) can extract accurate .css.map files.
  *
- * (The third-party css-charset-webpack-plugin ran at STAGE_OPTIMIZE = 100,
- *  which destroyed the ConcatSource/SourceMapSource before source maps could
- *  be written.)
+ * Runs at STAGE_ADDITIONS (-100), before source maps are extracted.
+ *
+ * (The third-party css-charset-webpack-plugin ran at STAGE_OPTIMIZE = 100 and
+ *  replaced assets with RawSource, which destroyed source maps entirely.)
  */
 class CssCharsetPlugin {
   constructor({ charset = 'utf-8' } = {}) {
@@ -20,19 +20,39 @@ class CssCharsetPlugin {
       compilation.hooks.processAssets.tap(
         {
           name: 'CssCharsetPlugin',
-          stage: Compilation.PROCESS_ASSETS_STAGE_DEV_TOOLING + 1,
+          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
         },
         () => {
-          const { RawSource } = compiler.webpack.sources;
+          const { ConcatSource, RawSource } = compiler.webpack.sources;
           for (const asset of compilation.getAssets()) {
             if (!/\.css$/i.test(asset.name)) continue;
             const css = asset.source.source().toString();
             if (/^\s*@charset\s+["'][^"']+["'];/i.test(css)) continue;
-            const cleaned = css.replace(/@charset\s+["'][^"']+["'];?/gi, '');
-            compilation.updateAsset(
-              asset.name,
-              new RawSource(`@charset "${this.charset}";\n\n${cleaned}`)
-            );
+
+            if (/@charset\s+["'][^"']+["'];?/i.test(css)) {
+              // Must rewrite content to strip embedded @charset — this
+              // replaces the asset with a RawSource and loses the source map.
+              console.warn(
+                `[CssCharsetPlugin] ${asset.name} contains an embedded @charset ` +
+                  `declaration which is not needed (the build injects one ` +
+                  `automatically). Stripping it requires a full rewrite, so ` +
+                  `the CSS source map for this asset will be lost.`
+              );
+              const cleaned = css.replace(/@charset\s+["'][^"']+["'];?/gi, '');
+              compilation.updateAsset(
+                asset.name,
+                new RawSource(`@charset "${this.charset}";\n\n${cleaned}`)
+              );
+            } else {
+              // Common case: just prepend, preserving the original source maps
+              compilation.updateAsset(
+                asset.name,
+                new ConcatSource(
+                  new RawSource(`@charset "${this.charset}";\n\n`),
+                  asset.source
+                )
+              );
+            }
           }
         }
       );
