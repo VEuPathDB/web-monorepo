@@ -828,6 +828,11 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
               label="Effect direction"
               selectedOption={vizConfig.effectDirection ?? 'up and down'}
               options={['up and down', 'up only', 'down only']}
+              optionLabels={[
+                'Up- or down-regulated',
+                'Up-regulated only',
+                'Down-regulated only',
+              ]}
               onOptionSelected={(newValue) =>
                 updateVizConfig({
                   effectDirection:

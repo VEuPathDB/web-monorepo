@@ -208,7 +208,7 @@ export function DifferentialAnalysisReviewContent({
               ? 'Up-regulated only'
               : volcanoPlotConfig?.effectDirection === 'down only'
               ? 'Down-regulated only'
-              : 'Up- and down-regulated'
+              : 'Up- or down-regulated'
           }
         />
         {volcanoStep && (
