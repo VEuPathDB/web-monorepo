@@ -530,7 +530,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     };
 
     return series;
-  }, [visualization.descriptor.type, distributionDataArgs, xAxisVariable]);
+  }, [visualization.descriptor.type, 'distribution', distributionDataArgs, xAxisVariable]);
 
   // Note: Histogram distribution data contains statistical values such as summary.min/max,
   // however, it does not fully respect multiple filters.
@@ -715,7 +715,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       ),
       showMissingOverlay
     );
-  }, [visualization.descriptor.type, dataRequestDeps]);
+  }, [visualization.descriptor.type, 'main', dataRequestDeps]);
 
   const [checkData, isEmptyData] = useMemo(() => {
     // controls need the bin info from just one facet (not an empty one)
