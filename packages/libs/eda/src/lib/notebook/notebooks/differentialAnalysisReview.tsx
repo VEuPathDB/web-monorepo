@@ -177,7 +177,16 @@ export function DifferentialAnalysisReviewContent({
           label="p-value ≤"
           value={String(volcanoPlotConfig?.significanceThreshold ?? '—')}
         />
-        <ReviewRow label="Direction" value="Up and down regulated" />
+        <ReviewRow
+          label="Direction"
+          value={
+            volcanoPlotConfig?.effectDirection === 'up only'
+              ? 'Up-regulated only'
+              : volcanoPlotConfig?.effectDirection === 'down only'
+              ? 'Down-regulated only'
+              : 'Up- and down-regulated'
+          }
+        />
         {volcanoStep && (
           <p
             style={{
