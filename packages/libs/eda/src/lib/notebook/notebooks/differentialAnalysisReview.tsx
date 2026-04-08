@@ -30,6 +30,7 @@ interface DifferentialAnalysisReviewContentProps extends TextCellContext {
   sharedInputsCellId?: string;
   computeCellId?: string;
   volcanoCellId?: string;
+  dataEntityDisplayName?: string;
 }
 
 export function DifferentialAnalysisReviewContent({
@@ -42,6 +43,7 @@ export function DifferentialAnalysisReviewContent({
   sharedInputsCellId = 'de_shared_inputs',
   computeCellId = 'de_deseq2_compute',
   volcanoCellId = 'de_volcano',
+  dataEntityDisplayName = 'Sample',
 }: DifferentialAnalysisReviewContentProps) {
   const deComputation = analysisState?.analysis?.descriptor.computations.find(
     (c) => c.descriptor.type === 'differentialexpression'
@@ -144,7 +146,7 @@ export function DifferentialAnalysisReviewContent({
       </ReviewCard>
 
       {filters.length > 0 && (
-        <ReviewCard title="Subset filters">
+        <ReviewCard title={`${dataEntityDisplayName} Filters`}>
           {filters.map((filter) => {
             const ev = findEntityAndVariable(entities, filter);
             if (!ev) return null;
