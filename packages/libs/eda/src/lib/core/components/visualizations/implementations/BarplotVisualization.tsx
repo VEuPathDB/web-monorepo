@@ -494,7 +494,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       ),
       showMissingOverlay
     );
-  }, [dataRequestDeps]);
+  }, [visualization.descriptor.type, dataRequestDeps]);
 
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&

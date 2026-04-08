@@ -203,7 +203,6 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
           filters,
           computationConfiguration,
           computationType: computation.descriptor.type,
-          visualizationType: visualization.descriptor.type,
         };
 
   const data = useCachedPromise(
@@ -220,12 +219,12 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
 
       return dataClient.getVisualizationData(
         dataRequestDeps.computationType,
-        dataRequestDeps.visualizationType,
+        visualization.descriptor.type,
         params,
         VolcanoPlotResponse
       );
     },
-    [dataRequestDeps]
+    [visualization.descriptor.type, dataRequestDeps]
   );
 
   /**
