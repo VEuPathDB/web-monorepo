@@ -8,9 +8,9 @@ import VolcanoPlot, {
 } from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
-import { usePromise } from '../../../hooks/promise';
+import { useCachedPromise } from '../../../hooks/cachedPromise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
   useDataClient,
@@ -190,42 +190,42 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     useState<string>('');
 
   // Get the volcano plot data!
-  const data = usePromise(
-    useCallback(async (): Promise<VolcanoPlotResponse | undefined> => {
-      // Only need to check compute job status and filter status, since there are no
-      // viz input variables.
-      if (computeJobStatus !== 'complete') return undefined;
-      if (filteredCounts.pending || filteredCounts.value == null)
-        return undefined;
+  // Only need to check compute job status and filter status, since there are no
+  // viz input variables. Set dataRequestDeps to null to disable the query when
+  // conditions aren't met.
+  const dataRequestDeps =
+    computeJobStatus !== 'complete' ||
+    filteredCounts.pending ||
+    filteredCounts.value == null
+      ? null
+      : {
+          studyId,
+          filters,
+          computationConfiguration,
+          computationType: computation.descriptor.type,
+          visualizationType: visualization.descriptor.type,
+        };
 
+  const data = useCachedPromise(
+    async (): Promise<VolcanoPlotResponse> => {
+      if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
       // There are _no_ viz request params for the volcano plot (config: {}).
       // The data service streams the volcano data directly from the compute service.
       const params = {
-        studyId,
-        filters,
+        studyId: dataRequestDeps.studyId,
+        filters: dataRequestDeps.filters,
         config: {},
-        computeConfig: computationConfiguration,
+        computeConfig: dataRequestDeps.computationConfiguration,
       };
 
-      const response = await dataClient.getVisualizationData(
-        computation.descriptor.type,
-        visualization.descriptor.type,
+      return dataClient.getVisualizationData(
+        dataRequestDeps.computationType,
+        dataRequestDeps.visualizationType,
         params,
         VolcanoPlotResponse
       );
-
-      return response;
-    }, [
-      computeJobStatus,
-      filteredCounts.pending,
-      filteredCounts.value,
-      filters,
-      studyId,
-      computationConfiguration,
-      computation.descriptor.type,
-      dataClient,
-      visualization.descriptor.type,
-    ])
+    },
+    [dataRequestDeps]
   );
 
   /**
