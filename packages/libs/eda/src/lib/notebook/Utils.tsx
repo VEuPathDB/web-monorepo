@@ -17,7 +17,6 @@ import { formatFilterValue } from '../core/utils/filter-display';
 import { ReviewCard, ReviewRow } from './components/ReviewCard';
 import { useStudyMetadata } from '../core/hooks/study';
 import { useConfiguredSubsettingClient } from '../core/hooks/client';
-import { edaServiceUrl } from '@veupathdb/web-common/lib/config';
 
 export function parseJson(str: string) {
   try {
@@ -28,32 +27,37 @@ export function parseJson(str: string) {
 }
 
 /**
- * Step-details formatter for EDA notebook questions.
- * Shows subset filters and a human-readable summary of each computation.
+ * Factory that returns a step-details formatter for the `eda_analysis_spec`
+ * WDK parameter. Pass the EDA service URL from the application layer.
  */
-export function formatEdaAnalysisSpec(
-  parameter: Parameter,
-  value: string | undefined,
-  datasetParamItems: Record<string, DatasetItem[]> | undefined
-) {
-  if (parameter.name === 'eda_analysis_spec' && value != null) {
-    const obj = parseJson(value);
-    if (NewAnalysis.is(obj) || Analysis.is(obj)) {
-      return (
-        <EdaNotebookAnalysisSummary
-          studyId={obj.studyId}
-          descriptor={obj.descriptor}
-        />
-      );
+export function makeFormatEdaAnalysisSpec(edaServiceUrl: string) {
+  return function formatEdaAnalysisSpec(
+    parameter: Parameter,
+    value: string | undefined,
+    datasetParamItems: Record<string, DatasetItem[]> | undefined
+  ) {
+    if (parameter.name === 'eda_analysis_spec' && value != null) {
+      const obj = parseJson(value);
+      if (NewAnalysis.is(obj) || Analysis.is(obj)) {
+        return (
+          <EdaNotebookAnalysisSummary
+            edaServiceUrl={edaServiceUrl}
+            studyId={obj.studyId}
+            descriptor={obj.descriptor}
+          />
+        );
+      }
     }
-  }
-  return defaultFormatParameterValue(parameter, value, datasetParamItems);
+    return defaultFormatParameterValue(parameter, value, datasetParamItems);
+  };
 }
 
 function EdaNotebookAnalysisSummary({
+  edaServiceUrl,
   studyId,
   descriptor,
 }: {
+  edaServiceUrl: string;
   studyId: string;
   descriptor: AnalysisDescriptor;
 }) {

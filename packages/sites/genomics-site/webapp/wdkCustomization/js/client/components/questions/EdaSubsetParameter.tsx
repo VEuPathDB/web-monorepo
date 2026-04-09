@@ -28,7 +28,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
 import {
   parseJson,
-  formatEdaAnalysisSpec,
+  makeFormatEdaAnalysisSpec,
 } from '@veupathdb/eda/lib/notebook/Utils';
 
 const datasetIdParamName = 'eda_dataset_id';
@@ -164,7 +164,7 @@ export function EdaSubsetStepDetails(props: LeafStepDetailsContentProps) {
   return (
     <DefaultStepDetailsContent
       {...props}
-      formatParameterValue={formatEdaAnalysisSpec}
+      formatParameterValue={makeFormatEdaAnalysisSpec(edaServiceUrl)}
     />
   );
 }

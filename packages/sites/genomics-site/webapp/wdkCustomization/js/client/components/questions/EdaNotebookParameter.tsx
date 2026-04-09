@@ -21,7 +21,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
 import {
   parseJson,
-  formatEdaAnalysisSpec,
+  makeFormatEdaAnalysisSpec,
 } from '@veupathdb/eda/lib/notebook/Utils';
 import { EdaNotebookAnalysis } from '@veupathdb/eda/lib/notebook/EdaNotebookAnalysis';
 import { WdkState } from '@veupathdb/eda/lib/notebook/Types';
@@ -106,7 +106,7 @@ export function EdaNotebookStepDetails(props: LeafStepDetailsContentProps) {
   return (
     <DefaultStepDetailsContent
       {...props}
-      formatParameterValue={formatEdaAnalysisSpec}
+      formatParameterValue={makeFormatEdaAnalysisSpec(edaServiceUrl)}
     />
   );
 }
