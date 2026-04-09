@@ -130,6 +130,16 @@ function ComputationSummary({ computation }: { computation: Computation }) {
             value={String(volcanoConfig.significanceThreshold)}
           />
         )}
+        <ReviewRow
+          label="Direction"
+          value={
+            volcanoConfig?.effectDirection === 'up only'
+              ? 'Up-regulated only'
+              : volcanoConfig?.effectDirection === 'down only'
+              ? 'Down-regulated only'
+              : 'Up- or down-regulated'
+          }
+        />
       </ReviewCard>
     );
   }
