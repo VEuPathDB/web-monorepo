@@ -120,7 +120,7 @@ function ComputationSummary({ computation }: { computation: Computation }) {
         <ReviewRow label="Comparison group (B)" value={groupBLabels} />
         {volcanoConfig?.effectSizeThreshold != null && (
           <ReviewRow
-            label="|Effect size| ≥"
+            label={`|${volcanoConfig.effectSizeLabel ?? 'Effect size'}| ≥`}
             value={String(volcanoConfig.effectSizeThreshold)}
           />
         )}

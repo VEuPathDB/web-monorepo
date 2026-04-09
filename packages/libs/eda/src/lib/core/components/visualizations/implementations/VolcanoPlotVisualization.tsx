@@ -121,6 +121,8 @@ export const VolcanoPlotConfig = t.partial({
   markerBodyOpacity: t.number,
   independentAxisRange: NumberRange,
   dependentAxisRange: NumberRange,
+  /** Label for the effect size axis/threshold, sourced from the backend response. */
+  effectSizeLabel: t.string,
 });
 
 export interface VolcanoPlotOptions
@@ -522,6 +524,17 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
       ),
     [rawDataMinMaxValues, vizConfig]
   );
+
+  // Persist the backend-supplied effectSizeLabel into vizConfig so review
+  // components can display it without an extra network call.
+  useEffect(() => {
+    if (
+      data.value?.effectSizeLabel &&
+      data.value.effectSizeLabel !== vizConfig.effectSizeLabel
+    ) {
+      updateVizConfig({ effectSizeLabel: data.value.effectSizeLabel });
+    }
+  }, [data.value?.effectSizeLabel, vizConfig.effectSizeLabel, updateVizConfig]);
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
