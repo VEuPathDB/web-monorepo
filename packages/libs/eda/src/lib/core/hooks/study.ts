@@ -1,4 +1,4 @@
-import { createContext, useCallback } from 'react';
+import { createContext } from 'react';
 import {
   useWdkService,
   useWdkServiceWithRefresh,
@@ -23,12 +23,13 @@ import {
 import SubsettingClient from '../api/SubsettingClient';
 
 // Hooks
-import { usePromise, useStudyRecord } from '..';
+import { useStudyRecord } from '..';
 import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
 import { getWdkStudyRecords } from '../utils/study-records';
 import { useDeepValue } from './immutability';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { FetchClientError } from '@veupathdb/http-utils';
+import { useCachedPromise } from './cachedPromise';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -187,32 +188,22 @@ export function isStubEntity(entity: StudyEntity) {
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   const permissionsResponse = usePermissions();
-  return usePromise(
-    useCallback(async () => {
-      if (permissionsResponse.loading) return;
-      const { permissions } = permissionsResponse;
-      const studyId = permissions.perDataset[datasetId]?.studyId;
-      if (studyId == null) {
-        throw new Error(
-          `An EDA Study ID could not be found for the Dataset ${datasetId}.`
-        );
+  const edaStudyId = permissionsResponse.loading
+    ? undefined
+    : permissionsResponse.permissions.perDataset[datasetId]?.studyId;
+
+  return useCachedPromise(async () => {
+    try {
+      return await client.getStudyMetadata(edaStudyId!);
+    } catch (error) {
+      if (error instanceof FetchClientError) {
+        console.error(error);
+        return {
+          id: edaStudyId!,
+          rootEntity: STUB_ENTITY,
+        };
       }
-      try {
-        return await client.getStudyMetadata(studyId);
-      } catch (error) {
-        if (error instanceof FetchClientError) {
-          console.error(error);
-          return {
-            id: studyId,
-            rootEntity: STUB_ENTITY,
-          };
-        }
-        throw error;
-      }
-    }, [client, datasetId, permissionsResponse]),
-    {
-      keepPreviousValue: false,
-      throwError: true,
+      throw error;
     }
-  );
+  }, [edaStudyId, client]);
 }
