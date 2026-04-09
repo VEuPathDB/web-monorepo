@@ -12,7 +12,6 @@ import { VolcanoPlotConfig } from '../core/components/visualizations/implementat
 import {
   entityTreeToArray,
   findEntityAndVariable,
-  formatFilterDisplayValue,
 } from '../core/utils/study-metadata';
 import { formatFilterValue } from '../core/utils/filter-display';
 import { ReviewCard, ReviewRow } from './components/ReviewCard';
@@ -29,43 +28,10 @@ export function parseJson(str: string) {
 }
 
 /**
- * Shared step-details formatter for the `eda_analysis_spec` WDK parameter.
- * Used by both EdaNotebookParameter and EdaSubsetParameter.
- */
-export function formatEdaAnalysisParameterValue(
-  parameter: Parameter,
-  value: string | undefined,
-  datasetParamItems: Record<string, DatasetItem[]> | undefined
-) {
-  if (parameter.name === 'eda_analysis_spec' && value != null) {
-    const obj = parseJson(value);
-    if (NewAnalysis.is(obj) || Analysis.is(obj)) {
-      if (obj.descriptor.subset.descriptor.length === 0) {
-        return (
-          <div>
-            <em>No filters applied.</em>
-          </div>
-        );
-      }
-      return (
-        <div style={{ whiteSpace: 'pre-line' }}>
-          {obj.descriptor.subset.descriptor.map((filter, index) => (
-            <div key={index}>
-              {filter.variableId}: {formatFilterDisplayValue(filter)}
-            </div>
-          ))}
-        </div>
-      );
-    }
-  }
-  return defaultFormatParameterValue(parameter, value, datasetParamItems);
-}
-
-/**
  * Step-details formatter for EDA notebook questions.
  * Shows subset filters and a human-readable summary of each computation.
  */
-export function formatEdaNotebookParameterValue(
+export function formatEdaAnalysisSpec(
   parameter: Parameter,
   value: string | undefined,
   datasetParamItems: Record<string, DatasetItem[]> | undefined
@@ -108,7 +74,9 @@ function EdaNotebookAnalysisSummary({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      {filters.length > 0 && (
+      {filters.length === 0 ? (
+        <em>No filters applied.</em>
+      ) : (
         <ReviewCard title="Filters">
           {filters.map((filter, i) => {
             const ev = entities
