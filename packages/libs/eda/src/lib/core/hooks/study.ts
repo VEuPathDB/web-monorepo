@@ -188,18 +188,28 @@ export function isStubEntity(entity: StudyEntity) {
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   const permissionsResponse = usePermissions();
+  // undefined while permissions are loading → disables the query (pending state)
+  // '__not_found__' sentinel → enables the query so the task can throw a clear error
   const edaStudyId = permissionsResponse.loading
     ? undefined
-    : permissionsResponse.permissions.perDataset[datasetId]?.studyId;
+    : permissionsResponse.permissions.perDataset[datasetId]?.studyId ??
+      '__not_found__';
 
   return useCachedPromise(async () => {
+    // The '__not_found__' sentinel is a non-null key so react-query doesn't
+    // pause the query — it runs and throws a clear error instead of hanging.
+    if (edaStudyId === '__not_found__' || edaStudyId == null) {
+      throw new Error(
+        `An EDA Study ID could not be found for the Dataset ${datasetId}.`
+      );
+    }
     try {
-      return await client.getStudyMetadata(edaStudyId!);
+      return await client.getStudyMetadata(edaStudyId);
     } catch (error) {
       if (error instanceof FetchClientError) {
         console.error(error);
         return {
-          id: edaStudyId!,
+          id: edaStudyId,
           rootEntity: STUB_ENTITY,
         };
       }
