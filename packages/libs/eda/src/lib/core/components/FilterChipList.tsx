@@ -3,7 +3,8 @@ import { StudyEntity } from '..';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
-import { ReactNode, Fragment } from 'react';
+import { formatFilterValue } from '../utils/filter-display';
+import { ReactNode } from 'react';
 import { VariableLink, VariableLinkConfig } from './VariableLink';
 import { colors, Warning } from '@veupathdb/coreui';
 
@@ -50,50 +51,10 @@ export default function FilterChipList(props: Props) {
             findEntityAndVariable(props.entities, filter) ?? {};
 
           if (entity && variable) {
-            // The string to be displayed for the filter's value
-            let filterValueDisplay: ReactNode;
-
-            // Set filterValueDisplay based on the filter's type
-            switch (filter.type) {
-              case 'stringSet':
-                filterValueDisplay = filter.stringSet.join(' | ');
-                break;
-              case 'numberSet':
-                filterValueDisplay = filter.numberSet.join(' | ');
-                break;
-              case 'dateSet':
-                filterValueDisplay = filter.dateSet.join(' | ');
-                break;
-              case 'numberRange':
-                filterValueDisplay = `from ${filter.min} to ${filter.max}, inclusive`;
-                break;
-              case 'dateRange':
-                filterValueDisplay = `from ${filter.min.split('T')[0]} to ${
-                  filter.max.split('T')[0]
-                }, inclusive`;
-                break;
-              case 'multiFilter':
-                filterValueDisplay = filter.subFilters
-                  .map((subFilter) => {
-                    const entAndVar = findEntityAndVariable(props.entities, {
-                      entityId: filter.entityId,
-                      variableId: subFilter.variableId,
-                    });
-                    if (entAndVar == null) return '';
-                    return `${
-                      entAndVar.variable.displayName
-                    } = ${subFilter.stringSet.join(' | ')}`;
-                  })
-                  .flatMap((text, index) => (
-                    <Fragment key={`filter-chip-multivalue-${text}`}>
-                      {text}
-                      {index < filter.subFilters.length ? <br /> : null}
-                    </Fragment>
-                  ));
-                break;
-              default:
-                filterValueDisplay = '';
-            }
+            const filterValueDisplay: ReactNode = formatFilterValue(
+              filter,
+              props.entities
+            );
 
             const tooltipText = (
               <>

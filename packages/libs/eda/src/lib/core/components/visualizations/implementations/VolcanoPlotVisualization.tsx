@@ -27,6 +27,7 @@ import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
@@ -121,6 +122,13 @@ export const VolcanoPlotConfig = t.partial({
   markerBodyOpacity: t.number,
   independentAxisRange: NumberRange,
   dependentAxisRange: NumberRange,
+  /** Label for the effect size axis/threshold, sourced from the backend response. */
+  effectSizeLabel: t.string,
+  effectDirection: t.union([
+    t.literal('up and down'),
+    t.literal('up only'),
+    t.literal('down only'),
+  ]),
 });
 
 export interface VolcanoPlotOptions
@@ -334,17 +342,27 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
               pointID.split('.')[0],
               entities
             );
+          let sigColor = assignSignificanceColor(
+            Number(d.effectSize),
+            Number(d.pValue),
+            significanceThreshold,
+            effectSizeThreshold,
+            significanceColors
+          );
+          const effectDirection = vizConfig.effectDirection ?? 'up and down';
+          if (effectDirection === 'up only' && Number(d.effectSize) < 0) {
+            sigColor = significanceColors['inconclusive'];
+          } else if (
+            effectDirection === 'down only' &&
+            Number(d.effectSize) > 0
+          ) {
+            sigColor = significanceColors['inconclusive'];
+          }
           return {
             ...remainingProperties,
             pointIDs: pointID ? [pointID] : undefined,
             displayLabels: displayLabel ? [displayLabel] : undefined,
-            significanceColor: assignSignificanceColor(
-              Number(d.effectSize),
-              Number(d.pValue),
-              significanceThreshold,
-              effectSizeThreshold,
-              significanceColors
-            ),
+            significanceColor: sigColor,
           };
         })
         // Sort data in ascending order for tooltips to work most effectively
@@ -397,6 +415,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     significanceThreshold,
     effectSizeThreshold,
     entities,
+    vizConfig.effectDirection,
   ]);
 
   // For the legend, we need the counts of the data
@@ -491,6 +510,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     independentAxisRange,
     dependentAxisRange,
     rawDataMinMaxValues,
+    effectDirection: vizConfig.effectDirection ?? 'up and down',
     /**
      * As sophisticated aesthetes, let's specify axis ranges for the empty viz placeholder
      */
@@ -521,6 +541,17 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
       ),
     [rawDataMinMaxValues, vizConfig]
   );
+
+  // Persist the backend-supplied effectSizeLabel into vizConfig so review
+  // components can display it without an extra network call.
+  useEffect(() => {
+    if (
+      data.value?.effectSizeLabel &&
+      data.value.effectSizeLabel !== vizConfig.effectSizeLabel
+    ) {
+      updateVizConfig({ effectSizeLabel: data.value.effectSizeLabel });
+    }
+  }, [data.value?.effectSizeLabel, vizConfig.effectSizeLabel, updateVizConfig]);
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
@@ -736,6 +767,8 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
         .memberPlural
     ) || capitalize(options?.pointsDisplayNamePlural);
 
+  const effectDirection = vizConfig.effectDirection ?? 'up and down';
+
   const legendNode = finalData && countsData && (
     <PlotLegend
       type="list"
@@ -749,22 +782,30 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
           hasData: true,
           markerColor: significanceColors['inconclusive'],
         },
-        {
-          label: `Up in ${computationConfiguration?.comparator?.groupB
-            ?.map((entry: { label: string }) => entry.label)
-            .join(', ')} (${countsData[significanceColors['high']]})`,
-          marker: 'circle',
-          hasData: true,
-          markerColor: significanceColors['high'],
-        },
-        {
-          label: `Up in ${computationConfiguration?.comparator?.groupA
-            ?.map((entry: { label: string }) => entry.label)
-            .join(', ')} (${countsData[significanceColors['low']]})`,
-          marker: 'circle',
-          hasData: true,
-          markerColor: significanceColors['low'],
-        },
+        ...(effectDirection !== 'down only'
+          ? [
+              {
+                label: `Up in ${computationConfiguration?.comparator?.groupB
+                  ?.map((entry: { label: string }) => entry.label)
+                  .join(', ')} (${countsData[significanceColors['high']]})`,
+                marker: 'circle' as const,
+                hasData: true,
+                markerColor: significanceColors['high'],
+              },
+            ]
+          : []),
+        ...(effectDirection !== 'up only'
+          ? [
+              {
+                label: `Up in ${computationConfiguration?.comparator?.groupA
+                  ?.map((entry: { label: string }) => entry.label)
+                  .join(', ')} (${countsData[significanceColors['low']]})`,
+                marker: 'circle' as const,
+                hasData: true,
+                markerColor: significanceColors['low'],
+              },
+            ]
+          : []),
       ]}
       showCheckbox={false}
     />
@@ -778,24 +819,42 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {!hideInputsAndControls && (
-        <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
-          <NumberInput
-            onValueChange={(newValue?: NumberOrDate) => {
-              updateVizConfig({ effectSizeThreshold: Number(newValue) });
-              options?.inputSnackbar &&
-                typeof newValue === 'number' &&
-                options.inputSnackbar(
-                  enqueueSnackbar,
-                  'effectSizeThreshold',
-                  newValue
-                );
-            }}
-            label={finalData?.effectSizeLabel ?? 'Effect Size'}
-            minValue={0}
-            value={vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD}
-            containerStyles={{ marginRight: 10 }}
-          />
-
+        <LabelledGroup label="Threshold lines">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <NumberInput
+              onValueChange={(newValue?: NumberOrDate) => {
+                updateVizConfig({ effectSizeThreshold: Number(newValue) });
+                options?.inputSnackbar &&
+                  typeof newValue === 'number' &&
+                  options.inputSnackbar(
+                    enqueueSnackbar,
+                    'effectSizeThreshold',
+                    newValue
+                  );
+              }}
+              label={finalData?.effectSizeLabel ?? 'Effect Size'}
+              minValue={0}
+              value={vizConfig.effectSizeThreshold ?? DEFAULT_ES_THRESHOLD}
+            />
+            <RadioButtonGroup
+              label="Effect direction"
+              selectedOption={vizConfig.effectDirection ?? 'up and down'}
+              options={['up and down', 'up only', 'down only']}
+              optionLabels={[
+                'Up- or down-regulated',
+                'Up-regulated only',
+                'Down-regulated only',
+              ]}
+              onOptionSelected={(newValue) =>
+                updateVizConfig({
+                  effectDirection:
+                    newValue as VolcanoPlotConfig['effectDirection'],
+                })
+              }
+              buttonColor="primary"
+              labelStyles={{ fontSize: '0.8125rem' }}
+            />
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <NumberInput
               label="P-value"
@@ -811,10 +870,9 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
               }}
               minValue={0}
               value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
-              containerStyles={{ marginLeft: 10 }}
               step={0.001}
             />
-            <div style={{ marginLeft: '10px' }}>
+            <div>
               <i>
                 Threshold uses raw p-value. Adjusted p-value shown in tooltips.
               </i>
