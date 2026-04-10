@@ -13,6 +13,7 @@ import {
   entityTreeToArray,
   findEntityAndVariable,
 } from '../core/utils/study-metadata';
+import { StudyEntity } from '../core/types/study';
 import { formatFilterValue } from '../core/utils/filter-display';
 import { ReviewCard, ReviewRow } from './components/ReviewCard';
 import { useStudyMetadata } from '../core/hooks/study';
@@ -92,7 +93,7 @@ function EdaNotebookAnalysisSummary({
             const label = ev
               ? `${ev.entity.displayName} > ${ev.variable.displayName}`
               : entities == null
-              ? '...'
+              ? 'Loading...'
               : filter.variableId;
             return (
               <ReviewRow
@@ -105,19 +106,33 @@ function EdaNotebookAnalysisSummary({
         </ReviewCard>
       )}
       {computations.map((comp) => (
-        <ComputationSummary key={comp.computationId} computation={comp} />
+        <ComputationSummary
+          key={comp.computationId}
+          computation={comp}
+          entities={entities}
+        />
       ))}
     </div>
   );
 }
 
-function ComputationSummary({ computation }: { computation: Computation }) {
+function ComputationSummary({
+  computation,
+  entities,
+}: {
+  computation: Computation;
+  entities: StudyEntity[] | undefined;
+}) {
   const { type, configuration } = computation.descriptor;
 
   if (type === 'differentialexpression') {
     const config = DifferentialExpressionConfig.is(configuration)
       ? configuration
       : undefined;
+    const comparatorVarInfo =
+      config?.comparator?.variable && entities
+        ? findEntityAndVariable(entities, config.comparator.variable)
+        : undefined;
     const groupALabels =
       config?.comparator?.groupA?.map((r) => r.label).join(', ') ?? '—';
     const groupBLabels =
@@ -129,6 +144,10 @@ function ComputationSummary({ computation }: { computation: Computation }) {
       : undefined;
     return (
       <ReviewCard title="Differential Expression">
+        <ReviewRow
+          label="Metadata variable"
+          value={comparatorVarInfo?.variable.displayName ?? '—'}
+        />
         <ReviewRow label="Reference group (A)" value={groupALabels} />
         <ReviewRow label="Comparison group (B)" value={groupBLabels} />
         {volcanoConfig?.effectSizeThreshold != null && (
