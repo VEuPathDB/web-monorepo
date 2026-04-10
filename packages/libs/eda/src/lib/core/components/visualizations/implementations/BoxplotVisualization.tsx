@@ -567,7 +567,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       showMissingOverlay,
       '#a0a0a0'
     );
-  }, [dataRequestDeps]);
+  }, [visualization.descriptor.type, dataRequestDeps]);
 
   const outputSize =
     (overlayVariable != null || facetVariable != null) &&
