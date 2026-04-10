@@ -194,7 +194,7 @@ export function DifferentialAnalysisReviewContent({
 
       <ReviewCard title="Volcano Thresholds">
         <ReviewRow
-          label="|Effect size| ≥"
+          label={`|${volcanoPlotConfig?.effectSizeLabel ?? 'Effect size'}| ≥`}
           value={String(volcanoPlotConfig?.effectSizeThreshold ?? '—')}
         />
         <ReviewRow
