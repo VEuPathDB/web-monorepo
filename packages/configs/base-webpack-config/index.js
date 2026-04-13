@@ -9,7 +9,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const webpackMerge = require('webpack-merge');
+const { merge: webpackMerge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isModern = process.env.BROWSERSLIST_ENV === 'modern';
 const outputSubDir = isModern ? 'modern' : 'legacy';
@@ -29,7 +29,7 @@ exports.webpack = webpack;
 exports.merge = function merge(additionalConfig) {
   return function (env, argv) {
     const isDevelopment = argv.mode !== 'production';
-    return webpackMerge.smart(
+    return webpackMerge(
       [
         {
           bail: true,
@@ -100,7 +100,13 @@ exports.merge = function merge(additionalConfig) {
                 test: /\.scss$/,
                 use: [
                   { loader: MiniCssExtractPlugin.loader },
-                  { loader: 'css-loader', options: { sourceMap: true } },
+                  {
+                    loader: 'css-loader',
+                    options: {
+                      sourceMap: true,
+                      url: { filter: (url) => !url.startsWith('/') },
+                    },
+                  },
                   { loader: 'sass-loader', options: { sourceMap: true } },
                 ],
               },
@@ -109,15 +115,21 @@ exports.merge = function merge(additionalConfig) {
                 test: /\.css$/,
                 use: [
                   { loader: MiniCssExtractPlugin.loader },
-                  { loader: 'css-loader', options: { sourceMap: true } },
+                  {
+                    loader: 'css-loader',
+                    options: {
+                      sourceMap: true,
+                      url: { filter: (url) => !url.startsWith('/') },
+                    },
+                  },
                 ],
               },
 
-              // inlines images as base64
+              // inlines small assets as base64, emits larger ones as files
               {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
-                loader: 'url-loader',
-                options: { limit: 100000 },
+                type: 'asset',
+                parser: { dataUrlCondition: { maxSize: 100000 } },
               },
             ],
           },

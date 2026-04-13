@@ -1,6 +1,72 @@
 var baseConfig = require('@veupathdb/base-webpack-config');
 
-const CssCharsetPlugin = require('css-charset-webpack-plugin');
+/**
+ * Prepends @charset "utf-8" to CSS assets, removing any existing @charset
+ * declarations first.  Uses ConcatSource to preserve source-map data so that
+ * SourceMapDevToolPlugin (stage 500) can extract accurate .css.map files.
+ *
+ * Runs at STAGE_ADDITIONS (-100), before source maps are extracted.
+ *
+ * (The third-party css-charset-webpack-plugin ran at STAGE_OPTIMIZE = 100 and
+ *  replaced assets with RawSource, which destroyed source maps entirely.)
+ */
+class CssCharsetPlugin {
+  constructor({ charset = 'utf-8' } = {}) {
+    this.charset = charset;
+  }
+  apply(compiler) {
+    const { Compilation } = compiler.webpack;
+    compiler.hooks.thisCompilation.tap('CssCharsetPlugin', (compilation) => {
+      compilation.hooks.processAssets.tap(
+        {
+          name: 'CssCharsetPlugin',
+          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+        },
+        () => {
+          const { ConcatSource, RawSource, ReplaceSource } =
+            compiler.webpack.sources;
+          for (const asset of compilation.getAssets()) {
+            if (!/\.css$/i.test(asset.name)) continue;
+            const css = asset.source.source().toString();
+            if (/^\s*@charset\s+["'][^"']+["'];/i.test(css)) continue;
+
+            if (/@charset\s+["'][^"']+["'];?/i.test(css)) {
+              // Strip embedded @charset declarations using ReplaceSource so the
+              // source map is preserved (ReplaceSource adjusts mappings around
+              // the removed ranges, unlike a full RawSource rewrite).
+              const replaceSource = new ReplaceSource(asset.source);
+              const charsetRe = /@charset\s+["'][^"']+["'];?/gi;
+              let match;
+              while ((match = charsetRe.exec(css)) !== null) {
+                replaceSource.replace(
+                  match.index,
+                  match.index + match[0].length - 1,
+                  ''
+                );
+              }
+              compilation.updateAsset(
+                asset.name,
+                new ConcatSource(
+                  new RawSource(`@charset "${this.charset}";\n\n`),
+                  replaceSource
+                )
+              );
+            } else {
+              // Common case: just prepend, preserving the original source maps
+              compilation.updateAsset(
+                asset.name,
+                new ConcatSource(
+                  new RawSource(`@charset "${this.charset}";\n\n`),
+                  asset.source
+                )
+              );
+            }
+          }
+        }
+      );
+    });
+  }
+}
 
 // Create webpack alias configuration object
 var alias = {
@@ -71,7 +137,7 @@ module.exports = function configure(additionalConfig) {
           process: 'process/browser',
         }),
         new SuppressProvidedDependencyCacheWarnings(),
-        new CssCharsetPlugin({ charset: 'utf-8' }),
+        new CssCharsetPlugin(),
       ],
 
       // Map external libraries Wdk exposes so we can do things like:

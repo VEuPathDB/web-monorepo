@@ -57,7 +57,7 @@
     "babel-loader": "^8.3.0",
     "bubleify": "^2.0.0",
     "core-js": "^3.25.3",
-    "css-loader": "^2.1.1",
+    "css-loader": "^6.7.4",
     "file-loader": "^3.0.1",
     "html-webpack-plugin": "^4.5.2",
     "ify-loader": "^1.1.0",
@@ -82,8 +82,7 @@
     "webpack": "^5.84.1",
     "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^5.1.1",
-    "webpack-dev-server": "^4.15.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-dev-server": "^4.15.0"
   },
   "files": [
     "dist"
