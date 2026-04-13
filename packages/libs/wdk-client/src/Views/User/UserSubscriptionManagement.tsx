@@ -22,7 +22,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Core/State/Types';
 import { deburr } from 'lodash';
 import { userIsClassParticipant } from '../../Utils/Subscriptions';
-import { useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
+import { useExpireSubscriptionGroupsByLead, useSubscriptionGroupsByLead } from '../../Hooks/SubscriptionGroups';
+import { useWdkService } from '../../Hooks/WdkServiceHook';
+import { useNonNullableContext } from '../../Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '../../Hooks/WdkDependenciesEffect';
 
 interface UserSubscriptionManagementProps {
   user: User;
@@ -49,7 +52,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   saveButton,
   onSuccess,
   formStatus,
-  showSubscriptionProds,
+  showSubscriptionProds
 }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [localSelection, setLocalSelection] = useState<string>();
@@ -131,6 +134,23 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
   const isClassParticipant = userIsClassParticipant(user);
 
   let managedGroups = useSubscriptionGroupsByLead();
+
+  // function factory to create user removal event handlers
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const expireSubscriptionGroupsByLead = useExpireSubscriptionGroupsByLead();
+  let getRemoveUserFromGroupFunction = (userId: number, groupId: number, userName: string, groupName: string) => {
+    return () => {
+      if (!confirm(`Are you sure you want to remove ${userName} from ${groupName}?`)) {
+        return;
+      }
+      wdkService.removeUserFromGroup(userId, groupId).then(() => {
+        // After removing a user from a group, refetch the groups that the user is a lead of to update the member list
+        expireSubscriptionGroupsByLead();
+      }).catch((error: any) => {
+        console.error('Failed to remove user from group:', error);
+      });
+    };
+  };
 
   return (
     <div className="wdk-UserProfile-profileForm">
@@ -251,9 +271,9 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               color: colors.gray[700],
             }}
           >
-            If you would like to make updates to the subscription group(s) you
-            manage, such as removing members or editing the group name, please
-            contact us at <strong>subscriptions@veupathdb.org</strong>
+            You can remove users from the subscription group(s) you manage using the trash icons
+            below.  If you would like to make any other updates, e.g. editing the group name,
+            please contact us at <strong>subscriptions@veupathdb.org</strong>
           </span>
           {managedGroups.map((group) => (
             <div style={{ marginTop: '1em' }}>
@@ -298,6 +318,14 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
                     <>
                       <span className="h4-style-light">
                         {u.name} ({u.organization})
+                        {u.userId !== user.id && (
+                          <Icon
+                            fa="trash"
+                            style={{ paddingLeft: '0.5em', color: 'black', fontSize: '1.2em', cursor: 'pointer' }}
+                            onClick={getRemoveUserFromGroupFunction(u.userId, group.groupId, u.name, group.groupName)}
+                            title="Remove this user from this group"
+                          />
+                        )}
                       </span>
                       {/* Extra div added so that the members all show up in the right column */}
                       <div></div>
@@ -512,6 +540,7 @@ const UserSubscriptionManagement: React.FC<UserSubscriptionManagementProps> = ({
               themeRole="primary"
               onSuccess={() => {
                 setShowConfirmModal(false);
+                expireSubscriptionGroupsByLead();
                 onSuccess();
               }}
               savedStateDuration={1000}
