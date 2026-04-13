@@ -26,6 +26,7 @@ let TableReporterForm = (props) => {
     onSubmit,
     ontology,
     includeSubmit,
+    postTableSelectionElement
   } = props;
   let getUpdateHandler = (fieldName) =>
     util.getChangeHandler(fieldName, updateFormState, formState);
@@ -63,6 +64,7 @@ let TableReporterForm = (props) => {
               }}
             />
           </div>
+          {postTableSelectionElement}
           <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
             <div>
               <h3>Download Type</h3>
