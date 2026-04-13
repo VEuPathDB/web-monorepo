@@ -1,9 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   SubscriptionGroup,
   SubscriptionGroupWithMembers,
 } from '../Service/Mixins/OauthService';
 import { useWdkDependenciesContext } from './WdkDependenciesEffect';
+
+// key for react-query caching of subscription groups; shared by create and expire
+const SUBSCRIPTION_GROUPS_WITH_MEMBERS_QUERY_KEY = 'subscriptionGroupsWithMembers';
 
 /**
  * Hook to fetch subscription groups and group info from the API with react-query caching.
@@ -46,13 +49,23 @@ export function useSubscriptionGroups(): SubscriptionGroup[] | undefined {
   return data;
 }
 
+export function useExpireSubscriptionGroupsByLead() {
+  const queryClient = useQueryClient();
+
+  // invalidate and force refetch a query
+  return () => queryClient.invalidateQueries({
+    queryKey: [SUBSCRIPTION_GROUPS_WITH_MEMBERS_QUERY_KEY],
+    refetchType: 'all' // refetch both active and inactive queries
+  });
+}
+
 export function useSubscriptionGroupsByLead():
   | SubscriptionGroupWithMembers[]
   | undefined {
   const { wdkService } = useWdkDependenciesContext();
 
   const { data } = useQuery({
-    queryKey: ['subscriptionGroupsWithMembers'],
+    queryKey: [SUBSCRIPTION_GROUPS_WITH_MEMBERS_QUERY_KEY],
     queryFn: async () => {
       if (!wdkService) {
         throw new Error('WDK service not available');

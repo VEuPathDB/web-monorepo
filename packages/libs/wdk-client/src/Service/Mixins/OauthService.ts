@@ -2,11 +2,13 @@ import { ServiceBase } from '../../Service/ServiceBase';
 import * as Decode from '../../Utils/Json';
 
 export type UserBasicInfo = {
+  userId: number;
   name: string;
   organization: string;
 };
 
 type SubscriptionGroupBase = {
+  groupId: number;
   groupName: string;
   subscriptionToken: string;
   groupLeads: UserBasicInfo[];
@@ -25,12 +27,14 @@ export type SubscriptionGroupWithMembers = SubscriptionGroupBase & {
 };
 
 const UserBasicInfoDecoder: Decode.Decoder<UserBasicInfo> = Decode.combine(
+  Decode.field('userId', Decode.number),
   Decode.field('name', Decode.string),
   Decode.field('organization', Decode.string)
 );
 
 const SubscriptionGroupBaseDecoder: Decode.Decoder<SubscriptionGroupBase> =
   Decode.combine(
+    Decode.field('groupId', Decode.number),
     Decode.field('groupName', Decode.string),
     Decode.field('subscriptionToken', Decode.string),
     Decode.field('groupLeads', Decode.arrayOf(UserBasicInfoDecoder))
@@ -109,10 +113,27 @@ export default (base: ServiceBase) => {
     );
   }
 
+  /**
+   * Remove a user from a subscription group. Only available to group leads.
+   */
+  function removeUserFromGroup(userId: number, groupId: number) {
+    return base.sendRequest(Decode.none, {
+      method: 'post',
+      path: '/remove-group-members',
+      useCache: false,
+      body: JSON.stringify({
+        groupId: groupId,
+        idsToRemove: [ userId ]
+      })
+    });
+  }
+
+
   return {
     getOauthStateToken,
     getUserProfileVocabulary,
     getSubscriptionGroups,
     getManagedGroupsForUser,
+    removeUserFromGroup
   };
 };
