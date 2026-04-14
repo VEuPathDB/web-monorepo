@@ -820,7 +820,7 @@ Once the basic apps are running, two optional additions deepen understanding:
 
 **1. Add a second component to the registry** — e.g. a `Footer` component with a site-specific override. This reinforces that the registry scales to any number of swappable slots.
 
-**2. Add a `next.config.ts` with `transpilePackages`** — Required to make Next.js transpile the `@veupathdb/shared-ui` workspace package correctly:
+**2. Add a `next.config.ts` with `transpilePackages`** — Required to make Next.js compile the `@veupathdb/shared-ui` workspace package correctly:
 
 ```ts
 // next.config.ts
@@ -833,7 +833,15 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 ```
 
-This is a common monorepo gotcha — Next.js doesn't transpile workspace packages by default.
+This is a common monorepo gotcha, and the word "transpile" can be misleading here — it has nothing to do with targeting older browser versions (which is handled separately by the browserslist config). The issue is specifically about where source files live.
+
+By default, Next.js assumes that packages in `node_modules` are already **pre-compiled** — i.e. they contain plain JavaScript with no JSX and no TypeScript, ready for the browser to execute. This is the normal assumption for packages published to npm.
+
+Workspace packages linked via `workspace:^` end up in `node_modules` as symlinks, but they are _not_ pre-compiled — `shared-ui` contains raw `.tsx` source files with JSX and TypeScript. When Next.js's bundler encounters an import from `@veupathdb/shared-ui`, it would normally skip compilation (treating it like an npm package) and then fail or produce incorrect output when it finds TypeScript/JSX inside.
+
+`transpilePackages: ['@veupathdb/shared-ui']` tells Next.js: "treat this package as if it were your own local source code — run it through the TypeScript and JSX compiler, not just the bundler." With that setting, imports from `shared-ui` work exactly like imports from a file in your own `src/` directory.
+
+This will be relevant for any workspace lib you import into a Next.js app — including, eventually, `@veupathdb/eda`, `@veupathdb/wdk-client`, etc. Each one would need to be listed here, or you would need to pre-compile them to JavaScript as a build step first (which is what the current `build-npm-modules` scripts do for the existing webpack sites).
 
 ---
 
