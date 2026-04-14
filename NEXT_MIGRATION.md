@@ -390,6 +390,117 @@ The eventual direction is: domain logic currently in store modules (record fetch
 
 For the initial port, it is entirely valid to keep Redux as-is inside `'use client'` components. The Redux store works fine in client components — it just can't participate in server rendering.
 
+#### What Redux replacement actually looks like: the profile form example
+
+The `UserProfileStoreModule` and its associated `UserActions.ts` thunks are a good concrete example of what migration away from Redux involves. The profile form tracks `formStatus: 'new' | 'modified' | 'pending' | 'success' | 'error'` across a multi-step async operation (update user → update preferences sequentially, because `updateCurrentUser` can reset the WDK cookie). This involves three intertwined concerns that Redux handles in one place but that are better separated:
+
+**1. Form dirty state (`'new' | 'modified'`) → `useState`**
+
+This is local UI state — it doesn't need to live in a global store:
+
+```tsx
+const [formData, setFormData] = useState(initialFormData);
+const isDirty = !isEqual(formData, initialFormData); // replaces 'modified'
+```
+
+**2. Async operation state (`'pending' | 'success' | 'error'`) → TanStack Query `useMutation`**
+
+The current Redux thunk returns an array of a sync action plus a promise chain. The equivalent is a plain async function:
+
+```tsx
+const updateProfile = useMutation({
+  mutationFn: async (formData: UserProfileFormData) => {
+    const currentUser = await wdkService.getCurrentUser();
+    const partialUser = filterOutProps(formData, [
+      'isGuest',
+      'id',
+      'confirmEmail',
+      'preferences',
+    ]);
+
+    // Sequential await replaces the nested .then() chain.
+    // Must be sequential: updateCurrentUser() can reset the WDK cookie.
+    const updatedUser = await wdkService.updateCurrentUser({
+      ...currentUser,
+      ...partialUser,
+    });
+    await wdkService.patchUserPreferences(formData.preferences);
+    return updatedUser;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+  },
+});
+```
+
+The component reads `updateProfile.isPending`, `updateProfile.isSuccess`, `updateProfile.isError` — the same states, but scoped to the component rather than a global store:
+
+```tsx
+<form onSubmit={() => updateProfile.mutate(formData)}>
+  {updateProfile.isPending && <p>Saving...</p>}
+  {updateProfile.isSuccess && <p>Profile updated.</p>}
+  {updateProfile.isError && <p>Error: {updateProfile.error.message}</p>}
+  <button disabled={!isDirty || updateProfile.isPending}>Save</button>
+</form>
+```
+
+**3. Cache invalidation → `queryClient.invalidateQueries`**
+
+After success, the Redux pattern dispatches `userUpdate(user)` and `preferencesUpdate(prefs)` to push new values into the store, and all `useSelector` subscribers pick them up. The TanStack Query equivalent is `queryClient.invalidateQueries({ queryKey: ['currentUser'] })` — any component using `useQuery({ queryKey: ['currentUser'] })` automatically refetches. Same automatic propagation, pull-based rather than push-based.
+
+**The `maybeLoggedIn` pattern → inline auth guard**
+
+Basket and favorites thunks use a `maybeLoggedIn` decorator that checks guest status before acting, showing a login warning if needed. In a hook this is just:
+
+```tsx
+function useBasketMutation() {
+  const { user } = useCurrentUser();
+  return useMutation({
+    mutationFn: async ({ record, status }) => {
+      if (user.isGuest) { showLoginModal('use baskets'); return; }
+      await wdkService.updateRecordsBasketStatus(...);
+    }
+  });
+}
+```
+
+**For genuinely complex state machines → `useReducer`**
+
+When a component has more states and transitions than pending/success/error, `useReducer` is the right tool — it's essentially Redux scoped to a single component. The `UserProfileStoreModule` reducer translates almost verbatim:
+
+```tsx
+function formReducer(state: FormState, action: FormAction): FormState {
+  switch (action.type) {
+    case 'modify':
+      return { ...state, status: 'modified' };
+    case 'submit':
+      return { ...state, status: 'pending' };
+    case 'success':
+      return { ...state, status: 'success', errorMessage: undefined };
+    case 'error':
+      return { ...state, status: 'error', errorMessage: action.message };
+    default:
+      return state;
+  }
+}
+const [formState, dispatch] = useReducer(formReducer, { status: 'new' });
+```
+
+The difference from the current system: this reducer is scoped to the component rather than the global store. Two profile forms would have independent state — which is correct. In the current system they share state via Redux, which is arguably a bug.
+
+**Summary: what Redux was doing and what replaces it**
+
+| Redux concept                                 | React/TanStack Query equivalent                    |
+| --------------------------------------------- | -------------------------------------------------- |
+| Async action thunks                           | `useMutation`                                      |
+| `pending/success/error` in store              | `mutation.isPending/isSuccess/isError`             |
+| `dispatch(userUpdate(user))` to push to store | `queryClient.invalidateQueries` to trigger refetch |
+| `useSelector(state => state.userProfile)`     | `useQuery({ queryKey: ['currentUser'] })`          |
+| `maybeLoggedIn` thunk decorator               | Auth check inside mutation function                |
+| Global store for form state                   | `useState` / `useReducer` in the component         |
+
+Redux was solving a harder problem than necessary: coordinating state across many unrelated components in an era before good data-fetching libraries existed. For server-state (API data), TanStack Query is the right tool. For local-state (form dirty tracking, UI toggles), `useState`/`useReducer` is the right tool. The global Redux store was doing both jobs.
+
 ### Ownership Mapping Table
 
 | Concern              | Current owner                               | Next.js owner                                   |
