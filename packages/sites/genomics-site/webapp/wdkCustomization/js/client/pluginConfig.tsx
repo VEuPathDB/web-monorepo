@@ -68,6 +68,7 @@ import {
 } from './components/questions/EdaSubsetParameter';
 import { GenesByEdaSubset } from './components/questions/GenesByEdaSubset';
 import { EdaNotebookQuestionForm } from './components/questions/EdaNotebookQuestionForm';
+import { EdaNotebookStepDetails } from './components/questions/EdaNotebookParameter';
 
 const BlastForm = React.lazy(() => import('./plugins/BlastForm'));
 const BlastQuestionController = React.lazy(
@@ -94,7 +95,9 @@ const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
 
 const isPhenotypeSubsetSearch: ClientPluginRegistryEntry<any>['test'] = ({
   question,
-}) => (question?.queryName === 'GenesByEdaSubsetGeneric') || (question?.queryName === 'GenesByUserDatasetEdaSubsetGeneric');
+}) =>
+  question?.queryName === 'GenesByEdaSubsetGeneric' ||
+  question?.queryName === 'GenesByUserDatasetEdaSubsetGeneric';
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
@@ -283,6 +286,12 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'stepDetails',
     test: isPhenotypeSubsetSearch,
     component: EdaSubsetStepDetails,
+  },
+  {
+    type: 'stepDetails',
+    test: ({ question }) =>
+      (question?.properties?.edaNotebookType?.length ?? 0) > 0,
+    component: EdaNotebookStepDetails,
   },
   {
     type: 'questionForm',
