@@ -633,8 +633,8 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 /* Hide action links on Dataset page for now */
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
   .wdk-RecordActions {
-  display: none;
-}
+    display: none;
+  }
 
 /* Hide Favorites action link on record pages */
 .wdk-RecordActionItem .favorites {

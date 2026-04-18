@@ -15,8 +15,8 @@
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
   .wdk-RecordActions
   a[title='Download Data Set'] {
-  visibility: hidden;
-}
+    visibility: hidden;
+  }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
            = Sidebar
