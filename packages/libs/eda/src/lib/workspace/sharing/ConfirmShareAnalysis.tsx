@@ -66,26 +66,26 @@ export default function ConfirmShareAnalysis({
                     }}
                   >
                     {contextForUserDataset.isCurrentUserStudyManager
-                      ? 'You own this study.'
-                      : 'Another user owns this study.'}
+                      ? 'You own this dataset.'
+                      : 'Another user owns this dataset.'}
                   </span>{' '}
                   <span>
                     {contextForUserDataset.isCurrentUserStudyManager
-                      ? 'This analysis is only viewable to users who have been granted access to your study data.'
-                      : 'The owner must grant all recipients of this shared analysis access to the study data for the URL to work.'}
+                      ? 'This analysis is only viewable to users who have been granted access to your dataset.'
+                      : 'The owner must grant all recipients of this shared analysis access to the dataset for the URL to work.'}
                   </span>{' '}
                   {contextForUserDataset.isCurrentUserStudyManager && (
                     <span>
-                      To grant users access to your study data,{' '}
+                      To grant users access to your dataset,{' '}
                       <a
                         href={sharingDatasetUrl}
                         style={{
                           fontWeight: 'bold',
                         }}
                       >
-                        go to your study's status page
+                        go to your dataset's status page
                       </a>{' '}
-                      and click the "Grant Access to Study" button in the upper
+                      and click the "Grant Access to Dataset" button in the upper
                       right.
                     </span>
                   )}

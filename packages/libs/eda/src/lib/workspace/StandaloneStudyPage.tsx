@@ -46,7 +46,7 @@ export function StandaloneStudyPage(props: Props) {
         tabs={[
           {
             key: 'details',
-            display: 'Study details',
+            display: 'Dataset details',
             content: (
               <div style={{ minHeight: '10em' }}>
                 <RecordController recordClass="dataset" primaryKey={studyId} />
