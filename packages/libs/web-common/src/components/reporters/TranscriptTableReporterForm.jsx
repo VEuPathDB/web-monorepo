@@ -9,7 +9,7 @@ let recordClassOverride = {
   recordClass: { fullName: 'GeneRecordClasses.GeneRecordClass' },
 };
 
-const ORTHOLOGS_TABLE_NAME = 'Orthologs';
+const ORTHOLOGS_TABLE_NAME = 'OrthologsLite';
 const ORGANISM_SEARCH_NAME = "GenesByTaxon";
 const ORGANISM_PARAM_NAME = 'organism';
 
@@ -36,7 +36,7 @@ let OrganismSelection = ({ props }) => {
   let paramContext = {
     searchName: ORGANISM_SEARCH_NAME,
     parameter: orgParam,
-    paramValues: { 'organism': orgParamValue }
+    paramValues: { [ORGANISM_PARAM_NAME]: orgParamValue }
   };
 
   const defaultParamUiState = {
