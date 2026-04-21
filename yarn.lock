@@ -8805,6 +8805,7 @@ __metadata:
     file-loader: "npm:^3.0.1"
     html-webpack-plugin: "npm:^4.5.2"
     ify-loader: "npm:^1.1.0"
+    imports-loader: "npm:^1.1.1"
     jquery: "npm:1.9.1"
     js-cookie: "npm:^2.2.0"
     mini-css-extract-plugin: "npm:^2.7.6"

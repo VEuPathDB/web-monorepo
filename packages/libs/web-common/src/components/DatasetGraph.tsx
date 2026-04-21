@@ -35,7 +35,7 @@ interface RecordTableProps {
 interface RowData {
   source_id: string;
   assay_type: string;
-  module: string;
+  module: string | null;
   paralog_number: number;
   graph_ids: string;
   dataset_id: string;
@@ -340,7 +340,7 @@ const DatasetGraph: React.FC<DatasetGraphProps> = ({
   const specialImgUrl =
     dataTable && dataTable.record.attributes.specialJbrowseUrl;
 
-  const isUserDataset = module.startsWith('UserDatasets');
+  const isUserDataset = module?.startsWith('UserDatasets') ?? false;
 
   const dataset_link = makeDatasetUrl(rowData, isUserDataset);
   const tutorial_link = makeTutorialUrl();
