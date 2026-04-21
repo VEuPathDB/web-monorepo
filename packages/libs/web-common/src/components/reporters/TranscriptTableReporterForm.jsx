@@ -91,7 +91,7 @@ let TranscriptTableReporterForm = (props) => {
       alert ("You must select at least one organism to request an Orthologs table.");
     }
     else {
-      onSubmit;
+      props.onSubmit();
     }
   };
   let newProps = Object.assign({}, props, recordClassOverride, {
