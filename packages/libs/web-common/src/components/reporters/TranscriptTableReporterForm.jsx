@@ -1,13 +1,15 @@
 import TableReporterForm from './TableReporterForm';
 import { OrganismParam } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
-import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 // Transcript Table Reporter is the same as a regular Table Reporter, but need to
 //   override the recordClass (Transcript) with Gene to get Gene tables for a Transcript result
-let recordClassOverride = Object.assign({}, recordClass, {
-  fullName: 'GeneRecordClasses.GeneRecordClass'
-});
+let recordClassOverride = {
+  recordClass: {
+    fullName: 'GeneRecordClasses.GeneRecordClass',
+    displayNamePlural: 'Genes'
+  },
+};
 
 const ORTHOLOGS_TABLE_NAME = 'OrthologsLite';
 const ORGANISM_SEARCH_NAME = "GenesByTaxon";
@@ -89,7 +91,7 @@ let TranscriptTableReporterForm = (props) => {
       alert ("You must select at least one organism to request an Orthologs table.");
     }
     else {
-      onSubmit();
+      onSubmit;
     }
   };
   let newProps = Object.assign({}, props, recordClassOverride, {
