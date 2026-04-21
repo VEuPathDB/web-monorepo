@@ -76,7 +76,7 @@ let OrganismSelection = ({ props }) => {
 
   return (
     <div>
-      <h3>Select organisms for which orthologs will be returned</h3>
+      <h3>Choose the organisms you want orthologs for</h3>
       <OrganismParam {...orgParamProps}/>
     </div>
   );
