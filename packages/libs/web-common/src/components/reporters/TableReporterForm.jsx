@@ -63,8 +63,8 @@ let TableReporterForm = (props) => {
                 },
               }}
             />
+            <div>{postTableSelectionElement}</div>
           </div>
-          {postTableSelectionElement}
           <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
             <div>
               <h3>Download Type</h3>
