@@ -1548,6 +1548,16 @@ div.usererror {
   vertical-align: middle;
 }
 
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         RECORD page: Hide action links on User Dataset page 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.wdk-RecordContainer__UserDatasetRecordClasses\.UserDatasetRecordClass
+  .wdk-RecordActions {
+    display: none;
+  }
+
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 SEARCH page: jQuery treeParam code (also used for attribute selection)
 	 makes organism <a href>.... so it picks up the link color

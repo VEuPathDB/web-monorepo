@@ -40,7 +40,7 @@ export function PublicAnalysesRoute({
       communityDatasets && [
         ...map(studyRecords, (record) => ({
           id: getStudyId(record)!,
-          displayName: record.displayName ?? 'Unknown Study',
+          displayName: record.displayName ?? 'Unknown dataset',
         })),
         ...map(communityDatasets, (ud) => ({
           id: diyUserDatasetIdToWdkRecordId(ud.datasetId),

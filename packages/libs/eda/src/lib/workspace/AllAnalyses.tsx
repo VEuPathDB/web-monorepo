@@ -113,7 +113,7 @@ const useStyles = makeStyles({
   },
 });
 
-const UNKNOWN_DATASET_NAME = 'Unknown study';
+const UNKNOWN_DATASET_NAME = 'Unknown dataset';
 const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 
 export function AllAnalyses(props: Props) {
@@ -505,7 +505,7 @@ export function AllAnalyses(props: Props) {
           : [
               {
                 key: 'study',
-                name: 'Study',
+                name: 'Dataset',
                 sortable: true,
                 renderCell: (data: { row: AnalysisAndDataset }) => {
                   const { dataset } = data.row;

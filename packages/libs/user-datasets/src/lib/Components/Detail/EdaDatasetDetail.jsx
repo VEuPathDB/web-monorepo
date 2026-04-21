@@ -17,8 +17,8 @@ class EdaDatasetDetail extends UserDatasetDetail {
     } = this.props;
 
     const isInstalled =
-      status?.import === 'complete' &&
-      status?.install?.find((d) => d.projectId === projectId)?.dataStatus ===
+      status?.import.status === 'complete' &&
+      status?.install?.find((d) => d.installTarget === projectId)?.data.status ===
         'complete';
 
     if (!isInstalled) return null;

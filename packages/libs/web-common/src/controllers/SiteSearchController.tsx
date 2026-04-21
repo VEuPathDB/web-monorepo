@@ -365,7 +365,8 @@ function useSiteSearchResponse(
           offset,
           numRecords,
         },
-        restrictToProject: projectId === 'UniDB' ? 'VEuPathDB' : projectId,
+        restrictToProject: projectId,
+        //restrictToProject: projectId === 'UniDB' ? 'VEuPathDB' : projectId,
         restrictMetadataToOrganisms: !offerOrganismFilter
           ? undefined
           : allOrganisms,

@@ -62,7 +62,7 @@ export const userDatasetRoutes: RouteEntry[] = [
             props: UserDatasetDetailProps
           ) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
-              props.userDataset.id
+              props.userDataset.datasetId
             );
             const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
             return (
