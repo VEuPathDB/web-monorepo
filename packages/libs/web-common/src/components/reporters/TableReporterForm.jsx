@@ -63,7 +63,6 @@ let TableReporterForm = (props) => {
                 },
               }}
             />
-            <div>{postTableSelectionElement}</div>
           </div>
           <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
             <div>
@@ -91,6 +90,7 @@ let TableReporterForm = (props) => {
               </div>
             </div>
           </div>
+          <div className="eupathdb-ReporterFormGroup">{postTableSelectionElement}</div>
         </div>
 
         {includeSubmit && (
