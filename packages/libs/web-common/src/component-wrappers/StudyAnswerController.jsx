@@ -116,7 +116,7 @@ function StudyAnswerController(props) {
 
   return (
     <>
-      <h1>Study summaries</h1>
+      <h1>Dataset summaries</h1>
       <div className="ClinEpiStudyAnswerController">
         {showUserDatasetTables && (
           <>
@@ -124,7 +124,7 @@ function StudyAnswerController(props) {
               useEda &&
               userStudySummaryRows.length > 0 && (
                 <div>
-                  <h2>My studies</h2>
+                  <h2>My datasets</h2>
                   <RecordFilter
                     searchTerm={userStudySearchTerm}
                     onSearchTermChange={(searchTerm) =>
@@ -161,7 +161,7 @@ function StudyAnswerController(props) {
               useEda &&
               communityStudySummaryRows.length > 0 && (
                 <div>
-                  <h2>Community studies</h2>
+                  <h2>Community datasets</h2>
                   <RecordFilter
                     searchTerm={communityStudySearchTerm}
                     onSearchTermChange={(searchTerm) =>
@@ -197,7 +197,7 @@ function StudyAnswerController(props) {
           </>
         )}
         <div>
-          {showUserDatasetTables && <h2>Curated studies</h2>}
+          {showUserDatasetTables && <h2>Curated datasets</h2>}
           {curatedStudies}
         </div>
       </div>
