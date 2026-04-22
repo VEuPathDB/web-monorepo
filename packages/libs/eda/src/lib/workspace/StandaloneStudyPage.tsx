@@ -4,7 +4,7 @@ import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restrictio
 import { Tabs } from '@veupathdb/wdk-client/lib/Components';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { useState } from 'react';
-import { useDownloadClient, useStudyRecord } from '../core';
+import { useDownloadClient, useStudyRecord, useStudyRecordClass } from '../core';
 import DownloadTab from './DownloadTab';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 
@@ -25,6 +25,7 @@ export function StandaloneStudyPage(props: Props) {
     isStudyExplorerWorkspace = false,
   } = props;
   const studyRecord = useStudyRecord();
+  const studyRecordClass = useStudyRecordClass();
   const downloadClient = useDownloadClient();
   const permissionsValue = usePermissions();
   const approvalStatus: ApprovalStatus = permissionsValue.loading
@@ -49,7 +50,7 @@ export function StandaloneStudyPage(props: Props) {
             display: 'Dataset details',
             content: (
               <div style={{ minHeight: '10em' }}>
-                <RecordController recordClass="dataset" primaryKey={studyId} />
+	        <RecordController recordClass={studyRecordClass.urlSegment} primaryKey={studyId} />
               </div>
             ),
           },
