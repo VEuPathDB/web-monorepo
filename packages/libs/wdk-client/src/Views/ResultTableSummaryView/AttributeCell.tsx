@@ -52,6 +52,12 @@ function AttributeCellInner({ attribute, recordInstance }: AttributeCellProps) {
 
   if (value == null) return null;
 
+  if (typeof value === 'string' && attribute.columnDataType === 'NUMBER') {
+    const num = Number(value);
+    const display = isNaN(num) ? value : num.toLocaleString();
+    return <div style={{ whiteSpace: 'nowrap' }}>{display}</div>;
+  }
+
   if (typeof value === 'string') {
     const cellContent = safeHtml(
       value,
