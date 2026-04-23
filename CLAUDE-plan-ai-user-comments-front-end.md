@@ -184,8 +184,7 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - **Provenance panel (read-only)**: renders source — either a `PubmedIdEntry` for `kind: 'pubmed'` or a link (`externalUrl` / `externalTitle`) plus a "(uploaded PDF, not stored)" note for `kind: 'upload'`.
    - **Review level selector**: radio group over `AiReviewLevel` — `unreviewed` / `reviewed` / `edited`. Default is whatever the server returned. If the user edits the content textarea, automatically bump to `'edited'` (but don't clobber explicit `'reviewed'` → keep last explicit user choice unless content actually changes).
    - **Headline** (`TextBox`) and **Content** (`TextArea`) — editable, bound to the same Redux state as the heavyweight form via existing `updateFormFields` dispatches. This gives us free submit/save plumbing.
-   - **Categories** (`CheckboxList`, wired identically to the heavyweight form).
-   - No PubMed/DOI/GenBank/location/attachments/related-genes sections. That's the point of the minimal form.
+   - No Categories/PubMed/DOI/GenBank/location/attachments/related-genes sections. That's the point of the minimal form.
    - Submit calls the existing `requestSubmitComment` — no changes to the submit epic needed.
 
 ## Controller changes
@@ -266,7 +265,7 @@ Expose all three alongside the existing methods in the returned object.
 
 Minimum required: a link from the gene record page. Two small touch-ups:
 
-1. On the existing gene-page "User Comments" section or near the "Add a comment" link, add a sibling "Add an AI-assisted comment from a publication" link pointing to `/user-comments/ai-gene-publication/add?stableId={geneId}`. The exact DOM location depends on WDK model config; keep the plan-side note that this is a one-line WDK/JSP or custom wrapper tweak.
+1. On the existing gene-page "User Comments" section or near the "Add a comment" link, add a sibling "Add an AI-assisted comment from a publication" link pointing to `/user-comments/ai-gene-publication/add?stableId={geneId}`. Could later be refined to a single link with a popup that bifurcates to the two different routes with some more explanation of the new AI tool.
 2. No changes yet to the user-comments show page's links or to the record-page comments table — those follow-ups are out of scope.
 
 ## Files to create or modify
@@ -296,7 +295,7 @@ Reused without modification:
 
 ## Verification
 
-1. `yarn workspace @veupathdb/web-common build` (or the site-specific build if simpler) should type-check cleanly, particularly around the new discriminated `AiProvenance`.
+1. `yarn workspace @veupathdb/genomics-site compile:check` should type-check cleanly, particularly around the new discriminated `AiProvenance`.
 2. Run the genomics-site dev server locally. In a browser:
    - Log in, navigate to `/user-comments/ai-gene-publication/add?stableId=PF3D7_0315200` (any gene).
    - **PubMed path**: enter a known PMID that mentions the gene → expect URL to gain a `&jobId=…` on submit; watch the stage checklist advance (`fetching-article` → `fetching-gene-synonyms` → `scanning-gene-mentions` → `generating-summary` → `validating` → `persisting`); on terminal `success`, expect redirect to `/user-comments/edit?commentId={N}` with the AI minimal view. Change the content textarea and confirm `reviewLevel` auto-bumps to `'edited'`; submit succeeds.
