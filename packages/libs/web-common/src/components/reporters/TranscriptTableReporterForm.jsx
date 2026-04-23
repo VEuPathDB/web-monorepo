@@ -14,6 +14,7 @@ let recordClassOverride = {
 const ORTHOLOGS_TABLE_NAME = 'OrthologsLite';
 const ORGANISM_SEARCH_NAME = "GenesByTaxon";
 const ORGANISM_PARAM_NAME = 'organism';
+const MAX_ORTHOLOG_SELECTED_ORGANISMS = 5;
 
 let OrganismSelection = ({ props }) => {
   let {
@@ -82,13 +83,49 @@ let OrganismSelection = ({ props }) => {
   );
 };
 
+// TODO: find this function elsewhere- it is likely to exist
+function findLeaf(term, vocabNode) {
+  if (vocabNode.data.term === term) {
+    // found this org's node; return whether it is a leaf
+    return { found: true, isLeaf: vocabNode.children.length === 0 };
+  }
+  for (let i = 0; i < vocabNode.children.length; i++) {
+    let result = findLeaf(term, vocabNode.children[i]);
+    if (result.found) {
+      return result;
+    }
+  }
+  return { found: false };
+}
+
 /** @type import('./Types').ReporterFormComponent */
 let TranscriptTableReporterForm = (props) => {
+
+  // need org tree here to limit number of selected organisms
+  const orgParam = useWdkService(
+    async (wdkService) => {
+      const question = await wdkService.getQuestionAndParameters(ORGANISM_SEARCH_NAME);
+      return question.parameters.find(p => p.name === ORGANISM_PARAM_NAME);
+    }
+  );
+
   let showOrgSelector = props.formState.tables.length !== 0 && props.formState.tables[0] === ORTHOLOGS_TABLE_NAME;
   let orgSelector = showOrgSelector ? <OrganismSelection props={props} /> : null;
+
   let onSubmit = !showOrgSelector ? props.onSubmit : () => {
+    let selectedOrgs = props.formState.orthologOrganisms;
     if (props.formState.orthologOrganisms == null || props.formState.orthologOrganisms.length === 0) {
       alert ("You must select at least one organism to request an Orthologs table.");
+      return;
+    }
+
+    let leafOrgs = selectedOrgs.filter(org => {
+      let result = findLeaf(org, orgParam.vocabulary);
+      return result.found && result.isLeaf;
+    });
+
+    if (leafOrgs.length > MAX_ORTHOLOG_SELECTED_ORGANISMS) {
+      alert("You can select no more than " + MAX_ORTHOLOG_SELECTED_ORGANISMS + " organisms.");
     }
     else {
       props.onSubmit();
