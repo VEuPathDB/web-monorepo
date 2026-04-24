@@ -4,6 +4,7 @@ import {
   MAX_RECOMMENDED_PROPERTY,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 // Transcript Table Reporter is the same as a regular Table Reporter, but need to
 //   override the recordClass (Transcript) with Gene to get Gene tables for a Transcript result
@@ -106,21 +107,6 @@ const OrganismSelection = ({ props }) => {
   );
 };
 
-// TODO: find this function elsewhere- it is likely to exist
-function findLeaf(term, vocabNode) {
-  if (vocabNode.data.term === term) {
-    // found this org's node; return whether it is a leaf
-    return { found: true, isLeaf: vocabNode.children.length === 0 };
-  }
-  for (let i = 0; i < vocabNode.children.length; i++) {
-    let result = findLeaf(term, vocabNode.children[i]);
-    if (result.found) {
-      return result;
-    }
-  }
-  return { found: false };
-}
-
 /** @type import('./Types').ReporterFormComponent */
 const TranscriptTableReporterForm = (props) => {
   // need org tree here to limit number of selected organisms
@@ -152,10 +138,12 @@ const TranscriptTableReporterForm = (props) => {
           return;
         }
 
-        const leafOrgs = selectedOrgs.filter((org) => {
-          let result = findLeaf(org, orgParam.vocabulary);
-          return result.found && result.isLeaf;
-        });
+        const leafTerms = new Set(
+          getLeaves(orgParam.vocabulary, (node) => node.children).map(
+            (node) => node.data.term
+          )
+        );
+        const leafOrgs = selectedOrgs.filter((org) => leafTerms.has(org));
 
         if (leafOrgs.length > MAX_ORTHOLOG_SELECTED_ORGANISMS) {
           alert(
