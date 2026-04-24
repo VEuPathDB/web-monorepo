@@ -1,5 +1,5 @@
 import TableReporterForm from './TableReporterForm';
-import { OrganismParam } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
+import { OrganismParam, MAX_RECOMMENDED_PROPERTY } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 // Transcript Table Reporter is the same as a regular Table Reporter, but need to
@@ -24,7 +24,7 @@ let OrganismSelection = ({ props }) => {
     updateFormUiState
   } = props;
 
-  const orgParam = useWdkService(
+  let orgParam = useWdkService(
     async (wdkService) => {
       const question = await wdkService.getQuestionAndParameters(ORGANISM_SEARCH_NAME);
       return question.parameters.find(p => p.name === ORGANISM_PARAM_NAME);
@@ -33,6 +33,14 @@ let OrganismSelection = ({ props }) => {
 
   // may need to wait for param to populate (async)
   if (orgParam == null) return null;
+
+  let replacementProperties = !orgParam.properties ? {} :
+    { ...orgParam.properties, [MAX_RECOMMENDED_PROPERTY]: undefined };
+  orgParam = Object.assign({}, orgParam, {
+    minSelectedCount: 1,
+    maxSelectedCount: MAX_ORTHOLOG_SELECTED_ORGANISMS,
+    properties: replacementProperties
+  });
 
   let orgParamValue = JSON.stringify(formState.orthologOrganisms);
 
