@@ -147,9 +147,7 @@ const TranscriptTableReporterForm = (props) => {
 
         if (leafOrgs.length > MAX_ORTHOLOG_SELECTED_ORGANISMS) {
           alert(
-            'You can select no more than ' +
-              MAX_ORTHOLOG_SELECTED_ORGANISMS +
-              ' organisms.'
+            `You have selected ${leafOrgs.length} organisms but no more than ${MAX_ORTHOLOG_SELECTED_ORGANISMS} are allowed. Please review your selection.`
           );
         } else {
           props.onSubmit();
