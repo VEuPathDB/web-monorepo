@@ -117,6 +117,17 @@ From anywhere in the repo:
 yarn
 ----
 
+=== Set up git hooks
+
+Run this once after cloning to enable pre-commit formatting checks:
+
+[source, shell]
+----
+npx husky install
+----
+
+NOTE: `yarn install` only runs the `postinstall` script when the dependency tree changes, so new clones won't get the hooks automatically. You must run this manually.
+
 *Note:* This repository uses immutable installs for security. The `yarn.lock` file must be committed to git and cannot be modified by `yarn install`. Commands like `yarn add <package>` and `yarn remove <package>` work normally and will update the lockfile as expected. This prevents accidental mass upgrades (e.g., deleting and regenerating yarn.lock would upgrade many packages to newer versions). All dependency upgrades should be intentional and reviewed.
 
 == Overview
