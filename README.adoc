@@ -42,17 +42,39 @@ corepack enable --install-directory ~/.volta/bin
 
 This configuration allows Volta to manage Node versions while Corepack manages Yarn versions based on the `packageManager` field in `package.json`.
 
-=== Development on Cedar Server
+=== Install yarn dependencies
+
+From anywhere in the repo:
+
+[source, shell]
+----
+yarn
+----
+
+*Note:* This repository uses immutable installs for security. The `yarn.lock` file must be committed to git and cannot be modified by `yarn install`. Commands like `yarn add <package>` and `yarn remove <package>` work normally and will update the lockfile as expected. This prevents accidental mass upgrades (e.g., deleting and regenerating yarn.lock would upgrade many packages to newer versions). All dependency upgrades should be intentional and reviewed.
+
+=== Set up git hooks
+
+Run this once after cloning to enable pre-commit formatting checks:
+
+[source, shell]
+----
+npx husky install
+----
+
+NOTE: `yarn install` only runs the `postinstall` script when the dependency tree changes, so new clones won't get the hooks automatically. You must run this manually.
+
+== Development on Cedar Server
 
 Follow the instructions above in a regular terminal (not a dev site environment after sourcing `etc/setenv`) to set up Volta, Node, Yarn and Corepack.
 
 To work smoothly in a dev site environment (any time after sourcing `etc/setenv`), you need to address a PATH configuration issue that can shadow Volta's yarn with an older system version.
 
-==== The Issue
+=== The Issue
 
 Intranet dev site configurations use `etc/setenv` scripts that prepend legacy paths to PATH. This causes the system's old yarn to take precedence over Volta's managed version, breaking the build.
 
-==== The Fix
+=== The Fix
 
 Choose one of these approaches:
 
@@ -105,30 +127,6 @@ This ensures Volta's yarn (from `~/.volta/bin`) remains first in PATH.
 *IMPORTANT:* This project requires Yarn. Using `npm install` will fail with dependency resolution errors because this monorepo uses Yarn-specific features (workspace protocol, etc.) that npm doesn't support.
 
 Corepack enforces the correct Yarn version automatically via the `packageManager` field in `package.json`. If you see errors about wrong Yarn version, refer to the setup instructions above.
-
-== Quick Start
-
-=== Install yarn dependencies
-
-From anywhere in the repo:
-
-[source, shell]
-----
-yarn
-----
-
-=== Set up git hooks
-
-Run this once after cloning to enable pre-commit formatting checks:
-
-[source, shell]
-----
-npx husky install
-----
-
-NOTE: `yarn install` only runs the `postinstall` script when the dependency tree changes, so new clones won't get the hooks automatically. You must run this manually.
-
-*Note:* This repository uses immutable installs for security. The `yarn.lock` file must be committed to git and cannot be modified by `yarn install`. Commands like `yarn add <package>` and `yarn remove <package>` work normally and will update the lockfile as expected. This prevents accidental mass upgrades (e.g., deleting and regenerating yarn.lock would upgrade many packages to newer versions). All dependency upgrades should be intentional and reviewed.
 
 == Overview
 
