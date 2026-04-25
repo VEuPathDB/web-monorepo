@@ -7,7 +7,7 @@
     "packages/sites/*"
   ],
   "scripts": {
-    "postinstall": "husky"
+    "postinstall": "husky install"
   },
   "resolutions": {
     "@tanstack/react-query": "^4.33.0",
