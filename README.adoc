@@ -55,6 +55,8 @@ yarn
 
 === Set up git hooks
 
+A pre-commit hook will run `prettier` to normalise formatting of files touched by the commit. This irons out inter-developer IDE formatting differences and is essential to avoid confusion and uninformative formatting-only diffs in the history.
+
 Run this once after cloning to enable pre-commit formatting checks:
 
 [source, shell]
@@ -62,7 +64,7 @@ Run this once after cloning to enable pre-commit formatting checks:
 npx husky install
 ----
 
-NOTE: `yarn install` only runs the `postinstall` script when the dependency tree changes, so new clones won't get the hooks automatically. You must run this manually.
+NOTE: `yarn install` only runs the `postinstall` script in `package.json` when the dependency tree changes, so new clones won't get the hooks automatically. **You must run `npx husky install` manually once per clone.**
 
 == Development on Cedar Server
 
