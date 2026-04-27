@@ -1,8 +1,5 @@
+import { useState, useEffect } from 'react';
 import TableReporterForm from './TableReporterForm';
-import {
-  OrganismParam,
-  MAX_RECOMMENDED_PROPERTY,
-} from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -23,8 +20,23 @@ const MAX_ORTHOLOG_SELECTED_ORGANISMS = 5;
 const OrganismSelection = ({ props }) => {
   const { formState, formUiState, updateFormState, updateFormUiState } = props;
 
+  // Dynamic import avoids a static dependency on @veupathdb/preferred-organisms in
+  // web-common. A static import would break non-genomics site builds (e.g. clinepi-site)
+  // that don't have that package. The cleaner long-term fix would be to move OrganismSelection
+  // into genomics-site and inject it as a prop, but that requires an extension point in
+  // selectReporterComponent (util/reporter.js) which isn't worth the refactor right now.
+  const [preferredOrgsModule, setPreferredOrgsModule] = useState(null);
+
+  useEffect(() => {
+    import('@veupathdb/preferred-organisms/lib/components/OrganismParam').then(
+      setPreferredOrgsModule
+    );
+  }, []);
+
   const orgParam = useWdkService(
     async (wdkService) => {
+      if (preferredOrgsModule == null) return null;
+      const { MAX_RECOMMENDED_PROPERTY } = preferredOrgsModule;
       const question = await wdkService.getQuestionAndParameters(
         ORGANISM_SEARCH_NAME
       );
@@ -45,11 +57,13 @@ const OrganismSelection = ({ props }) => {
         properties,
       };
     },
-    [MAX_RECOMMENDED_PROPERTY]
+    [preferredOrgsModule]
   );
 
-  // may need to wait for param to populate (async)
-  if (orgParam == null) return null;
+  // may need to wait for module or param to populate (async)
+  if (preferredOrgsModule == null || orgParam == null) return null;
+
+  const { OrganismParam } = preferredOrgsModule;
 
   const orgParamValue = JSON.stringify(formState.orthologOrganisms);
 
