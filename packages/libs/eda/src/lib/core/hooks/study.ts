@@ -31,8 +31,6 @@ import { usePermissions } from '@veupathdb/study-data-access/lib/data-restrictio
 import { FetchClientError } from '@veupathdb/http-utils';
 import { useCachedPromise } from './cachedPromise';
 
-const STUDY_RECORD_CLASS_NAME = 'dataset';
-
 interface StudyState {
   studyRecordClass: StudyRecordClass;
   studyRecord: StudyRecord;
@@ -46,8 +44,22 @@ export interface HookValue {
   studyRecord: StudyRecord;
 }
 export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
+  const permissionsResponse = usePermissions();
+
+  // Determine record class name based on isUserStudy from permissions
+  // undefined while permissions are loading → will return undefined from the hook
+  const STUDY_RECORD_CLASS_NAME = permissionsResponse.loading
+    ? undefined
+    : permissionsResponse.permissions.perDataset[datasetId]?.isUserStudy
+    ? 'userdataset'
+    : 'dataset';
+
   return useWdkServiceWithRefresh(
     async (wdkService) => {
+      if (STUDY_RECORD_CLASS_NAME === undefined) {
+        return undefined;
+      }
+
       const studyRecordClass = await wdkService.findRecordClass(
         STUDY_RECORD_CLASS_NAME
       );
@@ -105,7 +117,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         studyRecordClass,
       };
     },
-    [datasetId]
+    [datasetId, STUDY_RECORD_CLASS_NAME]
   );
 }
 
@@ -148,13 +160,27 @@ export function useWdkStudyRecords(
  * */
 export function useWdkStudyReleases(): Array<WdkStudyRelease> {
   const studyRecord = useStudyRecord();
+  const permissionsResponse = usePermissions();
+
+  // Extract datasetId from studyRecord.id
+  const datasetId = studyRecord.id[0]?.value;
+
+  // Determine record class name based on isUserStudy from permissions
+  const STUDY_RECORD_CLASS_NAME = permissionsResponse.loading
+    ? 'dataset'
+    : permissionsResponse.permissions.perDataset[datasetId]?.isUserStudy
+    ? 'userdataset'
+    : 'dataset';
 
   return (
-    useWdkService((wdkService) => {
-      return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
-        tables: ['DownloadVersion'],
-      });
-    })?.tables['DownloadVersion'].map(
+    useWdkService(
+      (wdkService) => {
+        return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
+          tables: ['DownloadVersion'],
+        });
+      },
+      [studyRecord.id, STUDY_RECORD_CLASS_NAME]
+    )?.tables['DownloadVersion'].map(
       (release) => ({
         // DAVE/JAMIE: I was sure if I could tell TS that these values
         // would always be present.

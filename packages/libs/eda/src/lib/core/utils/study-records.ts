@@ -32,30 +32,43 @@ export async function getWdkStudyRecords(
   const { wdkService, subsettingClient, studyAccessApi } = deps;
   const attributes = options?.attributes ?? EMPTY_ARRAY;
   const tables = options?.tables ?? EMPTY_ARRAY;
-  const searchName = options?.searchName ?? 'AllDatasets';
 
-  const [permissions, recordClass] = await Promise.all([
-    cachedPermissionCheck(await wdkService.getCurrentUser(), studyAccessApi),
-    wdkService.findRecordClass('dataset'),
-  ]);
-  const finalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(attributes).filter(
-    (attribute) => attribute in recordClass.attributesMap
+  const [permissions, datasetRecordClass, userDatasetRecordClass, edaStudies] =
+    await Promise.all([
+      cachedPermissionCheck(await wdkService.getCurrentUser(), studyAccessApi),
+      wdkService.findRecordClass('dataset'),
+      wdkService.findRecordClass('userdataset'),
+      subsettingClient.getStudies(),
+    ]);
+
+  // Prepare attributes and tables for dataset record class
+  const datasetFinalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(
+    attributes
+  ).filter((attribute) => attribute in datasetRecordClass.attributesMap);
+  const datasetFinalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
+    (table) => table in datasetRecordClass.tablesMap
   );
-  const finalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
-    (table) => table in recordClass.tablesMap
+
+  // Prepare attributes and tables for userdataset record class
+  const userDatasetFinalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(
+    attributes
+  ).filter((attribute) => attribute in userDatasetRecordClass.attributesMap);
+  const userDatasetFinalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
+    (table) => table in userDatasetRecordClass.tablesMap
   );
-  const [edaStudies, answer] = await Promise.all([
-    subsettingClient.getStudies(),
+
+  // Fetch both dataset and userdataset records
+  const [datasetAnswer, userDatasetAnswer] = await Promise.all([
     wdkService.getAnswerJson(
       {
-        searchName,
+        searchName: 'AllDatasets',
         searchConfig: {
           parameters: {},
         },
       },
       {
-        attributes: finalAttributes,
-        tables: finalTables,
+        attributes: datasetFinalAttributes,
+        tables: datasetFinalTables,
         sorting: [
           {
             attributeName: 'display_name',
@@ -64,12 +77,34 @@ export async function getWdkStudyRecords(
         ],
       }
     ),
+    wdkService.getAnswerJson(
+      {
+        searchName: 'AllUserDatasets',
+        searchConfig: {
+          parameters: {},
+        },
+      },
+      {
+        attributes: userDatasetFinalAttributes,
+        tables: userDatasetFinalTables,
+        sorting: [
+          {
+            attributeName: 'name',
+            direction: 'ASC',
+          },
+        ],
+      }
+    ),
   ]);
+
   const filteredStudies = options?.hasMap
     ? edaStudies.filter((study) => study.hasMap)
     : edaStudies;
   const studyIds = new Set(filteredStudies.map((s) => s.id));
-  return answer.records.filter((record) => {
+
+  // Combine and filter both result sets
+  const allRecords = [...datasetAnswer.records, ...userDatasetAnswer.records];
+  return allRecords.filter((record) => {
     const datasetId = getStudyId(record);
     if (datasetId == null) {
       return false;

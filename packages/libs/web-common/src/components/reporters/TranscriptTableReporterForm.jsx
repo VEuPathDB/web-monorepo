@@ -44,6 +44,7 @@ const OrganismSelection = ({ props }) => {
         (p) => p.name === ORGANISM_PARAM_NAME
       );
       if (param == null) return null;
+
       // Remove MAX_RECOMMENDED_PROPERTY to disable the advisory-only maxRecommendedGate;
       // the hard limit is enforced by maxSelectedCount and the submit handler instead.
       const properties = !param.properties

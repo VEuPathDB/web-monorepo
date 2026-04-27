@@ -45,6 +45,7 @@ export default function Downloads({
   );
   const datasetId = studyRecord.id[0].value;
   const { isUserStudy } = studyMetadata;
+  const recordClassName = isUserStudy ? 'userdataset' : 'dataset';
   const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const projectDisplayName = useWdkService(
@@ -55,7 +56,7 @@ export default function Downloads({
   const studyContacts = useWdkService(
     async (wdkService) =>
       await wdkService
-        .getRecord('dataset', studyRecord.id, { tables: ['Contacts'] })
+        .getRecord(recordClassName, studyRecord.id, { tables: ['Contacts'] })
         .then((record) => {
           const contactsArray = record.tables['Contacts'].map(
             (contact) => contact['contact_name']
@@ -127,14 +128,17 @@ export default function Downloads({
    * you have two different variables for study releases here.
    */
 
-  const WDKStudyReleases = useWdkStudyReleases();
+  const WDKStudyReleases = isUserStudy ? [] : useWdkStudyReleases();
 
   // Get a list of all available study releases according to the Download Service.
   const downloadServiceStudyReleases = usePromise(
     useCallback(async () => {
       // Only fetch study releases if they are expected to be available
       if (permission.loading) return undefined;
-      if (permission.permissions.perDataset[datasetId]?.sha1Hash == null)
+      if (
+        permission.permissions.perDataset[datasetId]?.sha1Hash == null ||
+        permission.permissions.perDataset[datasetId]?.sha1Hash === ''
+      )
         return [];
       try {
         return await downloadClient.getStudyReleases(studyMetadata.id);
@@ -219,7 +223,7 @@ export default function Downloads({
           marginRight: 75,
         }}
       >
-        {projectDisplayName === 'ClinEpiDB' &&
+        {projectDisplayName === 'dataExplorer' &&
           !isUserStudy &&
           (dataAccessDeclaration ?? '')}
         {mergedReleaseData[0] && (
