@@ -139,6 +139,11 @@ The optional `jobId` query param lets a user refresh mid-job (or revisit via bro
 
 The AI comment flow is presented as a three-step wizard with a left-hand sidebar that mirrors the visual pattern of `packages/libs/wdk-client/src/Views/User/ProfileNavigationSection.tsx` (the `/user/profile` page). The sidebar is read-only — clicking inactive steps does nothing — so its only job is to orient the user and reflect the current phase.
 
+> **Mockups** (sidebar in each step state):
+> [Frame 01 — step 1 active](mockups/ai-user-comments/01-add-form-pubmed/mockup-frame-01-pubmed-input.png) ·
+> [Frame 05 — step 2 active](mockups/ai-user-comments/03-add-form-progress/mockup-frame-05-progress.png) ·
+> [Frame 08 — step 3 active](mockups/ai-user-comments/05-ai-review-edit/mockup-frame-08-review-edit.png)
+
 ### Steps
 
 | #   | Key                  | Label              | Route(s) where active                                                             |
@@ -218,6 +223,14 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
 
    **Input mode** (no active job):
 
+   > **Mockups** (PubMed path):
+   > [Frame 01 — initial state, PMID empty, submit disabled](mockups/ai-user-comments/01-add-form-pubmed/mockup-frame-01-pubmed-input.png) ·
+   > [Frame 02 — PMID entered, metadata preview shown, submit enabled](mockups/ai-user-comments/01-add-form-pubmed/mockup-frame-02-pubmed-preview.png)
+   >
+   > **Mockups** (PDF upload path):
+   > [Frame 03 — Upload PDF selected, no file chosen, submit disabled](mockups/ai-user-comments/02-add-form-pdf/mockup-frame-03-pdf-upload.png) ·
+   > [Frame 04 — file chosen, provenance URL filled, submit enabled](mockups/ai-user-comments/02-add-form-pdf/mockup-frame-04-pdf-chosen.png)
+
    - Headline: "AI-assisted comment for gene `{stableId}`".
    - Radio group: **PubMed ID** vs **Upload PDF** (discriminated union state).
    - If PubMed: single `TextBox` for PMID. Optional inline PubMed metadata preview using the existing `getPubmedPreview` service (re-use `PubmedIdEntry.tsx` for the rendered chip).
@@ -228,6 +241,11 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - `// TODO(dedup)` marker near the submit button noting where a duplicate-warning UI will plug in later.
 
    **Progress mode** (job in flight or terminal):
+
+   > **Mockups**:
+   > [Frame 05 — mid-job, stage checklist with spinner on current stage, Cancel button](mockups/ai-user-comments/03-add-form-progress/mockup-frame-05-progress.png) ·
+   > [Frame 06 — all stages complete, success box, auto-redirect in progress](mockups/ai-user-comments/03-add-form-progress/mockup-frame-06-success-redirect.png) ·
+   > [Frame 07 — terminal error: gene not mentioned, synonyms listed, recovery buttons](mockups/ai-user-comments/04-add-form-error/mockup-frame-07-gene-not-mentioned.png)
 
    - Form inputs hidden or shown read-only (summary of what was submitted).
    - **Stage checklist**: render all stages relevant to the submitted options in fixed order; each stage shows one of three states — _done_ (tick), _current_ (spinner + live `progress.message`), or _pending_ (greyed). Unknown future stages fall through to rendering the raw `message` string so the UI doesn't break if the back end adds stages.
@@ -255,6 +273,9 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    No Redux store module is needed. The job is a UI-local concern; nothing else in the app cares about its intermediate state.
 
 3. **`AiCommentEditView.tsx`** — the minimal review form for AI comments, rendered when `aiProvenance` is present on the loaded comment. Not a route; it's a view component mounted by `UserCommentFormController`.
+
+   > **Mockup**: [Frame 08 — review & edit form, step 3 active, provenance panel, review-level radio, publish disabled](mockups/ai-user-comments/05-ai-review-edit/mockup-frame-08-review-edit.png)
+
    - Header: "Review AI-assisted comment for gene `{stableId}`".
    - **Provenance panel (read-only)**: renders source — either a `PubmedIdEntry` for `kind: 'pubmed'` or a link (`externalUrl` / `externalTitle`) plus a "(uploaded PDF, not stored)" note for `kind: 'upload'`.
    - **Review level selector**: radio group over `AiReviewLevel` — `unreviewed` / `reviewed` / `edited`. Default is whatever the server returned. If the user edits the content textarea, automatically bump to `'edited'` (but don't clobber explicit `'reviewed'` → keep last explicit user choice unless content actually changes).
