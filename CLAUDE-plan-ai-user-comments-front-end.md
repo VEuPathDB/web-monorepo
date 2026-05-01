@@ -249,7 +249,7 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - **Poll loop**: recursive `setTimeout`-driven (not `setInterval`, to avoid overlapping requests if a poll is slow). Interval 1000 ms. Clear the timeout on unmount and on terminal responses. Do not retry automatically on transient fetch errors — surface a small "reconnecting…" indicator and try again on the next tick. A `404` terminates the loop with `type: 'not-found'`.
    - **Terminal handling**:
      - `success` → navigate to `/user-comments/edit?commentId={commentId}`.
-     - `cancelled` / error variants → stay on this page, show the message, offer "Start over".
+     - `cancelled` / error variants → stay on this page, show the message, offer "Try a different publication" and "Back to gene page".
    - **Cancel**: call `deleteAiGenePublicationJob`; the UI updates when the next poll returns `cancelled`. No need for the controller to optimistically transition — polling is the source of truth. On the cancelled terminal state, offer "Try a different publication" (resets to input mode) and "Back to gene page".
 
    No Redux store module is needed. The job is a UI-local concern; nothing else in the app cares about its intermediate state.
@@ -260,6 +260,9 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - **Review level selector**: radio group over `AiReviewLevel` — `unreviewed` / `reviewed` / `edited`. Default is whatever the server returned. If the user edits the content textarea, automatically bump to `'edited'` (but don't clobber explicit `'reviewed'` → keep last explicit user choice unless content actually changes).
    - **Headline** (`TextBox`) and **Content** (`TextArea`) — editable, bound to the same Redux state as the heavyweight form via existing `updateFormFields` dispatches. This gives us free submit/save plumbing.
    - No Categories/PubMed/DOI/GenBank/location/attachments/related-genes sections. That's the point of the minimal form.
+   - **Publish comment** button: disabled (greyed out) when `reviewLevel === 'unreviewed'`; a hint reads "Set review level to 'Reviewed' or 'Edited' to publish." Unreviewed comments are never shown to other users.
+   - **Keep as draft** button (secondary, always enabled): saves without publishing via `requestSubmitComment` with the current state.
+   - `// TODO(delete)` — a "Delete comment" button should also be offered so users can discard a draft they don't want to keep. Deferred pending confirmation of a back-end delete endpoint for user comments.
    - Submit calls the existing `requestSubmitComment` — no changes to the submit epic needed.
 
 ## Controller changes
