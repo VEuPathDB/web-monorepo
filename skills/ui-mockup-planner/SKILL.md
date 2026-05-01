@@ -1,6 +1,15 @@
 ---
 name: ui-mockup-planner
-description: Creates ChatGPT-ready mockup prompt packages from implementation plans or feature specs. Use this skill whenever the user wants to turn a plan, spec, or design document into UI mockup images for a presentation or slide deck — especially when they mention "mockup", "wireframe", "screenshots for ChatGPT", "mockup prompt", or want to visualise a feature before it's built. Also trigger when the user says things like "let's do the mockups for this" or "what would this look like as a screen". The skill guides a structured workflow: Claude explores the codebase to find the best screenshots to take, the user takes those screenshots, and Claude writes precise per-frame prompt files that the user pastes into ChatGPT to generate polished PNG mockups.
+description: >-
+  Creates ChatGPT-ready mockup prompt packages from implementation plans or feature specs.
+  Use this skill whenever the user wants to turn a plan, spec, or design document into UI
+  mockup images for a presentation or slide deck — especially when they mention "mockup",
+  "wireframe", "screenshots for ChatGPT", "mockup prompt", or want to visualise a feature
+  before it's built. Also trigger when the user says things like "let's do the mockups for
+  this" or "what would this look like as a screen". The skill guides a structured workflow:
+  Claude explores the codebase to find the best screenshots to take, the user takes those
+  screenshots, and Claude writes precise per-frame prompt files that the user pastes into
+  ChatGPT to generate polished PNG mockups.
 ---
 
 # UI Mockup Planner
