@@ -151,7 +151,7 @@ The AI comment flow is presented as a three-step wizard with a left-hand sidebar
 
 - **Form submit** (`idle → submitting → polling`): the sidebar advances from step 1 to step 2. The content pane transitions from the input form to the polling/progress view. The URL gains `&jobId=…` via `history.replace`.
 - **Job success** (`polling → terminal success`): the controller calls `history.push('/user-comments/edit?commentId={id}')`. The edit page renders `AiCommentEditView` with step 3 active in its own sidebar instance.
-- **Cancel / error**: stays on the add page at step 2. The user sees the error UI and a "Start over" button that resets `phase` to `idle`, returning to step 1.
+- **Cancel / error**: stays on the add page at step 2. The user sees the error UI with a "Try a different publication" button that resets `phase` to `idle`, returning to step 1, and a "Back to gene page" secondary link.
 
 ### Sidebar state per step
 
@@ -234,7 +234,7 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - Elapsed-time indicator.
    - **Cancel** button (fires `deleteAiGenePublicationJob`; UI shows a "cancelling…" state until the next poll returns `type: 'cancelled'`).
    - On terminal `success`, the controller navigates (`history.push`) to `/user-comments/edit?commentId={commentId}` — no manual "continue" click needed.
-   - On terminal errors, show a per-case message (`gene-not-mentioned` lists synonyms checked; `text-unavailable` explains likely cause; `validation-error`/`internal-error` render their strings). Include a "Start over" button that clears the jobId from the URL and returns to input mode with the previous form values preserved.
+   - On terminal errors, show a per-case message (`gene-not-mentioned` lists synonyms checked; `text-unavailable` explains likely cause; `validation-error`/`internal-error` render their strings). Include a "Try a different publication" button (primary) that clears the jobId from the URL and returns to input mode with the previous form values preserved, and a "Back to gene page" link (secondary) for users who decide not to proceed.
    - On `not-found` from the poller (expired / unknown jobId — e.g. the user returned to a stale URL), show a friendly "That job has expired — please submit again" message and fall back to input mode.
 
 2. **`AiGenePublicationAddController.tsx`** — minimal controller. Props: `{ stableId: string; jobId?: string }`. Holds local React state (no Redux — the flow is one-shot and short-lived):
@@ -250,7 +250,7 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - **Terminal handling**:
      - `success` → navigate to `/user-comments/edit?commentId={commentId}`.
      - `cancelled` / error variants → stay on this page, show the message, offer "Start over".
-   - **Cancel**: call `deleteAiGenePublicationJob`; the UI updates when the next poll returns `cancelled`. No need for the controller to optimistically transition — polling is the source of truth.
+   - **Cancel**: call `deleteAiGenePublicationJob`; the UI updates when the next poll returns `cancelled`. No need for the controller to optimistically transition — polling is the source of truth. On the cancelled terminal state, offer "Try a different publication" (resets to input mode) and "Back to gene page".
 
    No Redux store module is needed. The job is a UI-local concern; nothing else in the app cares about its intermediate state.
 
