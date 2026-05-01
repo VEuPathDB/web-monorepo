@@ -135,6 +135,81 @@ The optional `jobId` query param lets a user refresh mid-job (or revisit via bro
 
 `/user-comments/edit` stays as-is at the route level; the view branch happens inside `UserCommentFormController`.
 
+## Step navigation sidebar
+
+The AI comment flow is presented as a three-step wizard with a left-hand sidebar that mirrors the visual pattern of `packages/libs/wdk-client/src/Views/User/ProfileNavigationSection.tsx` (the `/user/profile` page). The sidebar is read-only — clicking inactive steps does nothing — so its only job is to orient the user and reflect the current phase.
+
+### Steps
+
+| #   | Key                  | Label              | Route(s) where active                                                             |
+| --- | -------------------- | ------------------ | --------------------------------------------------------------------------------- |
+| 1   | `publication-source` | Publication source | `/user-comments/ai-gene-publication/add` when `phase === 'idle' \| 'submitting'`  |
+| 2   | `generating-comment` | Generating comment | `/user-comments/ai-gene-publication/add` when `phase === 'polling' \| 'terminal'` |
+| 3   | `review-publish`     | Review & publish   | `/user-comments/edit` when `aiProvenance` is present                              |
+
+### Step transitions
+
+- **Form submit** (`idle → submitting → polling`): the sidebar advances from step 1 to step 2. The content pane transitions from the input form to the polling/progress view. The URL gains `&jobId=…` via `history.replace`.
+- **Job success** (`polling → terminal success`): the controller calls `history.push('/user-comments/edit?commentId={id}')`. The edit page renders `AiCommentEditView` with step 3 active in its own sidebar instance.
+- **Cancel / error**: stays on the add page at step 2. The user sees the error UI and a "Start over" button that resets `phase` to `idle`, returning to step 1.
+
+### Sidebar state per step
+
+| Step           | Appearance                                                      |
+| -------------- | --------------------------------------------------------------- |
+| Active step    | `wdk-ProfileNavigationItem__active` background, non-clickable   |
+| Completed step | Normal styling, non-clickable (no back-navigation in this flow) |
+| Future step    | Greyed out (`opacity: 0.45`, `cursor: default`)                 |
+
+The sidebar **never** lets the user click backwards or jump ahead — it is a progress indicator only, not a navigation menu. This differs from the profile page where all tabs are independently navigable.
+
+### Layout structure
+
+```tsx
+<div className="wdk-UserAccountForm">
+  {' '}
+  {/* flex row, gap: 20px — reuse existing class */}
+  <AiGenePublicationStepNav activeStep={activeStep} /> {/* min-width: 250px */}
+  <div style={{ flex: 1 }}>
+    {/* content pane: input form | progress view | edit form */}
+  </div>
+</div>
+```
+
+### `AiGenePublicationStepNav.tsx`
+
+New component (same directory as the other `AiGenePublication/` files). Props:
+
+```ts
+type AiFlowStep =
+  | 'publication-source'
+  | 'generating-comment'
+  | 'review-publish';
+
+interface AiGenePublicationStepNavProps {
+  activeStep: AiFlowStep;
+}
+```
+
+Renders a `<nav>` using the same CSS class names as `ProfileNavigationSection` (`wdk-ProfileNavigationSection`, `wdk-ProfileNavigationItems`, `wdk-ProfileNavigationItem`, `wdk-ProfileNavigationItem__active`). Uses FontAwesome icons (`fa-book` / `fa-spinner` / `fa-check-circle`) to match the profile page aesthetic. Future steps get an inline `style={{ opacity: 0.45 }}`.
+
+No `onClick` handlers — the component is entirely display-only.
+
+### Where each sidebar instance is mounted
+
+- **Add page** (`AiGenePublicationAddView`): wraps both input-mode and progress-mode content in the two-column layout. The controller derives `activeStep` from its `phase`:
+  - `idle | submitting` → `'publication-source'`
+  - `polling | terminal` → `'generating-comment'`
+- **Edit page** (`AiCommentEditView`): wraps the review form in the same two-column layout with `activeStep='review-publish'` hardcoded.
+
+### Files affected by this addition
+
+| Action | Path                                                                                            |
+| ------ | ----------------------------------------------------------------------------------------------- |
+| create | `…/AiGenePublication/AiGenePublicationStepNav.tsx`                                              |
+| modify | `…/AiGenePublication/AiGenePublicationAddView.tsx` — wrap content in sidebar layout             |
+| modify | `…/AiGenePublication/AiCommentEditView.tsx` — wrap content in sidebar layout with step 3 active |
+
 ## New components
 
 Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/userComments/AiGenePublication/`:
@@ -279,6 +354,7 @@ Minimum required: a link from the gene record page. Two small touch-ups:
 | create | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/controllers/AiGenePublicationAddController.tsx`                            |
 | create | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/userComments/AiGenePublication/AiGenePublicationAddView.tsx`    |
 | create | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/userComments/AiGenePublication/AiCommentEditView.tsx`           |
+| create | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/userComments/AiGenePublication/AiGenePublicationStepNav.tsx`    |
 
 Reused without modification:
 
