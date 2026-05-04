@@ -23,13 +23,13 @@ import UserDatasetList, {
   DatasetListProps,
 } from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
-import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
 import { DataNoun } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
+import { VdiServiceConfig } from '../Service/model/response-decoders';
 
 const ActionCreators = {
   showLoginForm,
@@ -53,12 +53,13 @@ type StateProps = Pick<
 >;
 type DispatchProps = typeof ActionCreators;
 interface OwnProps extends RouteComponentProps {
-  baseUrl: string;
-  hasDirectUpload: boolean;
-  helpRoute: string;
-  workspaceTitle: string;
-  dataNoun: DataNoun;
-  enablePublicUserDatasets: boolean;
+  readonly baseUrl: string;
+  readonly hasDirectUpload: boolean;
+  readonly helpRoute: string;
+  readonly workspaceTitle: string;
+  readonly dataNoun: DataNoun;
+  readonly enablePublicUserDatasets: boolean;
+  readonly vdiConfig: VdiServiceConfig;
 }
 type Props = {
   ownProps: OwnProps;
@@ -176,13 +177,14 @@ class UserDatasetListController extends PageController<Props> {
     } = this.props.dispatchProps;
 
     const listProps: DatasetListProps = {
+      vdiConfig: this.props.ownProps.vdiConfig,
+
       baseUrl,
       user,
       location,
       dataNoun,
       projectId,
       projectName,
-      quotaSize,
       enablePublicUserDatasets,
       userDatasets,
       filterByProject,

@@ -2,6 +2,7 @@ import {
   makeActionCreator,
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { BadUpload } from '../StoreModules/UserDatasetUploadStoreModule';
 
 // import { UserDatasetUpload } from '../Utils/types';
 
@@ -12,7 +13,7 @@ export const trackUploadProgress = makeActionCreator(
 
 export const receiveBadUpload = makeActionCreator(
   'user-dataset-upload/receive-bad-upload',
-  (message: string) => ({ message, timestamp: Date.now() })
+  (response: BadUpload) => response
 );
 
 export const clearBadUpload = makeActionCreator(

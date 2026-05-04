@@ -12,7 +12,7 @@ import UserDatasetDetail, { DetailViewProps } from './UserDatasetDetail';
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 import { WdkDependencies } from "@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect";
 import { MesaColumn } from "@veupathdb/coreui/lib/components/Mesa/types";
-import { DatasetDependency } from "../../Utils/types";
+import { DatasetDependency } from "../../Service/model/response-decoders";
 
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 

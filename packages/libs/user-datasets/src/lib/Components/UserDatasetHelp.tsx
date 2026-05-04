@@ -7,10 +7,10 @@ import tutStep3 from './images/tut-step-3.jpg';
 // Pretty sure this file is not in use, help is now coming from static content
 
 interface Props {
-  hasDirectUpload: boolean;
-  projectName: string;
-  quotaSize: number;
-  workspaceTitle: string;
+  readonly hasDirectUpload: boolean;
+  readonly projectName: string;
+  readonly quotaSize: number;
+  readonly workspaceTitle: string;
 }
 
 function UserDatasetHelp({

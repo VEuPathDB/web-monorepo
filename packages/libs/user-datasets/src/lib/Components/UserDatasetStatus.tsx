@@ -2,25 +2,22 @@ import * as React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
+import { DataNoun } from '../Utils/types';
+import * as vdi from '../Service/model/response-decoders';
 import {
-  DataNoun,
-  DatasetDetails,
-  DatasetListEntry,
-  DatasetStatusInfo,
-  DatasetUploadStatusInfo,
-} from '../Utils/types';
-
-// NOTE: The reinstall interval is configured in the VDI service and thus may change
-const VDI_REINSTALL_INTERVAL = 6;
+  VdiReconcilerConfig,
+  VdiServiceConfig,
+} from '../Service/model/response-decoders';
 
 interface Props {
-  baseUrl: string;
-  userDataset: DatasetListEntry | DatasetDetails;
-  projectId: string;
-  displayName: string;
-  linkToDataset: boolean;
-  useTooltip: boolean;
-  dataNoun: DataNoun;
+  readonly baseUrl: string;
+  readonly vdiConfig: VdiServiceConfig,
+  readonly userDataset: vdi.DatasetListEntry | vdi.DatasetGetResponseBody;
+  readonly projectId: string;
+  readonly displayName: string;
+  readonly linkToDataset: boolean;
+  readonly useTooltip: boolean;
+  readonly dataNoun: DataNoun;
 }
 
 const orderedStatuses = [
@@ -48,11 +45,12 @@ const orderedStatuses = [
  **/
 
 function getStatus(
-  status: DatasetStatusInfo,
+  status: vdi.DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
-  projects: string[]
+  projects: string[],
+  vdiConfig: VdiReconcilerConfig,
 ): { content: React.ReactNode; icon: string } {
   const isTargetingCurrentSite = projects.includes(projectId);
 
@@ -64,9 +62,9 @@ function getStatus(
   }
 
   if (status.upload.status !== 'success')
-    return getUploadStatus(status.upload, dataNoun)
+    return getUploadStatus(status.upload, dataNoun);
   else
-    return getPostUploadStatus(status, projectId, dataNoun, projectDisplayName);
+    return getPostUploadStatus(status, projectId, dataNoun, projectDisplayName, vdiConfig);
 }
 
 const queuedStatus = (dataNoun: string) => ({
@@ -75,7 +73,7 @@ const queuedStatus = (dataNoun: string) => ({
 });
 
 function getUploadStatus(
-  details: DatasetUploadStatusInfo,
+  details: vdi.DatasetUploadStatusInfo,
   dataNoun: string,
 ): { content: React.ReactNode; icon: string; } {
   switch (details.status) {
@@ -121,10 +119,11 @@ function getUploadStatus(
  * data install step for all install target projects.
  */
 function getPostUploadStatus(
-  status: DatasetStatusInfo,
+  status: vdi.DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
+  vdiConfig: VdiReconcilerConfig,
 ): { content: React.ReactNode; icon: string } {
   const importStatus = status.import?.status;
   switch (importStatus) {
@@ -213,8 +212,8 @@ function getPostUploadStatus(
       case 'ready-for-reinstall':
         return {
           content: <>
-            This {dataNoun} will be reinstalled within {VDI_REINSTALL_INTERVAL}
-            hours. Please check again soon.
+            This {dataNoun} will be reinstalled within
+            {vdiConfig.fullRunInterval}. Please check again soon.
           </>,
           icon: 'minus-circle',
         };
@@ -246,7 +245,8 @@ export default function UserDatasetStatus(props: Props) {
     projectId,
     lowercaseSingularDataNoun,
     displayName,
-    installTargets
+    installTargets,
+    props.vdiConfig.daemons.reconciler,
   );
 
   const link = `${baseUrl}/${userDataset.datasetId}`;

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { IconAlt as Icon, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Modal } from '@veupathdb/coreui';
@@ -6,8 +6,27 @@ import { FilledButton } from '@veupathdb/coreui';
 
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
+import { User } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
+import {
+  DatasetGetResponseBody,
+  DatasetListEntry,
+} from '../../Service/model/response-decoders';
+import { updateDatasetCommunityVisibility } from "../../Actions/UserDatasetsActions";
+import { DataNoun } from "../../Utils/types";
 
-export default function UserDatasetSharingModal(props) {
+export interface DatasetSharingModalProps {
+  readonly context: 'datasetDetails' | 'datasetsList';
+  readonly datasets: Array<DatasetListEntry | DatasetGetResponseBody>;
+  readonly dataNoun: DataNoun;
+  readonly onClose: () => void;
+  readonly updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
+  readonly updatePending: boolean;
+  readonly updateSuccessful: boolean;
+  readonly updateError: string | undefined;
+  readonly user: User;
+}
+
+export function DatasetSharingModal(props: DatasetSharingModalProps): React.ReactElement {
   const {
     datasets,
     onClose,
@@ -24,11 +43,11 @@ export default function UserDatasetSharingModal(props) {
 
   const totalOwnedDatasets = datasets.filter(
     (dataset) =>
-      dataset && dataset.ownerUserId && dataset.ownerUserId === user.id
+      dataset && dataset.owner.userId && dataset.owner.userId === user.id
   ).length;
 
   const totalCommunityDatasets = datasets.filter(
-    (dataset) => dataset.meta.visibility === 'public'
+    (dataset) => dataset.visibility === 'public'
   ).length;
 
   const totalNotOwnedDatasets = totalSelectedDatasets - totalOwnedDatasets;
@@ -103,7 +122,7 @@ export default function UserDatasetSharingModal(props) {
             text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
             onPress={() =>
               updateDatasetCommunityVisibility(
-                datasets.map((d) => d.id),
+                datasets.map((d) => d.datasetId),
                 true,
                 context
               )
@@ -120,7 +139,7 @@ export default function UserDatasetSharingModal(props) {
             text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
             onPress={() =>
               updateDatasetCommunityVisibility(
-                datasets.map((d) => d.id),
+                datasets.map((d) => d.datasetId),
                 false,
                 context
               )
@@ -145,6 +164,6 @@ export default function UserDatasetSharingModal(props) {
   );
 }
 
-function isAre(total) {
+function isAre(total: number) {
   return total === 1 ? 'is' : 'are';
 }

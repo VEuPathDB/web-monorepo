@@ -20,7 +20,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetDetails } from '../Utils/types';
+import { DatasetGetResponseBody } from '../Service/model/response-decoders';
 
 export const key = 'userDatasetDetail';
 
@@ -30,7 +30,7 @@ export const key = 'userDatasetDetail';
  */
 export type UserDatasetEntry = {
   isLoading: boolean;
-  resource?: DatasetDetails;
+  resource?: DatasetGetResponseBody;
 };
 
 export interface State {

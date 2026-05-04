@@ -1,39 +1,30 @@
-// import {
-//   ActionsObservable,
-//   combineEpics,
-//   StateObservable,
-// } from 'redux-observable';
-// import { Observable } from 'rxjs';
-// import { filter, mergeMap } from 'rxjs/operators';
-
-// import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-
 import {
   Action,
   trackUploadProgress,
   receiveBadUpload,
-  // requestUploadMessages,
-  // receiveUploadMessages,
-  // cancelCurrentUpload,
-  // clearMessages,
   receiveBadUploadHistoryAction,
   clearBadUpload,
 } from '../Actions/UserDatasetUploadActions';
 
-// import { assertIsVdiCompatibleWdkService } from '../Service';
-
-// import { StateSlice } from '../StoreModules/types';
-
 import { UserDatasetUpload } from '../Utils/types';
+import { ValidationErrors } from '../Service/model/response-decoders';
 
 export const key = 'userDatasetUpload';
 
-export type State = {
-  uploads?: Array<UserDatasetUpload>;
-  badUploadMessage?: { message: string; timestamp: number };
-  badAllUploadsActionMessage?: { message: string; timestamp: number };
-  uploadProgress?: { progress: number | null };
-};
+export interface State {
+  readonly uploads?: Array<UserDatasetUpload>;
+  readonly badUploadMessage?: BadUpload;
+  readonly badAllUploadsActionMessage?: { message: string; timestamp: number };
+  readonly uploadProgress?: { progress: number | null };
+}
+
+export type BadUpload = { readonly timestamp: number; } & (
+  | { type: 400, message: string; }
+  | { type: 422, errors: ValidationErrors; }
+  | { type: 500, message: string; }
+)
+
+
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
     case receiveBadUpload.type:
@@ -50,75 +41,3 @@ export function reduce(state: State = {}, action: Action): State {
       return state;
   }
 }
-
-// export const observe = combineEpics(
-//   // observeRequestUploadMessages,
-//   // observeCancelCurrentUpload,
-//   // observeClearMessages
-// );
-
-// function observeRequestUploadMessages(
-//   action$: ActionsObservable<Action>,
-//   state$: StateObservable<StateSlice>,
-//   dependencies: EpicDependencies
-// ): Observable<Action> {
-//   return action$.pipe(
-//     filter(requestUploadMessages.isOfType),
-//     mergeMap(async (action) => {
-//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
-
-//       try {
-//         const uploads = await dependencies.wdkService.listStatusDetails();
-//         return receiveUploadMessages(uploads);
-//       } catch (err) {
-//         return receiveBadUploadHistoryAction(
-//           'Could not retrieve upload history\n' + err
-//         );
-//       }
-//     })
-//   );
-// }
-
-// function observeCancelCurrentUpload(
-//   action$: ActionsObservable<Action>,
-//   state$: StateObservable<StateSlice>,
-//   dependencies: EpicDependencies
-// ): Observable<Action> {
-//   return action$.pipe(
-//     filter(cancelCurrentUpload.isOfType),
-//     mergeMap(async (action) => {
-//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
-
-//       try {
-//         await dependencies.wdkService.cancelOngoingUpload(action.payload.id);
-//         return requestUploadMessages();
-//       } catch (err) {
-//         return receiveBadUploadHistoryAction(
-//           'Could not cancel current upload\n' + err
-//         );
-//       }
-//     })
-//   );
-// }
-
-// function observeClearMessages(
-//   action$: ActionsObservable<Action>,
-//   state$: StateObservable<StateSlice>,
-//   dependencies: EpicDependencies
-// ): Observable<Action> {
-//   return action$.pipe(
-//     filter(clearMessages.isOfType),
-//     mergeMap(async (action) => {
-//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
-
-//       try {
-//         await dependencies.wdkService.clearMessages(action.payload.ids);
-//         return requestUploadMessages();
-//       } catch (err) {
-//         return receiveBadUploadHistoryAction(
-//           'Could not clear messages\n' + err
-//         );
-//       }
-//     })
-//   );
-// }

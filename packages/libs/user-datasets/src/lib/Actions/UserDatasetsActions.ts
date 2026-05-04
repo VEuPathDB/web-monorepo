@@ -16,12 +16,13 @@ import {
 import { validateVdiCompatibleThunk } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import { DatasetDetails, DatasetListEntry } from '../Utils/types';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { DatasetPatchRequest } from "../Service/model/requests";
+import * as vdi from "../Service/model/response-decoders";
 
 export type Action =
   | DetailErrorAction
@@ -67,13 +68,13 @@ export const LIST_RECEIVED = 'user-dataset/list-received';
 export type ListReceivedAction = {
   type: typeof LIST_RECEIVED;
   payload: {
-    userDatasets: DatasetListEntry[];
+    userDatasets: vdi.DatasetListEntry[];
     filterByProject: boolean;
   };
 };
 
 export function listReceived(
-  userDatasets: DatasetListEntry[],
+  userDatasets: vdi.DatasetListEntry[],
   filterByProject: boolean
 ): ListReceivedAction {
   return {
@@ -128,12 +129,12 @@ export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success'
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
   payload: {
-    userDataset: DatasetListEntry;
+    userDataset: vdi.DatasetListEntry;
   };
 };
 
 export function listItemUpdateSuccess(
-  userDataset: DatasetListEntry
+  userDataset: vdi.DatasetListEntry
 ): ListItemUpdateSuccessAction {
   return {
     type: LIST_ITEM_UPDATE_SUCCESS,
@@ -189,13 +190,13 @@ export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
   payload: {
     id: string;
-    userDataset?: DatasetDetails;
+    userDataset?: vdi.DatasetGetResponseBody;
   };
 };
 
 export function detailReceived(
   id: string,
-  userDataset?: DatasetDetails,
+  userDataset?: vdi.DatasetGetResponseBody
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
@@ -247,12 +248,12 @@ export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
-    userDataset: DatasetDetails;
+    userDataset: vdi.DatasetGetResponseBody;
   };
 };
 
 export function detailUpdateSuccess(
-  userDataset: DatasetDetails
+  userDataset: vdi.DatasetGetResponseBody
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
@@ -498,8 +499,10 @@ export function updateDatasetCommunityVisibility(
         try {
           await Promise.all(
             datasetIds.map((datasetId) =>
-              wdkService.updateUserDataset(datasetId, {
-                visibility: isVisibleToCommunity ? 'public' : 'private',
+              wdkService.vdi.patchDatasetDetails(datasetId, {
+                visibility: {
+                  value: isVisibleToCommunity ? 'public' : 'private'
+                },
               })
             )
           );
@@ -554,7 +557,7 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         // ignore error and default to false
         () => false
       ),
-      wdkService.getCurrentUserDatasets(),
+      wdkService.vdi.getDatasetList(),
     ]).then(([filterByProject, userDatasets]) =>
       listReceived(userDatasets, filterByProject), listErrorReceived));
 }
@@ -565,8 +568,8 @@ export function loadUserDatasetList() {
 
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
-    wdkService.getUserDataset(id).then(
-      (ud: DatasetDetails) => detailReceived(id, ud),
+    wdkService.vdi.getDatasetDetails(id).then(
+      (ud: vdi.DatasetGetResponseBody) => detailReceived(id, ud),
       (error: FetchClientError) => detailError(error)
     )
   );
@@ -598,10 +601,10 @@ export function shareUserDatasets(
     updateSharingDatasetPending(true),
     Promise.all(
       requests.map((req) =>
-        wdkService.editUserDatasetSharing(
-          'grant',
+        wdkService.vdi.putDatasetShareOffer(
           req.datasetId,
-          req.recipientId
+          req.recipientId,
+          'grant',
         )
       )
     ).then(() => {
@@ -630,8 +633,8 @@ export function unshareUserDatasets(
     DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction
   >(({ wdkService }) => [
     updateSharingDatasetPending(true),
-    wdkService
-      .editUserDatasetSharing('revoke', userDatasetId, recipientUserId)
+    wdkService.vdi
+      .putDatasetShareOffer(userDatasetId, recipientUserId, 'revoke')
       .then(() => {
         if (context === 'datasetDetails') {
           return loadUserDatasetDetailWithoutLoadingIndicator(userDatasetId);
@@ -644,13 +647,13 @@ export function unshareUserDatasets(
 }
 
 export function updateDatasetListItem(
-  dataset: DatasetListEntry,
-  patch: Partial<DatasetListEntry>,
+  dataset: vdi.DatasetListEntry,
+  patch: DatasetPatchRequest,
 ) {
   return validateVdiCompatibleThunk<ListItemUpdateAction>(({ wdkService }) => [
     listItemUpdating(),
-    wdkService
-      .updateUserDataset(dataset.datasetId, patch)
+    wdkService.vdi
+      .patchDatasetDetails(dataset.datasetId, patch)
       .then(
         () => listItemUpdateSuccess({ ...dataset, ...patch }),
         listItemUpdateError,
@@ -659,13 +662,13 @@ export function updateDatasetListItem(
 }
 
 export function updateUserDatasetDetail(
-  userDataset: DatasetDetails,
-  patch: Partial<DatasetDetails>,
+  userDataset: vdi.DatasetGetResponseBody,
+  patch: DatasetPatchRequest,
 ) {
   return validateVdiCompatibleThunk<DetailUpdateAction>(({ wdkService }) => [
     detailUpdating(),
-    wdkService
-      .updateUserDataset(userDataset.datasetId, patch)
+    wdkService.vdi
+      .patchDatasetDetails(userDataset.datasetId, patch)
       .then(
         () => detailUpdateSuccess({ ...userDataset, ...patch }),
         detailUpdateError
@@ -680,8 +683,8 @@ export function removeUserDataset(
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),
-      wdkService
-        .removeUserDataset(datasetId)
+      wdkService.vdi
+        .deleteDataset(datasetId)
         .then(
           () => [
             detailRemoveSuccess(datasetId),

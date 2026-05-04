@@ -22,16 +22,10 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import {
-  DataNoun,
-  DatasetListEntry,
-  DatasetListShareUser,
-  DatasetTypeOutput,
-} from '../../Utils/types';
+import { DataNoun } from '../../Utils/types';
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
@@ -47,10 +41,18 @@ import {
   removeUserDataset,
   updateDatasetListItem,
 } from '../../Actions/UserDatasetsActions';
-import { datasetUserFullName } from '../../Utils/formatting';
+import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import {
+  DatasetListEntry,
+  DatasetListShareUser,
+  DatasetTypeOutput,
+  VdiServiceConfig,
+} from '../../Service/model/response-decoders';
+import { DatasetSharingModal } from "../Sharing/UserDatasetCommunityModal";
 
 export interface DatasetListProps {
   baseUrl: string;
+  readonly vdiConfig: VdiServiceConfig;
   user: User;
   location: any;
   projectId: string;
@@ -77,7 +79,6 @@ export interface DatasetListProps {
   removeUserDataset: typeof removeUserDataset;
   updateDatasetListItem: typeof updateDatasetListItem;
   updateProjectFilter: (filterByProject: boolean) => any;
-  quotaSize: number;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
   communityModalOpen: boolean;
@@ -190,7 +191,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   }
 
   renderStatusCell(cellProps: MesaDataCellProps) {
-    const { baseUrl, projectId, projectName, dataNoun } = this.props;
+    const { baseUrl, projectId, projectName, dataNoun, vdiConfig } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -200,6 +201,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         projectId={projectId}
         displayName={projectName}
         dataNoun={dataNoun}
+        vdiConfig={vdiConfig}
       />
     );
   }
@@ -542,7 +544,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   filterAndSortRows(rows: DatasetListEntry[]): DatasetListEntry[] {
     const { searchTerm, uiState } = this.state;
-    const { projectName, projectId, filterByProject } = this.props;
+    const { projectId, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
 
     let result = rows;
@@ -630,7 +632,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       shareUserDatasets,
       unshareUserDatasets,
       filterByProject,
-      quotaSize,
+      vdiConfig,
       dataNoun,
       sharingModalOpen,
       sharingDatasetPending,
@@ -673,6 +675,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       .map((ud) => ud.fileSizeTotal ?? 0)
       .reduce(add, 0);
 
+    const quotaSize = vdiConfig.api.userMaxStorageSize;
     const totalPercent = totalSize / quotaSize;
 
     const offerProjectToggle = userDatasets.some(({ installTargets }) =>
@@ -702,7 +705,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                   />
                 ) : null}
                 {this.props.communityModalOpen && enablePublicUserDatasets ? (
-                  <CommunityModal
+                  <DatasetSharingModal
                     user={user}
                     datasets={selectedDatasets}
                     context="datasetsList"
@@ -748,7 +751,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
                   <Icon fa="info-circle" /> {bytesToHuman(totalSize)} (
                   {normalizePercentage(totalPercent)}%) of{' '}
-                  {bytesToHuman(quotaSize)} used
+                  {formatFileSize(quotaSize)} used
                 </div>
               </div>
             )}

@@ -16,7 +16,7 @@ import {
   LIST_ITEM_UPDATE_SUCCESS,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetListEntry } from '../Utils/types';
+import { DatasetListEntry } from '../Service/model/response-decoders';
 
 export const key = 'userDatasetList';
 

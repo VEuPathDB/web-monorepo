@@ -25,7 +25,6 @@ import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
-import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 import { DataNoun } from '../Utils/types';
@@ -60,7 +59,6 @@ type OwnProps = {
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
-  showExtraMetadata: boolean; // Used in user dataset detail view
   includeAllLink: boolean;
   includeNameHeader: boolean;
 };
@@ -130,9 +128,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   isRenderDataLoaded() {
     const { userDatasetDetails: entry, user, questions, config } = this.props.stateProps;
     if (user && user.isGuest) return true;
-    return entry?.isLoading === false && user && questions && config
-      ? true
-      : false;
+    return !!(entry?.isLoading === false && user && questions && config);
   }
 
   getDetailView(type: any) {
@@ -229,7 +225,6 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       location: window.location,
       updateError,
       removeUserDataset,
-      quotaSize,
       userDatasetUpdating,
       shareUserDatasets,
       unshareUserDatasets,
