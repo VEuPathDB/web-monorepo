@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
-import { pure } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import DatasetGraph from '../../components/DatasetGraph';
 import { projectId } from '../../config';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
@@ -29,7 +27,7 @@ export function formatLink(link, opts) {
 }
 
 function renderPrimaryPublication(publication) {
-  return formatLink(publication.pubmed_link, { newWindow: true });
+  return formatLink(publication.publication_link, { newWindow: true });
 }
 
 function renderPrimaryContact(contact, institution, email, record) {
@@ -43,110 +41,75 @@ function renderPrimaryContact(contact, institution, email, record) {
   );
 }
 
-function renderSourceVersion(version, newcategory) {
-  if (newcategory === 'Genomes') {
-    return (
-      <span>
-        {version}&nbsp;
-        <HelpIcon>
-          {'The source versions for the assembly, ' +
-            'structural annotation and functional annotation.  ' +
-            'See the Dataset Release History table for more details.'}
-        </HelpIcon>
-      </span>
-    );
-  } else {
-    return (
-      <span>
-        {version.version}&nbsp;
-        <HelpIcon>
-          {"The data provider's version number or publication date, from" +
-            ' the site the data was acquired. In the rare case neither is available,' +
-            ' the download date.'}
-        </HelpIcon>
-      </span>
-    );
-  }
-}
-
-function getSourceVersion(attributes, tables) {
-  let version;
-  if (attributes.newcategory === 'Genomes') {
-    let g_version = attributes.genome_version
-      ? attributes.genome_version
-      : 'n/a';
-    let a_version = attributes.annotation_version
-      ? attributes.annotation_version
-      : 'n/a';
-    let fa_version = attributes.functional_annotation_version
-      ? attributes.functional_annotation_version
-      : 'n/a';
-
-    version = g_version + ', ' + a_version + ', ' + fa_version;
-  } else {
-    version = tables.Version && tables.Version[0];
-  }
-
-  return version;
-}
-
 export function RecordHeading(props) {
   let { record, questions, recordClasses } = props;
   let { attributes, tables } = record;
   let {
+    primary_publication,
+    primary_affiliation,
+    primary_contact_name,
+    primary_country,
+    primary_email,
+    name,
+    creation_date,
     summary,
-    owner_name,
-    owner_organization,
-    category,
+    accessibility
   } = attributes;
 
-  let version = getSourceVersion(attributes, tables);
-  let primaryPublication = getPrimaryPublication(record);
+  let datasetID = record.id[0].value;
 
   return (
     <>
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-
-          {category ? (
+          <dt>Primary Publication:</dt>
+          {primary_publication ? (
             <>
-              <dt>Type</dt>
-              <dd>{category}</dd>
+              <dd>
+                {primary_publication}
+              </dd>
             </>
           ) : null}
 
-
-          {owner_name && owner_organization ? (
+          <dt>Primary Contact:</dt>
+          {primary_contact_name ? (
             <>
-              <dt>Primary contact</dt>
-              <dd>owner_name + ', ' + owner_organization</dd>
+              <dd>
+                {primary_contact_name}
+              </dd>
             </>
           ) : null}
 
+          <dt>VEuPathDB Dataset ID:</dt>
+          <dd>{datasetID}</dd>
+          
+          <dt>Dataset Version / Date:</dt>
+          <dd>v1, {creation_date}</dd>
 
-          <dt>Summary</dt>
+	  <dt>Summary:</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: summary }}
           />
+
+	  <dt>Data Accessibility:</dt>
+          <dd>{accessibility} 
+	    {accessibility === 'private' ? (
+              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
+                This dataset can only be discovered, explored, and downloaded by the owner and explicitly invited collaborators. 
+              </div> ) : (
+              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
+                No access restrictions; anyone can download the data without registering.
+              </div>
+	    )}
+	  </dd>
 
         </dl>
       </div>
     </>
   );
 }
-
-const DatasetGraphTable = pure(function DatasetGraphTable(props) {
-  return (
-    <props.DefaultComponent
-      {...props}
-      childRow={(childProps) => (
-        <DatasetGraph rowData={props.value[childProps.rowIndex]} />
-      )}
-    />
-  );
-});
 
 function References(props) {
   let { questions, recordClasses } = props;
@@ -221,134 +184,7 @@ export function RecordTable(props) {
   if (props.table.name === 'References') {
     return <ConnectedReferences {...props} />;
   }
-  if (props.table.name === 'ExampleGraphs') {
-    return <DatasetGraphTable {...props} />;
-  }
   return <props.DefaultComponent {...props} />;
 }
 
-export function RecordUI({ DefaultComponent, ...props }) {
-  return (
-    <React.Fragment>
-      <DefaultComponent {...props} />
-      <JsonLinkedData {...props} />
-    </React.Fragment>
-  );
-}
 
-function JsonLinkedData(props) {
-  const { record } = props;
-  const primaryPublication = getPrimaryPublication(record);
-  const contacts =
-    record.tables.Contacts &&
-    record.tables.Contacts.map((row) => ({
-      '@type': 'Person',
-      name: row.contact_name,
-      affiliation: row.affiliation,
-    }));
-
-  const metadata = {
-    '@context': 'http://schema.org/',
-    '@type': 'Dataset',
-    name: record.displayName,
-    description: record.attributes.summary,
-    publication: primaryPublication && {
-      name: primaryPublication.pubmed_link.displayText,
-      url: primaryPublication.pubmed_link.url,
-    },
-    contributor: contacts,
-  };
-
-  return <script type="application/ld+json">{JSON.stringify(metadata)}</script>;
-}
-
-// helpers
-function getPrimaryPublication(record) {
-  const { tables } = record;
-  return tables.Publications && tables.Publications[0];
-}
-
-function StudyAccessOverviewItem(props) {
-  const { study_access, record } = props;
-  const { loading, permissions } = usePermissions();
-  const isUserApproved =
-    !loading &&
-    isUserApprovedForAction(
-      permissions,
-      record.attributes.dataset_id,
-      'download'
-    );
-
-  const attemptAction = useAttemptActionCallback();
-
-  const requestAccessButton = (
-    <button
-      type="button"
-      className="link"
-      onClick={() =>
-        attemptAction('download', {
-          studyId: record.attributes.dataset_id,
-        })
-      }
-    >
-      request access
-    </button>
-  );
-
-  function makeMessage() {
-    if (typeof record.attributes.custom_download_tab === 'string') {
-      return (
-        <Banner
-          banner={{
-            type: 'info',
-            message: safeHtml(
-              record.attributes.custom_download_tab,
-              null,
-              'div'
-            ),
-          }}
-        />
-      );
-    } else {
-      switch (study_access) {
-        case 'Prerelease':
-          return 'Data downloads for this study are not yet available on this website.';
-        case 'Public':
-          return 'Data downloads for this study are public. Data are available without logging in.';
-        case 'Controlled':
-          return isUserApproved ? (
-            'You have been granted access to download the data.'
-          ) : (
-            <>
-              To download data, please {requestAccessButton}. Data will be
-              available immediately after submitting the request.
-            </>
-          );
-        case 'Protected':
-        default:
-          return isUserApproved ? (
-            'You have been granted access to download the data.'
-          ) : (
-            <>
-              To download data, please {requestAccessButton}. Data will be
-              available upon study team review and approval.
-            </>
-          );
-      }
-    }
-  }
-
-  return (
-    <>
-      <dt>Data accessibility</dt>
-      <dd>
-        {study_access}
-        {loading ? null : (
-          <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-            {makeMessage()}
-          </div>
-        )}
-      </dd>
-    </>
-  );
-}
