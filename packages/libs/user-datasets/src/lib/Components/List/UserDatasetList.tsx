@@ -167,7 +167,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ) {
     const { updateDatasetListItem } = this.props;
     return (value: DatasetListEntry[K]) =>
-      updateDatasetListItem(dataset, { [attrKey]: value });
+      updateDatasetListItem(
+        dataset,
+        { [attrKey]: value },
+        { [attrKey]: { value } },
+      );
   }
 
   renderSharedWithCell(cellProps: MesaDataCellProps) {

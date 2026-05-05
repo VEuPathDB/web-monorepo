@@ -54,43 +54,43 @@ export function optionalValuePatch<T>(value?: T): OptionalValuePatch<T> {
 }
 
 export interface StudyCharacteristicsPatch {
-  studyDesign?: OptionalValuePatch<string>;
-  studyType?: OptionalValuePatch<string>;
-  countries?: OptionalValuePatch<Array<string>>;
-  years?: OptionalValuePatch<vdi.SampleYearRange>;
-  studySpecies?: OptionalValuePatch<Array<string>>;
-  outcomes?: OptionalValuePatch<Array<string>>;
-  associatedFactors?: OptionalValuePatch<Array<string>>;
-  participantAges?: OptionalValuePatch<string>;
-  sampleTypes?: OptionalValuePatch<Array<string>>;
+  readonly studyDesign?: OptionalValuePatch<string>;
+  readonly studyType?: OptionalValuePatch<string>;
+  readonly countries?: OptionalValuePatch<Array<string>>;
+  readonly years?: OptionalValuePatch<vdi.SampleYearRange>;
+  readonly studySpecies?: OptionalValuePatch<Array<string>>;
+  readonly outcomes?: OptionalValuePatch<Array<string>>;
+  readonly associatedFactors?: OptionalValuePatch<Array<string>>;
+  readonly participantAges?: OptionalValuePatch<string>;
+  readonly sampleTypes?: OptionalValuePatch<Array<string>>;
 }
 
 export interface ExternalIdentifiersPatch {
-  dois?: OptionalValuePatch<Array<vdi.DOIReference>>;
-  hyperlinks?: OptionalValuePatch<Array<vdi.DatasetHyperlink>>;
-  bioprojectIds?: OptionalValuePatch<Array<vdi.BioProjectId>>;
+  readonly dois?: OptionalValuePatch<Array<vdi.DOIReference>>;
+  readonly hyperlinks?: OptionalValuePatch<Array<vdi.DatasetHyperlink>>;
+  readonly bioprojectIds?: OptionalValuePatch<Array<vdi.BioProjectId>>;
 }
 
 export interface DatasetPatchRequest {
-  type?: ValuePatch<vdi.DatasetTypeReference>;
-  visibility?: ValuePatch<vdi.DatasetVisibility>;
-  name?: ValuePatch<string>;
-  summary?: ValuePatch<string>;
-  description?: OptionalValuePatch<string>;
-  publications?: OptionalValuePatch<Array<vdi.DatasetPublication>>;
-  contacts?: OptionalValuePatch<Array<vdi.DatasetContact>>;
-  projectName?: OptionalValuePatch<string>;
-  programName?: OptionalValuePatch<string>;
-  linkedDatasets?: OptionalValuePatch<Array<vdi.LinkedDataset>>;
-  experimentalOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
-  hostOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
-  studyCharacteristics?: StudyCharacteristicsPatch;
-  externalIdentifiers?: ExternalIdentifiersPatch;
-  funding?: OptionalValuePatch<Array<vdi.DatasetFundingAward>>;
-  shortAttribution?: OptionalValuePatch<string>;
-  daysForApproval?: OptionalValuePatch<number>;
-  dataDisclaimer?: OptionalValuePatch<string>;
-  datasetSources?: OptionalValuePatch<Array<vdi.DatasetSource>>;
+  readonly type?: ValuePatch<vdi.DatasetTypeReference>;
+  readonly visibility?: ValuePatch<vdi.DatasetVisibility>;
+  readonly name?: ValuePatch<string>;
+  readonly summary?: ValuePatch<string>;
+  readonly description?: OptionalValuePatch<string>;
+  readonly publications?: OptionalValuePatch<Array<vdi.DatasetPublication>>;
+  readonly contacts?: OptionalValuePatch<Array<vdi.DatasetContact>>;
+  readonly projectName?: OptionalValuePatch<string>;
+  readonly programName?: OptionalValuePatch<string>;
+  readonly linkedDatasets?: OptionalValuePatch<Array<vdi.LinkedDataset>>;
+  readonly experimentalOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
+  readonly hostOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
+  readonly studyCharacteristics?: StudyCharacteristicsPatch;
+  readonly externalIdentifiers?: ExternalIdentifiersPatch;
+  readonly funding?: OptionalValuePatch<Array<vdi.DatasetFundingAward>>;
+  readonly shortAttribution?: OptionalValuePatch<string>;
+  readonly daysForApproval?: OptionalValuePatch<number>;
+  readonly dataDisclaimer?: OptionalValuePatch<string>;
+  readonly datasetSources?: OptionalValuePatch<Array<vdi.DatasetSource>>;
 }
 
 // endregion Patch Dataset

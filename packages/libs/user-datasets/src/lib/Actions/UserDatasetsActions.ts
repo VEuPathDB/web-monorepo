@@ -647,30 +647,31 @@ export function unshareUserDatasets(
 }
 
 export function updateDatasetListItem(
-  dataset: vdi.DatasetListEntry,
+  original: vdi.DatasetListEntry,
+  updates: Partial<vdi.DatasetListEntry>,
   patch: DatasetPatchRequest,
 ) {
   return validateVdiCompatibleThunk<ListItemUpdateAction>(({ wdkService }) => [
     listItemUpdating(),
-    wdkService.vdi
-      .patchDatasetDetails(dataset.datasetId, patch)
+    wdkService.vdi.patchDatasetDetails(original.datasetId, patch)
       .then(
-        () => listItemUpdateSuccess({ ...dataset, ...patch }),
-        listItemUpdateError,
-      )
+        () => listItemUpdateSuccess({ ...original, ...updates }),
+        listItemUpdateError
+      ),
   ]);
 }
 
 export function updateUserDatasetDetail(
-  userDataset: vdi.DatasetGetResponseBody,
+  original: vdi.DatasetGetResponseBody,
+  updates: Partial<vdi.DatasetGetResponseBody>,
   patch: DatasetPatchRequest,
 ) {
   return validateVdiCompatibleThunk<DetailUpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService.vdi
-      .patchDatasetDetails(userDataset.datasetId, patch)
+      .patchDatasetDetails(original.datasetId, patch)
       .then(
-        () => detailUpdateSuccess({ ...userDataset, ...patch }),
+        () => detailUpdateSuccess({ ...original, ...updates }),
         detailUpdateError
       ),
   ]);

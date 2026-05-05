@@ -1,16 +1,5 @@
 import React, { ReactNode } from 'react';
 
-import {
-  TypeOf,
-  array,
-  intersection,
-  number,
-  type,
-  partial,
-  string,
-} from 'io-ts';
-import { DatasetDependency } from "../Service/model/response-decoders";
-
 export type Consumer<T> = (value: T) => void;
 export type BiConsumer<T1, T2> = (value1: T1, value2: T2) => void;
 
@@ -36,10 +25,6 @@ export interface UserDatasetUpload {
   isUserError: boolean;
 }
 
-export type DatasetUploadTypeConfig<T extends string> = {
-  [K in T]: DatasetUploadTypeConfigEntry<K>;
-};
-
 export interface DatasetUploadTypeConfigEntry<T extends string> {
   type: T;
   displayName: string;
@@ -55,11 +40,6 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     description?: {
       inputProps: Partial<React.TextareaHTMLAttributes<HTMLTextAreaElement>>;
     };
-    dependencies?: {
-      label: ReactNode;
-      render: (props: DependencyProps) => ReactNode;
-      required?: boolean;
-    };
     hideRelatedOrganisms?: boolean;
     uploadMethodConfig: {
       file?: FileUploadConfig;
@@ -68,11 +48,6 @@ export interface DatasetUploadTypeConfigEntry<T extends string> {
     };
     renderInfo?: () => ReactNode;
   };
-}
-
-export interface DependencyProps {
-  value: DatasetDependency[];
-  onChange: (value: DatasetDependency[]) => void;
 }
 
 export interface FileUploadConfig {
@@ -101,28 +76,6 @@ export type DataNoun = {
   singular: string;
   plural: string;
 };
-
-export type UserDatasetFormContent = TypeOf<typeof userDatasetFormContent>;
-export const userDatasetFormContent = intersection([
-  type({
-    name: string,
-    summary: string,
-  }),
-  partial({
-    shortAttribution: string,
-    description: string,
-  }),
-]);
-partial({
-  upload: type({
-    zipSize: number,
-    contents: array(type({ fileName: string, fileSize: number })),
-  }),
-  install: type({
-    zipSize: number,
-    contents: array(type({ fileName: string, fileSize: number })),
-  }),
-});
 // export async function getEnabledTypeConfigs(
 //   projectId: string,
 //   serviceUrl: string,

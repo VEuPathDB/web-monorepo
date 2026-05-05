@@ -2,6 +2,8 @@ import { ReactElement, ReactNode } from 'react';
 import { UploadInputConfig } from './UploadFormConfig';
 import { DatasetTypeConfig } from './DatasetTypeConfig';
 import { UploadFormVerbiage } from "./UploadFormVerbiage";
+import { DatasetDependency } from "../../../Service/model/response-decoders";
+import { Consumer } from "../../../Utils";
 
 export interface DatasetUploadConfig<T extends DatasetTypeConfig | undefined = DatasetTypeConfig> {
   readonly verbiage: UploadFormVerbiage;
@@ -23,5 +25,17 @@ export interface DatasetUploadConfig<T extends DatasetTypeConfig | undefined = D
    *
    * @param inputField The default upload form file input element.
    */
-  readonly renderFileInput?: (inputField: ReactElement) => ReactNode;
+  readonly overrideFileInput?: (inputField: ReactElement) => ReactNode;
+
+  readonly dependencies?: DependenciesConfig;
+}
+
+export interface DependencyInputProps {
+  readonly dependencies: readonly DatasetDependency[];
+  readonly setDependencies: Consumer<readonly DatasetDependency[]>;
+}
+
+export interface DependenciesConfig {
+  readonly required: boolean;
+  readonly renderInput: (props: DependencyInputProps) => ReactNode;
 }

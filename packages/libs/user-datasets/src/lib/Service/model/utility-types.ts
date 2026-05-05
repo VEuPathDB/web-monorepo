@@ -4,3 +4,5 @@ export interface DatasetUploads {
   readonly documentFiles?: File[];
   readonly dataPropertiesFiles?: File[];
 }
+
+export type DatasetZipType = 'upload' | 'install';

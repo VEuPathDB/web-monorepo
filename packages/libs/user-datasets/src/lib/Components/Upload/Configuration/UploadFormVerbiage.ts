@@ -8,6 +8,7 @@ interface InputConfig {
 interface CoreInputConfigs {
   readonly name?: InputConfig;
   readonly summary?: InputConfig;
+  readonly dependencies?: string;
 }
 
 export interface UploadFormVerbiage {

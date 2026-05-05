@@ -53,8 +53,8 @@ import {
   DatasetShareOffer,
   VdiServiceConfig,
 } from '../../Service/model/response-decoders';
-import { ZipFileType } from '../../../../lib/Utils/types';
 import { isVdiCompatibleWdkService } from '../../Service';
+import { DatasetZipType } from "../../Service/model/utility-types";
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -179,6 +179,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
       const { userDataset, updateUserDatasetDetail } = this.props;
 
       let updatedMeta;
+      let patchBody;
 
       if (index !== undefined && Number.isInteger(index) && index >= 0) {
         // Handle nested array case, for example meta.contacts[index].name
@@ -195,18 +196,21 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
             arrayField[index] = value;
           }
           updatedMeta = { [key]: arrayField };
+          patchBody = { [key]: { value: arrayField } };
         } else {
           // Add new entry to the array
           // We use this case to add new empty objects to the array.
           arrayField.push(value);
           updatedMeta = { [key]: arrayField };
+          patchBody = { [key]: { value: arrayField } };
         }
       } else {
         // Regular key-value update.
         updatedMeta = { [key]: value };
+        patchBody = { [key]: { value } };
       }
 
-      return updateUserDatasetDetail(userDataset, updatedMeta);
+      return updateUserDatasetDetail(userDataset, updatedMeta, patchBody);
     };
   }
 
@@ -555,7 +559,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
     );
   }
 
-  getFileTableColumns(fileType: ZipFileType): MesaColumn<ZipFileRow>[] {
+  getFileTableColumns(fileType: DatasetZipType): MesaColumn<ZipFileRow>[] {
     const { userDataset, config } = this.props;
     const { projectId } = config;
     const { status } = userDataset;

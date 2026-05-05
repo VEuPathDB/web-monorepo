@@ -4,7 +4,7 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { DatasetTypeConfig, DatasetTypeSelection } from './Configuration';
 import { UploadTypeMenu } from './UploadTypeMenu';
-import UploadFormController from './UploadForm';
+import { UploadFormController } from './UploadForm';
 import { configureFormProps, UploadFormConfigurators } from "./Configuration/form-configs";
 import { VdiService } from '../../Service';
 import { isSameDataType, parseDataTypeString } from "./Configuration/data-types";
