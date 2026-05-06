@@ -12,7 +12,7 @@ import { EMPTY, Observable } from 'rxjs';
 import { PageTransitioner } from '../Utils/PageTransitioner';
 import { ParamValueStore } from '../Utils/ParamValueStore';
 import WdkService from '../Service/WdkService';
-import { wdkMiddleware } from './WdkMiddleware';
+import { wdkMiddleware } from '../Core/WdkMiddleware';
 import { catchError, startWith } from 'rxjs/operators';
 import { notifyUnhandledError } from '../Actions/UnhandledErrorActions';
 

@@ -5,6 +5,7 @@ import { getChangeHandler } from '../../Utils/ComponentUtils';
 import { Ontology } from '../../Utils/OntologyUtils';
 import { Question, RecordClass } from '../../Utils/WdkModel';
 import { State } from '../../StoreModules/DownloadFormStoreModule';
+import ReporterSortMessage from '../../Views/ReporterForm/ReporterSortMessage';
 import {
   addPk,
   getAllReportScopedAttributes,
@@ -12,7 +13,7 @@ import {
   getAttributeTree,
   getAttributesChangeHandler,
   getTableTree,
-} from './reporterUtils';
+} from '../../Views/ReporterForm/reporterUtils';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 type Props<T, U> = {
@@ -33,6 +34,7 @@ function WdkServiceJsonReporterForm<T extends {}, U extends {}>(
   props: Props<T, U>
 ) {
   let {
+    scope,
     question,
     recordClass,
     ontology,

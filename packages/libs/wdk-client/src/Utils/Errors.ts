@@ -91,7 +91,6 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
       error,
       info,
     };
-
   return {
     name: error instanceof Error ? error.name : 'runtime error',
     type: 'runtime',

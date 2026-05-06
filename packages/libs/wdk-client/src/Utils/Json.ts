@@ -7,7 +7,7 @@ import {
   values,
 } from 'lodash';
 
-import { Seq } from './IterableUtils';
+import { Seq } from '../Utils/IterableUtils';
 import { makeCommonErrorMessage } from './Errors';
 
 /**
@@ -130,9 +130,9 @@ export function field<T, S extends string>(fieldName: S, decoder: Decoder<T>) {
   };
 }
 
-export function record<T>(decoderRecord: {
-  [K in keyof T]: Decoder<T[K]>;
-}): Decoder<T> {
+export function record<T>(
+  decoderRecord: { [K in keyof T]: Decoder<T[K]> }
+): Decoder<T> {
   return function decodeRecord(t: any): Result<T> {
     if (!isPlainObject(t)) return err(t, `object`);
     for (const key in decoderRecord) {
