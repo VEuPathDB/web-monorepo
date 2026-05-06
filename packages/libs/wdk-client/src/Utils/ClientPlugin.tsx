@@ -5,6 +5,7 @@ import { WdkService } from '../Core';
 import { useWdkService } from '../Hooks/WdkServiceHook';
 import { Parameter, Question, RecordClass } from '../Utils/WdkModel';
 import NotFound from '../Views/NotFound/NotFound';
+import { ServiceError } from '../Service/ServiceError';
 
 export type PluginType =
   | 'attributeAnalysis'
@@ -122,7 +123,7 @@ function makeCompositePluginComponentUncached<T>(
     if (resolvedReferences == null) return <>{props.fallback}</> ?? null;
 
     if ('error' in resolvedReferences) {
-      return resolvedReferences.error.status === 404 ? (
+      return (resolvedReferences.error as ServiceError).status === 404 ? (
         <NotFound />
       ) : (
         <LoadError />
