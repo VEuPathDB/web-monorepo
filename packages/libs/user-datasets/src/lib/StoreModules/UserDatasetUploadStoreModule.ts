@@ -7,7 +7,7 @@ import {
 } from '../Actions/UserDatasetUploadActions';
 
 import { UserDatasetUpload } from '../Utils/types';
-import { ValidationErrors } from '../Service/model/response-decoders';
+import { ValidationErrors } from '../Service';
 
 export const key = 'userDatasetUpload';
 
@@ -23,7 +23,6 @@ export type BadUpload = { readonly timestamp: number; } & (
   | { type: 422, errors: ValidationErrors; }
   | { type: 500, message: string; }
 )
-
 
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {

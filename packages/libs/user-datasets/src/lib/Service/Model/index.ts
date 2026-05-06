@@ -1,36 +1,40 @@
-export { VdiService } from './VdiService';
-export { useVdiService } from './utils/use-vdi';
-export {
-  type VdiCompatibleWdkService,
-  isVdiCompatibleWdkService,
-  wrapWdkService,
-  validateVdiCompatibleThunk,
-} from './utils/compatibility';
+export type {
+  DatasetPatchRequest,
+  DatasetPostDetails,
+  DatasetPutDetails,
+  PostCharacteristics,
+  PostDatasetSource,
+} from './requests';
 
 export type {
   DatasetContact,
   DatasetDependency,
+  DatasetFileListing,
   DatasetGetResponseBody,
   DatasetId,
   DatasetListEntry,
   DatasetListShareUser,
-  DatasetPostDetails,
   DatasetPostResponseBody,
+  DatasetPutResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,
   DatasetTypeOutput,
-  DatasetUploads,
   DatasetUploadStatusInfo,
   DatasetUser,
-  DatasetZipType,
   PluginDataType,
-  PostCharacteristics,
-  PostDatasetSource,
   SampleYearRange,
+  ShareOfferAction,
+  ShareOfferListEntry,
   ValidationErrors,
   VdiPluginConfig,
   VdiReconcilerConfig,
   VdiServiceConfig,
-  VdiServiceFeatures,
   VdiServiceMetadata,
-} from './Model';
+  VdiServiceFeatures,
+  VdiUserMetadata,
+} from './response-decoders';
+
+export type {
+  DatasetUploads,
+  DatasetZipType,
+} from './utility-types';

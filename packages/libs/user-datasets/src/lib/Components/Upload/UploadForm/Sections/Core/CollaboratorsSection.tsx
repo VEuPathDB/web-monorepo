@@ -2,22 +2,22 @@ import { ReactElement } from 'react';
 import { partialRight } from 'lodash';
 
 import { InputPair } from "../../Components";
-import { UploadContact, UploadMetadata } from '../../DataModel';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
+import { DatasetContact, DatasetPostDetails } from '../../../../../Service';
 
 export interface CollaboratorsSectionProps {
-  readonly datasetMeta: UploadMetadata;
-  readonly setDatasetMeta: Consumer<UploadMetadata>;
+  readonly datasetMeta: DatasetPostDetails;
+  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
   readonly pathBuilder: JsonPathBuilder;
 }
 
 export function CollaboratorsSection(
   props: CollaboratorsSectionProps
 ): ReactElement {
-  const setContacts = (contacts: Array<UploadContact>) =>
+  const setContacts = (contacts: Array<DatasetContact>) =>
     props.setDatasetMeta({ ...props.datasetMeta, contacts: contacts });
 
-  const onUpdateContact = (contact: UploadContact, index: number) => {
+  const onUpdateContact = (contact: DatasetContact, index: number) => {
     if (
       Array.isArray(props.datasetMeta.contacts) &&
       props.datasetMeta.contacts.length > 0
@@ -65,17 +65,17 @@ export function CollaboratorsSection(
 interface ContactBlockProps {
   readonly index: number;
   readonly pathBuilder: JsonPathBuilder;
-  readonly contact: UploadContact;
-  readonly updateContact: (contact: UploadContact, index: number) => void;
+  readonly contact: DatasetContact;
+  readonly updateContact: (contact: DatasetContact, index: number) => void;
 }
 
 function ContactBlock(props: ContactBlockProps): ReactElement {
   const path = props.pathBuilder.append(props.index);
 
-  const isPrimary = path.appendToString<UploadContact>('isPrimary');
+  const isPrimary = path.appendToString<DatasetContact>('isPrimary');
 
   const onChangePart = partialRight(
-    changeHandler<UploadContact>,
+    changeHandler<DatasetContact>,
     props.contact,
     partialRight(props.updateContact, props.index)
   );
@@ -147,7 +147,7 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
 
 interface LabeledInputProps {
   readonly label: string;
-  readonly field: keyof UploadContact;
+  readonly field: keyof DatasetContact;
   readonly pathBuilder: JsonPathBuilder;
   readonly onChange: (value: string) => void;
 }

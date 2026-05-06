@@ -1,34 +1,35 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+
 import { StateSlice } from '../../../StoreModules/types';
+
 import {
   clearBadUpload,
   receiveBadUpload,
   requestUploadMessages,
   trackUploadProgress,
 } from '../../../Actions/UserDatasetUploadActions';
+
 import { Consumer } from '../../../Utils';
-import { DatasetPostDetails } from "../../../Service";
-import { DatasetUploads } from '../../../Service/model/utility-types';
 import { assertIsVdiCompatibleWdkService } from '../../../Service/utils/compatibility';
 import { submitNewDataset } from '../../../Service/process/create-dataset';
-import {
-  DatasetPostResponseBody,
-  VdiServiceMetadata,
-} from '../../../Service/model/response-decoders';
-import { BadUpload } from '../../../StoreModules/UserDatasetUploadStoreModule';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { DatasetUploadConfig } from "../Configuration";
-import { UploadForm } from "./UploadForm";
+import { DatasetPostResponseBody, VdiServiceMetadata } from '../../../Service';
+import { BadUpload } from '../../../StoreModules';
+import { DatasetUploadConfig } from '../Configuration';
+import { UploadForm, UploadFormState } from './UploadForm';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
   readonly formConfig: DatasetUploadConfig;
   readonly vdiConfig: VdiServiceMetadata;
   readonly urlParams: Record<string, string>;
+  readonly uploadFormState: UploadFormState;
+  readonly setUploadFormState: Consumer<UploadFormState>;
 }
 
 export function UploadFormController({
@@ -36,6 +37,8 @@ export function UploadFormController({
   formConfig,
   vdiConfig,
   urlParams,
+  uploadFormState,
+  setUploadFormState,
 }: UploadFormControllerProps) {
   useSetDocumentTitle(formConfig.verbiage.formTitle);
 
@@ -80,7 +83,7 @@ export function UploadFormController({
   }, [dispatch]);
 
   const submitForm = useCallback(
-    (details: DatasetPostDetails, uploads: DatasetUploads) => {
+    ({ metadata, uploads }: UploadFormState) => {
       setSubmitting(true);
       dispatch(async ({ wdkService, transitioner }) => {
         try {
@@ -88,7 +91,7 @@ export function UploadFormController({
 
           await submitNewDataset({
             service: wdkService.vdi,
-            details,
+            details: metadata,
             uploads,
             onProgress: (progress: number | null) =>
               dispatch(trackUploadProgress(progress)),
@@ -135,6 +138,8 @@ export function UploadFormController({
         badUploadState={badUploadState}
         isSubmitting={submitting}
         urlParams={urlParams}
+        formState={uploadFormState}
+        setFormState={setUploadFormState}
         actions={{
           submit: submitForm,
           clearUploadError: clearBadUpload,

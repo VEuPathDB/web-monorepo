@@ -12,7 +12,7 @@ import {
   loadUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateUserDatasetDetail,
   updateSharingModalState,
   sharingError,
@@ -21,9 +21,9 @@ import {
   updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 
-import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
-import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
+import { BigwigDatasetDetail } from '../Components/Detail/BigwigDatasetDetail';
+import { RnaSeqDatasetDetail } from '../Components/Detail/RnaSeqDatasetDetail';
+import { UserDatasetDetail } from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
 
 import { StateSlice } from '../StoreModules/types';
@@ -36,7 +36,7 @@ const ActionCreators = {
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDatasets: unshareUserDataset,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
@@ -203,7 +203,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilitySuccess,
     } = this.props.stateProps;
 
-    if (entry?.resource == null)
+    if (!entry?.resource)
       return <Loading />;
 
     const userDataset = entry.resource;

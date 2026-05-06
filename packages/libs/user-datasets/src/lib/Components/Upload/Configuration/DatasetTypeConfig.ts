@@ -1,11 +1,8 @@
 import { ReactNode } from 'react';
-import {
-  PluginDataType,
-  VdiPluginConfig,
-} from '../../../Service/model/response-decoders';
+import { PluginDataType, VdiPluginConfig } from '../../../Service';
 import { stringifyDataType } from "./data-types";
 
-export interface ClientDataTypeConfig {
+export interface ClientDatasetTypeConfig {
   /**
    * Data type display name override.  If unset, the `category` value from the
    * VDI service's configuration will be used.
@@ -37,7 +34,7 @@ export interface ClientDataTypeConfig {
   description: ReactNode;
 }
 
-export interface DatasetTypeConfig extends ClientDataTypeConfig {
+export interface DatasetTypeConfig extends ClientDatasetTypeConfig {
   /**
    * VDI service's configuration for the data type.
    */
@@ -50,7 +47,7 @@ export interface DatasetTypeConfig extends ClientDataTypeConfig {
 }
 
 export function promoteTypeConfig(
-  clientDataType: ClientDataTypeConfig,
+  clientDataType: ClientDatasetTypeConfig,
   plugins: readonly VdiPluginConfig[]
 ): DatasetTypeConfig | undefined {
   const { name: clientTypeName, version: clientTypeVersion } =
@@ -72,12 +69,10 @@ export function promoteTypeConfig(
 }
 
 export function filterAvailableDataTypes(
-  clientTypes: readonly ClientDataTypeConfig[],
+  clientTypes: readonly ClientDatasetTypeConfig[],
   plugins: readonly VdiPluginConfig[]
-): ClientDataTypeConfig[] {
+): ClientDatasetTypeConfig[] {
   const serviceTypes = new Set<string>();
-
-  const stringIt = (name: string, version: string) => `${name}__${version}`;
 
   for (const plugin of plugins) {
     for (const dt of plugin.dataTypes) {

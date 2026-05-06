@@ -10,7 +10,7 @@ import { User } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
 import {
   DatasetGetResponseBody,
   DatasetListEntry,
-} from '../../Service/model/response-decoders';
+} from '../../Service';
 import { updateDatasetCommunityVisibility } from "../../Actions/UserDatasetsActions";
 import { DataNoun } from "../../Utils/types";
 

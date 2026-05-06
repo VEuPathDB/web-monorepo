@@ -1,4 +1,5 @@
 import * as vdi from './response-decoders';
+
 import {
   DatasetCharacteristics,
   DatasetMetaBase,
@@ -6,7 +7,11 @@ import {
   DatasetVisibility,
   SampleYearRange,
 } from "./response-decoders";
+
 import { DatasetTypeSelection } from "../../Components/Upload/Configuration";
+
+
+export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
 
 // region Create Dataset
 
@@ -42,17 +47,6 @@ interface OptionalValuePatch<T> {
   value?: T;
 }
 
-export function valuePatch<T>(value: T): ValuePatch<T> {
-  return { value };
-}
-
-export function optionalValuePatch<T>(value?: T): OptionalValuePatch<T> {
-  if (value)
-    return { value };
-  else
-    return {};
-}
-
 export interface StudyCharacteristicsPatch {
   readonly studyDesign?: OptionalValuePatch<string>;
   readonly studyType?: OptionalValuePatch<string>;
@@ -72,7 +66,7 @@ export interface ExternalIdentifiersPatch {
 }
 
 export interface DatasetPatchRequest {
-  readonly type?: ValuePatch<vdi.DatasetTypeReference>;
+  readonly type?: ValuePatch<DatasetTypeSelection>;
   readonly visibility?: ValuePatch<vdi.DatasetVisibility>;
   readonly name?: ValuePatch<string>;
   readonly summary?: ValuePatch<string>;
@@ -98,7 +92,7 @@ export interface DatasetPatchRequest {
 /**
  * The "details" multipart/form-data value type.
  */
-export interface DatasetPutRequestDetails extends DatasetPatchRequest {
+export interface DatasetPutDetails extends DatasetPatchRequest {
   origin: string;
   revisionNote: string;
 }

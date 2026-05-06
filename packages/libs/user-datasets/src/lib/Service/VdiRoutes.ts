@@ -1,6 +1,7 @@
-import * as vdi from './model/response-decoders';
+import { DatasetId } from './Model';
+import { RootDatasetFile } from './Model/utility-types';
 
-export class VdiRoute {
+export class VdiRoutes {
   // Root API Paths
   static readonly DatasetListPath = '/datasets';
   static readonly PluginsPath = '/plugins';
@@ -17,54 +18,54 @@ export class VdiRoute {
 
   // Full Static Paths
   static readonly UserShareOffersPath =
-    VdiRoute.UserInfoPath + VdiRoute.SelfUserPathSegment + '/share-offers';
+    VdiRoutes.UserInfoPath + VdiRoutes.SelfUserPathSegment + '/share-offers';
   static readonly UserMetadataPath =
-    VdiRoute.UserInfoPath + VdiRoute.SelfUserPathSegment + '/meta';
+    VdiRoutes.UserInfoPath + VdiRoutes.SelfUserPathSegment + '/meta';
 
   // region Service Path Construction
 
-  static datasetUri(id: vdi.DatasetId) {
-    return VdiRoute.DatasetListPath + `/${id}`;
+  static datasetUri(id: DatasetId) {
+    return VdiRoutes.DatasetListPath + `/${id}`;
   }
 
-  static datasetFilesUri(id: vdi.DatasetId) {
-    return VdiRoute.datasetUri(id) + VdiRoute.FilesPathSegment;
+  static datasetFilesUri(id: DatasetId) {
+    return VdiRoutes.datasetUri(id) + VdiRoutes.FilesPathSegment;
   }
 
   static datasetStaticFileUri(
-    id: vdi.DatasetId,
-    file: vdi.RootDatasetFile
+    id: DatasetId,
+    file: RootDatasetFile
   ) {
-    return VdiRoute.datasetFilesUri(id) + `/${file}`;
+    return VdiRoutes.datasetFilesUri(id) + `/${file}`;
   }
 
-  static datasetDocumentFileUri(id: vdi.DatasetId, file: string) {
+  static datasetDocumentFileUri(id: DatasetId, file: string) {
     return (
-      VdiRoute.datasetFilesUri(id) +
-      VdiRoute.DocumentsPathSegment +
+      VdiRoutes.datasetFilesUri(id) +
+      VdiRoutes.DocumentsPathSegment +
       `/${file}`
     );
   }
 
   static datasetVariablePropertiesFileUri(
-    id: vdi.DatasetId,
+    id: DatasetId,
     file: string
   ) {
     return (
-      VdiRoute.datasetFilesUri(id) +
-      VdiRoute.VariablePropertiesPathSegment +
+      VdiRoutes.datasetFilesUri(id) +
+      VdiRoutes.VariablePropertiesPathSegment +
       `/${file}`
     );
   }
 
   static datasetShareUri(
-    id: vdi.DatasetId,
+    id: DatasetId,
     recipient: number,
     file: 'offer' | 'receipt'
   ) {
     return (
-      VdiRoute.datasetUri(id) +
-      VdiRoute.SharesPathSegment +
+      VdiRoutes.datasetUri(id) +
+      VdiRoutes.SharesPathSegment +
       '/' +
       recipient.toString() +
       '/' +

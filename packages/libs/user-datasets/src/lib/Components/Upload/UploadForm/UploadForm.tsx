@@ -1,16 +1,18 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
-import { SubmissionModal, UploadButton, UploadErrorBanner } from "./Components";
+import { SubmissionModal, UploadButton, UploadErrorBanner } from './Components';
 import { MetadataSection, RootDetailsSection } from './Sections';
-import { DatasetUploadConfig } from "../Configuration";
-import { DatasetPostDetails } from "../../../Service";
-import { DatasetUploads } from '../../../Service/model/utility-types';
-import { BadUpload } from '../../../StoreModules/UserDatasetUploadStoreModule';
-import { BiConsumer, JsonPathBuilder } from '../../../Utils';
-import { VdiServiceMetadata } from "../../../Service/model/response-decoders";
+import { DatasetUploadConfig } from '../Configuration';
+import {
+  DatasetPostDetails,
+  DatasetUploads,
+  VdiServiceMetadata,
+} from '../../../Service';
+import { Consumer, JsonPathBuilder } from '../../../Utils';
+import { BadUpload } from '../../../StoreModules';
 
 export interface UploadFormProps extends DatasetUploadConfig {
   readonly baseUrl: string;
@@ -18,7 +20,7 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly vdiConfig: VdiServiceMetadata;
 
   readonly actions: {
-    readonly submit: BiConsumer<DatasetPostDetails, DatasetUploads>;
+    readonly submit: Consumer<UploadFormState>;
     readonly clearUploadError: () => void;
   };
 
@@ -29,16 +31,25 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly badUploadState?: BadUpload;
 
   readonly urlParams: Record<string, string>;
+
+  readonly formState: UploadFormState;
+  readonly setFormState: Consumer<UploadFormState>;
+}
+
+export interface UploadFormState {
+  readonly metadata: DatasetPostDetails;
+  readonly uploads: DatasetUploads;
 }
 
 export function UploadForm(props: UploadFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
-  const [metadata, setMetadata] = useState<DatasetPostDetails>({});
+  const setMetadata = (metadata: DatasetPostDetails) =>
+    props.setFormState({ ...props.formState, metadata });
+  const setUploads = (uploads: DatasetUploads) =>
+    props.setFormState({ ...props.formState, uploads });
 
-  const [uploads, setUploads] = useState<DatasetUploads>({});
-
-  const onSubmit = () => props.actions.submit(metadata, uploads);
+  const onSubmit = () => props.actions.submit(props.formState);
 
   return (
     <section id="dataset-upload">
@@ -67,16 +78,16 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           formProps={props}
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
-          datasetMeta={metadata}
+          datasetMeta={props.formState.metadata}
           setDatasetMeta={setMetadata}
-          uploads={uploads}
+          uploads={props.formState.uploads}
           setUploads={setUploads}
           onSubmit={onSubmit}
         />
 
         <MetadataSection
           formProps={props}
-          datasetMeta={metadata}
+          datasetMeta={props.formState.metadata}
           setDatasetMeta={setMetadata}
           jsonPath={metaPath}
         />

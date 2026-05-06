@@ -5,8 +5,8 @@ import './UploadFormMenu.scss';
 import { DatasetTypeConfig } from '../Configuration';
 import { stringifyDataType } from "../Configuration/data-types";
 
-interface UploadTypeMenuProps {
-  availableDataTypes: readonly DatasetTypeConfig[];
+export interface UploadTypeMenuProps {
+  readonly availableDataTypes: readonly DatasetTypeConfig[];
 }
 
 export function UploadTypeMenu({ availableDataTypes }: UploadTypeMenuProps) {

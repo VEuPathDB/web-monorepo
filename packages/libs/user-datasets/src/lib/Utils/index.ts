@@ -1,5 +1,6 @@
 export { JsonPathBuilder } from './JsonPathBuilder';
 export type {
+  Runnable,
   Consumer,
   BiConsumer
 } from './types';

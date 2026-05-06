@@ -2,25 +2,25 @@ import { isEmpty } from 'lodash';
 import { ReactElement } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import WdkRoute from "@veupathdb/wdk-client/lib/Core/WdkRoute";
+import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
-import {
-  VdiServiceMetadata,
-  VdiPluginConfig,
-} from '../../Service/model/response-decoders';
-import { DatasetTypeConfig } from './Configuration';
-import { UploadFormConfigurators } from "./Configuration/form-configs";
-import { VdiService } from "../../Service";
-import { DatasetUploadController } from "./DatasetUploadController";
+import { VdiService, VdiServiceMetadata, VdiPluginConfig } from '../../Service';
+import { DatasetTypeConfig, UploadFormConfigurators } from './Configuration';
+import { DatasetUploadController } from './DatasetUploadController';
+import { UploadFormState } from './UploadForm';
+import { Consumer } from '../../Utils';
 
-interface UploadRouteProps {
+export interface UploadRouteProps {
   readonly vdi: VdiService;
   readonly vdiConfig: VdiServiceMetadata;
   readonly baseUrl: string;
   readonly urlParams: Record<string, string>;
-  readonly formConfigs: UploadFormConfigurators;
   readonly datasetTypes: readonly DatasetTypeConfig[];
   readonly plugins: readonly VdiPluginConfig[];
+
+  readonly formConfigs: UploadFormConfigurators;
+  readonly uploadFormState: UploadFormState;
+  readonly setUploadFormState: Consumer<UploadFormState>;
 }
 
 export function DatasetUploadRoute(props: UploadRouteProps): ReactElement {

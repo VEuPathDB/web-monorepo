@@ -12,17 +12,18 @@ import {
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
-
-import { validateVdiCompatibleThunk } from '../Service';
-
-import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { DatasetPatchRequest } from "../Service/model/requests";
-import * as vdi from "../Service/model/response-decoders";
+
+import { validateVdiCompatibleThunk } from '../Service';
+import { DatasetPatchRequest } from '../Service/Model';
+import * as vdi from '../Service/Model/response-decoders';
+
+import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
+import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
 
 export type Action =
   | DetailErrorAction
@@ -582,7 +583,7 @@ export function loadUserDatasetDetail(id: string) {
 export function shareUserDatasets(
   userDatasetIds: string[],
   recipientUserIds: number[],
-  context: 'datasetDetails' | 'datasetsList'
+  context: SharingModalContext,
 ) {
   // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
   const requests: { datasetId: string; recipientId: number }[] = [];
@@ -624,10 +625,10 @@ export function shareUserDatasets(
   ]);
 }
 
-export function unshareUserDatasets(
+export function unshareUserDataset(
   userDatasetId: string,
   recipientUserId: number,
-  context: 'datasetDetails' | 'datasetsList'
+  context: SharingModalContext,
 ) {
   return validateVdiCompatibleThunk<
     DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction

@@ -1,11 +1,13 @@
 import { ReactElement, ReactNode } from 'react';
 import { UploadInputConfig } from './UploadFormConfig';
 import { DatasetTypeConfig } from './DatasetTypeConfig';
-import { UploadFormVerbiage } from "./UploadFormVerbiage";
-import { DatasetDependency } from "../../../Service/model/response-decoders";
-import { Consumer } from "../../../Utils";
+import { UploadFormVerbiage } from './UploadFormVerbiage';
+import { DatasetDependency } from '../../../Service';
+import { Consumer } from '../../../Utils';
 
-export interface DatasetUploadConfig<T extends DatasetTypeConfig | undefined = DatasetTypeConfig> {
+export interface DatasetUploadConfig<
+  T extends DatasetTypeConfig | undefined = DatasetTypeConfig
+> {
   readonly verbiage: UploadFormVerbiage;
 
   readonly dataType: T;

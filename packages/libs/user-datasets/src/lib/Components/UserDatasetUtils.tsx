@@ -1,6 +1,6 @@
 import { MesaDataCellProps } from './List/UserDatasetList';
 import { ReactNode } from 'react';
-import { DatasetListEntry } from "../Service/model/response-decoders";
+import { DatasetListEntry } from "../Service";
 
 export function makeClassifier(...classNames: string[]) {
   return (substyle?: string) =>

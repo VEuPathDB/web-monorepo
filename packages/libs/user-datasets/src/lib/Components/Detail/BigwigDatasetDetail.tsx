@@ -6,13 +6,13 @@ import {
   Mesa,
   MesaState,
 } from '@veupathdb/coreui/lib/components/Mesa';
+import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
 
 import { makeClassifier } from '../UserDatasetUtils';
-import UserDatasetDetail, { DetailViewProps } from './UserDatasetDetail';
-import BigwigGBrowseUploader from './BigwigGBrowseUploader';
-import { WdkDependencies } from "@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect";
-import { MesaColumn } from "@veupathdb/coreui/lib/components/Mesa/types";
-import { DatasetDependency } from "../../Service/model/response-decoders";
+import { DetailViewProps, UserDatasetDetail } from './UserDatasetDetail';
+import { BigwigGBrowseUploader } from './BigwigGBrowseUploader';
+import { DatasetDependency } from "../../Service";
 
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 
@@ -25,7 +25,9 @@ interface CompatibilityRow extends DatasetDependency {
   project: string;
 }
 
-class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}> {
+export class BigwigDatasetDetail extends UserDatasetDetail<{
+  sequenceId: string | null;
+}> {
   constructor(props: DetailViewProps) {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
@@ -103,11 +105,11 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
         name: 'Genome Browser Link',
         renderCell: ({ row }) => (
           <BigwigGBrowseUploader
-            sequenceId={this.state.sequenceId}
+            sequenceId={this.state.sequenceId!}
             dataFileName={row.dataFileName}
             datasetId={id}
             projectId={projectId}
-            genome={genome}
+            genome={genome!}
             datasetName={name}
           />
         ),
@@ -133,8 +135,8 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
 
     const isInstalled =
       status?.import?.status === 'complete' &&
-      status?.install?.find((d) => d.installTarget === config.projectId)
-        ?.data?.status === 'complete';
+      status?.install?.find((d) => d.installTarget === config.projectId)?.data
+        ?.status === 'complete';
 
     return !rows.length ? null : isInstalled ? (
       <section>
@@ -276,8 +278,7 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
   }
 
   // See note in the base class, UserDatasetDetail
-  /** @return {Array<() => (import("react").ReactElement | null)>} */
-  getPageSections() {
+  getPageSections(): Array<() => import('react').ReactElement | null> {
     const [headerSection, fileSection] = super.getPageSections();
     return [
       headerSection,
@@ -287,5 +288,3 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
     ];
   }
 }
-
-export default BigwigDatasetDetail;

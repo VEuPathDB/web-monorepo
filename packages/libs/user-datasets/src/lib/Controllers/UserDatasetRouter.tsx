@@ -12,10 +12,10 @@ import UserDatasetDetailController, {
   UserDatasetDetailProps,
 } from './UserDatasetDetailController';
 import { UploadFormConfigurators } from "../Components/Upload/Configuration/form-configs";
-import { ClientDataTypeConfig } from "../Components/Upload/Configuration";
+import { ClientDatasetTypeConfig } from "../Components/Upload/Configuration";
 
 interface Props {
-  readonly datasetTypeConfigs: readonly ClientDataTypeConfig[];
+  readonly datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
   readonly uploadFormConfigurators: UploadFormConfigurators;
   readonly detailsPageTitle: string;
   readonly helpRoute: string;

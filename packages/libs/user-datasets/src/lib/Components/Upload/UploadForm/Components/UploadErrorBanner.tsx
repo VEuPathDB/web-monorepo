@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode } from 'react';
-import { BadUpload } from '../../../../StoreModules/UserDatasetUploadStoreModule';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { ValidationErrors } from '../../../../Service/model/response-decoders';
+import { ValidationErrors } from '../../../../Service';
+import { BadUpload } from '../../../../StoreModules';
 
 export interface UploadErrorBannerProps {
   readonly errors: BadUpload | undefined;

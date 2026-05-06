@@ -6,26 +6,31 @@ import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/
 import { WorkspaceNavigationItem } from '@veupathdb/wdk-client/src/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 import { projectId } from '@veupathdb/web-common/lib/config';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-import { DatasetUploadRoute } from './Upload';
 import {
-  ClientDataTypeConfig,
+  ClientDatasetTypeConfig,
   DatasetTypeConfig,
+  UploadFormConfigurators,
+  DatasetUploadRoute,
   filterAvailableDataTypes,
-} from './Upload/Configuration';
+  promoteTypeConfig,
+  UploadFormState,
+} from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import { DataNoun } from '../Utils/types';
-import { VdiPluginConfig, VdiService, useVdiService } from '../Service';
-import { VdiServiceMetadata } from "../Service/model/response-decoders";
-import { Loading } from "@veupathdb/wdk-client/lib/Components";
-import { promoteTypeConfig } from "./Upload/Configuration/DatasetTypeConfig";
-import { UploadFormConfigurators } from "./Upload/Configuration/form-configs";
+import {
+  VdiPluginConfig,
+  VdiServiceMetadata,
+  VdiService,
+  useVdiService,
+} from '../Service';
 
 export interface UserDatasetWorkspaceProps {
   readonly baseUrl: string;
   readonly helpRoute: string;
   readonly urlParams: Record<string, string>;
-  readonly datasetTypes: readonly ClientDataTypeConfig[];
+  readonly datasetTypes: readonly ClientDatasetTypeConfig[];
   readonly formConfigs: UploadFormConfigurators;
   readonly workspaceTitle: string;
   readonly helpTabContents?: ReactNode;
@@ -55,8 +60,12 @@ export function UserDatasetsWorkspace(
     vdi?.getServiceMetadata()?.then(setFeatures);
   }, [vdi]);
 
-  if (!Array.isArray(plugins) || !features)
-    return <Loading />;
+  const [uploadFormState, setUploadFormState] = useState<UploadFormState>({
+    metadata: {},
+    uploads: {},
+  });
+
+  if (!Array.isArray(plugins) || !features) return <Loading />;
 
   const datasetTypes = props.datasetTypes
     .map((cdt) => promoteTypeConfig(cdt, plugins))
@@ -121,6 +130,8 @@ export function UserDatasetsWorkspace(
             plugins={plugins}
             formConfigs={props.formConfigs}
             datasetTypes={datasetTypes}
+            uploadFormState={uploadFormState}
+            setUploadFormState={setUploadFormState}
           />
         )}
         {helpTabContents && (

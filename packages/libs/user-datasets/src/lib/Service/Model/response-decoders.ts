@@ -80,6 +80,7 @@ export const partialUser = io.intersection([
     affiliation: io.string,
   }),
 ]);
+export type DatasetUser = io.TypeOf<typeof partialUser>;
 
 const datasetListShareUser = io.type({
   userId: io.number,
@@ -88,6 +89,7 @@ const datasetListShareUser = io.type({
   affiliation: io.string,
   accepted: io.boolean,
 });
+export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
 
 const datasetUploadStatusCode = io.union([
   io.literal('running'),
@@ -100,6 +102,7 @@ const datasetUploadStatusInfo = io.intersection([
   io.type({ status: datasetUploadStatusCode }),
   io.partial({ message: io.string }),
 ]);
+export type DatasetUploadStatusInfo = io.TypeOf<typeof datasetUploadStatusInfo>;
 
 const datasetStatusInfo = io.intersection([
   io.type({ upload: datasetUploadStatusInfo }),
@@ -108,21 +111,14 @@ const datasetStatusInfo = io.intersection([
     install: io.array(datasetInstallStatusMap),
   }),
 ]);
-
-const datasetTypeInput = io.type({
-  name: io.string,
-  version: io.string,
-});
-export interface DatasetTypeReference {
-  name: string;
-  version: string;
-}
+export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
 
 const datasetTypeOutput = io.type({
   name: io.string,
   version: io.string,
   category: io.string,
 });
+export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
 
 const datasetVisibility = io.union([
   io.literal('private'),
@@ -153,12 +149,14 @@ export const datasetListEntry = io.intersection([
     originalId: io.string,
   }),
 ]);
+export type DatasetListEntry = io.TypeOf<typeof datasetListEntry>;
 
 export const datasetDependency = io.type({
   resourceIdentifier: io.string,
   resourceDisplayName: io.string,
   resourceVersion: io.string,
 });
+export type DatasetDependency = io.TypeOf<typeof datasetDependency>;
 
 const datasetFileDetails = io.type({
   fileName: io.string,
@@ -308,16 +306,10 @@ export const shareOffer = io.type({
   recipient: partialUser,
   status: shareOfferAction,
 });
-
-export const datasetPostDetails = io.intersection([
-  datasetMetaBase,
-  io.type({
-    type: datasetTypeInput,
-  }),
-  io.partial({ visibility: datasetVisibility }),
-]);
+export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 
 export const datasetIdType = io.string;
+export type DatasetId = io.TypeOf<typeof datasetIdType>;
 
 export const userMetadata = io.type({
   quota: io.type({
@@ -325,25 +317,8 @@ export const userMetadata = io.type({
     usage: io.number,
   }),
 });
-export type UserMetadata = io.TypeOf<typeof userMetadata>;
+export type VdiUserMetadata = io.TypeOf<typeof userMetadata>;
 
-export type DatasetId = io.TypeOf<typeof datasetIdType>;
-
-export type DatasetDependency = io.TypeOf<typeof datasetDependency>;
-export type DatasetFileDetails = io.TypeOf<typeof datasetFileDetails>;
-export type DatasetListEntry = io.TypeOf<typeof datasetListEntry>;
-export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
-export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
-export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
-export type DatasetTypeOutput = io.TypeOf<typeof datasetTypeOutput>;
-export type DatasetZipDetails = io.TypeOf<typeof datasetZipDetails>;
-export type DatasetUploadStatusCode = io.TypeOf<typeof datasetUploadStatusCode>;
-export type DatasetUploadStatusInfo = io.TypeOf<typeof datasetUploadStatusInfo>;
-export type DatasetUser = io.TypeOf<typeof partialUser>;
-
-export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
-
-export type OwnershipFilterEnum = 'any' | 'owned' | 'shared';
 
 const vdiApiConfig = io.type({
   maxUploadSize: io.number,
@@ -375,7 +350,7 @@ export type VdiServiceConfig = io.TypeOf<typeof serviceConfiguration>;
 export const serviceFeatures = io.type({
   supportedArchiveTypes: io.array(io.string),
 });
-export type ServiceFeatures = io.TypeOf<typeof serviceFeatures>;
+export type VdiServiceFeatures = io.TypeOf<typeof serviceFeatures>;
 
 export const serviceMetadata = io.type({
   buildInfo: io.any, // not relevant for public client use
@@ -383,12 +358,6 @@ export const serviceMetadata = io.type({
   features: serviceFeatures,
 });
 export type VdiServiceMetadata = io.TypeOf<typeof serviceMetadata>;
-
-export type RootDatasetFile =
-  | 'upload'
-  | 'install'
-  | 'metadata.json'
-  | 'upload-errors.json';
 
 export const shareOfferStatus = io.union([
   io.literal('open'),

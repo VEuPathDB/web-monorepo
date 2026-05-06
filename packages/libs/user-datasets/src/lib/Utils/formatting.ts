@@ -1,4 +1,4 @@
-import { DatasetListShareUser, DatasetUser } from '../Service/model/response-decoders';
+import { DatasetListShareUser, DatasetUser } from '../Service';
 
 export function datasetUserFullName(user: DatasetUser | DatasetListShareUser): string {
   if (user.firstName && user.lastName)

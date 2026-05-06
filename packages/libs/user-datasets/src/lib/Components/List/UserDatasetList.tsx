@@ -1,14 +1,8 @@
 import React from 'react';
-
 import { add } from 'lodash';
+import { Public } from '@material-ui/icons';
 
-import {
-  Checkbox,
-  IconAlt as Icon,
-  Link,
-  RealTimeSearchBox as SearchBox,
-  SaveableTextEditor,
-} from '@veupathdb/wdk-client/lib/Components';
+import { Tooltip } from '@veupathdb/coreui';
 import {
   Mesa,
   MesaState,
@@ -18,8 +12,15 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
+import {
+  Checkbox,
+  IconAlt as Icon,
+  Link,
+  RealTimeSearchBox as SearchBox,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
+import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { DataNoun } from '../../Utils/types';
@@ -35,8 +36,6 @@ import { DateTime } from '../DateTime';
 
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
-import { Public } from '@material-ui/icons';
-import { Tooltip } from '@veupathdb/coreui';
 import {
   removeUserDataset,
   updateDatasetListItem,
@@ -47,7 +46,7 @@ import {
   DatasetListShareUser,
   DatasetTypeOutput,
   VdiServiceConfig,
-} from '../../Service/model/response-decoders';
+} from '../../Service';
 import { DatasetSharingModal } from "../Sharing/UserDatasetCommunityModal";
 
 export interface DatasetListProps {
@@ -108,7 +107,7 @@ export interface MesaDataCellProps {
   inline?: boolean;
 }
 
-class UserDatasetList extends React.Component<DatasetListProps, State> {
+export class UserDatasetList extends React.Component<DatasetListProps, State> {
   constructor(props: DatasetListProps) {
     super(props);
     this.state = {
@@ -699,13 +698,13 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                     deselectDataset={this.onRowDeselect}
                     shareUserDatasets={shareUserDatasets}
                     context="datasetsList"
-                    unshareUserDatasets={unshareUserDatasets}
+                    unshareUserDataset={unshareUserDatasets}
                     onClose={this.closeSharingModal}
                     dataNoun={dataNoun}
                     sharingDatasetPending={sharingDatasetPending}
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
-                    updateUserDatasetDetail={updateDatasetListItem}
+                    updateDatasetListItem={updateDatasetListItem}
                   />
                 ) : null}
                 {this.props.communityModalOpen && enablePublicUserDatasets ? (
@@ -765,5 +764,3 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     );
   }
 }
-
-export default UserDatasetList;

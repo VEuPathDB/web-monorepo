@@ -1,12 +1,13 @@
 import { ReactElement, useState } from 'react';
+import { partialRight } from 'lodash';
+
 import { Consumer , JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import {
   DatasetPostDetails,
   PostCharacteristics,
-} from '../../../../../Service/model/requests';
-import { partialRight } from 'lodash';
+  SampleYearRange,
+} from '../../../../../Service';
 import { GrowableStringList, InputPair } from "../../Components";
-import { SampleYearRange } from "../../../../../Service/model/response-decoders";
 
 export interface CharacteristicsSectionProps {
   readonly datasetMeta: DatasetPostDetails;

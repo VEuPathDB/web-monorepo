@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
 import { FileInput } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../Configuration';
-import { ServiceFeatures } from '../../../../Service/model/response-decoders';
+import { VdiServiceFeatures } from '../../../../Service';
 import { Consumer } from '../../../../Utils';
 
 export interface DataFileInputProps {
   readonly fieldName: string;
   readonly dataType: DatasetTypeConfig;
-  readonly vdiFeatures: ServiceFeatures;
+  readonly vdiFeatures: VdiServiceFeatures;
   readonly required: boolean;
   readonly setFile: Consumer<File | undefined>;
 }

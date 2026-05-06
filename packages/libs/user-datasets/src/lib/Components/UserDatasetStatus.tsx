@@ -3,16 +3,19 @@ import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
 import { DataNoun } from '../Utils/types';
-import * as vdi from '../Service/model/response-decoders';
 import {
+  DatasetGetResponseBody,
+  DatasetListEntry,
+  DatasetStatusInfo,
+  DatasetUploadStatusInfo,
   VdiReconcilerConfig,
   VdiServiceConfig,
-} from '../Service/model/response-decoders';
+} from '../Service';
 
-interface Props {
+export interface Props {
   readonly baseUrl: string;
   readonly vdiConfig: VdiServiceConfig,
-  readonly userDataset: vdi.DatasetListEntry | vdi.DatasetGetResponseBody;
+  readonly userDataset: DatasetListEntry | DatasetGetResponseBody;
   readonly projectId: string;
   readonly displayName: string;
   readonly linkToDataset: boolean;
@@ -45,7 +48,7 @@ const orderedStatuses = [
  **/
 
 function getStatus(
-  status: vdi.DatasetStatusInfo,
+  status: DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
@@ -73,7 +76,7 @@ const queuedStatus = (dataNoun: string) => ({
 });
 
 function getUploadStatus(
-  details: vdi.DatasetUploadStatusInfo,
+  details: DatasetUploadStatusInfo,
   dataNoun: string,
 ): { content: React.ReactNode; icon: string; } {
   switch (details.status) {
@@ -119,7 +122,7 @@ function getUploadStatus(
  * data install step for all install target projects.
  */
 function getPostUploadStatus(
-  status: vdi.DatasetStatusInfo,
+  status: DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,

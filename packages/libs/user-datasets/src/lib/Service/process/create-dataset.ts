@@ -1,9 +1,8 @@
-import { DatasetPostDetails } from '../model/requests';
+import { DatasetPostDetails, DatasetPostResponseBody } from '../Model';
+import { DatasetUploads } from "../Model/utility-types";
 import { DatasetUpload, VdiService } from '../VdiService';
-import { Consumer } from '../../Utils';
-import { DatasetPostResponseBody } from '../model/response-decoders';
 import { BadUpload } from "../../StoreModules/UserDatasetUploadStoreModule";
-import { DatasetUploads } from "../model/utility-types";
+import { Consumer } from '../../Utils';
 
 export interface NewDatasetSubmission {
   readonly service: VdiService;

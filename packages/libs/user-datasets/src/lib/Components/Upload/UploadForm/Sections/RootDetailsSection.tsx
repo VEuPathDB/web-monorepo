@@ -4,8 +4,7 @@ import { RootDataInput } from "../Components/RootDataInput";
 import { InputPair, UploadButton } from '../Components';
 import { Consumer, JsonPathBuilder } from '../../../../Utils';
 import { UploadFormProps } from "../UploadForm";
-import { DatasetPostDetails } from "../../../../Service";
-import { DatasetUploads } from "../../../../Service/model/utility-types";
+import { DatasetPostDetails, DatasetUploads } from "../../../../Service";
 
 export interface RootDetailsSectionProps {
   readonly formProps: UploadFormProps;

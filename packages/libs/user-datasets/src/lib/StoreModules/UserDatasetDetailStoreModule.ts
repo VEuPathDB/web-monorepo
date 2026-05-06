@@ -20,7 +20,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetGetResponseBody } from '../Service/model/response-decoders';
+import { DatasetGetResponseBody } from '../Service';
 
 export const key = 'userDatasetDetail';
 

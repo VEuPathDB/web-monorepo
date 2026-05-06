@@ -1,17 +1,23 @@
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useState } from 'react';
+import {
+  Dispatch,
+  FormEvent,
+  ReactElement,
+  SetStateAction,
+  useState,
+} from 'react';
 import {
   FileUploadConfig,
   ResultUploadConfig,
   UrlUploadConfig,
 } from '../../Configuration/UploadFormConfig';
-import { StrategySummary } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
-import { Consumer, isNonEmptyString, JsonPathBuilder } from "../../../../Utils";
-import { UploadUrlParams } from "../DataModel";
-import { RadioList } from "@veupathdb/wdk-client/lib/Components";
-import { DatasetTypeConfig } from "../../Configuration";
-import { formatFileSize } from "../../../../Utils/formatting";
-import { DataFileInput } from "./DataFileInput";
-import { VdiServiceMetadata } from "../../../../Service/model/response-decoders";
+import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { Consumer, isNonEmptyString, JsonPathBuilder } from '../../../../Utils';
+import { UploadUrlParams } from '../DataModel';
+import { RadioList } from '@veupathdb/wdk-client/lib/Components';
+import { DatasetTypeConfig } from '../../Configuration';
+import { formatFileSize } from '../../../../Utils/formatting';
+import { DataFileInput } from './DataFileInput';
+import { VdiServiceMetadata } from '../../../../Service';
 
 // region Root Dataset Data Input Component
 
@@ -38,15 +44,23 @@ type UploadType = 'file' | 'url' | 'result';
 export function RootDataInput(props: RootDataInputProps): ReactElement {
   let uploadInputs = buildUploadInputConstructors(props);
 
-  const [selectedInput, setSelectedInput] = useState(determineDefaultUploadType(props));
+  const [selectedInput, setSelectedInput] = useState(
+    determineDefaultUploadType(props)
+  );
 
   if (uploadInputs.length === 0) {
-    console.error('no upload types are allowed by the upload form configuration')
+    console.error(
+      'no upload types are allowed by the upload form configuration'
+    );
     return <div>No data uploads are permitted.</div>;
   }
 
   if (uploadInputs.length === 1)
-    return uploadInputs[0][1]({ dataType: props.dataType, pathBuilder: props.pathBuilder, required: true });
+    return uploadInputs[0][1]({
+      dataType: props.dataType,
+      pathBuilder: props.pathBuilder,
+      required: true,
+    });
 
   const radioListItems = uploadInputs.map(([kind, fn]) => ({
     value: kind,
@@ -54,39 +68,57 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
       dataType: props.dataType,
       required: selectedInput === kind,
       pathBuilder: props.pathBuilder,
-    })
-  }))
+    }),
+  }));
 
-  return <RadioList
-    name="upload-type"
-    value={selectedInput}
-    onChange={value => setSelectedInput(value as UploadType)}
-    items={radioListItems}
-  />;
+  return (
+    <RadioList
+      name="upload-type"
+      value={selectedInput}
+      onChange={(value) => setSelectedInput(value as UploadType)}
+      items={radioListItems}
+    />
+  );
 }
 
 type UploadInputConstructor = (fieldProps: UploadFieldProps) => ReactElement;
 
-function buildUploadInputConstructors(props: RootDataInputProps): Array<[UploadType, UploadInputConstructor]> {
-  const inputs: Array<[UploadType, (fieldProps: UploadFieldProps) => ReactElement]> = [];
+function buildUploadInputConstructors(
+  props: RootDataInputProps
+): Array<[UploadType, UploadInputConstructor]> {
+  const inputs: Array<
+    [UploadType, (fieldProps: UploadFieldProps) => ReactElement]
+  > = [];
 
   if (props.fileUpload?.enabled === true)
-    inputs.push(['file', (fieldProps) => fileInput({
-      ...props.fileUpload!,
-      ...fieldProps,
-    })]);
+    inputs.push([
+      'file',
+      (fieldProps) =>
+        fileInput({
+          ...props.fileUpload!,
+          ...fieldProps,
+        }),
+    ]);
 
   if (props.urlUpload?.enabled === true)
-    inputs.push(['url', (fieldProps) => urlInput({
-      ...props.urlUpload!,
-      ...fieldProps,
-    })]);
+    inputs.push([
+      'url',
+      (fieldProps) =>
+        urlInput({
+          ...props.urlUpload!,
+          ...fieldProps,
+        }),
+    ]);
 
   if (props.resultUpload?.enabled === true)
-    inputs.push([ 'result', (fieldProps) => resultInput({
-      ...props.resultUpload!,
-      ...fieldProps,
-    })]);
+    inputs.push([
+      'result',
+      (fieldProps) =>
+        resultInput({
+          ...props.resultUpload!,
+          ...fieldProps,
+        }),
+    ]);
 
   return inputs;
 }
@@ -97,10 +129,12 @@ function determineDefaultUploadType({
   resultUpload,
 }: RootDataInputProps): UploadType {
   if (resultUpload?.enabled === true) {
-    if (isNonEmptyString(urlParams?.datasetStepId))
-      return 'result';
+    if (isNonEmptyString(urlParams?.datasetStepId)) return 'result';
 
-    if (isNonEmptyString(urlParams?.datasetStrategyRootStepId) && resultUpload.offerStrategyUpload)
+    if (
+      isNonEmptyString(urlParams?.datasetStrategyRootStepId) &&
+      resultUpload.offerStrategyUpload
+    )
       return 'result';
   }
 
@@ -128,21 +162,24 @@ interface UploadFieldProps {
 
 // region File Input Sub-Component
 
-export type FileUploadProps = FileUploadConfig & UploadFieldProps & {
-  readonly setFile: Consumer<File | undefined>;
-  readonly vdiConfig: VdiServiceMetadata;
-};
+export type FileUploadProps = FileUploadConfig &
+  UploadFieldProps & {
+    readonly setFile: Consumer<File | undefined>;
+    readonly vdiConfig: VdiServiceMetadata;
+  };
 
 function fileInput(props: FileUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('dataFile');
   const className = props.required ? 'required' : undefined;
-  const baseField = <DataFileInput
-    fieldName={fieldName}
-    dataType={props.dataType}
-    required={props.required}
-    setFile={props.setFile}
-    vdiFeatures={props.vdiConfig.features}
-  />;
+  const baseField = (
+    <DataFileInput
+      fieldName={fieldName}
+      dataType={props.dataType}
+      required={props.required}
+      setFile={props.setFile}
+      vdiFeatures={props.vdiConfig.features}
+    />
+  );
 
   const helpText = props.helpText ?? (
     <div>
@@ -153,7 +190,9 @@ function fileInput(props: FileUploadProps): ReactElement {
 
   return (
     <>
-      <label className={className} htmlFor={fieldName}>Data Files</label>
+      <label className={className} htmlFor={fieldName}>
+        Data Files
+      </label>
       {props.renderOverride ? props.renderOverride(baseField) : baseField}
       {helpText}
     </>
@@ -166,9 +205,7 @@ function fileInput(props: FileUploadProps): ReactElement {
 
 export type UrlUploadProps = UrlUploadConfig & UploadFieldProps;
 
-function urlInput(
-  props: UrlUploadProps,
-): ReactElement {
+function urlInput(props: UrlUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('url');
   const className = props.required ? 'required' : undefined;
   const baseField = <input type="url" name={fieldName} id={fieldName} />;
@@ -185,17 +222,14 @@ function urlInput(
 
 // region Result Input Sub-Component
 
-export type ResultUploadProps = ResultUploadConfig
-  & UploadFieldProps
-  & {
+export type ResultUploadProps = ResultUploadConfig &
+  UploadFieldProps & {
     readonly stepId: number;
     readonly setStepId: Dispatch<SetStateAction<number>>;
     readonly strategyOptions: Array<StrategySummary>;
-  }
+  };
 
-function resultInput(
-  props: ResultUploadProps,
-): ReactElement {
+function resultInput(props: ResultUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('url');
   const className = props.required ? 'required' : undefined;
 
@@ -215,19 +249,23 @@ function resultInput(
     props.setStepId(parseInt(value));
   };
 
-  const baseField = <select
-    value={props.stepId.toString()}
-    onInput={onInput}
-    disabled={!props.enabled}
-    name={fieldName}
-    id={fieldName}
-  >
-    {selectItems}
-  </select>;
+  const baseField = (
+    <select
+      value={props.stepId.toString()}
+      onInput={onInput}
+      disabled={!props.enabled}
+      name={fieldName}
+      id={fieldName}
+    >
+      {selectItems}
+    </select>
+  );
 
   return (
     <>
-      <label className={className} htmlFor={fieldName}>Upload Strategy</label>
+      <label className={className} htmlFor={fieldName}>
+        Upload Strategy
+      </label>
       {props.renderOverride ? props.renderOverride(baseField) : baseField}
     </>
   );

@@ -13,7 +13,7 @@ export type UploadFormPropConstructor = (
   vdi: VdiService,
 ) => DatasetUploadConfig;
 
-type UploadFormConfiguratorItem = readonly [
+export type UploadFormConfiguratorItem = readonly [
   DatasetTypeSelection,
   UploadFormPropConstructor,
 ];

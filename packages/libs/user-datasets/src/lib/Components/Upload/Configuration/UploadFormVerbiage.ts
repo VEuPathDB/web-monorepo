@@ -1,11 +1,11 @@
 import { ReactNode } from 'react';
 
-interface InputConfig {
+export interface InputConfig {
   readonly label?: ReactNode;
   readonly placeholder?: string;
 }
 
-interface CoreInputConfigs {
+export interface CoreInputConfigs {
   readonly name?: InputConfig;
   readonly summary?: InputConfig;
   readonly dependencies?: string;

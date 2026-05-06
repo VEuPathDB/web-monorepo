@@ -1,7 +1,8 @@
 export {
   type DatasetTypeConfig,
-  type ClientDataTypeConfig,
+  type ClientDatasetTypeConfig,
   filterAvailableDataTypes,
+  promoteTypeConfig,
 } from './DatasetTypeConfig';
 
 export type {
@@ -11,3 +12,8 @@ export type {
 } from './DatasetUploadConfig';
 
 export type { DatasetTypeSelection } from './data-types';
+
+export type {
+  UploadFormConfigurators,
+  UploadFormPropConstructor,
+} from './form-configs';

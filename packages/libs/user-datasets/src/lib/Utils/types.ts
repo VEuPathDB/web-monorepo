@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 
+export type Runnable = () => void;
 export type Consumer<T> = (value: T) => void;
 export type BiConsumer<T1, T2> = (value1: T1, value2: T2) => void;
 

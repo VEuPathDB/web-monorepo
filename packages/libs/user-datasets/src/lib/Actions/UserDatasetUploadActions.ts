@@ -2,9 +2,7 @@ import {
   makeActionCreator,
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { BadUpload } from '../StoreModules/UserDatasetUploadStoreModule';
-
-// import { UserDatasetUpload } from '../Utils/types';
+import { BadUpload } from '../StoreModules';
 
 export const trackUploadProgress = makeActionCreator(
   'user-dataset-upload/upload-progress',

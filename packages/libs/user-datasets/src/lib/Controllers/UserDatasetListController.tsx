@@ -8,7 +8,7 @@ import {
   loadUserDatasetList,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateProjectFilter,
   updateDatasetListItem,
   updateSharingModalState,
@@ -19,8 +19,9 @@ import {
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
-import UserDatasetList, {
+import {
   DatasetListProps,
+  UserDatasetList,
 } from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 
@@ -29,7 +30,7 @@ import { StateSlice } from '../StoreModules/types';
 import { DataNoun } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
-import { VdiServiceConfig } from '../Service/model/response-decoders';
+import { VdiServiceConfig } from '../Service';
 
 const ActionCreators = {
   showLoginForm,
@@ -37,7 +38,7 @@ const ActionCreators = {
   updateDatasetListItem,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDatasets: unshareUserDataset,
   updateProjectFilter,
   requestUploadMessages,
   updateSharingModalState,

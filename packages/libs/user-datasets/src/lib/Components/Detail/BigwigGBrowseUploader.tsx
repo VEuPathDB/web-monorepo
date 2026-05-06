@@ -2,9 +2,19 @@ import React from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 import './BigwigGBrowseUploader.scss';
+import { DatasetId } from '../../Service';
 
-class BigwigGBrowseUploader extends React.Component {
-  constructor(props) {
+export interface BigwigGBrowseUploaderProps {
+  readonly datasetId: DatasetId;
+  readonly projectId: string;
+  readonly sequenceId: string;
+  readonly genome: string;
+  readonly datasetName: string;
+  readonly dataFileName: string;
+}
+
+export class BigwigGBrowseUploader extends React.Component<BigwigGBrowseUploaderProps> {
+  constructor(props: BigwigGBrowseUploaderProps) {
     super(props);
     this.getGBrowseUrl = this.getGBrowseUrl.bind(this);
   }
@@ -39,5 +49,3 @@ class BigwigGBrowseUploader extends React.Component {
     );
   }
 }
-
-export default BigwigGBrowseUploader;

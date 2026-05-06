@@ -6,3 +6,9 @@ export interface DatasetUploads {
 }
 
 export type DatasetZipType = 'upload' | 'install';
+
+export type RootDatasetFile =
+  | 'upload'
+  | 'install'
+  | 'metadata.json'
+  | 'upload-errors.json';

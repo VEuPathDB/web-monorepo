@@ -28,7 +28,7 @@ import {
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 import { useState } from 'react';
-import { VdiApiConfig } from './lib/Service/model/response-decoders';
+import { VdiApiConfig } from './lib/Service/Model/response-decoders';
 import { projectId } from '@veupathdb/web-common/lib/config';
 
 initialize({

@@ -4,19 +4,53 @@ import {
   FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
-import * as vdi from './model/response-decoders';
-import * as req from './model/requests';
+
 import * as io from 'io-ts';
-import { VdiRoute } from './VdiRoute';
+
+import { VdiRoutes } from './VdiRoutes';
 import { makeQueryString, QueryParams } from './utils/api-utils';
 import { Consumer } from '../Utils';
 import { sendMultipartRequest } from './utils/xhr';
-import { BadUpload } from '../StoreModules/UserDatasetUploadStoreModule';
+import { BadUpload } from '../StoreModules';
+
 import {
-  pluginListItem,
+  DatasetFileListing,
+  DatasetGetResponseBody,
+  DatasetId,
+  DatasetListEntry,
+  DatasetPatchRequest,
+  DatasetPostDetails,
+  DatasetPostResponseBody,
+  DatasetPutDetails,
+  DatasetPutResponseBody,
+  ShareOfferAction,
+  ShareOfferListEntry,
   VdiPluginConfig,
+  VdiServiceMetadata,
+  VdiUserMetadata,
+} from './Model';
+
+import {
+  GetDatasetsQueryParamEnum,
+  ShareReceiptAction,
+} from './Model/requests';
+
+import {
+  datasetFileListing,
+  datasetGetResponseBody,
+  datasetListEntry,
+  datasetPostResponse,
+  DatasetPostResponse,
+  pluginListItem,
   ServerErrorBody,
-} from './model/response-decoders';
+  serviceMetadata,
+  shareOfferListEntry,
+  SimpleServiceErrorBody,
+  userMetadata,
+  ValidationErrorBody,
+} from './Model/response-decoders';
+
+import { RootDatasetFile } from './Model/utility-types';
 
 export type DatasetUploadFileType =
   | 'dataFile'
@@ -40,32 +74,32 @@ export class VdiService extends FetchClientWithCredentials {
    * service processing time.
    */
   async getDatasetList(
-    query?: QueryParams<vdi.GetDatasetsQueryParamEnum>
-  ): Promise<Array<vdi.DatasetListEntry>> {
+    query?: QueryParams<GetDatasetsQueryParamEnum>
+  ): Promise<Array<DatasetListEntry>> {
     const queryString = query ? makeQueryString(query) : '';
 
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.DatasetListPath + queryString,
+        path: VdiRoutes.DatasetListPath + queryString,
         method: 'GET',
-        transformResponse: ioTransformer(io.array(vdi.datasetListEntry)),
+        transformResponse: ioTransformer(io.array(datasetListEntry)),
       })
     );
   }
 
   async postDataset(
-    details: req.DatasetPostDetails,
+    details: DatasetPostDetails,
     uploads: DatasetUpload[],
     dispatchUploadProgress?: Consumer<number>,
-    dispatchPageRedirect?: Consumer<vdi.DatasetPostResponseBody>,
+    dispatchPageRedirect?: Consumer<DatasetPostResponseBody>,
     dispatchBadUpload?: Consumer<BadUpload>
   ) {
-    await this.uploadDataset<vdi.DatasetPostResponse>(
-      VdiRoute.DatasetListPath,
+    await this.uploadDataset<DatasetPostResponse>(
+      VdiRoutes.DatasetListPath,
       'POST',
       details,
       uploads,
-      ioTransformer(vdi.datasetPostResponse),
+      ioTransformer(datasetPostResponse),
       dispatchUploadProgress
     ).then((res) => {
       if (dispatchPageRedirect && 'datasetId' in res) dispatchPageRedirect(res);
@@ -77,14 +111,12 @@ export class VdiService extends FetchClientWithCredentials {
    * Fetches available details about a dataset's metadata and processing
    * statuses.
    */
-  async getDatasetDetails(
-    id: vdi.DatasetId
-  ): Promise<vdi.DatasetGetResponseBody> {
+  async getDatasetDetails(id: DatasetId): Promise<DatasetGetResponseBody> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.datasetUri(id),
+        path: VdiRoutes.datasetUri(id),
         method: 'GET',
-        transformResponse: ioTransformer(vdi.datasetGetResponseBody),
+        transformResponse: ioTransformer(datasetGetResponseBody),
       })
     );
   }
@@ -93,12 +125,12 @@ export class VdiService extends FetchClientWithCredentials {
    * Updates a dataset's details based on the given patch body.
    */
   async patchDatasetDetails(
-    id: vdi.DatasetId,
-    body: req.DatasetPatchRequest
+    id: DatasetId,
+    body: DatasetPatchRequest
   ): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.datasetUri(id),
+        path: VdiRoutes.datasetUri(id),
         method: 'PATCH',
         body: body,
         transformResponse: VdiService.voidResponse,
@@ -110,19 +142,19 @@ export class VdiService extends FetchClientWithCredentials {
    * Uploads a new data revision for a target dataset.
    */
   async putDataset(
-    id: vdi.DatasetId,
-    details: req.DatasetPutRequestDetails,
+    id: DatasetId,
+    details: DatasetPutDetails,
     uploads: DatasetUpload[],
     dispatchUploadProgress?: Consumer<number>,
-    dispatchPageRedirect?: Consumer<vdi.DatasetPutResponseBody>,
+    dispatchPageRedirect?: Consumer<DatasetPutResponseBody>,
     dispatchBadUpload?: Consumer<BadUpload>
   ) {
     await this.uploadDataset(
-      VdiRoute.datasetUri(id),
+      VdiRoutes.datasetUri(id),
       'PUT',
       details,
       uploads,
-      ioTransformer(vdi.datasetPostResponse),
+      ioTransformer(datasetPostResponse),
       dispatchUploadProgress
     ).then((res) => {
       if (dispatchPageRedirect && 'datasetId' in res) dispatchPageRedirect(res);
@@ -133,22 +165,22 @@ export class VdiService extends FetchClientWithCredentials {
   /**
    * Marks a target dataset as deleted.
    */
-  async deleteDataset(id: vdi.DatasetId): Promise<void> {
+  async deleteDataset(id: DatasetId): Promise<void> {
     return this.fetch(
       createPlainTextRequest({
-        path: VdiRoute.datasetUri(id),
+        path: VdiRoutes.datasetUri(id),
         method: 'DELETE',
         transformResponse: VdiService.voidResponse,
       })
     );
   }
 
-  async getDatasetFileList(id: vdi.DatasetId): Promise<vdi.DatasetFileListing> {
+  async getDatasetFileList(id: DatasetId): Promise<DatasetFileListing> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.datasetFilesUri(id),
+        path: VdiRoutes.datasetFilesUri(id),
         method: 'GET',
-        transformResponse: ioTransformer(vdi.datasetFileListing),
+        transformResponse: ioTransformer(datasetFileListing),
       })
     );
   }
@@ -159,14 +191,14 @@ export class VdiService extends FetchClientWithCredentials {
    * The download flag does nothing for zip files.
    */
   async getDatasetRootFile(
-    id: vdi.DatasetId,
-    file: vdi.RootDatasetFile,
+    id: DatasetId,
+    file: RootDatasetFile,
     download: boolean = true
   ): Promise<void | unknown> {
     const dlParam = download ? '' : '?download=false';
     return this.fetch(
       createPlainTextRequest({
-        path: VdiRoute.datasetStaticFileUri(id, file) + dlParam,
+        path: VdiRoutes.datasetStaticFileUri(id, file) + dlParam,
         method: 'GET',
         transformResponse: VdiService.unknownBody,
       })
@@ -174,12 +206,12 @@ export class VdiService extends FetchClientWithCredentials {
   }
 
   async getDatasetDocumentFile(
-    id: vdi.DatasetId,
+    id: DatasetId,
     file: string
   ): Promise<void | unknown> {
     return this.fetch(
       createPlainTextRequest({
-        path: VdiRoute.datasetDocumentFileUri(id, file),
+        path: VdiRoutes.datasetDocumentFileUri(id, file),
         method: 'GET',
         transformResponse: VdiService.unknownBody,
       })
@@ -187,26 +219,26 @@ export class VdiService extends FetchClientWithCredentials {
   }
 
   async putDatasetDocumentFile(
-    id: vdi.DatasetId,
+    id: DatasetId,
     file: File,
     dispatchResponse?: (status: number, message?: string) => void
   ): Promise<void> {
     await this.uploadFile(
-      VdiRoute.datasetDocumentFileUri(id, file.name),
+      VdiRoutes.datasetDocumentFileUri(id, file.name),
       file,
       dispatchResponse
     );
   }
 
   async getDatasetVarPropsFile(
-    id: vdi.DatasetId,
+    id: DatasetId,
     file: string,
     download: boolean = true
   ): Promise<void | unknown> {
     const dlParam = download ? '' : '?download=false';
     return this.fetch(
       createPlainTextRequest({
-        path: VdiRoute.datasetVariablePropertiesFileUri(id, file) + dlParam,
+        path: VdiRoutes.datasetVariablePropertiesFileUri(id, file) + dlParam,
         method: 'GET',
         transformResponse: VdiService.unknownBody,
       })
@@ -214,25 +246,25 @@ export class VdiService extends FetchClientWithCredentials {
   }
 
   async putDatasetVarPropsFile(
-    id: vdi.DatasetId,
+    id: DatasetId,
     file: File,
     dispatchResponse?: (status: number, message?: string) => void
   ): Promise<void> {
     await this.uploadFile(
-      VdiRoute.datasetVariablePropertiesFileUri(id, file.name),
+      VdiRoutes.datasetVariablePropertiesFileUri(id, file.name),
       file,
       dispatchResponse
     );
   }
 
   async putDatasetShareOffer(
-    id: vdi.DatasetId,
+    id: DatasetId,
     recipientUserId: number,
-    action: vdi.ShareOfferAction
+    action: ShareOfferAction
   ): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.datasetShareUri(id, recipientUserId, 'offer'),
+        path: VdiRoutes.datasetShareUri(id, recipientUserId, 'offer'),
         method: 'PUT',
         body: { action },
         transformResponse: VdiService.voidResponse,
@@ -241,13 +273,13 @@ export class VdiService extends FetchClientWithCredentials {
   }
 
   async putDatasetShareReceipt(
-    id: vdi.DatasetId,
+    id: DatasetId,
     recipientUserId: number,
-    action: req.ShareReceiptAction
+    action: ShareReceiptAction
   ): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.datasetShareUri(id, recipientUserId, 'receipt'),
+        path: VdiRoutes.datasetShareUri(id, recipientUserId, 'receipt'),
         method: 'PUT',
         body: { action },
         transformResponse: VdiService.voidResponse,
@@ -255,32 +287,32 @@ export class VdiService extends FetchClientWithCredentials {
     );
   }
 
-  async getCommunityDatasetList(): Promise<Array<vdi.DatasetListEntry>> {
+  async getCommunityDatasetList(): Promise<Array<DatasetListEntry>> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.DatasetListPath + VdiRoute.CommunityPathSegment,
+        path: VdiRoutes.DatasetListPath + VdiRoutes.CommunityPathSegment,
         method: 'GET',
-        transformResponse: ioTransformer(io.array(vdi.datasetListEntry)),
+        transformResponse: ioTransformer(io.array(datasetListEntry)),
       })
     );
   }
 
-  async getUserMetadata(): Promise<vdi.UserMetadata> {
+  async getUserMetadata(): Promise<VdiUserMetadata> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.UserMetadataPath,
+        path: VdiRoutes.UserMetadataPath,
         method: 'GET',
-        transformResponse: ioTransformer(vdi.userMetadata),
+        transformResponse: ioTransformer(userMetadata),
       })
     );
   }
 
-  async getUserShareOffers(): Promise<Array<vdi.ShareOfferListEntry>> {
+  async getUserShareOffers(): Promise<Array<ShareOfferListEntry>> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.UserShareOffersPath,
+        path: VdiRoutes.UserShareOffersPath,
         method: 'GET',
-        transformResponse: ioTransformer(io.array(vdi.shareOfferListEntry)),
+        transformResponse: ioTransformer(io.array(shareOfferListEntry)),
       })
     );
   }
@@ -288,21 +320,23 @@ export class VdiService extends FetchClientWithCredentials {
   /**
    * Fetches the public facing service configuration details.
    */
-  async getServiceMetadata(): Promise<vdi.VdiServiceMetadata> {
+  async getServiceMetadata(): Promise<VdiServiceMetadata> {
     return this.fetch(
       createJsonRequest({
-        path: VdiRoute.ServiceInfoPath,
+        path: VdiRoutes.ServiceInfoPath,
         method: 'GET',
-        transformResponse: ioTransformer(vdi.serviceMetadata),
+        transformResponse: ioTransformer(serviceMetadata),
       })
     );
   }
 
-  async getPluginList(installTarget?: string): Promise<Array<VdiPluginConfig>> {
+  async getPluginList(
+    installTarget?: string
+  ): Promise<Array<VdiPluginConfig>> {
     return this.fetch(
       createJsonRequest({
         path:
-          VdiRoute.PluginsPath +
+          VdiRoutes.PluginsPath +
           (installTarget ? `?${installTarget}=${installTarget}` : ''),
         method: 'GET',
         transformResponse: ioTransformer(io.array(pluginListItem)),
@@ -343,7 +377,8 @@ export class VdiService extends FetchClientWithCredentials {
 
         if (code >= 500) {
           throw new Error(
-            (body as ServerErrorBody).message ?? 'unhandled server exception'
+            (body as ServerErrorBody).message ??
+              'unhandled server exception'
           );
         }
 
@@ -355,14 +390,14 @@ export class VdiService extends FetchClientWithCredentials {
               timestamp: Date.now(),
               type: 400,
               message:
-                (body as vdi.SimpleServiceErrorBody).message ??
+                (body as SimpleServiceErrorBody).message ??
                 'file upload failed',
             } as BadUpload;
           case 422:
             return {
               timestamp: Date.now(),
               type: 422,
-              errors: (body as vdi.ValidationErrorBody).errors,
+              errors: (body as ValidationErrorBody).errors,
             } as BadUpload;
           default:
             console.error('unexpected server response: ', response);

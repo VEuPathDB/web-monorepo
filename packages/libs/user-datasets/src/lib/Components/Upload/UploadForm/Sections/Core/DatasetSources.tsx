@@ -1,9 +1,10 @@
 import { ReactElement, useState } from 'react';
+
 import { InputPair } from '../../Components';
 import {
   DatasetPostDetails,
   PostDatasetSource,
-} from '../../../../../Service/model/requests';
+} from '../../../../../Service';
 import {
   BiConsumer,
   Consumer,

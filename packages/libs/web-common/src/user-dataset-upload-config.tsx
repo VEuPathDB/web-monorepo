@@ -7,7 +7,7 @@ import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
-  ClientDataTypeConfig,
+  ClientDatasetTypeConfig,
   DatasetDependency,
   DependencyInputProps,
   UploadFormConfigurators
@@ -22,7 +22,7 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
-  phenotype: { name: 'phenotype', version: '1.0' },
+  phenotype: { name: 'phenotype', version: '1.0' }
 } as const;
 
 /**
@@ -31,7 +31,7 @@ const implementedUploadTypes = {
  * Primarily used for rendering the data type selection menu before the upload
  * form for projects that allow for multiple dataset types.
  */
-export const userDatasetTypeConfigs: readonly ClientDataTypeConfig[] = [
+export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
   {
     ...implementedUploadTypes.bigwigfiles,
     description: `Integrate your bigWig data in ${projectId}.`,
