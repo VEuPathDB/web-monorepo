@@ -69,7 +69,8 @@ import {
 import { transitionToInternalPage } from '../../Actions/RouterActions';
 import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 import { InvalidStepValidation, extractParamValues } from '../../Utils/WdkUser';
-import { getTypedError } from '../../Utils/Errors';
+import { getTypedError, makeCommonErrorMessage } from '../../Utils/Errors';
+import { ServiceError } from '../../Service/ServiceError';
 
 export const observeStartLoadingTabListing = (
   action$: ActionsObservable<Action>,
@@ -182,10 +183,9 @@ export const observeStartLoadingSavedTab = (
         return finishLoadingSavedTab(panelId, {
           ...panelState,
           status: 'ERROR',
-          errorMessage:
-            typeof ex === 'object' && 'response' in ex!
-              ? (ex.response as string)
-              : String(ex),
+          errorMessage: ex instanceof ServiceError
+            ? ex.response
+            : makeCommonErrorMessage(ex),
         });
       }
     })
