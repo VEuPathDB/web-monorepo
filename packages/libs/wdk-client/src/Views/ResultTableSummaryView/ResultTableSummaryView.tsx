@@ -20,7 +20,7 @@ import {
   CloseAttributeAnalysis,
   UpdateSelectedIds,
   ShowLoginWarning,
-} from '../../Views/ResultTableSummaryView/Types';
+} from './Types';
 import ResultTableAddColumnsDialog from '../../Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
 import { LoadingOverlay } from '../../Components';
 

@@ -12,7 +12,7 @@ import { EMPTY, Observable } from 'rxjs';
 import { PageTransitioner } from '../Utils/PageTransitioner';
 import { ParamValueStore } from '../Utils/ParamValueStore';
 import WdkService from '../Service/WdkService';
-import { wdkMiddleware } from '../Core/WdkMiddleware';
+import { wdkMiddleware } from './WdkMiddleware';
 import { catchError, startWith } from 'rxjs/operators';
 import { notifyUnhandledError } from '../Actions/UnhandledErrorActions';
 
@@ -46,7 +46,7 @@ type StoreModuleRecord<T extends Record<string, any>, A extends Action> = {
 type RootReducer<T, A extends Action> = Reducer<T, A>;
 
 export function createWdkStore<
-  T,
+  T extends Record<string, any>,
   A extends Action,
   E extends EpicDependencies = EpicDependencies
 >(

@@ -69,6 +69,7 @@ import {
 import { transitionToInternalPage } from '../../Actions/RouterActions';
 import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 import { InvalidStepValidation, extractParamValues } from '../../Utils/WdkUser';
+import { getTypedError } from '../../Utils/Errors';
 
 export const observeStartLoadingTabListing = (
   action$: ActionsObservable<Action>,
@@ -181,7 +182,10 @@ export const observeStartLoadingSavedTab = (
         return finishLoadingSavedTab(panelId, {
           ...panelState,
           status: 'ERROR',
-          errorMessage: 'response' in ex ? ex.response : String(ex),
+          errorMessage:
+            typeof ex === 'object' && 'response' in ex!
+              ? (ex.response as string)
+              : String(ex),
         });
       }
     })
@@ -237,7 +241,7 @@ export const observeStartLoadingChosenAnalysisTab = (
             parseAnalysisInitializationError(ex);
 
           if (!isValidationError) {
-            wdkService.submitErrorIfNot500(ex);
+            wdkService.submitErrorIfNot500(getTypedError(ex));
           }
 
           return [
