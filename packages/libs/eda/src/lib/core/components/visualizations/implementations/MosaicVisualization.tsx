@@ -457,7 +457,7 @@ function MosaicViz(props: Props<Options>) {
       yAxisVocabulary,
       vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
     ) as TwoByTwoDataWithCoverage | ContTableDataWithCoverage;
-  }, [dataRequestDeps]);
+  }, [visualization.descriptor.type, dataRequestDeps]);
 
   const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
   const yAxisLabel = variableDisplayWithUnit(yAxisVariable);

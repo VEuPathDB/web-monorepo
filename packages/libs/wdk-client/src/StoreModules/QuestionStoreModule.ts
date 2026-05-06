@@ -84,6 +84,7 @@ import {
   mergeMapRequestActionsToEpic as mrate,
 } from '../Utils/ActionCreatorUtils';
 import { GlobalParamMapping, ParamValueStore } from '../Utils/ParamValueStore';
+import { ServiceError } from '../Service/ServiceError';
 
 export const key = 'question';
 
@@ -566,7 +567,7 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
       }
 
       return from(
-        [{ name: '__total__' }]
+        [{ name: '__total__' } as ParameterGroup]
           .concat(questionState.question.groups)
           .filter(
             (group) =>
@@ -1059,7 +1060,7 @@ async function loadQuestion(
       submissionMetadata,
     });
   } catch (error) {
-    return error.status === 404
+    return error instanceof ServiceError && error.status === 404
       ? questionNotFound({ searchName })
       : questionError({ searchName });
   }

@@ -348,6 +348,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     );
     return result.variables;
   }, [
+    visualization.descriptor.type,
     computeName,
     computeJobComplete,
     studyId,
@@ -917,7 +918,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         overlayValueToColorMapper,
       };
     },
-    [dataRequestDeps],
+    [visualization.descriptor.type, dataRequestDeps],
     60 * 1000 // 60 seconds cache time
   );
 

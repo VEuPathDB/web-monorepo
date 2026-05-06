@@ -14,7 +14,12 @@ export function loadChemDoodleWeb() {
   return new Promise(function (resolve, reject) {
     try {
       require.ensure([], function (require) {
-        require('!!script-loader!site/js/ChemDoodleWeb');
+        // ChemDoodleWeb.js is a UMD module. When loaded via script-loader,
+        // webpack's module-scope `exports` leaks into the eval scope and
+        // the UMD wrapper picks the CommonJS branch, then throws on the
+        // undefined `module`. Shadow both so the UMD falls through to the
+        // browser-global branch that actually registers readMOL et al.
+        require('!!script-loader!imports-loader?additionalCode=var%20exports%3Dundefined%3Bvar%20module%3Dundefined%3B!site/js/ChemDoodleWeb');
         resolve(ChemDoodle);
       });
     } catch (err) {

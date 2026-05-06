@@ -187,15 +187,15 @@ interface InstrumentOptions {
  *
  * This should never be used in production code!
  */
-export function instrument<P>(
+export function instrument<P extends AnyObject>(
   Component: React.ComponentClass<P>,
   options: InstrumentOptions
 ): React.ComponentClass<P>;
-export function instrument<P>(
+export function instrument<P extends AnyObject>(
   Component: React.FC<P>,
   options: InstrumentOptions
 ): React.ComponentClass<P>;
-export function instrument<P>(
+export function instrument<P extends AnyObject>(
   Component: any,
   options: InstrumentOptions = {}
 ): React.ComponentClass<P> {

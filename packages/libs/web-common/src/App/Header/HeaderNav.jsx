@@ -73,7 +73,7 @@ class HeaderNav extends React.Component {
           <h2 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
               <mark>{titleFirstPart}</mark>
-              {titleSecPart}
+              <i>{titleSecPart}</i>
             </Link>
           </h2>
         </div>
@@ -127,7 +127,7 @@ class HeaderNav extends React.Component {
           <h1 className="HeaderNav-Title">
             <Link to="/" style={{ color: '#DD314E' }}>
               <mark>{titleFirstPart}</mark>
-              {titleSecPart}
+              <i>{titleSecPart}</i>
             </Link>
           </h1>
           <p>

@@ -62,7 +62,7 @@ export const userDatasetRoutes: RouteEntry[] = [
             props: UserDatasetDetailProps
           ) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
-              props.userDataset.id
+              props.userDataset.datasetId
             );
             const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
             return (
@@ -93,7 +93,7 @@ export const userDatasetRoutes: RouteEntry[] = [
             helpTabContents={
               <ExternalContentController url={helpTabContentUrl} />
             }
-            dataNoun={{ singular: 'Study', plural: 'Studies' }}
+            dataNoun={{ singular: 'Dataset', plural: 'Datasets' }}
             enablePublicUserDatasets={!!communityDatasetsEnabled}
             showExtraMetadata={!!showExtraMetadata}
           />

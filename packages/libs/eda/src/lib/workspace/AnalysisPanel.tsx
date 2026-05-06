@@ -24,7 +24,7 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { usePrevious } from '../core/hooks/previousValue';
 import { isStubEntity } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { useStudyMetadata, useStudyRecord } from '../core';
+import { useStudyMetadata, useStudyRecord, useStudyRecordClass } from '../core';
 import { useGeoConfig } from '../core/hooks/geoConfig';
 
 // Components
@@ -124,6 +124,7 @@ export function AnalysisPanel({
   isStudyExplorerWorkspace = false,
 }: Props) {
   const studyRecord = useStudyRecord();
+  const studyRecordClass = useStudyRecordClass();
   const analysisState = useAnalysis(analysisId, singleAppMode);
 
   const {
@@ -191,6 +192,7 @@ export function AnalysisPanel({
   );
 
   const previousAnalysisId = usePrevious(analysisId);
+  const { isUserStudy } = studyMetadata;
 
   useEffect(() => {
     if (
@@ -350,7 +352,7 @@ export function AnalysisPanel({
               routeBase={routeBase}
               items={[
                 {
-                  display: 'View Study Details',
+                  display: 'View Dataset Details',
                   route: `/details`,
                   exact: false,
                 },
@@ -421,7 +423,7 @@ export function AnalysisPanel({
             render={() => (
               <AnalysisTabErrorBoundary>
                 <RecordController
-                  recordClass="dataset"
+                  recordClass={studyRecordClass.urlSegment}
                   primaryKey={studyRecord.id.map((p) => p.value).join('/')}
                 />
               </AnalysisTabErrorBoundary>

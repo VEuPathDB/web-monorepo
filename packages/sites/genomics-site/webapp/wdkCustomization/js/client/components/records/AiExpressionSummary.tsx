@@ -505,11 +505,16 @@ function useAiExpressionSummary(
       if (!isGenomicsService(wdkService)) throw new Error('nasty');
       if (pollingCounter < 0) return undefined;
       const { projectId } = await wdkService.getConfig();
+      const recordClasses = await wdkService.getRecordClasses();
+      const geneRecordHasProjectId = recordClasses.find(
+        (rc) => rc.fullName === 'GeneRecordClasses.GeneRecordClass'
+      )?.primaryKeyColumnRefs.length === 2;
+      const genePkValues = geneRecordHasProjectId ? `${geneId},${projectId}` : geneId;
       const answerSpec = {
         searchName: 'single_record_question_GeneRecordClasses_GeneRecordClass',
         searchConfig: {
           parameters: {
-            primaryKeys: `${geneId},${projectId}`,
+            primaryKeys: genePkValues,
           },
         },
       };

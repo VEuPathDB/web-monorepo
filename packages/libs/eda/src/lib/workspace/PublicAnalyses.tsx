@@ -249,7 +249,7 @@ function PublicAnalysesTable({
     () => [
       {
         key: 'studyId',
-        name: 'Study',
+        name: 'Dataset',
         sortable: true,
         renderCell: (data: { row: PublicAnalysisRow }) =>
           safeHtml(data.row.studyDisplayNameHTML),

@@ -1,7 +1,12 @@
 import { colors } from '@material-ui/core';
 import { plugins } from '../../core/components/computations/plugins';
 import { VolcanoPlotConfig } from '../../core/components/visualizations/implementations/VolcanoPlotVisualization';
-import { useFindEntityAndVariable } from '../../core/hooks/workspace';
+import {
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../core/hooks/workspace';
+import { findEntityAndVariable } from '../../core/utils/study-metadata';
+import { formatFilterValue } from '../../core/utils/filter-display';
 import { DifferentialExpressionConfig } from '../../core/types/apps';
 import { AnalysisState, Filter } from '../../core';
 import { TextCellContext } from '../Types';
@@ -25,6 +30,7 @@ interface DifferentialAnalysisReviewContentProps extends TextCellContext {
   sharedInputsCellId?: string;
   computeCellId?: string;
   volcanoCellId?: string;
+  dataEntityDisplayName?: string;
 }
 
 export function DifferentialAnalysisReviewContent({
@@ -37,6 +43,7 @@ export function DifferentialAnalysisReviewContent({
   sharedInputsCellId = 'de_shared_inputs',
   computeCellId = 'de_deseq2_compute',
   volcanoCellId = 'de_volcano',
+  dataEntityDisplayName = 'Sample',
 }: DifferentialAnalysisReviewContentProps) {
   const deComputation = analysisState?.analysis?.descriptor.computations.find(
     (c) => c.descriptor.type === 'differentialexpression'
@@ -56,16 +63,17 @@ export function DifferentialAnalysisReviewContent({
 
   const filters =
     (analysisState?.analysis?.descriptor?.subset?.descriptor as Filter[]) ?? [];
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
+  const entities = useStudyEntities(filters);
+  const findEntityAndVariableByDescriptor = useFindEntityAndVariable(filters);
 
   const identifierVarInfo = deConfig?.identifierVariable
-    ? findEntityAndVariable(deConfig.identifierVariable)
+    ? findEntityAndVariableByDescriptor(deConfig.identifierVariable)
     : undefined;
   const valueVarInfo = deConfig?.valueVariable
-    ? findEntityAndVariable(deConfig.valueVariable)
+    ? findEntityAndVariableByDescriptor(deConfig.valueVariable)
     : undefined;
   const comparatorVarInfo = deConfig?.comparator?.variable
-    ? findEntityAndVariable(deConfig.comparator.variable)
+    ? findEntityAndVariableByDescriptor(deConfig.comparator.variable)
     : undefined;
 
   const hasExpressionData = identifierVarInfo != null && valueVarInfo != null;
@@ -137,6 +145,22 @@ export function DifferentialAnalysisReviewContent({
         />
       </ReviewCard>
 
+      {filters.length > 0 && (
+        <ReviewCard title={`${dataEntityDisplayName} Filters`}>
+          {filters.map((filter) => {
+            const ev = findEntityAndVariable(entities, filter);
+            if (!ev) return null;
+            return (
+              <ReviewRow
+                key={`${filter.entityId}/${filter.variableId}`}
+                label={`${ev.entity.displayName}: ${ev.variable.displayName}`}
+                value={formatFilterValue(filter, entities)}
+              />
+            );
+          })}
+        </ReviewCard>
+      )}
+
       <ReviewCard
         title="Group Comparison"
         complete={hasGroupComparison}
@@ -170,14 +194,23 @@ export function DifferentialAnalysisReviewContent({
 
       <ReviewCard title="Volcano Thresholds">
         <ReviewRow
-          label="|Effect size| ≥"
+          label={`|${volcanoPlotConfig?.effectSizeLabel ?? 'Effect size'}| ≥`}
           value={String(volcanoPlotConfig?.effectSizeThreshold ?? '—')}
         />
         <ReviewRow
           label="p-value ≤"
           value={String(volcanoPlotConfig?.significanceThreshold ?? '—')}
         />
-        <ReviewRow label="Direction" value="Up and down regulated" />
+        <ReviewRow
+          label="Direction"
+          value={
+            volcanoPlotConfig?.effectDirection === 'up only'
+              ? 'Up-regulated only'
+              : volcanoPlotConfig?.effectDirection === 'down only'
+              ? 'Down-regulated only'
+              : 'Up- or down-regulated'
+          }
+        />
         {volcanoStep && (
           <p
             style={{

@@ -8,9 +8,9 @@ export let cancelAnimationFrame: (handle: number) => void;
 /** Normalize requestAnimationFrame functions */
 (function () {
   requestAnimationFrame =
-    window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+    window.requestAnimationFrame || (window as any).webkitRequestAnimationFrame;
   cancelAnimationFrame =
-    window.cancelAnimationFrame || window.webkitCancelAnimationFrame;
+    window.cancelAnimationFrame || (window as any).webkitCancelAnimationFrame;
 
   if (!requestAnimationFrame) {
     let lastTime = 0;

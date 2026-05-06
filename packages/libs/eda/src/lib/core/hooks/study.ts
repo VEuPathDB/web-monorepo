@@ -1,4 +1,4 @@
-import { createContext, useCallback } from 'react';
+import { createContext } from 'react';
 import {
   useWdkService,
   useWdkServiceWithRefresh,
@@ -23,14 +23,13 @@ import {
 import SubsettingClient from '../api/SubsettingClient';
 
 // Hooks
-import { usePromise, useStudyRecord } from '..';
+import { useStudyRecord } from '..';
 import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
 import { getWdkStudyRecords } from '../utils/study-records';
 import { useDeepValue } from './immutability';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { FetchClientError } from '@veupathdb/http-utils';
-
-const STUDY_RECORD_CLASS_NAME = 'dataset';
+import { useCachedPromise } from './cachedPromise';
 
 interface StudyState {
   studyRecordClass: StudyRecordClass;
@@ -45,8 +44,22 @@ export interface HookValue {
   studyRecord: StudyRecord;
 }
 export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
+  const permissionsResponse = usePermissions();
+
+  // Determine record class name based on isUserStudy from permissions
+  // undefined while permissions are loading → will return undefined from the hook
+  const STUDY_RECORD_CLASS_NAME = permissionsResponse.loading
+    ? undefined
+    : permissionsResponse.permissions.perDataset[datasetId]?.isUserStudy
+    ? 'userdataset'
+    : 'dataset';
+
   return useWdkServiceWithRefresh(
     async (wdkService) => {
+      if (STUDY_RECORD_CLASS_NAME === undefined) {
+        return undefined;
+      }
+
       const studyRecordClass = await wdkService.findRecordClass(
         STUDY_RECORD_CLASS_NAME
       );
@@ -91,7 +104,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
             { dataset_id: datasetId }
           );
           return {
-            displayName: 'Fake Study',
+            displayName: 'unknown Dataset',
             id: [{ name: 'dataset_id', value: datasetId }],
             recordClassName: STUDY_RECORD_CLASS_NAME,
             attributes: attrs,
@@ -104,7 +117,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         studyRecordClass,
       };
     },
-    [datasetId]
+    [datasetId, STUDY_RECORD_CLASS_NAME]
   );
 }
 
@@ -147,13 +160,24 @@ export function useWdkStudyRecords(
  * */
 export function useWdkStudyReleases(): Array<WdkStudyRelease> {
   const studyRecord = useStudyRecord();
+  const permissionsResponse = usePermissions();
+
+  // Extract datasetId from studyRecord.id
+  const datasetId = studyRecord.id[0]?.value;
+
+  // Determine record class name based on isUserStudy from permissions
+  const STUDY_RECORD_CLASS_NAME = permissionsResponse.loading
+    ? 'dataset'
+    : permissionsResponse.permissions.perDataset[datasetId]?.isUserStudy
+    ? 'userdataset'
+    : 'dataset';
 
   return (
     useWdkService((wdkService) => {
       return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
         tables: ['DownloadVersion'],
       });
-    })?.tables['DownloadVersion'].map(
+    }, [studyRecord.id, STUDY_RECORD_CLASS_NAME])?.tables['DownloadVersion'].map(
       (release) => ({
         // DAVE/JAMIE: I was sure if I could tell TS that these values
         // would always be present.
@@ -187,32 +211,32 @@ export function isStubEntity(entity: StudyEntity) {
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   const permissionsResponse = usePermissions();
-  return usePromise(
-    useCallback(async () => {
-      if (permissionsResponse.loading) return;
-      const { permissions } = permissionsResponse;
-      const studyId = permissions.perDataset[datasetId]?.studyId;
-      if (studyId == null) {
-        throw new Error(
-          `An EDA Study ID could not be found for the Dataset ${datasetId}.`
-        );
-      }
-      try {
-        return await client.getStudyMetadata(studyId);
-      } catch (error) {
-        if (error instanceof FetchClientError) {
-          console.error(error);
-          return {
-            id: studyId,
-            rootEntity: STUB_ENTITY,
-          };
-        }
-        throw error;
-      }
-    }, [client, datasetId, permissionsResponse]),
-    {
-      keepPreviousValue: false,
-      throwError: true,
+  // undefined while permissions are loading → disables the query (pending state)
+  // '__not_found__' sentinel → enables the query so the task can throw a clear error
+  const edaStudyId = permissionsResponse.loading
+    ? undefined
+    : permissionsResponse.permissions.perDataset[datasetId]?.studyId ??
+      '__not_found__';
+
+  return useCachedPromise(async () => {
+    // The '__not_found__' sentinel is a non-null key so react-query doesn't
+    // pause the query — it runs and throws a clear error instead of hanging.
+    if (edaStudyId === '__not_found__' || edaStudyId == null) {
+      throw new Error(
+        `An EDA Study ID could not be found for the Dataset ${datasetId}.`
+      );
     }
-  );
+    try {
+      return await client.getStudyMetadata(edaStudyId);
+    } catch (error) {
+      if (error instanceof FetchClientError) {
+        console.error(error);
+        return {
+          id: edaStudyId,
+          rootEntity: STUB_ENTITY,
+        };
+      }
+      throw error;
+    }
+  }, [edaStudyId, client]);
 }
