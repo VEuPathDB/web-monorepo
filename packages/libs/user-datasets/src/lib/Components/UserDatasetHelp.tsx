@@ -1,5 +1,6 @@
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+
+import { formatFileSize } from '../Utils/formatting';
 
 import tutStep2 from './images/tut-step-2.jpg';
 import tutStep3 from './images/tut-step-3.jpg';
@@ -28,10 +29,11 @@ function UserDatasetHelp({
         Taxon counts can be obtained from metagenome sequences through commonly
         available tools. Three of the most common ones (
         <a href="https://benjjneb.github.io/dada2">DADA2</a>,{' '}
-        <a href="www.qiime.org">QIIME</a>, and{' '}
-        <a href="www.mothur.org/wiki/Make.biom">Mothur</a>) have been integrated
-        into workflows, and are available as a free online service, through
-        NIAID's <a href="https://nephele.niaid.nih.gov/">Nephele</a> project.
+        <a href="https://www.qiime.org">QIIME</a>, and{' '}
+        <a href="https://mothur.org/wiki/make.biom/">Mothur</a>) have been
+        integrated into workflows, and are available as a free online service,
+        through NIAID's <a href="https://nephele.niaid.nih.gov/">Nephele</a>{' '}
+        project.
         <h4>Formatting the input </h4>
         You can upload any file that contains processed taxonomic reads in a
         valid BIOM format. See <a href="http://biom-format.org/">
@@ -139,7 +141,7 @@ function UserDatasetHelp({
             </li>
             <li>
               {workspaceTitle} you've created contribute to a per-user upload
-              limit/quota of <b>{bytesToHuman(quotaSize)}</b>.
+              limit/quota of <b>{formatFileSize(quotaSize)}</b>.
             </li>
             <li>
               {' '}
