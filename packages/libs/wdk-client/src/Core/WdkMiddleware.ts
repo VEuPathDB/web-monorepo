@@ -106,7 +106,7 @@ export const wdkMiddleware =
       logError(error);
     }
 
-    function logError(error: unknown) {
+    function logError(error: Error) {
       dispatch(notifyUnhandledError(error));
     }
   };

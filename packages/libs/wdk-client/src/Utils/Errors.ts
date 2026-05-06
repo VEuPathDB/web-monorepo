@@ -33,20 +33,17 @@ export type DelayedResultError = ErrorType<
   DelayedResultErrorInstance
 >;
 
-export type WdkError = Error &
-  (
-    | RuntimeError
-    | ValidationError
-    | ServerError
-    | ClientError
-    | InputError
-    | DelayedResultError
-  );
+export type WdkError =
+  | RuntimeError
+  | ValidationError
+  | ServerError
+  | ClientError
+  | InputError
+  | DelayedResultError;
 
 export function getTypedError(error: unknown, info?: unknown): WdkError {
   if (isServerError(error))
     return {
-      name: error.name,
       type: 'server',
       message: 'Internal server error',
       id: error.logMarker,
@@ -57,7 +54,6 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
     const result = ValidationBundle(parseJson(error.response));
     return result.status === 'ok'
       ? {
-          name: error.name,
           type: 'validation',
           message: makeValidationBundleErrorMessage(result.value),
           id: uuid(),
@@ -65,7 +61,6 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
           info,
         }
       : {
-          name: error.name,
           type: 'client',
           message: error.response,
           id: error.logMarker,
@@ -75,7 +70,6 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
   }
   if (isInputError(error))
     return {
-      name: error.name,
       type: 'input',
       message: error.response,
       id: error.logMarker,
@@ -84,16 +78,13 @@ export function getTypedError(error: unknown, info?: unknown): WdkError {
     };
   if (isDelayedResultError(error))
     return {
-      name: error.name,
       type: 'delayed-result',
       message: error.message,
       id: error.logMarker,
       error,
       info,
     };
-
   return {
-    name: error instanceof Error ? error.name : 'runtime error',
     type: 'runtime',
     message:
       error instanceof Error ? error.message : String(error) || 'Unknown error',

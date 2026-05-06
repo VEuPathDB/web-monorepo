@@ -30,18 +30,18 @@ export interface StateWithHistory<T> {
  * Use state hook with a history of the size provided via `options`. The initial returned state will be `undefined`.
  * @param options
  */
-export function useStateWithHistory<T extends {} = {}>(
+export function useStateWithHistory<T = undefined>(
   options: Options
 ): StateWithHistory<T | undefined>;
 /**
  * Use state hook with a history of the size provided via `options`.
  * @param options
  */
-export function useStateWithHistory<T extends {} = {}>(
+export function useStateWithHistory<T>(
   initialState: T,
   options: Options
 ): StateWithHistory<T>;
-export function useStateWithHistory<T extends {} = {}>(
+export function useStateWithHistory<T>(
   initialStateOrOptions: T | Options,
   optionsOrUndef?: Options
 ) {

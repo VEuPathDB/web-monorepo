@@ -224,7 +224,7 @@ export class Seq<T> {
     for (let iter = this[Symbol.iterator](); ; ) {
       let { done, value } = iter.next();
       if (done) break;
-      fn(value as T);
+      fn(value);
     }
     return this;
   }

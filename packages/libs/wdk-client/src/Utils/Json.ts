@@ -7,8 +7,7 @@ import {
   values,
 } from 'lodash';
 
-import { Seq } from './IterableUtils';
-import { makeCommonErrorMessage } from './Errors';
+import { Seq } from '../Utils/IterableUtils';
 
 /**
  * Validate and parse JSON strings into TypeScript/JavaScript objects.
@@ -130,9 +129,9 @@ export function field<T, S extends string>(fieldName: S, decoder: Decoder<T>) {
   };
 }
 
-export function record<T>(decoderRecord: {
-  [K in keyof T]: Decoder<T[K]>;
-}): Decoder<T> {
+export function record<T>(
+  decoderRecord: { [K in keyof T]: Decoder<T[K]> }
+): Decoder<T> {
   return function decodeRecord(t: any): Result<T> {
     if (!isPlainObject(t)) return err(t, `object`);
     for (const key in decoderRecord) {
@@ -451,9 +450,7 @@ export function decode<T>(decoder: Decoder<T>, jsonString: string): T {
   try {
     t = JSON.parse(jsonString);
   } catch (error) {
-    throw new Error(
-      'Provided JSON is not valid: ' + makeCommonErrorMessage(error)
-    );
+    throw new Error('Provided JSON is not valid: ' + error.message);
   }
   const r = decoder(t);
   if (r.status === 'err') {
