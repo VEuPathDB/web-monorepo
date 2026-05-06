@@ -56,6 +56,7 @@ import {
 } from '../Utils/StrategyUtils';
 import { confirm, alert } from '../Utils/Platform';
 import { SearchConfig } from '../Utils/WdkModel';
+import { getTypedError } from '../Utils/Errors';
 
 export const key = 'strategies';
 
@@ -239,7 +240,7 @@ async function getFulfillStrategy(
     const strategy = await wdkService.getStrategy(strategyId);
     return fulfillStrategy(strategy);
   } catch (error) {
-    return fulfillStrategyError(strategyId, error);
+    return fulfillStrategyError(strategyId, getTypedError(error));
   }
 }
 
