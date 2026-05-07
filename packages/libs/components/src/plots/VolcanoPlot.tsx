@@ -104,9 +104,9 @@ export interface VolcanoPlotProps {
    * at which points can be plotted. This information will also be shown in tooltips for floored points.
    */
   statisticsFloors?: StatisticsFloors;
-  /** Controls which directions of effect are highlighted. 'up only' hides the negative threshold line;
-   * 'down only' hides the positive threshold line. Defaults to 'up and down'. */
-  effectDirection?: 'up and down' | 'up only' | 'down only';
+  /** Controls which directions of effect are highlighted. 'upOnly' hides the negative threshold line;
+   * 'downOnly' hides the positive threshold line. Defaults to 'upAndDown'. */
+  effectDirection?: 'upAndDown' | 'upOnly' | 'downOnly';
 }
 
 const EmptyVolcanoPlotStats: VolcanoPlotStats = [];
@@ -227,7 +227,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
     showSpinner = false,
     rawDataMinMaxValues,
     statisticsFloors = DefaultStatisticsFloors,
-    effectDirection = 'up and down',
+    effectDirection = 'upAndDown',
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -341,9 +341,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
    * prevent the line from rendering outside the graph.
    */
   const showNegativeFoldChangeThresholdLine =
-    effectDirection !== 'up only' && -effectSizeThreshold > xAxisMin;
+    effectDirection !== 'upOnly' && -effectSizeThreshold > xAxisMin;
   const showPositiveFoldChangeThresholdLine =
-    effectDirection !== 'down only' && effectSizeThreshold < xAxisMax;
+    effectDirection !== 'downOnly' && effectSizeThreshold < xAxisMax;
   const showSignificanceThresholdLine =
     -Math.log10(Number(significanceThreshold)) > yAxisMin &&
     -Math.log10(Number(significanceThreshold)) < yAxisMax;
