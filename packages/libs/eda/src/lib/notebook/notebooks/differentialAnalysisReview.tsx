@@ -1,6 +1,9 @@
 import { colors } from '@material-ui/core';
 import { plugins } from '../../core/components/computations/plugins';
-import { VolcanoPlotConfig } from '../../core/components/visualizations/implementations/VolcanoPlotVisualization';
+import {
+  VolcanoPlotConfig,
+  effectDirectionLabels,
+} from '../../core/components/visualizations/implementations/VolcanoPlotVisualization';
 import {
   useFindEntityAndVariable,
   useStudyEntities,
@@ -204,11 +207,9 @@ export function DifferentialAnalysisReviewContent({
         <ReviewRow
           label="Direction"
           value={
-            volcanoPlotConfig?.effectDirection === 'up only'
-              ? 'Up-regulated only'
-              : volcanoPlotConfig?.effectDirection === 'down only'
-              ? 'Down-regulated only'
-              : 'Up- or down-regulated'
+            effectDirectionLabels[
+              volcanoPlotConfig?.effectDirection ?? 'upAndDown'
+            ]
           }
         />
         {volcanoStep && (
