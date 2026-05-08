@@ -26,6 +26,7 @@ import {
   updateDatasetListItem,
   updateUserDatasetDetail,
 } from '../../Actions/UserDatasetsActions';
+import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 
 //
 
@@ -82,9 +83,6 @@ export class UserDatasetSharingModal extends React.Component<
   UserDatasetSharingModalProps,
   UserDatasetSharingModalState
 > {
-  static contextType = WdkDependenciesContext;
-  declare context: React.ContextType<typeof WdkDependenciesContext>;
-
   constructor(props: UserDatasetSharingModalProps) {
     super(props);
     this.state = {
@@ -140,7 +138,7 @@ export class UserDatasetSharingModal extends React.Component<
         `verifyRecipient: bad email received (${recipientEmail})`
       );
 
-    const { wdkService } = this.context!;
+    const { wdkService } = this.context as EpicDependencies;
 
     if (!isVdiCompatibleWdkService(wdkService)) {
       throw new Error(
@@ -445,7 +443,7 @@ export class UserDatasetSharingModal extends React.Component<
   }: {
     datasets: VdiDataset[];
   }): ReactElement | null {
-    this.isOnDatasetList(this.props.context)
+    this.isOnDatasetList(this.props.context);
     return !Array.isArray(datasets) || !datasets.length ? null : (
       <>{datasets.map(this.renderDatasetItem)}</>
     );

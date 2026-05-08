@@ -28,7 +28,9 @@ export class JsonPathBuilder {
   }
 
   toString(): string {
-    return this.parentRef.toString() + JsonPathBuilder.toString(this.self);
+    return this === JsonPathBuilder.Root
+      ? (this.self as string)
+      : this.parentRef.toString() + JsonPathBuilder.toString(this.self);
   }
 
   private static toString(child: string | number): string {

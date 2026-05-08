@@ -1,22 +1,39 @@
-import { ReactElement } from 'react';
+import { ReactElement, useCallback } from 'react';
 import { UploadFormProps } from '../UploadForm';
-import { DatasetPostDetails } from "../../../../Service";
-import { Consumer, JsonPathBuilder } from '../../../../Utils';
-import { CoreDatasetInformation } from "./Core";
+import { JsonPathBuilder } from '../../../../Utils';
+import { CoreDatasetInformation } from './Core';
+import { useDispatch } from 'react-redux';
+import {
+  ClientSideUploadFormState,
+  useUploadFormState,
+} from '../../../../StoreModules/UserDatasetUploadStoreModule';
+import { DatasetPostDetails } from '../../../../Service';
+import { updateFormState } from '../../../../Actions/UserDatasetUploadActions';
 
 export interface MetadataSectionProps {
   readonly formProps: UploadFormProps;
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function MetadataSection({
   formProps,
-  datasetMeta,
-  setDatasetMeta,
   jsonPath,
 }: MetadataSectionProps): ReactElement {
+  const dispatch = useDispatch();
+  const { datasetDetails, fileUploads, formMetaState } = useUploadFormState();
+
+  const setMetadata = useCallback(
+    (datasetDetails: DatasetPostDetails) =>
+      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
+    [dispatch, fileUploads, formMetaState]
+  );
+
+  const setFormState = useCallback(
+    (formMetaState: ClientSideUploadFormState) =>
+      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
+    [dispatch, datasetDetails, fileUploads]
+  );
+
   return (
     <section className="relative-root">
       <h2>
@@ -25,12 +42,12 @@ export function MetadataSection({
       <ImportMetaButton />
 
       <CoreDatasetInformation
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
+        datasetMeta={datasetDetails}
+        setDatasetMeta={setMetadata}
+        clientSideState={formMetaState}
+        setClientSideState={setFormState}
         jsonPath={jsonPath}
       />
-
-
     </section>
   );
 }

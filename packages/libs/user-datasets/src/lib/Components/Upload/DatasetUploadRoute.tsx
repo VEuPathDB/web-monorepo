@@ -7,8 +7,6 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 import { VdiService, VdiServiceMetadata, VdiPluginConfig } from '../../Service';
 import { DatasetTypeConfig, UploadFormConfigurators } from './Configuration';
 import { DatasetUploadController } from './DatasetUploadController';
-import { UploadFormState } from './UploadForm';
-import { Consumer } from '../../Utils';
 
 export interface UploadRouteProps {
   readonly vdi: VdiService;
@@ -19,8 +17,6 @@ export interface UploadRouteProps {
   readonly plugins: readonly VdiPluginConfig[];
 
   readonly formConfigs: UploadFormConfigurators;
-  readonly uploadFormState: UploadFormState;
-  readonly setUploadFormState: Consumer<UploadFormState>;
 }
 
 export function DatasetUploadRoute(props: UploadRouteProps): ReactElement {

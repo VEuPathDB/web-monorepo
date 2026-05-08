@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { partialRight } from 'lodash';
 
-import { InputPair } from "../../Components";
+import { InputPair } from '../../Components';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { DatasetContact, DatasetPostDetails } from '../../../../../Service';
 
@@ -31,14 +31,19 @@ export function CollaboratorsSection(
   };
 
   const contactBlocks = (props.datasetMeta.contacts ?? [{}]).map(
-    (contact, index) => (
-      <ContactBlock
-        index={index}
-        pathBuilder={props.pathBuilder}
-        contact={contact}
-        updateContact={onUpdateContact}
-      />
-    )
+    (contact, index) => {
+      const path = props.pathBuilder.append(index);
+
+      return (
+        <ContactBlock
+          key={path.toString()}
+          path={path}
+          index={index}
+          contact={contact}
+          updateContact={onUpdateContact}
+        />
+      );
+    }
   );
 
   return (
@@ -52,6 +57,7 @@ export function CollaboratorsSection(
 
         <button
           className="input-appender"
+          type="button"
           title="Adds an additional contact entry."
           onClick={(_) => setContacts([{}])}
         >
@@ -64,14 +70,12 @@ export function CollaboratorsSection(
 
 interface ContactBlockProps {
   readonly index: number;
-  readonly pathBuilder: JsonPathBuilder;
+  readonly path: JsonPathBuilder;
   readonly contact: DatasetContact;
   readonly updateContact: (contact: DatasetContact, index: number) => void;
 }
 
-function ContactBlock(props: ContactBlockProps): ReactElement {
-  const path = props.pathBuilder.append(props.index);
-
+function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
   const isPrimary = path.appendToString<DatasetContact>('isPrimary');
 
   const onChangePart = partialRight(
@@ -85,11 +89,12 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
       <span className="multi-input-label">Contact {props.index + 1}</span>
       <button className="inline">Copy from My Profile</button>
 
-      <div className="col-2 field-grid">
+      <div className="column-2 field-grid">
         <TextField
           label="First Name"
           field="firstName"
           pathBuilder={path}
+          value={props.contact.firstName}
           onChange={onChangePart('firstName')}
         />
 
@@ -97,6 +102,7 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
           label="Middle Name"
           field="middleName"
           pathBuilder={path}
+          value={props.contact.middleName}
           onChange={onChangePart('middleName')}
         />
 
@@ -104,6 +110,7 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
           label="Last Name"
           field="lastName"
           pathBuilder={path}
+          value={props.contact.lastName}
           onChange={onChangePart('lastName')}
         />
 
@@ -111,6 +118,7 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
           label="Email"
           field="email"
           pathBuilder={path}
+          value={props.contact.email}
           onChange={onChangePart('email')}
         />
 
@@ -118,6 +126,7 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
           label="Organization Name"
           field="affiliation"
           pathBuilder={path}
+          value={props.contact.affiliation}
           onChange={onChangePart('affiliation')}
         />
 
@@ -125,6 +134,7 @@ function ContactBlock(props: ContactBlockProps): ReactElement {
           label="Country"
           field="country"
           pathBuilder={path}
+          value={props.contact.country}
           onChange={onChangePart('country')}
         />
 
@@ -149,13 +159,23 @@ interface LabeledInputProps {
   readonly label: string;
   readonly field: keyof DatasetContact;
   readonly pathBuilder: JsonPathBuilder;
+  readonly value: string | undefined;
   readonly onChange: (value: string) => void;
 }
 
-function TextField(props: LabeledInputProps): ReactElement {
-  return InputPair({
-    label:     props.label,
-    fieldName: props.pathBuilder.appendToString(props.field),
-    onChange:  props.onChange,
-  });
+function TextField({
+  label,
+  value,
+  field,
+  pathBuilder,
+  onChange,
+}: LabeledInputProps): ReactElement {
+  return (
+    <InputPair
+      label={label}
+      fieldName={pathBuilder.appendToString(field)}
+      value={value}
+      onChange={onChange}
+    />
+  );
 }

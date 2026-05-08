@@ -33,7 +33,7 @@ import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 
 import { ExportOption } from './ResultExportSelector';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { submitNewDataset } from "@veupathdb/user-datasets/src/lib/Service/process/create-dataset";
+import { submitNewDataset } from '@veupathdb/user-datasets/lib/Service/process/create-dataset';
 import {
   VdiCompatibleWdkService,
   wrapWdkService as addVdiService,
@@ -376,7 +376,7 @@ export async function uploadGeneListUserDataset(
       visibility: 'private',
     },
     uploads: {
-      url: temporaryResultUrl
+      url: temporaryResultUrl,
     },
   });
 }

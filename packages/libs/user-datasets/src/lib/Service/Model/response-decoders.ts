@@ -319,6 +319,7 @@ export const userMetadata = io.type({
 });
 export type VdiUserMetadata = io.TypeOf<typeof userMetadata>;
 
+// region Service Config Endpoint
 
 const vdiApiConfig = io.type({
   maxUploadSize: io.number,
@@ -340,10 +341,15 @@ const vdiDaemonConfig = io.intersection([
   io.record(io.string, io.any),
 ]);
 
+const vdiInstallTarget = io.type({
+  id: io.string,
+  name: io.string,
+});
+
 const serviceConfiguration = io.type({
   api: vdiApiConfig,
   daemons: vdiDaemonConfig, // not relevant for public client use
-  installTargets: io.array(io.string),
+  installTargets: io.array(vdiInstallTarget),
 });
 export type VdiServiceConfig = io.TypeOf<typeof serviceConfiguration>;
 
@@ -358,6 +364,8 @@ export const serviceMetadata = io.type({
   features: serviceFeatures,
 });
 export type VdiServiceMetadata = io.TypeOf<typeof serviceMetadata>;
+
+// endregion Service Config Endpoint
 
 export const shareOfferStatus = io.union([
   io.literal('open'),

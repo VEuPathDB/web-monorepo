@@ -10,8 +10,8 @@ import {
   ClientDatasetTypeConfig,
   DatasetDependency,
   DependencyInputProps,
-  UploadFormConfigurators
-} from '@veupathdb/user-datasets/src/lib';
+  UploadFormConfigurators,
+} from '@veupathdb/user-datasets/lib';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -22,8 +22,8 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
-  phenotype: { name: 'phenotype', version: '1.0' }
-} as const;
+  phenotype: { name: 'phenotype', version: '1.0' },
+};
 
 /**
  * Basic dataset type configurations.
@@ -79,15 +79,17 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
         renderInput: ReferenceGenomeDependency,
       },
       helpText: () => (
-        <p className="formInfo">
-          We accept .bw or .bigwig files in the{' '}
-          <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
-            bigWig format
-          </a>
-          .
-          <br />
-          If you need to upload more than one file please make a compressed file
-          with all your bigWig files (a .tar.gz, .tgz or .zip file).
+        <div className="formInfo">
+          <p>
+            We accept .bw or .bigwig files in the{' '}
+            <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
+              bigWig format
+            </a>
+            .
+            <br />
+            If you need to upload more than one file please make a compressed
+            file with all your bigWig files (a .tar.gz, .tgz or .zip file).
+          </p>
           <ul>
             <li>
               Each bigWig file must be mapped to the genome that you selected
@@ -95,7 +97,7 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
             </li>
             <li>Each individual file cannot be &gt; 500MB.</li>
           </ul>
-        </p>
+        </div>
       ),
     }),
   ],
@@ -160,33 +162,32 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
         },
       },
       helpText: () => (
-        <p className="formInfo">
-          Upload a file containing gene IDs. Gene IDs need to be valid and be
-          separated by valid delimiters.
-          <br />
-          <br />
+        <div className="formInfo">
+          <p>
+            Upload a file containing gene IDs. Gene IDs need to be valid and be
+            separated by valid delimiters.
+          </p>
           Valid gene IDs should:
           <ul>
             <li>include only these characters [a-zA-Z0-9().:_-]</li>
             <li>have at least one alphabetical character</li>
             <li>be at most 80 characters</li>
           </ul>
-          Invalid IDs and duplicated IDs will be discarded.
-          <br />
-          <br />
+          <p>Invalid IDs and duplicated IDs will be discarded.</p>
           Valid delimiters are:
           <ul>
             <li>white space (newline, space, tab)</li>
             <li>comma</li>
             <li>semi-colon</li>
           </ul>
-          <br />
-          <i>
-            Gene lists can also be added from a search strategy result page:
-            click on the "Send to" menu near the "Download" button, and choose
-            the "My Datasets" option to install the gene list in My Datasets.
-          </i>
-        </p>
+          <p>
+            <i>
+              Gene lists can also be added from a search strategy result page:
+              click on the "Send to" menu near the "Download" button, and choose
+              the "My Datasets" option to install the gene list in My Datasets.
+            </i>
+          </p>
+        </div>
       ),
     }),
   ],
@@ -244,7 +245,7 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
         renderInput: ReferenceGenomeDependency,
       },
       helpText: () => (
-        <p className="formInfo">
+        <div className="formInfo">
           To upload your dataset:
           <ol>
             <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
@@ -285,7 +286,7 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
             <li>add these file names in the manifest file.</li>
             <li>make sure there are no empty files.</li>
           </ol>
-        </p>
+        </div>
       ),
     }),
   ],
@@ -295,7 +296,6 @@ function ReferenceGenomeDependency({
   dependencies,
   setDependencies,
 }: DependencyInputProps): ReactElement | null {
-
   const styleOverrides = {
     treeNode: {
       labelTextWrapper: {

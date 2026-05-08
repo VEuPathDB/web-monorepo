@@ -1,24 +1,23 @@
-import { ReactElement } from 'react';
+import { ReactElement, useCallback } from 'react';
 
-import { RootDataInput } from "../Components/RootDataInput";
+import {
+  OptionalFileUploadProps,
+  OptionalUrlUploadProps,
+  RootDataInput,
+} from '../Components/RootDataInput';
 import { InputPair, UploadButton } from '../Components';
 import { Consumer, JsonPathBuilder } from '../../../../Utils';
-import { UploadFormProps } from "../UploadForm";
-import { DatasetPostDetails, DatasetUploads } from "../../../../Service";
+import { UploadFormProps } from '../UploadForm';
+import { DatasetPostDetails, DatasetUploads } from '../../../../Service';
+import { isEmpty } from 'lodash';
+import { useDispatch } from 'react-redux';
+import { useUploadFormState } from '../../../../StoreModules/UserDatasetUploadStoreModule';
+import { updateFormState } from '../../../../Actions/UserDatasetUploadActions';
 
 export interface RootDetailsSectionProps {
   readonly formProps: UploadFormProps;
 
   readonly onSubmit: () => void;
-
-  /**
-   * Dataset metadata definition.
-   */
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
-
-  readonly uploads: DatasetUploads;
-  readonly setUploads: Consumer<DatasetUploads>;
 
   /**
    * JSON Path Builder instance for dataset details/metadata field paths.
@@ -31,44 +30,103 @@ export interface RootDetailsSectionProps {
   readonly contentJsonPath: JsonPathBuilder;
 }
 
-export function RootDetailsSection(props: RootDetailsSectionProps): ReactElement {
-  const {
-    datasetMeta: metadata,
-    detailsJsonPath: jsonPath,
-    setDatasetMeta: setMetadata,
-  } = props;
+export function RootDetailsSection(
+  props: RootDetailsSectionProps
+): ReactElement {
+  const { detailsJsonPath: jsonPath, formProps } = props;
+
+  const dispatch = useDispatch();
+  const { datasetDetails, fileUploads, formMetaState } = useUploadFormState();
 
   const nameKey = jsonPath.appendToString<DatasetPostDetails>('name');
   const summaryKey = jsonPath.appendToString<DatasetPostDetails>('summary');
 
-  return <section>
-    <div className="field-grid">
-      <InputPair
-        label="Name"
-        fieldName={nameKey}
-        onChange={v => setMetadata({ ...metadata, name: v })}
-        labelClass="required"
-      />
+  const setMetadata = useCallback(
+    (datasetDetails: DatasetPostDetails) =>
+      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
+    [dispatch, fileUploads, formMetaState]
+  );
 
-      <InputPair
-        label="Summary"
-        fieldName={summaryKey}
-        onChange={v => setMetadata({ ...metadata, summary: v })}
-        labelClass="required"
-      />
+  const setUploads = useCallback(
+    (fileUploads: DatasetUploads) =>
+      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
+    [dispatch, datasetDetails, formMetaState]
+  );
 
-      <RootDataInput
-        pathBuilder={props.contentJsonPath}
-        dataType={props.formProps.dataType}
-        vdiConfig={props.formProps.vdiConfig}
-        {...props.formProps.uploadConfig}
-      />
+  const fileUpload = buildFileProps(formProps, fileUploads, setUploads);
+  const urlUpload = buildUrlProps(formProps, fileUploads, setUploads);
 
-      {props.formProps.helpText?.()}
-    </div>
+  return (
+    <section>
+      <div className="field-grid">
+        <InputPair
+          label="Name"
+          fieldName={nameKey}
+          value={datasetDetails.name}
+          onChange={(v) => setMetadata({ ...datasetDetails, name: v })}
+          labelClass="required"
+        />
 
-    {props.formProps.verbiage.afterUploadHelpText}
+        <InputPair
+          label="Summary"
+          fieldName={summaryKey}
+          value={datasetDetails.summary}
+          onChange={(v) => setMetadata({ ...datasetDetails, summary: v })}
+          labelClass="required"
+        />
 
-    <UploadButton onClick={props.onSubmit} />
-  </section>;
+        <RootDataInput
+          pathBuilder={props.contentJsonPath}
+          dataType={formProps.dataType}
+          vdiConfig={formProps.vdiConfig}
+          fileUpload={fileUpload}
+          urlUpload={urlUpload}
+          urlParams={formProps.urlParams}
+        />
+
+        {props.formProps.helpText?.()}
+      </div>
+
+      {props.formProps.verbiage.afterUploadHelpText}
+
+      <UploadButton onClick={props.onSubmit} />
+    </section>
+  );
+}
+
+function buildFileProps(
+  { uploadConfig, vdiConfig }: UploadFormProps,
+  uploads: DatasetUploads,
+  setUploads: Consumer<DatasetUploads>
+): OptionalFileUploadProps {
+  if (uploadConfig.file?.enabled !== true) return { enabled: false };
+
+  return {
+    ...uploadConfig.file,
+    vdiConfig,
+    // TODO: add support multiple data files in a single upload.
+    file: isEmpty(uploads.dataFiles) ? undefined : uploads.dataFiles![0],
+    setFile: (value) =>
+      setUploads({
+        ...uploads,
+        dataFiles: value ? [value] : [],
+      }),
+  };
+}
+
+function buildUrlProps(
+  { uploadConfig: { url } }: UploadFormProps,
+  uploads: DatasetUploads,
+  setUploads: Consumer<DatasetUploads>
+): OptionalUrlUploadProps {
+  if (url?.enabled !== true) return { enabled: false };
+
+  return {
+    ...url,
+    url: uploads.url ?? '',
+    setUrl: (url) =>
+      isEmpty(url)
+        ? setUploads({ ...uploads, url: undefined })
+        : setUploads({ ...uploads, url }),
+  };
 }

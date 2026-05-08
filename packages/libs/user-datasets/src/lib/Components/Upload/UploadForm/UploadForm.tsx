@@ -6,13 +6,12 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { SubmissionModal, UploadButton, UploadErrorBanner } from './Components';
 import { MetadataSection, RootDetailsSection } from './Sections';
 import { DatasetUploadConfig } from '../Configuration';
-import {
-  DatasetPostDetails,
-  DatasetUploads,
-  VdiServiceMetadata,
-} from '../../../Service';
-import { Consumer, JsonPathBuilder } from '../../../Utils';
+import { VdiServiceMetadata } from '../../../Service';
+import { JsonPathBuilder, Runnable } from '../../../Utils';
 import { BadUpload } from '../../../StoreModules';
+import { UploadUrlParams } from './DataModel';
+
+import './UploadForm.scss';
 
 export interface UploadFormProps extends DatasetUploadConfig {
   readonly baseUrl: string;
@@ -20,8 +19,8 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly vdiConfig: VdiServiceMetadata;
 
   readonly actions: {
-    readonly submit: Consumer<UploadFormState>;
-    readonly clearUploadError: () => void;
+    readonly submit: Runnable;
+    readonly clearUploadError: Runnable;
   };
 
   readonly isSubmitting: boolean;
@@ -30,26 +29,13 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly formClassName?: string;
   readonly badUploadState?: BadUpload;
 
-  readonly urlParams: Record<string, string>;
-
-  readonly formState: UploadFormState;
-  readonly setFormState: Consumer<UploadFormState>;
-}
-
-export interface UploadFormState {
-  readonly metadata: DatasetPostDetails;
-  readonly uploads: DatasetUploads;
+  readonly urlParams: UploadUrlParams;
 }
 
 export function UploadForm(props: UploadFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
-  const setMetadata = (metadata: DatasetPostDetails) =>
-    props.setFormState({ ...props.formState, metadata });
-  const setUploads = (uploads: DatasetUploads) =>
-    props.setFormState({ ...props.formState, uploads });
-
-  const onSubmit = () => props.actions.submit(props.formState);
+  const onSubmit = () => props.actions.submit();
 
   return (
     <section id="dataset-upload">
@@ -78,19 +64,10 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           formProps={props}
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
-          datasetMeta={props.formState.metadata}
-          setDatasetMeta={setMetadata}
-          uploads={props.formState.uploads}
-          setUploads={setUploads}
           onSubmit={onSubmit}
         />
 
-        <MetadataSection
-          formProps={props}
-          datasetMeta={props.formState.metadata}
-          setDatasetMeta={setMetadata}
-          jsonPath={metaPath}
-        />
+        <MetadataSection formProps={props} jsonPath={metaPath} />
 
         <UploadButton onClick={onSubmit} />
 

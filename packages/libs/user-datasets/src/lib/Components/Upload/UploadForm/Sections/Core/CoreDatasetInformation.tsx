@@ -1,25 +1,29 @@
-import { ReactElement } from "react";
-import { CollaboratorsSection } from "./CollaboratorsSection";
-import { DatasetPostDetails } from "../../../../../Service";
-import { CharacteristicsSection } from "./CharacteristicsSection";
-import { DatasetSources } from "./DatasetSources";
-import { Consumer, JsonPathBuilder } from "../../../../../Utils";
-import { DatasetUsage } from "./DatasetUsage";
+import { ReactElement } from 'react';
+import { CollaboratorsSection } from './CollaboratorsSection';
+import { DatasetPostDetails } from '../../../../../Service';
+import { CharacteristicsSection } from './CharacteristicsSection';
+import { DatasetSources } from './DatasetSources';
+import { Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { DatasetUsage } from './DatasetUsage';
+import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly clientSideState: ClientSideUploadFormState;
+  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function CoreDatasetInformation({
   datasetMeta,
   setDatasetMeta,
-  jsonPath
+  clientSideState,
+  setClientSideState,
+  jsonPath,
 }: CoreDatasetInformationProps): ReactElement {
   return (
     <>
-
       <CollaboratorsSection
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
@@ -29,6 +33,8 @@ export function CoreDatasetInformation({
       <CharacteristicsSection
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
+        clientSideState={clientSideState}
+        setClientSideState={setClientSideState}
         pathBuilder={jsonPath.append<DatasetPostDetails>(
           'datasetCharacteristics'
         )}
@@ -37,6 +43,8 @@ export function CoreDatasetInformation({
       <DatasetSources
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
+        clientMeta={clientSideState}
+        setClientMeta={setClientSideState}
         jsonPath={jsonPath.append<DatasetPostDetails>('datasetSources')}
       />
 

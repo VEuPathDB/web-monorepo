@@ -1,6 +1,9 @@
+export type {
+  DatasetTypeConfig,
+  ClientDatasetTypeConfig,
+} from './DatasetTypeConfig';
+
 export {
-  type DatasetTypeConfig,
-  type ClientDatasetTypeConfig,
   filterAvailableDataTypes,
   promoteTypeConfig,
 } from './DatasetTypeConfig';

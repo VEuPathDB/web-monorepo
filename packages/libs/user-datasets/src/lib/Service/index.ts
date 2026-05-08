@@ -1,7 +1,7 @@
 export { VdiService } from './VdiService';
 export { useVdiService } from './utils/use-vdi';
+export type { VdiCompatibleWdkService } from './utils/compatibility';
 export {
-  type VdiCompatibleWdkService,
   isVdiCompatibleWdkService,
   wrapWdkService,
   validateVdiCompatibleThunk,

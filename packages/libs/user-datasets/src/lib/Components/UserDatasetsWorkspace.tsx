@@ -15,7 +15,6 @@ import {
   DatasetUploadRoute,
   filterAvailableDataTypes,
   promoteTypeConfig,
-  UploadFormState,
 } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import { DataNoun } from '../Utils/types';
@@ -59,11 +58,6 @@ export function UserDatasetsWorkspace(
     vdi?.getPluginList(projectId)?.then(setPlugins);
     vdi?.getServiceMetadata()?.then(setFeatures);
   }, [vdi]);
-
-  const [uploadFormState, setUploadFormState] = useState<UploadFormState>({
-    metadata: {},
-    uploads: {},
-  });
 
   if (!Array.isArray(plugins) || !features) return <Loading />;
 
@@ -130,8 +124,6 @@ export function UserDatasetsWorkspace(
             plugins={plugins}
             formConfigs={props.formConfigs}
             datasetTypes={datasetTypes}
-            uploadFormState={uploadFormState}
-            setUploadFormState={setUploadFormState}
           />
         )}
         {helpTabContents && (

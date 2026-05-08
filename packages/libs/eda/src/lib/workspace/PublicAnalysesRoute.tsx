@@ -31,7 +31,7 @@ export function PublicAnalysesRoute({
   const studyRecords = useWdkStudyRecords(subsettingClient);
   const communityDatasets = useWdkService(async (wdkService) => {
     if (isVdiCompatibleWdkService(wdkService))
-      return wdkService.getCommunityDatasets();
+      return wdkService.vdi.getCommunityDatasetList();
     return [];
   }, []);
 

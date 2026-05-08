@@ -11,8 +11,10 @@ import { DataNoun } from '../Utils/types';
 import UserDatasetDetailController, {
   UserDatasetDetailProps,
 } from './UserDatasetDetailController';
-import { UploadFormConfigurators } from "../Components/Upload/Configuration/form-configs";
-import { ClientDatasetTypeConfig } from "../Components/Upload/Configuration";
+import {
+  ClientDatasetTypeConfig,
+  UploadFormConfigurators,
+} from '../Components/Upload';
 
 interface Props {
   readonly datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
@@ -58,7 +60,6 @@ export function UserDatasetRouter({
 
             return Object.fromEntries(searchParamEntries);
           }, [props.location.search]);
-
 
           return (
             <UserDatasetsWorkspace

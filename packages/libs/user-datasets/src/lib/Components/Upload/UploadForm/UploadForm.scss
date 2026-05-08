@@ -1,5 +1,130 @@
+:root {
+  --common-radius: 8px;
+  --common-border-color: #999999ff;
+  --max-form-width: 1280px;
+}
+
+.wdk-WorkspaceNavigation {
+  max-width: var(--max-form-width);
+  margin: 0 auto;
+}
+
+#dataset-upload {
+  max-width: var(--max-form-width);
+  padding: 1em 3em;
+  margin: 0 auto;
+
+  p {
+    margin: 0;
+  }
+
+  div.input-block {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #999;
+    border-radius: var(--common-radius);
+  }
+
+  form {
+    .description {
+      color: var(--coreui-gray-900);
+      font-style: italic;
+    }
+
+    > section,
+    .input-block {
+      margin-top: 1.5em;
+    }
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    row-gap: 1em;
+    column-gap: 1ch;
+    margin: 0 3em;
+
+    .field-grid {
+      margin: 0;
+      grid-template-columns: 1fr 5fr;
+    }
+
+    &.narrow-labels {
+      grid-template-columns: 1fr 9fr;
+    }
+
+    > .column-2 {
+      grid-column-start: 2;
+    }
+
+    > label,
+    > .multi-input-label {
+      text-align: right;
+    }
+
+    > input[type='checkbox'] {
+      margin-left: 0.5ch;
+      margin-right: auto;
+    }
+  }
+
+  .contact-block > .field-grid {
+    grid-template-columns: 1fr 6fr;
+  }
+
+  .flex-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    column-gap: 1ch;
+    margin-left: 8%;
+    margin-right: 8%;
+  }
+
+  .flex-row > * {
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .input-appender {
+    display: block;
+    border: none;
+    color: var(--coreui-blue-600);
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .multi-input {
+    list-style: none;
+
+    > li:not(:last-child) {
+      margin-bottom: 1em;
+    }
+
+    .field-grid:not(:first-child) {
+      padding-top: 0.8em;
+    }
+
+    .field-grid:not(:last-child) {
+      margin-bottom: 0;
+      padding-bottom: 0.8em;
+      border-bottom-width: 1px;
+      border-bottom-color: #a4a4a4;
+      border-bottom-style: solid;
+    }
+  }
+
+  .multi-input-label {
+    font-weight: bold;
+  }
+}
+
 .UploadForm {
-  max-width: 1000px;
   padding: 1em 3em;
 
   > * + * {
@@ -143,5 +268,4 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 .field-grid {
-
 }

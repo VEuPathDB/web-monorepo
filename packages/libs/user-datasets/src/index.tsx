@@ -1,35 +1,35 @@
-import './globals';
-import { vdiServiceUrl } from './constants';
-
+import { isEmpty, partial } from 'lodash';
+import { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { isEmpty, partial } from 'lodash';
-
-import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
-import Header from './Header';
-import Home from './Home';
-import { endpoint, rootElement, rootUrl } from './constants';
+import './globals';
 import reportWebVitals from './reportWebVitals';
-
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-
-import UserDatasetHelp from './lib/Components/UserDatasetHelp';
-import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
-import { useVdiService, wrapWdkService } from './lib/Service';
-import { wrapStoreModules } from './lib/StoreModules';
+import { vdiServiceUrl } from './constants';
+import { endpoint, rootElement, rootUrl } from './constants';
 
 import {
   userDatasetTypeConfigs,
   uploadFormConfigurators,
 } from '@veupathdb/web-common/src/user-dataset-upload-config';
 
+import { initialize } from '@veupathdb/web-common/lib/bootstrap';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { projectId } from '@veupathdb/web-common/lib/config';
+
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
-import { useState } from 'react';
+
+import Header from './Header';
+import Home from './Home';
+
+import UserDatasetHelp from './lib/Components/UserDatasetHelp';
+import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
+import { useVdiService, wrapWdkService } from './lib/Service';
+import { wrapStoreModules } from './lib/StoreModules';
+
 import { VdiApiConfig } from './lib/Service/Model/response-decoders';
-import { projectId } from '@veupathdb/web-common/lib/config';
 
 initialize({
   rootUrl,

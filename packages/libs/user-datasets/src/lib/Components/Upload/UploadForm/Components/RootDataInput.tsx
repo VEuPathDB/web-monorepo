@@ -1,16 +1,12 @@
+import { ReactElement, useState } from 'react';
 import {
-  Dispatch,
-  FormEvent,
-  ReactElement,
-  SetStateAction,
-  useState,
-} from 'react';
-import {
+  DisabledFileUploadConfig,
+  DisabledUrlUploadConfig,
+  EnabledFileUploadConfig,
+  EnabledUrlUploadConfig,
   FileUploadConfig,
-  ResultUploadConfig,
   UrlUploadConfig,
 } from '../../Configuration/UploadFormConfig';
-import { StrategySummary } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { Consumer, isNonEmptyString, JsonPathBuilder } from '../../../../Utils';
 import { UploadUrlParams } from '../DataModel';
 import { RadioList } from '@veupathdb/wdk-client/lib/Components';
@@ -24,14 +20,13 @@ import { VdiServiceMetadata } from '../../../../Service';
 export interface RootDataInputProps {
   readonly vdiConfig: VdiServiceMetadata;
   readonly dataType: DatasetTypeConfig;
-  readonly urlParams?: UploadUrlParams;
-  readonly fileUpload?: FileUploadProps;
-  readonly urlUpload?: UrlUploadProps;
-  readonly resultUpload?: ResultUploadProps;
+  readonly urlParams: UploadUrlParams;
+  readonly fileUpload: OptionalFileUploadProps;
+  readonly urlUpload: OptionalUrlUploadProps;
   readonly pathBuilder: JsonPathBuilder;
 }
 
-type UploadType = 'file' | 'url' | 'result';
+type UploadType = 'file' | 'url';
 
 /**
  * Input(s) for users to upload dataset data files.
@@ -55,20 +50,11 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
     return <div>No data uploads are permitted.</div>;
   }
 
-  if (uploadInputs.length === 1)
-    return uploadInputs[0][1]({
-      dataType: props.dataType,
-      pathBuilder: props.pathBuilder,
-      required: true,
-    });
+  if (uploadInputs.length === 1) return uploadInputs[0][1];
 
-  const radioListItems = uploadInputs.map(([kind, fn]) => ({
+  const radioListItems = uploadInputs.map(([kind, element]) => ({
     value: kind,
-    display: fn({
-      dataType: props.dataType,
-      required: selectedInput === kind,
-      pathBuilder: props.pathBuilder,
-    }),
+    display: element,
   }));
 
   return (
@@ -81,43 +67,37 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
   );
 }
 
-type UploadInputConstructor = (fieldProps: UploadFieldProps) => ReactElement;
-
 function buildUploadInputConstructors(
   props: RootDataInputProps
-): Array<[UploadType, UploadInputConstructor]> {
-  const inputs: Array<
-    [UploadType, (fieldProps: UploadFieldProps) => ReactElement]
-  > = [];
+): Array<[UploadType, ReactElement]> {
+  const { fileUpload, urlUpload } = props;
 
-  if (props.fileUpload?.enabled === true)
+  const inputs: Array<[UploadType, ReactElement]> = [];
+
+  const count = (fileUpload.enabled ? 1 : 0) + (urlUpload.enabled ? 1 : 0);
+
+  const fieldProps: UploadFieldProps = {
+    required: count === 1,
+    dataType: props.dataType,
+    pathBuilder: props.pathBuilder,
+  };
+
+  if (fileUpload.enabled)
     inputs.push([
       'file',
-      (fieldProps) =>
-        fileInput({
-          ...props.fileUpload!,
-          ...fieldProps,
-        }),
+      fileInput({
+        ...fileUpload,
+        ...fieldProps,
+      }),
     ]);
 
-  if (props.urlUpload?.enabled === true)
+  if (urlUpload.enabled)
     inputs.push([
       'url',
-      (fieldProps) =>
-        urlInput({
-          ...props.urlUpload!,
-          ...fieldProps,
-        }),
-    ]);
-
-  if (props.resultUpload?.enabled === true)
-    inputs.push([
-      'result',
-      (fieldProps) =>
-        resultInput({
-          ...props.resultUpload!,
-          ...fieldProps,
-        }),
+      urlInput({
+        ...urlUpload,
+        ...fieldProps,
+      }),
     ]);
 
   return inputs;
@@ -126,22 +106,10 @@ function buildUploadInputConstructors(
 function determineDefaultUploadType({
   urlParams,
   urlUpload,
-  resultUpload,
 }: RootDataInputProps): UploadType {
-  if (resultUpload?.enabled === true) {
-    if (isNonEmptyString(urlParams?.datasetStepId)) return 'result';
-
-    if (
-      isNonEmptyString(urlParams?.datasetStrategyRootStepId) &&
-      resultUpload.offerStrategyUpload
-    )
-      return 'result';
-  }
-
-  if (urlUpload?.enabled === true && isNonEmptyString(urlParams?.datasetUrl))
-    return 'url';
-
-  return 'file';
+  return urlUpload?.enabled === true && isNonEmptyString(urlParams?.datasetUrl)
+    ? 'url'
+    : 'file';
 }
 
 // endregion Root Dataset Data Input Component
@@ -162,11 +130,23 @@ interface UploadFieldProps {
 
 // region File Input Sub-Component
 
-export type FileUploadProps = FileUploadConfig &
-  UploadFieldProps & {
-    readonly setFile: Consumer<File | undefined>;
-    readonly vdiConfig: VdiServiceMetadata;
-  };
+interface FileUploadState {
+  readonly file: File | undefined;
+  readonly setFile: Consumer<File | undefined>;
+  readonly vdiConfig: VdiServiceMetadata;
+}
+
+type IncompleteFileUploadProps = FileUploadConfig & FileUploadState;
+type FileUploadProps = UploadFieldProps & IncompleteFileUploadProps;
+
+export type EnabledFileUploadProps = EnabledFileUploadConfig &
+  IncompleteFileUploadProps;
+export type DisabledFileUploadProps = DisabledFileUploadConfig &
+  Partial<IncompleteFileUploadProps>;
+
+export type OptionalFileUploadProps =
+  | EnabledFileUploadProps
+  | DisabledFileUploadProps;
 
 function fileInput(props: FileUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('dataFile');
@@ -203,12 +183,33 @@ function fileInput(props: FileUploadProps): ReactElement {
 
 // region URL Input Sub-Component
 
-export type UrlUploadProps = UrlUploadConfig & UploadFieldProps;
+interface UrlUploadState {
+  readonly url: string;
+  readonly setUrl: Consumer<string>;
+}
+
+export type IncompleteUrlUploadProps = UrlUploadConfig & UrlUploadState;
+
+export type UrlUploadProps = EnabledUrlUploadConfig &
+  UrlUploadState &
+  UploadFieldProps;
+
+export type OptionalUrlUploadProps =
+  | (EnabledUrlUploadConfig & IncompleteUrlUploadProps)
+  | (DisabledUrlUploadConfig & Partial<IncompleteUrlUploadProps>);
 
 function urlInput(props: UrlUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('url');
   const className = props.required ? 'required' : undefined;
-  const baseField = <input type="url" name={fieldName} id={fieldName} />;
+  const baseField = (
+    <input
+      type="url"
+      name={fieldName}
+      id={fieldName}
+      value={props.url}
+      onChange={(e) => props.setUrl(e.currentTarget.value)}
+    />
+  );
 
   return (
     <>
@@ -219,56 +220,3 @@ function urlInput(props: UrlUploadProps): ReactElement {
 }
 
 // endregion URL Input Sub-Component
-
-// region Result Input Sub-Component
-
-export type ResultUploadProps = ResultUploadConfig &
-  UploadFieldProps & {
-    readonly stepId: number;
-    readonly setStepId: Dispatch<SetStateAction<number>>;
-    readonly strategyOptions: Array<StrategySummary>;
-  };
-
-function resultInput(props: ResultUploadProps): ReactElement {
-  const fieldName = props.pathBuilder.appendToString('url');
-  const className = props.required ? 'required' : undefined;
-
-  const selectItems = props.strategyOptions.map((opt) => (
-    <option value={opt.rootStepId.toString()}>
-      {opt.name + (opt.isSaved ? '' : '*')}
-    </option>
-  ));
-
-  const onInput = (e: FormEvent<HTMLSelectElement>) => {
-    if (!(typeof e.currentTarget?.value === 'string')) return;
-
-    const value = e.currentTarget.value;
-
-    if (value.length < 1) return;
-
-    props.setStepId(parseInt(value));
-  };
-
-  const baseField = (
-    <select
-      value={props.stepId.toString()}
-      onInput={onInput}
-      disabled={!props.enabled}
-      name={fieldName}
-      id={fieldName}
-    >
-      {selectItems}
-    </select>
-  );
-
-  return (
-    <>
-      <label className={className} htmlFor={fieldName}>
-        Upload Strategy
-      </label>
-      {props.renderOverride ? props.renderOverride(baseField) : baseField}
-    </>
-  );
-}
-
-// endregion Result Input Sub-Component

@@ -4,7 +4,7 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { DatasetTypeConfig, DatasetTypeSelection } from './Configuration';
 import { UploadTypeMenu } from './UploadTypeMenu';
-import { UploadFormState, UploadFormController } from './UploadForm';
+import { UploadFormController } from './UploadForm';
 import {
   configureFormProps,
   UploadFormConfigurators,
@@ -14,7 +14,6 @@ import {
   isSameDataType,
   parseDataTypeString,
 } from './Configuration/data-types';
-import { Consumer } from '../../Utils';
 
 export interface DatasetUploadControllerConfig {
   readonly formConfigs: UploadFormConfigurators;
@@ -28,9 +27,6 @@ export interface DatasetUploadControllerProps
   readonly vdiConfig: VdiServiceMetadata;
   readonly type?: string;
   readonly urlParams: Record<string, string>;
-
-  readonly uploadFormState: UploadFormState;
-  readonly setUploadFormState: Consumer<UploadFormState>;
 }
 
 export function DatasetUploadController({

@@ -1,16 +1,11 @@
 export { DatasetUploadRoute } from './DatasetUploadRoute';
 
-export { type UploadFormState } from './UploadForm';
+export type { DatasetUploadControllerConfig } from './DatasetUploadController';
 
-export {
-  DatasetUploadController,
-  type DatasetUploadControllerConfig,
-} from './DatasetUploadController';
+export type {
+  ClientDatasetTypeConfig,
+  DatasetTypeConfig,
+  UploadFormConfigurators,
+} from './Configuration';
 
-export {
-  type ClientDatasetTypeConfig,
-  type DatasetTypeConfig,
-  type UploadFormConfigurators,
-  filterAvailableDataTypes,
-  promoteTypeConfig,
-} from './Configuration'
+export { filterAvailableDataTypes, promoteTypeConfig } from './Configuration';

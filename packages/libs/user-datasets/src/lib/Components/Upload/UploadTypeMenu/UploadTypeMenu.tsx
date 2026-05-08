@@ -3,7 +3,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 
 import './UploadFormMenu.scss';
 import { DatasetTypeConfig } from '../Configuration';
-import { stringifyDataType } from "../Configuration/data-types";
+import { stringifyDataType } from '../Configuration/data-types';
 
 export interface UploadTypeMenuProps {
   readonly availableDataTypes: readonly DatasetTypeConfig[];
@@ -13,11 +13,15 @@ export function UploadTypeMenu({ availableDataTypes }: UploadTypeMenuProps) {
   const { url } = useRouteMatch();
 
   return (
-    <div className="UserDatasetUploadFormMenu">
+    <div id="dataset-type-selection">
       <h2>Choose an upload type</h2>
       <menu>
         {availableDataTypes.map((type) => (
-          <UploadTypeMenuItem url={url} dataType={type} />
+          <UploadTypeMenuItem
+            key={`${stringifyDataType(type)}`}
+            url={url}
+            dataType={type}
+          />
         ))}
       </menu>
     </div>
@@ -36,12 +40,9 @@ function UploadTypeMenuItem({ url, dataType }: MenuItemProps): ReactElement {
     <li>
       <Link to={url + '/' + stringifyDataType(dataType)} className="btn">
         <div className="title">
-          <i className="fa fa-file-text" />{' '}
-          {displayName}
+          <i className="fa fa-file-text" /> {displayName}
         </div>
-        <div className="description">
-          {dataType.description}
-        </div>
+        <div className="description">{dataType.description}</div>
       </Link>
     </li>
   );

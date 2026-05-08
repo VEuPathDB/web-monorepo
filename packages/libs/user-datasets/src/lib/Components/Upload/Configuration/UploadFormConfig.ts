@@ -6,23 +6,34 @@ export interface UploadConfig {
   readonly helpText?: React.ReactNode;
 }
 
+interface EnabledConfig extends UploadConfig {
+  readonly enabled: true;
+}
+
+interface DisabledConfig extends UploadConfig {
+  readonly enabled: false;
+}
+
 export interface FileUploadConfig extends UploadConfig {}
+
+export type EnabledFileUploadConfig = EnabledConfig & FileUploadConfig;
+export type DisabledFileUploadConfig = DisabledConfig &
+  Partial<FileUploadConfig>;
+
+export type OptionalFileUploadConfig =
+  | EnabledFileUploadConfig
+  | DisabledFileUploadConfig;
 
 export interface UrlUploadConfig extends UploadConfig {}
 
-export type CompatibleRecordTypes = Record<
-  string,
-  { reportName: string; reportConfig: unknown }
->;
+export type EnabledUrlUploadConfig = EnabledConfig & UrlUploadConfig;
+export type DisabledUrlUploadConfig = DisabledConfig & Partial<UrlUploadConfig>;
 
-export interface ResultUploadConfig extends UploadConfig {
-  // TODO: what does this mean?
-  readonly offerStrategyUpload: boolean;
-  readonly compatibleRecordTypes: CompatibleRecordTypes;
-}
+export type OptionalUrlUploadConfig =
+  | EnabledUrlUploadConfig
+  | DisabledUrlUploadConfig;
 
 export interface UploadInputConfig {
-  readonly file?: FileUploadConfig;
-  readonly result?: ResultUploadConfig;
-  readonly url?: UrlUploadConfig;
+  readonly file?: OptionalFileUploadConfig;
+  readonly url?: OptionalUrlUploadConfig;
 }

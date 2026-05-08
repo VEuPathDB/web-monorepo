@@ -1,10 +1,7 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 
 import { InputPair } from '../../Components';
-import {
-  DatasetPostDetails,
-  PostDatasetSource,
-} from '../../../../../Service';
+import { DatasetPostDetails, PostDatasetSource } from '../../../../../Service';
 import {
   BiConsumer,
   Consumer,
@@ -12,15 +9,21 @@ import {
   arrayChangeHandler,
 } from '../../../../../Utils';
 import { AddRowButton } from '../../Components/AddRowButton';
+import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface DatasetSourcesProps {
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly clientMeta: ClientSideUploadFormState;
+  readonly setClientMeta: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function DatasetSources(props: DatasetSourcesProps): ReactElement {
-  const [enabled, setEnabled] = useState(false);
+  const { hasExternalSources: enabled } = props.clientMeta;
+
+  const setEnabled = (v: boolean) =>
+    props.setClientMeta({ ...props.clientMeta, hasExternalSources: v });
 
   const safeSources = props.datasetMeta.datasetSources ?? [];
   if (safeSources.length < 1) safeSources.push({});
@@ -32,15 +35,21 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
 
   const addSource = () => updateSources({}, undefined);
 
-  const inputRows = safeSources.map((src, i) => (
-    <DataSource
-      index={i}
-      jsonPath={props.jsonPath}
-      enabled={enabled}
-      source={src}
-      setSource={updateSources}
-    />
-  ));
+  const inputRows = safeSources.map((src, i) => {
+    // Add the index of the current array element to the json path.
+    const jPath = props.jsonPath.append(i);
+
+    return (
+      <DataSource
+        key={jPath.toString()}
+        index={i}
+        jsonPath={jPath}
+        enabled={enabled}
+        source={src}
+        setSource={updateSources}
+      />
+    );
+  });
 
   return (
     <div className="input-block">
@@ -91,14 +100,11 @@ function DataSource({
   source,
   setSource,
 }: DataSourceProps): ReactElement {
-  // Add the index of the current array element to the json path.
-  const jPath = jsonPath.append(index);
-
   return (
     <li className="field-grid">
       <InputPair
         label="Source URL"
-        fieldName={jPath.appendToString<PostDatasetSource>('url')}
+        fieldName={jsonPath.appendToString<PostDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
         disabled={!enabled}
@@ -111,7 +117,7 @@ function DataSource({
 
       <InputPair
         label="Source Version"
-        fieldName={jPath.appendToString<PostDatasetSource>('version')}
+        fieldName={jsonPath.appendToString<PostDatasetSource>('version')}
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}

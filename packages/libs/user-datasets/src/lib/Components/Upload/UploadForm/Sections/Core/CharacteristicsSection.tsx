@@ -1,28 +1,35 @@
 import { ReactElement, useState } from 'react';
 import { partialRight } from 'lodash';
 
-import { Consumer , JsonPathBuilder, changeHandler } from '../../../../../Utils';
+import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import {
   DatasetPostDetails,
   PostCharacteristics,
   SampleYearRange,
 } from '../../../../../Service';
-import { GrowableStringList, InputPair } from "../../Components";
+import { GrowableStringList, InputPair } from '../../Components';
+import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface CharacteristicsSectionProps {
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly clientSideState: ClientSideUploadFormState;
+  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly pathBuilder: JsonPathBuilder;
 }
 
 export function CharacteristicsSection({
   datasetMeta: metadata,
   setDatasetMeta: setMetadata,
+  clientSideState,
+  setClientSideState,
   pathBuilder: jsonPath,
 }: CharacteristicsSectionProps): ReactElement {
-  const [enabled, setEnabled] = useState(false);
-
+  const { isStudy: enabled } = clientSideState;
   const safeCharacteristics = metadata.datasetCharacteristics ?? {};
+
+  const setEnabled = (enabled: boolean) =>
+    setClientSideState({ ...clientSideState, isStudy: enabled });
 
   const setRootField = partialRight(
     changeHandler<PostCharacteristics>,
@@ -44,6 +51,7 @@ export function CharacteristicsSection({
             ' population study; an epidemiological study (including' +
             ' surveillance); or a clinical trial'
           }
+          checked={enabled}
           onChange={setEnabled}
         />
 

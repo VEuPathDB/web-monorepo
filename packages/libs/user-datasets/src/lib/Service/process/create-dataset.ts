@@ -1,7 +1,10 @@
-import { DatasetPostDetails, DatasetPostResponseBody } from '../Model';
-import { DatasetUploads } from "../Model/utility-types";
+import {
+  DatasetPostDetails,
+  DatasetPostResponseBody,
+  DatasetUploads,
+} from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
-import { BadUpload } from "../../StoreModules/UserDatasetUploadStoreModule";
+import { BadUpload } from '../../StoreModules';
 import { Consumer } from '../../Utils';
 
 export interface NewDatasetSubmission {

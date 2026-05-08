@@ -1,9 +1,5 @@
 export { JsonPathBuilder } from './JsonPathBuilder';
-export type {
-  Runnable,
-  Consumer,
-  BiConsumer
-} from './types';
+export type { Runnable, Consumer, BiConsumer } from './types';
 
 export {
   changeHandler,
@@ -12,4 +8,4 @@ export {
   replaceElement,
 } from './input-utils';
 
-export { isNonEmptyString } from './string-utils';
+export { isNonEmptyString } from './value-tests';
