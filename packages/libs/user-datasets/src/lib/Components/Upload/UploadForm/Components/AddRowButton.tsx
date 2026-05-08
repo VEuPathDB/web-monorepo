@@ -14,7 +14,7 @@ export function AddRowButton({
     className += ' input-appender';
 
   return (
-    <button className={className} type="button" {...props}>
+    <button className={className} type="button" onClick={onClick} {...props}>
       {children}
     </button>
   );
