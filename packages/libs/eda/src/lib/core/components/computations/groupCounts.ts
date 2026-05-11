@@ -53,25 +53,21 @@ export interface GroupCounts {
 }
 
 /**
- * Returns a >=1 NumberRangeFilter on valueVariable for DESeq analyses, or
- * undefined for all other methods. Append this to any filter array passed to
- * the subsetting API so that samples with all-zero counts for the selected
- * gene set are excluded consistently across the UI (counts display, comparator
- * variable distribution), matching the R backend's removeEmptyRecords behaviour.
- *
- * A !=0 equivalent for limma/ArrayDataCollection does not currently exist in
- * the EDA filter repertoire — revisit if limma surfaces a similar edge case.
+ * Returns a NumberRangeFilter on valueVariable to exclude samples with no
+ * measurement (NA). For DESeq the floor is 1 (matching removeEmptyRecords);
+ * for limma the range is [MIN_SAFE_INTEGER, MAX_SAFE_INTEGER] which admits all
+ * real expression values while still dropping NAs.
  */
-export function makeDeseqExpressionFloorFilter(
+export function makeExpressionValueRangeFilter(
   method: DifferentialExpressionMethod | undefined,
   valueVariable: VariableDescriptor | undefined
 ): Filter | undefined {
-  if (method !== 'DESeq' || valueVariable == null) return undefined;
+  if (method == null || valueVariable == null) return undefined;
   return {
     type: 'numberRange',
     entityId: valueVariable.entityId,
     variableId: valueVariable.variableId,
-    min: 1,
+    min: method === 'DESeq' ? 1 : Number.MIN_SAFE_INTEGER,
     max: Number.MAX_SAFE_INTEGER,
   };
 }
@@ -107,7 +103,7 @@ export function useGroupCounts({
   const { rootEntity } = useStudyMetadata();
 
   const filtersWithFloor = useMemo(() => {
-    const floorFilter = makeDeseqExpressionFloorFilter(method, valueVariable);
+    const floorFilter = makeExpressionValueRangeFilter(method, valueVariable);
     if (floorFilter == null) return filters;
     return [...(filters ?? []), floorFilter];
   }, [method, valueVariable, filters]);
