@@ -176,6 +176,17 @@ export const plugin: ComputationPlugin = {
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
     'These visualizations are only available for studies with compatible assay data.',
+  getCountWarning(counts) {
+    const root = counts['root'];
+    if (!root || root.pending || root.value == null) return { type: 'pending' };
+    if (root.value < 4)
+      return {
+        type: 'warning',
+        message:
+          'At least 4 samples (2 per group) are required to run differential expression. Please relax your filtering criteria.',
+      };
+    return { type: 'ok' };
+  },
 };
 
 function DifferentialExpressionConfigDescriptionComponent({
