@@ -14,7 +14,7 @@ import { DifferentialExpressionConfig } from '../../core/types/apps';
 import { AnalysisState, Filter } from '../../core';
 import { TextCellContext } from '../Types';
 import { ReviewCard, ReviewRow } from '../components/ReviewCard';
-import { useGroupCounts } from '../../core/hooks/groupCounts';
+import { useGroupCounts } from '../../core/components/computations/groupCounts';
 
 export function isDEReadyToReviewAndSubmit(
   analysisState: AnalysisState | undefined
@@ -97,7 +97,9 @@ export function DifferentialAnalysisReviewContent({
       deConfig?.comparator?.variable,
       deConfig?.comparator?.groupA,
       deConfig?.comparator?.groupB,
-      filters
+      filters,
+      deConfig?.differentialExpressionMethod,
+      deConfig?.valueVariable
     );
 
   const formatCount = (count: number | undefined, pending: boolean): string => {

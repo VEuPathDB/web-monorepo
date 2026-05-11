@@ -53,7 +53,7 @@ import {
   ancestorEntitiesForEntityId,
 } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
-import { useGroupCounts } from '../../../hooks/groupCounts';
+import { useGroupCounts } from '../groupCounts';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
@@ -480,7 +480,9 @@ export function DifferentialExpressionConfiguration(
     comparatorVariable,
     configuration.comparator?.groupA,
     configuration.comparator?.groupB,
-    filters
+    filters,
+    configuration.differentialExpressionMethod,
+    configuration.valueVariable
   );
 
   // Report per-group count gating to the parent (e.g. ComputeNotebookCell)

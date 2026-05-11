@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { Filter } from '../types/filter';
-import { LabeledRange } from '../api/DataClient/types';
-import { VariableDescriptor } from '../types/variable';
-import { useStudyMetadata } from './workspace';
-import { useEntityCounts } from './entityCounts';
+import { Filter } from '../../types/filter';
+import { LabeledRange } from '../../api/DataClient/types';
+import { VariableDescriptor } from '../../types/variable';
+import { DifferentialExpressionMethod } from '../../types/apps';
+import { useStudyMetadata } from '../../hooks/workspace';
+import { useEntityCounts } from '../../hooks/entityCounts';
 
 function makeGroupFilter(
   variable: VariableDescriptor,
@@ -43,14 +44,34 @@ export interface GroupCounts {
  * Hook that computes per-group sample counts for a comparator variable
  * split into two groups (A and B). Each group's filter is independently
  * memoised so that changing one group doesn't trigger a recount for the other.
+ *
+ * When method is 'DESeq' and valueVariable is provided, a >=1 floor filter is
+ * silently appended so that the displayed counts match what the R backend will
+ * actually use after removeEmptyRecords strips all-zero-count samples.
+ * A !=0 equivalent for limma/ArrayDataCollection does not currently exist in
+ * the EDA filter repertoire — revisit if limma surfaces a similar edge case.
  */
 export function useGroupCounts(
   comparatorVariable: VariableDescriptor | undefined,
   groupA: LabeledRange[] | undefined,
   groupB: LabeledRange[] | undefined,
-  filters: Filter[] | undefined
+  filters: Filter[] | undefined,
+  method?: DifferentialExpressionMethod,
+  valueVariable?: VariableDescriptor
 ): GroupCounts {
   const { rootEntity } = useStudyMetadata();
+
+  const filtersWithFloor = useMemo(() => {
+    if (method !== 'DESeq' || valueVariable == null) return filters;
+    const floorFilter: Filter = {
+      type: 'numberRange',
+      entityId: valueVariable.entityId,
+      variableId: valueVariable.variableId,
+      min: 1,
+      max: Number.MAX_SAFE_INTEGER,
+    };
+    return [...(filters ?? []), floorFilter];
+  }, [method, valueVariable, filters]);
 
   const groupAFilter = useMemo(() => {
     if (!comparatorVariable || !groupA?.length) return undefined;
@@ -63,12 +84,14 @@ export function useGroupCounts(
   }, [comparatorVariable, groupB]);
 
   const groupAFilters = useMemo(
-    () => (groupAFilter ? [...(filters ?? []), groupAFilter] : undefined),
-    [filters, groupAFilter]
+    () =>
+      groupAFilter ? [...(filtersWithFloor ?? []), groupAFilter] : undefined,
+    [filtersWithFloor, groupAFilter]
   );
   const groupBFilters = useMemo(
-    () => (groupBFilter ? [...(filters ?? []), groupBFilter] : undefined),
-    [filters, groupBFilter]
+    () =>
+      groupBFilter ? [...(filtersWithFloor ?? []), groupBFilter] : undefined,
+    [filtersWithFloor, groupBFilter]
   );
 
   const groupACounts = useEntityCounts(groupAFilters);
