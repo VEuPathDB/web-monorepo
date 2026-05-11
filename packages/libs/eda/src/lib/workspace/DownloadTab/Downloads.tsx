@@ -9,11 +9,14 @@ import {
 
 // Utils
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import { isVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
 import StudyCitation, { getCitationString } from './StudyCitation';
+import { UserDatasetFiles } from '@veupathdb/user-datasets/lib/Components/UserDatasetFiles';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -67,6 +70,39 @@ export default function Downloads({
         }),
     []
   );
+
+  // Fetch user dataset files for user studies
+  const vdiDatasetId = isUserStudy
+    ? wdkRecordIdToDiyUserDatasetId(datasetId)
+    : null;
+
+  const userDatasetFilesResult = useWdkService(
+    async (wdkService) => {
+      if (!isUserStudy || !vdiDatasetId) {
+        return { data: null, error: null };
+      }
+
+      if (!isVdiCompatibleWdkService(wdkService)) {
+        return {
+          data: null,
+          error: 'VDI service is not configured. Unable to load dataset files.',
+        };
+      }
+
+      try {
+        const files = await wdkService.getUserDatasetFileListing(vdiDatasetId);
+        return { data: files, error: null };
+      } catch (error) {
+        console.error('Failed to fetch user dataset files:', error);
+        return {
+          data: null,
+          error: 'Failed to load dataset files. Please try again later.',
+        };
+      }
+    },
+    [isUserStudy, vdiDatasetId]
+  );
+
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -135,7 +171,10 @@ export default function Downloads({
     useCallback(async () => {
       // Only fetch study releases if they are expected to be available
       if (permission.loading) return undefined;
-      if (permission.permissions.perDataset[datasetId]?.sha1Hash == null || permission.permissions.perDataset[datasetId]?.sha1Hash === "" )
+      if (
+        permission.permissions.perDataset[datasetId]?.sha1Hash == null ||
+        permission.permissions.perDataset[datasetId]?.sha1Hash === ''
+      )
         return [];
       try {
         return await downloadClient.getStudyReleases(studyMetadata.id);
@@ -237,6 +276,24 @@ export default function Downloads({
             analysisState={analysisState}
           />
         )}
+        {isUserStudy &&
+          (userDatasetFilesResult?.error ? (
+            <div className="error-message">
+              <h2>Data Files</h2>
+              <p>{userDatasetFilesResult.error}</p>
+            </div>
+          ) : userDatasetFilesResult?.data ? (
+            <UserDatasetFiles
+              datasetId={vdiDatasetId!}
+              files={userDatasetFilesResult.data}
+              installStatus="complete"
+            />
+          ) : userDatasetFilesResult === undefined ? (
+            <div>
+              <h2>Data Files</h2>
+              <Loading />
+            </div>
+          ) : null)}
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
             <CurrentRelease

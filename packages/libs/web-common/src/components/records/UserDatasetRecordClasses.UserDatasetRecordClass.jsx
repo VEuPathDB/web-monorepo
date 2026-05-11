@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
+import Loading from '@veupathdb/wdk-client/lib/Components/Loading/Loading';
 import { projectId } from '../../config';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
@@ -8,6 +9,10 @@ import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import { isVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
+import { UserDatasetFiles } from '@veupathdb/user-datasets/lib/Components/UserDatasetFiles';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -53,10 +58,39 @@ export function RecordHeading(props) {
     name,
     creation_date,
     summary,
-    accessibility
+    accessibility,
   } = attributes;
 
   let datasetID = record.id[0].value;
+  let vdiDatasetId = wdkRecordIdToDiyUserDatasetId(datasetID);
+
+  // Fetch user dataset files
+  const userDatasetFilesResult = useWdkService(
+    async (wdkService) => {
+      if (!vdiDatasetId) {
+        return { data: null, error: null };
+      }
+
+      if (!isVdiCompatibleWdkService(wdkService)) {
+        return {
+          data: null,
+          error: 'VDI service is not configured. Unable to load dataset files.',
+        };
+      }
+
+      try {
+        const files = await wdkService.getUserDatasetFileListing(vdiDatasetId);
+        return { data: files, error: null };
+      } catch (error) {
+        console.error('Failed to fetch user dataset files:', error);
+        return {
+          data: null,
+          error: 'Failed to load dataset files. Please try again later.',
+        };
+      }
+    },
+    [vdiDatasetId]
+  );
 
   return (
     <>
@@ -66,47 +100,65 @@ export function RecordHeading(props) {
           <dt>Primary Publication:</dt>
           {primary_publication ? (
             <>
-              <dd>
-                {primary_publication}
-              </dd>
+              <dd>{primary_publication}</dd>
             </>
           ) : null}
 
           <dt>Primary Contact:</dt>
           {primary_contact_name ? (
             <>
-              <dd>
-                {primary_contact_name}
-              </dd>
+              <dd>{primary_contact_name}</dd>
             </>
           ) : null}
 
           <dt>VEuPathDB Dataset ID:</dt>
           <dd>{datasetID}</dd>
-          
+
           <dt>Dataset Version / Date:</dt>
           <dd>v1, {creation_date}</dd>
 
-	  <dt>Summary:</dt>
+          <dt>Summary:</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: summary }}
           />
 
-	  <dt>Data Accessibility:</dt>
-          <dd>{accessibility} 
-	    {accessibility === 'private' ? (
+          <dt>Data Accessibility:</dt>
+          <dd>
+            {accessibility}
+            {accessibility === 'private' ? (
               <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-                This dataset can only be discovered, explored, and downloaded by the owner and explicitly invited collaborators. 
-              </div> ) : (
-              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-                No access restrictions; anyone can download the data without registering.
+                This dataset can only be discovered, explored, and downloaded by
+                the owner and explicitly invited collaborators.
               </div>
-	    )}
-	  </dd>
-
+            ) : (
+              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
+                No access restrictions; anyone can download the data without
+                registering.
+              </div>
+            )}
+          </dd>
         </dl>
       </div>
+      {userDatasetFilesResult?.error ? (
+        <div className="error-message" style={{ marginTop: '1.5em' }}>
+          <h2>Data Files</h2>
+          <p>{userDatasetFilesResult.error}</p>
+        </div>
+      ) : userDatasetFilesResult?.data ? (
+        <div style={{ marginTop: '1.5em' }}>
+          <UserDatasetFiles
+            datasetId={vdiDatasetId}
+            files={userDatasetFilesResult.data}
+            installStatus="complete"
+          />
+        </div>
+      ) : userDatasetFilesResult === undefined ? (
+        <div style={{ marginTop: '1.5em' }}>
+          <h2>Data Files</h2>
+          <Loading />
+        </div>
+      ) : null}
     </>
   );
 }
@@ -186,5 +238,3 @@ export function RecordTable(props) {
   }
   return <props.DefaultComponent {...props} />;
 }
-
-
