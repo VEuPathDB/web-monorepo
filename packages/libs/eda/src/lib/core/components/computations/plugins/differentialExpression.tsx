@@ -495,14 +495,15 @@ export function DifferentialExpressionConfiguration(
     groupBCountPending,
     groupAFilter,
     groupBFilter,
-  } = useGroupCounts(
+  } = useGroupCounts({
     comparatorVariable,
-    configuration.comparator?.groupA,
-    configuration.comparator?.groupB,
+    groupA: configuration.comparator?.groupA,
+    groupB: configuration.comparator?.groupB,
     filters,
-    configuration.differentialExpressionMethod,
-    configuration.valueVariable
-  );
+    method: configuration.differentialExpressionMethod,
+    valueVariable: configuration.valueVariable,
+    comparatorVariableType: selectedComparatorVariable?.variable.type,
+  });
 
   // Report per-group count gating to the parent (e.g. ComputeNotebookCell)
   useEffect(() => {

@@ -93,14 +93,15 @@ export function DifferentialAnalysisReviewContent({
     .join(', ');
 
   const { groupACount, groupBCount, groupACountPending, groupBCountPending } =
-    useGroupCounts(
-      deConfig?.comparator?.variable,
-      deConfig?.comparator?.groupA,
-      deConfig?.comparator?.groupB,
+    useGroupCounts({
+      comparatorVariable: deConfig?.comparator?.variable,
+      groupA: deConfig?.comparator?.groupA,
+      groupB: deConfig?.comparator?.groupB,
       filters,
-      deConfig?.differentialExpressionMethod,
-      deConfig?.valueVariable
-    );
+      method: deConfig?.differentialExpressionMethod,
+      valueVariable: deConfig?.valueVariable,
+      comparatorVariableType: comparatorVarInfo?.variable.type,
+    });
 
   const formatCount = (count: number | undefined, pending: boolean): string => {
     if (pending) return ' (please wait...)';
