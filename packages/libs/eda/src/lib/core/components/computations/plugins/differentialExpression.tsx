@@ -53,7 +53,7 @@ import {
   ancestorEntitiesForEntityId,
 } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
-import { useGroupCounts } from '../groupCounts';
+import { useGroupCounts, makeDeseqExpressionFloorFilter } from '../groupCounts';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
@@ -433,7 +433,15 @@ export function DifferentialExpressionConfiguration(
       configuration.comparator.variable.variableId,
       {
         valueSpec: 'count',
-        filters: otherFilters,
+        filters: [
+          ...(otherFilters ?? []),
+          ...[
+            makeDeseqExpressionFloorFilter(
+              configuration.differentialExpressionMethod,
+              configuration.valueVariable
+            ),
+          ].filter((f): f is Filter => f != null),
+        ],
       }
     );
 

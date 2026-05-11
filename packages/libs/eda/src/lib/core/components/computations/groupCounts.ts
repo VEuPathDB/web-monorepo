@@ -41,6 +41,30 @@ export interface GroupCounts {
 }
 
 /**
+ * Returns a >=1 NumberRangeFilter on valueVariable for DESeq analyses, or
+ * undefined for all other methods. Append this to any filter array passed to
+ * the subsetting API so that samples with all-zero counts for the selected
+ * gene set are excluded consistently across the UI (counts display, comparator
+ * variable distribution), matching the R backend's removeEmptyRecords behaviour.
+ *
+ * A !=0 equivalent for limma/ArrayDataCollection does not currently exist in
+ * the EDA filter repertoire — revisit if limma surfaces a similar edge case.
+ */
+export function makeDeseqExpressionFloorFilter(
+  method: DifferentialExpressionMethod | undefined,
+  valueVariable: VariableDescriptor | undefined
+): Filter | undefined {
+  if (method !== 'DESeq' || valueVariable == null) return undefined;
+  return {
+    type: 'numberRange',
+    entityId: valueVariable.entityId,
+    variableId: valueVariable.variableId,
+    min: 1,
+    max: Number.MAX_SAFE_INTEGER,
+  };
+}
+
+/**
  * Hook that computes per-group sample counts for a comparator variable
  * split into two groups (A and B). Each group's filter is independently
  * memoised so that changing one group doesn't trigger a recount for the other.
@@ -48,8 +72,6 @@ export interface GroupCounts {
  * When method is 'DESeq' and valueVariable is provided, a >=1 floor filter is
  * silently appended so that the displayed counts match what the R backend will
  * actually use after removeEmptyRecords strips all-zero-count samples.
- * A !=0 equivalent for limma/ArrayDataCollection does not currently exist in
- * the EDA filter repertoire — revisit if limma surfaces a similar edge case.
  */
 export function useGroupCounts(
   comparatorVariable: VariableDescriptor | undefined,
@@ -62,14 +84,8 @@ export function useGroupCounts(
   const { rootEntity } = useStudyMetadata();
 
   const filtersWithFloor = useMemo(() => {
-    if (method !== 'DESeq' || valueVariable == null) return filters;
-    const floorFilter: Filter = {
-      type: 'numberRange',
-      entityId: valueVariable.entityId,
-      variableId: valueVariable.variableId,
-      min: 1,
-      max: Number.MAX_SAFE_INTEGER,
-    };
+    const floorFilter = makeDeseqExpressionFloorFilter(method, valueVariable);
+    if (floorFilter == null) return filters;
     return [...(filters ?? []), floorFilter];
   }, [method, valueVariable, filters]);
 
