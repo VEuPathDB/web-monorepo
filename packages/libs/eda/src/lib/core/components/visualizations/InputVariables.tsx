@@ -378,9 +378,12 @@ export function InputVariables(props: Props) {
       if (selectedVariables[input.name] != null) continue;
 
       const disabled = disabledVariablesByInputName[input.name];
+      // Skip inputs whose constraints haven't been resolved yet (disabled === undefined
+      // means "unknown", not "unrestricted" — same guard as autoSelectWhenPossible).
+      if (disabled == null) continue;
       const first = featuredFields.find((field) => {
         const [entityId, variableId] = field.term.split('/');
-        if (!disabled?.length) return true;
+        if (!disabled.length) return true;
         return !disabled.some(
           (d) => d.entityId === entityId && d.variableId === variableId
         );
