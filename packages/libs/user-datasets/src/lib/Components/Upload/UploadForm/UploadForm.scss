@@ -151,10 +151,13 @@
   }
 
   .upload-button {
-    background-color: var(--coreui-cyan-800);
+    background-color: var(--coreui-mutedCyan-600);
     padding: 1em 1.5em;
     border-radius: var(--common-radius);
     border: none;
-    box-shadow: 5px 5px var(--coreui-cyan-900);
+    box-shadow: 5px 5px var(--coreui-mutedCyan-700);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2em;
   }
 }
