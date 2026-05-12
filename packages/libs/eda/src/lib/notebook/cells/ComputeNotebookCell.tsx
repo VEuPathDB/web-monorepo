@@ -295,6 +295,7 @@ export function ComputeNotebookCell(
             ...(readonlyInputNames ?? []),
           ],
           onCountGatingChange: setConfigCountGating,
+          autoSelectFeatured: true,
         };
 
         if (hidden) {
