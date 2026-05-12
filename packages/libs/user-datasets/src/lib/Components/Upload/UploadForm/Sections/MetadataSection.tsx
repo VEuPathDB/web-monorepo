@@ -39,7 +39,6 @@ export function MetadataSection({
       <h2>
         {formProps.verbiage.metadataSectionTitle ?? 'Provide Dataset Metadata:'}
       </h2>
-      <ImportMetaButton />
 
       <CoreDatasetInformation
         datasetMeta={datasetDetails}
@@ -50,8 +49,4 @@ export function MetadataSection({
       />
     </section>
   );
-}
-
-function ImportMetaButton(): ReactElement {
-  return <button>Import from Existing Dataset</button>;
 }

@@ -37,15 +37,18 @@ export function CharacteristicsSection({
     (v) => setMetadata({ ...metadata, datasetCharacteristics: v })
   );
 
+  const disabledClass = enabled ? '' : ' disabled-fields';
+
   return (
     <div className="input-block">
       <h4>Field Study or Clinical Trial Characteristics</h4>
 
-      <div className="field-grid">
+      <div className={"field-grid" + disabledClass}>
         <InputPair
           type="checkbox"
           label="Field Study or Clinical Trial"
           fieldName="enable-characteristics"
+          className="not-disabled"
           helpText={
             'Whether the dataset is from a human, vector, animal, or plant' +
             ' population study; an epidemiological study (including' +

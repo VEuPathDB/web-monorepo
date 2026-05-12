@@ -56,6 +56,10 @@ export function RootDetailsSection(
   const fileUpload = buildFileProps(formProps, fileUploads, setUploads);
   const urlUpload = buildUrlProps(formProps, fileUploads, setUploads);
 
+  const helpText = typeof props.formProps.helpText === 'function'
+    ? <div className='column-2'>{props.formProps.helpText()}</div>
+    : undefined;
+
   return (
     <section>
       <div className="field-grid">
@@ -84,7 +88,7 @@ export function RootDetailsSection(
           urlParams={formProps.urlParams}
         />
 
-        {props.formProps.helpText?.()}
+        {helpText}
       </div>
 
       {props.formProps.verbiage.afterUploadHelpText}

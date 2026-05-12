@@ -14,6 +14,8 @@ export interface CollaboratorsSectionProps {
 export function CollaboratorsSection(
   props: CollaboratorsSectionProps
 ): ReactElement {
+  const safeContacts = props.datasetMeta.contacts ?? [{}];
+
   const setContacts = (contacts: Array<DatasetContact>) =>
     props.setDatasetMeta({ ...props.datasetMeta, contacts: contacts });
 
@@ -30,7 +32,7 @@ export function CollaboratorsSection(
     }
   };
 
-  const contactBlocks = (props.datasetMeta.contacts ?? [{}]).map(
+  const contactBlocks = (safeContacts).map(
     (contact, index) => {
       const path = props.pathBuilder.append(index);
 
@@ -59,7 +61,7 @@ export function CollaboratorsSection(
           className="input-appender"
           type="button"
           title="Adds an additional contact entry."
-          onClick={(_) => setContacts([{}])}
+          onClick={(_) => setContacts([...safeContacts, {}])}
         >
           + Additional contact
         </button>
@@ -87,7 +89,6 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
   return (
     <li className="field-grid non-bold-labels">
       <span className="multi-input-label">Contact {props.index + 1}</span>
-      <button className="inline">Copy from My Profile</button>
 
       <div className="column-2 field-grid">
         <TextField

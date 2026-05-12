@@ -24,7 +24,7 @@ export class JsonPathBuilder {
   appendToString(subpath: string): string;
   appendToString(subpath: number): string;
   appendToString(subpath: string | number): string {
-    return this.parentRef.toString() + JsonPathBuilder.toString(subpath);
+    return this.toString() + JsonPathBuilder.toString(subpath);
   }
 
   toString(): string {

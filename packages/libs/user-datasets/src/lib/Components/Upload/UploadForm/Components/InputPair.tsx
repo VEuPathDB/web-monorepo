@@ -6,6 +6,7 @@ interface BaseInputProps<T extends object = object> {
   readonly label: string;
   readonly fieldName: keyof T & string;
   readonly labelClass?: string;
+  readonly className?: string;
   readonly helpText?: ReactNode;
   readonly disabled?: boolean;
 }
@@ -30,12 +31,18 @@ export function InputPair<T extends object = object>(
   props: InputPairProps<T>
 ): ReactElement {
   const helpText = props.helpText ? (
-    <FieldHelpText>{props.helpText}</FieldHelpText>
+    <FieldHelpText className={props.className}>{props.helpText}</FieldHelpText>
   ) : undefined;
+
+  const labelClass = props.className
+    ? props.labelClass
+      ? `${props.className} ${props.labelClass}`
+      : props.className
+    : props.labelClass;
 
   return (
     <>
-      <label htmlFor={props.fieldName} className={props.labelClass}>
+      <label htmlFor={props.fieldName} className={labelClass}>
         {props.label}
       </label>
       {props.type === 'checkbox' ? Checkbox(props) : TextInput(props)}
@@ -50,6 +57,7 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
       type="checkbox"
       id={props.fieldName}
       name={props.fieldName}
+      className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.checked)}
       checked={props.checked ?? false}
     />
@@ -62,6 +70,7 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
       type={props.type ?? 'text'}
       id={props.fieldName}
       name={props.fieldName}
+      className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}
       value={props.value ?? ''}
     />

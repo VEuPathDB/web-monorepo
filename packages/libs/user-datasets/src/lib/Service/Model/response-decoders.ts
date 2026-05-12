@@ -221,6 +221,7 @@ export const externalIdentifiers = io.partial({
   hyperlinks: io.array(datasetHyperlink),
   bioprojectIds: io.array(bioprojectId),
 });
+export type ExternalIdentifiers = io.TypeOf<typeof externalIdentifiers>;
 
 export const linkedDataset = io.type({
   datasetUri: io.string,

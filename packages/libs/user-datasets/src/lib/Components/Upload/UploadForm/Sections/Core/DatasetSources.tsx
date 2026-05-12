@@ -28,6 +28,8 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   const safeSources = props.datasetMeta.datasetSources ?? [];
   if (safeSources.length < 1) safeSources.push({});
 
+  const disabledClass = enabled ? '' : ' disabled-fields';
+
   const updateSources = arrayChangeHandler<
     DatasetPostDetails,
     'datasetSources'
@@ -52,14 +54,15 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   });
 
   return (
-    <div className="input-block">
-      <h4>Dataset Source</h4>
+    <div className={'input-block' + disabledClass}>
+      <h4 className="not-disabled">Dataset Source</h4>
 
       <InputPair
         label="Available from External Source"
         fieldName="enabled"
         type="checkbox"
         checked={enabled}
+        className="not-disabled"
         helpText={
           'Whether this dataset is also available from an external source' +
           ' (e.g., a public repository, journal-hosted supplementary' +

@@ -37,7 +37,7 @@ type UploadType = 'file' | 'url';
  * @constructor
  */
 export function RootDataInput(props: RootDataInputProps): ReactElement {
-  let uploadInputs = buildUploadInputConstructors(props);
+  let uploadInputs = buildUploadInputs(props);
 
   const [selectedInput, setSelectedInput] = useState(
     determineDefaultUploadType(props)
@@ -67,7 +67,7 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
   );
 }
 
-function buildUploadInputConstructors(
+function buildUploadInputs(
   props: RootDataInputProps
 ): Array<[UploadType, ReactElement]> {
   const { fileUpload, urlUpload } = props;
@@ -161,10 +161,12 @@ function fileInput(props: FileUploadProps): ReactElement {
     />
   );
 
-  const helpText = props.helpText ?? (
-    <div>
-      Files cannot be greater than{' '}
-      {formatFileSize(props.dataType.vdiConfig.maxFileSize)}.
+  const helpText = (
+    <div className="column-2">
+      {props.helpText ??
+        'Files cannot be greater than ' +
+          formatFileSize(props.dataType.vdiConfig.maxFileSize) +
+          '.'}
     </div>
   );
 
