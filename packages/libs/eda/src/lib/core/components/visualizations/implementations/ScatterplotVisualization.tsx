@@ -299,6 +299,10 @@ export interface ScatterplotOptions
    * coverage data is not meaningful (e.g. a PCA plot where all samples are always used).
    */
   hideCoverageData?: boolean;
+  // Currently used only for DE notebook PCA cells. Could be extended to all
+  // visualization plugins if the auto-select-featured behaviour proves useful
+  // more broadly.
+  autoSelectFeatured?: boolean;
 }
 
 // Keep a local alias so the rest of the file doesn't need renaming.
@@ -2239,6 +2243,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 : onShowMissingnessChange
             }
             outputEntity={outputEntity}
+            autoSelectFeatured={
+              options?.autoSelectFeatured &&
+              hasComputedXAxis &&
+              hasComputedYAxis
+            }
           />
         )}
       </div>

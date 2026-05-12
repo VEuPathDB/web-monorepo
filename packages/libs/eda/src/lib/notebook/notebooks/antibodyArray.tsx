@@ -99,6 +99,7 @@ export const antibodyArrayNotebook: PresetNotebook = {
               other sources of variation.
             </span>
           ),
+          getVizPluginOptions: () => ({ autoSelectFeatured: true }),
         },
       ],
     },
