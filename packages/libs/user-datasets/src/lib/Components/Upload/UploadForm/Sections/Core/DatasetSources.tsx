@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { InputPair } from '../../Components';
+import { InputBlock, InputPair } from '../../Components';
 import { DatasetPostDetails, PostDatasetSource } from '../../../../../Service';
 import {
   BiConsumer,
@@ -54,35 +54,35 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   });
 
   return (
-    <div className={'input-block' + disabledClass}>
-      <h4 className="not-disabled">Dataset Source</h4>
+    <InputBlock header="Dataset Source">
+      <div className={'field-grid' + disabledClass}>
+        <InputPair
+          label="Available from External Source"
+          fieldName="enabled"
+          type="checkbox"
+          checked={enabled}
+          className="not-disabled"
+          helpText={
+            'Whether this dataset is also available from an external source' +
+            ' (e.g., a public repository, journal-hosted supplementary' +
+            ' materials, project website, or institutional archive) outside of' +
+            ' this platform.'
+          }
+          onChange={setEnabled}
+        />
 
-      <InputPair
-        label="Available from External Source"
-        fieldName="enabled"
-        type="checkbox"
-        checked={enabled}
-        className="not-disabled"
-        helpText={
-          'Whether this dataset is also available from an external source' +
-          ' (e.g., a public repository, journal-hosted supplementary' +
-          ' materials, project website, or institutional archive) outside of' +
-          ' this platform.'
-        }
-        onChange={setEnabled}
-      />
+        <span className="multi-input-label">Sources</span>
+        <ol className="multi-input non-bold-labels">{inputRows}</ol>
 
-      <span className="multi-input-label">Sources</span>
-      <ol className="multi-input non-bold-labels">{inputRows}</ol>
-
-      <AddRowButton
-        className="column-2"
-        onClick={addSource}
-        disabled={!enabled}
-      >
-        + Additional Dataset Source
-      </AddRowButton>
-    </div>
+        <AddRowButton
+          className="column-2"
+          onClick={addSource}
+          disabled={!enabled}
+        >
+          + Additional Dataset Source
+        </AddRowButton>
+      </div>
+    </InputBlock>
   );
 }
 

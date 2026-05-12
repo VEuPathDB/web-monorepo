@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { partialRight } from 'lodash';
 
-import { InputPair } from '../../Components';
+import { InputBlock, InputPair } from '../../Components';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { DatasetContact, DatasetPostDetails } from '../../../../../Service';
 
@@ -32,26 +32,22 @@ export function CollaboratorsSection(
     }
   };
 
-  const contactBlocks = (safeContacts).map(
-    (contact, index) => {
-      const path = props.pathBuilder.append(index);
+  const contactBlocks = safeContacts.map((contact, index) => {
+    const path = props.pathBuilder.append(index);
 
-      return (
-        <ContactBlock
-          key={path.toString()}
-          path={path}
-          index={index}
-          contact={contact}
-          updateContact={onUpdateContact}
-        />
-      );
-    }
-  );
+    return (
+      <ContactBlock
+        key={path.toString()}
+        path={path}
+        index={index}
+        contact={contact}
+        updateContact={onUpdateContact}
+      />
+    );
+  });
 
   return (
-    <div className="input-block">
-      <h4>Principal Investigators and Collaborators</h4>
-
+    <InputBlock header="Principal Investigators and Collaborators">
       <div className="field-grid">
         <span className="multi-input-label">Contacts</span>
 
@@ -66,7 +62,7 @@ export function CollaboratorsSection(
           + Additional contact
         </button>
       </div>
-    </div>
+    </InputBlock>
   );
 }
 
@@ -139,18 +135,16 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           onChange={onChangePart('country')}
         />
 
-        <>
-          <label htmlFor={isPrimary}>Primary Contact</label>
-          <input
-            type="radio"
-            name="primaryContact"
-            id={isPrimary}
-            value={isPrimary}
-            onChange={(e) =>
-              onChangePart('isPrimary')(e.currentTarget.value === isPrimary)
-            }
-          />
-        </>
+        <InputPair
+          label="Primary Contact"
+          type="radio"
+          fieldName={isPrimary}
+          nameOverride="isPrimaryContact"
+          value={isPrimary}
+          onChange={(value: string) =>
+            onChangePart('isPrimary')(value === isPrimary)
+          }
+        />
       </div>
     </li>
   );

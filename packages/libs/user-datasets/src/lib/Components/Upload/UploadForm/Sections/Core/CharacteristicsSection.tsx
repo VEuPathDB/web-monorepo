@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import { partialRight } from 'lodash';
 
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
@@ -7,7 +7,7 @@ import {
   PostCharacteristics,
   SampleYearRange,
 } from '../../../../../Service';
-import { GrowableStringList, InputPair } from '../../Components';
+import { GrowableStringList, InputBlock, InputPair } from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface CharacteristicsSectionProps {
@@ -40,10 +40,8 @@ export function CharacteristicsSection({
   const disabledClass = enabled ? '' : ' disabled-fields';
 
   return (
-    <div className="input-block">
-      <h4>Field Study or Clinical Trial Characteristics</h4>
-
-      <div className={"field-grid" + disabledClass}>
+    <InputBlock header="Field Study or Clinical Trial Characteristics">
+      <div className={'field-grid' + disabledClass}>
         <InputPair
           type="checkbox"
           label="Field Study or Clinical Trial"
@@ -143,7 +141,7 @@ export function CharacteristicsSection({
           }
         />
       </div>
-    </div>
+    </InputBlock>
   );
 }
 

@@ -18,6 +18,16 @@
     margin: 0;
   }
 
+  h4 {
+    margin-bottom: 1em;
+    padding-left: 2ch;
+    cursor: pointer;
+
+    i {
+      margin-right: 1ch;
+    }
+  }
+
   ol.multi-input {
     margin: 0;
     padding: 0;
@@ -33,6 +43,24 @@
     border-style: solid;
     border-color: #999;
     border-radius: var(--common-radius);
+
+    &.collapsed {
+      h4 {
+        margin-bottom: 0;
+      }
+
+      > *:not(h4) {
+        overflow: hidden;
+        margin: 0;
+        grid-row-gap: 0;
+        height: 0;
+
+        > * {
+          margin: 0;
+          height: 0;
+        }
+      }
+    }
   }
 
   form {
@@ -50,7 +78,7 @@
   label {
     font-weight: bold;
 
-    .required {
+    &.required {
       color: red;
 
       &::after {
@@ -61,6 +89,7 @@
 
   .disabled-fields > *:not(.not-disabled) {
     opacity: 0.6;
+    cursor: not-allowed;
   }
 
   .field-grid {
@@ -137,7 +166,11 @@
       padding-top: 0.8em;
     }
 
-    .field-grid:not(:last-child) {
+    .field-grid .field-grid {
+      border-bottom: none;
+    }
+
+    > .field-grid:not(:last-child) {
       margin-bottom: 0;
       padding-bottom: 0.8em;
       border-bottom-width: 1px;
@@ -152,12 +185,23 @@
 
   .upload-button {
     background-color: var(--coreui-mutedCyan-600);
-    padding: 1em 1.5em;
+    padding: 0.9em 1.4em;
     border-radius: var(--common-radius);
     border: none;
-    box-shadow: 5px 5px var(--coreui-mutedCyan-700);
+    box-shadow: 4px 5px var(--coreui-mutedCyan-700);
     color: white;
     font-weight: bold;
     font-size: 1.2em;
+  }
+
+  .formInfo {
+    p,
+    ul {
+      margin-bottom: 1em;
+    }
+
+    li:not(:last-child) {
+      margin-bottom: 0.4em;
+    }
   }
 }

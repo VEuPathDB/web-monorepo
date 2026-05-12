@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
-import { DatasetPostDetails } from "../../../../../Service";
-import { Consumer, JsonPathBuilder, changeHandler } from "../../../../../Utils";
-import { FieldHelpText } from "../../Components";
+import { DatasetPostDetails } from '../../../../../Service';
+import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
+import { FieldHelpText, InputBlock } from '../../Components';
 
 export interface DatasetUsageProps {
   readonly datasetMeta: DatasetPostDetails;
@@ -18,8 +18,7 @@ export function DatasetUsage({
     jsonPath.appendToString<DatasetPostDetails>('dataDisclaimer');
 
   return (
-    <div className="input-block">
-      <h4>Dataset Usage</h4>
+    <InputBlock header="Dataset Usage">
       <div className="field-grid">
         <label htmlFor={fieldName}>Disclaimers</label>
         <textarea
@@ -41,6 +40,6 @@ export function DatasetUsage({
           may affect analysis. (maximum 1000 characters).
         </FieldHelpText>
       </div>
-    </div>
+    </InputBlock>
   );
 }

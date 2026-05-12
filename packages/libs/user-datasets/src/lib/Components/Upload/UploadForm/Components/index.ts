@@ -1,5 +1,6 @@
 export { FieldHelpText } from './FieldHelpText';
 export { GrowableStringList } from './GrowableStringList';
+export { InputBlock } from './InputBlock';
 export { InputPair } from './InputPair';
 export { SubmissionModal } from './SubmissionModal';
 export { UploadButton } from './UploadButton';

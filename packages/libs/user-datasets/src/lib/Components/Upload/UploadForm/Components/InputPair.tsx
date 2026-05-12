@@ -1,10 +1,11 @@
 import { Consumer } from '../../../../Utils';
-import { HTMLInputTypeAttribute, ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { FieldHelpText } from './FieldHelpText';
 
 interface BaseInputProps<T extends object = object> {
   readonly label: string;
   readonly fieldName: keyof T & string;
+  readonly nameOverride?: string;
   readonly labelClass?: string;
   readonly className?: string;
   readonly helpText?: ReactNode;
@@ -18,7 +19,7 @@ interface CheckboxProps<T extends object = object> extends BaseInputProps<T> {
 }
 
 interface TextProps<T extends object = object> extends BaseInputProps<T> {
-  readonly type?: Exclude<HTMLInputTypeAttribute, 'checkbox' | (string & {})>;
+  readonly type?: 'text' | 'radio';
   readonly onChange: Consumer<string>;
   readonly value?: string;
 }
@@ -53,26 +54,30 @@ export function InputPair<T extends object = object>(
 
 function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
   return (
-    <input
-      type="checkbox"
-      id={props.fieldName}
-      name={props.fieldName}
-      className={props.className}
-      onChange={(e) => props.onChange(e.currentTarget.checked)}
-      checked={props.checked ?? false}
-    />
+    <span>
+      <input
+        type="checkbox"
+        id={props.fieldName}
+        name={props.nameOverride ?? props.fieldName}
+        className={props.className}
+        onChange={(e) => props.onChange(e.currentTarget.checked)}
+        checked={props.checked ?? false}
+      />
+    </span>
   );
 }
 
 function TextInput<T extends object>(props: TextProps<T>): ReactElement {
-  return (
+  const baseElement = (
     <input
       type={props.type ?? 'text'}
       id={props.fieldName}
-      name={props.fieldName}
+      name={props.nameOverride ?? props.fieldName}
       className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}
       value={props.value ?? ''}
     />
   );
+
+  return props.type === 'radio' ? <span>{baseElement}</span> : baseElement;
 }
