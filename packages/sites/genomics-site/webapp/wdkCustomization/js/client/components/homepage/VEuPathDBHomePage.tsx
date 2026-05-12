@@ -677,13 +677,6 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'methods',
-          display: 'Analysis methods',
-          type: 'reactRoute',
-          tooltip: 'How we obtain/generate the data',
-          url: makeStaticPageRoute(`/methods.html`),
-        },
-        {
           key: 'datasets',
           display: `Datasets in ${displayName}`,
           type: 'reactRoute',
@@ -691,13 +684,20 @@ const useHeaderMenuItems = (
         },
         {
           key: 'data-files-eupathdb-beta',
-          display: <>Download data files</>,
+          display: <>Download data</>,
           type: 'reactRoute',
           url: '/downloads',
         },
         {
+          key: 'genomes-and-data-types',
+          display: 'Genome information & stats',
+          tooltip: `Table summarizing all the genomes in ${displayName}`,
+          type: 'reactRoute',
+          url: '/search/organism/GenomeDataTypes/result',
+        },
+        {
           key: 'mahpic-data',
-          display: 'MaHPIC',
+          display: 'External data: MaHPIC',
           type: 'reactRoute',
           tooltip: 'Access MaHPIC Data',
           url: makeStaticPageRoute(`/${projectId}/mahpic.html`),
@@ -706,20 +706,11 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'genomes-and-data-types',
-          display: 'Organisms: Genome Info & Stats',
-          tooltip: `Table summarizing all the genomes in ${displayName}`,
+          key: 'methods',
+          display: 'VEuPathDB processing methods',
           type: 'reactRoute',
-          url: '/search/organism/GenomeDataTypes/result',
-        },
-        {
-          key: 'community-download',
-          display: 'User uploaded files',
-          type: 'reactRoute',
-          url: '/search/file/UserFileUploads?autoRun=1',
-          metadata: {
-            exclude: [EuPathDB],
-          },
+          tooltip: 'How we obtain/generate the data',
+          url: makeStaticPageRoute(`/methods.html`),
         },
       ],
     },
