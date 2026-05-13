@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { useFeaturedFields } from '../variableSelectors/hooks';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
@@ -369,8 +369,16 @@ export function InputVariables(props: Props) {
 
   const featuredFields = useFeaturedFields(entities, 'variableTree');
 
+  // allow autoSelections to be removed with the (x) (showClearSelectionButton)
+  const autoSelectedFeaturedRef = useRef(false);
+
   useEffect(() => {
-    if (!autoSelectFeatured || !featuredFields.length) return;
+    if (
+      autoSelectedFeaturedRef.current ||
+      !autoSelectFeatured ||
+      !featuredFields.length
+    )
+      return;
 
     const autoSelections: VariablesByInputName = {};
     for (const input of inputs) {
@@ -396,6 +404,7 @@ export function InputVariables(props: Props) {
 
     if (Object.keys(autoSelections).length === 0) return;
     onChange({ ...selectedVariables, ...autoSelections });
+    autoSelectedFeaturedRef.current = true;
   }, [
     autoSelectFeatured,
     featuredFields,
