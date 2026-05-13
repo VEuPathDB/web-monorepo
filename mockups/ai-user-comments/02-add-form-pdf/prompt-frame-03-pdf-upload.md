@@ -1,8 +1,27 @@
 # Frame 03 — Add form: PDF upload (initial state)
 
-Continue with the same PlasmoDB chrome, page heading, and two-column layout established in the previous frames.
+## Reference images
 
-**Base**: same as `mockup-frame-01-pubmed-input.png` — same page heading ("AI-assisted comment for gene PF3D7_0315200"), same step sidebar with step 1 (Publication source) active — with the following changes:
+Two images are uploaded in this chat — use both as style references for all frames in this session:
+
+- `mockup-frame-01-pubmed-input.png` — provides the full page layout, chrome, form styles, button styles, and example data (ignore the left panel if any; this is a single-column layout)
+- `mockup-breadcrumb-design.png` — provides the exact breadcrumb trail style
+
+## Style guide
+
+Match the visual style, fonts, colors, spacing, and UI component style shown in `mockup-frame-01-pubmed-input.png` exactly.
+
+Key style notes:
+
+- **Chrome**: Deep maroon/burgundy top nav bar, PlasmoDB logo top-left, light grey secondary bar below
+- **Page heading**: `AI-assisted comment for gene PF3D7_0315200` — same position and style as in the reference
+- **Single-column layout**: no left sidebar; content sits directly below the page heading and breadcrumb
+- **Breadcrumb trail**: use the style from `mockup-breadcrumb-design.png`; step 1 is active (see below)
+- **Buttons**: solid teal/green primary, white outlined secondary
+
+## Content
+
+Same page heading ("AI-assisted comment for gene PF3D7_0315200") and breadcrumb with step 1 (Publication source) active, with the following changes from the PubMed variant:
 
 - **Source radio group**: "Upload PDF" is now selected, "PubMed ID" is unselected
   - ○ PubMed ID
@@ -11,19 +30,19 @@ Continue with the same PlasmoDB chrome, page heading, and two-column layout esta
 
 ### PDF upload section (replaces the PubMed ID field)
 
-**File picker row** (label left, control right, matching the label/field grid):
+**File picker row** (label left, control right):
 
 - Label: `PDF file`
-- Control: a file-input button labelled `Choose file` (grey outlined button style) with the text `No file chosen` beside it, scoped to `.pdf` files
+- Control: file-input button labelled `Choose file` (grey outlined button) with the text `No file chosen` beside it, scoped to `.pdf` files
 
-**Privacy notice** — a visually distinct notice box directly below the file picker (light blue background, thin border, small info icon on the left):
+**Privacy notice** — a visually distinct notice box directly below the file picker (light yellow or light blue background, thin border, small info icon on the left):
 
 > This PDF will be sent to our AI service for analysis only and will not be stored. For provenance, optionally add a public link to the publication below.
 
 **Optional link fields** (label left, field right, below the notice):
 
-- Label: `Publication URL` — empty text input, placeholder `https://biorxiv.org/…` (optional, greyed placeholder)
-- Label: `Link text` — empty text input, placeholder `e.g. Smith et al. 2024 (bioRxiv)` (optional, greyed placeholder)
+- Label: `Publication URL` — empty text input, placeholder `https://biorxiv.org/…`
+- Label: `Link text` — empty text input, placeholder `e.g. Smith et al. 2024 (bioRxiv)`
 
 **Options section** (identical to frame 01):
 
@@ -33,7 +52,7 @@ Continue with the same PlasmoDB chrome, page heading, and two-column layout esta
 **Submit button**:
 
 - Label: `Generate AI comment`
-- State: **disabled** — muted grey fill, because no file has been chosen yet
+- State: **disabled** — muted grey fill, no file chosen yet
 - Small text: `Submitting will create a draft comment for your review`
 
 ## Annotations

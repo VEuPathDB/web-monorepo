@@ -9,7 +9,7 @@ Continue with the same PlasmoDB chrome and style established in the previous fra
 - **Link text field**: filled with `Chauhan et al. 2024 (bioRxiv preprint)`
 - **Generate AI comment** button is now **enabled** — full solid teal/green fill with white text
 
-Everything else (step sidebar at step 1, radio showing Upload PDF selected, privacy notice, checkboxes) is identical to frame 03.
+The breadcrumb (step 1 active), radio showing "Upload PDF" selected, privacy notice, and checkboxes are identical to frame 03.
 
 ## Annotations
 

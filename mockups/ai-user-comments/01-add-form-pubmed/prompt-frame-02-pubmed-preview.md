@@ -1,6 +1,6 @@
 # Frame 02 — Add form: PubMed input with metadata preview
 
-Continue with the same PlasmoDB chrome, page heading, and two-column layout established in frame 01.
+Continue with the same PlasmoDB chrome, page heading, and layout established in frame 01.
 
 **Base**: same as `mockup-frame-01-pubmed-input.png` with the following changes:
 
@@ -10,9 +10,9 @@ Continue with the same PlasmoDB chrome, page heading, and two-column layout esta
   - Title | `A Plasmodium falciparum kinase required for gametocyte development and blood-stage fitness`
   - Author | `Chauhan M et al.`
   - Journal | `Nature Communications, 2024`
-- **Generate AI comment** button is now **enabled** — full solid teal/green fill with white text (no longer muted/grey)
+- **Generate AI comment** button is now **enabled** — full solid teal/green fill with white text
 
-Everything else (step sidebar, radio selection, checkboxes, hint text) is identical to frame 01.
+The breadcrumb (step 1 active) and everything else are identical to frame 01.
 
 ## Annotations
 

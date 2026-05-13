@@ -1,8 +1,11 @@
 # Frame 01 — Add form: PubMed input (initial state)
 
-## Reference image
+## Reference images
 
-`base-profile-page.png` is uploaded in this chat — use it as the style reference for all frames in this session.
+Two images are uploaded in this chat — use both as style references for all frames in this session:
+
+- `base-profile-page.png` — provides the PlasmoDB site chrome (top nav bar, logo, secondary bar, fonts, colours, form-field and button styles)
+- `mockup-breadcrumb-design.png` — provides the exact breadcrumb trail style to use at the top of every frame
 
 ## Style guide
 
@@ -10,68 +13,66 @@ Match the visual style, fonts, colors, spacing, and UI component style shown in 
 
 Key style notes:
 
-- **Chrome**: Deep maroon/burgundy top navigation bar with white text links (My Strategies, Searches, Tools, My Workspace, Data, About, Help, Subscriptions, Contact Us); PlasmoDB logo top-left with pink/magenta organism illustration; light grey secondary bar below with a teal "My Organism Preferences" link on the right
+- **Chrome**: Deep maroon/burgundy top navigation bar with white text links; PlasmoDB logo top-left with pink/magenta organism illustration; light grey secondary bar below
 - **Page background**: White content area, clean sans-serif font throughout
-- **Left step sidebar**: White background, ~250px wide; nav items are a small icon + label in a grid row; the active item has a solid light blue (#d5eaf5) background fill with rounded corners; future/inactive items are plain text, slightly muted
-- **Form fields**: Light grey bordered rectangular text inputs, labels to the left or above in a consistent grid
-- **Primary button**: Solid teal/green fill with white text (like the "Save" button in the reference)
-- **Secondary button**: White background with grey/outlined border
+- **IMPORTANT — ignore the left panel**: `base-profile-page.png` shows a left-hand profile navigation panel. **Do NOT include this panel.** The AI comment flow uses a single-column layout with a horizontal breadcrumb trail at the top instead (see below).
+- **Form fields**: Light grey bordered rectangular text inputs, labels above or to the left
+- **Primary button**: Solid teal/green fill with white text
+- **Secondary button**: White background with grey outlined border
 
 ## Page layout
 
-Reproduce the **two-column flex layout** from the reference screenshot (the same pattern as the profile page):
+Single-column content area (no left sidebar). Structure from top to bottom:
 
-- **Left column** (~250px wide): step navigation sidebar (described below)
-- **Right column** (flex: 1, white content area): the add form
+1. **Page heading** — styled the same as "Account: Bob MacCallum" in the reference:
 
-**Page heading** sits above the two columns — styled the same as "Account: Bob MacCallum" in the reference:
+   > AI-assisted comment for gene PF3D7_0315200
 
-> AI-assisted comment for gene PF3D7_0315200
+2. **Breadcrumb trail** — immediately below the heading, styled exactly as shown in `mockup-breadcrumb-design.png` (Row 1 — Step 1 active):
 
-### Left sidebar — Step navigation
+   - ① **Publication source** — circle and label in deep maroon, label **bold**, full opacity (active)
+   - → mid-grey arrow
+   - ② Generating comment — faded, ~45% opacity
+   - → faded arrow
+   - ③ Review & publish — faded, ~45% opacity
 
-Three steps, styled exactly like the profile page sidebar (icon + label text, rounded items, active = light blue fill). The sidebar is a read-only progress indicator — no hover states needed.
+3. **Form content** — below the breadcrumb (see below)
 
-| Step | Icon                    | Label              | State                                                                 |
-| ---- | ----------------------- | ------------------ | --------------------------------------------------------------------- |
-| 1    | book icon               | Publication source | **Active** — solid light blue (#d5eaf5) background fill, full opacity |
-| 2    | hourglass or clock icon | Generating comment | Future — greyed out, opacity ~0.45                                    |
-| 3    | checkmark-circle icon   | Review & publish   | Future — greyed out, opacity ~0.45                                    |
+## Form content
 
-### Right column — Form content
+**Sub-heading**: "Publication details" (bold section label)
 
-**Sub-heading**: "Publication details" (bold section label, styled like the "Contact" / "Information" headers in the reference)
-
-**Source radio group** (two inline radio buttons with labels, a little margin below):
+**Source radio group** (two inline radio buttons):
 
 - ● PubMed ID
 - ○ Upload PDF
 
-**PubMed ID input row** (label left, field right — matching the label/field grid in the reference):
+**PubMed ID input row**:
 
 - Label: `PubMed ID`
-- Input: empty text field, placeholder text `e.g. 38429021`
-- Below the input field: small grey hint text — `Enter a PubMed ID to look up the publication`
+- Input: empty text field, placeholder `e.g. 38429021`
+- Below input: small grey hint text — `Enter a PubMed ID to look up the publication`
 
-**Options section** (below the PubMed field, with a thin divider or small gap):
+**Options section** (below the PubMed field, with a small gap):
 
 - Bold label: "Options"
 - ☐ Generate product description
-- ☑ Validate output ← checked (ticked checkbox)
+- ☑ Validate output (checked)
 
 **Submit button** (left-aligned, below the checkboxes):
 
 - Label: `Generate AI comment`
-- State: **disabled** — muted grey fill (not teal), because no PMID has been entered yet
+- State: **disabled** — muted grey fill, no PMID entered yet
 - Small text beside or below: `Submitting will create a draft comment for your review`
 
 ## Annotations
 
 Figma-style: purple-filled circle with white number label, thin connecting line to a purple rounded-rectangle callout bubble with white text.
 
-- ① **Source selector** — Radio group to choose between a PubMed ID or a PDF upload; selecting "Upload PDF" replaces the PMID field with a file picker
-- ② **PubMed ID field** — Accepts a numeric PubMed ID; once a valid ID is entered an inline metadata preview will appear confirming the publication
-- ③ **Validate output** — On by default; adds an LLM validation step to the back-end pipeline before the draft comment is created
-- ④ **Generate AI comment** — Disabled until a PMID is entered; submitting kicks off an async job and advances the sidebar to step 2
+- ① **Breadcrumb trail** — Step 1 "Publication source" is bold and active; steps 2 and 3 are grayed out to show the user's position in the flow
+- ② **Source selector** — Radio group to choose between a PubMed ID or a PDF upload; selecting "Upload PDF" replaces the PMID field with a file picker
+- ③ **PubMed ID field** — Accepts a numeric PubMed ID; once a valid ID is entered an inline metadata preview will appear confirming the publication
+- ④ **Validate output** — On by default; adds an LLM validation step to the back-end pipeline before the draft comment is created
+- ⑤ **Generate AI comment** — Disabled until a PMID is entered; submitting kicks off an async job and advances the breadcrumb to step 2
 
 Save as: `mockup-frame-01-pubmed-input.png`

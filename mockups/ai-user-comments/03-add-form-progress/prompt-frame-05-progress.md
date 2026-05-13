@@ -1,8 +1,11 @@
 # Frame 05 — Add form: progress / polling view (mid-job)
 
-## Reference image
+## Reference images
 
-`mockup-frame-02-pubmed-preview.png` is uploaded in this chat — use it as the style reference for all frames in this session.
+Two images are uploaded in this chat — use both as style references for all frames in this session:
+
+- `mockup-frame-02-pubmed-preview.png` — provides the full page layout, chrome, form styles, button styles, and example data
+- `mockup-breadcrumb-design.png` — provides the exact breadcrumb trail style
 
 ## Style guide
 
@@ -12,23 +15,23 @@ Key style notes:
 
 - **Chrome**: Deep maroon/burgundy top nav bar, PlasmoDB logo top-left, light grey secondary bar below
 - **Page heading**: `AI-assisted comment for gene PF3D7_0315200` — same position and style as in the reference
-- **Two-column layout**: left step navigation sidebar (~250px), right content area (flex: 1), matching the reference exactly
-- **Sidebar items**: icon + label rows, active item has solid light blue (#d5eaf5) rounded fill
-- **Buttons**: solid teal/green primary, white outlined secondary (both colours visible in the reference)
+- **Single-column layout**: no left sidebar; content sits directly below the page heading and breadcrumb
+- **IMPORTANT — ignore the left panel**: if the reference shows a left-hand navigation panel, do NOT reproduce it. The layout is single-column with a breadcrumb trail at the top.
+- **Buttons**: solid teal/green primary, white outlined secondary
 
-## Left sidebar — Step navigation
+## Breadcrumb trail
 
-Step 2 is now active. Step 1 is complete (full opacity, no highlight). Step 3 is still future (greyed, opacity ~0.45):
+Step 2 is now active. Step 1 is complete (full opacity, mid-grey circle, normal weight label). Step 3 is still future (faded, ~45% opacity). Match the styling from `mockup-breadcrumb-design.png` Row 2 exactly:
 
-| Step | Icon                  | Label              | State                                                   |
-| ---- | --------------------- | ------------------ | ------------------------------------------------------- |
-| 1    | book icon             | Publication source | Complete — full opacity, plain styling, no background   |
-| 2    | hourglass icon        | Generating comment | **Active** — solid light blue (#d5eaf5) background fill |
-| 3    | checkmark-circle icon | Review & publish   | Future — greyed out, opacity ~0.45                      |
+- ① Publication source — mid-grey circle, normal weight, full opacity (completed)
+- → mid-grey arrow
+- ② **Generating comment** — deep maroon circle, **bold** label, full opacity (active)
+- → mid-grey arrow
+- ③ Review & publish — faded, ~45% opacity (future)
 
-## Right column — Progress view
+## Content — Progress view
 
-The input form is gone entirely. The content pane now shows a progress view with three parts:
+The input form is gone entirely. The content pane (below the breadcrumb) now shows a progress view with three parts:
 
 **1. Submission summary** — a compact read-only box at the top, light grey background, small text, rounded corners:
 
@@ -42,8 +45,8 @@ The input form is gone entirely. The content pane now shows a progress view with
 | ✓ green tick            | Fetching gene synonyms | (done — muted grey text)                                                                           |
 | ✓ green tick            | Scanning gene mentions | (done — muted grey text)                                                                           |
 | ⟳ animated blue spinner | **Generating summary** | `Summarising PF3D7_0315200 function from article text…` (italic, dark text, slightly smaller font) |
-| ○ grey circle           | Validating             | (pending — grey text, opacity ~0.5)                                                                |
-| ○ grey circle           | Creating comment       | (pending — grey text, opacity ~0.5)                                                                |
+| ○ grey circle           | Validating             | (pending — grey text, ~50% opacity)                                                                |
+| ○ grey circle           | Creating comment       | (pending — grey text, ~50% opacity)                                                                |
 
 **3. Footer row** below the checklist:
 
@@ -54,10 +57,10 @@ The input form is gone entirely. The content pane now shows a progress view with
 
 Figma-style: purple-filled circle with white number label, thin connecting line, purple rounded-rectangle callout bubble.
 
-- ① **Step 2 active** — sidebar advances automatically on job submit; the user cannot click back to step 1
+- ① **Breadcrumb advances to step 2** — automatically on job submit; the user cannot click back to step 1
 - ② **Submission summary** — read-only reminder of what was submitted
 - ③ **Current stage + live message** — the back end returns a human-readable message string for the active stage; shown here in italic below the stage label
-- ④ **Pending stages** — greyed until reached; only stages relevant to the submitted options appear (e.g. "Validating" is present because "Validate output" was on)
+- ④ **Pending stages** — greyed until reached; only stages relevant to the submitted options appear
 - ⑤ **Cancel** — fires a DELETE to the back end; UI waits for the next poll to confirm before showing the cancelled state
 
 Save as: `mockup-frame-05-progress.png`

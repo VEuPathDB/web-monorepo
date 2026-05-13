@@ -1,20 +1,20 @@
 # Frame 06 — Add form: success / redirecting state
 
-Continue with the same PlasmoDB chrome, page heading, and two-column layout established in the previous frames.
+Continue with the same PlasmoDB chrome, page heading, and layout established in the previous frames.
 
 **Base**: same as `mockup-frame-05-progress.png` with the following changes:
 
-### Left sidebar — Step navigation
+### Breadcrumb trail
 
-Unchanged from frame 05 — step 2 remains active. The sidebar only advances to step 3 once the user lands on the edit page:
+Unchanged from frame 05 — step 2 remains active. The breadcrumb only advances to step 3 once the user lands on the edit page:
 
-| Step | Icon                  | Label              | State                                                   |
-| ---- | --------------------- | ------------------ | ------------------------------------------------------- |
-| 1    | book icon             | Publication source | Complete — full opacity, plain styling                  |
-| 2    | hourglass icon        | Generating comment | **Active** — solid light blue (#d5eaf5) background fill |
-| 3    | checkmark-circle icon | Review & publish   | Future — greyed out, opacity ~0.45                      |
+- ① Publication source — mid-grey circle, normal weight, full opacity (completed)
+- → mid-grey arrow
+- ② **Generating comment** — deep maroon circle, **bold** label, full opacity (active)
+- → mid-grey arrow
+- ③ Review & publish — faded, ~45% opacity (future)
 
-### Right column — Success / redirect view
+### Content — Success / redirect view
 
 **Stage checklist**: all stages now show a ✓ green tick (done), including "Creating comment" at the bottom. No spinner, no pending circles — the list is entirely green ticks.
 
@@ -33,7 +33,7 @@ The Cancel button is gone.
 
 ## Annotations
 
-- ① **Sidebar stays on step 2** — the add page owns steps 1 and 2 throughout its lifetime; step 3 only becomes active once the user lands on the edit page
+- ① **Breadcrumb stays on step 2** — the add page owns steps 1 and 2 throughout its lifetime; step 3 only becomes active once the user lands on the edit page
 - ② **All stages complete** — every stage shows a green tick; "Creating comment" confirms the draft comment row has been persisted
 - ③ **Auto-redirect** — navigation to `/user-comments/edit?commentId=…` happens automatically; no user action required
 - ④ **Fallback link** — in case the redirect is delayed or blocked, the user can navigate manually
