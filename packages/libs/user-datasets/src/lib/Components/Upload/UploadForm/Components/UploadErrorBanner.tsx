@@ -52,7 +52,7 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
   if ('byKey' in errors) {
     for (const jsonPath of Object.keys(errors.byKey)) {
       const link = document.getElementById(jsonPath) ? (
-        <a href={`#${jsonPath}`}>{encodeURI(formatJPath(jsonPath))}</a>
+        <a href={`#${encodeURI(jsonPath)}`}>{formatJPath(jsonPath)}</a>
       ) : (
         formatJPath(jsonPath)
       );
@@ -73,6 +73,10 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
 }
 
 function formatJPath(path: string): string {
+  const label = document.querySelector(`label[for="${path}"]`);
+
+  if (label != null) return label.textContent!;
+
   const hits = path.match(/\.(\w+)(?:\[(\d+)])?$/);
 
   if (!hits) return path;

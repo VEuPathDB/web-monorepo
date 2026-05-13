@@ -35,7 +35,10 @@ export interface UploadFormProps extends DatasetUploadConfig {
 export function UploadForm(props: UploadFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
-  const onSubmit = () => props.actions.submit();
+  const onSubmit = () => {
+    props.actions.submit();
+    window.scrollTo(0, 0);
+  };
 
   return (
     <section id="dataset-upload">
