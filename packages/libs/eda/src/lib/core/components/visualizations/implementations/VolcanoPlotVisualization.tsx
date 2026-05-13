@@ -125,11 +125,26 @@ export const VolcanoPlotConfig = t.partial({
   /** Label for the effect size axis/threshold, sourced from the backend response. */
   effectSizeLabel: t.string,
   effectDirection: t.union([
-    t.literal('up and down'),
-    t.literal('up only'),
-    t.literal('down only'),
+    t.literal('upAndDown'),
+    t.literal('upOnly'),
+    t.literal('downOnly'),
   ]),
 });
+
+export const effectDirectionOptions = [
+  'upAndDown',
+  'upOnly',
+  'downOnly',
+] as const;
+
+export const effectDirectionLabels: Record<
+  NonNullable<VolcanoPlotConfig['effectDirection']>,
+  string
+> = {
+  upAndDown: 'Up- or down-regulated',
+  upOnly: 'Up-regulated only',
+  downOnly: 'Down-regulated only',
+};
 
 export interface VolcanoPlotOptions
   extends LayoutOptions,
@@ -213,27 +228,24 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
           computationType: computation.descriptor.type,
         };
 
-  const data = useCachedPromise(
-    async (): Promise<VolcanoPlotResponse> => {
-      if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
-      // There are _no_ viz request params for the volcano plot (config: {}).
-      // The data service streams the volcano data directly from the compute service.
-      const params = {
-        studyId: dataRequestDeps.studyId,
-        filters: dataRequestDeps.filters,
-        config: {},
-        computeConfig: dataRequestDeps.computationConfiguration,
-      };
+  const data = useCachedPromise(async (): Promise<VolcanoPlotResponse> => {
+    if (!dataRequestDeps) throw new Error('dataRequestDeps is not defined');
+    // There are _no_ viz request params for the volcano plot (config: {}).
+    // The data service streams the volcano data directly from the compute service.
+    const params = {
+      studyId: dataRequestDeps.studyId,
+      filters: dataRequestDeps.filters,
+      config: {},
+      computeConfig: dataRequestDeps.computationConfiguration,
+    };
 
-      return dataClient.getVisualizationData(
-        dataRequestDeps.computationType,
-        visualization.descriptor.type,
-        params,
-        VolcanoPlotResponse
-      );
-    },
-    [visualization.descriptor.type, dataRequestDeps]
-  );
+    return dataClient.getVisualizationData(
+      dataRequestDeps.computationType,
+      visualization.descriptor.type,
+      params,
+      VolcanoPlotResponse
+    );
+  }, [visualization.descriptor.type, dataRequestDeps]);
 
   /**
    * Find mins and maxes of the data and for the plot.
@@ -349,11 +361,11 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
             effectSizeThreshold,
             significanceColors
           );
-          const effectDirection = vizConfig.effectDirection ?? 'up and down';
-          if (effectDirection === 'up only' && Number(d.effectSize) < 0) {
+          const effectDirection = vizConfig.effectDirection ?? 'upAndDown';
+          if (effectDirection === 'upOnly' && Number(d.effectSize) < 0) {
             sigColor = significanceColors['inconclusive'];
           } else if (
-            effectDirection === 'down only' &&
+            effectDirection === 'downOnly' &&
             Number(d.effectSize) > 0
           ) {
             sigColor = significanceColors['inconclusive'];
@@ -510,7 +522,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     independentAxisRange,
     dependentAxisRange,
     rawDataMinMaxValues,
-    effectDirection: vizConfig.effectDirection ?? 'up and down',
+    effectDirection: vizConfig.effectDirection ?? 'upAndDown',
     /**
      * As sophisticated aesthetes, let's specify axis ranges for the empty viz placeholder
      */
@@ -767,7 +779,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
         .memberPlural
     ) || capitalize(options?.pointsDisplayNamePlural);
 
-  const effectDirection = vizConfig.effectDirection ?? 'up and down';
+  const effectDirection = vizConfig.effectDirection ?? 'upAndDown';
 
   const legendNode = finalData && countsData && (
     <PlotLegend
@@ -782,7 +794,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
           hasData: true,
           markerColor: significanceColors['inconclusive'],
         },
-        ...(effectDirection !== 'down only'
+        ...(effectDirection !== 'downOnly'
           ? [
               {
                 label: `Up in ${computationConfiguration?.comparator?.groupB
@@ -794,7 +806,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
               },
             ]
           : []),
-        ...(effectDirection !== 'up only'
+        ...(effectDirection !== 'upOnly'
           ? [
               {
                 label: `Up in ${computationConfiguration?.comparator?.groupA
@@ -838,13 +850,11 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
             />
             <RadioButtonGroup
               label="Effect direction"
-              selectedOption={vizConfig.effectDirection ?? 'up and down'}
-              options={['up and down', 'up only', 'down only']}
-              optionLabels={[
-                'Up- or down-regulated',
-                'Up-regulated only',
-                'Down-regulated only',
-              ]}
+              selectedOption={vizConfig.effectDirection ?? 'upAndDown'}
+              options={[...effectDirectionOptions]}
+              optionLabels={effectDirectionOptions.map(
+                (k) => effectDirectionLabels[k]
+              )}
               onOptionSelected={(newValue) =>
                 updateVizConfig({
                   effectDirection:
