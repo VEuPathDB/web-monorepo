@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
-import Loading from '@veupathdb/wdk-client/lib/Components/Loading/Loading';
 import { projectId } from '../../config';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
@@ -9,10 +8,7 @@ import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
-import { isVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
-import { UserDatasetFiles } from '@veupathdb/user-datasets/lib/Components/UserDatasetFiles';
+import { DataFilesSection } from './DataFilesSection';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -62,35 +58,6 @@ export function RecordHeading(props) {
   } = attributes;
 
   let datasetID = record.id[0].value;
-  let vdiDatasetId = wdkRecordIdToDiyUserDatasetId(datasetID);
-
-  // Fetch user dataset files
-  const userDatasetFilesResult = useWdkService(
-    async (wdkService) => {
-      if (!vdiDatasetId) {
-        return { data: null, error: null };
-      }
-
-      if (!isVdiCompatibleWdkService(wdkService)) {
-        return {
-          data: null,
-          error: 'VDI service is not configured. Unable to load dataset files.',
-        };
-      }
-
-      try {
-        const files = await wdkService.getUserDatasetFileListing(vdiDatasetId);
-        return { data: files, error: null };
-      } catch (error) {
-        console.error('Failed to fetch user dataset files:', error);
-        return {
-          data: null,
-          error: 'Failed to load dataset files. Please try again later.',
-        };
-      }
-    },
-    [vdiDatasetId]
-  );
 
   return (
     <>
@@ -140,25 +107,6 @@ export function RecordHeading(props) {
           </dd>
         </dl>
       </div>
-      {userDatasetFilesResult?.error ? (
-        <div className="error-message" style={{ marginTop: '1.5em' }}>
-          <h2>Data Files</h2>
-          <p>{userDatasetFilesResult.error}</p>
-        </div>
-      ) : userDatasetFilesResult?.data ? (
-        <div style={{ marginTop: '1.5em' }}>
-          <UserDatasetFiles
-            datasetId={vdiDatasetId}
-            files={userDatasetFilesResult.data}
-            installStatus="complete"
-          />
-        </div>
-      ) : userDatasetFilesResult === undefined ? (
-        <div style={{ marginTop: '1.5em' }}>
-          <h2>Data Files</h2>
-          <Loading />
-        </div>
-      ) : null}
     </>
   );
 }
@@ -225,11 +173,16 @@ const ConnectedReferences = connect(
   null
 )(References);
 
-export function RecordAttributeSection({ DefaultComponent, ...props }) {
-  if (props.attribute.name === 'description') {
-    return <BlockRecordAttributeSection {...props} />;
+export function RecordAttributeSection(props) {
+  const { DefaultComponent, ...restProps } = props;
+  switch (restProps.attribute.name) {
+    case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'dataFiles':
+      return <DataFilesSection {...restProps} />;
+    default:
+      return <DefaultComponent {...restProps} />;
   }
-  return <DefaultComponent {...props} />;
 }
 
 export function RecordTable(props) {
