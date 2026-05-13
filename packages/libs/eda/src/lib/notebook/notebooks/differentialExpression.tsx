@@ -107,6 +107,7 @@ export const differentialExpressionNotebook: PresetNotebook = {
           getVizPluginOptions: () => ({
             hideCoverageData: true,
             autoSelectFeatured: true,
+            autoSelectWhenPossible: true,
           }),
         },
       ],

@@ -303,6 +303,7 @@ export interface ScatterplotOptions
   // visualization plugins if the auto-select-featured behaviour proves useful
   // more broadly.
   autoSelectFeatured?: boolean;
+  autoSelectWhenPossible?: boolean;
 }
 
 // Keep a local alias so the rest of the file doesn't need renaming.
@@ -2245,6 +2246,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             outputEntity={outputEntity}
             autoSelectFeatured={
               options?.autoSelectFeatured &&
+              hasComputedXAxis &&
+              hasComputedYAxis
+            }
+            autoSelectWhenPossible={
+              options?.autoSelectWhenPossible &&
               hasComputedXAxis &&
               hasComputedYAxis
             }
