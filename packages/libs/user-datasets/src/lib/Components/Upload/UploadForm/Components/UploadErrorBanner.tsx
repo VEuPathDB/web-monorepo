@@ -2,7 +2,6 @@ import React, { ReactElement, ReactNode } from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { ValidationErrors } from '../../../../Service';
 import { BadUpload } from '../../../../StoreModules';
-import { capitalize } from 'lodash';
 
 export interface UploadErrorBannerProps {
   readonly errors: BadUpload | undefined;

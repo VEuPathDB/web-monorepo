@@ -9,6 +9,7 @@ import {
 } from '../../../../../Service';
 import { GrowableStringList, InputBlock, InputPair } from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { DatasetCharacteristicsFormSectionConfig } from '../../../Configuration/DatasetUploadConfig';
 
 export interface CharacteristicsSectionProps {
   readonly datasetMeta: DatasetPostDetails;
@@ -16,6 +17,7 @@ export interface CharacteristicsSectionProps {
   readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly pathBuilder: JsonPathBuilder;
+  readonly formProps: DatasetCharacteristicsFormSectionConfig;
 }
 
 export function CharacteristicsSection({
@@ -24,6 +26,7 @@ export function CharacteristicsSection({
   clientSideState,
   setClientSideState,
   pathBuilder: jsonPath,
+  formProps,
 }: CharacteristicsSectionProps): ReactElement {
   const { isStudy: enabled } = clientSideState;
   const safeCharacteristics = metadata.datasetCharacteristics ?? {};
@@ -56,12 +59,7 @@ export function CharacteristicsSection({
           onChange={setEnabled}
         />
 
-        <label htmlFor="meta.studyCharacteristics.studyDesign">
-          Study Design
-        </label>
-        <select id="meta.studyCharacteristics.studyDesign">
-          <option>nope</option>
-        </select>
+        {studyDesign(formProps.studyDesignVocab)}
 
         <GrowableStringList
           labelPlural="Countries"
@@ -145,6 +143,23 @@ export function CharacteristicsSection({
     </InputBlock>
   );
 }
+
+// region Study Design
+
+function studyDesign(vocab: readonly string[]): ReactElement {
+  const options = vocab.map((v) => <option value={v}>{v}</option>);
+
+  return (
+    <>
+      <label htmlFor="meta.studyCharacteristics.studyDesign">
+        Study Design
+      </label>
+      <select id="meta.studyCharacteristics.studyDesign">{options}</select>
+    </>
+  );
+}
+
+// endregion Study Design
 
 // region Years
 

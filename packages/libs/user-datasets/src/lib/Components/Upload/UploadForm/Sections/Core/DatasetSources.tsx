@@ -111,11 +111,7 @@ function DataSource({
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
         disabled={!enabled}
-        helpText={
-          'For datasets also available from an external source (e.g., a' +
-          ' journal supplement, data repository, or project website), provide' +
-          ' the URL where the dataset is hosted or was obtained.'
-        }
+        helpText="The URL where the dataset is hosted or was obtained."
       />
 
       <InputPair
@@ -125,10 +121,9 @@ function DataSource({
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}
         helpText={
-          'For datasets also available from an external source: the version' +
-          ' number or publication date from the site where the data was' +
-          ' obtained. If neither is available, the data download date is' +
-          ' acceptable.'
+          'The version number or publication date from the site where the' +
+          ' data was obtained. If neither is available, the data download' +
+          ' date is recommended.'
         }
       />
     </li>

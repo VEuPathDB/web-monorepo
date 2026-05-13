@@ -1,11 +1,8 @@
-:root {
-  --common-radius: 8px;
-  --common-border-color: #999999ff;
-  --max-form-width: 1280px;
-}
-
 #dataset-upload {
-  max-width: var(--max-form-width);
+  $inputPadding: 5px;
+  $commonRadius: 8px;
+
+  max-width: 1280px;
   padding: 1em 3em;
   margin: 0 auto;
 
@@ -23,21 +20,12 @@
     }
   }
 
-  ol.multi-input {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    > li {
-      margin: 0;
-    }
-  }
-
   div.input-block {
     border-width: 1px;
     border-style: solid;
     border-color: #999;
-    border-radius: var(--common-radius);
+    border-radius: $commonRadius;
+    position: relative;
 
     &.collapsed {
       h4 {
@@ -62,6 +50,9 @@
     .description {
       color: var(--coreui-gray-900);
       font-style: italic;
+      padding-bottom: 0.5em;
+      position: relative;
+      margin-top: -1em;
     }
 
     > section,
@@ -70,7 +61,27 @@
     }
   }
 
+  input,
+  select,
+  textarea,
+  .column-2 {
+    margin-bottom: 1em;
+  }
+
+  input:not([type='radio']):not([type='checkbox']),
+  textarea {
+    border-radius: 5px;
+    padding: $inputPadding;
+  }
+
+  input[type='checkbox'],
+  input[type='radio'],
+  select {
+    margin-top: $inputPadding;
+  }
+
   label {
+    padding: calc($inputPadding + 1px) 0;
     font-weight: bold;
 
     &.required {
@@ -82,15 +93,24 @@
     }
   }
 
-  .disabled-fields > *:not(.not-disabled) {
-    opacity: 0.6;
-    cursor: not-allowed;
+  .disabled-fields {
+    > *:not(.not-disabled) {
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      cursor: not-allowed !important;
+    }
   }
 
   .field-grid {
     display: grid;
     grid-template-columns: 1fr 4fr;
-    row-gap: 1em;
+    row-gap: 0.5em;
     column-gap: 1ch;
     margin: 0 3em;
 
@@ -136,25 +156,29 @@
     }
   }
 
-  .input-appender {
+  span.input-appender {
+    position: relative;
+    margin-top: -1em;
+    margin-bottom: 0;
+  }
+
+  button.input-appender {
     border: none;
     background: none;
     color: var(--coreui-blue-600);
     cursor: pointer;
     font-weight: bold;
     text-decoration: none;
-    text-align: left;
-
-    &.column-2 {
-      max-width: 48ch;
-    }
+    padding: 0;
   }
 
   .multi-input {
+    margin: 0;
+    padding: 0;
     list-style: none;
 
     > li:not(:last-child) {
-      margin-bottom: 1em;
+      margin-bottom: 0.5em;
     }
 
     .field-grid:not(:first-child) {
@@ -172,6 +196,10 @@
       border-bottom-color: #a4a4a4;
       border-bottom-style: solid;
     }
+
+    input:not([type='checkbox']):not([type='radio']) {
+      width: 100%;
+    }
   }
 
   .multi-input-label {
@@ -179,9 +207,11 @@
   }
 
   .upload-button {
+    margin-top: 1.5em;
+    -webkit-margin-collapse: collapse;
     background-color: var(--coreui-mutedCyan-600);
     padding: 0.9em 1.4em;
-    border-radius: var(--common-radius);
+    border-radius: $commonRadius;
     border: none;
     box-shadow: 4px 5px var(--coreui-mutedCyan-700);
     color: white;

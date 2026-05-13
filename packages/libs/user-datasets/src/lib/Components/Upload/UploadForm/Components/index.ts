@@ -1,3 +1,4 @@
+export { AddRowButton } from './AddRowButton';
 export { FieldHelpText } from './FieldHelpText';
 export { GrowableStringList } from './GrowableStringList';
 export { InputBlock } from './InputBlock';

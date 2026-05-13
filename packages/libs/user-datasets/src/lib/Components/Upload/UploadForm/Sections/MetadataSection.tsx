@@ -41,6 +41,7 @@ export function MetadataSection({
       </h2>
 
       <CoreDatasetInformation
+        formProps={formProps}
         datasetMeta={datasetDetails}
         setDatasetMeta={setMetadata}
         clientSideState={formMetaState}

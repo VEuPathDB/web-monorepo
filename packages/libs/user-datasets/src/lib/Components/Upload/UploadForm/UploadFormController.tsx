@@ -15,7 +15,11 @@ import {
 import { Consumer } from '../../../Utils';
 import { assertIsVdiCompatibleWdkService } from '../../../Service/utils/compatibility';
 import { submitNewDataset } from '../../../Service/process/create-dataset';
-import { DatasetPostResponseBody, VdiServiceMetadata } from '../../../Service';
+import {
+  DatasetPostDetails,
+  DatasetPostResponseBody,
+  VdiServiceMetadata,
+} from '../../../Service';
 import { BadUpload } from '../../../StoreModules';
 import { DatasetUploadConfig } from '../Configuration';
 import { UploadForm } from './UploadForm';
@@ -58,43 +62,46 @@ export function UploadFormController({
     dispatch(trackUploadProgress);
   }, [dispatch]);
 
-  const submitForm = useCallback(() => {
-    const { datasetDetails, fileUploads } = formState;
+  const submitForm = useCallback(
+    (details: DatasetPostDetails) => {
+      const { fileUploads } = formState;
 
-    setSubmitting(true);
-    dispatch(async ({ wdkService, transitioner }) => {
-      try {
-        assertIsVdiCompatibleWdkService(wdkService);
+      setSubmitting(true);
+      dispatch(async ({ wdkService, transitioner }) => {
+        try {
+          assertIsVdiCompatibleWdkService(wdkService);
 
-        await submitNewDataset({
-          service: wdkService.vdi,
-          details: {
-            type: {
-              name: formConfig.dataType.name,
-              version: formConfig.dataType.version,
+          await submitNewDataset({
+            service: wdkService.vdi,
+            details: {
+              type: {
+                name: formConfig.dataType.name,
+                version: formConfig.dataType.version,
+              },
+              ...details,
             },
-            ...datasetDetails,
-          },
-          uploads: fileUploads,
-          onProgress: (progress: number | null) =>
-            dispatch(trackUploadProgress(progress)),
-          onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
-            setSubmitting(false);
-            transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`);
-          },
-          onError: (error: BadUpload) => dispatch(receiveBadUpload(error)),
-        });
+            uploads: fileUploads,
+            onProgress: (progress: number | null) =>
+              dispatch(trackUploadProgress(progress)),
+            onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
+              setSubmitting(false);
+              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`);
+            },
+            onError: (error: BadUpload) => dispatch(receiveBadUpload(error)),
+          });
 
-        return requestUploadMessages();
-      } catch (err) {
-        return receiveBadUpload({
-          timestamp: Date.now(),
-          type: 500,
-          message: String(err) ?? 'Failed to upload dataset',
-        });
-      }
-    });
-  }, [formState, dispatch, formConfig.dataType, baseUrl]);
+          return requestUploadMessages();
+        } catch (err) {
+          return receiveBadUpload({
+            timestamp: Date.now(),
+            type: 500,
+            message: String(err) ?? 'Failed to upload dataset',
+          });
+        }
+      });
+    },
+    [formState, dispatch, formConfig.dataType, baseUrl]
+  );
 
   useEffect(() => {
     if (badUploadState != null) {

@@ -6,6 +6,7 @@ import { DatasetSources } from './DatasetSources';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { UploadFormProps } from '../../UploadForm';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: DatasetPostDetails;
@@ -13,6 +14,7 @@ export interface CoreDatasetInformationProps {
   readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
+  readonly formProps: UploadFormProps;
 }
 
 export function CoreDatasetInformation({
@@ -21,6 +23,7 @@ export function CoreDatasetInformation({
   clientSideState,
   setClientSideState,
   jsonPath,
+  formProps,
 }: CoreDatasetInformationProps): ReactElement {
   return (
     <>
@@ -30,15 +33,18 @@ export function CoreDatasetInformation({
         pathBuilder={jsonPath.append<DatasetPostDetails>('contacts')}
       />
 
-      <CharacteristicsSection
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
-        clientSideState={clientSideState}
-        setClientSideState={setClientSideState}
-        pathBuilder={jsonPath.append<DatasetPostDetails>(
-          'datasetCharacteristics'
-        )}
-      />
+      {formProps.datasetCharacteristics?.enable && (
+        <CharacteristicsSection
+          formProps={formProps.datasetCharacteristics}
+          datasetMeta={datasetMeta}
+          setDatasetMeta={setDatasetMeta}
+          clientSideState={clientSideState}
+          setClientSideState={setClientSideState}
+          pathBuilder={jsonPath.append<DatasetPostDetails>(
+            'datasetCharacteristics'
+          )}
+        />
+      )}
 
       <DatasetSources
         datasetMeta={datasetMeta}

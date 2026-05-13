@@ -1,5 +1,5 @@
 import { Consumer } from '../../../../Utils';
-import { ReactElement, ReactNode } from 'react';
+import { ChangeEvent, ReactElement, ReactNode } from 'react';
 import { FieldHelpText } from './FieldHelpText';
 
 interface BaseInputProps<T extends object = object> {
@@ -12,16 +12,23 @@ interface BaseInputProps<T extends object = object> {
   readonly disabled?: boolean;
 }
 
+interface TextProps<T extends object = object> extends BaseInputProps<T> {
+  readonly type?: 'text';
+  readonly onChange: Consumer<string>;
+  readonly value?: string;
+}
+
 interface CheckboxProps<T extends object = object> extends BaseInputProps<T> {
   readonly type: 'checkbox';
   readonly onChange: Consumer<boolean>;
   readonly checked?: boolean;
 }
 
-interface TextProps<T extends object = object> extends BaseInputProps<T> {
-  readonly type?: 'text' | 'radio';
-  readonly onChange: Consumer<string>;
+interface RadioProps<T extends object = object> extends BaseInputProps<T> {
+  readonly type: 'radio';
   readonly value?: string;
+  readonly checked?: boolean;
+  readonly onChange: Consumer<ChangeEvent<HTMLInputElement>>;
 }
 
 interface NumberProps<T extends object = object> extends BaseInputProps<T> {
@@ -36,7 +43,8 @@ interface NumberProps<T extends object = object> extends BaseInputProps<T> {
 export type InputPairProps<T extends object = object> =
   | TextProps<T>
   | CheckboxProps<T>
-  | NumberProps<T>;
+  | NumberProps<T>
+  | RadioProps<T>;
 
 export function InputPair<T extends object = object>(
   props: InputPairProps<T>
@@ -59,6 +67,9 @@ export function InputPair<T extends object = object>(
       break;
     case 'number':
       input = <NumberInput<T> {...props} />;
+      break;
+    case 'radio':
+      input = <RadioInput<T> {...props} />;
       break;
     default:
       input = <DefaultInput<T> {...props} />;
@@ -106,10 +117,26 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
   );
 }
 
+function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
+  return (
+    <span>
+      <input
+        type="radio"
+        id={props.fieldName}
+        name={props.nameOverride ?? props.fieldName}
+        value={props.value}
+        className={props.className}
+        onChange={props.onChange}
+        checked={props.checked ?? false}
+      />
+    </span>
+  );
+}
+
 function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
-  const baseElement = (
+  return (
     <input
-      type={props.type ?? 'text'}
+      type="text"
       id={props.fieldName}
       name={props.nameOverride ?? props.fieldName}
       className={props.className}
@@ -117,6 +144,4 @@ function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
       value={props.value ?? ''}
     />
   );
-
-  return props.type === 'radio' ? <span>{baseElement}</span> : baseElement;
 }

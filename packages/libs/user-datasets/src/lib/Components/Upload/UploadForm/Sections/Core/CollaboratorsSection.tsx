@@ -1,7 +1,7 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { partialRight } from 'lodash';
 
-import { InputBlock, InputPair } from '../../Components';
+import { AddRowButton, InputBlock, InputPair } from '../../Components';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { DatasetContact, DatasetPostDetails } from '../../../../../Service';
 
@@ -14,7 +14,12 @@ export interface CollaboratorsSectionProps {
 export function CollaboratorsSection(
   props: CollaboratorsSectionProps
 ): ReactElement {
-  const safeContacts = props.datasetMeta.contacts ?? [{}];
+  const safeContacts = useMemo(
+    () => props.datasetMeta.contacts ?? [{}],
+    [props.datasetMeta.contacts]
+  );
+
+  const [selection, setSelection] = useState(-1);
 
   const setContacts = (contacts: Array<DatasetContact>) =>
     props.setDatasetMeta({ ...props.datasetMeta, contacts: contacts });
@@ -32,6 +37,16 @@ export function CollaboratorsSection(
     }
   };
 
+  useEffect(() => {
+    if (selection === -1) return;
+
+    for (let i = 0; i < safeContacts.length; i++) {
+      if (i !== selection && safeContacts[i].isPrimary) {
+        safeContacts[i] = { ...safeContacts[i], isPrimary: false };
+      }
+    }
+  }, [selection, safeContacts]);
+
   const contactBlocks = safeContacts.map((contact, index) => {
     const path = props.pathBuilder.append(index);
 
@@ -42,6 +57,8 @@ export function CollaboratorsSection(
         index={index}
         contact={contact}
         updateContact={onUpdateContact}
+        selection={selection}
+        setSelection={setSelection}
       />
     );
   });
@@ -53,14 +70,13 @@ export function CollaboratorsSection(
 
         <ol className="multi-input contact-block">{contactBlocks}</ol>
 
-        <button
-          className="input-appender"
-          type="button"
+        <AddRowButton
           title="Adds an additional contact entry."
-          onClick={(_) => setContacts([...safeContacts, {}])}
+          className="column-2"
+          onClick={() => setContacts([...safeContacts, {}])}
         >
           + Additional contact
-        </button>
+        </AddRowButton>
       </div>
     </InputBlock>
   );
@@ -71,6 +87,8 @@ interface ContactBlockProps {
   readonly path: JsonPathBuilder;
   readonly contact: DatasetContact;
   readonly updateContact: (contact: DatasetContact, index: number) => void;
+  readonly selection: number;
+  readonly setSelection: Consumer<number>;
 }
 
 function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
@@ -137,13 +155,14 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
 
         <InputPair
           label="Primary Contact"
-          type="radio"
+          type="checkbox"
           fieldName={isPrimary}
           nameOverride="isPrimaryContact"
-          value={isPrimary}
-          onChange={(value: string) =>
-            onChangePart('isPrimary')(value === isPrimary)
-          }
+          checked={props.index === props.selection}
+          onChange={(v) => {
+            onChangePart('isPrimary')(v);
+            props.setSelection(props.index);
+          }}
         />
       </div>
     </li>

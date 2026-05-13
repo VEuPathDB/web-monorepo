@@ -60,6 +60,21 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
 
 const DefaultFormTitle = 'Upload Dataset';
 
+const StudyDesignVocab: readonly string[] = [
+  'Cluster-randomized controlled trial',
+  'Quasi-experimental study',
+  'Randomized controlled/clinical trial',
+  'Case series study',
+  'Case-control study',
+  'Cohort study',
+  'Cross-sectional study',
+  'Ecological study',
+  'Panel study',
+  'Surveillance study',
+  'Meta-analysis',
+  'Other',
+];
+
 /**
  * Upload form configuration constructors.
  *
@@ -77,6 +92,10 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
       dependencies: {
         required: true,
         renderInput: ReferenceGenomeDependency,
+      },
+      datasetCharacteristics: {
+        enable: true,
+        studyDesignVocab: StudyDesignVocab,
       },
       helpText: () => (
         <div className="formInfo">
@@ -112,6 +131,10 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
       uploadConfig: {
         file: { enabled: true },
       },
+      datasetCharacteristics: {
+        enable: true,
+        studyDesignVocab: StudyDesignVocab,
+      },
       helpText: () => (
         <p className="formInfo">
           We accept any file in the{' '}
@@ -134,6 +157,10 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
       dataType,
       verbiage: {
         formTitle: DefaultFormTitle,
+      },
+      datasetCharacteristics: {
+        enable: true,
+        studyDesignVocab: StudyDesignVocab,
       },
       uploadConfig: {
         file: {
@@ -199,6 +226,10 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
       verbiage: {
         formTitle: DefaultFormTitle,
       },
+      datasetCharacteristics: {
+        enable: true,
+        studyDesignVocab: StudyDesignVocab,
+      },
       uploadConfig: {
         file: {
           enabled: true,
@@ -218,6 +249,10 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
       dataType,
       verbiage: {
         formTitle: DefaultFormTitle,
+      },
+      datasetCharacteristics: {
+        enable: true,
+        studyDesignVocab: StudyDesignVocab,
       },
       uploadConfig: {
         file: {
@@ -243,6 +278,10 @@ export const uploadFormConfigurators: UploadFormConfigurators = [
       dependencies: {
         required: true,
         renderInput: ReferenceGenomeDependency,
+      },
+      datasetCharacteristics: {
+        enable: true,
+        studyDesignVocab: StudyDesignVocab,
       },
       helpText: () => (
         <div className="formInfo">

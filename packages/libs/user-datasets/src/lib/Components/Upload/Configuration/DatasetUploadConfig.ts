@@ -30,6 +30,13 @@ export interface DatasetUploadConfig<
   readonly overrideFileInput?: (inputField: ReactElement) => ReactNode;
 
   readonly dependencies?: DependenciesConfig;
+
+  readonly datasetCharacteristics?: DatasetCharacteristicsFormSectionConfig;
+}
+
+export interface DatasetCharacteristicsFormSectionConfig {
+  readonly enable: boolean;
+  readonly studyDesignVocab: readonly string[];
 }
 
 export interface DependencyInputProps {
