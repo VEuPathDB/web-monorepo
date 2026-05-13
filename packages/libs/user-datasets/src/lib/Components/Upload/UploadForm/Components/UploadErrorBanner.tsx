@@ -2,6 +2,7 @@ import React, { ReactElement, ReactNode } from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { ValidationErrors } from '../../../../Service';
 import { BadUpload } from '../../../../StoreModules';
+import { capitalize } from 'lodash';
 
 export interface UploadErrorBannerProps {
   readonly errors: BadUpload | undefined;
@@ -81,8 +82,10 @@ function formatJPath(path: string): string {
 
   if (!hits) return path;
 
-  if (typeof hits[2] === 'string')
-    return `${hits[1]} item ${parseInt(hits[2]) + 1}`;
+  const name = hits[1][0].toUpperCase() + hits[1].substring(1);
 
-  return hits[1];
+  if (typeof hits[2] === 'string')
+    return `${name} item ${parseInt(hits[2]) + 1}`;
+
+  return name;
 }
