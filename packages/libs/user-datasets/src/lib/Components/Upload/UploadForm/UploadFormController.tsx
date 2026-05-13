@@ -68,7 +68,13 @@ export function UploadFormController({
 
         await submitNewDataset({
           service: wdkService.vdi,
-          details: datasetDetails,
+          details: {
+            type: {
+              name: formConfig.dataType.name,
+              version: formConfig.dataType.version,
+            },
+            ...datasetDetails,
+          },
           uploads: fileUploads,
           onProgress: (progress: number | null) =>
             dispatch(trackUploadProgress(progress)),
@@ -88,7 +94,7 @@ export function UploadFormController({
         });
       }
     });
-  }, [dispatch, baseUrl, formState]);
+  }, [formState, dispatch, formConfig.dataType, baseUrl]);
 
   useEffect(() => {
     if (badUploadState != null) {

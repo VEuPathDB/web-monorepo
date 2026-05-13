@@ -8,13 +8,12 @@ import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
 import { DataNoun } from '../Utils/types';
 
-import UserDatasetDetailController, {
-  UserDatasetDetailProps,
-} from './UserDatasetDetailController';
 import {
   ClientDatasetTypeConfig,
   UploadFormConfigurators,
 } from '../Components/Upload';
+import UserDatasetDetailController from './UserDatasetDetailController';
+import { DetailViewProps } from '../Components/Detail/UserDatasetDetail';
 
 interface Props {
   readonly datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
@@ -25,7 +24,7 @@ interface Props {
   readonly helpTabContents?: ReactNode;
   readonly detailComponentsByTypeName?: Record<
     string,
-    ComponentType<UserDatasetDetailProps>
+    ComponentType<DetailViewProps>
   >;
   readonly dataNoun: DataNoun;
   readonly enablePublicUserDatasets?: boolean;

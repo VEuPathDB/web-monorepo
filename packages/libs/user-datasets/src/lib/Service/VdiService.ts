@@ -10,7 +10,7 @@ import * as io from 'io-ts';
 import { VdiRoutes } from './VdiRoutes';
 import { makeQueryString, QueryParams } from './utils/api-utils';
 import { Consumer } from '../Utils';
-import { sendMultipartRequest } from './utils/xhr';
+import { MultipartField, sendMultipartRequest } from './utils/xhr';
 import { BadUpload } from '../StoreModules';
 
 import {
@@ -33,7 +33,7 @@ import {
 import {
   GetDatasetsQueryParamEnum,
   ShareReceiptAction,
-} from './Model/requests';
+} from './Model/request-types';
 
 import {
   datasetFileListing,
@@ -330,9 +330,7 @@ export class VdiService extends FetchClientWithCredentials {
     );
   }
 
-  async getPluginList(
-    installTarget?: string
-  ): Promise<Array<VdiPluginConfig>> {
+  async getPluginList(installTarget?: string): Promise<Array<VdiPluginConfig>> {
     return this.fetch(
       createJsonRequest({
         path:
@@ -358,27 +356,40 @@ export class VdiService extends FetchClientWithCredentials {
       headers: await this.findAuthorizationHeaders(),
       fields: [
         {
+          type: 'json',
           fieldName: 'details',
-          content: JSON.stringify(details),
+          content: details,
         },
-        ...uploads.map((u) => ({
-          fieldName: u.type,
-          content: u.type === 'url' ? u.url : u.file,
-          fileName: u.type !== 'url' ? u.file.name : undefined,
-        })),
+        ...uploads.map((u): MultipartField => {
+          return u.type === 'url'
+            ? {
+                type: 'url',
+                fieldName: 'url',
+                content: u.url,
+              }
+            : {
+                type: 'file',
+                fieldName: u.type,
+                content: u.file,
+                fileName: u.file.name,
+              };
+        }),
       ],
       onResponse: async (code, type, response) => {
-        if (type !== 'json') {
+        if (type !== 'json' && type !== '') {
           console.error('unexpected server response: ', response);
           throw new Error(`unexpected server response with code ${code}`);
         }
 
-        const body = await decoder(response);
+        const body = await decoder(
+          type === '' && typeof response === 'string'
+            ? JSON.parse(response)
+            : response
+        );
 
         if (code >= 500) {
           throw new Error(
-            (body as ServerErrorBody).message ??
-              'unhandled server exception'
+            (body as ServerErrorBody).message ?? 'unhandled server exception'
           );
         }
 

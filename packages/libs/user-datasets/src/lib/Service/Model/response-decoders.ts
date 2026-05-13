@@ -445,14 +445,10 @@ const ccServerErrorBody = io.intersection([
 ]);
 export type ServerErrorBody = io.TypeOf<typeof ccServerErrorBody>;
 
-const ccValidationErrors = io.union([
-  io.type({ general: io.array(io.string) }),
-  io.type({ byKey: io.record(io.string, io.array(io.string)) }),
-  io.type({
-    general: io.array(io.string),
-    byKey: io.record(io.string, io.array(io.string)),
-  }),
-]);
+const ccValidationErrors = io.type({
+  general: io.array(io.string),
+  byKey: io.record(io.string, io.array(io.string)),
+});
 export type ValidationErrors = io.TypeOf<typeof ccValidationErrors>;
 
 const ccValidationErrorBody = io.intersection([
@@ -465,9 +461,9 @@ const ccValidationErrorBody = io.intersection([
 export type ValidationErrorBody = io.TypeOf<typeof ccValidationErrorBody>;
 
 export const ccErrorBodyUnion = io.union([
+  ccValidationErrorBody,
   simpleContainerCoreErrorBody,
   ccServerErrorBody,
-  ccValidationErrorBody,
 ]);
 export type ServiceError = io.TypeOf<typeof ccErrorBodyUnion>;
 
@@ -506,7 +502,9 @@ export type DatasetPutResponseBody = DatasetPostResponseBody;
 
 export const datasetPostResponse = io.union([
   datasetPostResponseBody,
-  ccErrorBodyUnion,
+  ccValidationErrorBody,
+  simpleContainerCoreErrorBody,
+  ccServerErrorBody,
 ]);
 export type DatasetPostResponse = io.TypeOf<typeof datasetPostResponse>;
 

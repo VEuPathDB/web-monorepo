@@ -15,6 +15,7 @@ import {
 } from '../Service';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
+import { defaultDatasetDetails } from '../Service/Model/defaults';
 
 export const key = 'userDatasetUpload';
 
@@ -48,7 +49,7 @@ export interface UploadFormState {
 
 export function defaultUploadFormState(): UploadFormState {
   return {
-    datasetDetails: {},
+    datasetDetails: defaultDatasetDetails(),
     fileUploads: {},
     formMetaState: defaultClientOnlyFormState(),
   };

@@ -8,12 +8,11 @@ export interface UploadErrorBannerProps {
 }
 
 export function UploadErrorBanner(props: UploadErrorBannerProps): ReactElement {
-  if (!props.errors)
-    return <></>;
+  if (!props.errors) return <></>;
 
   const message = (
     <div style={{ lineHeight: 1.5 }}>
-      <span>Could not upload dataset</span>
+      <span>Could not upload dataset:&nbsp;</span>
       {makeMessage(props.errors)}
     </div>
   );
@@ -27,8 +26,9 @@ function makeMessage(errors: BadUpload): ReactElement {
   if (errors.type === 500)
     return <span className="upload-error error-500">{errors.message}</span>;
 
-  if (errors.type !== 422)
+  if (errors.type !== 422) {
     return <span className="upload-error">{String(errors)}</span>;
+  }
 
   return makeValidationErrorMessage(errors.errors);
 }
@@ -37,29 +37,29 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
   const elements: ReactNode[] = [];
 
   let index = 0;
-  const newSpan = (msg: ReactNode) => (
-    <span className="upload-error error-422 general" key={++index}>
+  const newLI = (msg: ReactNode) => (
+    <li className="upload-error error-422 general" key={++index}>
       {msg}
-    </span>
+    </li>
   );
 
   if ('general' in errors) {
     for (const msg of errors.general) {
-      elements.push(newSpan(msg));
+      elements.push(newLI(msg));
     }
   }
 
   if ('byKey' in errors) {
     for (const jsonPath of Object.keys(errors.byKey)) {
       const link = document.getElementById(jsonPath) ? (
-        <a href={`#${jsonPath}`}>{formatJPath(jsonPath)}</a>
+        <a href={`#${jsonPath}`}>{encodeURI(formatJPath(jsonPath))}</a>
       ) : (
         formatJPath(jsonPath)
       );
 
       for (const msg of errors.byKey[jsonPath]) {
         elements.push(
-          newSpan(
+          newLI(
             <>
               {link}: {msg}
             </>
@@ -69,7 +69,7 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
     }
   }
 
-  return <>{elements}</>;
+  return <ul className="error-list">{elements}</ul>;
 }
 
 function formatJPath(path: string): string {

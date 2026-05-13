@@ -24,9 +24,19 @@ interface TextProps<T extends object = object> extends BaseInputProps<T> {
   readonly value?: string;
 }
 
+interface NumberProps<T extends object = object> extends BaseInputProps<T> {
+  readonly type: 'number';
+  readonly onChange: Consumer<number>;
+  readonly value?: number;
+  readonly showControls?: boolean;
+  readonly minimum?: number;
+  readonly maximum?: number;
+}
+
 export type InputPairProps<T extends object = object> =
   | TextProps<T>
-  | CheckboxProps<T>;
+  | CheckboxProps<T>
+  | NumberProps<T>;
 
 export function InputPair<T extends object = object>(
   props: InputPairProps<T>
@@ -41,12 +51,26 @@ export function InputPair<T extends object = object>(
       : props.className
     : props.labelClass;
 
+  let input: ReactElement;
+
+  switch (props.type) {
+    case 'checkbox':
+      input = <Checkbox<T> {...props} />;
+      break;
+    case 'number':
+      input = <NumberInput<T> {...props} />;
+      break;
+    default:
+      input = <DefaultInput<T> {...props} />;
+      break;
+  }
+
   return (
     <>
       <label htmlFor={props.fieldName} className={labelClass}>
         {props.label}
       </label>
-      {props.type === 'checkbox' ? Checkbox(props) : TextInput(props)}
+      {input}
       {helpText}
     </>
   );
@@ -67,7 +91,22 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
   );
 }
 
-function TextInput<T extends object>(props: TextProps<T>): ReactElement {
+function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
+  return (
+    <input
+      type="number"
+      min={props.minimum}
+      max={props.maximum}
+      id={props.fieldName}
+      name={props.nameOverride ?? props.fieldName}
+      className={props.className}
+      onChange={(e) => props.onChange(Number(e.currentTarget.value))}
+      value={props.value ?? ''}
+    />
+  );
+}
+
+function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
   const baseElement = (
     <input
       type={props.type ?? 'text'}

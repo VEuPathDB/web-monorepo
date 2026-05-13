@@ -125,6 +125,7 @@ export function CharacteristicsSection({
           label="Participant Ages"
           disabled={!enabled}
           helpText="Age range(s) of participants when data were collected (e.g., '0-5 years; 18+ years')."
+          value={safeCharacteristics.participantAges}
           onChange={setRootField('participantAges')}
         />
 
@@ -167,32 +168,34 @@ function YearsInputs({
 
   const setYear = disabled
     ? () => {}
-    : (k: keyof SampleYearRange, v: string | undefined) => {
+    : (k: keyof SampleYearRange, v: number | undefined) => {
         if (!v) return;
 
-        const value = parseInt(v);
+        if (isNaN(v)) return;
 
-        if (isNaN(value)) return;
-
-        setYears({ ...safeYears, [k]: value });
+        setYears({ ...safeYears, [k]: v });
       };
 
   return (
     <>
       <InputPair
         label="Start Year"
+        type="number"
+        minimum={1500}
         fieldName={startField}
         helpText="Year (YYYY) when data collection was initiated."
-        value={safeYears.start?.toString()}
+        value={safeYears.start}
         onChange={(v) => setYear('start', v)}
         disabled={disabled}
       />
 
       <InputPair
         label="End Year"
+        type="number"
+        minimum={1500}
         fieldName={endField}
         helpText="Year (YYYY) when data collection was concluded."
-        value={safeYears.end?.toString()}
+        value={safeYears.end}
         onChange={(v) => setYear('end', v)}
         disabled={disabled}
       />

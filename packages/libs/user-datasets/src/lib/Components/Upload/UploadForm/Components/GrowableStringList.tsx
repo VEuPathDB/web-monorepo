@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   Consumer,
   JsonPathBuilder,
@@ -28,9 +28,28 @@ export function GrowableStringList({
   disabled,
   ...props
 }: GrowableStringListProps): ReactElement {
-  const safeValues = Array.isArray(values) && values.length > 0 ? values : [''];
+  const safeValues = useMemo(
+    () => (Array.isArray(values) && values.length > 0 ? values : ['']),
+    [values]
+  );
 
-  const addValue = disabled ? () => {} : () => setValues([...safeValues, '']);
+  const [addedValue, setAddedValue] = useState(false);
+
+  const addValue = disabled
+    ? () => {}
+    : () => {
+        setValues([...safeValues, '']);
+        setAddedValue(true);
+      };
+
+  useEffect(() => {
+    if (addedValue) {
+      document
+        .getElementById(jsonPath.appendToString(safeValues.length - 1))
+        ?.focus();
+      setAddedValue(false);
+    }
+  }, [addedValue, safeValues, jsonPath]);
 
   const helpText = props.helpText ? (
     <FieldHelpText>{props.helpText}</FieldHelpText>

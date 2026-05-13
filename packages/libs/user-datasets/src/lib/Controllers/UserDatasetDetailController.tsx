@@ -19,11 +19,15 @@ import {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  loadVdiServiceMetadata,
 } from '../Actions/UserDatasetsActions';
 
 import { BigwigDatasetDetail } from '../Components/Detail/BigwigDatasetDetail';
 import { RnaSeqDatasetDetail } from '../Components/Detail/RnaSeqDatasetDetail';
-import { UserDatasetDetail } from '../Components/Detail/UserDatasetDetail';
+import {
+  DetailViewProps,
+  UserDatasetDetail,
+} from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
 
 import { StateSlice } from '../StoreModules/types';
@@ -42,26 +46,25 @@ const ActionCreators = {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  loadVdiServiceMetadata,
 };
-
-export type UserDatasetDetailProps = any;
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
-type OwnProps = {
-  baseUrl: string;
-  detailsPageTitle: string;
-  workspaceTitle: string;
-  id: string;
-  detailComponentsByTypeName?: Record<
+interface OwnProps {
+  readonly baseUrl: string;
+  readonly detailsPageTitle: string;
+  readonly workspaceTitle: string;
+  readonly id: string;
+  readonly detailComponentsByTypeName?: Record<
     string,
-    ComponentType<UserDatasetDetailProps>
+    ComponentType<DetailViewProps>
   >;
-  dataNoun: DataNoun;
-  enablePublicUserDatasets: boolean;
-  includeAllLink: boolean;
-  includeNameHeader: boolean;
-};
+  readonly dataNoun: DataNoun;
+  readonly enablePublicUserDatasets: boolean;
+  readonly includeAllLink: boolean;
+  readonly includeNameHeader: boolean;
+}
 type MergedProps = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -98,9 +101,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   loadData(prevProps?: this['props']) {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
+
     if (idChanged) {
       this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
     }
+
+    if (prevProps == null) this.props.dispatchProps.loadVdiServiceMetadata();
   }
 
   isRenderDataLoadError() {
@@ -126,12 +132,17 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   isRenderDataLoaded() {
-    const { userDatasetDetails: entry, user, questions, config } = this.props.stateProps;
+    const {
+      userDatasetDetails: entry,
+      user,
+      questions,
+      config,
+    } = this.props.stateProps;
     if (user && user.isGuest) return true;
     return !!(entry?.isLoading === false && user && questions && config);
   }
 
-  getDetailView(type: any) {
+  getDetailView(type: any): ComponentType<DetailViewProps> {
     const name: string = type && typeof type === 'object' ? type.name : null;
 
     if (this.props.ownProps.detailComponentsByTypeName?.[name] != null) {
@@ -201,21 +212,21 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      serviceMetadata,
     } = this.props.stateProps;
 
-    if (!entry?.resource)
-      return <Loading />;
+    if (!entry?.resource || !serviceMetadata) return <Loading />;
 
     const userDataset = entry.resource;
 
     const isOwner = !!(user && userDataset.owner.userId === user.id);
 
-    const size = userDataset.files.upload?.contents
-      ?.map(file => file.fileSize)
-      ?.reduce(add, 0)
-      ?? 0;
+    const size =
+      userDataset.files.upload?.contents
+        ?.map((file) => file.fileSize)
+        ?.reduce(add, 0) ?? 0;
 
-    const props = {
+    const props: DetailViewProps = {
       baseUrl,
       includeAllLink,
       includeNameHeader,
@@ -250,20 +261,18 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
       datasetSize: size,
+      vdiConfig: serviceMetadata.configuration,
+      quotaSize: serviceMetadata.configuration.api.userMaxStorageSize,
     };
 
-
     const DetailView = this.getDetailView(entry.resource.type);
-    return entry.resource.visibility !== 'public' &&
-      user &&
-      user.isGuest ? (
+    return entry.resource.visibility !== 'public' && user && user.isGuest ? (
       this.renderGuestView()
     ) : (
       <DetailView {...props} />
     );
   }
 }
-
 
 const enhance = connect<
   StateProps,

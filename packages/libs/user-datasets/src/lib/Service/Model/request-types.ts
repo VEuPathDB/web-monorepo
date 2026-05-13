@@ -6,28 +6,26 @@ import {
   DatasetSource as ApiSource,
   DatasetVisibility,
   SampleYearRange,
-} from "./response-decoders";
+} from './response-decoders';
 
-import { DatasetTypeSelection } from "../../Components/Upload/Configuration";
-
+import { DatasetTypeSelection } from '../../Components/Upload/Configuration';
 
 export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
 
 // region Create Dataset
 
-export type DatasetPostDetails = Readonly<Partial<
-  Omit<
-    DatasetMetaBase,
-    'datasetCharacteristics' | 'datasetSources'
-  >
->> & {
+export type DatasetPostDetails = Readonly<
+  Partial<Omit<DatasetMetaBase, 'datasetCharacteristics' | 'datasetSources'>>
+> & {
   readonly type?: DatasetTypeSelection;
   readonly visibility?: DatasetVisibility;
   readonly datasetCharacteristics?: PostCharacteristics;
   readonly datasetSources?: PostDatasetSource[];
-}
+};
 
-export type PostCharacteristics = Readonly<Partial<Omit<DatasetCharacteristics, 'years'>>> & {
+export type PostCharacteristics = Readonly<
+  Partial<Omit<DatasetCharacteristics, 'years'>>
+> & {
   readonly years?: PostSampleYearRange;
 };
 

@@ -4,7 +4,7 @@ export type {
   DatasetPutDetails,
   PostCharacteristics,
   PostDatasetSource,
-} from './requests';
+} from './request-types';
 
 export type {
   DatasetContact,
@@ -34,7 +34,4 @@ export type {
   VdiUserMetadata,
 } from './response-decoders';
 
-export type {
-  DatasetUploads,
-  DatasetZipType,
-} from './utility-types';
+export type { DatasetUploads, DatasetZipType } from './utility-types';

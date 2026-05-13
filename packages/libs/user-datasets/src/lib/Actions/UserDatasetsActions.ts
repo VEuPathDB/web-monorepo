@@ -18,7 +18,7 @@ import {
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { validateVdiCompatibleThunk } from '../Service';
+import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 import { DatasetPatchRequest } from '../Service/Model';
 import * as vdi from '../Service/Model/response-decoders';
 
@@ -46,7 +46,9 @@ export type Action =
   | SharingSuccessAction
   | SharingModalOpenAction
   | SharingErrorAction
-  | CommunityAction;
+  | CommunityAction
+  | ServiceMetaLoading
+  | ServiceMetaReceived;
 
 //==============================================================================
 
@@ -125,7 +127,8 @@ export function listItemUpdating(): ListItemUpdatingAction {
 
 //==============================================================================
 
-export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success';
+export const LIST_ITEM_UPDATE_SUCCESS =
+  'user-datasets/list-item-update-success';
 
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
@@ -312,7 +315,7 @@ export type DetailRemoveSuccessAction = {
 };
 
 export function detailRemoveSuccess(
-  datasetId: string,
+  datasetId: string
 ): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
@@ -455,6 +458,38 @@ export function projectFilter(filterByProject: boolean): ProjectFilterAction {
 
 //==============================================================================
 
+export const METADATA_LOADING = 'user-datasets/service-meta-loading';
+
+export interface ServiceMetaLoading {
+  type: typeof METADATA_LOADING;
+}
+
+export function serviceMetaLoading(): ServiceMetaLoading {
+  return {
+    type: METADATA_LOADING,
+  };
+}
+
+//==============================================================================
+
+export const METADATA_RECEIVED = 'user-datasets/service-meta-received';
+
+export interface ServiceMetaReceived {
+  type: typeof METADATA_RECEIVED;
+  payload: VdiServiceMetadata;
+}
+
+export function serviceMetaReceived(
+  meta: VdiServiceMetadata
+): ServiceMetaReceived {
+  return {
+    type: METADATA_RECEIVED,
+    payload: meta,
+  };
+}
+
+//==============================================================================
+
 // Community sharing actions. Note, these are using the `makeActionCreator` utility
 // which reduces boilerplate dramatically.
 
@@ -502,7 +537,7 @@ export function updateDatasetCommunityVisibility(
             datasetIds.map((datasetId) =>
               wdkService.vdi.patchDatasetDetails(datasetId, {
                 visibility: {
-                  value: isVisibleToCommunity ? 'public' : 'private'
+                  value: isVisibleToCommunity ? 'public' : 'private',
                 },
               })
             )
@@ -548,6 +583,7 @@ type RemovalAction =
   | DetailRemovingAction
   | DetailRemoveSuccessAction
   | DetailRemoveErrorAction;
+type ServiceMetaAction = ServiceMetaLoading | ServiceMetaReceived;
 
 export function loadUserDatasetListWithoutLoadingIndicator() {
   return validateVdiCompatibleThunk<ListAction>(({ wdkService }) =>
@@ -559,12 +595,29 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         () => false
       ),
       wdkService.vdi.getDatasetList(),
-    ]).then(([filterByProject, userDatasets]) =>
-      listReceived(userDatasets, filterByProject), listErrorReceived));
+    ]).then(
+      ([filterByProject, userDatasets]) =>
+        listReceived(userDatasets, filterByProject),
+      listErrorReceived
+    )
+  );
 }
 
 export function loadUserDatasetList() {
   return [listLoading(), loadUserDatasetListWithoutLoadingIndicator()];
+}
+
+export function loadVdiServiceMetadataWithoutLoadingIndicator() {
+  return validateVdiCompatibleThunk<ServiceMetaAction>(({ wdkService }) =>
+    wdkService.vdi.getServiceMetadata().then(serviceMetaReceived)
+  );
+}
+
+export function loadVdiServiceMetadata() {
+  return [
+    serviceMetaLoading(),
+    loadVdiServiceMetadataWithoutLoadingIndicator(),
+  ];
 }
 
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
@@ -583,7 +636,7 @@ export function loadUserDatasetDetail(id: string) {
 export function shareUserDatasets(
   userDatasetIds: string[],
   recipientUserIds: number[],
-  context: SharingModalContext,
+  context: SharingModalContext
 ) {
   // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
   const requests: { datasetId: string; recipientId: number }[] = [];
@@ -605,7 +658,7 @@ export function shareUserDatasets(
         wdkService.vdi.putDatasetShareOffer(
           req.datasetId,
           req.recipientId,
-          'grant',
+          'grant'
         )
       )
     ).then(() => {
@@ -628,7 +681,7 @@ export function shareUserDatasets(
 export function unshareUserDataset(
   userDatasetId: string,
   recipientUserId: number,
-  context: SharingModalContext,
+  context: SharingModalContext
 ) {
   return validateVdiCompatibleThunk<
     DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction
@@ -650,11 +703,12 @@ export function unshareUserDataset(
 export function updateDatasetListItem(
   original: vdi.DatasetListEntry,
   updates: Partial<vdi.DatasetListEntry>,
-  patch: DatasetPatchRequest,
+  patch: DatasetPatchRequest
 ) {
   return validateVdiCompatibleThunk<ListItemUpdateAction>(({ wdkService }) => [
     listItemUpdating(),
-    wdkService.vdi.patchDatasetDetails(original.datasetId, patch)
+    wdkService.vdi
+      .patchDatasetDetails(original.datasetId, patch)
       .then(
         () => listItemUpdateSuccess({ ...original, ...updates }),
         listItemUpdateError
@@ -665,7 +719,7 @@ export function updateDatasetListItem(
 export function updateUserDatasetDetail(
   original: vdi.DatasetGetResponseBody,
   updates: Partial<vdi.DatasetGetResponseBody>,
-  patch: DatasetPatchRequest,
+  patch: DatasetPatchRequest
 ) {
   return validateVdiCompatibleThunk<DetailUpdateAction>(({ wdkService }) => [
     detailUpdating(),
@@ -678,10 +732,7 @@ export function updateUserDatasetDetail(
   ]);
 }
 
-export function removeUserDataset(
-  datasetId: string,
-  redirectTo?: string
-) {
+export function removeUserDataset(datasetId: string, redirectTo?: string) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),

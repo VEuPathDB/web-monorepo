@@ -5,11 +5,23 @@ export type ResponseHandler<T> = (
   response: unknown
 ) => Promise<T>;
 
-export interface MultipartField {
+export type MultipartField = {
   readonly fieldName: string;
-  readonly content: string | Blob;
-  readonly fileName?: string;
-}
+} & (
+  | {
+      readonly type: 'json';
+      readonly content: any;
+    }
+  | {
+      readonly type: 'url';
+      readonly content: string;
+    }
+  | {
+      readonly type: 'file';
+      readonly content: Blob;
+      readonly fileName?: string;
+    }
+);
 
 export interface MultipartConfig<T> {
   readonly url: string | URL;
@@ -24,7 +36,9 @@ export interface MultipartConfig<T> {
   readonly onProgress?: ProgressHandler;
 }
 
-export function sendMultipartRequest<T>(config: MultipartConfig<T>): Promise<T> {
+export function sendMultipartRequest<T>(
+  config: MultipartConfig<T>
+): Promise<T> {
   return new Promise<T>((good, bad) => {
     const xhr = new XMLHttpRequest();
 
@@ -45,8 +59,27 @@ export function sendMultipartRequest<T>(config: MultipartConfig<T>): Promise<T> 
 
     const formData = new FormData();
 
-    for (const field of config.fields)
-      formData.append(field.fieldName, field.content, field.fileName);
+    for (const field of config.fields) {
+      let content: Blob;
+      let fileName: string | undefined;
+
+      switch (field.type) {
+        case 'json':
+          content = new Blob([JSON.stringify(field.content)], {
+            type: 'application/json',
+          });
+          break;
+        case 'url':
+          content = new Blob([field.content], { type: 'text/plain' });
+          break;
+        case 'file':
+          content = field.content;
+          fileName = field.fileName;
+          break;
+      }
+
+      formData.append(field.fieldName, content, fileName);
+    }
 
     xhr.open(config.method ?? 'POST', config.url);
 
