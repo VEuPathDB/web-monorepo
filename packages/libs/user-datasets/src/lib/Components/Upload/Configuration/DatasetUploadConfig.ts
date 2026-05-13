@@ -36,7 +36,7 @@ export interface DatasetUploadConfig<
 
 export interface DatasetCharacteristicsFormSectionConfig {
   readonly enable: boolean;
-  readonly studyDesignVocab: readonly string[];
+  readonly studyDesignVocab: readonly [string, string][];
 }
 
 export interface DependencyInputProps {

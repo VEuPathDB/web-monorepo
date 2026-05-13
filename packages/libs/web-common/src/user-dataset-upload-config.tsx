@@ -60,19 +60,22 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
 
 const DefaultFormTitle = 'Upload Dataset';
 
-const StudyDesignVocab: readonly string[] = [
-  'Cluster-randomized controlled trial',
-  'Quasi-experimental study',
-  'Randomized controlled/clinical trial',
-  'Case series study',
-  'Case-control study',
-  'Cohort study',
-  'Cross-sectional study',
-  'Ecological study',
-  'Panel study',
-  'Surveillance study',
-  'Meta-analysis',
-  'Other',
+const StudyDesignVocab: readonly [string, string][] = [
+  ['Cluster-randomized controlled trial', 'Experimental'],
+  ['Quasi-experimental study', 'Experimental'],
+  ['Randomized controlled/clinical trial', 'Experimental'],
+
+  ['Case series study', 'Observational'],
+  ['Case-control study', 'Observational'],
+  ['Cohort study', 'Observational'],
+  ['Cross-sectional study', 'Observational'],
+  ['Ecological study', 'Observational'],
+  ['Panel study', 'Observational'],
+  ['Surveillance study', 'Observational'],
+
+  ['Meta-analysis', 'Review'],
+
+  ['Other', 'n/a'],
 ];
 
 /**

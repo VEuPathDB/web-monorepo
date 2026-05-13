@@ -1,7 +1,12 @@
 import { ReactElement } from 'react';
 import { partialRight } from 'lodash';
 
-import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
+import {
+  Consumer,
+  JsonPathBuilder,
+  changeHandler,
+  BiConsumer,
+} from '../../../../../Utils';
 import {
   DatasetPostDetails,
   PostCharacteristics,
@@ -29,7 +34,10 @@ export function CharacteristicsSection({
   formProps,
 }: CharacteristicsSectionProps): ReactElement {
   const { isStudy: enabled } = clientSideState;
-  const safeCharacteristics = metadata.datasetCharacteristics ?? {};
+  const safeCharacteristics = metadata.datasetCharacteristics ?? {
+    studyDesign: formProps.studyDesignVocab[0][0],
+    studyType: formProps.studyDesignVocab[0][1],
+  };
 
   const setEnabled = (enabled: boolean) =>
     setClientSideState({ ...clientSideState, isStudy: enabled });
@@ -59,7 +67,19 @@ export function CharacteristicsSection({
           onChange={setEnabled}
         />
 
-        {studyDesign(formProps.studyDesignVocab)}
+        <StudyDesign
+          vocab={formProps.studyDesignVocab}
+          onChange={(d, t) => {
+            setMetadata({
+              ...metadata,
+              datasetCharacteristics: {
+                ...safeCharacteristics,
+                studyDesign: d,
+                studyType: t,
+              },
+            });
+          }}
+        />
 
         <GrowableStringList
           labelPlural="Countries"
@@ -146,15 +166,32 @@ export function CharacteristicsSection({
 
 // region Study Design
 
-function studyDesign(vocab: readonly string[]): ReactElement {
-  const options = vocab.map((v) => <option value={v}>{v}</option>);
+interface StudyDesignProps {
+  readonly vocab: readonly [string, string][];
+  readonly onChange: BiConsumer<string, string>;
+}
+
+function StudyDesign({ vocab, onChange }: StudyDesignProps): ReactElement {
+  const options = vocab.map(([v, _], i) => (
+    <option key={i} value={i}>
+      {v}
+    </option>
+  ));
 
   return (
     <>
       <label htmlFor="meta.studyCharacteristics.studyDesign">
         Study Design
       </label>
-      <select id="meta.studyCharacteristics.studyDesign">{options}</select>
+      <select
+        id="meta.studyCharacteristics.studyDesign"
+        onChange={(e) => {
+          const [design, type] = vocab[parseInt(e.currentTarget.value ?? '0')];
+          onChange(design, type);
+        }}
+      >
+        {options}
+      </select>
     </>
   );
 }

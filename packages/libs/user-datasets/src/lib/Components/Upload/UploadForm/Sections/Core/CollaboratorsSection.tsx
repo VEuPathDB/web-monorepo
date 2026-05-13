@@ -38,11 +38,9 @@ export function CollaboratorsSection(
   };
 
   useEffect(() => {
-    if (selection === -1) return;
-
     for (let i = 0; i < safeContacts.length; i++) {
       if (i !== selection && safeContacts[i].isPrimary) {
-        safeContacts[i] = { ...safeContacts[i], isPrimary: false };
+        safeContacts[i] = { ...safeContacts[i], isPrimary: undefined };
       }
     }
   }, [selection, safeContacts]);
@@ -100,6 +98,8 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
     partialRight(props.updateContact, props.index)
   );
 
+  const requireInputs = !isContactEmpty(props.contact);
+
   return (
     <li className="field-grid non-bold-labels">
       <span className="multi-input-label">Contact {props.index + 1}</span>
@@ -111,6 +111,7 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           pathBuilder={path}
           value={props.contact.firstName}
           onChange={onChangePart('firstName')}
+          required={requireInputs}
         />
 
         <TextField
@@ -127,6 +128,7 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           pathBuilder={path}
           value={props.contact.lastName}
           onChange={onChangePart('lastName')}
+          required={requireInputs}
         />
 
         <TextField
@@ -161,7 +163,7 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           checked={props.index === props.selection}
           onChange={(v) => {
             onChangePart('isPrimary')(v);
-            props.setSelection(props.index);
+            props.setSelection(v ? props.index : -1);
           }}
         />
       </div>
@@ -175,6 +177,7 @@ interface LabeledInputProps {
   readonly pathBuilder: JsonPathBuilder;
   readonly value: string | undefined;
   readonly onChange: (value: string) => void;
+  readonly required?: boolean;
 }
 
 function TextField({
@@ -183,6 +186,7 @@ function TextField({
   field,
   pathBuilder,
   onChange,
+  required,
 }: LabeledInputProps): ReactElement {
   return (
     <InputPair
@@ -190,6 +194,15 @@ function TextField({
       fieldName={pathBuilder.appendToString(field)}
       value={value}
       onChange={onChange}
+      labelClass={required ? 'required' : undefined}
     />
   );
+}
+
+function isContactEmpty(contact: DatasetContact): boolean {
+  for (const key of Object.keys(contact) as Array<keyof DatasetContact>) {
+    if (key !== 'isPrimary' && contact[key]) return false;
+  }
+
+  return !contact.isPrimary;
 }
