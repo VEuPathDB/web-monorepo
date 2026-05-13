@@ -109,6 +109,8 @@ export type AiProvenanceSource =
 export interface AiProvenance {
   reviewLevel: AiReviewLevel;
   source: AiProvenanceSource;
+  originalHeadline: string; // AI-generated headline at creation time; used by the Restore button
+  originalContent: string; // AI-generated content at creation time; used by the Restore button
 }
 ```
 
@@ -266,17 +268,18 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
 
 3. **`AiCommentEditView.tsx`** — the minimal review form for AI comments, rendered when `aiProvenance` is present on the loaded comment. Not a route; it's a view component mounted by `UserCommentFormController`.
 
-   > **Mockup**: [Frame 08 — review & edit form, step 3 active, provenance panel, review-level radio, publish disabled](mockups/ai-user-comments/05-ai-review-edit/mockup-frame-08-review-edit.png)
+   > **Mockup**: [Frame 08 — review & edit form, step 3 active, provenance panel, editable content, restore button, confirmation checkbox, publish disabled](mockups/ai-user-comments/05-ai-review-edit/mockup-frame-08-review-edit.png)
+
+   Vertical layout from top to bottom:
 
    - Header: "Review AI-assisted comment for gene `{stableId}`".
    - **Provenance panel (read-only)**: renders source — either a `PubmedIdEntry` for `kind: 'pubmed'` or a link (`externalUrl` / `externalTitle`) plus a "(uploaded PDF, not stored)" note for `kind: 'upload'`.
-   - **Review level selector**: radio group over `AiReviewLevel` — `unreviewed` / `reviewed` / `edited`. Default is whatever the server returned. If the user edits the content textarea, automatically bump to `'edited'` (but don't clobber explicit `'reviewed'` → keep last explicit user choice unless content actually changes).
-   - **Headline** (`TextBox`) and **Content** (`TextArea`) — editable, bound to the same Redux state as the heavyweight form via existing `updateFormFields` dispatches. This gives us free submit/save plumbing.
-   - No Categories/PubMed/DOI/GenBank/location/attachments/related-genes sections. That's the point of the minimal form.
-   - **Publish comment** button: disabled (greyed out) when `reviewLevel === 'unreviewed'`; a hint reads "Set review level to 'Reviewed' or 'Edited' to publish." Unreviewed comments are never shown to other users.
-   - **Keep as draft** button (secondary, always enabled): saves without publishing via `requestSubmitComment` with the current state.
-   - `// TODO(delete)` — a "Delete comment" button should also be offered so users can discard a draft they don't want to keep. Deferred pending confirmation of a back-end delete endpoint for user comments.
-   - Submit calls the existing `requestSubmitComment` — no changes to the submit epic needed.
+   - **Headline** (`TextBox`) and **Content** (`TextArea`) — editable, bound to Redux via `updateFormFields`. No Categories/PubMed/DOI/GenBank/location/attachments/related-genes sections.
+   - **Encouragement copy** (small italic text below the content area): e.g. "Please review the AI-generated content above and edit as needed before publishing."
+   - **Restore original** button (outlined secondary, below the verbiage): resets Headline and Content to the AI-generated originals stored in `aiProvenance.originalHeadline` / `aiProvenance.originalContent`. Only enabled when the current field values differ from those originals.
+   - **Confirmation checkbox** (required): "I have reviewed this content and it is appropriate for public release." Must be checked before the publish button is enabled.
+   - **Publish comment** button (primary): disabled (greyed out) until the checkbox is checked. On submit, calls `requestSubmitComment`. The back end derives `reviewLevel` automatically — `'reviewed'` if the submitted headline + content match the originals, `'edited'` otherwise. No `reviewLevel` radio is shown to the user.
+   - **Delete comment** button (danger/destructive style, right-aligned or below publish): opens a WDK `Dialog` "Are you sure?" confirmation before calling `deleteUserComment` on the service (same confirmation pattern as the subscription-management pages). On confirm, deletes the draft and redirects away.
 
 ## Controller changes
 
@@ -352,11 +355,27 @@ function deleteAiGenePublicationJob(jobId: string): Promise<void> {
 
 Expose all three alongside the existing methods in the returned object.
 
+Also add a `deleteUserComment` function for the delete-draft action in `AiCommentEditView`:
+
+```ts
+function deleteUserComment(commentId: number): Promise<void> {
+  return base._fetchJson<void>('delete', `/user-comments/${commentId}`);
+}
+```
+
+(Requires a back-end DELETE endpoint for individual user comment records — confirm path with back-end.)
+
 ## Entry points (how users reach the new form)
 
-Minimum required: a link from the gene record page. Two small touch-ups:
+One change to the gene record page:
 
-1. On the existing gene-page "User Comments" section or near the "Add a comment" link, add a sibling "Add an AI-assisted comment from a publication" link pointing to `/user-comments/ai-gene-publication/add?stableId={geneId}`. Could later be refined to a single link with a popup that bifurcates to the two different routes with some more explanation of the new AI tool.
+1. In the gene-page "User Comments" section header, replace the existing "Add a comment" text link with **two small outlined buttons** on a new row below the existing "Download" / "Discuss" links:
+
+   - **"Add a comment"** — navigates to the existing `/user-comments/add?stableId={geneId}` route (unchanged behaviour)
+   - **"Add AI-assisted comment"** with a small teal "Beta" pill badge — navigates to `/user-comments/ai-gene-publication/add?stableId={geneId}`
+
+   Both buttons: white background, 1px solid light-grey border, dark-grey label text, ~4px border radius, compact padding. See `mockups/ai-user-comments/00-entry-point/mockup-frame-01-option-a-three-buttons.png` for the approved design.
+
 2. No changes yet to the user-comments show page's links or to the record-page comments table — those follow-ups are out of scope.
 
 ## Files to create or modify
@@ -390,7 +409,9 @@ Reused without modification:
 1. `yarn workspace @veupathdb/genomics-site compile:check` should type-check cleanly, particularly around the new discriminated `AiProvenance`.
 2. Run the genomics-site dev server locally. In a browser:
    - Log in, navigate to `/user-comments/ai-gene-publication/add?stableId=PF3D7_0315200` (any gene).
-   - **PubMed path**: enter a known PMID that mentions the gene → expect URL to gain a `&jobId=…` on submit; watch the stage checklist advance (`fetching-article` → `fetching-gene-synonyms` → `scanning-gene-mentions` → `generating-summary` → `validating` → `persisting`); on terminal `success`, expect redirect to `/user-comments/edit?commentId={N}` with the AI minimal view. Change the content textarea and confirm `reviewLevel` auto-bumps to `'edited'`; submit succeeds.
+   - **PubMed path**: enter a known PMID that mentions the gene → expect URL to gain a `&jobId=…` on submit; watch the stage checklist advance (`fetching-article` → `fetching-gene-synonyms` → `scanning-gene-mentions` → `generating-summary` → `validating` → `persisting`); on terminal `success`, expect redirect to `/user-comments/edit?commentId={N}` with the AI minimal view. Check the confirmation checkbox and submit — confirm publish succeeds.
+   - **Restore button**: edit the headline or content, then click "Restore original" — confirm both fields reset to the AI-generated values stored in `aiProvenance.originalHeadline` / `aiProvenance.originalContent`.
+   - **Delete draft**: click "Delete comment", confirm the Dialog appears, click "Delete" in the Dialog, confirm the comment is deleted and the user is redirected away.
    - **Upload path**: upload a PDF → same polling/redirect/edit flow. Check in the resulting edit view that the provenance panel renders the `externalUrl`/`externalTitle` (if supplied) and the "not stored" note.
    - **Refresh-during-job**: mid-poll, reload the page. The URL should still carry `jobId`; polling resumes and the correct stage is shown without resubmitting.
    - **Cancel**: submit, click Cancel mid-stage, confirm UI transitions to the cancelled-terminal state and offers "Start over".
