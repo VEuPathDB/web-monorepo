@@ -4,7 +4,7 @@
 
 Two images are uploaded in this chat — use both as style references for all frames in this session:
 
-- `mockup-frame-01-pubmed-input.png` — provides the full page layout, chrome, form styles, button styles, and example data (ignore the left panel if any; this is a single-column layout)
+- `mockup-frame-01-pubmed-input.png` — provides the full page layout, chrome, form styles, button styles, and example data (this is a single-column layout)
 - `mockup-breadcrumb-design.png` — provides the exact breadcrumb trail style
 
 ## Style guide
