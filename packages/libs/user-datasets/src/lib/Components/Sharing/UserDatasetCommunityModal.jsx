@@ -24,11 +24,11 @@ export default function UserDatasetSharingModal(props) {
 
   const totalOwnedDatasets = datasets.filter(
     (dataset) =>
-      dataset && dataset.ownerUserId && dataset.ownerUserId === user.id
+      dataset && dataset.owner.userId && dataset.owner.userId === user.id
   ).length;
 
   const totalCommunityDatasets = datasets.filter(
-    (dataset) => dataset.meta.visibility === 'public'
+    (dataset) => dataset.visibility === 'public'
   ).length;
 
   const totalNotOwnedDatasets = totalSelectedDatasets - totalOwnedDatasets;
@@ -103,7 +103,7 @@ export default function UserDatasetSharingModal(props) {
             text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
             onPress={() =>
               updateDatasetCommunityVisibility(
-                datasets.map((d) => d.id),
+                datasets.map((d) => d.datasetId),
                 true,
                 context
               )
@@ -120,7 +120,7 @@ export default function UserDatasetSharingModal(props) {
             text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
             onPress={() =>
               updateDatasetCommunityVisibility(
-                datasets.map((d) => d.id),
+                datasets.map((d) => d.datasetId),
                 false,
                 context
               )

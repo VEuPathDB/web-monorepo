@@ -110,7 +110,7 @@ export const plugin: ComputationPlugin = {
       return {
         type: 'warning',
         message:
-          'At least 2 samples are required to run dimensionality reduction.',
+          'At least 2 samples are required to run dimensionality reduction. Please relax your filtering criteria.',
       };
     return { type: 'ok' };
   },
