@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { InputBlock, InputPair } from '../../Components';
+import { InputBlock, InputPair, YesNoToggle } from '../../Components';
 import { DatasetPostDetails, PostDatasetSource } from '../../../../../Service';
 import {
   BiConsumer,
@@ -8,22 +8,25 @@ import {
   JsonPathBuilder,
   arrayChangeHandler,
 } from '../../../../../Utils';
-import { AddRowButton } from '../../Components/AddRowButton';
+import { AddRowButton } from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface DatasetSourcesProps {
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
-  readonly clientMeta: ClientSideUploadFormState;
-  readonly setClientMeta: Consumer<ClientSideUploadFormState>;
+  readonly clientSideState: ClientSideUploadFormState;
+  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function DatasetSources(props: DatasetSourcesProps): ReactElement {
-  const { hasExternalSources: enabled } = props.clientMeta;
+  const { hasExternalSources: enabled } = props.clientSideState;
 
   const setEnabled = (v: boolean) =>
-    props.setClientMeta({ ...props.clientMeta, hasExternalSources: v });
+    props.setClientSideState({
+      ...props.clientSideState,
+      hasExternalSources: v,
+    });
 
   const safeSources = props.datasetMeta.datasetSources ?? [];
   if (safeSources.length < 1) safeSources.push({});
@@ -56,11 +59,13 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   return (
     <InputBlock header="Dataset Source">
       <div className={'field-grid' + disabledClass}>
-        <InputPair
-          label="Available from External Source"
-          fieldName="enabled"
-          type="checkbox"
-          checked={enabled}
+        <label className="not-disabled required">
+          Available from External Source
+        </label>
+        <YesNoToggle
+          value={enabled}
+          setValue={setEnabled}
+          fieldName="enable-dataset-srouces"
           className="not-disabled"
           helpText={
             'Whether this dataset is also available from an external source' +
@@ -68,7 +73,6 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
             ' materials, project website, or institutional archive) outside of' +
             ' this platform.'
           }
-          onChange={setEnabled}
         />
 
         <span className="multi-input-label">Sources</span>
@@ -90,7 +94,7 @@ interface DataSourceProps {
   readonly index: number;
   readonly jsonPath: JsonPathBuilder;
 
-  readonly enabled: boolean;
+  readonly enabled: boolean | undefined;
 
   readonly source: PostDatasetSource;
   readonly setSource: BiConsumer<PostDatasetSource, number>;
@@ -110,7 +114,7 @@ function DataSource({
         fieldName={jsonPath.appendToString<PostDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
-        disabled={!enabled}
+        disabled={enabled !== true}
         helpText="The URL where the dataset is hosted or was obtained."
       />
 
@@ -119,7 +123,7 @@ function DataSource({
         fieldName={jsonPath.appendToString<PostDatasetSource>('version')}
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
-        disabled={!enabled}
+        disabled={enabled !== true}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

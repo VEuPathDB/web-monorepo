@@ -9,6 +9,7 @@ import {
 } from '../../../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetPostDetails } from '../../../../Service';
 import { updateFormState } from '../../../../Actions/UserDatasetUploadActions';
+import { RecommendedInformation } from './Recommended';
 
 export interface MetadataSectionProps {
   readonly formProps: UploadFormProps;
@@ -36,9 +37,7 @@ export function MetadataSection({
 
   return (
     <section className="relative-root">
-      <h2>
-        {formProps.verbiage.metadataSectionTitle ?? 'Provide Dataset Metadata:'}
-      </h2>
+      <h2>Provide Dataset Metadata:</h2>
 
       <CoreDatasetInformation
         formProps={formProps}
@@ -46,6 +45,14 @@ export function MetadataSection({
         setDatasetMeta={setMetadata}
         clientSideState={formMetaState}
         setClientSideState={setFormState}
+        jsonPath={jsonPath}
+      />
+
+      <h2>Recommended Information:</h2>
+
+      <RecommendedInformation
+        datasetMeta={datasetDetails}
+        setDatasetMeta={setMetadata}
         jsonPath={jsonPath}
       />
     </section>

@@ -12,7 +12,12 @@ import {
   PostCharacteristics,
   SampleYearRange,
 } from '../../../../../Service';
-import { GrowableStringList, InputBlock, InputPair } from '../../Components';
+import {
+  GrowableStringList,
+  InputBlock,
+  InputPair,
+  YesNoToggle,
+} from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../Configuration/DatasetUploadConfig';
 
@@ -53,9 +58,12 @@ export function CharacteristicsSection({
   return (
     <InputBlock header="Field Study or Clinical Trial Characteristics">
       <div className={'field-grid' + disabledClass}>
-        <InputPair
-          type="checkbox"
-          label="Field Study or Clinical Trial"
+        <label className="not-disabled required">
+          Field Study or Clinical Trial
+        </label>
+        <YesNoToggle
+          value={enabled}
+          setValue={setEnabled}
           fieldName="enable-characteristics"
           className="not-disabled"
           helpText={
@@ -63,8 +71,6 @@ export function CharacteristicsSection({
             ' population study; an epidemiological study (including' +
             ' surveillance); or a clinical trial'
           }
-          checked={enabled}
-          onChange={setEnabled}
         />
 
         <StudyDesign

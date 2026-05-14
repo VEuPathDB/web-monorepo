@@ -24,20 +24,16 @@ export const key = 'userDatasetUpload';
  * and are not used by any other user dataset features or functionality.
  */
 export interface ClientSideUploadFormState {
-  /**
-   * Whether the user dataset being uploaded contains study data.
-   *
-   * This flag enables the study characteristics form fields.
-   */
-  readonly isStudy: boolean;
-
-  readonly hasExternalSources: boolean;
+  readonly isStudy: boolean | undefined;
+  readonly hasExternalSources: boolean | undefined;
+  readonly hasDisclaimer: boolean | undefined;
 }
 
 function defaultClientOnlyFormState(): ClientSideUploadFormState {
   return {
-    isStudy: false,
-    hasExternalSources: false,
+    isStudy: undefined,
+    hasExternalSources: undefined,
+    hasDisclaimer: undefined,
   };
 }
 

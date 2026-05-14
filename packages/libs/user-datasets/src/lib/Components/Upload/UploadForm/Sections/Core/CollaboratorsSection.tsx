@@ -63,18 +63,18 @@ export function CollaboratorsSection(
 
   return (
     <InputBlock header="Principal Investigators and Collaborators">
+      <ol className="multi-input contact-block">{contactBlocks}</ol>
+
       <div className="field-grid">
-        <span className="multi-input-label">Contacts</span>
-
-        <ol className="multi-input contact-block">{contactBlocks}</ol>
-
-        <AddRowButton
-          title="Adds an additional contact entry."
-          className="column-2"
-          onClick={() => setContacts([...safeContacts, {}])}
-        >
-          + Additional contact
-        </AddRowButton>
+        <p className="column-2">
+          <AddRowButton
+            title="Adds an additional contact entry."
+            className="column-2"
+            onClick={() => setContacts([...safeContacts, {}])}
+          >
+            + Additional contact
+          </AddRowButton>
+        </p>
       </div>
     </InputBlock>
   );

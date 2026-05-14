@@ -6,3 +6,4 @@ export { InputPair } from './InputPair';
 export { SubmissionModal } from './SubmissionModal';
 export { UploadButton } from './UploadButton';
 export { UploadErrorBanner } from './UploadErrorBanner';
+export { YesNoToggle } from './YesNoToggle';

@@ -6,6 +6,7 @@ interface BaseInputProps<T extends object = object> {
   readonly label: string;
   readonly fieldName: keyof T & string;
   readonly nameOverride?: string;
+  readonly idOverride?: string;
   readonly labelClass?: string;
   readonly className?: string;
   readonly helpText?: ReactNode;
@@ -92,7 +93,7 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
     <span>
       <input
         type="checkbox"
-        id={props.fieldName}
+        id={props.idOverride ?? props.fieldName}
         name={props.nameOverride ?? props.fieldName}
         className={props.className}
         onChange={(e) => props.onChange(e.currentTarget.checked)}
@@ -108,7 +109,7 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
       type="number"
       min={props.minimum}
       max={props.maximum}
-      id={props.fieldName}
+      id={props.idOverride ?? props.fieldName}
       name={props.nameOverride ?? props.fieldName}
       className={props.className}
       onChange={(e) => props.onChange(Number(e.currentTarget.value))}
@@ -122,7 +123,7 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
     <span>
       <input
         type="radio"
-        id={props.fieldName}
+        id={props.idOverride ?? props.fieldName}
         name={props.nameOverride ?? props.fieldName}
         value={props.value}
         className={props.className}
@@ -137,7 +138,7 @@ function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
   return (
     <input
       type="text"
-      id={props.fieldName}
+      id={props.idOverride ?? props.fieldName}
       name={props.nameOverride ?? props.fieldName}
       className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}

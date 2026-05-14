@@ -55,7 +55,9 @@ export function UploadForm(props: UploadFormProps): ReactElement {
     <section id="dataset-upload">
       <header>
         <UploadErrorBanner errors={props.badUploadState} />
+
         <h2>{props.verbiage.formTitle}</h2>
+
         <Banner
           banner={{
             type: 'warning',
@@ -67,6 +69,23 @@ export function UploadForm(props: UploadFormProps): ReactElement {
                   "Help" tab
                 </Link>
                 .
+              </>
+            ),
+          }}
+        />
+        <Banner
+          banner={{
+            type: 'warning',
+            message: (
+              <>
+                You will need to complete the <b>Core Dataset Information</b>{' '}
+                and provide a valid <b>Variable Annotations file</b> before
+                publishing as a{' '}
+                <b>
+                  <i>Community-contributed dataset</i>
+                </b>
+                . Until then, you can still explore, analyze, and privately
+                share the dataset using dataExplorer.
               </>
             ),
           }}

@@ -49,14 +49,16 @@ export function CoreDatasetInformation({
       <DatasetSources
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
-        clientMeta={clientSideState}
-        setClientMeta={setClientSideState}
+        clientSideState={clientSideState}
+        setClientSideState={setClientSideState}
         jsonPath={jsonPath.append<DatasetPostDetails>('datasetSources')}
       />
 
       <DatasetUsage
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
+        clientSideState={clientSideState}
+        setClientSideState={setClientSideState}
         jsonPath={jsonPath}
       />
     </>

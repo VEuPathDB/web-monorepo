@@ -1,15 +1,20 @@
 import { ReactElement } from 'react';
 import { DatasetPostDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
-import { FieldHelpText, InputBlock } from '../../Components';
+import { FieldHelpText, InputBlock, YesNoToggle } from '../../Components';
+import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface DatasetUsageProps {
+  readonly clientSideState: ClientSideUploadFormState;
+  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function DatasetUsage({
+  clientSideState,
+  setClientSideState,
   datasetMeta,
   setDatasetMeta,
   jsonPath,
@@ -17,9 +22,22 @@ export function DatasetUsage({
   const fieldName =
     jsonPath.appendToString<DatasetPostDetails>('dataDisclaimer');
 
+  const disabledClass = clientSideState.hasDisclaimer ? '' : ' disabled-fields';
+
+  const setEnabled = (enabled: boolean) =>
+    setClientSideState({ ...clientSideState, hasDisclaimer: enabled });
+
   return (
     <InputBlock header="Dataset Usage">
-      <div className="field-grid">
+      <div className={'field-grid' + disabledClass}>
+        <label className="not-disabled required">Filler Text</label>
+        <YesNoToggle
+          value={clientSideState.hasDisclaimer}
+          setValue={setEnabled}
+          fieldName="enable-disclaimer"
+          className="not-disabled"
+        />
+
         <label htmlFor={fieldName}>Disclaimers</label>
         <textarea
           name={fieldName}
