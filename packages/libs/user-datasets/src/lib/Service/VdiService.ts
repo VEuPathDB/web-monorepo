@@ -335,7 +335,7 @@ export class VdiService extends FetchClientWithCredentials {
       createJsonRequest({
         path:
           VdiRoutes.PluginsPath +
-          (installTarget ? `?${installTarget}=${installTarget}` : ''),
+          (installTarget ? `?install-target=${installTarget}` : ''),
         method: 'GET',
         transformResponse: ioTransformer(io.array(pluginListItem)),
       })
