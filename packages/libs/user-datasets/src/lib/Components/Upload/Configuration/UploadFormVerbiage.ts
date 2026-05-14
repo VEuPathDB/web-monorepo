@@ -14,7 +14,6 @@ export interface CoreInputConfigs {
 export interface UploadFormVerbiage {
   readonly formTitle: string;
   readonly afterUploadHelpText?: ReactNode;
-  readonly metadataSectionTitle?: string;
 
   readonly formInputs?: CoreInputConfigs;
 }
