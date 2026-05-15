@@ -16,18 +16,18 @@ import UserDatasetDetailController from './UserDatasetDetailController';
 import { DetailViewProps } from '../Components/Detail/UserDatasetDetail';
 
 interface Props {
-  readonly datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
-  readonly uploadFormConfigurators: UploadFormConfigurators;
-  readonly detailsPageTitle: string;
-  readonly helpRoute: string;
-  readonly workspaceTitle: string;
-  readonly helpTabContents?: ReactNode;
-  readonly detailComponentsByTypeName?: Record<
+  datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
+  uploadFormConfigurators: UploadFormConfigurators;
+  detailsPageTitle: string;
+  helpRoute: string;
+  workspaceTitle: string;
+  helpTabContents?: ReactNode;
+  detailComponentsByTypeName?: Record<
     string,
     ComponentType<DetailViewProps>
   >;
-  readonly dataNoun: DataNoun;
-  readonly enablePublicUserDatasets?: boolean;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets?: boolean;
 }
 
 export function UserDatasetRouter({
@@ -63,14 +63,14 @@ export function UserDatasetRouter({
           return (
             <UserDatasetsWorkspace
               baseUrl={url}
-              datasetTypes={datasetTypeConfigs}
-              formConfigs={uploadFormConfigurators}
               helpRoute={helpRoute}
+              formConfigs={uploadFormConfigurators}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              datasetTypes={datasetTypeConfigs}
             />
           );
         }}
@@ -93,14 +93,14 @@ export function UserDatasetRouter({
           return (
             <UserDatasetsWorkspace
               baseUrl={url}
-              datasetTypes={datasetTypeConfigs}
-              formConfigs={uploadFormConfigurators}
               helpRoute={helpRoute}
+              formConfigs={uploadFormConfigurators}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              datasetTypes={datasetTypeConfigs}
             />
           );
         }}
@@ -124,13 +124,13 @@ export function UserDatasetRouter({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              datasetTypes={datasetTypeConfigs}
               formConfigs={uploadFormConfigurators}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              datasetTypes={datasetTypeConfigs}
             />
           );
         }}

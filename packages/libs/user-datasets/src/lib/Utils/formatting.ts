@@ -1,14 +1,14 @@
 import { DatasetListShareUser, DatasetUser } from '../Service';
 
-export function datasetUserFullName(
-  user: DatasetUser | DatasetListShareUser
-): string {
+export function datasetUserFullName(user: DatasetUser | DatasetListShareUser): string {
   if (user.firstName && user.lastName)
     return user.firstName + ' ' + user.lastName;
 
-  if (user.firstName) return user.firstName;
+  if (user.firstName)
+    return user.firstName;
 
-  if (user.lastName) return user.lastName;
+  if (user.lastName)
+    return user.lastName;
 
   return 'unknown user';
 }
@@ -19,10 +19,10 @@ export function formatFileSize(
 ): string {
   const div = form === 'metric' ? 1000 : 1024;
   let mag = 0;
-  let rem = bytes;
+  let quo = bytes;
 
-  while (rem > div && mag < 4) {
-    rem /= div;
+  while (quo > div && mag < 4) {
+    quo /= div;
     mag++;
   }
 

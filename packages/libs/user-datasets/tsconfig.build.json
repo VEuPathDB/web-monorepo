@@ -2,13 +2,14 @@
   "extends": "./tsconfig.json",
   "include": [
     "src/lib",
+    "src/react-app-env.d.ts"
   ],
   "compilerOptions": {
     "noEmit": false,
-    "outDir": "lib",
-    "target": "ES2015",
+    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "outDir": "lib",
+    "target": "ES2015"
   }
 }

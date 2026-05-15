@@ -8,6 +8,8 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
+import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Detail/UserDatasetDetail';
+
 import {
   communityDatasetsEnabled,
   communitySite,
@@ -19,16 +21,14 @@ import ExternalContentController from '@veupathdb/web-common/lib/controllers/Ext
 
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/lib/core/hooks/study';
-import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Detail/UserDatasetDetail';
 import {
   uploadFormConfigurators,
   userDatasetTypeConfigs,
 } from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
-const EdaDatasetDetail = React.lazy(() =>
-  import(
-    '@veupathdb/user-datasets/lib/Components/Detail/EdaDatasetDetail'
-  ).then((it) => ({ default: it.EdaDatasetDetail }))
+const EdaDatasetDetail = React.lazy(
+  () =>
+    import('@veupathdb/user-datasets/lib/Components/Detail/EdaDatasetDetail')
 );
 
 const UserDatasetRouter = React.lazy(
@@ -81,17 +81,17 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
+            uploadFormConfigurators={uploadFormConfigurators}
             detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
+            datasetTypeConfigs={userDatasetTypeConfigs}
             detailComponentsByTypeName={detailComponentsByTypeName}
             helpTabContents={
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Dataset', plural: 'Datasets' }}
             enablePublicUserDatasets={!!communityDatasetsEnabled}
-            datasetTypeConfigs={userDatasetTypeConfigs}
-            uploadFormConfigurators={uploadFormConfigurators}
           />
         </Suspense>
       );
