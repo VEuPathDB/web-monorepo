@@ -1,8 +1,14 @@
 import React from 'react';
-import { add } from 'lodash';
-import { Public } from '@material-ui/icons';
 
-import { Tooltip } from '@veupathdb/coreui';
+import { add } from 'lodash';
+
+import {
+  Checkbox,
+  IconAlt as Icon,
+  Link,
+  RealTimeSearchBox as SearchBox,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
 import {
   Mesa,
   MesaState,
@@ -13,19 +19,19 @@ import {
   MesaSortObject,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 
-import {
-  Checkbox,
-  IconAlt as Icon,
-  Link,
-  RealTimeSearchBox as SearchBox,
-  SaveableTextEditor,
-} from '@veupathdb/wdk-client/lib/Components';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { DataNoun } from '../../Utils/types';
+import {
+  DatasetListEntry,
+  DatasetListShareUser,
+  DatasetTypeOutput,
+  VdiServiceConfig,
+} from '../../Service';
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
+import { CommunityModal } from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
@@ -35,18 +41,13 @@ import { DateTime } from '../DateTime';
 
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
+import { Public } from '@material-ui/icons';
+import { Tooltip } from '@veupathdb/coreui';
 import {
   removeUserDataset,
   updateDatasetListItem,
 } from '../../Actions/UserDatasetsActions';
 import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
-import {
-  DatasetListEntry,
-  DatasetListShareUser,
-  DatasetTypeOutput,
-  VdiServiceConfig,
-} from '../../Service';
-import { DatasetSharingModal } from "../Sharing/UserDatasetCommunityModal";
 
 export interface DatasetListProps {
   baseUrl: string;
@@ -350,6 +351,14 @@ export class UserDatasetList extends React.Component<DatasetListProps, State> {
           formatFileSize(size)
         ),
       },
+      // {
+      //   key: 'percentQuotaUsed',
+      //   name: 'Quota Usage',
+      //   sortable: true,
+      //   renderCell: textCell('percentQuotaUsed', (percent: number) =>
+      //     percent || percent === 0 ? `${normalizePercentage(percent)}%` : null
+      //   ),
+      // },
     ].filter((column) => column);
   }
 
@@ -699,7 +708,7 @@ export class UserDatasetList extends React.Component<DatasetListProps, State> {
                   />
                 ) : null}
                 {this.props.communityModalOpen && enablePublicUserDatasets ? (
-                  <DatasetSharingModal
+                  <CommunityModal
                     user={user}
                     datasets={selectedDatasets}
                     context="datasetsList"

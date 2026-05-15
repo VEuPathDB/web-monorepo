@@ -308,9 +308,8 @@ export function AllAnalyses(props: Props) {
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
 
   const [sharingModalVisible, setSharingModalVisible] = useState(false);
-  const [selectedAnalysisId, setSelectedAnalysisId] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedAnalysisId, setSelectedAnalysisId] =
+    useState<string | undefined>(undefined);
 
   const tableState = useMemo(
     () => ({

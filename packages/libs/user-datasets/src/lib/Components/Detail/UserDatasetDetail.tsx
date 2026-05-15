@@ -11,15 +11,9 @@ import {
 } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
-import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
-import {
-  MesaColumn,
-  MesaStateProps,
-} from '@veupathdb/coreui/lib/components/Mesa/types';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import { DatasetSharingModal } from '../Sharing/UserDatasetCommunityModal';
+import { CommunityModal } from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
@@ -44,56 +38,61 @@ import {
   updateUserDatasetDetail,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
-
-// needed for eda searches, to covert vdi ID to wdk ID
-import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
+import {
+  MesaColumn,
+  MesaStateProps,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
   DatasetZipType,
   VdiServiceConfig,
-  isVdiCompatibleWdkService,
+  isVdiCompatibleWdkService
 } from '../../Service';
+// needed for eda searches, to covert vdi ID to wdk ID
+import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
 
 const classify = makeClassifier('UserDatasetDetail');
 
 export interface DetailViewProps {
-  readonly baseUrl: string;
-  readonly includeAllLink: boolean;
-  readonly includeNameHeader: boolean;
+  baseUrl: string;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
   readonly vdiConfig: VdiServiceConfig;
-  readonly user: User;
-  readonly config: ServiceConfig;
-  readonly isOwner: boolean;
-  readonly location: Location;
-  readonly updateError?: FetchClientError;
-  readonly removeUserDataset: typeof removeUserDataset;
-  readonly quotaSize: number;
-  readonly userDatasetUpdating: boolean;
-  readonly shareUserDatasets: typeof shareUserDatasets;
-  readonly unshareUserDatasets: typeof unshareUserDataset;
-  readonly updateUserDatasetDetail: typeof updateUserDatasetDetail;
-  readonly sharingModalOpen: boolean;
-  readonly sharingDatasetPending: boolean;
-  readonly sharingError: typeof sharingError;
-  readonly shareError?: Error;
-  readonly sharingSuccess: typeof sharingSuccess;
-  readonly shareSuccessful?: boolean;
-  readonly userDataset: DatasetGetResponseBody;
-  readonly getQuestionUrl: (q: Question) => string;
-  readonly questionMap: Record<string, Question>;
-  readonly workspaceTitle: string;
-  readonly detailsPageTitle: string;
-  readonly dataNoun: DataNoun;
-  readonly enablePublicUserDatasets: boolean;
-  readonly updateCommunityModalVisibility: typeof updateCommunityModalVisibility;
-  readonly updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
-  readonly updateSharingModalState: typeof updateSharingModalState;
-  readonly communityModalOpen: boolean;
-  readonly updateDatasetCommunityVisibilityError?: string;
-  readonly updateDatasetCommunityVisibilityPending: boolean;
-  readonly updateDatasetCommunityVisibilitySuccess: boolean;
-  readonly datasetSize: number;
+  user: User;
+  config: ServiceConfig;
+  isOwner: boolean;
+  location: Location;
+  updateError?: FetchClientError;
+  removeUserDataset: typeof removeUserDataset;
+  quotaSize: number;
+  userDatasetUpdating: boolean;
+  shareUserDatasets: typeof shareUserDatasets;
+  unshareUserDatasets: typeof unshareUserDataset;
+  updateUserDatasetDetail: typeof updateUserDatasetDetail;
+  sharingModalOpen: boolean;
+  sharingDatasetPending: boolean;
+  sharingError: typeof sharingError;
+  shareError?: Error;
+  sharingSuccess: typeof sharingSuccess;
+  shareSuccessful?: boolean;
+  userDataset: DatasetGetResponseBody;
+  getQuestionUrl: (q: Question) => string;
+  questionMap: Record<string, Question>;
+  workspaceTitle: string;
+  detailsPageTitle: string;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
+  updateCommunityModalVisibility: typeof updateCommunityModalVisibility;
+  updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
+  updateSharingModalState: typeof updateSharingModalState;
+  communityModalOpen: boolean;
+  updateDatasetCommunityVisibilityError?: string;
+  updateDatasetCommunityVisibilityPending: boolean;
+  updateDatasetCommunityVisibilitySuccess: boolean;
+  datasetSize: number;
 }
 
 export interface DatasetAttribute {
@@ -337,14 +336,9 @@ export class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, 
                     const url =
                       urlPath +
                       (ps.length === 1
-                        ? '?param.' +
-                          ps[0] +
-                          '=' +
-                          (userDataset.type.name === 'phenotype'
-                            ? diyUserDatasetIdToWdkRecordId(
-                                userDataset.datasetId
-                              )
-                            : userDataset.datasetId)
+                        ? '?param.' + ps[0] + '=' + (userDataset.type.name==='phenotype'
+                                                      ? diyUserDatasetIdToWdkRecordId(userDataset.datasetId)
+                                                      : userDataset.datasetId)
                         : '');
                     return (
                       <li key={q.fullName}>
@@ -630,13 +624,11 @@ export class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, 
               }
               onClick={(e) => {
                 e.preventDefault();
-                if (isVdiCompatibleWdkService(wdkService)) {
-                  // noinspection JSIgnoredPromiseFromCall
+                if (isVdiCompatibleWdkService(wdkService))
                   wdkService.vdi.getDatasetRootFile(
                     userDataset.datasetId,
                     fileType
                   );
-                }
               }}
             >
               <Icon fa="save" className="left-side" /> Download
@@ -718,7 +710,7 @@ export class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, 
           />
         )}
         {this.props.communityModalOpen && enablePublicUserDatasets ? (
-          <DatasetSharingModal
+          <CommunityModal
             user={user}
             datasets={[userDataset]}
             context="datasetDetails"
@@ -736,4 +728,3 @@ export class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, 
 }
 
 UserDatasetDetail.contextType = WdkDependenciesContext;
-

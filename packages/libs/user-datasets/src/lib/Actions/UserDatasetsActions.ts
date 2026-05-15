@@ -12,15 +12,17 @@ import {
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+
+import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
+
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 import { DatasetPatchRequest } from '../Service/Model';
-import * as vdi from '../Service/Model/response-decoders';
+import { DatasetGetResponseBody, DatasetListEntry } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
@@ -71,13 +73,13 @@ export const LIST_RECEIVED = 'user-dataset/list-received';
 export type ListReceivedAction = {
   type: typeof LIST_RECEIVED;
   payload: {
-    userDatasets: vdi.DatasetListEntry[];
+    userDatasets: DatasetListEntry[];
     filterByProject: boolean;
   };
 };
 
 export function listReceived(
-  userDatasets: vdi.DatasetListEntry[],
+  userDatasets: DatasetListEntry[],
   filterByProject: boolean
 ): ListReceivedAction {
   return {
@@ -133,12 +135,12 @@ export const LIST_ITEM_UPDATE_SUCCESS =
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
   payload: {
-    userDataset: vdi.DatasetListEntry;
+    userDataset: DatasetListEntry;
   };
 };
 
 export function listItemUpdateSuccess(
-  userDataset: vdi.DatasetListEntry
+  userDataset: DatasetListEntry
 ): ListItemUpdateSuccessAction {
   return {
     type: LIST_ITEM_UPDATE_SUCCESS,
@@ -194,13 +196,13 @@ export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
   payload: {
     id: string;
-    userDataset?: vdi.DatasetGetResponseBody;
+    userDataset?: DatasetGetResponseBody;
   };
 };
 
 export function detailReceived(
   id: string,
-  userDataset?: vdi.DatasetGetResponseBody
+  userDataset?: DatasetGetResponseBody
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
@@ -252,12 +254,12 @@ export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
-    userDataset: vdi.DatasetGetResponseBody;
+    userDataset: DatasetGetResponseBody;
   };
 };
 
 export function detailUpdateSuccess(
-  userDataset: vdi.DatasetGetResponseBody
+  userDataset: DatasetGetResponseBody
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
@@ -623,7 +625,7 @@ export function loadVdiServiceMetadata() {
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
     wdkService.vdi.getDatasetDetails(id).then(
-      (ud: vdi.DatasetGetResponseBody) => detailReceived(id, ud),
+      (ud: DatasetGetResponseBody) => detailReceived(id, ud),
       (error: FetchClientError) => detailError(error)
     )
   );
@@ -701,8 +703,8 @@ export function unshareUserDataset(
 }
 
 export function updateDatasetListItem(
-  original: vdi.DatasetListEntry,
-  updates: Partial<vdi.DatasetListEntry>,
+  original: DatasetListEntry,
+  updates: Partial<DatasetListEntry>,
   patch: DatasetPatchRequest
 ) {
   return validateVdiCompatibleThunk<ListItemUpdateAction>(({ wdkService }) => [
@@ -717,8 +719,8 @@ export function updateDatasetListItem(
 }
 
 export function updateUserDatasetDetail(
-  original: vdi.DatasetGetResponseBody,
-  updates: Partial<vdi.DatasetGetResponseBody>,
+  original: DatasetGetResponseBody,
+  updates: Partial<DatasetGetResponseBody>,
   patch: DatasetPatchRequest
 ) {
   return validateVdiCompatibleThunk<DetailUpdateAction>(({ wdkService }) => [

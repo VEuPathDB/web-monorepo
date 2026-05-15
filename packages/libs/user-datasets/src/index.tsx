@@ -1,11 +1,11 @@
-import { isEmpty, partial } from 'lodash';
+import './globals';
+import { vdiServiceUrl } from './constants';
 import { useState } from 'react';
+
 import { RouteComponentProps } from 'react-router-dom';
 
-import './globals';
+import { isEmpty, partial } from 'lodash';
 import reportWebVitals from './reportWebVitals';
-import { vdiServiceUrl } from './constants';
-import { endpoint, rootElement, rootUrl } from './constants';
 
 import {
   userDatasetTypeConfigs,
@@ -14,20 +14,22 @@ import {
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import Header from './Header';
+import Home from './Home';
+import { endpoint, rootElement, rootUrl } from './constants';
+
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { projectId } from '@veupathdb/web-common/lib/config';
 
-import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
-import '@veupathdb/web-common/lib/styles/client.scss';
-
-import Header from './Header';
-import Home from './Home';
 
 import UserDatasetHelp from './lib/Components/UserDatasetHelp';
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
 import { useVdiService, wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';
+
+import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
+import '@veupathdb/web-common/lib/styles/client.scss';
 
 import { VdiApiConfig } from './lib/Service/Model/response-decoders';
 
@@ -37,7 +39,7 @@ initialize({
   wrapRoutes: (routes: any): RouteEntry[] => [
     {
       path: '/',
-      component: (_: RouteComponentProps<void>) => <Home />,
+      component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
       path: '/user-datasets',

@@ -14,7 +14,7 @@ import {
 import { updateDatasetCommunityVisibility } from "../../Actions/UserDatasetsActions";
 import { DataNoun } from "../../Utils/types";
 
-export interface DatasetSharingModalProps {
+export interface CommunityModalProps {
   readonly context: 'datasetDetails' | 'datasetsList';
   readonly datasets: Array<DatasetListEntry | DatasetGetResponseBody>;
   readonly dataNoun: DataNoun;
@@ -26,7 +26,7 @@ export interface DatasetSharingModalProps {
   readonly user: User;
 }
 
-export function DatasetSharingModal(props: DatasetSharingModalProps): React.ReactElement {
+export function CommunityModal(props: CommunityModalProps): React.ReactElement {
   const {
     datasets,
     onClose,
