@@ -36,7 +36,6 @@ export const {
   datasetImportUrl = '',
   showUnreleasedData = false,
   vdiServiceUrl = '',
-  userDatasetsUploadTypes = '',
   communityDatasetsEnabled = false,
   aiExpressionQualtricsId = '',
   showSubscriptionProds = false,

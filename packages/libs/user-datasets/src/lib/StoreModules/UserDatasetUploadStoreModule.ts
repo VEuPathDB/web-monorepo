@@ -15,7 +15,7 @@ import {
 } from '../Service';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
-import { defaultDatasetDetails } from '../Service/Model/defaults';
+import { defaultDatasetDetails } from '../Service/Model/constructors';
 
 export const key = 'userDatasetUpload';
 
@@ -66,7 +66,7 @@ export interface State {
   readonly uploadProgress?: { progress: number | null };
 }
 
-export type BadUpload = { readonly timestamp: number } & (
+export type BadUpload = (
   | { type: 400; message: string }
   | { type: 422; errors: ValidationErrors }
   | { type: 500; message: string }

@@ -21,6 +21,9 @@ import {
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../Configuration/DatasetUploadConfig';
 
+
+export const FieldStudyToggleID = 'field-study-toggle';
+
 export interface CharacteristicsSectionProps {
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
@@ -58,7 +61,7 @@ export function CharacteristicsSection({
   return (
     <InputBlock header="Field Study or Clinical Trial Characteristics">
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required">
+        <label className="not-disabled required" id={FieldStudyToggleID}>
           Field Study or Clinical Trial
         </label>
         <YesNoToggle

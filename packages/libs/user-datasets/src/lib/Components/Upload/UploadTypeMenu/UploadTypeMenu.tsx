@@ -4,19 +4,38 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import './UploadFormMenu.scss';
 import { DatasetTypeConfig } from '../Configuration';
 import { stringifyDataType } from '../Configuration/data-types';
+import { isGenomicsProject } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
+import { projectId } from '@veupathdb/web-common/lib/config';
 
 export interface UploadTypeMenuProps {
   readonly availableDataTypes: readonly DatasetTypeConfig[];
 }
 
-export function UploadTypeMenu({ availableDataTypes }: UploadTypeMenuProps) {
+export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
   const { url } = useRouteMatch();
+
+  // TODO - FIXME : This value should be pulled from config or the backend but
+  //  there does not presently seem to be a reliable way to fetch the URL of
+  //  another project.  The function `useProjectUrl` exists, but it relies on
+  //  the WDK's `/service` endpoint which does not report all project URLs, and
+  //  would need backend changes to do so.
+  const dataExplorerUrl = "https://dataexplorer.org";
 
   return (
     <div id="dataset-type-selection">
-      <h2>Choose an upload type</h2>
+      {isGenomicsProject(projectId) && (
+        <p>
+          <i>
+            Select the data type that corresponds to the data you are uploading.
+            If your data do not fit one of the supported upload types, please{' '}
+            <a href={url + '/app/contact-us'}>Contact Us</a> for assistance.
+            For exploration and sharing of general tab-delimited datasets,
+            please use <a href={dataExplorerUrl}>dataExplorer</a>.
+          </i>
+        </p>
+      )}
       <menu>
-        {availableDataTypes.map((type) => (
+        {props.availableDataTypes.map((type) => (
           <UploadTypeMenuItem
             key={`${stringifyDataType(type)}`}
             url={url}

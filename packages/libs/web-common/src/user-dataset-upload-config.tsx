@@ -1,6 +1,6 @@
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
-import { ReactElement, useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import { projectId } from './config';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -12,6 +12,7 @@ import {
   DependencyInputProps,
   UploadFormConfigurators,
 } from '@veupathdb/user-datasets/lib';
+
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -79,9 +80,9 @@ const StudyDesignVocab: readonly [string, string][] = [
 ];
 
 /**
- * Upload form configuration constructors.
+ * Dataset type specific upload form configuration constructors.
  *
- * One should exist
+ * One should exist for every dataset type that users can upload.
  */
 export const uploadFormConfigurators: UploadFormConfigurators = [
   [

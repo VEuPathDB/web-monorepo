@@ -102,8 +102,11 @@ export class VdiService extends FetchClientWithCredentials {
       ioTransformer(datasetPostResponse),
       dispatchUploadProgress
     ).then((res) => {
-      if (dispatchPageRedirect && 'datasetId' in res) dispatchPageRedirect(res);
-      else if (dispatchBadUpload && 'timestamp' in res) dispatchBadUpload(res);
+      if (dispatchPageRedirect && 'datasetId' in res) {
+        dispatchPageRedirect(res);
+      } else if (dispatchBadUpload && 'type' in res) {
+        dispatchBadUpload(res);
+      }
     });
   }
 
@@ -157,8 +160,11 @@ export class VdiService extends FetchClientWithCredentials {
       ioTransformer(datasetPostResponse),
       dispatchUploadProgress
     ).then((res) => {
-      if (dispatchPageRedirect && 'datasetId' in res) dispatchPageRedirect(res);
-      else if (dispatchBadUpload && 'timestamp' in res) dispatchBadUpload(res);
+      if (dispatchPageRedirect && 'datasetId' in res) {
+        dispatchPageRedirect(res);
+      } else if (dispatchBadUpload && 'type' in res) {
+        dispatchBadUpload(res);
+      }
     });
   }
 
@@ -398,18 +404,16 @@ export class VdiService extends FetchClientWithCredentials {
         switch (code) {
           case 400:
             return {
-              timestamp: Date.now(),
               type: 400,
               message:
                 (body as SimpleServiceErrorBody).message ??
                 'file upload failed',
-            } as BadUpload;
+            };
           case 422:
             return {
-              timestamp: Date.now(),
               type: 422,
               errors: (body as ValidationErrorBody).errors,
-            } as BadUpload;
+            };
           default:
             console.error('unexpected server response: ', response);
             throw new Error(`unexpected server response with code ${code}`);

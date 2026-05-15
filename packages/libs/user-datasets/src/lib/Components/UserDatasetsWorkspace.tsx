@@ -70,7 +70,7 @@ export function UserDatasetsWorkspace(
 
   const routes: WorkspaceNavigationItem[] = [
     {
-      display: 'All',
+      display: 'Manage my datasets',
       route: '',
     },
   ];

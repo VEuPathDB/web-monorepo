@@ -6,13 +6,12 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { SubmissionModal, UploadButton, UploadErrorBanner } from './Components';
 import { MetadataSection, RootDetailsSection } from './Sections';
 import { DatasetUploadConfig } from '../Configuration';
-import { DatasetPostDetails, VdiServiceMetadata } from '../../../Service';
-import { Consumer, JsonPathBuilder, Runnable } from '../../../Utils';
+import { VdiServiceMetadata } from '../../../Service';
+import { JsonPathBuilder, Runnable } from '../../../Utils';
 import { BadUpload } from '../../../StoreModules';
 import { UploadUrlParams } from './DataModel';
 
 import './UploadForm.scss';
-import { useUploadFormState } from '../../../StoreModules/UserDatasetUploadStoreModule';
 
 export interface UploadFormProps extends DatasetUploadConfig {
   readonly baseUrl: string;
@@ -20,7 +19,7 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly vdiConfig: VdiServiceMetadata;
 
   readonly actions: {
-    readonly submit: Consumer<DatasetPostDetails>;
+    readonly submit: Runnable;
     readonly clearUploadError: Runnable;
   };
 
@@ -36,18 +35,8 @@ export interface UploadFormProps extends DatasetUploadConfig {
 export function UploadForm(props: UploadFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
-  const { datasetDetails, formMetaState } = useUploadFormState();
-
   const onSubmit = () => {
-    let details = datasetDetails;
-
-    // don't submit inputs from disabled sections.
-    if (!formMetaState.isStudy)
-      details = { ...details, datasetCharacteristics: undefined };
-    if (!formMetaState.hasExternalSources)
-      details = { ...details, datasetSources: undefined };
-
-    props.actions.submit(details);
+    props.actions.submit();
     window.scrollTo(0, 0);
   };
 

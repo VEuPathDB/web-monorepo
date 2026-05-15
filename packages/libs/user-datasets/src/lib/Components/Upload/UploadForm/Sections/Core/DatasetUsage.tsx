@@ -4,6 +4,8 @@ import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock, YesNoToggle } from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
+export const DatasetUsageToggleID = "dataset-usage-toggle";
+
 export interface DatasetUsageProps {
   readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
@@ -30,7 +32,7 @@ export function DatasetUsage({
   return (
     <InputBlock header="Dataset Usage">
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required">Filler Text</label>
+        <label className="not-disabled required" id={DatasetUsageToggleID}>Filler Text</label>
         <YesNoToggle
           value={clientSideState.hasDisclaimer}
           setValue={setEnabled}

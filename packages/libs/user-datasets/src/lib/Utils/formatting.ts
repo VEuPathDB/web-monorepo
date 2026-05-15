@@ -1,24 +1,28 @@
 import { DatasetListShareUser, DatasetUser } from '../Service';
 
-export function datasetUserFullName(user: DatasetUser | DatasetListShareUser): string {
+export function datasetUserFullName(
+  user: DatasetUser | DatasetListShareUser
+): string {
   if (user.firstName && user.lastName)
     return user.firstName + ' ' + user.lastName;
 
-  if (user.firstName)
-    return user.firstName;
+  if (user.firstName) return user.firstName;
 
-  if (user.lastName)
-    return user.lastName;
+  if (user.lastName) return user.lastName;
 
   return 'unknown user';
 }
 
-export function formatFileSize(bytes: number, form: 'metric' | 'binary' = 'metric'): string {
+export function formatFileSize(
+  bytes: number,
+  form: 'metric' | 'binary' = 'metric'
+): string {
   const div = form === 'metric' ? 1000 : 1024;
   let mag = 0;
+  let rem = bytes;
 
-  while (bytes > div && mag < 3) {
-    bytes /= div;
+  while (rem > div && mag < 4) {
+    rem /= div;
     mag++;
   }
 
@@ -27,7 +31,7 @@ export function formatFileSize(bytes: number, form: 'metric' | 'binary' = 'metri
 
   switch (mag) {
     case 0:
-      return `${bytes}${suffix}`;
+      return `${bytes}B`;
 
     case 1:
       prefix = 'K';
@@ -38,10 +42,24 @@ export function formatFileSize(bytes: number, form: 'metric' | 'binary' = 'metri
       break;
 
     case 3:
-    default:
       prefix = 'G';
+      break;
+
+    case 4:
+    default:
+      prefix = 'T';
       break;
   }
 
-  return `${Math.floor(bytes)}${prefix}${suffix}`;
+  // remove insignificant decimal places
+  const formattedNum = bytes
+    .toFixed(2)
+    .toString()
+    .match(/^\d+(?:\.[1-9]{1,2})?/);
+
+  return (
+    (formattedNum ? formattedNum[0] : Math.floor(bytes).toString()) +
+    prefix +
+    suffix
+  );
 }

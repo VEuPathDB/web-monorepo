@@ -11,6 +11,8 @@ import {
 import { AddRowButton } from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
+export const DatasetSourcesToggleID = 'dataset-sources-toggle';
+
 export interface DatasetSourcesProps {
   readonly datasetMeta: DatasetPostDetails;
   readonly setDatasetMeta: Consumer<DatasetPostDetails>;
@@ -59,7 +61,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   return (
     <InputBlock header="Dataset Source">
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required">
+        <label className="not-disabled required" id={DatasetSourcesToggleID}>
           Available from External Source
         </label>
         <YesNoToggle

@@ -20,7 +20,6 @@ import {
   RealTimeSearchBox as SearchBox,
   SaveableTextEditor,
 } from '@veupathdb/wdk-client/lib/Components';
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { DataNoun } from '../../Utils/types';
@@ -348,17 +347,9 @@ export class UserDatasetList extends React.Component<DatasetListProps, State> {
         name: 'Size',
         sortable: true,
         renderCell: textCell('fileSizeTotal', (size: number) =>
-          bytesToHuman(size)
+          formatFileSize(size)
         ),
       },
-      // {
-      //   key: 'percentQuotaUsed',
-      //   name: 'Quota Usage',
-      //   sortable: true,
-      //   renderCell: textCell('percentQuotaUsed', (percent: number) =>
-      //     percent || percent === 0 ? `${normalizePercentage(percent)}%` : null
-      //   ),
-      // },
     ].filter((column) => column);
   }
 
@@ -752,7 +743,7 @@ export class UserDatasetList extends React.Component<DatasetListProps, State> {
                   </div>
                 )}
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
-                  <Icon fa="info-circle" /> {bytesToHuman(totalSize)} (
+                  <Icon fa="info-circle" /> {formatFileSize(totalSize)} (
                   {normalizePercentage(totalPercent)}%) of{' '}
                   {formatFileSize(quotaSize)} used
                 </div>

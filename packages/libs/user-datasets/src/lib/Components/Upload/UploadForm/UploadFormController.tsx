@@ -12,7 +12,6 @@ import {
   trackUploadProgress,
 } from '../../../Actions/UserDatasetUploadActions';
 
-import { Consumer } from '../../../Utils';
 import { assertIsVdiCompatibleWdkService } from '../../../Service/utils/compatibility';
 import { submitNewDataset } from '../../../Service/process/create-dataset';
 import {
@@ -20,10 +19,17 @@ import {
   DatasetPostResponseBody,
   VdiServiceMetadata,
 } from '../../../Service';
-import { BadUpload } from '../../../StoreModules';
+import { BadUpload, UploadFormState } from '../../../StoreModules';
 import { DatasetUploadConfig } from '../Configuration';
 import { UploadForm } from './UploadForm';
 import { useUploadFormState } from '../../../StoreModules/UserDatasetUploadStoreModule';
+import {
+  DatasetSourcesToggleID,
+  DatasetUsageToggleID,
+  FieldStudyToggleID,
+} from './Sections/Core';
+import { isEmpty } from 'lodash';
+import { createValidationError } from '../../../Service/Model/constructors';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -48,23 +54,26 @@ export function UploadFormController({
     (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessage
   );
 
-  const clearBadUploadMessage = useCallback(() => {
-    dispatch(clearBadUpload);
-  }, [dispatch]);
-
-  const uploadProgress = useSelector(
-    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.uploadProgress
-  );
-
   const formState = useUploadFormState();
 
-  const dispatchUploadProgress: Consumer<number | null> = useCallback(() => {
-    dispatch(trackUploadProgress);
-  }, [dispatch]);
-
   const submitForm = useCallback(
-    (details: DatasetPostDetails) => {
+    () => {
       const { fileUploads } = formState;
+
+      {
+        const validationErrors = validateFormState(formState);
+
+        if (!isEmpty(validationErrors)) {
+          dispatch(
+            receiveBadUpload({
+              type: 422,
+              errors: createValidationError(validationErrors),
+            })
+          );
+
+          return;
+        }
+      }
 
       setSubmitting(true);
       dispatch(async ({ wdkService, transitioner }) => {
@@ -78,7 +87,7 @@ export function UploadFormController({
                 name: formConfig.dataType.name,
                 version: formConfig.dataType.version,
               },
-              ...details,
+              ...filterDetails(formState),
             },
             uploads: fileUploads,
             onProgress: (progress: number | null) =>
@@ -93,7 +102,6 @@ export function UploadFormController({
           return requestUploadMessages();
         } catch (err) {
           return receiveBadUpload({
-            timestamp: Date.now(),
             type: 500,
             message: String(err) ?? 'Failed to upload dataset',
           });
@@ -105,10 +113,10 @@ export function UploadFormController({
 
   useEffect(() => {
     if (badUploadState != null) {
-      dispatchUploadProgress(null);
+      dispatch(trackUploadProgress(null));
       setSubmitting(false);
     }
-  }, [badUploadState, dispatchUploadProgress]);
+  }, [badUploadState, dispatch]);
 
   useEffect(() => {
     return () => {
@@ -132,4 +140,42 @@ export function UploadFormController({
       />
     </div>
   );
+}
+
+
+/**
+ * Validate the upload form state, performing basic checks that the user has
+ * performed all required client-side-only form steps before attempting an
+ * upload.
+ */
+function validateFormState(
+  { formMetaState: clientSide }: UploadFormState,
+): Record<string, string[]> {
+  const keyedErrors: Record<string, string[]> = {};
+  const errorMessage = [ "selection is required" ];
+
+  // Required Client-Only Fields
+  if (clientSide.isStudy === undefined)
+    keyedErrors[FieldStudyToggleID] = errorMessage;
+  if (clientSide.hasDisclaimer === undefined)
+    keyedErrors[DatasetUsageToggleID] = errorMessage;
+  if (clientSide.hasExternalSources === undefined)
+    keyedErrors[DatasetSourcesToggleID] = errorMessage;
+
+  return keyedErrors;
+}
+
+function filterDetails(
+  { formMetaState, datasetDetails }: UploadFormState
+): DatasetPostDetails {
+  const filtered = { ...datasetDetails };
+
+  if (!formMetaState.isStudy)
+    delete filtered['datasetCharacteristics'];
+  if (!formMetaState.hasDisclaimer)
+    delete filtered['dataDisclaimer'];
+  if (!formMetaState.hasExternalSources)
+    delete filtered['datasetSources'];
+
+  return filtered;
 }

@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
@@ -15,6 +15,7 @@ export interface UploadRouteProps {
   readonly urlParams: Record<string, string>;
   readonly datasetTypes: readonly DatasetTypeConfig[];
   readonly plugins: readonly VdiPluginConfig[];
+  readonly datasetTypeMenuHeader?: ReactNode;
 
   readonly formConfigs: UploadFormConfigurators;
 }
