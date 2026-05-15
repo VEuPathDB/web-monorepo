@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { UserDatasetDetail } from './UserDatasetDetail';
+import UserDatasetDetail from './UserDatasetDetail';
 
 export class EdaDatasetDetail extends UserDatasetDetail {
   constructor(props) {

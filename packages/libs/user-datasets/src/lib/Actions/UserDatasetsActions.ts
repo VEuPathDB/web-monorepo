@@ -15,6 +15,8 @@ import {
 
 import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 
+import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
+import { DatasetGetResponseBody, DatasetListEntry } from '../Service';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
@@ -22,9 +24,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
 import { DatasetPatchRequest } from '../Service/Model';
-import { DatasetGetResponseBody, DatasetListEntry } from '../Service';
-
-import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
 
 export type Action =
@@ -129,8 +128,7 @@ export function listItemUpdating(): ListItemUpdatingAction {
 
 //==============================================================================
 
-export const LIST_ITEM_UPDATE_SUCCESS =
-  'user-datasets/list-item-update-success';
+export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success';
 
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
@@ -597,12 +595,8 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         () => false
       ),
       wdkService.vdi.getDatasetList(),
-    ]).then(
-      ([filterByProject, userDatasets]) =>
-        listReceived(userDatasets, filterByProject),
-      listErrorReceived
-    )
-  );
+    ]).then(([filterByProject, userDatasets]) =>
+      listReceived(userDatasets, filterByProject), listErrorReceived));
 }
 
 export function loadUserDatasetList() {
@@ -713,8 +707,8 @@ export function updateDatasetListItem(
       .patchDatasetDetails(original.datasetId, patch)
       .then(
         () => listItemUpdateSuccess({ ...original, ...updates }),
-        listItemUpdateError
-      ),
+        listItemUpdateError,
+      )
   ]);
 }
 
@@ -734,7 +728,10 @@ export function updateUserDatasetDetail(
   ]);
 }
 
-export function removeUserDataset(datasetId: string, redirectTo?: string) {
+export function removeUserDataset(
+  datasetId: string,
+  redirectTo?: string
+) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),

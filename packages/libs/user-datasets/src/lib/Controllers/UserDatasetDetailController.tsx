@@ -22,12 +22,9 @@ import {
   loadVdiServiceMetadata,
 } from '../Actions/UserDatasetsActions';
 
-import { BigwigDatasetDetail } from '../Components/Detail/BigwigDatasetDetail';
-import { RnaSeqDatasetDetail } from '../Components/Detail/RnaSeqDatasetDetail';
-import {
-  DetailViewProps,
-  UserDatasetDetail,
-} from '../Components/Detail/UserDatasetDetail';
+import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
+import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
+import UserDatasetDetail, { DetailViewProps } from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
 
 import { StateSlice } from '../StoreModules/types';

@@ -13,7 +13,7 @@ export interface BigwigGBrowseUploaderProps {
   readonly dataFileName: string;
 }
 
-export class BigwigGBrowseUploader extends React.Component<BigwigGBrowseUploaderProps> {
+class BigwigGBrowseUploader extends React.Component<BigwigGBrowseUploaderProps> {
   constructor(props: BigwigGBrowseUploaderProps) {
     super(props);
     this.getGBrowseUrl = this.getGBrowseUrl.bind(this);
@@ -49,3 +49,5 @@ export class BigwigGBrowseUploader extends React.Component<BigwigGBrowseUploader
     );
   }
 }
+
+export default BigwigGBrowseUploader;

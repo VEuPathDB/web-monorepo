@@ -167,3 +167,5 @@ export function CommunityModal(props: CommunityModalProps): React.ReactElement {
 function isAre(total: number) {
   return total === 1 ? 'is' : 'are';
 }
+
+export default CommunityModal;

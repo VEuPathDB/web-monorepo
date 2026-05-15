@@ -38,19 +38,20 @@ import {
   updateUserDatasetDetail,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
+import {
+  DatasetGetResponseBody,
+  DatasetShareOffer,
+  DatasetZipType,
+  VdiServiceConfig,
+  isVdiCompatibleWdkService,
+} from '../../Service';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import {
   MesaColumn,
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import {
-  DatasetGetResponseBody,
-  DatasetShareOffer,
-  DatasetZipType,
-  VdiServiceConfig,
-  isVdiCompatibleWdkService
-} from '../../Service';
+
 // needed for eda searches, to covert vdi ID to wdk ID
 import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
 
@@ -107,7 +108,7 @@ export interface ZipFileRow {
   download?: React.ReactNode;
 }
 
-export class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
+class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
   constructor(props: DetailViewProps) {
     super(props);
 
@@ -728,3 +729,5 @@ export class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, 
 }
 
 UserDatasetDetail.contextType = WdkDependenciesContext;
+
+export default UserDatasetDetail;
