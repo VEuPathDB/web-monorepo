@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import UserDatasetDetail from './UserDatasetDetail';
 
-export class EdaDatasetDetail extends UserDatasetDetail {
+class EdaDatasetDetail extends UserDatasetDetail {
   constructor(props) {
     super(props);
     this.renderEdaLinkout = this.renderEdaLinkout.bind(this);
@@ -62,3 +62,5 @@ export class EdaDatasetDetail extends UserDatasetDetail {
     ];
   }
 }
+
+export default EdaDatasetDetail;

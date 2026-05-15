@@ -13,7 +13,7 @@ import {
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import { CommunityModal } from '../Sharing/UserDatasetCommunityModal';
+import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';

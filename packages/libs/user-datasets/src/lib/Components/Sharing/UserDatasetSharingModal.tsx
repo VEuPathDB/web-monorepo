@@ -228,10 +228,8 @@ export class UserDatasetSharingModal extends React.Component<
 
   handleRecipientAdd() {
     const { recipientInput, recipients } = this.state;
-
     if (!isValidEmail(recipientInput))
       return alert('Please enter a valid email to share with.');
-
     if (
       recipients.find(
         (recipient) =>
@@ -276,13 +274,10 @@ export class UserDatasetSharingModal extends React.Component<
   renderShareItem(share: VdiUser, index: number, userDataset: VdiDataset) {
     return (
       <div key={index}>
-        <span className="faded">Shared with</span>{' '}
-        <b>{datasetUserFullName(share)}</b>{' '}
+        <span className="faded">Shared with</span> <b>{datasetUserFullName(share)}</b>{' '}
         <button
           type="button"
-          onClick={() =>
-            this.unshareWithUser(userDataset.datasetId, share.userId)
-          }
+          onClick={() => this.unshareWithUser(userDataset.datasetId, share.userId)}
           className="link"
         >
           <Icon fa="times-circle unshareRecipient" />
@@ -344,9 +339,7 @@ export class UserDatasetSharingModal extends React.Component<
             <button
               type="button"
               title={`Unselect this ${dataNoun.singular.toLowerCase()} for sharing`}
-              onClick={() =>
-                this.unselectDataset(userDataset as DatasetListEntry)
-              }
+              onClick={() => this.unselectDataset(userDataset as DatasetListEntry)}
               className="link removalLink"
             >
               <Icon fa="close" />
@@ -559,9 +552,7 @@ export class UserDatasetSharingModal extends React.Component<
           <CloseButton />
         </div>
       );
-    }
-
-    if (shareSuccessful) {
+    } else if (shareSuccessful) {
       return (
         <div className="UserDataset-SharingModal-StatusView">
           <Icon fa="check-circle success" />
@@ -569,23 +560,23 @@ export class UserDatasetSharingModal extends React.Component<
           <CloseButton />
         </div>
       );
+    } else {
+      return (
+        <div className="UserDataset-SharingModal-FormView">
+          <div className="UserDataset-SharingModal-DatasetSection">
+            <DatasetList datasets={datasets} />
+          </div>
+          <div className="UserDataset-SharingModal-RecipientSection">
+            <h2 className="UserDatasetSharing-SectionName">
+              With the following recipients:
+            </h2>
+            <RecipientForm />
+            <RecipientList recipients={recipients} />
+            <SharingButtons />
+          </div>
+        </div>
+      );
     }
-
-    return (
-      <div className="UserDataset-SharingModal-FormView">
-        <div className="UserDataset-SharingModal-DatasetSection">
-          <DatasetList datasets={datasets} />
-        </div>
-        <div className="UserDataset-SharingModal-RecipientSection">
-          <h2 className="UserDatasetSharing-SectionName">
-            With the following recipients:
-          </h2>
-          <RecipientForm />
-          <RecipientList recipients={recipients} />
-          <SharingButtons />
-        </div>
-      </div>
-    );
   }
 
   render() {

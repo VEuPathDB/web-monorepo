@@ -26,7 +26,7 @@ export interface CommunityModalProps {
   readonly user: User;
 }
 
-export function CommunityModal(props: CommunityModalProps): React.ReactElement {
+export default function UserDatasetSharingModal(props: CommunityModalProps): React.ReactElement {
   const {
     datasets,
     onClose,
@@ -167,5 +167,3 @@ export function CommunityModal(props: CommunityModalProps): React.ReactElement {
 function isAre(total: number) {
   return total === 1 ? 'is' : 'are';
 }
-
-export default CommunityModal;

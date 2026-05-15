@@ -31,7 +31,7 @@ import {
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import { CommunityModal } from '../Sharing/UserDatasetCommunityModal';
+import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
