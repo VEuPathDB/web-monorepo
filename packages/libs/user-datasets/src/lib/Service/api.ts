@@ -29,16 +29,10 @@ const userIdsByEmailDecoder = record({
 });
 
 export class UserDatasetApi extends FetchClientWithCredentials {
-  getCurrentUserDatasets = (
-    installTarget?: string,
-    ownership?: string,
-  ) => {
+  getCurrentUserDatasets = (installTarget?: string, ownership?: string) => {
     // TODO: wire up to allow query params
     const queryString = makeQueryString(
-      [
-        'install_target',
-        'ownership',
-      ],
+      ['install_target', 'ownership'],
       [installTarget, ownership]
     );
     return this.fetch(
@@ -128,12 +122,14 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   updateUserDataset = (
     datasetId: string,
-    updatedMeta: Partial<LegacyCompatDatasetType>,
+    updatedMeta: Partial<LegacyCompatDatasetType>
   ) => {
     const requestBody: DatasetPatchBody = {};
 
-    for (const key of Object.keys(updatedMeta) as Array<keyof LegacyCompatDatasetType>)
-      requestBody[key] = { value: updatedMeta[key] }
+    for (const key of Object.keys(updatedMeta) as Array<
+      keyof LegacyCompatDatasetType
+    >)
+      requestBody[key] = { value: updatedMeta[key] };
 
     return this.fetch(
       createJsonRequest({
@@ -175,16 +171,32 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
   };
 
-  getUserDatasetFiles = async (
-    datasetId: string,
-    zipFileType: ZipFileType,
-  ) => {
+  getUserDatasetFiles = async (datasetId: string, zipFileType: ZipFileType) => {
     // When a form is submitted using the GET method, query params are removed.
     // By using the `input` option, the object will get converted to query params
     // by the form submission.
     submitAsForm({
       method: 'GET',
       action: `${this.baseUrl}/datasets/${datasetId}/files/${zipFileType}`,
+      inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
+    });
+  };
+
+  getUserDatasetDocument = async (datasetId: string, fileName: string) => {
+    submitAsForm({
+      method: 'GET',
+      action: `${this.baseUrl}/datasets/${datasetId}/files/documents/${fileName}`,
+      inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
+    });
+  };
+
+  getUserDatasetPropertiesFile = async (
+    datasetId: string,
+    fileName: string
+  ) => {
+    submitAsForm({
+      method: 'GET',
+      action: `${this.baseUrl}/datasets/${datasetId}/files/datasetProperties/${fileName}`,
       inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
     });
   };

@@ -10,7 +10,7 @@ import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullab
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { isVdiCompatibleWdkService } from '../Service';
-import { ZipFileType } from '../Utils/types';
+import { DatasetFileType, ZipFileType } from '../Utils/types';
 
 interface ZipFileRow {
   name: string;
@@ -29,6 +29,8 @@ export interface UserDatasetFilesProps {
       zipSize: number;
       contents: Array<{ fileName: string; fileSize: number }>;
     };
+    documents?: Array<{ fileName: string; fileSize: number }>;
+    datasetProperties?: Array<{ fileName: string; fileSize: number }>;
   };
   projectId?: string;
   installStatus?: string;
@@ -47,28 +49,33 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
   const getFileTableColumns = (
-    fileType: ZipFileType
+    fileType: DatasetFileType
   ): MesaColumn<ZipFileRow>[] => {
-    const fileListElement = files[fileType]?.contents?.length && (
-      <details style={{ margin: '1em 0 0 0.25em' }}>
-        <summary>
-          List of {fileType === 'upload' ? 'uploaded' : 'processed'} files:
-        </summary>
-        <ol
-          style={{
-            margin: '0.25em 0 0 0',
-            lineHeight: '1.5em',
-            padding: '0 0 0 2em',
-          }}
-        >
-          {files[fileType]!.contents.map((file, index) => (
-            <li key={`${file.fileName}-${index}`}>
-              {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
-            </li>
-          ))}
-        </ol>
-      </details>
-    );
+    const isZipFile = fileType === 'upload' || fileType === 'install';
+    const zipFileType = isZipFile ? (fileType as ZipFileType) : null;
+
+    const fileListElement = isZipFile &&
+      zipFileType &&
+      files[zipFileType]?.contents?.length && (
+        <details style={{ margin: '1em 0 0 0.25em' }}>
+          <summary>
+            List of {fileType === 'upload' ? 'uploaded' : 'processed'} files:
+          </summary>
+          <ol
+            style={{
+              margin: '0.25em 0 0 0',
+              lineHeight: '1.5em',
+              padding: '0 0 0 2em',
+            }}
+          >
+            {files[zipFileType]!.contents.map((file, index) => (
+              <li key={`${file.fileName}-${index}`}>
+                {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      );
 
     const columns: Array<MesaColumn<ZipFileRow> | null> = [
       {
@@ -97,10 +104,23 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
         name: 'Download',
         width: '130px',
         headingStyle: { textAlign: 'center' },
-        renderCell() {
-          const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
-          const enableDownload =
-            fileType === 'upload' ? true : installStatus === 'complete';
+        renderCell({ row }) {
+          const isDocument = fileType === 'documents';
+          const isPropertiesFile = fileType === 'datasetProperties';
+
+          const downloadServiceAvailable = isZipFile
+            ? 'getUserDatasetFiles' in wdkService
+            : isDocument
+            ? 'getUserDatasetDocument' in wdkService
+            : isPropertiesFile
+            ? 'getUserDatasetPropertiesFile' in wdkService
+            : false;
+
+          const enableDownload = isZipFile
+            ? fileType === 'upload'
+              ? true
+              : installStatus === 'complete'
+            : true; // Individual files can always be downloaded if service is available
 
           return (
             <button
@@ -113,8 +133,18 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
               }
               onClick={(e) => {
                 e.preventDefault();
-                if (isVdiCompatibleWdkService(wdkService))
-                  wdkService.getUserDatasetFiles(datasetId, fileType);
+                if (isVdiCompatibleWdkService(wdkService)) {
+                  if (isZipFile && zipFileType) {
+                    wdkService.getUserDatasetFiles(datasetId, zipFileType);
+                  } else if (isDocument) {
+                    wdkService.getUserDatasetDocument(datasetId, row.name);
+                  } else if (isPropertiesFile) {
+                    wdkService.getUserDatasetPropertiesFile(
+                      datasetId,
+                      row.name
+                    );
+                  }
+                }
               }}
             >
               <Icon fa="save" className="left-side" /> Download
@@ -138,6 +168,29 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
     columns: getFileTableColumns('install'),
     rows: [{ name: 'install.zip', size: files?.install?.zipSize }],
   });
+
+  const hasDocuments = files.documents && files.documents.length > 0;
+  const documentsFileState = hasDocuments
+    ? MesaState.create({
+        columns: getFileTableColumns('documents'),
+        rows: files.documents!.map((file) => ({
+          name: file.fileName,
+          size: file.fileSize,
+        })),
+      })
+    : null;
+
+  const hasDatasetProperties =
+    files.datasetProperties && files.datasetProperties.length > 0;
+  const datasetPropertiesFileState = hasDatasetProperties
+    ? MesaState.create({
+        columns: getFileTableColumns('datasetProperties'),
+        rows: files.datasetProperties!.map((file) => ({
+          name: file.fileName,
+          size: file.fileSize,
+        })),
+      })
+    : null;
 
   return (
     <section id="dataset-files">
@@ -172,6 +225,48 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
       <div className="UserDatasetFiles-MesaWrapper">
         <Mesa state={processedZipFileState} />
       </div>
+      {hasDocuments && (
+        <>
+          <h3
+            style={{
+              padding: 0,
+              fontSize: '1.3em',
+              marginTop: '1.1em',
+              marginBottom: '0.5em',
+            }}
+          >
+            <Icon
+              fa="file-text-o"
+              style={{ color: '#0B5EA1', marginRight: '10px' }}
+            />
+            Documents
+          </h3>
+          <div className="UserDatasetFiles-MesaWrapper">
+            <Mesa state={documentsFileState} />
+          </div>
+        </>
+      )}
+      {hasDatasetProperties && (
+        <>
+          <h3
+            style={{
+              padding: 0,
+              fontSize: '1.3em',
+              marginTop: '1.1em',
+              marginBottom: '0.5em',
+            }}
+          >
+            <Icon
+              fa="list-alt"
+              style={{ color: '#0B5EA1', marginRight: '10px' }}
+            />
+            Dataset Properties
+          </h3>
+          <div className="UserDatasetFiles-MesaWrapper">
+            <Mesa state={datasetPropertiesFileState} />
+          </div>
+        </>
+      )}
       <style>{`
         .UserDatasetFiles-MesaWrapper .MesaComponent .DataTable table {
           width: auto !important;

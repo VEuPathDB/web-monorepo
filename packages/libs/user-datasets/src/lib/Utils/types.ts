@@ -107,13 +107,13 @@ const datasetUploadStatusCode = io.union([
 const datasetUploadStatusInfo = io.intersection([
   io.type({ status: datasetUploadStatusCode }),
   io.partial({ message: io.string }),
-])
+]);
 
 const datasetStatusInfo = io.intersection([
   io.type({ upload: datasetUploadStatusInfo }),
   io.partial({
     import: datasetImportStatusDetails,
-    install: io.array(datasetInstallStatusMap)
+    install: io.array(datasetInstallStatusMap),
   }),
 ]);
 
@@ -177,7 +177,7 @@ export const datasetFileListing = io.partial({
   upload: datasetZipDetails,
   install: datasetZipDetails,
   documents: io.array(datasetFileDetails),
-  variableProperties: io.array(datasetFileDetails),
+  datasetProperties: io.array(datasetFileDetails),
 });
 
 export const datasetFundingAward = io.type({
@@ -338,9 +338,9 @@ export type DatasetUser = io.TypeOf<typeof partialUser>;
 
 export type PatchValue<T> = {
   value: T | null;
-}
+};
 
-export type DatasetPatchBody = Record<string, PatchValue<unknown>>
+export type DatasetPatchBody = Record<string, PatchValue<unknown>>;
 
 /**
  * Union type for compatibility between the VDI API and legacy code based on the
@@ -349,6 +349,7 @@ export type DatasetPatchBody = Record<string, PatchValue<unknown>>
 export type LegacyCompatDatasetType = DatasetListEntry | DatasetDetails;
 
 export type ZipFileType = 'upload' | 'install';
+export type DatasetFileType = ZipFileType | 'documents' | 'datasetProperties';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -430,7 +431,7 @@ export type CompatibleRecordTypes = Record<
 
 export type DatasetUploadPageConfig<
   T1 extends string = string,
-  T2 extends string = string,
+  T2 extends string = string
 > =
   | { hasDirectUpload: false }
   | {
