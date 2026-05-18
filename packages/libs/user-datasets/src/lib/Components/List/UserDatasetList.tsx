@@ -107,7 +107,7 @@ export interface MesaDataCellProps {
   inline?: boolean;
 }
 
-export class UserDatasetList extends React.Component<DatasetListProps, State> {
+class UserDatasetList extends React.Component<DatasetListProps, State> {
   constructor(props: DatasetListProps) {
     super(props);
     this.state = {
@@ -764,3 +764,5 @@ export class UserDatasetList extends React.Component<DatasetListProps, State> {
     );
   }
 }
+
+export default UserDatasetList;

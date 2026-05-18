@@ -19,9 +19,8 @@ import {
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
-import {
+import UserDatasetList, {
   DatasetListProps,
-  UserDatasetList,
 } from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 

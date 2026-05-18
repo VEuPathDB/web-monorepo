@@ -13,14 +13,14 @@ import {
 } from '../Service';
 
 export interface Props {
-  readonly baseUrl: string;
-  readonly vdiConfig: VdiServiceConfig,
-  readonly userDataset: DatasetListEntry | DatasetGetResponseBody;
-  readonly projectId: string;
-  readonly displayName: string;
-  readonly linkToDataset: boolean;
-  readonly useTooltip: boolean;
-  readonly dataNoun: DataNoun;
+  baseUrl: string;
+  userDataset: DatasetListEntry | DatasetGetResponseBody;
+  projectId: string;
+  displayName: string;
+  linkToDataset: boolean;
+  useTooltip: boolean;
+  dataNoun: DataNoun;
+  readonly vdiConfig: VdiServiceConfig;
 }
 
 const orderedStatuses = [
