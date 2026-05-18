@@ -44,6 +44,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
   };
 
   const onSubmit = () => {
+    setShowUploadWarning(false);
     props.actions.submit();
     window.scrollTo(0, 0);
   };
