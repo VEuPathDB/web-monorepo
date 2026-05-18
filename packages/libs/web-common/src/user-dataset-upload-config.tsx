@@ -117,7 +117,7 @@ function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfi
           helpText: function HelpText() {
             const { path } = useRouteMatch();
             return (
-              <>
+              <div className="formInfo">
                 <p>
                   (Optional) Upload a variable annotations file describing the
                   variables in the data file:
@@ -141,7 +141,7 @@ function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfi
                     upload.
                   </i>
                 </p>
-              </>
+              </div>
             );
           },
         },
@@ -166,7 +166,6 @@ function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfi
               Each bigWig file must be mapped to the genome that you selected
               above.
             </li>
-            <li>Each individual file cannot be &gt; 500MB.</li>
           </ul>
         </div>
       ),

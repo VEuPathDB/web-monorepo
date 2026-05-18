@@ -180,7 +180,7 @@ function fileInput(props: FileUploadProps): ReactElement {
     <div className="column-2 file-input-help">
       {props.helpText ??
         'Files cannot be greater than ' +
-          formatFileSize(props.dataType.vdiConfig.maxFileSize) +
+          formatFileSize(props.dataType.vdiConfig.maxFileSize, 'binary') +
           '.'}
     </div>
   );
