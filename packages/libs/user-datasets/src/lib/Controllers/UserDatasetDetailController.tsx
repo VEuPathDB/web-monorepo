@@ -37,7 +37,7 @@ const ActionCreators = {
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets: unshareUserDataset,
+  unshareUserDataset,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
@@ -48,19 +48,19 @@ const ActionCreators = {
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
-interface OwnProps {
-  readonly baseUrl: string;
-  readonly detailsPageTitle: string;
-  readonly workspaceTitle: string;
-  readonly id: string;
-  readonly detailComponentsByTypeName?: Record<
+type OwnProps = {
+  baseUrl: string;
+  detailsPageTitle: string;
+  workspaceTitle: string;
+  id: string;
+  detailComponentsByTypeName?: Record<
     string,
     ComponentType<DetailViewProps>
   >;
-  readonly dataNoun: DataNoun;
-  readonly enablePublicUserDatasets: boolean;
-  readonly includeAllLink: boolean;
-  readonly includeNameHeader: boolean;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
 }
 type MergedProps = {
   ownProps: OwnProps;
@@ -129,14 +129,11 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   isRenderDataLoaded() {
-    const {
-      userDatasetDetails: entry,
-      user,
-      questions,
-      config,
-    } = this.props.stateProps;
+    const { userDatasetDetails: entry, user, questions, config } = this.props.stateProps;
     if (user && user.isGuest) return true;
-    return !!(entry?.isLoading === false && user && questions && config);
+    return entry?.isLoading === false && user && questions && config
+      ? true
+      : false;
   }
 
   getDetailView(type: any): ComponentType<DetailViewProps> {
@@ -187,7 +184,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateUserDatasetDetail,
       shareUserDatasets,
       removeUserDataset,
-      unshareUserDatasets,
+      unshareUserDataset,
       updateSharingModalState,
       sharingSuccess,
       sharingError,
@@ -220,8 +217,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     const isOwner = !!(user && userDataset.owner.userId === user.id);
 
     const size = userDataset.files.upload?.contents
-      ?.map((file) => file.fileSize)
-      ?.reduce(add, 0) ?? 0;
+      ?.map(file => file.fileSize)
+      ?.reduce(add, 0)
+      ?? 0;
 
     const props: DetailViewProps = {
       baseUrl,
@@ -235,7 +233,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       removeUserDataset,
       userDatasetUpdating,
       shareUserDatasets,
-      unshareUserDatasets,
+      unshareUserDatasets: unshareUserDataset,
       updateUserDatasetDetail,
       sharingModalOpen,
       sharingDatasetPending,
@@ -273,6 +271,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
     );
   }
 }
+
 
 const enhance = connect<
   StateProps,
