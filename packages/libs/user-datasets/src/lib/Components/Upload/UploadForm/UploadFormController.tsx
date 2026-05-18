@@ -10,6 +10,7 @@ import {
   receiveBadUpload,
   requestUploadMessages,
   trackUploadProgress,
+  updateFormState,
 } from '../../../Actions/UserDatasetUploadActions';
 
 import { assertIsVdiCompatibleWdkService } from '../../../Service/utils/compatibility';
@@ -22,7 +23,10 @@ import {
 import { BadUpload, UploadFormState } from '../../../StoreModules';
 import { DatasetUploadConfig } from '../Configuration';
 import { UploadForm } from './UploadForm';
-import { useUploadFormState } from '../../../StoreModules/UserDatasetUploadStoreModule';
+import {
+  defaultUploadFormState,
+  useUploadFormState,
+} from '../../../StoreModules/UserDatasetUploadStoreModule';
 import {
   DatasetSourcesToggleID,
   DatasetUsageToggleID,
@@ -56,60 +60,58 @@ export function UploadFormController({
 
   const formState = useUploadFormState();
 
-  const submitForm = useCallback(
-    () => {
-      const { fileUploads } = formState;
+  const submitForm = useCallback(() => {
+    const { fileUploads } = formState;
 
-      {
-        const validationErrors = validateFormState(formState);
+    {
+      const validationErrors = validateFormState(formState);
 
-        if (!isEmpty(validationErrors)) {
-          dispatch(
-            receiveBadUpload({
-              type: 422,
-              errors: createValidationError(validationErrors),
-            })
-          );
+      if (!isEmpty(validationErrors)) {
+        dispatch(
+          receiveBadUpload({
+            type: 422,
+            errors: createValidationError(validationErrors),
+          })
+        );
 
-          return;
-        }
+        return;
       }
+    }
 
-      setSubmitting(true);
-      dispatch(async ({ wdkService, transitioner }) => {
-        try {
-          assertIsVdiCompatibleWdkService(wdkService);
+    setSubmitting(true);
+    dispatch(async ({ wdkService, transitioner }) => {
+      try {
+        assertIsVdiCompatibleWdkService(wdkService);
 
-          await submitNewDataset({
-            service: wdkService.vdi,
-            details: {
-              type: {
-                name: formConfig.dataType.name,
-                version: formConfig.dataType.version,
-              },
-              ...filterDetails(formState),
+        await submitNewDataset({
+          service: wdkService.vdi,
+          details: {
+            type: {
+              name: formConfig.dataType.name,
+              version: formConfig.dataType.version,
             },
-            uploads: fileUploads,
-            onProgress: (progress: number | null) =>
-              dispatch(trackUploadProgress(progress)),
-            onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
-              setSubmitting(false);
-              transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`);
-            },
-            onError: (error: BadUpload) => dispatch(receiveBadUpload(error)),
-          });
+            ...filterDetails(formState),
+          },
+          uploads: fileUploads,
+          onProgress: (progress: number | null) =>
+            dispatch(trackUploadProgress(progress)),
+          onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
+            setSubmitting(false);
+            dispatch(updateFormState(defaultUploadFormState()));
+            transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`);
+          },
+          onError: (error: BadUpload) => dispatch(receiveBadUpload(error)),
+        });
 
-          return requestUploadMessages();
-        } catch (err) {
-          return receiveBadUpload({
-            type: 500,
-            message: String(err) ?? 'Failed to upload dataset',
-          });
-        }
-      });
-    },
-    [formState, dispatch, formConfig.dataType, baseUrl]
-  );
+        return requestUploadMessages();
+      } catch (err) {
+        return receiveBadUpload({
+          type: 500,
+          message: String(err) ?? 'Failed to upload dataset',
+        });
+      }
+    });
+  }, [formState, dispatch, formConfig.dataType, baseUrl]);
 
   useEffect(() => {
     if (badUploadState != null) {
@@ -142,17 +144,16 @@ export function UploadFormController({
   );
 }
 
-
 /**
  * Validate the upload form state, performing basic checks that the user has
  * performed all required client-side-only form steps before attempting an
  * upload.
  */
-function validateFormState(
-  { formMetaState: clientSide }: UploadFormState,
-): Record<string, string[]> {
+function validateFormState({
+  formMetaState: clientSide,
+}: UploadFormState): Record<string, string[]> {
   const keyedErrors: Record<string, string[]> = {};
-  const errorMessage = [ "selection is required" ];
+  const errorMessage = ['selection is required'];
 
   // Required Client-Only Fields
   if (clientSide.isStudy === undefined)
@@ -165,17 +166,15 @@ function validateFormState(
   return keyedErrors;
 }
 
-function filterDetails(
-  { formMetaState, datasetDetails }: UploadFormState
-): DatasetPostDetails {
+function filterDetails({
+  formMetaState,
+  datasetDetails,
+}: UploadFormState): DatasetPostDetails {
   const filtered = { ...datasetDetails };
 
-  if (!formMetaState.isStudy)
-    delete filtered['datasetCharacteristics'];
-  if (!formMetaState.hasDisclaimer)
-    delete filtered['dataDisclaimer'];
-  if (!formMetaState.hasExternalSources)
-    delete filtered['datasetSources'];
+  if (!formMetaState.isStudy) delete filtered['datasetCharacteristics'];
+  if (!formMetaState.hasDisclaimer) delete filtered['dataDisclaimer'];
+  if (!formMetaState.hasExternalSources) delete filtered['datasetSources'];
 
   return filtered;
 }

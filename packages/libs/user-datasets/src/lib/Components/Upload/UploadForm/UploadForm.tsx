@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -12,6 +12,7 @@ import { BadUpload } from '../../../StoreModules';
 import { UploadUrlParams } from './DataModel';
 
 import './UploadForm.scss';
+import { UploadWarningModal } from './UploadWarningModal';
 
 export interface UploadFormProps extends DatasetUploadConfig {
   readonly baseUrl: string;
@@ -34,6 +35,13 @@ export interface UploadFormProps extends DatasetUploadConfig {
 
 export function UploadForm(props: UploadFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
+
+  // TODO: temporary warning until dataset update form is completed.
+  const [showUploadWarning, setShowUploadWarning] = useState(false);
+
+  const tempOnSubmit = () => {
+    setShowUploadWarning(true);
+  };
 
   const onSubmit = () => {
     props.actions.submit();
@@ -86,18 +94,23 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           formProps={props}
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
-          onSubmit={onSubmit}
+          onSubmit={tempOnSubmit}
         />
 
         <MetadataSection formProps={props} jsonPath={metaPath} />
 
-        <UploadButton onClick={onSubmit} />
+        <UploadButton onClick={tempOnSubmit} />
 
         <SubmissionModal
           submitting={props.isSubmitting}
           uploadProgress={props.uploadProgress ?? 0}
         />
       </form>
+      <UploadWarningModal
+        visible={showUploadWarning}
+        setVisible={setShowUploadWarning}
+        runUpload={onSubmit}
+      />
     </section>
   );
 }

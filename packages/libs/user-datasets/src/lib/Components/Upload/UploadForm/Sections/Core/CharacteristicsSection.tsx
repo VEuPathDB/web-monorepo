@@ -21,7 +21,6 @@ import {
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../Configuration/DatasetUploadConfig';
 
-
 export const FieldStudyToggleID = 'field-study-toggle';
 
 export interface CharacteristicsSectionProps {
@@ -78,6 +77,7 @@ export function CharacteristicsSection({
 
         <StudyDesign
           vocab={formProps.studyDesignVocab}
+          enabled={enabled === true}
           onChange={(d, t) => {
             setMetadata({
               ...metadata,
@@ -178,9 +178,14 @@ export function CharacteristicsSection({
 interface StudyDesignProps {
   readonly vocab: readonly [string, string][];
   readonly onChange: BiConsumer<string, string>;
+  readonly enabled: boolean;
 }
 
-function StudyDesign({ vocab, onChange }: StudyDesignProps): ReactElement {
+function StudyDesign({
+  vocab,
+  onChange,
+  enabled,
+}: StudyDesignProps): ReactElement {
   const options = vocab.map(([v, _], i) => (
     <option key={i} value={i}>
       {v}
@@ -198,6 +203,7 @@ function StudyDesign({ vocab, onChange }: StudyDesignProps): ReactElement {
           const [design, type] = vocab[parseInt(e.currentTarget.value ?? '0')];
           onChange(design, type);
         }}
+        disabled={!enabled}
       >
         {options}
       </select>
