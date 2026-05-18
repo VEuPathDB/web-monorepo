@@ -1,9 +1,9 @@
-import React from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export interface UploadConfig {
   readonly enabled: boolean;
-  readonly renderOverride?: (inputField: React.ReactElement) => React.ReactNode;
-  readonly helpText?: React.ReactNode;
+  readonly renderOverride?: (inputField: ReactElement) => ReactNode;
+  readonly helpText?: ReactNode;
 }
 
 interface EnabledConfig extends UploadConfig {
@@ -33,7 +33,14 @@ export type OptionalUrlUploadConfig =
   | EnabledUrlUploadConfig
   | DisabledUrlUploadConfig;
 
-export interface UploadInputConfig {
+export interface DataInputConfig {
   readonly file?: OptionalFileUploadConfig;
   readonly url?: OptionalUrlUploadConfig;
+
+  // TODO: is this needed?  It was unused in the previous iteration of the
+  //       vdi-based user dataset upload form, but it is not clear whether this
+  //       was a planned feature or a defunct feature.
+  readonly result?: any;
+
+  readonly helpText?: () => ReactElement;
 }

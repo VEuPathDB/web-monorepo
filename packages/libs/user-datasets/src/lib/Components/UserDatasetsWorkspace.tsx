@@ -1,5 +1,5 @@
-import { identity, isEmpty } from 'lodash';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { identity, isEmpty } from 'lodash';
 import { Switch, Redirect } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -26,15 +26,15 @@ import {
 } from '../Service';
 
 export interface UserDatasetWorkspaceProps {
-  readonly baseUrl: string;
-  readonly helpRoute: string;
-  readonly urlParams: Record<string, string>;
+  baseUrl: string;
+  helpRoute: string;
+  urlParams: Record<string, string>;
   readonly datasetTypes: readonly ClientDatasetTypeConfig[];
   readonly formConfigs: UploadFormConfigurators;
-  readonly workspaceTitle: string;
-  readonly helpTabContents?: ReactNode;
-  readonly dataNoun: DataNoun;
-  readonly enablePublicUserDatasets: boolean;
+  workspaceTitle: string;
+  helpTabContents?: ReactNode;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
 }
 
 export function UserDatasetsWorkspace(
@@ -97,7 +97,6 @@ export function UserDatasetsWorkspace(
         routeBase={baseUrl}
         items={routes}
       />
-
       <Switch>
         <WdkRoute
           exact

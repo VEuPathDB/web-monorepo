@@ -2,7 +2,7 @@ export interface DatasetUploads {
   readonly url?: string;
   readonly dataFiles?: File[];
   readonly documentFiles?: File[];
-  readonly dataPropertiesFiles?: File[];
+  readonly dataPropertiesFiles?: FileList;
 }
 
 export type DatasetZipType = 'upload' | 'install';

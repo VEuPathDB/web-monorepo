@@ -6,6 +6,7 @@ export type {
   ClientDatasetTypeConfig,
   DatasetTypeConfig,
   UploadFormConfigurators,
+  DatasetUploadConfig,
 } from './Configuration';
 
 export { filterAvailableDataTypes, promoteTypeConfig } from './Configuration';

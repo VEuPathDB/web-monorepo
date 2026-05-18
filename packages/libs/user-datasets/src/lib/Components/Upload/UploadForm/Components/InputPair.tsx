@@ -98,6 +98,7 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
         className={props.className}
         onChange={(e) => props.onChange(e.currentTarget.checked)}
         checked={props.checked ?? false}
+        disabled={props.disabled}
       />
     </span>
   );
@@ -114,6 +115,7 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
       className={props.className}
       onChange={(e) => props.onChange(Number(e.currentTarget.value))}
       value={props.value ?? ''}
+      disabled={props.disabled}
     />
   );
 }
@@ -129,6 +131,7 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
         className={props.className}
         onChange={props.onChange}
         checked={props.checked ?? false}
+        disabled={props.disabled}
       />
     </span>
   );
@@ -143,6 +146,7 @@ function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
       className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}
       value={props.value ?? ''}
+      disabled={props.disabled}
     />
   );
 }

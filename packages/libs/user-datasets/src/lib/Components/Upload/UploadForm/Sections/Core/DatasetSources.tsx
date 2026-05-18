@@ -43,7 +43,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   const addSource = () => updateSources({}, undefined);
 
   const inputRows = safeSources.map((src, i) => {
-    // Add the index of the current array element to the json path.
+    // Add the index of the current array element to the JSON path.
     const jPath = props.jsonPath.append(i);
 
     return (
@@ -51,7 +51,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
         key={jPath.toString()}
         index={i}
         jsonPath={jPath}
-        enabled={enabled}
+        enabled={enabled === true}
         source={src}
         setSource={updateSources}
       />
@@ -96,7 +96,7 @@ interface DataSourceProps {
   readonly index: number;
   readonly jsonPath: JsonPathBuilder;
 
-  readonly enabled: boolean | undefined;
+  readonly enabled: boolean;
 
   readonly source: PostDatasetSource;
   readonly setSource: BiConsumer<PostDatasetSource, number>;
@@ -116,7 +116,7 @@ function DataSource({
         fieldName={jsonPath.appendToString<PostDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
-        disabled={enabled !== true}
+        disabled={!enabled}
         helpText="The URL where the dataset is hosted or was obtained."
       />
 
@@ -125,7 +125,7 @@ function DataSource({
         fieldName={jsonPath.appendToString<PostDatasetSource>('version')}
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
-        disabled={enabled !== true}
+        disabled={!enabled}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

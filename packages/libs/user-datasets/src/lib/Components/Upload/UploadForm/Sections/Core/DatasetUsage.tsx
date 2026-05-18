@@ -4,7 +4,7 @@ import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock, YesNoToggle } from '../../Components';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 
-export const DatasetUsageToggleID = "dataset-usage-toggle";
+export const DatasetUsageToggleID = 'dataset-usage-toggle';
 
 export interface DatasetUsageProps {
   readonly clientSideState: ClientSideUploadFormState;
@@ -32,12 +32,19 @@ export function DatasetUsage({
   return (
     <InputBlock header="Dataset Usage">
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required" id={DatasetUsageToggleID}>Filler Text</label>
+        <label className="not-disabled required" id={DatasetUsageToggleID}>
+          Important Reuse Considerations
+        </label>
         <YesNoToggle
           value={clientSideState.hasDisclaimer}
           setValue={setEnabled}
           fieldName="enable-disclaimer"
           className="not-disabled"
+          helpText={
+            'Whether this dataset includes important notes, caveats, or' +
+            ' limitations that users should review before interpreting or' +
+            ' reusing the data.'
+          }
         />
 
         <label htmlFor={fieldName}>Disclaimers</label>
@@ -45,6 +52,7 @@ export function DatasetUsage({
           name={fieldName}
           id={fieldName}
           value={datasetMeta.dataDisclaimer}
+          disabled={!clientSideState.hasDisclaimer}
           onChange={(e) =>
             changeHandler(
               'dataDisclaimer',

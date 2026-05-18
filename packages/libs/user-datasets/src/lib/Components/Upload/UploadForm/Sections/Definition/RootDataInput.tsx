@@ -6,14 +6,18 @@ import {
   EnabledUrlUploadConfig,
   FileUploadConfig,
   UrlUploadConfig,
-} from '../../Configuration/UploadFormConfig';
-import { Consumer, isNonEmptyString, JsonPathBuilder } from '../../../../Utils';
-import { UploadUrlParams } from '../DataModel';
+} from '../../../Configuration/UploadFormConfig';
+import {
+  Consumer,
+  isNonEmptyString,
+  JsonPathBuilder,
+} from '../../../../../Utils';
+import { UploadUrlParams } from '../../DataModel';
 import { RadioList } from '@veupathdb/wdk-client/lib/Components';
-import { DatasetTypeConfig } from '../../Configuration';
-import { formatFileSize } from '../../../../Utils/formatting';
+import { DatasetTypeConfig } from '../../../Configuration';
+import { formatFileSize } from '../../../../../Utils/formatting';
 import { DataFileInput } from './DataFileInput';
-import { VdiServiceMetadata } from '../../../../Service';
+import { VdiServiceMetadata } from '../../../../../Service';
 
 // region Root Dataset Data Input Component
 
@@ -24,6 +28,7 @@ export interface RootDataInputProps {
   readonly fileUpload: OptionalFileUploadProps;
   readonly urlUpload: OptionalUrlUploadProps;
   readonly pathBuilder: JsonPathBuilder;
+  readonly helpText?: () => ReactElement;
 }
 
 type UploadType = 'file' | 'url';
@@ -50,21 +55,31 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
     return <div>No data uploads are permitted.</div>;
   }
 
-  if (uploadInputs.length === 1) return uploadInputs[0][1];
+  const helpText =
+    typeof props.helpText === 'function' ? (
+      <div className="column-2">{props.helpText()}</div>
+    ) : undefined;
+
+  if (uploadInputs.length === 1)
+    return <>
+      {uploadInputs[0][1]}
+      {helpText}
+    </>;
 
   const radioListItems = uploadInputs.map(([kind, element]) => ({
     value: kind,
     display: element,
   }));
 
-  return (
+  return <>
     <RadioList
       name="upload-type"
       value={selectedInput}
       onChange={(value) => setSelectedInput(value as UploadType)}
       items={radioListItems}
     />
-  );
+    {helpText}
+  </>;
 }
 
 function buildUploadInputs(

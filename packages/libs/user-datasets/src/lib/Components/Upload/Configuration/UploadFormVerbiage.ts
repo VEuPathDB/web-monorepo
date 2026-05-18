@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export interface InputConfig {
   readonly label?: ReactNode;
@@ -9,6 +9,10 @@ export interface CoreInputConfigs {
   readonly name?: InputConfig;
   readonly summary?: InputConfig;
   readonly dependencies?: string;
+  readonly datasetProperties?: {
+    readonly label: string;
+    readonly helpText?: () => ReactElement;
+  }
 }
 
 export interface UploadFormVerbiage {

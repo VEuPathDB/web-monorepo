@@ -27,6 +27,14 @@ export function CoreDatasetInformation({
 }: CoreDatasetInformationProps): ReactElement {
   return (
     <>
+      <h3>Core Dataset Information</h3>
+      <p>
+        This information must be completed before you can grant Community Access
+        to this dataset. If you choose to not provide it, you will still be able
+        to upload the dataset for private use (including personal exploration
+        and sharing with selected collaborators).
+      </p>
+
       <CollaboratorsSection
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}

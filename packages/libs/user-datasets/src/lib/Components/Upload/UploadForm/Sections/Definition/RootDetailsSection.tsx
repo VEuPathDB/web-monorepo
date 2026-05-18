@@ -4,15 +4,16 @@ import {
   OptionalFileUploadProps,
   OptionalUrlUploadProps,
   RootDataInput,
-} from '../Components/RootDataInput';
-import { InputPair, UploadButton } from '../Components';
-import { Consumer, JsonPathBuilder } from '../../../../Utils';
-import { UploadFormProps } from '../UploadForm';
-import { DatasetPostDetails, DatasetUploads } from '../../../../Service';
+} from './RootDataInput';
+import { DatasetPropertiesInput } from './DatasetPropertiesInput';
+import { InputPair, UploadButton } from '../../Components';
+import { Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { UploadFormProps } from '../../UploadForm';
+import { DatasetPostDetails, DatasetUploads } from '../../../../../Service';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { useUploadFormState } from '../../../../StoreModules/UserDatasetUploadStoreModule';
-import { updateFormState } from '../../../../Actions/UserDatasetUploadActions';
+import { useUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions';
 
 export interface RootDetailsSectionProps {
   readonly formProps: UploadFormProps;
@@ -56,10 +57,6 @@ export function RootDetailsSection(
   const fileUpload = buildFileProps(formProps, fileUploads, setUploads);
   const urlUpload = buildUrlProps(formProps, fileUploads, setUploads);
 
-  const helpText = typeof props.formProps.helpText === 'function'
-    ? <div className='column-2'>{props.formProps.helpText()}</div>
-    : undefined;
-
   return (
     <section>
       <div className="field-grid">
@@ -86,9 +83,22 @@ export function RootDetailsSection(
           fileUpload={fileUpload}
           urlUpload={urlUpload}
           urlParams={formProps.urlParams}
+          helpText={formProps.dataInputConfig.helpText}
         />
 
-        {helpText}
+        {
+          formProps.dataType.vdiConfig.usesDataProperties
+          && formProps.verbiage.formInputs?.datasetProperties
+          && <DatasetPropertiesInput
+            label={formProps.verbiage.formInputs.datasetProperties.label}
+            fieldName="dataPropertiesFile"
+            setFiles={files => setUploads({
+              ...fileUploads,
+              dataPropertiesFiles: files ?? undefined
+            })}
+            helpText={formProps.verbiage.formInputs.datasetProperties.helpText}
+          />
+        }
       </div>
 
       {props.formProps.verbiage.afterUploadHelpText}
@@ -99,14 +109,14 @@ export function RootDetailsSection(
 }
 
 function buildFileProps(
-  { uploadConfig, vdiConfig }: UploadFormProps,
+  { dataInputConfig, vdiConfig }: UploadFormProps,
   uploads: DatasetUploads,
   setUploads: Consumer<DatasetUploads>
 ): OptionalFileUploadProps {
-  if (uploadConfig.file?.enabled !== true) return { enabled: false };
+  if (dataInputConfig.file?.enabled !== true) return { enabled: false };
 
   return {
-    ...uploadConfig.file,
+    ...dataInputConfig.file,
     vdiConfig,
     // TODO: add support multiple data files in a single upload.
     file: isEmpty(uploads.dataFiles) ? undefined : uploads.dataFiles![0],
@@ -119,7 +129,7 @@ function buildFileProps(
 }
 
 function buildUrlProps(
-  { uploadConfig: { url } }: UploadFormProps,
+  { dataInputConfig: { url } }: UploadFormProps,
   uploads: DatasetUploads,
   setUploads: Consumer<DatasetUploads>
 ): OptionalUrlUploadProps {

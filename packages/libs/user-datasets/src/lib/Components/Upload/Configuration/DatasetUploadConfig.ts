@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
-import { UploadInputConfig } from './UploadFormConfig';
+import { DataInputConfig } from './UploadFormConfig';
 import { DatasetTypeConfig } from './DatasetTypeConfig';
 import { UploadFormVerbiage } from './UploadFormVerbiage';
 import { DatasetDependency } from '../../../Service';
@@ -12,14 +12,7 @@ export interface DatasetUploadConfig<
 
   readonly dataType: T;
 
-  readonly uploadConfig: UploadInputConfig;
-
-  readonly fieldOverrides?: Record<
-    string,
-    (element: ReactElement) => ReactNode
-  >;
-
-  readonly helpText?: () => ReactElement;
+  readonly dataInputConfig: DataInputConfig;
 
   /**
    * Optional function to override or augment the default file input field react

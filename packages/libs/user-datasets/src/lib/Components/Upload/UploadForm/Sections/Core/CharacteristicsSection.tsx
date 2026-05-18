@@ -96,14 +96,14 @@ export function CharacteristicsSection({
           values={safeCharacteristics.countries}
           setValues={setRootField('countries')}
           jsonPath={jsonPath.append<PostCharacteristics>('countries')}
-          disabled={!enabled}
+          disabled={enabled !== true}
         />
 
         <YearsInputs
           years={safeCharacteristics.years}
           setYears={setRootField('years')}
           jsonPath={jsonPath.append<PostCharacteristics>('years')}
-          disabled={!enabled}
+          disabled={enabled !== true}
         />
 
         <GrowableStringList
@@ -112,7 +112,7 @@ export function CharacteristicsSection({
           values={safeCharacteristics.studySpecies}
           setValues={setRootField('studySpecies')}
           jsonPath={jsonPath.append<PostCharacteristics>('studySpecies')}
-          disabled={!enabled}
+          disabled={enabled !== true}
           helpText={
             'Scientific name of the population the study is based on (e.g.,' +
             ' Homo sapiens), even if the dataset contains laboratory' +
@@ -126,7 +126,7 @@ export function CharacteristicsSection({
           values={safeCharacteristics.outcomes}
           setValues={setRootField('outcomes')}
           jsonPath={jsonPath.append<PostCharacteristics>('outcomes')}
-          disabled={!enabled}
+          disabled={enabled !== true}
           helpText={
             'Primary disease, condition, or outcome being studied (e.g.,' +
             ' malaria, anemia, or treatment failure).'
@@ -139,7 +139,7 @@ export function CharacteristicsSection({
           values={safeCharacteristics.associatedFactors}
           setValues={setRootField('associatedFactors')}
           jsonPath={jsonPath.append<PostCharacteristics>('associatedFactors')}
-          disabled={!enabled}
+          disabled={enabled !== true}
           helpText={
             'Pathogen, exposure, or risk factor associated with the outcome' +
             ' (e.g., Plasmodium falciparum, or insecticide exposure).' +
@@ -150,7 +150,7 @@ export function CharacteristicsSection({
         <InputPair<PostCharacteristics>
           fieldName="participantAges"
           label="Participant Ages"
-          disabled={!enabled}
+          disabled={enabled !== true}
           helpText="Age range(s) of participants when data were collected (e.g., '0-5 years; 18+ years')."
           value={safeCharacteristics.participantAges}
           onChange={setRootField('participantAges')}
@@ -162,7 +162,7 @@ export function CharacteristicsSection({
           values={safeCharacteristics.sampleTypes}
           setValues={setRootField('sampleTypes')}
           jsonPath={jsonPath.append<PostCharacteristics>('sampleTypes')}
-          disabled={!enabled}
+          disabled={enabled !== true}
           helpText={
             'Type(s) of biological or environmental samples represented in' +
             ' this dataset.'

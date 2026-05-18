@@ -1,2 +1,2 @@
-export { RootDetailsSection } from './RootDetailsSection';
+export { RootDetailsSection } from './Definition/RootDetailsSection';
 export { MetadataSection } from './MetadataSection';

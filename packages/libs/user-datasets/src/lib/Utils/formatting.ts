@@ -52,13 +52,12 @@ export function formatFileSize(
   }
 
   // remove insignificant decimal places
-  const formattedNum = bytes
-    .toFixed(2)
+  const formattedNum = quo.toFixed(2)
     .toString()
     .match(/^\d+(?:\.[1-9]{1,2})?/);
 
   return (
-    (formattedNum ? formattedNum[0] : Math.floor(bytes).toString()) +
+    (formattedNum ? formattedNum[0] : Math.floor(quo).toString()) +
     prefix +
     suffix
   );

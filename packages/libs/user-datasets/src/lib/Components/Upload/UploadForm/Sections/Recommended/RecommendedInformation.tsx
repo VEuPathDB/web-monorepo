@@ -14,6 +14,11 @@ export function RecommendedInformation(
 ): ReactElement {
   return (
     <>
+      <p>
+        Providing this information is recommended, as it will helps others
+        understand, interpret, and reuse your dataset.
+      </p>
+
       <DatasetInformationSection {...props} />
     </>
   );

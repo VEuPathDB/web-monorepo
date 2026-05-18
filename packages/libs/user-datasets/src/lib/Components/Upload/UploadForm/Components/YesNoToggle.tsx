@@ -20,9 +20,13 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
     <FieldHelpText>{props.helpText}</FieldHelpText>
   ) : undefined;
 
+  const className = 'section-toggle' + (props.className
+    ? ' ' + props.className
+   : '');
+
   return (
     <>
-      <p className={props.className}>
+      <p className={className}>
         <input
           id={yesId}
           type="radio"
@@ -35,10 +39,8 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
             props.setValue(e.currentTarget.checked);
           }}
         />
-        <label htmlFor={yesId} style={{ paddingRight: '2ch' }}>
-          Yes
-        </label>
-
+        &nbsp;
+        <label htmlFor={yesId}>Yes</label>
         <input
           id={noId}
           type="radio"
@@ -51,6 +53,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
             props.setValue(!e.currentTarget.checked);
           }}
         />
+        &nbsp;
         <label htmlFor={noId}>No</label>
       </p>
       {helpText}
