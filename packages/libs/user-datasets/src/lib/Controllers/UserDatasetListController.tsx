@@ -38,7 +38,7 @@ const ActionCreators = {
   updateDatasetListItem,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets: unshareUserDataset,
+  unshareUserDataset,
   updateProjectFilter,
   requestUploadMessages,
   updateSharingModalState,
@@ -54,12 +54,12 @@ type StateProps = Pick<
 >;
 type DispatchProps = typeof ActionCreators;
 interface OwnProps extends RouteComponentProps {
-  readonly baseUrl: string;
-  readonly hasDirectUpload: boolean;
-  readonly helpRoute: string;
-  readonly workspaceTitle: string;
-  readonly dataNoun: DataNoun;
-  readonly enablePublicUserDatasets: boolean;
+  baseUrl: string;
+  hasDirectUpload: boolean;
+  helpRoute: string;
+  workspaceTitle: string;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
   readonly vdiConfig: VdiServiceConfig;
 }
 type Props = {
@@ -166,7 +166,7 @@ class UserDatasetListController extends PageController<Props> {
 
     const {
       shareUserDatasets,
-      unshareUserDatasets,
+      unshareUserDataset,
       removeUserDataset,
       updateDatasetListItem,
       updateProjectFilter,
@@ -190,7 +190,7 @@ class UserDatasetListController extends PageController<Props> {
       userDatasets,
       filterByProject,
       shareUserDatasets,
-      unshareUserDatasets,
+      unshareUserDatasets: unshareUserDataset,
       removeUserDataset,
       updateDatasetListItem,
       updateProjectFilter,

@@ -212,16 +212,16 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       serviceMetadata,
     } = this.props.stateProps;
 
-    if (!entry?.resource || !serviceMetadata) return <Loading />;
+    if (!entry?.resource || !serviceMetadata)
+      return <Loading />;
 
     const userDataset = entry.resource;
 
     const isOwner = !!(user && userDataset.owner.userId === user.id);
 
-    const size =
-      userDataset.files.upload?.contents
-        ?.map((file) => file.fileSize)
-        ?.reduce(add, 0) ?? 0;
+    const size = userDataset.files.upload?.contents
+      ?.map((file) => file.fileSize)
+      ?.reduce(add, 0) ?? 0;
 
     const props: DetailViewProps = {
       baseUrl,
@@ -262,8 +262,11 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       quotaSize: serviceMetadata.configuration.api.userMaxStorageSize,
     };
 
+
     const DetailView = this.getDetailView(entry.resource.type);
-    return entry.resource.visibility !== 'public' && user && user.isGuest ? (
+    return entry.resource.visibility !== 'public' &&
+      user &&
+      user.isGuest ? (
       this.renderGuestView()
     ) : (
       <DetailView {...props} />
