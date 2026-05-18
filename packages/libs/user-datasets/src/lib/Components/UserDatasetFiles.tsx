@@ -5,12 +5,16 @@ import {
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { isVdiCompatibleWdkService } from '../Service';
 import { DatasetFileType, ZipFileType } from '../Utils/types';
+
+import './UserDatasetFiles.scss';
 
 interface ZipFileRow {
   name: string;
@@ -20,33 +24,79 @@ interface ZipFileRow {
 
 export interface UserDatasetFilesProps {
   datasetId: string;
-  files: {
-    upload?: {
-      zipSize: number;
-      contents: Array<{ fileName: string; fileSize: number }>;
-    };
-    install?: {
-      zipSize: number;
-      contents: Array<{ fileName: string; fileSize: number }>;
-    };
-    documents?: Array<{ fileName: string; fileSize: number }>;
-    datasetProperties?: Array<{ fileName: string; fileSize: number }>;
-  };
-  projectId?: string;
   installStatus?: string;
-  dataNoun?: { singular: string; plural: string };
+  showHeader?: boolean;
+  dataNoun?: { singular: string };
 }
 
 export function UserDatasetFiles(props: UserDatasetFilesProps) {
   const {
     datasetId,
-    files,
-    projectId,
     installStatus = 'complete',
-    dataNoun = { singular: 'dataset', plural: 'datasets' },
+    showHeader = true,
+    dataNoun = { singular: 'dataset' },
   } = props;
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  // Fetch user dataset files
+  const userDatasetFilesResult = useWdkService(
+    async (wdkService) => {
+      if (!isVdiCompatibleWdkService(wdkService)) {
+        // Return null data when VDI is not configured - don't show error to user
+        return { data: null, error: null };
+      }
+
+      try {
+        const files = await wdkService.getUserDatasetFileListing(datasetId);
+        return { data: files, error: null };
+      } catch (error) {
+        console.error('Failed to fetch user dataset files:', error);
+        return {
+          data: null,
+          error: 'Failed to load dataset files. Please try again later.',
+        };
+      }
+    },
+    [datasetId]
+  );
+
+  // Show loading state
+  if (userDatasetFilesResult === undefined) {
+    return (
+      <div>
+        {showHeader && (
+          <h2 style={{ padding: 0, fontSize: '1.65em', color: 'black' }}>
+            Dataset Files
+          </h2>
+        )}
+        <Loading />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (userDatasetFilesResult?.error) {
+    return (
+      <div>
+        {showHeader && (
+          <h2 style={{ padding: 0, fontSize: '1.65em', color: 'black' }}>
+            Dataset Files
+          </h2>
+        )}
+        <div className="error-message">
+          <p>{userDatasetFilesResult.error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If VDI is not configured, render nothing
+  if (!userDatasetFilesResult?.data) {
+    return null;
+  }
+
+  const files = userDatasetFilesResult.data;
 
   const getFileTableColumns = (
     fileType: DatasetFileType
@@ -194,9 +244,11 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
 
   return (
     <section id="dataset-files">
-      <h2 style={{ padding: 0, fontSize: '1.65em', color: 'black' }}>
-        Data Files
-      </h2>
+      {showHeader && (
+        <h2 style={{ padding: 0, fontSize: '1.65em', color: 'black' }}>
+          Dataset Files
+        </h2>
+      )}
       <h3
         style={{
           padding: 0,
@@ -206,7 +258,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
         }}
       >
         <Icon fa="files-o" style={{ color: '#0B5EA1', marginRight: '10px' }} />
-        Uploaded Files in {dataNoun.singular}
+        Uploaded data files
       </h3>
       <div className="UserDatasetFiles-MesaWrapper">
         <Mesa state={uploadZipFileState} />
@@ -220,7 +272,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
         }}
       >
         <Icon fa="files-o" style={{ color: '#0B5EA1', marginRight: '10px' }} />
-        Processed Files in {dataNoun.singular}
+        Processed data files
       </h3>
       <div className="UserDatasetFiles-MesaWrapper">
         <Mesa state={processedZipFileState} />
@@ -239,7 +291,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
               fa="file-text-o"
               style={{ color: '#0B5EA1', marginRight: '10px' }}
             />
-            Documents
+            Uploaded documentation files
           </h3>
           <div className="UserDatasetFiles-MesaWrapper">
             <Mesa state={documentsFileState} />
@@ -260,18 +312,13 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
               fa="list-alt"
               style={{ color: '#0B5EA1', marginRight: '10px' }}
             />
-            Dataset Properties
+            Uploaded annotation files
           </h3>
           <div className="UserDatasetFiles-MesaWrapper">
             <Mesa state={datasetPropertiesFileState} />
           </div>
         </>
       )}
-      <style>{`
-        .UserDatasetFiles-MesaWrapper .MesaComponent .DataTable table {
-          width: auto !important;
-        }
-      `}</style>
     </section>
   );
 }

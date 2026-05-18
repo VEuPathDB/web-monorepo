@@ -497,4 +497,6 @@ export const userDatasetFileListing = partial({
     zipSize: number,
     contents: array(type({ fileName: string, fileSize: number })),
   }),
+  documents: array(type({ fileName: string, fileSize: number })),
+  datasetProperties: array(type({ fileName: string, fileSize: number })),
 });
