@@ -527,7 +527,6 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
       <UserDatasetFiles
         datasetId={userDataset.datasetId}
         installStatus={installStatus}
-        dataNoun={dataNoun}
       />
     );
   }

@@ -24,18 +24,12 @@ interface ZipFileRow {
 
 export interface UserDatasetFilesProps {
   datasetId: string;
-  installStatus?: string;
+  installStatus: string;
   showHeader?: boolean;
-  dataNoun?: { singular: string };
 }
 
 export function UserDatasetFiles(props: UserDatasetFilesProps) {
-  const {
-    datasetId,
-    installStatus = 'complete',
-    showHeader = true,
-    dataNoun = { singular: 'dataset' },
-  } = props;
+  const { datasetId, installStatus, showHeader = true } = props;
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
