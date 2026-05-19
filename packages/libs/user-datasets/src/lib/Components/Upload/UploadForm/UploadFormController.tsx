@@ -63,6 +63,9 @@ export function UploadFormController({
   const submitForm = useCallback(() => {
     const { fileUploads } = formState;
 
+    // Clear out previous error attempt messages.
+    dispatch(clearBadUpload());
+
     {
       const validationErrors = validateFormState(formState);
 
