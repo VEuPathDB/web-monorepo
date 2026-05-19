@@ -164,13 +164,15 @@ export type OptionalFileUploadProps =
   | DisabledFileUploadProps;
 
 function fileInput(props: FileUploadProps): ReactElement {
+  console.log(props);
+
   const fieldName = props.pathBuilder.appendToString('dataFile');
   const className = props.required ? 'required' : undefined;
   const baseField = (
     <DataFileInput
       fieldName={fieldName}
       dataType={props.dataType}
-      required={props.required}
+      required={props.required && !props.file}
       setFile={props.setFile}
       vdiFeatures={props.vdiConfig.features}
     />

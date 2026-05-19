@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -13,6 +13,8 @@ import { UploadUrlParams } from './DataModel';
 
 import './UploadForm.scss';
 import { UploadWarningModal } from './UploadWarningModal';
+
+const DatasetUploadSectionID = 'dataset-upload';
 
 export interface UploadFormProps extends DatasetUploadConfig {
   readonly baseUrl: string;
@@ -33,8 +35,14 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly urlParams: UploadUrlParams;
 }
 
+function calcFormIsValid(e: Element): boolean {
+  return e.querySelectorAll(':invalid').length === 0;
+}
+
 export function UploadForm(props: UploadFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
+
+  const [formIsValid, setFormIsValid] = useState<boolean>(true);
 
   // TODO: temporary warning until dataset update form is completed.
   const [showUploadWarning, setShowUploadWarning] = useState(false);
@@ -49,8 +57,15 @@ export function UploadForm(props: UploadFormProps): ReactElement {
     window.scrollTo(0, 0);
   };
 
+  const onFormChange = (e: FormEvent) =>
+    setFormIsValid(calcFormIsValid(e.currentTarget));
+
+  useEffect(() => {
+    setFormIsValid(calcFormIsValid(document.getElementById(DatasetUploadSectionID)!));
+  }, [setFormIsValid]);
+
   return (
-    <section id="dataset-upload">
+    <section id={DatasetUploadSectionID}>
       <header>
         <UploadErrorBanner errors={props.badUploadState} />
 
@@ -90,17 +105,18 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         />
       </header>
 
-      <form className={props.formClassName}>
+      <form className={props.formClassName} onChange={onFormChange}>
         <RootDetailsSection
           formProps={props}
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
           onSubmit={tempOnSubmit}
+          disableSubmit={!formIsValid}
         />
 
         <MetadataSection formProps={props} jsonPath={metaPath} />
 
-        <UploadButton onClick={tempOnSubmit} />
+        <UploadButton onClick={tempOnSubmit} disabled={!formIsValid} />
 
         <SubmissionModal
           submitting={props.isSubmitting}

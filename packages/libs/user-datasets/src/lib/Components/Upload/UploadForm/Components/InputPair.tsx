@@ -11,12 +11,15 @@ interface BaseInputProps<T extends object = object> {
   readonly className?: string;
   readonly helpText?: ReactNode;
   readonly disabled?: boolean;
+  readonly required?: boolean;
 }
 
 interface TextProps<T extends object = object> extends BaseInputProps<T> {
   readonly type?: 'text';
   readonly onChange: Consumer<string>;
   readonly value?: string;
+  readonly minLength?: number;
+  readonly maxLength?: number;
 }
 
 interface CheckboxProps<T extends object = object> extends BaseInputProps<T> {
@@ -73,7 +76,7 @@ export function InputPair<T extends object = object>(
       input = <RadioInput<T> {...props} />;
       break;
     default:
-      input = <DefaultInput<T> {...props} />;
+      input = <TextInput<T> {...props} />;
       break;
   }
 
@@ -99,6 +102,7 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
         onChange={(e) => props.onChange(e.currentTarget.checked)}
         checked={props.checked ?? false}
         disabled={props.disabled}
+        required={props.required}
       />
     </span>
   );
@@ -116,6 +120,7 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
       onChange={(e) => props.onChange(Number(e.currentTarget.value))}
       value={props.value ?? ''}
       disabled={props.disabled}
+      required={props.required}
     />
   );
 }
@@ -132,12 +137,13 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
         onChange={props.onChange}
         checked={props.checked ?? false}
         disabled={props.disabled}
+        required={props.required}
       />
     </span>
   );
 }
 
-function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
+function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   return (
     <input
       type="text"
@@ -147,6 +153,9 @@ function DefaultInput<T extends object>(props: TextProps<T>): ReactElement {
       onChange={(e) => props.onChange(e.currentTarget.value)}
       value={props.value ?? ''}
       disabled={props.disabled}
+      minLength={props.minLength}
+      required={props.required}
+      maxLength={props.maxLength}
     />
   );
 }

@@ -224,14 +224,33 @@
   .upload-button {
     margin-top: 1.5em;
     -webkit-margin-collapse: collapse;
-    background-color: var(--coreui-mutedCyan-600);
     padding: 0.9em 1.4em;
     border-radius: $commonRadius;
     border: none;
-    box-shadow: 4px 5px var(--coreui-mutedCyan-700);
-    color: white;
     font-weight: bold;
     font-size: 1.2em;
+
+    &:not([disabled]) {
+      background-color: var(--coreui-mutedCyan-600);
+      box-shadow: 4px 5px var(--coreui-mutedCyan-700);
+      color: white;
+    }
+
+    &[disabled] {
+      background-color: var(--coreui-gray-300);
+      box-shadow: 4px 5px var(--coreui-gray-400);
+      color: var(--coreui-gray-100);
+    }
+  }
+
+  .invalid-form-help {
+    display: inline-block;
+    margin: 1.5em 0 0 1.5em;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: red;
+    position: absolute;
+    padding: 1em 0;
   }
 
   .formInfo {

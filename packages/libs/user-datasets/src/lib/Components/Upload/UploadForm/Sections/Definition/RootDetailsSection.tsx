@@ -17,18 +17,20 @@ import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions
 
 export interface RootDetailsSectionProps {
   readonly formProps: UploadFormProps;
-
   readonly onSubmit: () => void;
-
   /**
    * JSON Path Builder instance for dataset details/metadata field paths.
    */
   readonly detailsJsonPath: JsonPathBuilder;
-
   /**
    * JSON Path Builder instance for dataset file upload paths.
    */
   readonly contentJsonPath: JsonPathBuilder;
+
+  /**
+   * Whether the form submit button should be disabled.
+   */
+  readonly disableSubmit?: boolean;
 }
 
 export function RootDetailsSection(
@@ -66,6 +68,9 @@ export function RootDetailsSection(
           value={datasetDetails.name}
           onChange={(v) => setMetadata({ ...datasetDetails, name: v })}
           labelClass="required"
+          minLength={3}
+          maxLength={1024}
+          required={true}
         />
 
         <InputPair
@@ -74,6 +79,9 @@ export function RootDetailsSection(
           value={datasetDetails.summary}
           onChange={(v) => setMetadata({ ...datasetDetails, summary: v })}
           labelClass="required"
+          minLength={3}
+          maxLength={4000}
+          required={true}
         />
 
         <RootDataInput
@@ -86,24 +94,27 @@ export function RootDetailsSection(
           helpText={formProps.dataInputConfig.helpText}
         />
 
-        {
-          formProps.dataType.vdiConfig.usesDataProperties
-          && formProps.verbiage.formInputs?.datasetProperties
-          && <DatasetPropertiesInput
-            label={formProps.verbiage.formInputs.datasetProperties.label}
-            fieldName="dataPropertiesFile"
-            setFiles={files => setUploads({
-              ...fileUploads,
-              dataPropertiesFiles: files ?? undefined
-            })}
-            helpText={formProps.verbiage.formInputs.datasetProperties.helpText}
-          />
-        }
+        {formProps.dataType.vdiConfig.usesDataProperties &&
+          formProps.verbiage.formInputs?.datasetProperties && (
+            <DatasetPropertiesInput
+              label={formProps.verbiage.formInputs.datasetProperties.label}
+              fieldName="dataPropertiesFile"
+              setFiles={(files) =>
+                setUploads({
+                  ...fileUploads,
+                  dataPropertiesFiles: files ?? undefined,
+                })
+              }
+              helpText={
+                formProps.verbiage.formInputs.datasetProperties.helpText
+              }
+            />
+          )}
       </div>
 
       {props.formProps.verbiage.afterUploadHelpText}
 
-      <UploadButton onClick={props.onSubmit} />
+      <UploadButton onClick={props.onSubmit} disabled={props.disableSubmit} />
     </section>
   );
 }
