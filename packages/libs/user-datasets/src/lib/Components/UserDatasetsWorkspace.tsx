@@ -5,7 +5,7 @@ import { Switch, Redirect } from 'react-router-dom';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { WorkspaceNavigationItem } from '@veupathdb/wdk-client/src/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
-import { projectId } from '@veupathdb/web-common/lib/config';
+import { projectId } from '../config';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 import {

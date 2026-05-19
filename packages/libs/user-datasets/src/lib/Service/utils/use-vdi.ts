@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { vdiServiceUrl } from '@veupathdb/web-common/lib/config';
+import { vdiServiceUrl } from '../../config';
 
 import { VdiService } from '../VdiService';
 import { wrapWdkService } from './compatibility';

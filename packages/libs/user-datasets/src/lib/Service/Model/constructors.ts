@@ -1,4 +1,4 @@
-import { projectId } from '@veupathdb/web-common/lib/config';
+import { projectId } from '../../config';
 
 import { DatasetPostDetails } from './request-types';
 import { ValidationErrors } from './response-decoders';
@@ -11,9 +11,11 @@ export function defaultDatasetDetails(): DatasetPostDetails {
   };
 }
 
-export function createValidationError(errors: Record<string, string[]>): ValidationErrors {
+export function createValidationError(
+  errors: Record<string, string[]>
+): ValidationErrors {
   return {
     general: [],
     byKey: errors,
-  }
+  };
 }

@@ -20,8 +20,7 @@ import { endpoint, rootElement, rootUrl } from './constants';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { projectId } from '@veupathdb/web-common/lib/config';
-
+import { projectId } from './lib/config';
 
 import UserDatasetHelp from './lib/Components/UserDatasetHelp';
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';

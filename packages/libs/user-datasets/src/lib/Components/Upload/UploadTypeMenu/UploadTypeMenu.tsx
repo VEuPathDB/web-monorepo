@@ -5,7 +5,7 @@ import './UploadFormMenu.scss';
 import { DatasetTypeConfig } from '../Configuration';
 import { stringifyDataType } from '../Configuration/data-types';
 import { isGenomicsProject } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
-import { projectId } from '@veupathdb/web-common/lib/config';
+import { projectId } from '../../../config';
 
 export interface UploadTypeMenuProps {
   readonly availableDataTypes: readonly DatasetTypeConfig[];
@@ -19,7 +19,7 @@ export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
   //  another project.  The function `useProjectUrl` exists, but it relies on
   //  the WDK's `/service` endpoint which does not report all project URLs, and
   //  would need backend changes to do so.
-  const dataExplorerUrl = "https://dataexplorer.org";
+  const dataExplorerUrl = 'https://dataexplorer.org';
 
   return (
     <div id="dataset-type-selection">
@@ -28,9 +28,9 @@ export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
           <i>
             Select the data type that corresponds to the data you are uploading.
             If your data do not fit one of the supported upload types, please{' '}
-            <a href={url + '/app/contact-us'}>Contact Us</a> for assistance.
-            For exploration and sharing of general tab-delimited datasets,
-            please use <a href={dataExplorerUrl}>dataExplorer</a>.
+            <a href={url + '/app/contact-us'}>Contact Us</a> for assistance. For
+            exploration and sharing of general tab-delimited datasets, please
+            use <a href={dataExplorerUrl}>dataExplorer</a>.
           </i>
         </p>
       )}
