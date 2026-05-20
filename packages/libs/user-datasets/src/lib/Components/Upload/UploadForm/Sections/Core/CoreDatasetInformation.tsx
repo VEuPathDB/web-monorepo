@@ -28,11 +28,12 @@ export function CoreDatasetInformation({
   return (
     <>
       <h3>Core Dataset Information</h3>
-      <p>
-        This information must be completed before you can grant Community Access
-        to this dataset. If you choose to not provide it, you will still be able
-        to upload the dataset for private use (including personal exploration
-        and sharing with selected collaborators).
+      <p className="important-info section-description">
+        This information must be completed before you can grant{' '}
+        <b>Community Access</b> to this dataset. If you choose to not provide
+        it, you will still be able to upload the dataset for private use
+        (including personal exploration and sharing with selected
+        collaborators).
       </p>
 
       <CollaboratorsSection

@@ -15,7 +15,7 @@ interface BaseInputProps<T extends object = object> {
 }
 
 interface TextProps<T extends object = object> extends BaseInputProps<T> {
-  readonly type?: 'text';
+  readonly type?: 'text' | 'email' | 'url';
   readonly onChange: Consumer<string>;
   readonly value?: string;
   readonly minLength?: number;
@@ -146,7 +146,7 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
 function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   return (
     <input
-      type="text"
+      type={props.type ?? 'text'}
       id={props.idOverride ?? props.fieldName}
       name={props.nameOverride ?? props.fieldName}
       className={props.className}

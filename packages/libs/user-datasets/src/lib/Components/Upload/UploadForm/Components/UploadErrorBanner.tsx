@@ -2,6 +2,7 @@ import React, { ReactElement, ReactNode } from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { ValidationErrors } from '../../../../Service';
 import { BadUpload } from '../../../../StoreModules';
+import { Link } from 'react-router-dom';
 
 export interface UploadErrorBannerProps {
   readonly errors: BadUpload | undefined;
@@ -52,7 +53,7 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
   if ('byKey' in errors) {
     for (const jsonPath of Object.keys(errors.byKey)) {
       const link = document.getElementById(jsonPath) ? (
-        <a href={`#${encodeURI(jsonPath)}`}>{formatJPath(jsonPath)}</a>
+        <Link to={`#${encodeURI(jsonPath)}`}>{formatJPath(jsonPath)}</Link>
       ) : (
         formatJPath(jsonPath)
       );

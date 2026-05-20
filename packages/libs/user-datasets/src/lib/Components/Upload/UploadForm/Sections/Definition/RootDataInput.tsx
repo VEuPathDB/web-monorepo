@@ -61,25 +61,29 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
     ) : undefined;
 
   if (uploadInputs.length === 1)
-    return <>
-      {uploadInputs[0][1]}
-      {helpText}
-    </>;
+    return (
+      <>
+        {uploadInputs[0][1]}
+        {helpText}
+      </>
+    );
 
   const radioListItems = uploadInputs.map(([kind, element]) => ({
     value: kind,
     display: element,
   }));
 
-  return <>
-    <RadioList
-      name="upload-type"
-      value={selectedInput}
-      onChange={(value) => setSelectedInput(value as UploadType)}
-      items={radioListItems}
-    />
-    {helpText}
-  </>;
+  return (
+    <>
+      <RadioList
+        name="upload-type"
+        value={selectedInput}
+        onChange={(value) => setSelectedInput(value as UploadType)}
+        items={radioListItems}
+      />
+      {helpText}
+    </>
+  );
 }
 
 function buildUploadInputs(
@@ -164,8 +168,6 @@ export type OptionalFileUploadProps =
   | DisabledFileUploadProps;
 
 function fileInput(props: FileUploadProps): ReactElement {
-  console.log(props);
-
   const fieldName = props.pathBuilder.appendToString('dataFile');
   const className = props.required ? 'required' : undefined;
   const baseField = (

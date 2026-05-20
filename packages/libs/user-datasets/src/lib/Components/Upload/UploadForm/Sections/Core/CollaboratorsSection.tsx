@@ -112,6 +112,8 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           value={props.contact.firstName}
           onChange={onChangePart('firstName')}
           required={requireInputs}
+          minLength={2}
+          maxLength={300}
         />
 
         <TextField
@@ -120,6 +122,8 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           pathBuilder={path}
           value={props.contact.middleName}
           onChange={onChangePart('middleName')}
+          minLength={0}
+          maxLength={300}
         />
 
         <TextField
@@ -129,14 +133,19 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           value={props.contact.lastName}
           onChange={onChangePart('lastName')}
           required={requireInputs}
+          minLength={2}
+          maxLength={300}
         />
 
         <TextField
           label="Email"
           field="email"
+          type="email"
           pathBuilder={path}
           value={props.contact.email}
           onChange={onChangePart('email')}
+          minLength={5}
+          maxLength={1024}
         />
 
         <TextField
@@ -145,6 +154,8 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           pathBuilder={path}
           value={props.contact.affiliation}
           onChange={onChangePart('affiliation')}
+          minLength={3}
+          maxLength={4000}
         />
 
         <TextField
@@ -153,6 +164,8 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           pathBuilder={path}
           value={props.contact.country}
           onChange={onChangePart('country')}
+          minLength={2}
+          maxLength={200}
         />
 
         <InputPair
@@ -173,11 +186,14 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
 
 interface LabeledInputProps {
   readonly label: string;
+  readonly type?: 'text' | 'email';
   readonly field: keyof DatasetContact;
   readonly pathBuilder: JsonPathBuilder;
   readonly value: string | undefined;
   readonly onChange: (value: string) => void;
   readonly required?: boolean;
+  readonly minLength?: number;
+  readonly maxLength?: number;
 }
 
 function TextField({
@@ -187,14 +203,21 @@ function TextField({
   pathBuilder,
   onChange,
   required,
+  minLength,
+  maxLength,
+  type,
 }: LabeledInputProps): ReactElement {
   return (
     <InputPair
       label={label}
+      type={type}
       fieldName={pathBuilder.appendToString(field)}
       value={value}
       onChange={onChange}
       labelClass={required ? 'required' : undefined}
+      required={required}
+      minLength={minLength}
+      maxLength={maxLength}
     />
   );
 }

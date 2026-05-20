@@ -48,8 +48,6 @@ export function MetadataSection({
         jsonPath={jsonPath}
       />
 
-      <h2>Recommended Information:</h2>
-
       <RecommendedInformation
         datasetMeta={datasetDetails}
         setDatasetMeta={setMetadata}

@@ -14,6 +14,7 @@ export function RecommendedInformation(
 ): ReactElement {
   return (
     <>
+      <h3>Recommended Information:</h3>
       <p>
         Providing this information is recommended, as it will helps others
         understand, interpret, and reuse your dataset.

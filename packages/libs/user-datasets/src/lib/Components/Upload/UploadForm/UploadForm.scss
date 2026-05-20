@@ -36,6 +36,14 @@
     }
   }
 
+  .important-info {
+    color: red;
+  }
+
+  .section-description {
+    font-style: italic;
+  }
+
   div.input-block {
     border-width: 1px;
     border-style: solid;
@@ -94,6 +102,12 @@
   input[type='radio'],
   select {
     margin-top: $inputPadding;
+  }
+
+  input[type='text']:user-invalid,
+  textarea:user-invalid {
+    border-color: var(--coreui-red-900);
+    background-color: var(--coreui-mutedRed-300);
   }
 
   label {

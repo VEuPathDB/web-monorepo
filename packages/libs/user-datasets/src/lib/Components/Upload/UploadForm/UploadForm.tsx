@@ -61,7 +61,9 @@ export function UploadForm(props: UploadFormProps): ReactElement {
     setFormIsValid(calcFormIsValid(e.currentTarget));
 
   useEffect(() => {
-    setFormIsValid(calcFormIsValid(document.getElementById(DatasetUploadSectionID)!));
+    setFormIsValid(
+      calcFormIsValid(document.getElementById(DatasetUploadSectionID)!)
+    );
   }, [setFormIsValid]);
 
   return (
@@ -91,14 +93,17 @@ export function UploadForm(props: UploadFormProps): ReactElement {
             type: 'warning',
             message: (
               <>
-                You will need to complete the <b>Core Dataset Information</b>{' '}
-                and provide a valid <b>Variable Annotations file</b> before
-                publishing as a{' '}
-                <b>
-                  <i>Community-contributed dataset</i>
-                </b>
-                . Until then, you can still explore, analyze, and privately
-                share the dataset using dataExplorer.
+                <span className="important-info">
+                  If you plan to make this dataset discoverable through{' '}
+                  <b>
+                    <i>Community Access</i>
+                  </b>
+                  , all sections marked with a globe icon must be completed
+                  before upload.
+                </span>
+                Datasets uploaded with only a name, summary, and data files will
+                be restricted to personal use and sharing with selected
+                collaborators.
               </>
             ),
           }}
