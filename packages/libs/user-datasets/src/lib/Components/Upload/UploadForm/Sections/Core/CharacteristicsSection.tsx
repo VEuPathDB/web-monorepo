@@ -13,6 +13,7 @@ import {
   SampleYearRange,
 } from '../../../../../Service';
 import {
+  GlobeIcon,
   GrowableStringList,
   InputBlock,
   InputPair,
@@ -58,7 +59,10 @@ export function CharacteristicsSection({
   const disabledClass = enabled ? '' : ' disabled-fields';
 
   return (
-    <InputBlock header="Field Study or Clinical Trial Characteristics">
+    <InputBlock
+      header="Field Study or Clinical Trial Characteristics"
+      isCommunityRelated={true}
+    >
       <div className={'field-grid' + disabledClass}>
         <label className="not-disabled required" id={FieldStudyToggleID}>
           Field Study or Clinical Trial

@@ -30,7 +30,7 @@ export function DatasetUsage({
     setClientSideState({ ...clientSideState, hasDisclaimer: enabled });
 
   return (
-    <InputBlock header="Dataset Usage">
+    <InputBlock header="Dataset Usage" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
         <label className="not-disabled required" id={DatasetUsageToggleID}>
           Important Reuse Considerations

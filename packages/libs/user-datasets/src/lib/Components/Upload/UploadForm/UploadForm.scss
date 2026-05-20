@@ -20,7 +20,7 @@
   }
 
   header {
-    margin-bottom: 2em;
+    margin-bottom: 1em;
   }
 
   p.description {
@@ -121,6 +121,15 @@
         content: '*';
       }
     }
+  }
+
+  i.fa-globe,
+  h4 i.fa-globe /*be specific for override*/ {
+    color: var(--coreui-mutedBlue-600);
+    font-size: 1.5em;
+    display: inline-block;
+    vertical-align: text-bottom;
+    margin-right: 6px;
   }
 
   .relative-root {

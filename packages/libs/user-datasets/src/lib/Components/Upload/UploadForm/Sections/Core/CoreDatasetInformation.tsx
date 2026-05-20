@@ -7,6 +7,7 @@ import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { UploadFormProps } from '../../UploadForm';
+import { GlobeIcon } from '../../Components';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: DatasetPostDetails;
@@ -27,7 +28,7 @@ export function CoreDatasetInformation({
 }: CoreDatasetInformationProps): ReactElement {
   return (
     <>
-      <h3>Core Dataset Information</h3>
+      <h3><GlobeIcon /> Core Dataset Information</h3>
       <p className="important-info section-description">
         This information must be completed before you can grant{' '}
         <b>Community Access</b> to this dataset. If you choose to not provide

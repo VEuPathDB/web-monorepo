@@ -59,7 +59,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   });
 
   return (
-    <InputBlock header="Dataset Source">
+    <InputBlock header="Dataset Source" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
         <label className="not-disabled required" id={DatasetSourcesToggleID}>
           Available from External Source

@@ -62,7 +62,10 @@ export function CollaboratorsSection(
   });
 
   return (
-    <InputBlock header="Principal Investigators and Collaborators">
+    <InputBlock
+      header="Principal Investigators and Collaborators"
+      isCommunityRelated={true}
+    >
       <ol className="multi-input contact-block">{contactBlocks}</ol>
 
       <div className="field-grid">
@@ -164,7 +167,7 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
           pathBuilder={path}
           value={props.contact.country}
           onChange={onChangePart('country')}
-          minLength={2}
+          minLength={3}
           maxLength={200}
         />
 

@@ -16,8 +16,10 @@ export function RecommendedInformation(
     <>
       <h3>Recommended Information:</h3>
       <p>
-        Providing this information is recommended, as it will helps others
-        understand, interpret, and reuse your dataset.
+        <i>
+          Providing this information is recommended, as it will helps others
+          understand, interpret, and reuse your dataset.
+        </i>
       </p>
 
       <DatasetInformationSection {...props} />
