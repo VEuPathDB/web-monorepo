@@ -274,10 +274,13 @@ export class UserDatasetSharingModal extends React.Component<
   renderShareItem(share: VdiUser, index: number, userDataset: VdiDataset) {
     return (
       <div key={index}>
-        <span className="faded">Shared with</span> <b>{datasetUserFullName(share)}</b>{' '}
+        <span className="faded">Shared with</span>{' '}
+        <b>{datasetUserFullName(share)}</b>{' '}
         <button
           type="button"
-          onClick={() => this.unshareWithUser(userDataset.datasetId, share.userId)}
+          onClick={() =>
+            this.unshareWithUser(userDataset.datasetId, share.userId)
+          }
           className="link"
         >
           <Icon fa="times-circle unshareRecipient" />
@@ -292,7 +295,7 @@ export class UserDatasetSharingModal extends React.Component<
     if (context !== 'datasetsList')
       throw new Error(
         'illegal state: dataset share modal is attempting to use dataset list' +
-          'functionality outside of the dataset list context'
+          ' functionality outside of the dataset list context'
       );
   }
 
@@ -302,11 +305,14 @@ export class UserDatasetSharingModal extends React.Component<
   }
 
   renderDatasetItem(userDataset: VdiDataset) {
-    this.isOnDatasetList(this.props.context);
-
     const { shares, datasetId } = userDataset;
     const isOwner = this.isMyDataset(userDataset);
-    const { deselectDataset, dataNoun } = this.props;
+    const { dataNoun } = this.props;
+
+    const deselectDataset =
+      this.props.context === 'datasetsList'
+        ? this.props.deselectDataset
+        : undefined;
 
     const EmptyState = this.renderEmptyState;
     const ShareList = this.renderShareList;
@@ -339,7 +345,9 @@ export class UserDatasetSharingModal extends React.Component<
             <button
               type="button"
               title={`Unselect this ${dataNoun.singular.toLowerCase()} for sharing`}
-              onClick={() => this.unselectDataset(userDataset as DatasetListEntry)}
+              onClick={() =>
+                this.unselectDataset(userDataset as DatasetListEntry)
+              }
               className="link removalLink"
             >
               <Icon fa="close" />
@@ -431,12 +439,18 @@ export class UserDatasetSharingModal extends React.Component<
     );
   }
 
+  /**
+   * Despite this method's name and purpose, it is used both in the dataset list
+   * and dataset details contexts.
+   *
+   * In the dataset details context, the datasets argument will contain a single
+   * value.
+   */
   renderDatasetList({
     datasets,
   }: {
     datasets: VdiDataset[];
   }): ReactElement | null {
-    this.isOnDatasetList(this.props.context);
     return !Array.isArray(datasets) || !datasets.length ? null : (
       <>{datasets.map(this.renderDatasetItem)}</>
     );
