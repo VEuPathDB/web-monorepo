@@ -24,12 +24,11 @@ interface ZipFileRow {
 
 export interface UserDatasetFilesProps {
   datasetId: string;
-  installStatus: string;
   showHeader?: boolean;
 }
 
 export function UserDatasetFiles(props: UserDatasetFilesProps) {
-  const { datasetId, installStatus, showHeader = true } = props;
+  const { datasetId, showHeader = true } = props;
 
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
@@ -160,11 +159,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
             ? 'getUserDatasetPropertiesFile' in wdkService
             : false;
 
-          const enableDownload = isZipFile
-            ? fileType === 'upload'
-              ? true
-              : installStatus === 'complete'
-            : true; // Individual files can always be downloaded if service is available
+          const enableDownload = true;
 
           return (
             <button
@@ -213,6 +208,8 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
     rows: [{ name: 'install.zip', size: files?.install?.zipSize }],
   });
 
+  const hasInstall = files.install != null;
+
   const hasDocuments = files.documents && files.documents.length > 0;
   const documentsFileState = hasDocuments
     ? MesaState.create({
@@ -257,20 +254,27 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
       <div className="UserDatasetFiles-MesaWrapper">
         <Mesa state={uploadZipFileState} />
       </div>
-      <h3
-        style={{
-          padding: 0,
-          fontSize: '1.3em',
-          marginTop: '1.1em',
-          marginBottom: '0.5em',
-        }}
-      >
-        <Icon fa="files-o" style={{ color: '#0B5EA1', marginRight: '10px' }} />
-        Processed data files
-      </h3>
-      <div className="UserDatasetFiles-MesaWrapper">
-        <Mesa state={processedZipFileState} />
-      </div>
+      {hasInstall && (
+        <>
+          <h3
+            style={{
+              padding: 0,
+              fontSize: '1.3em',
+              marginTop: '1.1em',
+              marginBottom: '0.5em',
+            }}
+          >
+            <Icon
+              fa="files-o"
+              style={{ color: '#0B5EA1', marginRight: '10px' }}
+            />
+            Processed data files
+          </h3>
+          <div className="UserDatasetFiles-MesaWrapper">
+            <Mesa state={processedZipFileState} />
+          </div>
+        </>
+      )}
       {hasDocuments && (
         <>
           <h3

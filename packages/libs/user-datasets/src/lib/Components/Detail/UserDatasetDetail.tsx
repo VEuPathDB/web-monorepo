@@ -512,23 +512,9 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderFileSection() {
-    const { userDataset, config, dataNoun } = this.props;
-    const { projectId } = config;
-    const { status } = userDataset;
+    const { userDataset } = this.props;
 
-    // Determine install status for this project
-    const installStatus =
-      status.install?.find((d) => d.installTarget === projectId)?.data
-        ?.status === 'complete'
-        ? 'complete'
-        : 'pending';
-
-    return (
-      <UserDatasetFiles
-        datasetId={userDataset.datasetId}
-        installStatus={installStatus}
-      />
-    );
+    return <UserDatasetFiles datasetId={userDataset.datasetId} />;
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
