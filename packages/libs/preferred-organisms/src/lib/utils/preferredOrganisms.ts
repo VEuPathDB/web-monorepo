@@ -32,6 +32,7 @@ import {
 
 export const ORGANISM_PREFERENCE_KEY = 'organism_preference';
 export const ORGANISM_PREFERENCE_SCOPE = 'project';
+export const ORGANISM_PARAM_PREF_KEY = 'organism_param_pref';
 
 export const makePreferredOrganismsRecoilState = memoize(
   (wdkDependencies: WdkDependencies | undefined) => {

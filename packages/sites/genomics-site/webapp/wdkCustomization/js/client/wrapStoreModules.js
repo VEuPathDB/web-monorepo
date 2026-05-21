@@ -10,6 +10,7 @@ import * as record from './storeModules/Record';
 import * as userCommentForm from './storeModules/UserCommentFormStoreModule';
 import * as userCommentShow from './storeModules/UserCommentShowStoreModule';
 import * as genomeSummaryView from './storeModules/GenomeSummaryViewStoreModule';
+import * as organismParamPreference from './storeModules/OrganismParamPreference';
 
 export default flowRight(
   useUserDatasetsWorkspace ? addUserDatasetStoreModules : identity,
@@ -20,5 +21,6 @@ export default flowRight(
     userCommentShow,
     blastSummaryView,
     genomeSummaryView,
+    organismParamPreference,
   })
 );
