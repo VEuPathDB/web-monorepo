@@ -904,10 +904,9 @@ function StrategyLinkout(props: Props) {
               margin: 0,
             }}
           >
-            Your result size (
+            Unable to export as a search strategy. Your result size (
             {response.searchResults.totalCount.toLocaleString()}) exceeds the
-            maximum number for exporting to a search strategy (
-            {MAX_RESULT_SIZE_FOR_EXPORT.toLocaleString()}).
+            maximum allowed ({MAX_RESULT_SIZE_FOR_EXPORT.toLocaleString()}).
           </p>
           <br />
           <p
