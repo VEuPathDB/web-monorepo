@@ -249,7 +249,7 @@ export default function Downloads({
           />
         )}
         {isUserStudy && vdiDatasetId && (
-          <UserDatasetFiles datasetId={vdiDatasetId} installStatus="complete" />
+          <UserDatasetFiles datasetId={vdiDatasetId} />
         )}
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (

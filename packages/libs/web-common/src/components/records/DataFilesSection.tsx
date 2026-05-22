@@ -36,11 +36,7 @@ export function DataFilesSection(props: Props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        <UserDatasetFiles
-          datasetId={vdiDatasetId}
-          installStatus="complete"
-          showHeader={false}
-        />
+        <UserDatasetFiles datasetId={vdiDatasetId} showHeader={false} />
       </ErrorBoundary>
     </CollapsibleSection>
   );
