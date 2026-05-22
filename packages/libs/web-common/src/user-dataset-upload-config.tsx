@@ -111,41 +111,6 @@ function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfi
     dataType,
     verbiage: {
       formTitle: DefaultFormTitle,
-      formInputs: {
-        datasetProperties: {
-          label: 'Variable Attributes',
-          helpText: function HelpText() {
-            const { path } = useRouteMatch();
-            return (
-              <div className="formInfo">
-                <p>
-                  (Optional) Upload a variable annotations file describing the
-                  variables in the data file:
-                </p>
-                <ul>
-                  <li>in .csv, .tsv, or tab-delimited .txt format</li>
-                  <li>
-                    with columns labeled (i) variable; (ii) label; (iii)
-                    definition, and
-                  </li>
-                  <li>with one row for every variable in the data file</li>
-                </ul>
-                <p className="red">
-                  A valid variable annotations file is required to grant
-                  <i>Community Access</i> to the dataset.
-                </p>
-                <p>
-                  <i>
-                    See <Link to={path + '/help'}>My datasets help</Link> for
-                    more information on how to properly format your files for
-                    upload.
-                  </i>
-                </p>
-              </div>
-            );
-          },
-        },
-      },
     },
     dataInputConfig: {
       file: { enabled: true },
@@ -282,6 +247,41 @@ function isasimpleFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadCo
     dataType,
     verbiage: {
       formTitle: DefaultFormTitle,
+      formInputs: {
+        datasetProperties: {
+          label: 'Variable Attributes',
+          helpText: function HelpText() {
+            const { path } = useRouteMatch();
+            return (
+              <div className="formInfo">
+                <p>
+                  (Optional) Upload a variable annotations file describing the
+                  variables in the data file:
+                </p>
+                <ul>
+                  <li>in .csv, .tsv, or tab-delimited .txt format</li>
+                  <li>
+                    with columns labeled (i) variable; (ii) label; (iii)
+                    definition, and
+                  </li>
+                  <li>with one row for every variable in the data file</li>
+                </ul>
+                <p className="red">
+                  A valid variable annotations file is required to grant
+                  <i>Community Access</i> to the dataset.
+                </p>
+                <p>
+                  <i>
+                    See <Link to={path + '/help'}>My datasets help</Link> for
+                    more information on how to properly format your files for
+                    upload.
+                  </i>
+                </p>
+              </div>
+            );
+          },
+        },
+      },
     },
     datasetCharacteristics: {
       enable: true,
