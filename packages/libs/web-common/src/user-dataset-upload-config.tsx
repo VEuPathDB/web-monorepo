@@ -1,132 +1,122 @@
-import {
-  DatasetDependency,
-  DatasetUploadTypeConfig,
-  DependencyProps,
-} from '@veupathdb/user-datasets/lib/Utils/types';
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
-import { useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import { projectId } from './config';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
+import {
+  ClientDatasetTypeConfig,
+  DatasetDependency,
+  DependencyInputProps,
+  UploadFormConfigurators,
+} from '@veupathdb/user-datasets/lib';
+import { Link } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
+import { DatasetTypeConfig, DatasetUploadConfig } from '@veupathdb/user-datasets/lib/Components/Upload';
 
-type ImplementedUploadTypes =
-  | 'biom'
-  | 'genelist'
-  | 'isasimple'
-  | 'bigwigfiles'
-  | 'rnaseq'
-  | 'phenotype';
+/**
+ * Type identifiers for dataset types that have client handling.
+ */
+const implementedUploadTypes = {
+  biom: { name: 'biom', version: '1.0' },
+  genelist: { name: 'genelist', version: '1.0' },
+  isasimple: { name: 'isasimple', version: '1.0' },
+  bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
+  rnaseq: { name: 'rnaseq', version: '1.0' },
+  phenotype: { name: 'phenotype', version: '1.0' },
+};
 
-export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
+/**
+ * Basic dataset type configurations.
+ *
+ * Primarily used for rendering the data type selection menu before the upload
+ * form for projects that allow for multiple dataset types.
+ */
+export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
   {
-    rnaseq: {
-      type: 'rnaseq',
-      displayName: 'Normalized RNA-Seq',
-      description: `Integrate your Normalized RNA-Seq data in ${projectId}.`,
-      uploadTitle: 'Upload My Normalized RNA-Seq Dataset',
-      formConfig: {
-        summary: {
-          inputProps: {
-            placeholder: 'brief summary of the dataset in a few sentences',
-          },
-        },
-        description: {
-          inputProps: {
-            required: false,
-            placeholder: 'optional longer description of the dataset',
-          },
-        },
-        dependencies: {
-          label: 'Reference Genome',
-          required: true,
-          render: (props) => <ReferenceGenomeDepdency {...props} />,
-        },
-        renderInfo: () => (
-          <p className="formInfo">
-            To upload your dataset:
-            <ol>
-              <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
-              <li>compress the set of files, not a folder containing them.</li>
-              <li>make sure there are no empty files.</li>
-            </ol>
-            The upload requires:
-            <ol>
-              <li>
-                <b>a counts file per sample</b> - each sample must have only one
-                tab-delimited file (use extension .txt) containing two columns
-                with these headers:
-                <ul>
-                  <li>'gene_id'</li>
-                  <li>'FPKM' or 'TPM'</li>
-                </ul>
-              </li>
-              <li>
-                <b>a manifest file</b> - a tab-delimited file named
-                'manifest.txt', containing three columns without headers:
-                <ul>
-                  <li>sample name</li>
-                  <li>file name (must match a counts file)</li>
-                  <li>
-                    strandedness ('unstranded' or 'stranded') - Only
-                    'unstranded' is currently supported.
-                  </li>
-                </ul>
-              </li>
-            </ol>
-            Optionally, you may include <b>bigWig files</b> (.bw extension) in
-            your compressed file:
-            <ol>
-              <li>
-                they are not required but will allow visualization in the genome
-                browser.
-              </li>
-              <li>add these file names in the manifest file.</li>
-              <li>make sure there are no empty files.</li>
-            </ol>
-          </p>
-        ),
-        uploadMethodConfig: {
-          file: {
-            maxSizeBytes: 1 * 1000 * 1000 * 1000, // 1GB
-            render: ({ fieldNode }) => (
-              <>
-                {fieldNode}
-                <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 1GB.
-                </div>
-              </>
-            ),
-          },
-        },
-      },
+    ...implementedUploadTypes.bigwigfiles,
+    description: `Integrate your bigWig data in ${projectId}.`,
+  },
+  {
+    ...implementedUploadTypes.biom,
+    description: `Integrate your BIOM study data in ${projectId}.`,
+  },
+  {
+    ...implementedUploadTypes.genelist,
+    description: `Integrate your gene list in ${projectId}.`,
+  },
+  {
+    ...implementedUploadTypes.isasimple,
+    description: `Integrate your study data in ${projectId}.`,
+  },
+  {
+    ...implementedUploadTypes.phenotype,
+    description: `Integrate your Phenotype data in ${projectId}.`,
+  },
+  {
+    ...implementedUploadTypes.rnaseq,
+    description: `Integrate your Normalized RNA-Seq data in ${projectId}.`,
+  },
+];
+
+/**
+ * Dataset type specific upload form configuration constructors.
+ *
+ * One should exist for every dataset type that users can upload.
+ */
+export const uploadFormConfigurators: UploadFormConfigurators = [
+  // bigwig
+  [ implementedUploadTypes.bigwigfiles, bigwigFormConfigurator ],
+
+  // biom
+  [ implementedUploadTypes.biom, biomFormConfigurator ],
+
+  // genelist
+  [ implementedUploadTypes.genelist, genelistFormConfigurator ],
+
+  // isasimple
+  [ implementedUploadTypes.isasimple, isasimpleFormConfigurator ],
+
+  // phenotype
+  [ implementedUploadTypes.phenotype, phenotypeFormConfigurator ],
+
+  // rnaseq
+  [ implementedUploadTypes.rnaseq, rnaseqFormConfigurator ],
+];
+
+const DefaultFormTitle = 'Upload Dataset';
+
+const StudyDesignVocab: readonly [string, string][] = [
+  ['Cluster-randomized controlled trial', 'Experimental'],
+  ['Quasi-experimental study', 'Experimental'],
+  ['Randomized controlled/clinical trial', 'Experimental'],
+
+  ['Case series study', 'Observational'],
+  ['Case-control study', 'Observational'],
+  ['Cohort study', 'Observational'],
+  ['Cross-sectional study', 'Observational'],
+  ['Ecological study', 'Observational'],
+  ['Panel study', 'Observational'],
+  ['Surveillance study', 'Observational'],
+
+  ['Meta-analysis', 'Review'],
+
+  ['Other', 'n/a'],
+];
+
+function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: DefaultFormTitle,
     },
-    bigwigfiles: {
-      type: 'bigwigfiles',
-      displayName: 'bigWig',
-      description: `Integrate your bigWig data in ${projectId}.`,
-      uploadTitle: 'Upload My bigWig Dataset',
-      formConfig: {
-        summary: {
-          inputProps: {
-            placeholder: 'brief summary in a few sentences',
-          },
-        },
-        description: {
-          inputProps: {
-            required: false,
-            placeholder: 'optional longer description of the dataset',
-          },
-        },
-        dependencies: {
-          label: 'Reference Genome',
-          required: true,
-          render: (props) => <ReferenceGenomeDepdency {...props} />,
-        },
-        renderInfo: () => (
-          <p className="formInfo">
+    dataInputConfig: {
+      file: { enabled: true },
+      helpText: () => (
+        <div className="formInfo">
+          <p>
             We accept .bw or .bigwig files in the{' '}
             <a href="https://genome.ucsc.edu/goldenpath/help/bigWig.html">
               bigWig format
@@ -135,253 +125,284 @@ export const uploadTypeConfig: DatasetUploadTypeConfig<ImplementedUploadTypes> =
             <br />
             If you need to upload more than one file please make a compressed
             file with all your bigWig files (a .tar.gz, .tgz or .zip file).
-            <ul>
-              <li>
-                Each bigWig file must be mapped to the genome that you selected
-                above.
-              </li>
-              <li>Each individual file cannot be &gt; 500MB.</li>
-            </ul>
           </p>
-        ),
-        uploadMethodConfig: {
-          file: {
-            maxSizeBytes: 10 * 1000 * 1000 * 1000, // 10GB
-            render: ({ fieldNode }) => (
-              <>
-                {fieldNode}
-                <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 1GB.
-                </div>
-              </>
-            ),
-          },
-        },
-      },
+          <ul>
+            <li>
+              Each bigWig file must be mapped to the genome that you selected
+              above.
+            </li>
+          </ul>
+        </div>
+      ),
     },
-    biom: {
-      type: 'biom',
-      displayName: 'BIOM',
-      description: `Integrate your BIOM study data in ${projectId}.`,
-      uploadTitle: 'Upload My Dataset',
-      formConfig: {
-        summary: {
-          inputProps: {
-            placeholder: 'brief summary of the study in a few sentences',
-          },
-        },
-        description: {
-          inputProps: {
-            required: false,
-            placeholder:
-              'optional longer description of the summary including background, study objectives, methodology, etc.',
-          },
-        },
-        renderInfo: () => (
-          <p className="formInfo">
-            We accept any file in the{' '}
-            <a href="http://biom-format.org">BIOM format</a>, either JSON-based
-            (BIOM 1.0) or HDF5 (BIOM 2.0+).
-            <br />
-            <br />
-            If possible, try including taxonomic information and rich sample
-            details in your file. This will allow you to select groups of
-            samples and create meaningful comparisons at a desired aggregation
-            level, using our filtering and visualisation tools.
-          </p>
-        ),
-        uploadMethodConfig: {
-          file: {
-            maxSizeBytes: 100 * 1000 * 1000, // 100MB
-            render: ({ fieldNode }) => (
-              <>
-                {fieldNode}
-                <div style={{ marginTop: '0.25em' }}>
-                  File must be less than 100MB
-                </div>
-              </>
-            ),
-          },
-        },
-      },
+    dependencies: {
+      required: true,
+      renderInput: ReferenceGenomeDependency,
     },
-    genelist: {
-      type: 'genelist',
-      displayName: 'Gene List',
-      description: `Integrate your gene list in ${projectId}.`,
-      uploadTitle: 'Upload My Gene List',
-      formConfig: {
-        summary: {
-          inputProps: {
-            placeholder: 'brief summary in a few sentences',
-          },
-        },
-        description: {
-          inputProps: {
-            required: false,
-            placeholder: 'optional longer description of the dataset',
-          },
-        },
-        renderInfo: () => (
-          <p className="formInfo">
-            Upload a file containing gene IDs. Gene IDs need to be valid and be separated by valid delimiters.
-            <br /><br />
-            Valid gene IDs should:
-              <ul>
-                <li>include only these characters [a-zA-Z0-9().:_-]</li>
-                <li>have at least one alphabetical character</li>
-                <li>be at most 80 characters</li>
-              </ul>
-            Invalid IDs and duplicated IDs will be discarded.
-            <br /><br />
-            Valid delimiters are:
-              <ul>
-                <li>white space (newline, space, tab)</li>
-                <li>comma</li>
-                <li>semi-colon</li>
-              </ul>
-            <br />
-            <i>Gene lists can also be added from a search strategy result page:
-            click on the "Send to" menu near the "Download" button,
-            and choose the "My Datasets" option to install the gene list in My Datasets.</i>
-          </p>
+    datasetCharacteristics: {
+      enable: true,
+      studyDesignVocab: StudyDesignVocab,
+    },
+  };
+}
+
+function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: DefaultFormTitle,
+    },
+    dataInputConfig: {
+      file: { enabled: true },
+      helpText: () => (
+        <p className="formInfo">
+          We accept any file in the{' '}
+          <a href="http://biom-format.org">BIOM format</a>, either JSON-based
+          (BIOM 1.0) or HDF5 (BIOM 2.0+).
+          <br />
+          <br />
+          If possible, try including taxonomic information and rich sample
+          details in your file. This will allow you to select groups of samples
+          and create meaningful comparisons at a desired aggregation level,
+          using our filtering and visualisation tools.
+        </p>
+      ),
+    },
+    datasetCharacteristics: {
+      enable: true,
+      studyDesignVocab: StudyDesignVocab,
+    },
+  };
+}
+
+function genelistFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: DefaultFormTitle,
+    },
+    datasetCharacteristics: {
+      enable: true,
+      studyDesignVocab: StudyDesignVocab,
+    },
+    dataInputConfig: {
+      file: {
+        enabled: true,
+        helpText: (
+          <div style={{ marginTop: '0.25em' }}>
+            File must be a text, comma or tab-delimited .txt, .csv or .tsv
+            file.
+          </div>
         ),
-        uploadMethodConfig: {
-          file: {
-            maxSizeBytes: 1 * 1000 * 1000 * 1000, // 1GB
-            render: ({ fieldNode }) => (
-              <>
-                {fieldNode}
-                <div style={{ marginTop: '0.25em' }}>
-                  File must be a text, comma or tab-delimited .txt, .csv or .tsv file.
-                  <br />File size must be less than 1GB.
-                </div>
-              </>
-            ),
-          },
-          result: {
-            offerStrategyUpload: false,
-            compatibleRecordTypes: {
-              transcript: {
-                reportName: 'attributesTabular',
-                reportConfig: {
-                  attributes: ['primary_key'],
-                  includeHeader: false,
-                  attachmentType: 'plain',
-                  applyFilter: true,
-                },
-              },
+      },
+      result: {
+        enabled: true,
+        offerStrategyUpload: false,
+        compatibleRecordTypes: {
+          transcript: {
+            reportName: 'attributesTabular',
+            reportConfig: {
+              attributes: ['primary_key'],
+              includeHeader: false,
+              attachmentType: 'plain',
+              applyFilter: true,
             },
           },
         },
       },
-    },
-    phenotype: {
-      type: 'phenotype',
-      displayName: 'Phenotype',
-      description: `Integrate your Phenotype data in ${projectId}.`,
-      uploadTitle: 'Upload My Phenotype Dataset',
-      formConfig: {
-        summary: {
-          inputProps: {
-            placeholder: 'brief summary in a few sentences',
-          },
-        },
-        description: {
-          inputProps: {
-            required: false,
-            placeholder: 'optional longer description of the dataset',
-          },
-        },
-        renderInfo: () => (
-          <p className="formInfo">
-            Upload a tab delimited file containing valid gene IDs and their values.
-            <br /><br />The file should contain:
-            <ul>
-              <li>A gene ID column with header "geneID"</li>
-              <li>At least one numeric column</li>
-              <li>Values no longer than 1000 characters; should not contain newlines</li>
-            </ul>
-            The file will be rejected if there are duplicated IDs.
-            <br /><br />We will consider a column numeric when all values are numbers. 
-            <ul>
-              <li>Use a dot for decimals, commas will be removed.</li>
-              <li>Scientific format is allowed.</li>
-            </ul>
-            <br />Valid gene IDs should:
-              <ul>
-                <li>include only these characters [a-zA-Z0-9().:_-]</li>
-                <li>have at least one alphabetical character</li>
-                <li>be at most 80 characters</li>
-              </ul>
-            Invalid IDs will be discarded.
+      helpText: () => (
+        <div className="formInfo">
+          <p>
+            Upload a file containing gene IDs. Gene IDs need to be valid and be
+            separated by valid delimiters.
           </p>
-        ),
-        uploadMethodConfig: {
-          file: {
-            maxSizeBytes: 1 * 1000 * 1000 * 1000, // 1GB
-            render: ({ fieldNode }) => (
-              <>
-                {fieldNode}
-                <div style={{ marginTop: '0.25em' }}>
-                  File must be a tab-delimited .txt or .tsv file. 
-                  <br />File must be less than 1GB.
-                </div>
-              </>
-            ),
+          Valid gene IDs should:
+          <ul>
+            <li>include only these characters [a-zA-Z0-9().:_-]</li>
+            <li>have at least one alphabetical character</li>
+            <li>be at most 80 characters</li>
+          </ul>
+          <p>Invalid IDs and duplicated IDs will be discarded.</p>
+          Valid delimiters are:
+          <ul>
+            <li>white space (newline, space, tab)</li>
+            <li>comma</li>
+            <li>semi-colon</li>
+          </ul>
+          <p>
+            <i>
+              Gene lists can also be added from a search strategy result page:
+              click on the "Send to" menu near the "Download" button, and choose
+              the "My Datasets" option to install the gene list in My Datasets.
+            </i>
+          </p>
+        </div>
+      ),
+    },
+  };
+}
+
+function isasimpleFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: DefaultFormTitle,
+      formInputs: {
+        datasetProperties: {
+          label: 'Variable Attributes',
+          helpText: function HelpText() {
+            const { path } = useRouteMatch();
+            return (
+              <div className="formInfo">
+                <p>
+                  (Optional) Upload a variable annotations file describing the
+                  variables in the data file:
+                </p>
+                <ul>
+                  <li>in .csv, .tsv, or tab-delimited .txt format</li>
+                  <li>
+                    with columns labeled (i) variable; (ii) label; (iii)
+                    definition, and
+                  </li>
+                  <li>with one row for every variable in the data file</li>
+                </ul>
+                <p className="red">
+                  A valid variable annotations file is required to grant
+                  <i>Community Access</i> to the dataset.
+                </p>
+                <p>
+                  <i>
+                    See <Link to={path + '/help'}>My datasets help</Link> for
+                    more information on how to properly format your files for
+                    upload.
+                  </i>
+                </p>
+              </div>
+            );
           },
         },
       },
     },
-    isasimple: {
-      type: 'isasimple',
-      displayName: 'ISA Study',
-      description: `Integrate your study data in ${projectId}.`,
-      uploadTitle: 'Upload My Study',
-      formConfig: {
-        summary: {
-          inputProps: {
-            placeholder: 'brief summary of the study in a few sentences',
-          },
-        },
-        description: {
-          inputProps: {
-            required: false,
-            placeholder:
-              'optional longer description of the study including background, study objectives, methodology, etc.',
-          },
-        },
-        uploadMethodConfig: {
-          file: {
-            render: ({ fieldNode }) => (
-              <>
-                {fieldNode}
-                <div style={{ marginTop: '0.25em' }}>
-                  File must be a .csv, .tsv, or tab-delimited .txt file
-                </div>
-              </>
-            ),
-          },
-          url: {
-            offer: false,
-          },
-        },
+    datasetCharacteristics: {
+      enable: true,
+      studyDesignVocab: StudyDesignVocab,
+    },
+    dataInputConfig: {
+      file: {
+        enabled: true,
+        helpText: (
+          <div style={{ marginTop: '0.25em' }}>
+            File must be a .csv, .tsv, or tab-delimited .txt file
+          </div>
+        ),
+      },
+    },
+  };
+}
+
+function phenotypeFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: DefaultFormTitle,
+    },
+    datasetCharacteristics: {
+      enable: true,
+      studyDesignVocab: StudyDesignVocab,
+    },
+    dataInputConfig: {
+      file: {
+        enabled: true,
+        helpText: (
+          <div style={{ marginTop: '0.25em' }}>
+            File must be a tab-delimited .txt or .tsv file.
+          </div>
+        ),
+      },
+    },
+  };
+}
+
+function rnaseqFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: DefaultFormTitle,
+    },
+    dataInputConfig: {
+      file: { enabled: true },
+      helpText: () => (
+        <div className="formInfo">
+          To upload your dataset:
+          <ol>
+            <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
+            <li>compress the set of files, not a folder containing them.</li>
+            <li>make sure there are no empty files.</li>
+          </ol>
+          The upload requires:
+          <ol>
+            <li>
+              <b>a counts file per sample</b> - each sample must have only one
+              tab-delimited file (use extension .txt) containing two columns
+              with these headers:
+              <ul>
+                <li>'gene_id'</li>
+                <li>'FPKM' or 'TPM'</li>
+              </ul>
+            </li>
+            <li>
+              <b>a manifest file</b> - a tab-delimited file named
+              'manifest.txt', containing three columns without headers:
+              <ul>
+                <li>sample name</li>
+                <li>file name (must match a counts file)</li>
+                <li>
+                  strandedness ('unstranded' or 'stranded') - Only 'unstranded'
+                  is currently supported.
+                </li>
+              </ul>
+            </li>
+          </ol>
+          Optionally, you may include <b>bigWig files</b> (.bw extension) in
+          your compressed file:
+          <ol>
+            <li>
+              they are not required but will allow visualization in the genome
+              browser.
+            </li>
+            <li>add these file names in the manifest file.</li>
+            <li>make sure there are no empty files.</li>
+          </ol>
+        </div>
+      ),
+    },
+    dependencies: {
+      required: true,
+      renderInput: ReferenceGenomeDependency,
+    },
+    datasetCharacteristics: {
+      enable: true,
+      studyDesignVocab: StudyDesignVocab,
+    },
+  };
+}
+
+function ReferenceGenomeDependency({
+  dependencies,
+  setDependencies,
+}: DependencyInputProps): ReactElement | null {
+  const styleOverrides = {
+    treeNode: {
+      labelTextWrapper: {
+        fontSize: '1.1em',
       },
     },
   };
 
-const styleOverrides = {
-  treeNode: {
-    labelTextWrapper: {
-      fontSize: '1.1em',
-    },
-  },
-};
+  const selectedList = dependencies?.map((entry) => entry.resourceDisplayName);
 
-function ReferenceGenomeDepdency(props: DependencyProps) {
-  const { value, onChange } = props;
-  const selectedList = value?.map((entry) => entry.resourceDisplayName);
   const organismTree = useOrganismTree(true);
+
   const fileNameByTerm = useWdkService(async (wdkService) => {
     const genomeDataTypesResult = await wdkService.getAnswerJson(
       {
@@ -422,13 +443,15 @@ function ReferenceGenomeDepdency(props: DependencyProps) {
               };
         })
         .filter((dep): dep is DatasetDependency => dep != null);
-      onChange(dependencies);
+      setDependencies(dependencies);
     },
-    [buildNumber, fileNameByTerm, onChange]
+    [buildNumber, fileNameByTerm, setDependencies]
   );
   const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+
   if (organismTree == null) return null;
+
   return (
     <SelectTree
       shouldCloseOnSelection

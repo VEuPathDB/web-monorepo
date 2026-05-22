@@ -8,20 +8,17 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import {
   communityDatasetsEnabled,
   communitySite,
-  userDatasetsUploadTypes,
-  showExtraMetadata,
 } from '@veupathdb/web-common/lib/config';
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
+import {
+  uploadFormConfigurators,
+  userDatasetTypeConfigs,
+} from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
 const UserDatasetRouter = React.lazy(
   () => import('./controllers/UserDatasetRouter')
 );
-
-const availableUploadTypes = userDatasetsUploadTypes.trim()
-  ? userDatasetsUploadTypes.split(/,\s*/g)
-  : ['genelist', 'bigwigfiles', 'rnaseq', 'phenotype'];
 
 const USER_DATASETS_HELP_PAGE = 'user_datasets_help.html';
 
@@ -47,16 +44,15 @@ export const userDatasetRoutes: RouteEntry[] = [
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
             enablePublicUserDatasets={!!communityDatasetsEnabled}
-            availableUploadTypes={availableUploadTypes}
+            datasetTypeConfigs={userDatasetTypeConfigs}
             detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
-            uploadTypeConfig={uploadTypeConfig}
             helpTabContents={
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Dataset', plural: 'Datasets' }}
-            showExtraMetadata={!!showExtraMetadata}
+            uploadFormConfigurators={uploadFormConfigurators}
           />
         </Suspense>
       );

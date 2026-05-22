@@ -18,16 +18,16 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
+import { DataNoun } from '../../Utils/types';
 import {
-  DataNoun,
   DatasetListEntry,
   DatasetListShareUser,
   DatasetTypeOutput,
-} from '../../Utils/types';
+  VdiServiceConfig,
+} from '../../Service';
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
@@ -47,10 +47,12 @@ import {
   removeUserDataset,
   updateDatasetListItem,
 } from '../../Actions/UserDatasetsActions';
-import { datasetUserFullName } from '../../Utils/formatting';
+import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 
 export interface DatasetListProps {
   baseUrl: string;
+  readonly vdiConfig: VdiServiceConfig;
   user: User;
   location: any;
   projectId: string;
@@ -77,7 +79,6 @@ export interface DatasetListProps {
   removeUserDataset: typeof removeUserDataset;
   updateDatasetListItem: typeof updateDatasetListItem;
   updateProjectFilter: (filterByProject: boolean) => any;
-  quotaSize: number;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
   communityModalOpen: boolean;
@@ -87,7 +88,7 @@ export interface DatasetListProps {
     isVisibleToCommunity: boolean,
     context: 'datasetDetails' | 'datasetsList'
   ) => any;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: CommunityPromotionError | undefined;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
 }
@@ -166,7 +167,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ) {
     const { updateDatasetListItem } = this.props;
     return (value: DatasetListEntry[K]) =>
-      updateDatasetListItem(dataset, { [attrKey]: value });
+      updateDatasetListItem(
+        dataset,
+        { [attrKey]: value },
+        { [attrKey]: { value } },
+      );
   }
 
   renderSharedWithCell(cellProps: MesaDataCellProps) {
@@ -190,7 +195,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   }
 
   renderStatusCell(cellProps: MesaDataCellProps) {
-    const { baseUrl, projectId, projectName, dataNoun } = this.props;
+    const { baseUrl, projectId, projectName, dataNoun, vdiConfig } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -200,6 +205,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         projectId={projectId}
         displayName={projectName}
         dataNoun={dataNoun}
+        vdiConfig={vdiConfig}
       />
     );
   }
@@ -343,7 +349,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         name: 'Size',
         sortable: true,
         renderCell: textCell('fileSizeTotal', (size: number) =>
-          bytesToHuman(size)
+          formatFileSize(size)
         ),
       },
       // {
@@ -542,7 +548,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   filterAndSortRows(rows: DatasetListEntry[]): DatasetListEntry[] {
     const { searchTerm, uiState } = this.state;
-    const { projectName, projectId, filterByProject } = this.props;
+    const { projectId, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
 
     let result = rows;
@@ -630,7 +636,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       shareUserDatasets,
       unshareUserDatasets,
       filterByProject,
-      quotaSize,
+      vdiConfig,
       dataNoun,
       sharingModalOpen,
       sharingDatasetPending,
@@ -673,6 +679,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       .map((ud) => ud.fileSizeTotal ?? 0)
       .reduce(add, 0);
 
+    const quotaSize = vdiConfig.api.userMaxStorageSize;
     const totalPercent = totalSize / quotaSize;
 
     const offerProjectToggle = userDatasets.some(({ installTargets }) =>
@@ -692,13 +699,13 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                     deselectDataset={this.onRowDeselect}
                     shareUserDatasets={shareUserDatasets}
                     context="datasetsList"
-                    unshareUserDatasets={unshareUserDatasets}
+                    unshareUserDataset={unshareUserDatasets}
                     onClose={this.closeSharingModal}
                     dataNoun={dataNoun}
                     sharingDatasetPending={sharingDatasetPending}
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
-                    updateUserDatasetDetail={updateDatasetListItem}
+                    updateDatasetListItem={updateDatasetListItem}
                   />
                 ) : null}
                 {this.props.communityModalOpen && enablePublicUserDatasets ? (
@@ -746,9 +753,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                   </div>
                 )}
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
-                  <Icon fa="info-circle" /> {bytesToHuman(totalSize)} (
+                  <Icon fa="info-circle" /> {formatFileSize(totalSize)} (
                   {normalizePercentage(totalPercent)}%) of{' '}
-                  {bytesToHuman(quotaSize)} used
+                  {formatFileSize(quotaSize)} used
                 </div>
               </div>
             )}
