@@ -17,6 +17,7 @@ import {
 } from '../Actions/UserDatasetsActions';
 
 import { DatasetListEntry } from '../Service';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export const key = 'userDatasetList';
 
@@ -28,7 +29,7 @@ type SharingModalState = {
   communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
 };
 
 type InitialState = SharingModalState & {

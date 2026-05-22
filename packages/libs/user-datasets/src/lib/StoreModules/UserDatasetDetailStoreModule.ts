@@ -23,6 +23,7 @@ import {
 } from '../Actions/UserDatasetsActions';
 
 import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export const key = 'userDatasetDetail';
 
@@ -50,7 +51,7 @@ export interface State {
   communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
   serviceMetadata?: VdiServiceMetadata;
 }
 

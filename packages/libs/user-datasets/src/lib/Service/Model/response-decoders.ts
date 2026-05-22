@@ -451,7 +451,7 @@ const ccValidationErrors = io.type({
 });
 export type ValidationErrors = io.TypeOf<typeof ccValidationErrors>;
 
-const ccValidationErrorBody = io.intersection([
+export const ccValidationErrorBody = io.intersection([
   io.type({
     status: io.literal('invalid-input'),
     errors: ccValidationErrors,
@@ -507,6 +507,14 @@ export const datasetPostResponse = io.union([
   ccServerErrorBody,
 ]);
 export type DatasetPostResponse = io.TypeOf<typeof datasetPostResponse>;
+
+export const datasetPatchResponse = io.union([
+  io.undefined, // 204 has no response body
+  ccValidationErrorBody,
+  simpleContainerCoreErrorBody,
+  ccServerErrorBody,
+]);
+export type DatasetPatchResponse = io.TypeOf<typeof datasetPatchResponse>;
 
 // endregion Service Responses
 

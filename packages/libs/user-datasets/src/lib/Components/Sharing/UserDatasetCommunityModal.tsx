@@ -6,13 +6,13 @@ import { FilledButton } from '@veupathdb/coreui';
 
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
-import { User } from "@veupathdb/wdk-client/lib/Utils/WdkUser";
-import {
-  DatasetGetResponseBody,
-  DatasetListEntry,
-} from '../../Service';
-import { updateDatasetCommunityVisibility } from "../../Actions/UserDatasetsActions";
-import { DataNoun } from "../../Utils/types";
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { DatasetGetResponseBody, DatasetListEntry } from '../../Service';
+import { updateDatasetCommunityVisibility } from '../../Actions/UserDatasetsActions';
+import { DataNoun } from '../../Utils/types';
+import { CommunityPromotionError } from './CommunityPromotionError';
+import { ReactElement, ReactNode } from 'react';
+import { CommunityAccess } from '../Misc/CommunityAccess';
 
 export interface CommunityModalProps {
   readonly context: 'datasetDetails' | 'datasetsList';
@@ -22,11 +22,13 @@ export interface CommunityModalProps {
   readonly updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
   readonly updatePending: boolean;
   readonly updateSuccessful: boolean;
-  readonly updateError: string | undefined;
+  readonly updateError: CommunityPromotionError | undefined;
   readonly user: User;
 }
 
-export default function UserDatasetSharingModal(props: CommunityModalProps): React.ReactElement {
+export default function UserDatasetSharingModal(
+  props: CommunityModalProps
+): React.ReactElement {
   const {
     datasets,
     onClose,
@@ -65,90 +67,93 @@ export default function UserDatasetSharingModal(props: CommunityModalProps): Rea
     </button>
   );
 
-  const content = updatePending ? (
-    <Loading />
-  ) : updateError ? (
-    <div className="UserDataset-SharingModal-StatusView">
-      <Icon fa="times-circle danger" />
-      <h2>Error Sharing {targetNoun}.</h2>
-      <p>
-        An error occurred while sharing your {targetNounLower}. Please try
-        again.
-      </p>
-      <CloseButton />
-    </div>
-  ) : updateSuccessful ? (
-    <div className="UserDataset-SharingModal-StatusView">
-      <Icon fa="check-circle success" />
-      <h2>Community access updated successfully.</h2>
-      <CloseButton />
-    </div>
-  ) : (
-    <div className="UserDataset-SharingModal-FormView">
-      <div className="UserDataset-SharingModal-VisibilitySection">
-        <p className="UserDataset-SharingModal-Subtitle">
-          <em>
-            Community {dataNoun.plural} can be viewed and downloaded by all
-            users.
-          </em>
-        </p>
-        <div>
-          <p>
-            {totalSelectedDatasets} selected ({totalCommunityDatasets}{' '}
-            {isAre(totalCommunityDatasets)} already in Community{' '}
-            {dataNoun.plural}{' '}
-            {totalNotOwnedDatasets > 0
-              ? `; ${totalNotOwnedDatasets} ${isAre(
-                  totalNotOwnedDatasets
-                )} owned by someone else`
-              : ''}
-            ).
+  let content: ReactElement;
+
+  if (updatePending) content = <Loading />;
+  else if (updateError)
+    content = (
+      <UpdateErrors
+        errors={updateError}
+        targetNounLower={targetNounLower}
+        CloseButton={CloseButton}
+        context={context}
+      />
+    );
+  else if (updateSuccessful)
+    content = (
+      <div className="UserDataset-SharingModal-StatusView">
+        <Icon fa="check-circle success" />
+        <h2>Community access updated successfully.</h2>
+        <CloseButton />
+      </div>
+    );
+  else
+    content = (
+      <div className="UserDataset-SharingModal-FormView">
+        <div className="UserDataset-SharingModal-VisibilitySection">
+          <p className="UserDataset-SharingModal-Subtitle">
+            <em>
+              Community {dataNoun.plural} can be viewed and downloaded by all
+              users.
+            </em>
           </p>
-          <p>
-            <strong>
-              {totalOwnedDatasets > 0
-                ? `Change Community access for ${totalOwnedDatasets} selected ${targetNounLower} that you own:`
-                : `You do not own any of the selected datsets.`}
-            </strong>
-          </p>
-          <FilledButton
-            disabled={totalOwnedDatasets === 0}
-            themeRole="primary"
-            styleOverrides={{
-              container: {
-                margin: '1em 0',
-              },
-            }}
-            text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
-            onPress={() =>
-              updateDatasetCommunityVisibility(
-                datasets.map((d) => d.datasetId),
-                true,
-                context
-              )
-            }
-          />
-          <FilledButton
-            disabled={totalOwnedDatasets === 0}
-            themeRole="primary"
-            styleOverrides={{
-              container: {
-                margin: '1em 0',
-              },
-            }}
-            text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
-            onPress={() =>
-              updateDatasetCommunityVisibility(
-                datasets.map((d) => d.datasetId),
-                false,
-                context
-              )
-            }
-          />
+          <div>
+            <p>
+              {totalSelectedDatasets} selected ({totalCommunityDatasets}{' '}
+              {isAre(totalCommunityDatasets)} already in Community{' '}
+              {dataNoun.plural}{' '}
+              {totalNotOwnedDatasets > 0
+                ? `; ${totalNotOwnedDatasets} ${isAre(
+                    totalNotOwnedDatasets
+                  )} owned by someone else`
+                : ''}
+              ).
+            </p>
+            <p>
+              <strong>
+                {totalOwnedDatasets > 0
+                  ? `Change Community access for ${totalOwnedDatasets} selected ${targetNounLower} that you own:`
+                  : `You do not own any of the selected datasets.`}
+              </strong>
+            </p>
+            <FilledButton
+              disabled={totalOwnedDatasets === 0}
+              themeRole="primary"
+              styleOverrides={{
+                container: {
+                  margin: '1em 0',
+                },
+              }}
+              text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
+              onPress={() =>
+                updateDatasetCommunityVisibility(
+                  datasets.map((d) => d.datasetId),
+                  true,
+                  context
+                )
+              }
+            />
+            <FilledButton
+              disabled={totalOwnedDatasets === 0}
+              themeRole="primary"
+              styleOverrides={{
+                container: {
+                  margin: '1em 0',
+                },
+              }}
+              text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
+              onPress={() =>
+                updateDatasetCommunityVisibility(
+                  datasets.map((d) => d.datasetId),
+                  false,
+                  context
+                )
+              }
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 
   return (
     <Modal
@@ -161,6 +166,56 @@ export default function UserDatasetSharingModal(props: CommunityModalProps): Rea
     >
       <div className="UserDataset-SharingModal">{content}</div>
     </Modal>
+  );
+}
+
+interface UpdateErrorsProps {
+  readonly errors: CommunityPromotionError;
+  readonly targetNounLower: string;
+  readonly CloseButton: () => ReactElement;
+  readonly context: 'datasetDetails' | 'datasetsList';
+}
+
+function UpdateErrors({
+  errors,
+  targetNounLower,
+  CloseButton,
+  context,
+}: UpdateErrorsProps): ReactElement {
+  let content: ReactNode;
+
+  const inList = context === 'datasetsList';
+
+  if (errors.validationErrors) {
+    content = (
+      <>
+        <p>
+          {inList ? 'One or more datasets do' : 'Dataset does'} not contain
+          enough information to be made discoverable through{' '}
+          <CommunityAccess />.
+        </p>
+        <p>
+          Re-upload your {targetNounLower} and complete all sections on the
+          upload form marked with a globe icon to enable <CommunityAccess />.
+        </p>
+      </>
+    );
+  } else {
+    content = (
+      <p>
+        An error occurred while sharing your {targetNounLower}. Please try
+        again.
+      </p>
+    );
+  }
+
+  return (
+    <div className="UserDataset-SharingModal-StatusView">
+      <Icon fa="times-circle danger" />
+      <h2>Unable to Grant Community Access</h2>
+      {content}
+      <CloseButton />
+    </div>
   );
 }
 

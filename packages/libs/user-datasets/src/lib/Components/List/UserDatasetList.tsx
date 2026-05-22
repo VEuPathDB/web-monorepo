@@ -48,6 +48,7 @@ import {
   updateDatasetListItem,
 } from '../../Actions/UserDatasetsActions';
 import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 
 export interface DatasetListProps {
   baseUrl: string;
@@ -87,7 +88,7 @@ export interface DatasetListProps {
     isVisibleToCommunity: boolean,
     context: 'datasetDetails' | 'datasetsList'
   ) => any;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: CommunityPromotionError | undefined;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
 }

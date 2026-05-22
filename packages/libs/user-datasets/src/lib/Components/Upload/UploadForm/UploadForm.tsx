@@ -13,6 +13,7 @@ import { UploadUrlParams } from './DataModel';
 
 import './UploadForm.scss';
 import { UploadWarningModal } from './UploadWarningModal';
+import { CommunityAccess } from '../../Misc/CommunityAccess';
 
 const DatasetUploadSectionID = 'dataset-upload';
 
@@ -96,11 +97,8 @@ export function UploadForm(props: UploadFormProps): ReactElement {
               <>
                 <span className="important-info">
                   If you plan to make this dataset discoverable through{' '}
-                  <b>
-                    <i>Community Access</i>
-                  </b>
-                  , all sections marked with a globe icon must be completed
-                  before upload.
+                  <CommunityAccess />, all sections marked with a globe icon
+                  must be completed before upload.
                 </span>
                 Datasets uploaded with only a name, summary, and data files will
                 be restricted to personal use and sharing with selected

@@ -1,6 +1,7 @@
 import { CSSProperties, ReactElement } from 'react';
 import { Modal } from '@veupathdb/coreui';
 import { Consumer, Runnable } from '../../../Utils';
+import { CommunityAccess } from '../../Misc/CommunityAccess';
 
 export interface UploadWarningModalProps {
   readonly visible: boolean;
@@ -43,26 +44,16 @@ export function UploadWarningModal(
     >
       <div style={{ margin: '1.5em' }}>
         <p>
-          Editing{' '}
-          <b>
-            <i>My Datasets</i>
-          </b>{' '}
-          after upload is planned for a future release.
+          Editing <strong><em>My Datasets</em></strong> after upload is planned
+          for a future release.
         </p>
         <p>
           If you intend to make this dataset available through{' '}
-          <b>
-            <i>Community Access</i>
-          </b>
-          , please ensure that all required{' '}
-          <b>
-            <i>Core Dataset Information</i>
-          </b>{' '}
-          and any required supporting files (such as a{' '}
-          <b>
-            <i>Variable Annotations</i>
-          </b>{' '}
-          file) are included before uploading.
+          <CommunityAccess />, please ensure that all required{' '}
+          <strong><em>Core Dataset Information</em></strong> and any required
+          supporting files (such as a{' '}
+          <strong><em>Variable Annotations</em></strong> file) are included
+          before uploading.
         </p>
         <p>
           If this information is not provided, the dataset will only be

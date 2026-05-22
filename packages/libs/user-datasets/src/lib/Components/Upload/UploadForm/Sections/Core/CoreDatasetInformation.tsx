@@ -8,6 +8,7 @@ import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { UploadFormProps } from '../../UploadForm';
 import { GlobeIcon } from '../../Components';
+import { CommunityAccess } from '../../../../Misc/CommunityAccess';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: DatasetPostDetails;
@@ -31,7 +32,7 @@ export function CoreDatasetInformation({
       <h3><GlobeIcon /> Core Dataset Information</h3>
       <p className="important-info section-description">
         This information must be completed before you can grant{' '}
-        <b>Community Access</b> to this dataset. If you choose to not provide
+        <CommunityAccess /> to this dataset. If you choose to not provide
         it, you will still be able to upload the dataset for private use
         (including personal exploration and sharing with selected
         collaborators).

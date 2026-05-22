@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { capitalize, get } from 'lodash';
 
 import {
   transitionToInternalPage,
@@ -25,6 +25,7 @@ import {
 
 import { DatasetPatchRequest } from '../Service/Model';
 import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export type Action =
   | DetailErrorAction
@@ -507,8 +508,8 @@ export const updateDatasetCommunityVisibilitySuccess = makeActionCreator(
 );
 
 export const updateDatasetCommunityVisibilityError = makeActionCreator(
-  'user-datastes/update-community-visibility-error',
-  (errorMessage: string) => ({ errorMessage })
+  'user-datasets/update-community-visibility-error',
+  (errorMessage: CommunityPromotionError) => ({ errorMessage })
 );
 
 type UpdateCommunityVisibilityThunkAction =
@@ -533,28 +534,54 @@ export function updateDatasetCommunityVisibility(
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
       async ({ wdkService }) => {
         try {
+          const validationErrors: { datasetId: string; messages: string[] }[] = [];
+          const serviceErrors: string[] = [];
+
           await Promise.all(
             datasetIds.map((datasetId) =>
-              wdkService.vdi.patchDatasetDetails(datasetId, {
-                visibility: {
-                  value: isVisibleToCommunity ? 'public' : 'private',
+              wdkService.vdi.patchDatasetDetails(
+                datasetId,
+                {
+                  visibility: {
+                    value: isVisibleToCommunity ? 'public' : 'private',
+                  },
                 },
-              })
+                // on success
+                undefined,
+                // on validation error
+                ({ errors: msgs }) => {
+                  validationErrors.push({
+                    datasetId,
+                    messages: [
+                      ...msgs.general,
+                      ...Object.entries<string[]>(msgs.byKey).flatMap(
+                        ([key, values]) => values.map((it) => `${capitalize(key)} - ${it}`)
+                      ),
+                    ],
+                  });
+                },
+                // on misc error
+                ({ message }) => { if (message) serviceErrors.push(message) }
+              )
             )
           );
-          if (context === 'datasetDetails') {
-            return [
+
+          if (validationErrors.length === 0 && serviceErrors.length === 0) {
+            return context === 'datasetDetails' ? [
               loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
               updateDatasetCommunityVisibilitySuccess,
-            ];
-          } else {
-            return [
+            ] : [
               loadUserDatasetListWithoutLoadingIndicator(),
               updateDatasetCommunityVisibilitySuccess,
             ];
           }
+
+          return updateDatasetCommunityVisibilityError({
+            serviceErrors,
+            validationErrors,
+          });
         } catch (error) {
-          return updateDatasetCommunityVisibilityError(String(error));
+          return updateDatasetCommunityVisibilityError({clientError: String(error)});
         }
       }
     ),

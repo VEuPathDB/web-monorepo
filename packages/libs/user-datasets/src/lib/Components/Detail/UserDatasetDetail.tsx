@@ -54,6 +54,7 @@ import {
 
 // needed for eda searches, to covert vdi ID to wdk ID
 import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
+import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -90,7 +91,7 @@ export interface DetailViewProps {
   updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
   updateSharingModalState: typeof updateSharingModalState;
   communityModalOpen: boolean;
-  updateDatasetCommunityVisibilityError?: string;
+  updateDatasetCommunityVisibilityError?: CommunityPromotionError;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
   datasetSize: number;
