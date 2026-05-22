@@ -102,7 +102,7 @@ interface Props {
   referenceStrains?: Set<string>;
 }
 
-const LARGE_EXPORT_WARNING_THRESHOLD = 50000;
+const MAX_RESULT_SIZE_FOR_EXPORT = 100000;
 
 const cx = makeClassNameHelper('SiteSearch');
 
@@ -781,7 +781,7 @@ function StrategyLinkout(props: Props) {
   const [loading, setLoading] = useState(false);
 
   const isLargeSearchResult =
-    response.searchResults.totalCount > LARGE_EXPORT_WARNING_THRESHOLD;
+    response.searchResults.totalCount > MAX_RESULT_SIZE_FOR_EXPORT;
   const [showLargeExportModal, setShowLargeExportModal] = useState(false);
 
   const history = useHistory();
@@ -903,8 +903,10 @@ function StrategyLinkout(props: Props) {
               margin: 0,
             }}
           >
-            Your result ({response.searchResults.totalCount.toLocaleString()})
-            is large and may result in a timeout or slow response.
+            Your result size (
+            {response.searchResults.totalCount.toLocaleString()}) exceeds the
+            maximum number for exporting to a search strategy (
+            {MAX_RESULT_SIZE_FOR_EXPORT.toLocaleString()}).
           </p>
           <br />
           <p
@@ -942,9 +944,9 @@ function StrategyLinkout(props: Props) {
               type="button"
               onClick={() => setShowLargeExportModal(false)}
             >
-              Cancel
+              Ok
             </button>
-            <button
+            {/*<button
               className="btn"
               type="button"
               onClick={() => {
@@ -953,7 +955,7 @@ function StrategyLinkout(props: Props) {
               }}
             >
               Continue to export
-            </button>
+            </button>*/}
           </div>
         </div>
       </CommonModal>
