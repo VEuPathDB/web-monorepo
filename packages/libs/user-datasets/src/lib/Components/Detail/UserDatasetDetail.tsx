@@ -9,7 +9,6 @@ import {
   WdkDependencies,
   WdkDependenciesContext,
 } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
@@ -24,7 +23,7 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './UserDatasetDetail.scss';
-import { datasetUserFullName } from '../../Utils/formatting';
+import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -32,28 +31,30 @@ import {
   shareUserDatasets,
   sharingError,
   sharingSuccess,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
   updateSharingModalState,
   updateUserDatasetDetail,
 } from '../../Actions/UserDatasetsActions';
+import { DataNoun } from '../../Utils/types';
 import {
-  DataNoun,
-  DatasetDetails,
+  DatasetGetResponseBody,
   DatasetShareOffer,
-  ZipFileType,
-} from '../../Utils/types';
+  DatasetZipType,
+  VdiServiceConfig,
+  isVdiCompatibleWdkService,
+} from '../../Service';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import {
   MesaColumn,
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { isVdiCompatibleWdkService } from '../../Service';
 
 // needed for eda searches, to covert vdi ID to wdk ID
-import { diyUserDatasetIdToWdkRecordId }  from  '../../Utils/diyDatasets';
+import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
+import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 
 const classify = makeClassifier('UserDatasetDetail');
 
@@ -61,6 +62,7 @@ export interface DetailViewProps {
   baseUrl: string;
   includeAllLink: boolean;
   includeNameHeader: boolean;
+  readonly vdiConfig: VdiServiceConfig;
   user: User;
   config: ServiceConfig;
   isOwner: boolean;
@@ -70,7 +72,7 @@ export interface DetailViewProps {
   quotaSize: number;
   userDatasetUpdating: boolean;
   shareUserDatasets: typeof shareUserDatasets;
-  unshareUserDatasets: typeof unshareUserDatasets;
+  unshareUserDatasets: typeof unshareUserDataset;
   updateUserDatasetDetail: typeof updateUserDatasetDetail;
   sharingModalOpen: boolean;
   sharingDatasetPending: boolean;
@@ -78,7 +80,7 @@ export interface DetailViewProps {
   shareError?: Error;
   sharingSuccess: typeof sharingSuccess;
   shareSuccessful?: boolean;
-  userDataset: DatasetDetails;
+  userDataset: DatasetGetResponseBody;
   getQuestionUrl: (q: Question) => string;
   questionMap: Record<string, Question>;
   workspaceTitle: string;
@@ -89,7 +91,7 @@ export interface DetailViewProps {
   updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
   updateSharingModalState: typeof updateSharingModalState;
   communityModalOpen: boolean;
-  updateDatasetCommunityVisibilityError?: string;
+  updateDatasetCommunityVisibilityError?: CommunityPromotionError;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
   datasetSize: number;
@@ -101,7 +103,7 @@ export interface DatasetAttribute {
   value: React.ReactNode;
 }
 
-interface ZipFileRow {
+export interface ZipFileRow {
   name: string;
   size: number;
   download?: React.ReactNode;
@@ -138,7 +140,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
     this.props.updateSharingModalState(false);
   }
 
-  validateKey(key: string): key is keyof DatasetDetails {
+  validateKey(key: string): key is keyof DatasetGetResponseBody {
     const META_KEYS = [
       'name',
       'summary',
@@ -177,6 +179,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
       const { userDataset, updateUserDatasetDetail } = this.props;
 
       let updatedMeta;
+      let patchBody;
 
       if (index !== undefined && Number.isInteger(index) && index >= 0) {
         // Handle nested array case, for example meta.contacts[index].name
@@ -193,18 +196,21 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
             arrayField[index] = value;
           }
           updatedMeta = { [key]: arrayField };
+          patchBody = { [key]: { value: arrayField } };
         } else {
           // Add new entry to the array
           // We use this case to add new empty objects to the array.
           arrayField.push(value);
           updatedMeta = { [key]: arrayField };
+          patchBody = { [key]: { value: arrayField } };
         }
       } else {
         // Regular key-value update.
         updatedMeta = { [key]: value };
+        patchBody = { [key]: { value } };
       }
 
-      return updateUserDatasetDetail(userDataset, updatedMeta);
+      return updateUserDatasetDetail(userDataset, updatedMeta, patchBody);
     };
   }
 
@@ -299,6 +305,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
           attribute: 'Status',
           value: (
             <UserDatasetStatus
+              vdiConfig={this.props.vdiConfig}
               baseUrl={this.props.baseUrl}
               linkToDataset={false}
               useTooltip={false}
@@ -331,8 +338,8 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
                     const url =
                       urlPath +
                       (ps.length === 1
-                        ? '?param.' + ps[0] + '=' + (userDataset.type.name==='phenotype' 
-                                                      ? diyUserDatasetIdToWdkRecordId(userDataset.datasetId) 
+                        ? '?param.' + ps[0] + '=' + (userDataset.type.name==='phenotype'
+                                                      ? diyUserDatasetIdToWdkRecordId(userDataset.datasetId)
                                                       : userDataset.datasetId)
                         : '');
                     return (
@@ -410,7 +417,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
         },
         {
           attribute: 'Data set size',
-          value: bytesToHuman(this.props.datasetSize),
+          value: formatFileSize(this.props.datasetSize),
         },
         { attribute: 'ID', value: userDataset.datasetId },
         {
@@ -547,7 +554,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
     );
   }
 
-  getFileTableColumns(fileType: ZipFileType): MesaColumn<ZipFileRow>[] {
+  getFileTableColumns(fileType: DatasetZipType): MesaColumn<ZipFileRow>[] {
     const { userDataset, config } = this.props;
     const { projectId } = config;
     const { status } = userDataset;
@@ -567,7 +574,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
         >
           {userDataset.files[fileType]!.contents.map((file, index) => (
             <li key={`${file.fileName}-${index}`}>
-              {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
+              {file.fileName} <span>({formatFileSize(file.fileSize)})</span>
             </li>
           ))}
         </ol>
@@ -593,7 +600,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
         name: 'File Size',
         renderCell({ row }) {
           const { size } = row;
-          return size ? bytesToHuman(size) : '';
+          return size ? formatFileSize(size) : '';
         },
       },
       {
@@ -602,7 +609,6 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
         width: '130px',
         headingStyle: { textAlign: 'center' },
         renderCell() {
-          const downloadServiceAvailable = 'getUserDatasetFiles' in wdkService;
           const enableDownload =
             fileType === 'upload'
               ? true
@@ -612,16 +618,16 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
           return (
             <button
               className="btn btn-info"
-              disabled={!downloadServiceAvailable || !enableDownload}
+              disabled={!enableDownload}
               title={
-                downloadServiceAvailable && enableDownload
+                enableDownload
                   ? 'Download this file'
                   : 'This download is unavailable. Please contact us if this problem persists.'
               }
               onClick={(e) => {
                 e.preventDefault();
                 if (isVdiCompatibleWdkService(wdkService))
-                  wdkService.getUserDatasetFiles(
+                  wdkService.vdi.getDatasetRootFile(
                     userDataset.datasetId,
                     fileType
                   );
@@ -693,17 +699,16 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
         {!isOwner || !sharingModalOpen ? null : (
           <SharingModal
             user={user}
-            datasets={[userDataset]}
+            dataset={userDataset}
             onClose={this.closeSharingModal}
             shareUserDatasets={shareUserDatasets}
             context="datasetDetails"
-            unshareUserDatasets={unshareUserDatasets}
+            unshareUserDataset={unshareUserDatasets}
             dataNoun={dataNoun}
             sharingDatasetPending={sharingDatasetPending}
             shareSuccessful={shareSuccessful}
             shareError={shareError}
             updateUserDatasetDetail={updateUserDatasetDetail}
-            enablePublicUserDatasets={enablePublicUserDatasets}
           />
         )}
         {this.props.communityModalOpen && enablePublicUserDatasets ? (

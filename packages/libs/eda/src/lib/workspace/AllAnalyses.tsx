@@ -189,8 +189,8 @@ export function AllAnalyses(props: Props) {
       if (isVdiCompatibleWdkService(wdkService)) {
         const user = await wdkService.getCurrentUser();
         return Promise.all([
-          user.isGuest ? [] : wdkService.getCurrentUserDatasets(),
-          wdkService.getCommunityDatasets(),
+          user.isGuest ? [] : wdkService.vdi.getDatasetList(),
+          wdkService.vdi.getCommunityDatasetList(),
         ]);
       }
       return [];
