@@ -102,6 +102,7 @@ interface Props {
   referenceStrains?: Set<string>;
 }
 
+// note: this value should be coordinated with SiteSearchService:SearchRequest.java:MAX_RECORDS_IN_TABULAR_RESPONSE
 const MAX_RESULT_SIZE_FOR_EXPORT = 100000;
 
 const cx = makeClassNameHelper('SiteSearch');
