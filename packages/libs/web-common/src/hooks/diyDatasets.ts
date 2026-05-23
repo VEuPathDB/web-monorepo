@@ -5,11 +5,9 @@ import { orderBy } from 'lodash';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { makeEdaRoute } from '../routes';
-import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service';
 import { projectId } from '../config';
-import {
-  DatasetListEntry,
-} from '@veupathdb/user-datasets/lib/Utils/types';
+import { assertIsVdiCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/utils/compatibility';
+import { DatasetListEntry } from '@veupathdb/user-datasets/lib/Service';
 
 export function useDiyDatasets() {
   const [requestTimestamp, setRequestTimestamp] = useState(() => Date.now());
@@ -23,7 +21,9 @@ export function useDiyDatasets() {
       assertIsVdiCompatibleWdkService(wdkService);
       const user = await wdkService.getCurrentUser();
       if (user.isGuest) return [];
-      const userDatasets = await wdkService.getCurrentUserDatasets(projectId);
+      const userDatasets = await wdkService.vdi.getDatasetList({
+        install_target: projectId,
+      });
       const unsortedDiyEntries = userDatasets.map(userDatasetToMenuItem);
       return orderBy(unsortedDiyEntries, ({ name }) => name);
     },
@@ -33,7 +33,7 @@ export function useDiyDatasets() {
   const communityDatasets = useWdkService(
     async (wdkService) => {
       assertIsVdiCompatibleWdkService(wdkService);
-      const userDatasets = await wdkService.getCommunityDatasets();
+      const userDatasets = await wdkService.vdi.getCommunityDatasetList();
       const unsortedDiyEntries = userDatasets
         .filter((userDataset) => userDataset.installTargets.includes(projectId))
         .map(userDatasetToMenuItem);

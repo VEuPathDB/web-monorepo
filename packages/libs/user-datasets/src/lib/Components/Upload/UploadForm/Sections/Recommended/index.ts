@@ -1,0 +1,1 @@
+export { RecommendedInformation } from './RecommendedInformation';

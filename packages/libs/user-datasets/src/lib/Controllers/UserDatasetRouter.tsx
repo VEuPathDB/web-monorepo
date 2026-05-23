@@ -6,47 +6,42 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
-import { makeDatasetUploadPageConfig } from '../Utils/upload-config';
-import { DatasetUploadTypeConfig, DataNoun } from '../Utils/types';
+import { DataNoun } from '../Utils/types';
 
-import UserDatasetDetailController, {
-  UserDatasetDetailProps,
-} from './UserDatasetDetailController';
+import {
+  ClientDatasetTypeConfig,
+  UploadFormConfigurators,
+} from '../Components/Upload';
+import UserDatasetDetailController from './UserDatasetDetailController';
+import { DetailViewProps } from '../Components/Detail/UserDatasetDetail';
 
-interface Props<T1 extends string = string, T2 extends string = string> {
-  availableUploadTypes?: T1[];
+interface Props {
+  datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
+  uploadFormConfigurators: UploadFormConfigurators;
   detailsPageTitle: string;
   helpRoute: string;
-  uploadTypeConfig: DatasetUploadTypeConfig<T2>;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   detailComponentsByTypeName?: Record<
     string,
-    ComponentType<UserDatasetDetailProps>
+    ComponentType<DetailViewProps>
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
 }
 
-export function UserDatasetRouter<T1 extends string, T2 extends string>({
-  availableUploadTypes,
+export function UserDatasetRouter({
+  datasetTypeConfigs,
+  uploadFormConfigurators,
   detailsPageTitle,
   helpRoute,
-  uploadTypeConfig,
   workspaceTitle,
   helpTabContents,
   detailComponentsByTypeName,
   dataNoun,
   enablePublicUserDatasets = false,
-  showExtraMetadata = false,
-}: Props<T1, T2>) {
+}: Props) {
   const { path, url } = useRouteMatch();
-
-  const uploadPageConfig = useMemo(
-    () => makeDatasetUploadPageConfig(availableUploadTypes, uploadTypeConfig),
-    [availableUploadTypes, uploadTypeConfig]
-  );
 
   return (
     <Switch>
@@ -55,7 +50,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -69,13 +64,13 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              formConfigs={uploadFormConfigurators}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              datasetTypes={datasetTypeConfigs}
             />
           );
         }}
@@ -85,7 +80,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -99,51 +94,23 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              formConfigs={uploadFormConfigurators}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              datasetTypes={datasetTypeConfigs}
             />
           );
         }}
       />
-      {/* <WdkRoute
-        path={path + '/recent'}
-        exact={true}
-        requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
-        ) {
-          const urlParams = useMemo(() => {
-            const searchParamEntries = new URLSearchParams(
-              props.location.search
-            ).entries();
-
-            return Object.fromEntries(searchParamEntries);
-          }, [props.location.search]);
-
-          return (
-            <UserDatasetsWorkspace
-              baseUrl={url}
-              helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
-              urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
-              helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
-            />
-          );
-        }}
-      /> */}
       <WdkRoute
         path={path + '/help'}
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -157,13 +124,13 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              formConfigs={uploadFormConfigurators}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              datasetTypes={datasetTypeConfigs}
             />
           );
         }}
@@ -180,7 +147,6 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
               includeAllLink
               includeNameHeader
               {...props.match.params}
