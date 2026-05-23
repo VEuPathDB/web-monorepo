@@ -8,22 +8,23 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
-import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
-
-import { uploadTypeConfig } from '@veupathdb/web-common/lib/user-dataset-upload-config';
+import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Detail/UserDatasetDetail';
 
 import {
   communityDatasetsEnabled,
   communitySite,
   edaServiceUrl,
   projectId,
-  showExtraMetadata,
 } from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/lib/core/hooks/study';
+import {
+  uploadFormConfigurators,
+  userDatasetTypeConfigs,
+} from '@veupathdb/web-common/lib/user-dataset-upload-config';
 
 const EdaDatasetDetail = React.lazy(
   () =>
@@ -33,8 +34,6 @@ const EdaDatasetDetail = React.lazy(
 const UserDatasetRouter = React.lazy(
   () => import('../controllers/UserDatasetRouter')
 );
-
-const availableUploadTypes = ['isasimple'];
 
 const USER_DATASETS_HELP_PAGE = `${projectId}/user_datasets_help.html`;
 
@@ -58,9 +57,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          isasimple: function ClinEpiEdaDatasetDetail(
-            props: UserDatasetDetailProps
-          ) {
+          isasimple: function ClinEpiEdaDatasetDetail(props: DetailViewProps) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.datasetId
             );
@@ -84,18 +81,17 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
-            availableUploadTypes={availableUploadTypes}
+            uploadFormConfigurators={uploadFormConfigurators}
             detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
-            uploadTypeConfig={uploadTypeConfig}
+            datasetTypeConfigs={userDatasetTypeConfigs}
             detailComponentsByTypeName={detailComponentsByTypeName}
             helpTabContents={
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Dataset', plural: 'Datasets' }}
             enablePublicUserDatasets={!!communityDatasetsEnabled}
-            showExtraMetadata={!!showExtraMetadata}
           />
         </Suspense>
       );

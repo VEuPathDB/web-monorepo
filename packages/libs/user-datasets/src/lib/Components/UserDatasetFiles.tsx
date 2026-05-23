@@ -11,8 +11,12 @@ import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullab
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
-import { isVdiCompatibleWdkService } from '../Service';
-import { DatasetFileType, ZipFileType } from '../Utils/types';
+import {
+  isVdiCompatibleWdkService,
+  DatasetZipType,
+  DatasetFileDetails,
+} from '../Service';
+import { DatasetFileType } from '../Utils/types';
 
 import './UserDatasetFiles.scss';
 
@@ -41,7 +45,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
       }
 
       try {
-        const files = await wdkService.getUserDatasetFileListing(datasetId);
+        const files = await wdkService.vdi.getDatasetFileList(datasetId);
         return { data: files, error: null };
       } catch (error) {
         console.error('Failed to fetch user dataset files:', error);
@@ -95,7 +99,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
     fileType: DatasetFileType
   ): MesaColumn<ZipFileRow>[] => {
     const isZipFile = fileType === 'upload' || fileType === 'install';
-    const zipFileType = isZipFile ? (fileType as ZipFileType) : null;
+    const zipFileType = isZipFile ? (fileType as DatasetZipType) : null;
 
     const fileListElement = isZipFile &&
       zipFileType &&
@@ -111,11 +115,13 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
               padding: '0 0 0 2em',
             }}
           >
-            {files[zipFileType]!.contents.map((file, index) => (
-              <li key={`${file.fileName}-${index}`}>
-                {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
-              </li>
-            ))}
+            {files[zipFileType]!.contents.map(
+              (file: DatasetFileDetails, index: number) => (
+                <li key={`${file.fileName}-${index}`}>
+                  {file.fileName} <span>({bytesToHuman(file.fileSize)})</span>
+                </li>
+              )
+            )}
           </ol>
         </details>
       );
@@ -151,13 +157,8 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
           const isDocument = fileType === 'documents';
           const isPropertiesFile = fileType === 'datasetProperties';
 
-          const downloadServiceAvailable = isZipFile
-            ? 'getUserDatasetFiles' in wdkService
-            : isDocument
-            ? 'getUserDatasetDocument' in wdkService
-            : isPropertiesFile
-            ? 'getUserDatasetPropertiesFile' in wdkService
-            : false;
+          const downloadServiceAvailable =
+            isVdiCompatibleWdkService(wdkService);
 
           const enableDownload = true;
 
@@ -174,14 +175,11 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
                 e.preventDefault();
                 if (isVdiCompatibleWdkService(wdkService)) {
                   if (isZipFile && zipFileType) {
-                    wdkService.getUserDatasetFiles(datasetId, zipFileType);
+                    wdkService.vdi.getDatasetRootFile(datasetId, zipFileType);
                   } else if (isDocument) {
-                    wdkService.getUserDatasetDocument(datasetId, row.name);
+                    wdkService.vdi.getDatasetDocumentFile(datasetId, row.name);
                   } else if (isPropertiesFile) {
-                    wdkService.getUserDatasetPropertiesFile(
-                      datasetId,
-                      row.name
-                    );
+                    wdkService.vdi.getDatasetVarPropsFile(datasetId, row.name);
                   }
                 }
               }}
@@ -214,7 +212,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
   const documentsFileState = hasDocuments
     ? MesaState.create({
         columns: getFileTableColumns('documents'),
-        rows: files.documents!.map((file) => ({
+        rows: files.documents!.map((file: DatasetFileDetails) => ({
           name: file.fileName,
           size: file.fileSize,
         })),
@@ -226,7 +224,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
   const datasetPropertiesFileState = hasDatasetProperties
     ? MesaState.create({
         columns: getFileTableColumns('datasetProperties'),
-        rows: files.datasetProperties!.map((file) => ({
+        rows: files.datasetProperties!.map((file: DatasetFileDetails) => ({
           name: file.fileName,
           size: file.fileSize,
         })),

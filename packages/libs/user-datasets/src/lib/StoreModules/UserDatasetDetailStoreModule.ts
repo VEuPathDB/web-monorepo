@@ -18,9 +18,12 @@ import {
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
+  METADATA_LOADING,
+  METADATA_RECEIVED,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetDetails } from '../Utils/types';
+import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export const key = 'userDatasetDetail';
 
@@ -30,7 +33,7 @@ export const key = 'userDatasetDetail';
  */
 export type UserDatasetEntry = {
   isLoading: boolean;
-  resource?: DatasetDetails;
+  resource?: DatasetGetResponseBody;
 };
 
 export interface State {
@@ -48,7 +51,8 @@ export interface State {
   communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
+  serviceMetadata?: VdiServiceMetadata;
 }
 
 const initialState: State = {
@@ -63,6 +67,7 @@ const initialState: State = {
   updateDatasetCommunityVisibilityError: undefined,
   updateDatasetCommunityVisibilityPending: false,
   updateDatasetCommunityVisibilitySuccess: false,
+  serviceMetadata: undefined,
 };
 
 /**
@@ -164,6 +169,15 @@ export function reduce(state: State = initialState, action: Action): State {
         ...state,
         sharingDatasetPending: false,
         shareError: action.payload.shareError,
+      };
+
+    case METADATA_LOADING:
+      return state;
+
+    case METADATA_RECEIVED:
+      return {
+        ...state,
+        serviceMetadata: action.payload,
       };
 
     case updateCommunityModalVisibility.type:

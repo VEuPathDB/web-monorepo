@@ -189,8 +189,8 @@ export function AllAnalyses(props: Props) {
       if (isVdiCompatibleWdkService(wdkService)) {
         const user = await wdkService.getCurrentUser();
         return Promise.all([
-          user.isGuest ? [] : wdkService.getCurrentUserDatasets(),
-          wdkService.getCommunityDatasets(),
+          user.isGuest ? [] : wdkService.vdi.getDatasetList(),
+          wdkService.vdi.getCommunityDatasetList(),
         ]);
       }
       return [];
@@ -308,8 +308,9 @@ export function AllAnalyses(props: Props) {
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
 
   const [sharingModalVisible, setSharingModalVisible] = useState(false);
-  const [selectedAnalysisId, setSelectedAnalysisId] =
-    useState<string | undefined>(undefined);
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<
+    string | undefined
+  >(undefined);
 
   const tableState = useMemo(
     () => ({

@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function ThemedDeleteButton({ buttonText, onPress }: Props) {
-  const theme = useUITheme();
+  useUITheme();
   return (
     <MesaButton
       text={buttonText}

@@ -115,7 +115,6 @@ interface Props {
   siteInformationProps: SiteInformationProps;
   showLinkToEda?: boolean;
   enablePublicUserDatasets?: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
 }
 
 export function MapAnalysis(props: Props) {
@@ -228,7 +227,6 @@ function MapAnalysisImpl(props: ImplProps) {
     setTimeSliderConfig,
     showLinkToEda = false,
     enablePublicUserDatasets = false,
-    showExtraMetadata = false,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -731,7 +729,6 @@ function MapAnalysisImpl(props: ImplProps) {
                 enablePublicUserDatasets={enablePublicUserDatasets}
                 includeAllLink={false}
                 includeNameHeader={false}
-                showExtraMetadata={showExtraMetadata}
               />
             ) : (
               <RecordController
