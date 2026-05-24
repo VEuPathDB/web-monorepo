@@ -94,7 +94,7 @@ export default function makeHeaderMenuItemsFactory(
           text: 'Datasets',
           children: ({ isFocused }) =>
             [
-              /*{
+              {
                 text: (
                   <>
                     <DiyStudiesDaemon
@@ -110,8 +110,8 @@ export default function makeHeaderMenuItemsFactory(
                     </div>
                   </>
                 ),
-                route: '/search/dataset/Studies/result',
-              },*/
+                route: '/search/userdataset/AllUserDatasets/result',
+              },
               {
                 text: (
                   <StudyMenuSearch
