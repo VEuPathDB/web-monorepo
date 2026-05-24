@@ -57,9 +57,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          isasimple: function ClinEpiEdaDatasetDetail(
-            props: DetailViewProps
-          ) {
+          isasimple: function ClinEpiEdaDatasetDetail(props: DetailViewProps) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.datasetId
             );

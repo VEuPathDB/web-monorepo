@@ -32,10 +32,7 @@ export class VdiRoutes {
     return VdiRoutes.datasetUri(id) + VdiRoutes.FilesPathSegment;
   }
 
-  static datasetStaticFileUri(
-    id: DatasetId,
-    file: RootDatasetFile
-  ) {
+  static datasetStaticFileUri(id: DatasetId, file: RootDatasetFile) {
     return VdiRoutes.datasetFilesUri(id) + `/${file}`;
   }
 
@@ -47,10 +44,7 @@ export class VdiRoutes {
     );
   }
 
-  static datasetVariablePropertiesFileUri(
-    id: DatasetId,
-    file: string
-  ) {
+  static datasetVariablePropertiesFileUri(id: DatasetId, file: string) {
     return (
       VdiRoutes.datasetFilesUri(id) +
       VdiRoutes.VariablePropertiesPathSegment +

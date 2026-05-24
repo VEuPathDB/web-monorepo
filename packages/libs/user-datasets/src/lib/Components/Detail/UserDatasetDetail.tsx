@@ -4,7 +4,6 @@ import { Public } from '@material-ui/icons';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
-import { Mesa, MesaState } from '@veupathdb/coreui/lib/components/Mesa';
 import {
   WdkDependencies,
   WdkDependenciesContext,
@@ -18,6 +17,7 @@ import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
+import { UserDatasetFiles } from '../UserDatasetFiles';
 
 import { DateTime } from '../DateTime';
 
@@ -47,6 +47,7 @@ import {
 } from '../../Service';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
+
 import {
   MesaColumn,
   MesaStateProps,
@@ -103,12 +104,6 @@ export interface DatasetAttribute {
   value: React.ReactNode;
 }
 
-export interface ZipFileRow {
-  name: string;
-  size: number;
-  download?: React.ReactNode;
-}
-
 class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
   constructor(props: DetailViewProps) {
     super(props);
@@ -125,7 +120,6 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
     this.openSharingModal = this.openSharingModal.bind(this);
     this.renderFileSection = this.renderFileSection.bind(this);
     this.closeSharingModal = this.closeSharingModal.bind(this);
-    this.getFileTableColumns = this.getFileTableColumns.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
     this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
   }
@@ -338,9 +332,14 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
                     const url =
                       urlPath +
                       (ps.length === 1
-                        ? '?param.' + ps[0] + '=' + (userDataset.type.name==='phenotype'
-                                                      ? diyUserDatasetIdToWdkRecordId(userDataset.datasetId)
-                                                      : userDataset.datasetId)
+                        ? '?param.' +
+                          ps[0] +
+                          '=' +
+                          (userDataset.type.name === 'phenotype'
+                            ? diyUserDatasetIdToWdkRecordId(
+                                userDataset.datasetId
+                              )
+                            : userDataset.datasetId)
                         : '');
                     return (
                       <li key={q.fullName}>
@@ -526,123 +525,9 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderFileSection() {
-    const { userDataset, dataNoun } = this.props;
-    const { files: fileListing } = userDataset;
-    const uploadZipFileState: MesaStateProps<ZipFileRow> = MesaState.create({
-      columns: this.getFileTableColumns('upload'),
-      rows: [{ name: 'upload.zip', size: fileListing?.upload?.zipSize }],
-    });
-    const processedZipFileState: MesaStateProps<ZipFileRow> = MesaState.create({
-      columns: this.getFileTableColumns('install'),
-      rows: [{ name: 'install.zip', size: fileListing?.install?.zipSize }],
-    });
+    const { userDataset } = this.props;
 
-    return (
-      <section id="dataset-files">
-        <h2>Data Files</h2>
-        <h3>
-          <Icon fa="files-o" />
-          Uploaded Files in {dataNoun.singular}
-        </h3>
-        <Mesa state={uploadZipFileState} />
-        <h3>
-          <Icon fa="files-o" />
-          Processed Files in {dataNoun.singular}
-        </h3>
-        <Mesa state={processedZipFileState} />
-      </section>
-    );
-  }
-
-  getFileTableColumns(fileType: DatasetZipType): MesaColumn<ZipFileRow>[] {
-    const { userDataset, config } = this.props;
-    const { projectId } = config;
-    const { status } = userDataset;
-    const { wdkService } = this.context! as WdkDependencies;
-
-    const fileListElement = userDataset.files[fileType]?.contents?.length && (
-      <details style={{ margin: '1em 0 0 0.25em' }}>
-        <summary>
-          List of {fileType === 'upload' ? 'uploaded' : 'processed'} files:
-        </summary>
-        <ol
-          style={{
-            margin: '0.25em 0 0 0',
-            lineHeight: '1.5em',
-            padding: '0 0 0 2em',
-          }}
-        >
-          {userDataset.files[fileType]!.contents.map((file, index) => (
-            <li key={`${file.fileName}-${index}`}>
-              {file.fileName} <span>({formatFileSize(file.fileSize)})</span>
-            </li>
-          ))}
-        </ol>
-      </details>
-    );
-
-    const columns: Array<MesaColumn<ZipFileRow> | null> = [
-      {
-        key: 'name',
-        name: 'File Name',
-        renderCell({ row }) {
-          const { name } = row;
-          return (
-            <>
-              <code>{name}</code>
-              {fileListElement}
-            </>
-          );
-        },
-      },
-      {
-        key: 'size',
-        name: 'File Size',
-        renderCell({ row }) {
-          const { size } = row;
-          return size ? formatFileSize(size) : '';
-        },
-      },
-      {
-        key: 'download',
-        name: 'Download',
-        width: '130px',
-        headingStyle: { textAlign: 'center' },
-        renderCell() {
-          const enableDownload =
-            fileType === 'upload'
-              ? true
-              : status.install?.find((d) => d.installTarget === projectId)?.data
-                  ?.status === 'complete';
-
-          return (
-            <button
-              className="btn btn-info"
-              disabled={!enableDownload}
-              title={
-                enableDownload
-                  ? 'Download this file'
-                  : 'This download is unavailable. Please contact us if this problem persists.'
-              }
-              onClick={(e) => {
-                e.preventDefault();
-                if (isVdiCompatibleWdkService(wdkService))
-                  wdkService.vdi.getDatasetRootFile(
-                    userDataset.datasetId,
-                    fileType
-                  );
-              }}
-            >
-              <Icon fa="save" className="left-side" /> Download
-            </button>
-          );
-        },
-      },
-    ];
-
-    return columns.filter(
-      (column): column is MesaColumn<ZipFileRow> => !!column
-    );
+    return <UserDatasetFiles datasetId={userDataset.datasetId} />;
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

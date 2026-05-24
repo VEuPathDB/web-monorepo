@@ -8,6 +8,7 @@ import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
+import { DataFilesSection } from './DataFilesSection';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -53,7 +54,7 @@ export function RecordHeading(props) {
     name,
     creation_date,
     summary,
-    accessibility
+    accessibility,
   } = attributes;
 
   let datasetID = record.id[0].value;
@@ -66,45 +67,44 @@ export function RecordHeading(props) {
           <dt>Primary Publication:</dt>
           {primary_publication ? (
             <>
-              <dd>
-                {primary_publication}
-              </dd>
+              <dd>{primary_publication}</dd>
             </>
           ) : null}
 
           <dt>Primary Contact:</dt>
           {primary_contact_name ? (
             <>
-              <dd>
-                {primary_contact_name}
-              </dd>
+              <dd>{primary_contact_name}</dd>
             </>
           ) : null}
 
           <dt>VEuPathDB Dataset ID:</dt>
           <dd>{datasetID}</dd>
-          
+
           <dt>Dataset Version / Date:</dt>
           <dd>v1, {creation_date}</dd>
 
-	  <dt>Summary:</dt>
+          <dt>Summary:</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: summary }}
           />
 
-	  <dt>Data Accessibility:</dt>
-          <dd>{accessibility} 
-	    {accessibility === 'private' ? (
+          <dt>Data Accessibility:</dt>
+          <dd>
+            {accessibility}
+            {accessibility === 'private' ? (
               <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-                This dataset can only be discovered, explored, and downloaded by the owner and explicitly invited collaborators. 
-              </div> ) : (
-              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-                No access restrictions; anyone can download the data without registering.
+                This dataset can only be discovered, explored, and downloaded by
+                the owner and explicitly invited collaborators.
               </div>
-	    )}
-	  </dd>
-
+            ) : (
+              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
+                No access restrictions; anyone can download the data without
+                registering.
+              </div>
+            )}
+          </dd>
         </dl>
       </div>
     </>
@@ -173,11 +173,16 @@ const ConnectedReferences = connect(
   null
 )(References);
 
-export function RecordAttributeSection({ DefaultComponent, ...props }) {
-  if (props.attribute.name === 'description') {
-    return <BlockRecordAttributeSection {...props} />;
+export function RecordAttributeSection(props) {
+  const { DefaultComponent, ...restProps } = props;
+  switch (restProps.attribute.name) {
+    case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'dataFiles':
+      return <DataFilesSection {...restProps} />;
+    default:
+      return <DefaultComponent {...restProps} />;
   }
-  return <DefaultComponent {...props} />;
 }
 
 export function RecordTable(props) {
@@ -186,5 +191,3 @@ export function RecordTable(props) {
   }
   return <props.DefaultComponent {...props} />;
 }
-
-

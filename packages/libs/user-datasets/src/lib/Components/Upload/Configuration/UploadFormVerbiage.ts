@@ -12,7 +12,7 @@ export interface CoreInputConfigs {
   readonly datasetProperties?: {
     readonly label: string;
     readonly helpText?: () => ReactElement;
-  }
+  };
 }
 
 export interface UploadFormVerbiage {

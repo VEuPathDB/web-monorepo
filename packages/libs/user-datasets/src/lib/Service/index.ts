@@ -10,6 +10,7 @@ export {
 export type {
   DatasetContact,
   DatasetDependency,
+  DatasetFileDetails,
   DatasetGetResponseBody,
   DatasetId,
   DatasetListEntry,

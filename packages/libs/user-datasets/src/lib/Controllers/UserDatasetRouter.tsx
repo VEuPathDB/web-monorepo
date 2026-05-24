@@ -22,10 +22,7 @@ interface Props {
   helpRoute: string;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
-  detailComponentsByTypeName?: Record<
-    string,
-    ComponentType<DetailViewProps>
-  >;
+  detailComponentsByTypeName?: Record<string, ComponentType<DetailViewProps>>;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
 }

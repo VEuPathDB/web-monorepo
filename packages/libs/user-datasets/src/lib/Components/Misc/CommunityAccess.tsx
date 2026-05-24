@@ -5,5 +5,9 @@ import { ReactElement } from 'react';
  * Access" in the user dataset workspace.
  */
 export function CommunityAccess(): ReactElement {
-  return <em><strong>Community Access</strong></em>;
+  return (
+    <em>
+      <strong>Community Access</strong>
+    </em>
+  );
 }

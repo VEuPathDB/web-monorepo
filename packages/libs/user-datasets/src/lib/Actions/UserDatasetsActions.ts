@@ -129,7 +129,8 @@ export function listItemUpdating(): ListItemUpdatingAction {
 
 //==============================================================================
 
-export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success';
+export const LIST_ITEM_UPDATE_SUCCESS =
+  'user-datasets/list-item-update-success';
 
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
@@ -534,7 +535,8 @@ export function updateDatasetCommunityVisibility(
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
       async ({ wdkService }) => {
         try {
-          const validationErrors: { datasetId: string; messages: string[] }[] = [];
+          const validationErrors: { datasetId: string; messages: string[] }[] =
+            [];
           const serviceErrors: string[] = [];
 
           await Promise.all(
@@ -555,25 +557,30 @@ export function updateDatasetCommunityVisibility(
                     messages: [
                       ...msgs.general,
                       ...Object.entries<string[]>(msgs.byKey).flatMap(
-                        ([key, values]) => values.map((it) => `${capitalize(key)} - ${it}`)
+                        ([key, values]) =>
+                          values.map((it) => `${capitalize(key)} - ${it}`)
                       ),
                     ],
                   });
                 },
                 // on misc error
-                ({ message }) => { if (message) serviceErrors.push(message) }
+                ({ message }) => {
+                  if (message) serviceErrors.push(message);
+                }
               )
             )
           );
 
           if (validationErrors.length === 0 && serviceErrors.length === 0) {
-            return context === 'datasetDetails' ? [
-              loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
-              updateDatasetCommunityVisibilitySuccess,
-            ] : [
-              loadUserDatasetListWithoutLoadingIndicator(),
-              updateDatasetCommunityVisibilitySuccess,
-            ];
+            return context === 'datasetDetails'
+              ? [
+                  loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
+                  updateDatasetCommunityVisibilitySuccess,
+                ]
+              : [
+                  loadUserDatasetListWithoutLoadingIndicator(),
+                  updateDatasetCommunityVisibilitySuccess,
+                ];
           }
 
           return updateDatasetCommunityVisibilityError({
@@ -581,7 +588,9 @@ export function updateDatasetCommunityVisibility(
             validationErrors,
           });
         } catch (error) {
-          return updateDatasetCommunityVisibilityError({clientError: String(error)});
+          return updateDatasetCommunityVisibilityError({
+            clientError: String(error),
+          });
         }
       }
     ),
@@ -622,8 +631,12 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         () => false
       ),
       wdkService.vdi.getDatasetList(),
-    ]).then(([filterByProject, userDatasets]) =>
-      listReceived(userDatasets, filterByProject), listErrorReceived));
+    ]).then(
+      ([filterByProject, userDatasets]) =>
+        listReceived(userDatasets, filterByProject),
+      listErrorReceived
+    )
+  );
 }
 
 export function loadUserDatasetList() {
@@ -734,8 +747,8 @@ export function updateDatasetListItem(
       .patchDatasetDetails(original.datasetId, patch)
       .then(
         () => listItemUpdateSuccess({ ...original, ...updates }),
-        listItemUpdateError,
-      )
+        listItemUpdateError
+      ),
   ]);
 }
 
@@ -755,10 +768,7 @@ export function updateUserDatasetDetail(
   ]);
 }
 
-export function removeUserDataset(
-  datasetId: string,
-  redirectTo?: string
-) {
+export function removeUserDataset(datasetId: string, redirectTo?: string) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),

@@ -14,9 +14,10 @@ export interface DatasetPropertiesInputProps {
 export function DatasetPropertiesInput(
   props: DatasetPropertiesInputProps
 ): ReactElement {
-  const helpText = typeof props.helpText === 'function'
-    ? <div className="column-2">{props.helpText()}</div>
-    : undefined;
+  const helpText =
+    typeof props.helpText === 'function' ? (
+      <div className="column-2">{props.helpText()}</div>
+    ) : undefined;
 
   const labelClass = props.required ? 'required' : undefined;
 

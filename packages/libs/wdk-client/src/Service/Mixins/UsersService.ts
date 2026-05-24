@@ -54,7 +54,7 @@ export default (base: ServiceBase) => {
       'POST',
       '/user-id-query',
       JSON.stringify({ emails })
-    )
+    );
   }
 
   return {

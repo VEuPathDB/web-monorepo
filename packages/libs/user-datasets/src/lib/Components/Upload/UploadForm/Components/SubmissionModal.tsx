@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 
-import { Modal } from "@veupathdb/coreui";
-import { Loading } from "@veupathdb/wdk-client/lib/Components";
+import { Modal } from '@veupathdb/coreui';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 export interface SubmissionModalProps {
   readonly submitting: boolean;
@@ -35,11 +35,7 @@ export function SubmissionModal(props: SubmissionModalProps): ReactElement {
   );
 }
 
-function UploadProgress({
-  uploadProgress,
-}: {
-  uploadProgress: number;
-}) {
+function UploadProgress({ uploadProgress }: { uploadProgress: number }) {
   return (
     <div
       style={{

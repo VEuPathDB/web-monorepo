@@ -10,9 +10,9 @@ import {
 import { makeClassifier } from '../UserDatasetUtils';
 import UserDatasetDetail, { DetailViewProps } from './UserDatasetDetail';
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
-import { WdkDependencies } from "@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect";
-import { MesaColumn } from "@veupathdb/coreui/lib/components/Mesa/types";
-import { DatasetDependency } from "../../Service";
+import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
+import { DatasetDependency } from '../../Service';
 
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 
@@ -25,7 +25,9 @@ interface CompatibilityRow extends DatasetDependency {
   project: string;
 }
 
-class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}> {
+class BigwigDatasetDetail extends UserDatasetDetail<{
+  sequenceId: string | null;
+}> {
   constructor(props: DetailViewProps) {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);

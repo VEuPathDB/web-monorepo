@@ -44,16 +44,23 @@ export function UploadWarningModal(
     >
       <div style={{ margin: '1.5em' }}>
         <p>
-          Editing <strong><em>My Datasets</em></strong> after upload is planned
-          for a future release.
+          Editing{' '}
+          <strong>
+            <em>My Datasets</em>
+          </strong>{' '}
+          after upload is planned for a future release.
         </p>
         <p>
           If you intend to make this dataset available through{' '}
           <CommunityAccess />, please ensure that all required{' '}
-          <strong><em>Core Dataset Information</em></strong> and any required
-          supporting files (such as a{' '}
-          <strong><em>Variable Annotations</em></strong> file) are included
-          before uploading.
+          <strong>
+            <em>Core Dataset Information</em>
+          </strong>{' '}
+          and any required supporting files (such as a{' '}
+          <strong>
+            <em>Variable Annotations</em>
+          </strong>{' '}
+          file) are included before uploading.
         </p>
         <p>
           If this information is not provided, the dataset will only be
