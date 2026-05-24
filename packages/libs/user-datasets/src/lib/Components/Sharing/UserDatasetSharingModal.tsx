@@ -1,0 +1,619 @@
+import React, { ReactElement, ReactNode } from 'react';
+
+import {
+  IconAlt as Icon,
+  Loading,
+  TextBox,
+} from '@veupathdb/wdk-client/lib/Components';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { Modal } from '@veupathdb/coreui';
+import {
+  DatasetGetResponseBody,
+  DatasetId,
+  DatasetListEntry,
+  DatasetListShareUser,
+  DatasetUser,
+  isVdiCompatibleWdkService,
+} from '../../Service';
+import '../UserDatasets.scss';
+import './UserDatasetSharingModal.scss';
+import { datasetUserFullName } from '../../Utils/formatting';
+import { Consumer, DataNoun, Runnable } from '../../Utils/types';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import {
+  shareUserDatasets,
+  unshareUserDataset,
+  updateDatasetListItem,
+  updateUserDatasetDetail,
+} from '../../Actions/UserDatasetsActions';
+import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
+
+//
+
+function isValidEmail(email?: string | null): email is string {
+  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+type VdiDataset = DatasetGetResponseBody | DatasetListEntry;
+type VdiUser = DatasetUser | DatasetListShareUser;
+
+interface Recipient {
+  readonly email: string;
+  readonly verified?: boolean;
+  readonly id?: number;
+  readonly error?: ReactNode;
+}
+
+//
+
+export type SharingModalContext = 'datasetDetails' | 'datasetsList';
+
+export type UserDatasetSharingModalProps = {
+  readonly user: User;
+  readonly dataNoun: DataNoun;
+  readonly context: SharingModalContext;
+
+  readonly sharingDatasetPending: boolean;
+  readonly shareSuccessful?: boolean;
+  readonly shareError?: Error;
+
+  readonly onClose: Runnable;
+  readonly shareUserDatasets: typeof shareUserDatasets;
+  readonly unshareUserDataset: typeof unshareUserDataset;
+} & (
+  | {
+      readonly context: 'datasetDetails';
+      readonly dataset: DatasetGetResponseBody;
+      readonly updateUserDatasetDetail: typeof updateUserDatasetDetail;
+    }
+  | {
+      readonly context: 'datasetsList';
+      readonly datasets: DatasetListEntry[];
+      readonly updateDatasetListItem: typeof updateDatasetListItem;
+      readonly deselectDataset?: Consumer<DatasetListEntry>;
+    }
+);
+
+export interface UserDatasetSharingModalState {
+  readonly recipients: Recipient[];
+  readonly recipientInput: string | null;
+}
+
+export class UserDatasetSharingModal extends React.Component<
+  UserDatasetSharingModalProps,
+  UserDatasetSharingModalState
+> {
+  constructor(props: UserDatasetSharingModalProps) {
+    super(props);
+    this.state = {
+      recipients: [],
+      recipientInput: null,
+    };
+    this.renderShareItem = this.renderShareItem.bind(this);
+    this.renderShareList = this.renderShareList.bind(this);
+    this.renderDatasetList = this.renderDatasetList.bind(this);
+    this.renderDatasetItem = this.renderDatasetItem.bind(this);
+    this.renderRecipientItem = this.renderRecipientItem.bind(this);
+    this.renderRecipientList = this.renderRecipientList.bind(this);
+    this.renderRecipientForm = this.renderRecipientForm.bind(this);
+
+    this.handleTextChange = this.handleTextChange.bind(this);
+    this.handleRecipientAdd = this.handleRecipientAdd.bind(this);
+    this.isMyDataset = this.isMyDataset.bind(this);
+    this.verifyRecipient = this.verifyRecipient.bind(this);
+    this.removeRecipient = this.removeRecipient.bind(this);
+    this.getDatasetNoun = this.getDatasetNoun.bind(this);
+    this.disqualifyRecipient = this.disqualifyRecipient.bind(this);
+
+    this.submitShare = this.submitShare.bind(this);
+    this.renderEmptyState = this.renderEmptyState.bind(this);
+    this.unshareWithUser = this.unshareWithUser.bind(this);
+    this.isRecipientValid = this.isRecipientValid.bind(this);
+    this.renderViewContent = this.renderViewContent.bind(this);
+    this.isDatasetShareable = this.isDatasetShareable.bind(this);
+    this.getValidRecipients = this.getValidRecipients.bind(this);
+    this.getShareableDatasets = this.getShareableDatasets.bind(this);
+    this.renderSharingButtons = this.renderSharingButtons.bind(this);
+  }
+
+  isMyDataset(dataset: VdiDataset) {
+    const { user } = this.props;
+    return dataset && dataset.owner.userId && dataset.owner.userId === user.id;
+  }
+
+  handleTextChange(recipientInput: string | null = null) {
+    this.setState({ recipientInput });
+  }
+
+  getDatasetNoun() {
+    return this.props.context === 'datasetDetails' ||
+      this.props.datasets.length === 1
+      ? `this ${this.props.dataNoun.singular.toLowerCase()}`
+      : `these ${this.props.dataNoun.plural.toLowerCase()}`;
+  }
+
+  verifyRecipient(recipientEmail: string) {
+    if (!recipientEmail.length)
+      throw new TypeError(
+        `verifyRecipient: bad email received (${recipientEmail})`
+      );
+
+    const { wdkService } = this.context as EpicDependencies;
+
+    if (!isVdiCompatibleWdkService(wdkService)) {
+      throw new Error(
+        `verifyRecipient: must have a properly configured UserDatasetsCompatibleWdkService`
+      );
+    }
+
+    return wdkService
+      .getUserIdsByEmail([recipientEmail])
+      .then(({ results }) => {
+        const foundUserId = results && results[recipientEmail];
+
+        if (!results || !foundUserId) {
+          return this.disqualifyRecipient(
+            recipientEmail,
+            <span>
+              This email is not associated with a VEuPathDB account. <br />{' '}
+              <b>{recipientEmail}</b> will not receive {this.getDatasetNoun()}.
+            </span>
+          );
+        }
+
+        if (foundUserId === this.props.user.id) {
+          return this.disqualifyRecipient(
+            recipientEmail,
+            <span>
+              Sorry, you cannot share a{' '}
+              {this.props.dataNoun.singular.toLowerCase()} with yourself.
+            </span>
+          );
+        } else {
+          return this.acceptRecipient(recipientEmail, foundUserId);
+        }
+      })
+      .catch((err) => {
+        console.error(
+          `verifyRecipient:  error checking if '${recipientEmail}' exists.`,
+          err
+        );
+        return this.disqualifyRecipient(
+          recipientEmail,
+          <span>An unknown error occurred.</span>
+        );
+      });
+  }
+
+  removeRecipient(recipient: Recipient) {
+    const { email } = recipient;
+    const { onClose } = this.props;
+    const recipients = [
+      ...this.state.recipients.filter((user) => user.email !== email),
+    ];
+    return recipients.length ? this.setState({ recipients }) : onClose();
+  }
+
+  acceptRecipient(recipientEmail: string, id: number) {
+    const { recipients } = this.state;
+    const acceptedRecipient = {
+      id,
+      verified: true,
+      email: recipientEmail,
+    };
+    this.setState({
+      recipients: recipients.map((recipient) => {
+        return recipient.email === recipientEmail
+          ? acceptedRecipient
+          : recipient;
+      }),
+    });
+  }
+
+  disqualifyRecipient(recipientEmail: string, reason: ReactNode) {
+    const { recipients } = this.state;
+    const disqualifiedRecipient = {
+      email: recipientEmail,
+      verified: false,
+      error: reason,
+    };
+    this.setState({
+      recipients: recipients.map((recipient) => {
+        return recipient.email === recipientEmail
+          ? disqualifiedRecipient
+          : recipient;
+      }),
+    });
+  }
+
+  handleRecipientAdd() {
+    const { recipientInput, recipients } = this.state;
+    if (!isValidEmail(recipientInput))
+      return alert('Please enter a valid email to share with.');
+    if (
+      recipients.find(
+        (recipient) =>
+          recipient.email.toLowerCase() === recipientInput.toLowerCase()
+      )
+    )
+      return alert('This email has already been entered.');
+    this.setState(
+      {
+        recipientInput: null,
+        recipients: [
+          ...recipients,
+          {
+            email: recipientInput,
+          },
+        ],
+      },
+      () => this.verifyRecipient(recipientInput)
+    );
+  }
+
+  renderEmptyState() {
+    return (
+      <i className="faded">
+        This {this.props.dataNoun.singular.toLowerCase()} hasn't been shared
+        yet.
+      </i>
+    );
+  }
+
+  unshareWithUser(datasetId: DatasetId, userId: number) {
+    if (
+      !window.confirm(
+        `Are you sure you want to stop sharing ${this.getDatasetNoun()} with this user?`
+      )
+    )
+      return;
+    const { unshareUserDataset, context } = this.props;
+    unshareUserDataset(datasetId, userId, context);
+  }
+
+  renderShareItem(share: VdiUser, index: number, userDataset: VdiDataset) {
+    return (
+      <div key={index}>
+        <span className="faded">Shared with</span>{' '}
+        <b>{datasetUserFullName(share)}</b>{' '}
+        <button
+          type="button"
+          onClick={() =>
+            this.unshareWithUser(userDataset.datasetId, share.userId)
+          }
+          className="link"
+        >
+          <Icon fa="times-circle unshareRecipient" />
+        </button>
+      </div>
+    );
+  }
+
+  private isOnDatasetList(
+    context: SharingModalContext
+  ): asserts context is 'datasetsList' {
+    if (context !== 'datasetsList')
+      throw new Error(
+        'illegal state: dataset share modal is attempting to use dataset list' +
+          ' functionality outside of the dataset list context'
+      );
+  }
+
+  unselectDataset(dataset: DatasetListEntry) {
+    this.isOnDatasetList(this.props.context);
+    this.props.deselectDataset?.(dataset);
+  }
+
+  renderDatasetItem(userDataset: VdiDataset) {
+    const { shares, datasetId } = userDataset;
+    const isOwner = this.isMyDataset(userDataset);
+    const { dataNoun } = this.props;
+
+    const deselectDataset =
+      this.props.context === 'datasetsList'
+        ? this.props.deselectDataset
+        : undefined;
+
+    const EmptyState = this.renderEmptyState;
+    const ShareList = this.renderShareList;
+
+    return (
+      <div
+        key={datasetId}
+        className={'UserDatasetSharing-Dataset' + (isOwner ? '' : ' invalid')}
+      >
+        <div className="UserDatasetSharing-Dataset-Icon">
+          <Icon fa={isOwner ? 'table' : 'exclamation-circle danger'} />
+        </div>
+
+        <div className="UserDatasetSharing-Dataset-Details">
+          <h3>{userDataset.name}</h3>
+          {!isOwner ? (
+            <i className="faded danger">
+              This {dataNoun.singular.toLowerCase()} has been shared with you.
+              Only the owner can share it.
+            </i>
+          ) : Array.isArray(shares) && shares.length ? (
+            <ShareList userDataset={userDataset} />
+          ) : (
+            <EmptyState />
+          )}
+        </div>
+
+        <div className="UserDatasetSharing-Dataset-Actions">
+          {typeof deselectDataset !== 'function' ? null : (
+            <button
+              type="button"
+              title={`Unselect this ${dataNoun.singular.toLowerCase()} for sharing`}
+              onClick={() =>
+                this.unselectDataset(userDataset as DatasetListEntry)
+              }
+              className="link removalLink"
+            >
+              <Icon fa="close" />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  renderRecipientItem(recipient: Recipient, index: number) {
+    const { email, verified, error } = recipient;
+    const invalid = verified === false;
+    const userIcon =
+      verified === null
+        ? 'circle-o-notch fa-spin'
+        : verified
+        ? 'user-circle'
+        : 'user-times danger';
+
+    return (
+      <div
+        key={index}
+        className={'UserDatasetSharing-Recipient' + (invalid ? ' invalid' : '')}
+      >
+        <div className="UserDatasetSharing-Recipient-Icon">
+          <Icon fa={userIcon} />
+        </div>
+        <div className="UserDatasetSharing-Recipient-Details">
+          <h3>{email}</h3>
+          {invalid ? (
+            <span className="danger">{error}</span>
+          ) : (
+            `will receive ${this.getDatasetNoun()}`
+          )}
+        </div>
+        <div className="UserDatasetSharing-Recipient-Actions">
+          <button
+            type="button"
+            onClick={() => this.removeRecipient(recipient)}
+            title="Remove this recipient."
+            className="link removalLink"
+          >
+            <Icon fa="close" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  renderRecipientList({
+    recipients,
+  }: {
+    recipients: Recipient[];
+  }): ReactElement {
+    return !Array.isArray(recipients) || !recipients.length ? (
+      <p className="NoRecipients">
+        <Icon fa="user-o" /> &nbsp; No recipients.
+      </p>
+    ) : (
+      <>{recipients.map(this.renderRecipientItem)}</>
+    );
+  }
+
+  renderShareList({
+    userDataset,
+  }: {
+    userDataset: VdiDataset;
+  }): ReactElement | null {
+    if (!Array.isArray(userDataset.shares) || !userDataset.shares.length)
+      return null;
+
+    const shares =
+      this.props.context === 'datasetDetails'
+        ? // Filter out revoked shares when on the dataset details page.
+          (userDataset as DatasetGetResponseBody)
+            .shares!.filter((it) => it.status === 'grant')
+            .map((it) => it.recipient)
+        : (userDataset as DatasetListEntry).shares;
+
+    return (
+      (
+        <>
+          {shares?.map((share, index) =>
+            this.renderShareItem(share, index, userDataset)
+          )}
+        </>
+      ) ?? null
+    );
+  }
+
+  /**
+   * Despite this method's name and purpose, it is used both in the dataset list
+   * and dataset details contexts.
+   *
+   * In the dataset details context, the datasets argument will contain a single
+   * value.
+   */
+  renderDatasetList({
+    datasets,
+  }: {
+    datasets: VdiDataset[];
+  }): ReactElement | null {
+    return !Array.isArray(datasets) || !datasets.length ? null : (
+      <>{datasets.map(this.renderDatasetItem)}</>
+    );
+  }
+
+  isRecipientValid(recipient: Recipient) {
+    return recipient.verified && recipient.id !== this.props.user.id;
+  }
+
+  isDatasetShareable(dataset: VdiDataset) {
+    return dataset.owner.userId === this.props.user.id;
+  }
+
+  submitShare() {
+    const recipients = this.getValidRecipients();
+    const datasets = this.getShareableDatasets();
+    if (!datasets.length) return;
+    const { shareUserDatasets, context } = this.props;
+
+    shareUserDatasets(
+      datasets.map(({ datasetId }: VdiDataset) => datasetId),
+      recipients.map(({ id }: Recipient) => id!),
+      context
+    );
+  }
+
+  renderRecipientForm() {
+    const { recipientInput } = this.state;
+    const { handleTextChange, handleRecipientAdd } = this;
+
+    return (
+      <form
+        className="UserDatasetSharing-RecipientForm"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <TextBox
+          placeholder="name@example.com"
+          onChange={handleTextChange}
+          value={recipientInput ? recipientInput : ''}
+        />
+        <button
+          className="btn slim btn-slim"
+          title="Share with this email address"
+          onClick={handleRecipientAdd}
+          type="submit"
+        >
+          <Icon fa="user-plus" />
+        </button>
+      </form>
+    );
+  }
+
+  getValidRecipients() {
+    const { recipients } = this.state;
+    return recipients.filter(this.isRecipientValid);
+  }
+
+  getShareableDatasets() {
+    return this.makeDatasetList().filter(this.isDatasetShareable);
+  }
+
+  renderSharingButtons() {
+    const datasets = this.getShareableDatasets();
+    const recipients = this.getValidRecipients();
+    const { dataNoun } = this.props;
+
+    return (
+      <div className="UserDatasetSharing-Buttons">
+        <button
+          className="btn btn-info"
+          disabled={!recipients.length || !datasets.length}
+          onClick={this.submitShare}
+        >
+          <Icon fa="share left-side" />
+          Grant {recipients.length} Recipient
+          {recipients.length === 1 ? '' : 's'} Access to{' '}
+          {datasets.length === 1 ? dataNoun.singular : dataNoun.plural}
+        </button>
+      </div>
+    );
+  }
+
+  private makeDatasetList(): VdiDataset[] {
+    return this.props.context === 'datasetsList'
+      ? this.props.datasets
+      : [this.props.dataset];
+  }
+
+  renderViewContent(): ReactElement {
+    const { recipients } = this.state;
+    const { onClose, dataNoun, shareError, shareSuccessful } = this.props;
+    const datasets = this.makeDatasetList();
+
+    const DatasetList = this.renderDatasetList;
+    const RecipientList = this.renderRecipientList;
+    const RecipientForm = this.renderRecipientForm;
+    const SharingButtons = this.renderSharingButtons;
+    const CloseButton = () => (
+      <button className="btn" onClick={() => onClose()}>
+        Close this window.
+      </button>
+    );
+
+    if (shareError) {
+      return (
+        <div className="UserDataset-SharingModal-StatusView">
+          <Icon fa="times-circle danger" />
+          <h2>Error Sharing {dataNoun.plural}.</h2>
+          <p>
+            An error occurred while sharing your {dataNoun.plural.toLowerCase()}
+            . Please try again.
+          </p>
+          <CloseButton />
+        </div>
+      );
+    } else if (shareSuccessful) {
+      return (
+        <div className="UserDataset-SharingModal-StatusView">
+          <Icon fa="check-circle success" />
+          <h2>Shared successfully.</h2>
+          <CloseButton />
+        </div>
+      );
+    } else {
+      return (
+        <div className="UserDataset-SharingModal-FormView">
+          <div className="UserDataset-SharingModal-DatasetSection">
+            <DatasetList datasets={datasets} />
+          </div>
+          <div className="UserDataset-SharingModal-RecipientSection">
+            <h2 className="UserDatasetSharing-SectionName">
+              With the following recipients:
+            </h2>
+            <RecipientForm />
+            <RecipientList recipients={recipients} />
+            <SharingButtons />
+          </div>
+        </div>
+      );
+    }
+  }
+
+  render() {
+    const { onClose, sharingDatasetPending } = this.props;
+    const ViewContent = this.renderViewContent;
+
+    return (
+      <Modal
+        title={`Manage Individual Access to ${this.getDatasetNoun()}`}
+        themeRole="primary"
+        includeCloseButton
+        toggleVisible={onClose}
+        visible
+        titleSize="small"
+      >
+        <div className="UserDataset-SharingModal">
+          {sharingDatasetPending ? <Loading /> : <ViewContent />}
+        </div>
+      </Modal>
+    );
+  }
+}
+
+UserDatasetSharingModal.contextType = WdkDependenciesContext;
+
+export default UserDatasetSharingModal;

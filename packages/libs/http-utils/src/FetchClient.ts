@@ -127,7 +127,7 @@ export abstract class FetchClient {
   }
 }
 
-async function fetchResponseBody(response: Response) {
+export async function fetchResponseBody(response: Response) {
   if (response.status === 204) {
     return undefined;
   }
@@ -141,7 +141,7 @@ async function fetchResponseBody(response: Response) {
     : response.text();
 }
 
-function generateTraceidHeaderValue() {
+export function generateTraceidHeaderValue() {
   const traceId = uuid().replaceAll('-', '');
   return traceId;
 }

@@ -12,20 +12,20 @@ import {
   loadUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateUserDatasetDetail,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  loadVdiServiceMetadata,
 } from '../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
-import UserDatasetDetail from '../Components/Detail/UserDatasetDetail';
+import UserDatasetDetail, { DetailViewProps } from '../Components/Detail/UserDatasetDetail';
 import EmptyState from '../Components/EmptyState';
-import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 import { DataNoun } from '../Utils/types';
@@ -37,15 +37,14 @@ const ActionCreators = {
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  loadVdiServiceMetadata,
 };
-
-export type UserDatasetDetailProps = any;
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
 type DispatchProps = typeof ActionCreators;
@@ -56,14 +55,13 @@ type OwnProps = {
   id: string;
   detailComponentsByTypeName?: Record<
     string,
-    ComponentType<UserDatasetDetailProps>
+    ComponentType<DetailViewProps>
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
-  showExtraMetadata: boolean; // Used in user dataset detail view
   includeAllLink: boolean;
   includeNameHeader: boolean;
-};
+}
 type MergedProps = {
   ownProps: OwnProps;
   dispatchProps: DispatchProps;
@@ -100,9 +98,12 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   loadData(prevProps?: this['props']) {
     const idChanged =
       prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
+
     if (idChanged) {
       this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
     }
+
+    if (prevProps == null) this.props.dispatchProps.loadVdiServiceMetadata();
   }
 
   isRenderDataLoadError() {
@@ -135,7 +136,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       : false;
   }
 
-  getDetailView(type: any) {
+  getDetailView(type: any): ComponentType<DetailViewProps> {
     const name: string = type && typeof type === 'object' ? type.name : null;
 
     if (this.props.ownProps.detailComponentsByTypeName?.[name] != null) {
@@ -183,7 +184,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateUserDatasetDetail,
       shareUserDatasets,
       removeUserDataset,
-      unshareUserDatasets,
+      unshareUserDataset,
       updateSharingModalState,
       sharingSuccess,
       sharingError,
@@ -205,9 +206,10 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      serviceMetadata,
     } = this.props.stateProps;
 
-    if (entry?.resource == null)
+    if (!entry?.resource || !serviceMetadata)
       return <Loading />;
 
     const userDataset = entry.resource;
@@ -219,7 +221,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       ?.reduce(add, 0)
       ?? 0;
 
-    const props = {
+    const props: DetailViewProps = {
       baseUrl,
       includeAllLink,
       includeNameHeader,
@@ -229,10 +231,9 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       location: window.location,
       updateError,
       removeUserDataset,
-      quotaSize,
       userDatasetUpdating,
       shareUserDatasets,
-      unshareUserDatasets,
+      unshareUserDatasets: unshareUserDataset,
       updateUserDatasetDetail,
       sharingModalOpen,
       sharingDatasetPending,
@@ -255,6 +256,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
       datasetSize: size,
+      vdiConfig: serviceMetadata.configuration,
+      quotaSize: serviceMetadata.configuration.api.userMaxStorageSize,
     };
 
 

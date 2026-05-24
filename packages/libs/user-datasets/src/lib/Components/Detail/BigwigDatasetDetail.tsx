@@ -12,7 +12,7 @@ import UserDatasetDetail, { DetailViewProps } from './UserDatasetDetail';
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 import { WdkDependencies } from "@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect";
 import { MesaColumn } from "@veupathdb/coreui/lib/components/Mesa/types";
-import { DatasetDependency } from "../../Utils/types";
+import { DatasetDependency } from "../../Service";
 
 const classify = makeClassifier('UserDatasetDetail', 'BigwigDatasetDetail');
 
@@ -103,11 +103,11 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
         name: 'Genome Browser Link',
         renderCell: ({ row }) => (
           <BigwigGBrowseUploader
-            sequenceId={this.state.sequenceId}
+            sequenceId={this.state.sequenceId!}
             dataFileName={row.dataFileName}
             datasetId={id}
             projectId={projectId}
-            genome={genome}
+            genome={genome!}
             datasetName={name}
           />
         ),
@@ -133,8 +133,8 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
 
     const isInstalled =
       status?.import?.status === 'complete' &&
-      status?.install?.find((d) => d.installTarget === config.projectId)
-        ?.data?.status === 'complete';
+      status?.install?.find((d) => d.installTarget === config.projectId)?.data
+        ?.status === 'complete';
 
     return !rows.length ? null : isInstalled ? (
       <section>
@@ -276,8 +276,7 @@ class BigwigDatasetDetail extends UserDatasetDetail<{sequenceId: string | null}>
   }
 
   // See note in the base class, UserDatasetDetail
-  /** @return {Array<() => (import("react").ReactElement | null)>} */
-  getPageSections() {
+  getPageSections(): Array<() => import('react').ReactElement | null> {
     const [headerSection, fileSection] = super.getPageSections();
     return [
       headerSection,
