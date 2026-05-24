@@ -209,7 +209,7 @@ class UserDatasetListController extends PageController<Props> {
     };
 
     const noDatasetsForThisProject = userDatasets.findIndex(
-      it => it.installTargets.includes(projectId)
+      it => it.installTargets
     ) === -1;
 
     return (
