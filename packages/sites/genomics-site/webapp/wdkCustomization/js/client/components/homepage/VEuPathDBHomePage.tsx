@@ -47,6 +47,7 @@ import {
   useAlphabetizedSearchTree,
 } from '@veupathdb/web-common/lib/components/homepage/Utils';
 import {
+  communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
   showUnreleasedData,
@@ -681,6 +682,15 @@ const useHeaderMenuItems = (
           display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
+        },
+        {
+          key: 'community-userdatasets',
+          display: 'Community-Contributed Datasets',
+          type: 'reactRoute',
+          url: '/search/userdataset/AllUserDatasets/result',
+          metadata: {
+            test: () => Boolean(communityDatasetsEnabled),
+          },
         },
         {
           key: 'data-files-eupathdb-beta',

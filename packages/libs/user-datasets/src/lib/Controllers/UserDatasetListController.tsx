@@ -209,8 +209,7 @@ class UserDatasetListController extends PageController<Props> {
     };
 
     const noDatasetsForThisProject =
-      userDatasets.findIndex((it) => it.installTargets.includes(projectId)) ===
-      -1;
+      userDatasets.findIndex((it) => it.installTargets) === -1;
 
     return (
       <div className="UserDatasetList-Controller">
