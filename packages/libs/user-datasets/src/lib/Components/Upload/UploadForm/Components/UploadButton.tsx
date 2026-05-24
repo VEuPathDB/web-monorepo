@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
-import { isNonEmptyString } from "../../../../Utils";
+import { isNonEmptyString } from '../../../../Utils';
 
 export interface UploadButtonProps {
   readonly buttonText?: string;
@@ -13,8 +13,7 @@ export function UploadButton(props: UploadButtonProps): ReactElement {
 
   let invalidFormHelp: ReactNode;
 
-  if (isNonEmptyString(props.className))
-    className += ' ' + props.className;
+  if (isNonEmptyString(props.className)) className += ' ' + props.className;
 
   if (props.disabled) {
     className += ' disabled';

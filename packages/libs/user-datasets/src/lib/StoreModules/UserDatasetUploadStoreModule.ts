@@ -66,11 +66,10 @@ export interface State {
   readonly uploadProgress?: { progress: number | null };
 }
 
-export type BadUpload = (
+export type BadUpload =
   | { type: 400; message: string }
   | { type: 422; errors: ValidationErrors }
-  | { type: 500; message: string }
-);
+  | { type: 500; message: string };
 
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {

@@ -9,11 +9,13 @@ import {
 
 // Utils
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
 import StudyCitation, { getCitationString } from './StudyCitation';
+import { UserDatasetFiles } from '@veupathdb/user-datasets/lib/Components/UserDatasetFiles';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -67,6 +69,12 @@ export default function Downloads({
         }),
     []
   );
+
+  // Get VDI dataset ID for user studies
+  const vdiDatasetId = isUserStudy
+    ? wdkRecordIdToDiyUserDatasetId(datasetId)
+    : null;
+
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -135,7 +143,10 @@ export default function Downloads({
     useCallback(async () => {
       // Only fetch study releases if they are expected to be available
       if (permission.loading) return undefined;
-      if (permission.permissions.perDataset[datasetId]?.sha1Hash == null || permission.permissions.perDataset[datasetId]?.sha1Hash === "" )
+      if (
+        permission.permissions.perDataset[datasetId]?.sha1Hash == null ||
+        permission.permissions.perDataset[datasetId]?.sha1Hash === ''
+      )
         return [];
       try {
         return await downloadClient.getStudyReleases(studyMetadata.id);
@@ -236,6 +247,9 @@ export default function Downloads({
             entities={enhancedEntityData}
             analysisState={analysisState}
           />
+        )}
+        {isUserStudy && vdiDatasetId && (
+          <UserDatasetFiles datasetId={vdiDatasetId} />
         )}
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (

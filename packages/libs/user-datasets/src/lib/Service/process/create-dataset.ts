@@ -65,7 +65,6 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
     datasetCharacteristics: scrubDatasetCharacteristics(
       details.datasetCharacteristics
     ),
-
   };
 }
 
@@ -84,8 +83,7 @@ function scrubExternalIdentifiers(
 function scrubDatasetCharacteristics(
   dChars: PostCharacteristics | undefined
 ): PostCharacteristics | undefined {
-  if (isEmpty(dChars))
-    return undefined;
+  if (isEmpty(dChars)) return undefined;
 
   return {
     ...dChars,

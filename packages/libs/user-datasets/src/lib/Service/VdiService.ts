@@ -41,7 +41,9 @@ import {
   ccValidationErrorBody,
   datasetFileListing,
   datasetGetResponseBody,
-  datasetListEntry, datasetPatchResponse, DatasetPatchResponse,
+  datasetListEntry,
+  datasetPatchResponse,
+  DatasetPatchResponse,
   datasetPostResponse,
   DatasetPostResponse,
   pluginListItem,
@@ -135,23 +137,20 @@ export class VdiService extends FetchClientWithCredentials {
     body: DatasetPatchRequest,
     onSuccess?: Runnable,
     onBadRequest?: Consumer<ValidationErrorBody>,
-    onError?: Consumer<SimpleServiceErrorBody | ServerErrorBody>,
+    onError?: Consumer<SimpleServiceErrorBody | ServerErrorBody>
   ): Promise<DatasetPatchResponse> {
     // FIXME: the below is based on the FetchClient superclass fetch method
     //        implementation.  The superclass method could not be used as it
     //        does not allow for direct handling of error responses.
-    const request = new Request(
-      this.baseUrl + VdiRoutes.datasetUri(id),
-      {
-        ...this.init,
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(await this.findAuthorizationHeaders())
-        },
-        body: JSON.stringify(body),
-      }
-    );
+    const request = new Request(this.baseUrl + VdiRoutes.datasetUri(id), {
+      ...this.init,
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(await this.findAuthorizationHeaders()),
+      },
+      body: JSON.stringify(body),
+    });
 
     if (this.includeTraceidHeader) {
       request.headers.set('traceid', generateTraceidHeaderValue());
@@ -166,21 +165,23 @@ export class VdiService extends FetchClientWithCredentials {
 
     // input validation error
     if (response.status === 422) {
-      const responseBody = await ioTransformer(ccValidationErrorBody)
-        (await fetchResponseBody(response));
+      const responseBody = await ioTransformer(ccValidationErrorBody)(
+        await fetchResponseBody(response)
+      );
 
       onBadRequest?.(responseBody);
 
       return responseBody;
     }
 
-    const responseBody = await ioTransformer(datasetPatchResponse)
-      (await fetchResponseBody(response));
+    const responseBody = await ioTransformer(datasetPatchResponse)(
+      await fetchResponseBody(response)
+    );
 
     // Cast because we have already ruled out 204 and 422 so can assume that
     // unless someone changed the decoders, there can be no other possible valid
     // response types.
-    onError?.(responseBody as (SimpleServiceErrorBody | ServerErrorBody));
+    onError?.(responseBody as SimpleServiceErrorBody | ServerErrorBody);
   }
 
   /**

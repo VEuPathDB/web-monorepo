@@ -9,6 +9,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import RecordAttribute from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttribute';
+import { DataFilesSection } from './DataFilesSection';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -206,6 +207,18 @@ function UserDatasetInlineAttribute(props) {
       </div>
     </div>
   );
+}
+
+export function RecordAttributeSection(props) {
+  const { DefaultComponent, ...restProps } = props;
+  switch (restProps.attribute.name) {
+    case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'dataFiles':
+      return <DataFilesSection {...restProps} />;
+    default:
+      return <UserDatasetInlineAttribute {...restProps} />;
+  }
 }
 
 export function RecordAttributeSection({ DefaultComponent, ...props }) {

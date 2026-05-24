@@ -208,9 +208,8 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilitySuccess,
     };
 
-    const noDatasetsForThisProject = userDatasets.findIndex(
-      it => it.installTargets
-    ) === -1;
+    const noDatasetsForThisProject =
+      userDatasets.findIndex((it) => it.installTargets) === -1;
 
     return (
       <div className="UserDatasetList-Controller">
