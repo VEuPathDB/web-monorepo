@@ -221,18 +221,6 @@ export function RecordAttributeSection(props) {
   }
 }
 
-export function RecordAttributeSection({ DefaultComponent, ...props }) {
-  const { attribute } = props;
-
-  // Handle description attribute with block formatting
-  if (attribute.name === 'description') {
-    return <BlockRecordAttributeSection {...props} />;
-  }
-
-  // Use aligned formatting for UserDataset attributes
-  return <UserDatasetInlineAttribute {...props} />;
-}
-
 export function RecordMainCategorySection(props) {
   const { category, record, children } = props;
 
