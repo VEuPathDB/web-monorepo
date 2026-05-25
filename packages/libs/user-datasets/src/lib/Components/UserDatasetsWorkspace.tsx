@@ -115,6 +115,14 @@ export function UserDatasetsWorkspace(
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
         />
+        {helpTabContents && (
+          <WdkRoute
+            requiresLogin={false}
+            exact
+            path={`${baseUrl}/help`}
+            component={() => <>{helpTabContents}</>}
+          />
+        )}
         {allowsUploads && (
           <DatasetUploadRoute
             {...props}
@@ -123,14 +131,6 @@ export function UserDatasetsWorkspace(
             plugins={plugins}
             formConfigs={props.formConfigs}
             datasetTypes={datasetTypes}
-          />
-        )}
-        {helpTabContents && (
-          <WdkRoute
-            requiresLogin={false}
-            exact
-            path={`${baseUrl}/help`}
-            component={() => <>{helpTabContents}</>}
           />
         )}
         <Redirect to={baseUrl} />
