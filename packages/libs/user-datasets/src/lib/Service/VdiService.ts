@@ -6,6 +6,7 @@ import {
   generateTraceidHeaderValue,
   ioTransformer,
 } from '@veupathdb/http-utils';
+import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 import * as io from 'io-ts';
 
@@ -243,28 +244,24 @@ export class VdiService extends FetchClientWithCredentials {
     id: DatasetId,
     file: RootDatasetFile,
     download: boolean = true
-  ): Promise<void | unknown> {
-    const dlParam = download ? '' : '?download=false';
-    return this.fetch(
-      createPlainTextRequest({
-        path: VdiRoutes.datasetStaticFileUri(id, file) + dlParam,
-        method: 'GET',
-        transformResponse: VdiService.unknownBody,
-      })
-    );
+  ): Promise<void> {
+    const queryParams = download ? '' : '?download=false';
+    submitAsForm({
+      method: 'GET',
+      action: `${this.baseUrl}${VdiRoutes.datasetStaticFileUri(
+        id,
+        file
+      )}${queryParams}`,
+      inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
+    });
   }
 
-  async getDatasetDocumentFile(
-    id: DatasetId,
-    file: string
-  ): Promise<void | unknown> {
-    return this.fetch(
-      createPlainTextRequest({
-        path: VdiRoutes.datasetDocumentFileUri(id, file),
-        method: 'GET',
-        transformResponse: VdiService.unknownBody,
-      })
-    );
+  async getDatasetDocumentFile(id: DatasetId, file: string): Promise<void> {
+    submitAsForm({
+      method: 'GET',
+      action: `${this.baseUrl}${VdiRoutes.datasetDocumentFileUri(id, file)}`,
+      inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
+    });
   }
 
   async putDatasetDocumentFile(
@@ -283,15 +280,16 @@ export class VdiService extends FetchClientWithCredentials {
     id: DatasetId,
     file: string,
     download: boolean = true
-  ): Promise<void | unknown> {
-    const dlParam = download ? '' : '?download=false';
-    return this.fetch(
-      createPlainTextRequest({
-        path: VdiRoutes.datasetVariablePropertiesFileUri(id, file) + dlParam,
-        method: 'GET',
-        transformResponse: VdiService.unknownBody,
-      })
-    );
+  ): Promise<void> {
+    const queryParams = download ? '' : '?download=false';
+    submitAsForm({
+      method: 'GET',
+      action: `${this.baseUrl}${VdiRoutes.datasetVariablePropertiesFileUri(
+        id,
+        file
+      )}${queryParams}`,
+      inputs: Object.fromEntries(await this.findAuthorizationQueryParams()),
+    });
   }
 
   async putDatasetVarPropsFile(
