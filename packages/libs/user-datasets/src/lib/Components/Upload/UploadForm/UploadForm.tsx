@@ -101,7 +101,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
                   If you plan to make this dataset discoverable through{' '}
                   <CommunityAccess />, all sections marked with a globe icon
                   must be completed before upload.
-                </span>
+                </span>{' '}
                 Datasets uploaded with only a name, summary, and data files will
                 be restricted to personal use and sharing with selected
                 collaborators.
