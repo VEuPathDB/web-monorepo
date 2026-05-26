@@ -276,7 +276,7 @@ function isasimpleFormConfigurator(
                   </li>
                   <li>with one row for every variable in the data file</li>
                 </ul>
-                <p className="red">
+                <p className="important-info">
                   A valid variable annotations file is required to grant{' '}
                   <i>Community Access</i> to the dataset.
                 </p>
