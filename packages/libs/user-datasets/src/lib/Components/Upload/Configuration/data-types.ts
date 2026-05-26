@@ -15,7 +15,7 @@ export function stringifyDataType(type: DatasetTypeSelection): string {
 }
 
 export function parseDataTypeString(type: string): DatasetTypeSelection {
-  const parts = type.split(':')
+  const parts = type.split(':');
 
   if (parts.length !== 2) {
     throw new Error(`invalid dataset type string: ${type}`);

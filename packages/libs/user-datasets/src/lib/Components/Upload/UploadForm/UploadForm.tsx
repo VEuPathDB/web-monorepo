@@ -73,7 +73,9 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         <UploadErrorBanner errors={props.badUploadState} />
 
         <h2>{props.verbiage.formTitle}</h2>
-        <p><i>Build a home for your dataset and start exploring</i></p>
+        <p>
+          <i>Build a home for your dataset and start exploring</i>
+        </p>
 
         <Banner
           banner={{
@@ -99,7 +101,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
                   If you plan to make this dataset discoverable through{' '}
                   <CommunityAccess />, all sections marked with a globe icon
                   must be completed before upload.
-                </span>
+                </span>{' '}
                 Datasets uploaded with only a name, summary, and data files will
                 be restricted to personal use and sharing with selected
                 collaborators.

@@ -20,9 +20,8 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
     <FieldHelpText>{props.helpText}</FieldHelpText>
   ) : undefined;
 
-  const className = 'section-toggle' + (props.className
-    ? ' ' + props.className
-   : '');
+  const className =
+    'section-toggle' + (props.className ? ' ' + props.className : '');
 
   return (
     <>

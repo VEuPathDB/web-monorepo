@@ -14,7 +14,10 @@ import {
 } from '@veupathdb/user-datasets/lib';
 import { Link } from 'react-router-dom';
 import { useRouteMatch } from 'react-router-dom';
-import { DatasetTypeConfig, DatasetUploadConfig } from '@veupathdb/user-datasets/lib/Components/Upload';
+import {
+  DatasetTypeConfig,
+  DatasetUploadConfig,
+} from '@veupathdb/user-datasets/lib/Components/Upload';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -68,22 +71,22 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
  */
 export const uploadFormConfigurators: UploadFormConfigurators = [
   // bigwig
-  [ implementedUploadTypes.bigwigfiles, bigwigFormConfigurator ],
+  [implementedUploadTypes.bigwigfiles, bigwigFormConfigurator],
 
   // biom
-  [ implementedUploadTypes.biom, biomFormConfigurator ],
+  [implementedUploadTypes.biom, biomFormConfigurator],
 
   // genelist
-  [ implementedUploadTypes.genelist, genelistFormConfigurator ],
+  [implementedUploadTypes.genelist, genelistFormConfigurator],
 
   // isasimple
-  [ implementedUploadTypes.isasimple, isasimpleFormConfigurator ],
+  [implementedUploadTypes.isasimple, isasimpleFormConfigurator],
 
   // phenotype
-  [ implementedUploadTypes.phenotype, phenotypeFormConfigurator ],
+  [implementedUploadTypes.phenotype, phenotypeFormConfigurator],
 
   // rnaseq
-  [ implementedUploadTypes.rnaseq, rnaseqFormConfigurator ],
+  [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
 ];
 
 const DefaultFormTitle = 'Upload Dataset';
@@ -106,7 +109,9 @@ const StudyDesignVocab: readonly [string, string][] = [
   ['Other', 'n/a'],
 ];
 
-function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+function bigwigFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetUploadConfig {
   return {
     dataType,
     verbiage: {
@@ -146,7 +151,9 @@ function bigwigFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfi
   };
 }
 
-function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+function biomFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetUploadConfig {
   return {
     dataType,
     verbiage: {
@@ -175,7 +182,9 @@ function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig 
   };
 }
 
-function genelistFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+function genelistFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetUploadConfig {
   return {
     dataType,
     verbiage: {
@@ -190,8 +199,7 @@ function genelistFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadCon
         enabled: true,
         helpText: (
           <div style={{ marginTop: '0.25em' }}>
-            File must be a text, comma or tab-delimited .txt, .csv or .tsv
-            file.
+            File must be a text, comma or tab-delimited .txt, .csv or .tsv file.
           </div>
         ),
       },
@@ -242,7 +250,9 @@ function genelistFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadCon
   };
 }
 
-function isasimpleFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+function isasimpleFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetUploadConfig {
   return {
     dataType,
     verbiage: {
@@ -300,7 +310,9 @@ function isasimpleFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadCo
   };
 }
 
-function phenotypeFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+function phenotypeFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetUploadConfig {
   return {
     dataType,
     verbiage: {
@@ -323,7 +335,9 @@ function phenotypeFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadCo
   };
 }
 
-function rnaseqFormConfigurator(dataType: DatasetTypeConfig): DatasetUploadConfig {
+function rnaseqFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetUploadConfig {
   return {
     dataType,
     verbiage: {

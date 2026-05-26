@@ -1,8 +1,8 @@
 import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
-import { ActionThunk } from "@veupathdb/wdk-client/lib/Core/WdkMiddleware";
-import { EpicDependencies } from "@veupathdb/wdk-client/lib/Core/Store";
+import { ActionThunk } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 
-import { VdiService } from "../VdiService";
+import { VdiService } from '../VdiService';
 
 const vdiCompatibilityFlag = '__IS_VDI_COMPATIBLE_SERVICE';
 

@@ -25,7 +25,7 @@ export const GENOMICS_PROJECTS = [
  * id values.
  */
 export function isGenomicsProject(projectId: string): boolean {
-  return GENOMICS_PROJECTS.some(id => id === projectId);
+  return GENOMICS_PROJECTS.some((id) => id === projectId);
 }
 
 export const OTHER_PROJECTS = [
