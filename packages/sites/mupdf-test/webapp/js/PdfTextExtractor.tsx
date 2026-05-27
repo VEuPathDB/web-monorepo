@@ -12,7 +12,6 @@ export function PdfTextExtractor() {
     setLoading(true);
     try {
       const arrayBuffer = await file.arrayBuffer();
-      // @ts-ignore — mupdf ships types via `exports` field; not found by moduleResolution:node
       const mupdf = await import('mupdf');
       const doc = mupdf.Document.openDocument(
         new Uint8Array(arrayBuffer),
