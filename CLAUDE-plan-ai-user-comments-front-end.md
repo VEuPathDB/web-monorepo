@@ -6,6 +6,8 @@ VEuPathDB is adding a new kind of user comment: an **AI-assisted gene-publicatio
 
 **Upload-path PDFs never leave the user's machine.** Text extraction happens client-side using **MuPDF.js** (WASM, lazy-loaded only when the user picks the upload tab); the front-end also computes a SHA-256 of the PDF bytes via Web Crypto. The POST body for an upload submission carries `paper_text` plus `pdf_content_sha256` — the back end never sees the PDF. This was a deliberate pivot from server-side extraction; see the BE plan (`CLAUDE-ai-user-comments.md`) for rationale.
 
+The MuPDF.js approach has been validated end-to-end in a PoC: [PR #1700](https://github.com/VEuPathDB/web-monorepo/pull/1700). The PoC confirms lazy-load, text extraction, and the webpack/WASM bundling story all work; that PR's build config and loader pattern are the starting point for the production wiring described below.
+
 The back end identifies jobs by a deterministic **content-digest `job_id`** (hex SHA-256 over gene + resolved synonyms + source-key + model + prompt version + canonical-JSON options). This means double-tap submits, cross-user resubmissions, and "I refreshed the tab" all naturally dedupe to the same in-flight job or the same cached result.
 
 This plan covers the front-end pieces only: the new initiation form (including the client-side PDF extraction pipeline), the back-end contract (now confirmed against the BE plan), additions to `AiProvenance`, a sibling-summary banner for cache-hit cases, and a view-level branch in the existing `/user-comments/edit` route so AI comments render a minimal modern review form rather than the heavyweight general form.
@@ -393,9 +395,11 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
 
    ### Client-side PDF extraction (upload path only)
 
+   The end-to-end approach (lazy-load, extraction, webpack/WASM bundling) has been validated in [PR #1700](https://github.com/VEuPathDB/web-monorepo/pull/1700). Lift the loader pattern and webpack config from that PR — the non-obvious bundling work is already solved.
+
    When the user selects a file in the upload tab:
 
-   1. **Lazy-load MuPDF.js.** Dynamic-`import` the module so the WASM bundle is only downloaded when the user actually picks the upload tab — not on every visit to the add page. Show a "Preparing PDF reader…" indicator while the import resolves. See <https://mupdf.readthedocs.io/en/1.27.2/guide/using-with-javascript.html>.
+   1. **Lazy-load MuPDF.js.** Dynamic-`import` the module so the WASM bundle is only downloaded when the user actually picks the upload tab — not on every visit to the add page. Show a "Preparing PDF reader…" indicator while the import resolves. See PR #1700 for the working loader, and <https://mupdf.readthedocs.io/en/1.27.2/guide/using-with-javascript.html> for the API reference.
    2. **Compute SHA-256.** Read the file as an `ArrayBuffer` and pass it through `crypto.subtle.digest('SHA-256', bytes)`. Hex-encode the result and stash it as `pdfContentSha256` in local state.
    3. **Extract text.** Hand the `ArrayBuffer` to MuPDF, iterate pages, concatenate their text into a single string `paperText`. Show a small "Extracting text…" indicator with a page counter if the PDF is large.
    4. **Error UI** — this is the case that previously would have surfaced as a server-side `text-unavailable` and now lives entirely on the client. If MuPDF throws (corrupt PDF, password-protected, scanned image with no text layer, etc.) show an inline error block in the file-input area: "We couldn't extract any text from that PDF. It may be scanned (image-only) or password-protected. Try a different file, or use a PubMed ID instead." Provide a "Clear" button and keep the form on the upload tab with the file deselected.
@@ -599,7 +603,7 @@ One change to the gene record page:
 
 | Action | Path                                                                                                                                                                                                                             |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| modify | `packages/sites/genomics-site/package.json` — add MuPDF.js dependency (and `@types/...` if it ships separately)                                                                                                                  |
+| modify | `packages/sites/genomics-site/package.json` + webpack config — add MuPDF.js dependency and WASM-loading config. Lift both from [PR #1700](https://github.com/VEuPathDB/web-monorepo/pull/1700) (PoC, validated)                  |
 | modify | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/types/userCommentTypes.ts` — extended `AiProvenance` plus AI-job types (or split into a sibling `aiGenePublicationTypes.ts`)                                     |
 | modify | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/userCommentRoutes.tsx` — new route                                                                                                                               |
 | modify | `packages/sites/genomics-site/webapp/wdkCustomization/js/client/service/UserCommentsService.ts` — `postAiGenePublication` (JSON, snake_case), `getAiGenePublicationJobStatus`, `deleteAiGenePublicationJob`, `deleteUserComment` |
