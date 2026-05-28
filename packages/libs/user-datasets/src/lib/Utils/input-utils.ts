@@ -1,6 +1,6 @@
 import { ArrayElement, BiConsumer, Consumer } from './types';
-import { ChangeEvent } from "react";
-import { isEmpty } from "lodash";
+import { ChangeEvent } from 'react';
+import { isEmpty } from 'lodash';
 
 export function changeHandler<
   T extends object,
@@ -13,7 +13,7 @@ export function changeHandler<
 export function arrayChangeHandler<
   T extends object,
   K extends keyof T = keyof T,
-  V extends ArrayElement<T[K] & never[]> = ArrayElement<T[K] & never[]>,
+  V extends ArrayElement<T[K] & never[]> = ArrayElement<T[K] & never[]>
 >(field: K, obj: T, then: Consumer<T>): BiConsumer<V, number | undefined> {
   return (value, index) =>
     then({
@@ -25,8 +25,10 @@ export function arrayChangeHandler<
     });
 }
 
-export function textChange(fn: Consumer<string | undefined>): Consumer<ChangeEvent<HTMLInputElement>> {
-  return e => fn(e.currentTarget?.value);
+export function textChange(
+  fn: Consumer<string | undefined>
+): Consumer<ChangeEvent<HTMLInputElement>> {
+  return (e) => fn(e.currentTarget?.value);
 }
 
 export function replaceElement<T>(

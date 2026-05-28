@@ -191,8 +191,8 @@ function UpdateErrors({
       <>
         <p>
           {inList ? 'One or more datasets do' : 'Dataset does'} not contain
-          enough information to be made discoverable through{' '}
-          <CommunityAccess />.
+          enough information to be made discoverable through <CommunityAccess />
+          .
         </p>
         <p>
           Re-upload your {targetNounLower} and complete all sections on the

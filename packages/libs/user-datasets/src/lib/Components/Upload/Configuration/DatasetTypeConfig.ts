@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { PluginDataType, VdiPluginConfig } from '../../../Service';
-import { stringifyDataType } from "./data-types";
+import { stringifyDataType } from './data-types';
 
 export interface ClientDatasetTypeConfig {
   /**
@@ -50,8 +50,7 @@ export function promoteTypeConfig(
   clientDataType: ClientDatasetTypeConfig,
   plugins: readonly VdiPluginConfig[]
 ): DatasetTypeConfig | undefined {
-  const { name: clientTypeName, version: clientTypeVersion } =
-    clientDataType;
+  const { name: clientTypeName, version: clientTypeVersion } = clientDataType;
 
   for (const plugin of plugins) {
     for (const vdiDataType of plugin.dataTypes) {
@@ -80,5 +79,5 @@ export function filterAvailableDataTypes(
     }
   }
 
-  return clientTypes.filter(cdt => serviceTypes.has(stringifyDataType(cdt)));
+  return clientTypes.filter((cdt) => serviceTypes.has(stringifyDataType(cdt)));
 }

@@ -1,14 +1,14 @@
 import { DatasetListShareUser, DatasetUser } from '../Service';
 
-export function datasetUserFullName(user: DatasetUser | DatasetListShareUser): string {
+export function datasetUserFullName(
+  user: DatasetUser | DatasetListShareUser
+): string {
   if (user.firstName && user.lastName)
     return user.firstName + ' ' + user.lastName;
 
-  if (user.firstName)
-    return user.firstName;
+  if (user.firstName) return user.firstName;
 
-  if (user.lastName)
-    return user.lastName;
+  if (user.lastName) return user.lastName;
 
   return 'unknown user';
 }
@@ -52,7 +52,8 @@ export function formatFileSize(
   }
 
   // remove insignificant decimal places
-  const formattedNum = quo.toFixed(2)
+  const formattedNum = quo
+    .toFixed(2)
     .toString()
     .match(/^\d+(?:\.[1-9]{1,2})?/);
 

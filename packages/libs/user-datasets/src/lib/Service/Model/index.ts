@@ -9,6 +9,7 @@ export type {
 export type {
   DatasetContact,
   DatasetDependency,
+  DatasetFileDetails,
   DatasetFileListing,
   DatasetGetResponseBody,
   DatasetId,

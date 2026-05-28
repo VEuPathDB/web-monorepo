@@ -94,7 +94,7 @@ export default function makeHeaderMenuItemsFactory(
           text: 'Datasets',
           children: ({ isFocused }) =>
             [
-              /*{
+              {
                 text: (
                   <>
                     <DiyStudiesDaemon
@@ -106,12 +106,12 @@ export default function makeHeaderMenuItemsFactory(
                         className="ebrc-icon-table"
                         style={studyTableIconStyle}
                       ></i>{' '}
-                      Datasets summaries table
+                      Datasets Summaries
                     </div>
                   </>
                 ),
-                route: '/search/dataset/Studies/result',
-              },*/
+                route: '/search/userdataset/AllUserDatasets/result',
+              },
               {
                 text: (
                   <StudyMenuSearch
@@ -222,9 +222,9 @@ export default function makeHeaderMenuItemsFactory(
           text: 'Workspace',
           children: [
             ...(useUserDatasetsWorkspace
-              ? [ 
-                  { 
-                    text: 'Upload Dataset',
+              ? [
+                  {
+                    text: 'Upload my dataset',
                     route: '/workspace/datasets/new',
                   },
                 ]
@@ -232,17 +232,17 @@ export default function makeHeaderMenuItemsFactory(
             ...(useUserDatasetsWorkspace
               ? [
                   {
-                    text: 'Manage My Datasets',
+                    text: 'Manage my datasets',
                     route: '/workspace/datasets',
                   },
                 ]
               : []),
             {
-              text: 'My Analyses',
+              text: 'My analyses',
               route: makeEdaRoute(),
             },
             {
-              text: 'Public Analyses',
+              text: 'Public analyses',
               route: `${makeEdaRoute()}/public`,
             },
             ...(requireLogin
@@ -329,7 +329,7 @@ export default function makeHeaderMenuItemsFactory(
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`,
             },
             {
-              text: 'External Resources',
+              text: 'External resources',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`,
             },
           ],

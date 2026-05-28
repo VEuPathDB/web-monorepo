@@ -48,6 +48,10 @@ export function UploadForm(props: UploadFormProps): ReactElement {
   // TODO: temporary warning until dataset update form is completed.
   const [showUploadWarning, setShowUploadWarning] = useState(false);
 
+  // Disable the upload buttons if the form is invalid, or an upload is already
+  // in progress.
+  const disableUpload = !formIsValid || props.isSubmitting;
+
   const tempOnSubmit = () => {
     setShowUploadWarning(true);
   };
@@ -73,7 +77,9 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         <UploadErrorBanner errors={props.badUploadState} />
 
         <h2>{props.verbiage.formTitle}</h2>
-        <p><i>Build a home for your dataset and start exploring</i></p>
+        <p>
+          <i>Build a home for your dataset and start exploring</i>
+        </p>
 
         <Banner
           banner={{
@@ -99,7 +105,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
                   If you plan to make this dataset discoverable through{' '}
                   <CommunityAccess />, all sections marked with a globe icon
                   must be completed before upload.
-                </span>
+                </span>{' '}
                 Datasets uploaded with only a name, summary, and data files will
                 be restricted to personal use and sharing with selected
                 collaborators.
@@ -115,12 +121,12 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
           onSubmit={tempOnSubmit}
-          disableSubmit={!formIsValid}
+          disableSubmit={disableUpload}
         />
 
         <MetadataSection formProps={props} jsonPath={metaPath} />
 
-        <UploadButton onClick={tempOnSubmit} disabled={!formIsValid} />
+        <UploadButton onClick={tempOnSubmit} disabled={disableUpload} />
 
         <SubmissionModal
           submitting={props.isSubmitting}

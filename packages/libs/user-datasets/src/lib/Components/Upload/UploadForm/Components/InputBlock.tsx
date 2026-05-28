@@ -45,9 +45,7 @@ interface InputBlockHeaderProps {
 function InputBlockHeader(props: InputBlockHeaderProps) {
   const cn = 'fa ' + (props.expanded ? 'fa-chevron-down' : 'fa-chevron-right');
 
-  const globe = props.isCommunityRelated
-    ? <GlobeIcon />
-    : undefined
+  const globe = props.isCommunityRelated ? <GlobeIcon /> : undefined;
 
   return (
     <h4 onClick={() => props.setExpanded(!props.expanded)}>
