@@ -48,6 +48,10 @@ export function UploadForm(props: UploadFormProps): ReactElement {
   // TODO: temporary warning until dataset update form is completed.
   const [showUploadWarning, setShowUploadWarning] = useState(false);
 
+  // Disable the upload buttons if the form is invalid, or an upload is already
+  // in progress.
+  const disableUpload = !formIsValid || props.isSubmitting;
+
   const tempOnSubmit = () => {
     setShowUploadWarning(true);
   };
@@ -117,12 +121,12 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
           onSubmit={tempOnSubmit}
-          disableSubmit={!formIsValid}
+          disableSubmit={disableUpload}
         />
 
         <MetadataSection formProps={props} jsonPath={metaPath} />
 
-        <UploadButton onClick={tempOnSubmit} disabled={!formIsValid} />
+        <UploadButton onClick={tempOnSubmit} disabled={disableUpload} />
 
         <SubmissionModal
           submitting={props.isSubmitting}
