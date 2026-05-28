@@ -57,11 +57,14 @@ export function InputPair<T extends object = object>(
     <FieldHelpText className={props.className}>{props.helpText}</FieldHelpText>
   ) : undefined;
 
-  let labelClass = '';
+  let labelClass = "";
 
-  if (props.className) labelClass += ' ' + props.className;
-  if (props.labelClass) labelClass += ' ' + props.labelClass;
-  if (props.required) labelClass += ' required';
+  if (props.className)
+    labelClass += " " + props.className;
+  if (props.labelClass)
+    labelClass += " " + props.labelClass;
+  if (props.required)
+    labelClass += " required";
 
   let input: ReactElement;
 

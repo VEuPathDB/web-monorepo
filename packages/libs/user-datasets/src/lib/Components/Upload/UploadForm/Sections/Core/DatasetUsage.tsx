@@ -51,10 +51,8 @@ export function DatasetUsage({
 
         <label
           htmlFor={fieldName}
-          className={hasDisclaimer ? 'required' : undefined}
-        >
-          Disclaimers
-        </label>
+          className={hasDisclaimer ? "required" : undefined}
+        >Disclaimers</label>
         <textarea
           name={fieldName}
           id={fieldName}
