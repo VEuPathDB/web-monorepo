@@ -607,6 +607,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       case 'sharedWith':
         return (data: DatasetListEntry): string | null =>
           this.sharedWithValue(data)?.toLowerCase() ?? '\uFFFF';
+      case 'size':
+        return (data: DatasetListEntry): number => data.fileSizeTotal ?? 0;
       default:
         return (data: any, _: number) => {
           const val =
