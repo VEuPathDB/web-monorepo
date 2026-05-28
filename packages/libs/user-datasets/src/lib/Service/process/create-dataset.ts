@@ -1,5 +1,4 @@
 import {
-  DatasetContact,
   DatasetPostDetails,
   DatasetPostResponseBody,
   DatasetUploads,
@@ -79,12 +78,14 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
 function pruneSimpleRecords<T extends object>(
   records: T[] | undefined
 ): T[] | undefined {
-  if (!records) return undefined;
+  if (!records)
+    return undefined;
 
   const out: T[] = [];
 
   for (const record of records) {
-    if (record && !isEmptyObject(record)) out.push(record);
+    if (record && !isEmptyObject(record))
+      out.push(record);
   }
 
   return out.length > 0 ? out : undefined;
@@ -121,7 +122,9 @@ function scrubDatasetCharacteristics(
  * Tests if a given object contains truthy values.
  */
 function isEmptyObject(obj: Record<string, any>): boolean {
-  for (const key of Object.keys(obj)) if (obj[key]) return false;
+  for (const key of Object.keys(obj))
+    if (obj[key])
+      return false;
 
   return true;
 }
