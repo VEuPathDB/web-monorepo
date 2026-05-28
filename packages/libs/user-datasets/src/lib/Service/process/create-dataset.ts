@@ -55,8 +55,8 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
     ...details,
 
     installTargets: removeEmpties(details.installTargets),
-    contacts: pruneContacts(details.contacts),
-    datasetSources: removeEmpties(details.datasetSources),
+    contacts: pruneSimpleRecords(details.contacts),
+    datasetSources: pruneSimpleRecords(details.datasetSources),
     dependencies: removeEmpties(details.dependencies),
     funding: removeEmpties(details.funding),
     linkedDatasets: removeEmpties(details.linkedDatasets),
@@ -69,33 +69,25 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
   };
 }
 
-function pruneContacts(contacts: DatasetContact[] | undefined): DatasetContact[] | undefined  {
-  if (!contacts)
-    return undefined;
+/**
+ * Prunes arrays of simple key/value objects by removing objects that contain no
+ * truthy property values.
+ *
+ * If the resulting array is empty, the array itself is to be 'pruned', and
+ * undefined will be returned.
+ */
+function pruneSimpleRecords<T extends object>(
+  records: T[] | undefined
+): T[] | undefined {
+  if (!records) return undefined;
 
-  const out: DatasetContact[] = [];
+  const out: T[] = [];
 
-  for (const contact of contacts) {
-    const res = pruneContact(contact);
-
-    if (res)
-      out.push(res);
+  for (const record of records) {
+    if (record && !isEmptyObject(record)) out.push(record);
   }
 
-  return out.length > 0
-    ? out
-    : undefined;
-}
-
-function pruneContact(contact: DatasetContact | undefined): DatasetContact | undefined {
-  if (!contact)
-    return undefined;
-
-  return contact.firstName || contact.middleName || contact.lastName
-    || contact.country || contact.affiliation || contact.email
-    || contact.isPrimary
-    ? contact
-    : undefined;
+  return out.length > 0 ? out : undefined;
 }
 
 function scrubExternalIdentifiers(
@@ -123,6 +115,15 @@ function scrubDatasetCharacteristics(
     sampleTypes: removeEmpties(dChars?.sampleTypes),
     studySpecies: removeEmpties(dChars?.studySpecies),
   };
+}
+
+/**
+ * Tests if a given object contains truthy values.
+ */
+function isEmptyObject(obj: Record<string, any>): boolean {
+  for (const key of Object.keys(obj)) if (obj[key]) return false;
+
+  return true;
 }
 
 function removeEmpties<T>(values: T[] | undefined): T[] | undefined {
