@@ -140,6 +140,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
     this.renderOwnerCell = this.renderOwnerCell.bind(this);
     this.renderStatusCell = this.renderStatusCell.bind(this);
+    this.renderSharedWithCell = this.renderSharedWithCell.bind(this);
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.closeSharingModal = this.closeSharingModal.bind(this);
@@ -176,6 +177,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   renderSharedWithCell(cellProps: MesaDataCellProps) {
     const dataset = cellProps.row;
+    if (!this.isMyDataset(dataset)) return 'Me';
     return !dataset.shares || !dataset.shares.length
       ? null
       : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
