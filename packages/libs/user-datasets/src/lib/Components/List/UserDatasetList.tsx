@@ -175,12 +175,15 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       );
   }
 
-  renderSharedWithCell(cellProps: MesaDataCellProps) {
-    const dataset = cellProps.row;
+  sharedWithValue(dataset: DatasetListEntry): string | null {
     if (!this.isMyDataset(dataset)) return 'Me';
     return !dataset.shares || !dataset.shares.length
       ? null
       : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
+  }
+
+  renderSharedWithCell(cellProps: MesaDataCellProps) {
+    return this.sharedWithValue(cellProps.row);
   }
 
   renderCommunityCell(cellProps: MesaDataCellProps) {
@@ -598,6 +601,12 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
           data.type.category.toLowerCase();
+      case 'owner':
+        return (data: DatasetListEntry): string =>
+          datasetUserFullName(data.owner).toLowerCase();
+      case 'sharedWith':
+        return (data: DatasetListEntry): string | null =>
+          this.sharedWithValue(data)?.toLowerCase() ?? '\uFFFF';
       default:
         return (data: any, _: number) => {
           const val =
