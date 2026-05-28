@@ -64,7 +64,7 @@ export function CharacteristicsSection({
       isCommunityRelated={true}
     >
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required" id={FieldStudyToggleID}>
+        <label className="not-disabled" id={FieldStudyToggleID}>
           Field Study or Clinical Trial
         </label>
         <YesNoToggle

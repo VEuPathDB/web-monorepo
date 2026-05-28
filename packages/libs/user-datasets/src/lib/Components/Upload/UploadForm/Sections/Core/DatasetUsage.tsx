@@ -32,7 +32,7 @@ export function DatasetUsage({
   return (
     <InputBlock header="Dataset Usage" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required" id={DatasetUsageToggleID}>
+        <label className="not-disabled" id={DatasetUsageToggleID}>
           Important Reuse Considerations
         </label>
         <YesNoToggle
