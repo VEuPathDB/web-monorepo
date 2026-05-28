@@ -33,6 +33,16 @@ export async function submitNewDataset({
     ? [convertUrl(uploads.url), ...dataFiles]
     : dataFiles;
 
+  if (uploads.documentFiles) {
+    uploads.documentFiles.forEach(it => combinedUploads.push(convertDocumentFile(it)));
+  }
+
+  if (uploads.dataPropertiesFiles) {
+    for (const file of uploads.dataPropertiesFiles) {
+      combinedUploads.push(convertPropertiesFile(file));
+    }
+  }
+
   const scrubbedDetails = scrubDetails(details);
 
   await service.postDataset(
@@ -105,6 +115,14 @@ function removeEmpties<T>(values: T[] | undefined): T[] | undefined {
   }
 
   return isEmpty(out) ? undefined : out;
+}
+
+function convertDocumentFile(file: File): DatasetUpload {
+  return { type: 'docFile', file }
+}
+
+function convertPropertiesFile(file: File): DatasetUpload {
+  return { type: 'dataPropertiesFile', file };
 }
 
 function convertDataFile(file: File): DatasetUpload {
