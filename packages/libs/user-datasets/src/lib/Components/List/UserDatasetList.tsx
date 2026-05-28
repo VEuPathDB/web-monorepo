@@ -596,13 +596,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
           data.type.category.toLowerCase();
-      case 'meta.name':
-        return (data: DatasetListEntry) => data.name.toLowerCase();
       default:
         return (data: any, _: number) => {
-          return typeof data[columnKey] !== 'undefined'
-            ? data[columnKey]
-            : null;
+          const val =
+            typeof data[columnKey] !== 'undefined' ? data[columnKey] : null;
+          return typeof val === 'string' ? val.toLowerCase() : val;
         };
     }
   }
@@ -613,9 +611,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ): DatasetListEntry[] {
     const direction: string = sort.direction;
     const columnKey: string = sort.columnKey;
-    const mappedValue = this.getColumnSortValueMapper(columnKey);
-    const sorted = [...rows].sort(MesaUtils.sortFactory(mappedValue));
-    return direction === 'asc' ? sorted : sorted.reverse();
+    const valueMapper = this.getColumnSortValueMapper(columnKey);
+    const sorted = [...rows].sort(MesaUtils.sortFactory(valueMapper));
+    return direction === 'asc' ? sorted.reverse() : sorted;
   }
 
   closeSharingModal() {
