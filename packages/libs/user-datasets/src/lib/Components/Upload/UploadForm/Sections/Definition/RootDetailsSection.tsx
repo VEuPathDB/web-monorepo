@@ -103,6 +103,7 @@ export function RootDetailsSection(
             <DatasetPropertiesInput
               label={formProps.verbiage.formInputs.datasetProperties.label}
               fieldName="dataPropertiesFile"
+              allowedExtensions={['.txt', '.csv', '.tsv']}
               setFiles={(files) =>
                 setUploads({
                   ...fileUploads,
