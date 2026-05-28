@@ -156,6 +156,7 @@ function validateFormState({
   formMetaState: clientSide,
 }: UploadFormState): Record<string, string[]> {
   const keyedErrors: Record<string, string[]> = {};
+  /* TODO: to be re-enabled for the update form
   const errorMessage = ['selection is required'];
 
   // Required Client-Only Fields
@@ -165,6 +166,7 @@ function validateFormState({
     keyedErrors[DatasetUsageToggleID] = errorMessage;
   if (clientSide.hasExternalSources === undefined)
     keyedErrors[DatasetSourcesToggleID] = errorMessage;
+   */
 
   return keyedErrors;
 }
