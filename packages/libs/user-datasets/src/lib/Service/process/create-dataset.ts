@@ -1,4 +1,5 @@
 import {
+  DatasetContact,
   DatasetPostDetails,
   DatasetPostResponseBody,
   DatasetUploads,
@@ -54,7 +55,7 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
     ...details,
 
     installTargets: removeEmpties(details.installTargets),
-    contacts: removeEmpties(details.contacts),
+    contacts: pruneContacts(details.contacts),
     datasetSources: removeEmpties(details.datasetSources),
     dependencies: removeEmpties(details.dependencies),
     funding: removeEmpties(details.funding),
@@ -66,6 +67,35 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
       details.datasetCharacteristics
     ),
   };
+}
+
+function pruneContacts(contacts: DatasetContact[] | undefined): DatasetContact[] | undefined  {
+  if (!contacts)
+    return undefined;
+
+  const out: DatasetContact[] = [];
+
+  for (const contact of contacts) {
+    const res = pruneContact(contact);
+
+    if (res)
+      out.push(res);
+  }
+
+  return out.length > 0
+    ? out
+    : undefined;
+}
+
+function pruneContact(contact: DatasetContact | undefined): DatasetContact | undefined {
+  if (!contact)
+    return undefined;
+
+  return contact.firstName || contact.middleName || contact.lastName
+    || contact.country || contact.affiliation || contact.email
+    || contact.isPrimary
+    ? contact
+    : undefined;
 }
 
 function scrubExternalIdentifiers(
