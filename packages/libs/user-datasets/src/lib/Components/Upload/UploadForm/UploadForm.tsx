@@ -115,7 +115,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         />
       </header>
 
-      <form className={props.formClassName} onChange={onFormChange}>
+      <form className={props.formClassName} onInput={onFormChange}>
         <RootDetailsSection
           formProps={props}
           detailsJsonPath={metaPath}

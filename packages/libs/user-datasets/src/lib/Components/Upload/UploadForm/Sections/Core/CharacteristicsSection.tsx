@@ -73,9 +73,9 @@ export function CharacteristicsSection({
           fieldName="enable-characteristics"
           className="not-disabled"
           helpText={
-            'Whether the dataset is from a human, vector, animal, or plant' +
-            ' population study; an epidemiological study (including' +
-            ' surveillance); or a clinical trial'
+            'Whether the dataset or underlying samples originated from a' +
+            ' human, vector, animal, or plant population study; an' +
+            ' epidemiological or surveillance study; or a clinical trial.'
           }
         />
 
