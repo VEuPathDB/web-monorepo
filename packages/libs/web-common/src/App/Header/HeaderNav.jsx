@@ -12,6 +12,8 @@ import partofveupath from '../../../images/partofveupath.png';
 import { SiteSearchInput } from '../../components';
 
 import './HeaderNav.scss';
+// @ts-ignore
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 
 class HeaderNav extends React.Component {
   constructor(props) {
@@ -117,7 +119,7 @@ class HeaderNav extends React.Component {
     logoUrl,
   }) {
     const { buildNumber, releaseDate } = config;
-
+    const isBetaSite = 1; //window.location.hostname.startsWith('beta');
     return (
       <div className="box row HeaderNav-Branding">
         <Link to="/" className="box">
@@ -134,6 +136,7 @@ class HeaderNav extends React.Component {
             {subTitle} <br />
           </p>
         </div>
+        {isBetaSite && <img className="BetaBadge" src={betaImage} alt="beta" />}
       </div>
     );
   }
