@@ -273,9 +273,6 @@ export function RecordTable(props) {
   return <props.DefaultComponent {...props} />;
 }
 
-// Note: Similar filtering logic exists in RecordMainCategorySection (lines 227-244)
-// and RecordTable (lines 260-270) above. Could be refactored into a shared utility
-// if additional complexity is needed.
 export function RecordNavigationSection(props) {
   const { record, categoryTree } = props;
 
