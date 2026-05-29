@@ -53,6 +53,9 @@ export const RecordAttributeSection = makeDynamicWrapper(
 export const RecordMainCategorySection = makeDynamicWrapper(
   'RecordMainCategorySection'
 );
+export const RecordNavigationSection = makeDynamicWrapper(
+  'RecordNavigationSection'
+);
 
 // Helpers
 // -------

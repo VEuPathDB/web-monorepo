@@ -272,3 +272,30 @@ export function RecordTable(props) {
 
   return <props.DefaultComponent {...props} />;
 }
+
+// Note: Similar filtering logic exists in RecordMainCategorySection (lines 227-244)
+// and RecordTable (lines 260-270) above. Could be refactored into a shared utility
+// if additional complexity is needed.
+export function RecordNavigationSection(props) {
+  const { record, categoryTree } = props;
+
+  // Check if this is a clinical field
+  const isClinicalField = record?.attributes?.['is_clinical_field'];
+  const shouldHideCharacteristics =
+    isClinicalField === 'No' || isClinicalField === false;
+
+  // If we need to hide the entire characteristics section, filter it from the tree
+  let filteredCategoryTree = categoryTree;
+  if (shouldHideCharacteristics && categoryTree?.children) {
+    filteredCategoryTree = {
+      ...categoryTree,
+      children: categoryTree.children.filter(
+        (node) => node.properties?.name?.[0] !== 'characteristics'
+      ),
+    };
+  }
+
+  return (
+    <props.DefaultComponent {...props} categoryTree={filteredCategoryTree} />
+  );
+}
