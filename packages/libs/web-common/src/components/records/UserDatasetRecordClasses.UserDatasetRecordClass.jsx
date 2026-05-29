@@ -272,3 +272,27 @@ export function RecordTable(props) {
 
   return <props.DefaultComponent {...props} />;
 }
+
+export function RecordNavigationSection(props) {
+  const { record, categoryTree } = props;
+
+  // Check if this is a clinical field
+  const isClinicalField = record?.attributes?.['is_clinical_field'];
+  const shouldHideCharacteristics =
+    isClinicalField === 'No' || isClinicalField === false;
+
+  // If we need to hide the entire characteristics section, filter it from the tree
+  let filteredCategoryTree = categoryTree;
+  if (shouldHideCharacteristics && categoryTree?.children) {
+    filteredCategoryTree = {
+      ...categoryTree,
+      children: categoryTree.children.filter(
+        (node) => node.properties?.name?.[0] !== 'characteristics'
+      ),
+    };
+  }
+
+  return (
+    <props.DefaultComponent {...props} categoryTree={filteredCategoryTree} />
+  );
+}
