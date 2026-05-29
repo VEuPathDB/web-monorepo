@@ -21,7 +21,7 @@ export function formatFileSize(
   let mag = 0;
   let quo = bytes;
 
-  while (quo > div && mag < 4) {
+  while (quo >= div && mag < 4) {
     quo /= div;
     mag++;
   }
