@@ -18,6 +18,7 @@ import {
   DatasetTypeConfig,
   DatasetUploadConfig,
 } from '@veupathdb/user-datasets/lib/Components/Upload';
+import { formatFileSize } from '@veupathdb/user-datasets/lib/Utils/formatting';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -301,8 +302,16 @@ function isasimpleFormConfigurator(
       file: {
         enabled: true,
         helpText: (
-          <div style={{ marginTop: '0.25em' }}>
-            File must be a .csv, .tsv, or tab-delimited .txt file
+          <div>
+            <p>
+              Upload a single <strong>data file</strong> (maximum{' '}
+              {formatFileSize(dataType.vdiConfig.maxFileSize, 'binary')}):
+            </p>
+            <ul>
+              <li>in .csv, .tsv, or tab-delimited .txt format; compressed (.zip)
+                files are also supported</li>
+              <li>with variables as columns, records as rows</li>
+            </ul>
           </div>
         ),
       },
