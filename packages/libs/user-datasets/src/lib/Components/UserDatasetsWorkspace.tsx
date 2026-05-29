@@ -85,7 +85,7 @@ export function UserDatasetsWorkspace(
 
   if (helpTabContents) {
     routes.push({
-      display: 'Help',
+      display: 'My datasets help',
       route: '/help',
     });
   }
