@@ -14,7 +14,7 @@ export class VdiRoutes {
   static readonly FilesPathSegment = '/files';
   static readonly SelfUserPathSegment = '/self';
   static readonly SharesPathSegment = '/shares';
-  static readonly VariablePropertiesPathSegment = '/variable-properties';
+  static readonly VariablePropertiesPathSegment = '/dataset-properties';
 
   // Full Static Paths
   static readonly UserShareOffersPath =
@@ -44,7 +44,7 @@ export class VdiRoutes {
     );
   }
 
-  static datasetVariablePropertiesFileUri(id: DatasetId, file: string) {
+  static datasetPropertiesFileUri(id: DatasetId, file: string) {
     return (
       VdiRoutes.datasetFilesUri(id) +
       VdiRoutes.VariablePropertiesPathSegment +
