@@ -116,7 +116,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       uiState: {
         sort: {
           columnKey: 'created',
-          direction: 'asc',
+          direction: 'desc',
         },
       },
       editingCache: {},
