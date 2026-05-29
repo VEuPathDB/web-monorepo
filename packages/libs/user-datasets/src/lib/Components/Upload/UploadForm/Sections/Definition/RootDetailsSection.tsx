@@ -67,7 +67,7 @@ export function RootDetailsSection(
 
       <div className="field-grid">
         <InputPair
-          label="Name"
+          label="Dataset Name"
           fieldName={nameKey}
           value={datasetDetails.name}
           onChange={(v) => setMetadata({ ...datasetDetails, name: v })}
