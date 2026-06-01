@@ -256,8 +256,12 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
     const { status } = this.props.userDataset;
     return (
       status?.import?.status === 'complete' &&
-      status?.install?.find((d) => d.installTarget === config.projectId)?.data
-        ?.status === 'complete'
+      status?.install?.some(
+        (d) =>
+          d.installTarget === config.projectId &&
+          d.data?.status === 'complete' &&
+          (d.meta == null || d.meta.status === 'complete')
+      )
     );
   }
 
