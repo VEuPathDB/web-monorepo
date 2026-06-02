@@ -24,7 +24,9 @@ export function DatasetUsage({
   const fieldName =
     jsonPath.appendToString<DatasetPostDetails>('dataDisclaimer');
 
-  const disabledClass = clientSideState.hasDisclaimer ? '' : ' disabled-fields';
+  const { hasDisclaimer } = clientSideState;
+
+  const disabledClass = hasDisclaimer ? '' : ' disabled-fields';
 
   const setEnabled = (enabled: boolean) =>
     setClientSideState({ ...clientSideState, hasDisclaimer: enabled });
@@ -32,11 +34,11 @@ export function DatasetUsage({
   return (
     <InputBlock header="Dataset Usage" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required" id={DatasetUsageToggleID}>
+        <label className="not-disabled" id={DatasetUsageToggleID}>
           Important Reuse Considerations
         </label>
         <YesNoToggle
-          value={clientSideState.hasDisclaimer}
+          value={hasDisclaimer}
           setValue={setEnabled}
           fieldName="enable-disclaimer"
           className="not-disabled"
@@ -47,12 +49,16 @@ export function DatasetUsage({
           }
         />
 
-        <label htmlFor={fieldName}>Disclaimers</label>
+        <label
+          htmlFor={fieldName}
+          className={hasDisclaimer ? "required" : undefined}
+        >Disclaimers</label>
         <textarea
           name={fieldName}
           id={fieldName}
           value={datasetMeta.dataDisclaimer}
-          disabled={!clientSideState.hasDisclaimer}
+          disabled={!hasDisclaimer}
+          required={hasDisclaimer}
           onChange={(e) =>
             changeHandler(
               'dataDisclaimer',

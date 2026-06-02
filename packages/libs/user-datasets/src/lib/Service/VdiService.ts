@@ -284,7 +284,7 @@ export class VdiService extends FetchClientWithCredentials {
     const queryParams = download ? '' : '?download=false';
     submitAsForm({
       method: 'GET',
-      action: `${this.baseUrl}${VdiRoutes.datasetVariablePropertiesFileUri(
+      action: `${this.baseUrl}${VdiRoutes.datasetPropertiesFileUri(
         id,
         file
       )}${queryParams}`,
@@ -298,7 +298,7 @@ export class VdiService extends FetchClientWithCredentials {
     dispatchResponse?: (status: number, message?: string) => void
   ): Promise<void> {
     await this.uploadFile(
-      VdiRoutes.datasetVariablePropertiesFileUri(id, file.name),
+      VdiRoutes.datasetPropertiesFileUri(id, file.name),
       file,
       dispatchResponse
     );

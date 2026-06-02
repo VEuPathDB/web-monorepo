@@ -64,7 +64,7 @@ export function CharacteristicsSection({
       isCommunityRelated={true}
     >
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required" id={FieldStudyToggleID}>
+        <label className="not-disabled" id={FieldStudyToggleID}>
           Field Study or Clinical Trial
         </label>
         <YesNoToggle
@@ -73,9 +73,9 @@ export function CharacteristicsSection({
           fieldName="enable-characteristics"
           className="not-disabled"
           helpText={
-            'Whether the dataset is from a human, vector, animal, or plant' +
-            ' population study; an epidemiological study (including' +
-            ' surveillance); or a clinical trial'
+            'Whether the dataset or underlying samples originated from a' +
+            ' human, vector, animal, or plant population study; an' +
+            ' epidemiological or surveillance study; or a clinical trial.'
           }
         />
 

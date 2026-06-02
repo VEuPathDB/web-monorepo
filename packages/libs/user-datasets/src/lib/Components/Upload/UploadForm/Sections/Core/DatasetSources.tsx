@@ -61,7 +61,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   return (
     <InputBlock header="Dataset Source" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled required" id={DatasetSourcesToggleID}>
+        <label className="not-disabled" id={DatasetSourcesToggleID}>
           Available from External Source
         </label>
         <YesNoToggle
@@ -109,6 +109,8 @@ function DataSource({
   source,
   setSource,
 }: DataSourceProps): ReactElement {
+  const required = index === 0 && enabled;
+
   return (
     <li className="field-grid">
       <InputPair
@@ -117,6 +119,7 @@ function DataSource({
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
         disabled={!enabled}
+        required={required}
         helpText="The URL where the dataset is hosted or was obtained."
       />
 
@@ -126,6 +129,7 @@ function DataSource({
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}
+        required={required}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

@@ -35,9 +35,9 @@ export default function HomePage({
       <div className="Showcase-Section">
         <FeaturedTools />
       </div>
-      <div className="News-Section">
+      {/*  <div className="News-Section">
         <News twitterUrls={[twitterUrl]} {...newsSidebar} />
-      </div>
+      </div>  */}
     </div>
   );
 }

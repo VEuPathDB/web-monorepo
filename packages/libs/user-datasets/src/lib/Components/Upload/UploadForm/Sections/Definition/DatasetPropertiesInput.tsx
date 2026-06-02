@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { Consumer } from '../../../../../Utils';
+import { GlobeIcon } from '../../Components';
 
 export interface DatasetPropertiesInputProps {
   readonly label: string;
@@ -24,7 +25,7 @@ export function DatasetPropertiesInput(
   return (
     <>
       <label htmlFor={props.fieldName} className={labelClass}>
-        {props.label}
+        <GlobeIcon /> {props.label}
       </label>
       <input
         type="file"

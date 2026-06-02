@@ -8,6 +8,7 @@ export interface YesNoToggleProps {
   readonly fieldName: string;
   readonly helpText?: ReactNode;
   readonly className?: string;
+  readonly required?: boolean;
 }
 
 export function YesNoToggle(props: YesNoToggleProps): ReactElement {
@@ -32,7 +33,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
           value="1"
           checked={current === true}
           name={props.fieldName}
-          required={true}
+          required={props.required}
           onChange={(e) => {
             setCurrent(e.currentTarget.checked);
             props.setValue(e.currentTarget.checked);
@@ -46,7 +47,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
           value="1"
           checked={current === false}
           name={props.fieldName}
-          required={true}
+          required={props.required}
           onChange={(e) => {
             setCurrent(!e.currentTarget.checked);
             props.setValue(!e.currentTarget.checked);

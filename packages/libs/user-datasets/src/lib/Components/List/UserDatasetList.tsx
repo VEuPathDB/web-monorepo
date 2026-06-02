@@ -116,7 +116,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       uiState: {
         sort: {
           columnKey: 'created',
-          direction: 'asc',
+          direction: 'desc',
         },
       },
       editingCache: {},
@@ -140,6 +140,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
     this.renderOwnerCell = this.renderOwnerCell.bind(this);
     this.renderStatusCell = this.renderStatusCell.bind(this);
+    this.renderSharedWithCell = this.renderSharedWithCell.bind(this);
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.closeSharingModal = this.closeSharingModal.bind(this);
@@ -174,11 +175,15 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       );
   }
 
-  renderSharedWithCell(cellProps: MesaDataCellProps) {
-    const dataset = cellProps.row;
+  sharedWithValue(dataset: DatasetListEntry): string | null {
+    if (!this.isMyDataset(dataset)) return 'Me';
     return !dataset.shares || !dataset.shares.length
       ? null
       : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
+  }
+
+  renderSharedWithCell(cellProps: MesaDataCellProps) {
+    return this.sharedWithValue(cellProps.row);
   }
 
   renderCommunityCell(cellProps: MesaDataCellProps) {
@@ -596,13 +601,19 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
           data.type.category.toLowerCase();
-      case 'meta.name':
-        return (data: DatasetListEntry) => data.name.toLowerCase();
+      case 'owner':
+        return (data: DatasetListEntry): string =>
+          datasetUserFullName(data.owner).toLowerCase();
+      case 'sharedWith':
+        return (data: DatasetListEntry): string | null =>
+          this.sharedWithValue(data)?.toLowerCase() ?? '\uFFFF';
+      case 'size':
+        return (data: DatasetListEntry): number => data.fileSizeTotal ?? 0;
       default:
         return (data: any, _: number) => {
-          return typeof data[columnKey] !== 'undefined'
-            ? data[columnKey]
-            : null;
+          const val =
+            typeof data[columnKey] !== 'undefined' ? data[columnKey] : null;
+          return typeof val === 'string' ? val.toLowerCase() : val;
         };
     }
   }
@@ -613,9 +624,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ): DatasetListEntry[] {
     const direction: string = sort.direction;
     const columnKey: string = sort.columnKey;
-    const mappedValue = this.getColumnSortValueMapper(columnKey);
-    const sorted = [...rows].sort(MesaUtils.sortFactory(mappedValue));
-    return direction === 'asc' ? sorted : sorted.reverse();
+    const valueMapper = this.getColumnSortValueMapper(columnKey);
+    const sorted = [...rows].sort(MesaUtils.sortFactory(valueMapper));
+    return direction === 'asc' ? sorted.reverse() : sorted;
   }
 
   closeSharingModal() {

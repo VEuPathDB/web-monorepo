@@ -33,6 +33,16 @@ export async function submitNewDataset({
     ? [convertUrl(uploads.url), ...dataFiles]
     : dataFiles;
 
+  if (uploads.documentFiles) {
+    uploads.documentFiles.forEach(it => combinedUploads.push(convertDocumentFile(it)));
+  }
+
+  if (uploads.dataPropertiesFiles) {
+    for (const file of uploads.dataPropertiesFiles) {
+      combinedUploads.push(convertPropertiesFile(file));
+    }
+  }
+
   const scrubbedDetails = scrubDetails(details);
 
   await service.postDataset(
@@ -54,8 +64,8 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
     ...details,
 
     installTargets: removeEmpties(details.installTargets),
-    contacts: removeEmpties(details.contacts),
-    datasetSources: removeEmpties(details.datasetSources),
+    contacts: pruneSimpleRecords(details.contacts),
+    datasetSources: pruneSimpleRecords(details.datasetSources),
     dependencies: removeEmpties(details.dependencies),
     funding: removeEmpties(details.funding),
     linkedDatasets: removeEmpties(details.linkedDatasets),
@@ -66,6 +76,29 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
       details.datasetCharacteristics
     ),
   };
+}
+
+/**
+ * Prunes arrays of simple key/value objects by removing objects that contain no
+ * truthy property values.
+ *
+ * If the resulting array is empty, the array itself is to be 'pruned', and
+ * undefined will be returned.
+ */
+function pruneSimpleRecords<T extends object>(
+  records: T[] | undefined
+): T[] | undefined {
+  if (!records)
+    return undefined;
+
+  const out: T[] = [];
+
+  for (const record of records) {
+    if (record && !isEmptyObject(record))
+      out.push(record);
+  }
+
+  return out.length > 0 ? out : undefined;
 }
 
 function scrubExternalIdentifiers(
@@ -95,6 +128,17 @@ function scrubDatasetCharacteristics(
   };
 }
 
+/**
+ * Tests if a given object contains truthy values.
+ */
+function isEmptyObject(obj: Record<string, any>): boolean {
+  for (const key of Object.keys(obj))
+    if (obj[key])
+      return false;
+
+  return true;
+}
+
 function removeEmpties<T>(values: T[] | undefined): T[] | undefined {
   if (isEmpty(values)) return undefined;
 
@@ -105,6 +149,14 @@ function removeEmpties<T>(values: T[] | undefined): T[] | undefined {
   }
 
   return isEmpty(out) ? undefined : out;
+}
+
+function convertDocumentFile(file: File): DatasetUpload {
+  return { type: 'docFile', file }
+}
+
+function convertPropertiesFile(file: File): DatasetUpload {
+  return { type: 'dataPropertiesFile', file };
 }
 
 function convertDataFile(file: File): DatasetUpload {
