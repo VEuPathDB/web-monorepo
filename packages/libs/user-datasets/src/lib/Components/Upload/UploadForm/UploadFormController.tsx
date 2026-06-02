@@ -58,6 +58,10 @@ export function UploadFormController({
     (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessage
   );
 
+  const uploadProgress = useSelector(
+    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.uploadProgress?.progress
+  )
+
   const formState = useUploadFormState();
 
   const submitForm = useCallback(() => {
@@ -137,6 +141,7 @@ export function UploadFormController({
         badUploadState={badUploadState}
         isSubmitting={submitting}
         urlParams={urlParams}
+        uploadProgress={uploadProgress ?? undefined}
         actions={{
           submit: submitForm,
           clearUploadError: clearBadUpload,
