@@ -1586,7 +1586,10 @@ function makeGenericSummary(
 
 function HtmlString(props: { value: string }) {
   const { value } = props;
-  const sanitized = useMemo(() => DOMPurify.sanitize(value), [value]);
+  const sanitized = useMemo(
+    () => DOMPurify.sanitize(value, { FORBID_TAGS: ['img'] }),
+    [value]
+  );
   return <span dangerouslySetInnerHTML={{ __html: sanitized }} />;
 }
 
