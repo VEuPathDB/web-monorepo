@@ -14,6 +14,7 @@ import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions';
+import { SubmittableState } from '../../Components/UploadButton';
 
 export interface RootDetailsSectionProps {
   readonly formProps: UploadFormProps;
@@ -30,7 +31,7 @@ export interface RootDetailsSectionProps {
   /**
    * Whether the form submit button should be disabled.
    */
-  readonly disableSubmit?: boolean;
+  readonly submittable?: SubmittableState;
 }
 
 export function RootDetailsSection(
@@ -119,7 +120,7 @@ export function RootDetailsSection(
 
       {props.formProps.verbiage.afterUploadHelpText}
 
-      <UploadButton onClick={props.onSubmit} disabled={props.disableSubmit} />
+      <UploadButton onClick={props.onSubmit} submittable={props.submittable} />
     </section>
   );
 }
