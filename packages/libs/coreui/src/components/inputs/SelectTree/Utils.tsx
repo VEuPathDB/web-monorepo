@@ -1,4 +1,5 @@
 import 'regenerator-runtime/runtime';
+import DOMPurify from 'dompurify';
 // Field types
 // -----------
 
@@ -384,13 +385,10 @@ export function safeHtml<P>(
   if (str.indexOf('<') === -1) {
     return <Component {...props}>{str}</Component>;
   }
-  // Use innerHTML to auto close tags
-  const container = document.createElement('div');
-  container.innerHTML = str;
   return (
     <Component
       {...props}
-      dangerouslySetInnerHTML={{ __html: container.innerHTML }}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(str) }}
     />
   );
 }

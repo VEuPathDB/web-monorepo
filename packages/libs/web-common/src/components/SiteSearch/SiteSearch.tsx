@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { Tooltip } from '@veupathdb/coreui';
 import { DataGrid } from '@veupathdb/coreui';
 import {
@@ -1585,15 +1586,11 @@ function makeGenericSummary(
 
 function HtmlString(props: { value: string }) {
   const { value } = props;
-  const formattedValue = useMemo(() => {
-    const div = document.createElement('div');
-    div.innerHTML = value;
-    div
-      .querySelectorAll('img, object, iframe')
-      .forEach((el) => el.parentElement?.removeChild(el));
-    return div.innerHTML;
-  }, [value]);
-  return <span dangerouslySetInnerHTML={{ __html: formattedValue }} />;
+  const sanitized = useMemo(
+    () => DOMPurify.sanitize(value, { FORBID_TAGS: ['img'] }),
+    [value]
+  );
+  return <span dangerouslySetInnerHTML={{ __html: sanitized }} />;
 }
 
 function formatSummaryFieldValue(value?: string | string[]) {

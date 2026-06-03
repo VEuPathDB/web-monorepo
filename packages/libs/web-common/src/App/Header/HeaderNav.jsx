@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { siteSearchServiceUrl } from '../../config';
 import SiteMenu from '../../App/SiteMenu';
 import { UserMenu, UserMenuGuest } from '../../App/UserMenu';
@@ -213,7 +214,9 @@ class HeaderNav extends React.Component {
             <Branding {...this.props} />
           </div>
           <div style={{ alignSelf: 'center' }}>
-            <h3 dangerouslySetInnerHTML={{ __html: tagline }} />
+            <h3
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tagline) }}
+            />
           </div>
           <a href="https://veupathdb.org" target="_blank">
             <img src={partofveupath} id="VEuPathLogo" />

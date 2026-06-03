@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { useEda } from '../../config';
 import { CategoryIcon } from '../../App/Categories';
@@ -177,7 +178,10 @@ class StudyCard extends React.Component {
         <div className="box StudyCard-Body">
           <ul>
             {points.map((point, index) => (
-              <li key={index} dangerouslySetInnerHTML={{ __html: point }} />
+              <li
+                key={index}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(point) }}
+              />
             ))}
           </ul>
         </div>

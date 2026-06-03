@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 import { OptionsDefaults } from './Defaults';
 import OverScroll from './Components/OverScroll';
@@ -35,7 +36,9 @@ const Templates = {
     let { displayText, url } = value;
     let href = url ? url : '#';
     let text = displayText.length ? value.displayText : href;
-    text = <div dangerouslySetInnerHTML={{ __html: text }} />;
+    text = (
+      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }} />
+    );
     let target = '_blank';
 
     const props = { href, target, className };
@@ -59,7 +62,9 @@ const Templates = {
   htmlCell({ key, value, row, rowIndex, column }) {
     const { truncated } = column;
     const className = 'Cell HtmlCell Cell-' + key;
-    const content = <div dangerouslySetInnerHTML={{ __html: value }} />;
+    const content = (
+      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value) }} />
+    );
     const size = truncated === true ? '16em' : truncated;
 
     return truncated ? (

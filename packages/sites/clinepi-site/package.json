@@ -88,6 +88,7 @@
     "dist"
   ],
   "dependencies": {
-    "@veupathdb/preferred-organisms": "workspace:^"
+    "@veupathdb/preferred-organisms": "workspace:^",
+    "dompurify": "^3.4.7"
   }
 }

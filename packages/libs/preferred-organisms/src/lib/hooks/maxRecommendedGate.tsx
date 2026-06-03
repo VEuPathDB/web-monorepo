@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 import {
   FilledButton,
@@ -99,7 +100,11 @@ export function useMaxRecommendedGate(
       <div className="MaxRecommendedGate">
         <div className="MaxRecommendedGate--Message">
           {customMessage ? (
-            <div dangerouslySetInnerHTML={{ __html: customMessage }} />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(customMessage),
+              }}
+            />
           ) : (
             defaultMessage
           )}

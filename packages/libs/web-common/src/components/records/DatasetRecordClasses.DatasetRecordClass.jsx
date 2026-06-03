@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { pure } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -117,7 +118,11 @@ export function RecordHeading(props) {
           {organism_prefix ? (
             <>
               <dt>Organism (source or reference)</dt>
-              <dd dangerouslySetInnerHTML={{ __html: organism_prefix }} />
+              <dd
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(organism_prefix),
+                }}
+              />
             </>
           ) : null}
 
@@ -161,7 +166,7 @@ export function RecordHeading(props) {
           <dt>Summary</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
-            dangerouslySetInnerHTML={{ __html: summary }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
 
           {megabase_pairs ? (

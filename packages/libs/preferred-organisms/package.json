@@ -18,6 +18,7 @@
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
     "@veupathdb/web-common": "workspace:^",
+    "dompurify": "^3.4.7",
     "lodash": "^4.17.21",
     "recoil": "^0.7.7"
   },
