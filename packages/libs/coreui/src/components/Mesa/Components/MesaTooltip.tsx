@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import DOMPurify from 'dompurify';
 
 import { Tooltip } from '../../info/Tooltip';
 
@@ -54,7 +55,11 @@ const MesaTooltip = ({
     <Tooltip
       title={
         renderHtml ? (
-          <div dangerouslySetInnerHTML={{ __html: content as string }} />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(content as string),
+            }}
+          />
         ) : (
           content ?? <></>
         )

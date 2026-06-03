@@ -37,6 +37,7 @@
     "@veupathdb/eda": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
     "custom-event-polyfill": "^1.0.7",
+    "dompurify": "^3.4.7",
     "md5": "^2.3.0",
     "pluralize": "^8.0.0",
     "whatwg-fetch": "^3.5.0"

@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '../../config';
@@ -88,7 +89,7 @@ export function RecordHeading(props) {
           <dt>Summary:</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
-            dangerouslySetInnerHTML={{ __html: summary }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
 
           <dt>Data Accessibility:</dt>

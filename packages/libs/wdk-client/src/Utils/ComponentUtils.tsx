@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { AttributeValue } from '../Utils/WdkModel';
 import { stripHTML } from './DomUtils';
 
@@ -267,13 +268,10 @@ export function safeHtml<P>(
   if (str.indexOf('<') === -1 && !isHtmlEntityFound) {
     return <Component {...props}>{str}</Component>;
   }
-  // Use innerHTML to auto close tags
-  let container = document.createElement('div');
-  container.innerHTML = str;
   return (
     <Component
       {...props}
-      dangerouslySetInnerHTML={{ __html: container.innerHTML }}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(str) }}
     />
   );
 }
