@@ -14,6 +14,7 @@ import { UploadUrlParams } from './DataModel';
 import './UploadForm.scss';
 import { UploadWarningModal } from './UploadWarningModal';
 import { CommunityAccess } from '../../Misc/CommunityAccess';
+import { SubmittableState } from './Components/UploadButton';
 
 const DatasetUploadSectionID = 'dataset-upload';
 
@@ -48,9 +49,12 @@ export function UploadForm(props: UploadFormProps): ReactElement {
   // TODO: temporary warning until dataset update form is completed.
   const [showUploadWarning, setShowUploadWarning] = useState(false);
 
-  // Disable the upload buttons if the form is invalid, or an upload is already
-  // in progress.
-  const disableUpload = !formIsValid || props.isSubmitting;
+  // Determine if the upload form should be submittable, and if not, why not.
+  const uploadSubmittable = !formIsValid
+    ? SubmittableState.Invalid
+    : (props.isSubmitting
+      ? SubmittableState.InProgress
+      : SubmittableState.Submittable);
 
   const tempOnSubmit = () => {
     setShowUploadWarning(true);
@@ -121,12 +125,12 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
           onSubmit={tempOnSubmit}
-          disableSubmit={disableUpload}
+          submittable={uploadSubmittable}
         />
 
         <MetadataSection formProps={props} jsonPath={metaPath} />
 
-        <UploadButton onClick={tempOnSubmit} disabled={disableUpload} />
+        <UploadButton onClick={tempOnSubmit} submittable={uploadSubmittable} />
 
         <SubmissionModal
           submitting={props.isSubmitting}
