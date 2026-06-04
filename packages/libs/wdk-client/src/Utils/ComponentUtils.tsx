@@ -311,9 +311,22 @@ export function formatAttributeValue(value?: AttributeValue): string {
 export function renderAttributeValue<P>(
   value: AttributeValue,
   props?: P,
+  Component = 'span',
+  autoBreak = false
+) {
+  let str = formatAttributeValue(value);
+  if (autoBreak && str) {
+    str = str.replace(/\r?\n\r?\n/g, '<br/><br/>');
+  }
+  return safeHtml(str, props, Component);
+}
+
+export function renderAttributeValueAutoBreak<P>(
+  value: AttributeValue,
+  props?: P,
   Component = 'span'
 ) {
-  return safeHtml(formatAttributeValue(value), props, Component);
+  return renderAttributeValue(value, props, Component, true);
 }
 
 /**
