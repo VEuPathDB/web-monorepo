@@ -17,7 +17,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   studyId: string;
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode;
   className?: string;
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
