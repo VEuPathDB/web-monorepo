@@ -23,6 +23,7 @@ import { DownloadClient } from '../api/DownloadClient';
 import { entityTreeToArray } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
 import { useDeepValue } from '../hooks/immutability';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export interface Props {
   studyId: string;
@@ -44,8 +45,23 @@ export function EDAWorkspaceContainer(props: Props) {
 
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
+
+  if (studyMetadata.error)
+    return (
+      <Banner
+        banner={{
+          type: 'warning',
+          message:
+            studyMetadata.error instanceof Error
+              ? studyMetadata.error.message
+              : 'An unexpected error occurred.',
+        }}
+      />
+    );
+
   if (wdkStudyRecordState == null || studyMetadata.value == null)
     return <Loading />;
+
   return (
     <EDAWorkspaceContainerWithLoadedData
       {...props}
