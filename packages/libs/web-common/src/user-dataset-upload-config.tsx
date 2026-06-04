@@ -308,9 +308,12 @@ function isasimpleFormConfigurator(
               {formatFileSize(dataType.vdiConfig.maxFileSize, 'binary')}):
             </p>
             <ul>
-              <li>in .csv, .tsv, or tab-delimited .txt format; compressed (.zip)
-                files are also supported</li>
+              <li>
+                in .csv, .tsv, or tab-delimited .txt format; compressed (.zip)
+                files are also supported
+              </li>
               <li>with variables as columns, records as rows</li>
+              <li>first row must be column headings (variable names)</li>
             </ul>
           </div>
         ),
