@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -52,9 +52,7 @@ export function EDAWorkspaceContainer(props: Props) {
         banner={{
           type: 'warning',
           message:
-            studyMetadata.error instanceof Error
-              ? studyMetadata.error.message
-              : 'An unexpected error occurred.',
+            'The dataset you requested could not be found. Please check the URL and try again.',
         }}
       />
     );
