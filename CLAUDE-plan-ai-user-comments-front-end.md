@@ -1,5 +1,7 @@
 # Plan: AI-Assisted User Comments — Front End
 
+**TO DO:** validation step has been removed from the back-end. Remove also from the front end plan and mock-up prompts (and user to remake relevant mockups via ChatGPT).
+
 ## Context
 
 VEuPathDB is adding a new kind of user comment: an **AI-assisted gene-publication summary**. A user supplies a gene (via URL param `stableId`) and a publication (either a PubMed ID or an uploaded PDF). A new back-end service resolves the publication text, checks that the gene or its synonyms are mentioned, runs an LLM to produce a gene-function description from the publication's perspective, and caches that output server-side (a `comment_ai_run` row). The user is taken to a **review-and-publish** step seeded with that AI output; **a user-comment record is created only when they click Publish** — at which point its `aiProvenance` field records the source.
