@@ -44,6 +44,15 @@
     font-style: italic;
   }
 
+  button.error-link {
+    background: none;
+    border: none;
+    color: var(--coreui-blue-700);
+    padding: 0;
+    margin: 0;
+    display: inline;
+  }
+
   div.input-block {
     border-width: 1px;
     border-style: solid;
