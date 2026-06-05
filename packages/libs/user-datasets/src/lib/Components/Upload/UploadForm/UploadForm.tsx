@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -15,6 +15,7 @@ import './UploadForm.scss';
 import { UploadWarningModal } from './UploadWarningModal';
 import { CommunityAccess } from '../../Misc/CommunityAccess';
 import { SubmittableState } from './Components/UploadButton';
+import { useUploadFormState } from '../../../StoreModules/UserDatasetUploadStoreModule';
 
 const DatasetUploadSectionID = 'dataset-upload';
 
@@ -35,10 +36,6 @@ export interface UploadFormProps extends DatasetUploadConfig {
   readonly badUploadState?: BadUpload;
 
   readonly urlParams: UploadUrlParams;
-}
-
-function calcFormIsValid(e: Element): boolean {
-  return e.querySelectorAll(':invalid').length === 0;
 }
 
 export function UploadForm(props: UploadFormProps): ReactElement {
@@ -66,14 +63,13 @@ export function UploadForm(props: UploadFormProps): ReactElement {
     window.scrollTo(0, 0);
   };
 
-  const onFormChange = (e: FormEvent) =>
-    setFormIsValid(calcFormIsValid(e.currentTarget));
+  const { datasetDetails, fileUploads } = useUploadFormState();
 
   useEffect(() => {
     setFormIsValid(
       calcFormIsValid(document.getElementById(DatasetUploadSectionID)!)
     );
-  }, [setFormIsValid]);
+  }, [setFormIsValid, datasetDetails, fileUploads]);
 
   return (
     <section id={DatasetUploadSectionID}>
@@ -119,7 +115,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         />
       </header>
 
-      <form className={props.formClassName} onInput={onFormChange}>
+      <form className={props.formClassName}>
         <RootDetailsSection
           formProps={props}
           detailsJsonPath={metaPath}
@@ -144,4 +140,8 @@ export function UploadForm(props: UploadFormProps): ReactElement {
       />
     </section>
   );
+}
+
+function calcFormIsValid(e: Element): boolean {
+  return e.querySelectorAll(':invalid').length === 0;
 }
