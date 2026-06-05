@@ -2,7 +2,6 @@ import React, { ReactElement, ReactNode } from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { ValidationErrors } from '../../../../Service';
 import { BadUpload } from '../../../../StoreModules';
-import { Link } from 'react-router-dom';
 
 export interface UploadErrorBannerProps {
   readonly errors: BadUpload | undefined;
@@ -52,20 +51,30 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
 
   if ('byKey' in errors) {
     for (const jsonPath of Object.keys(errors.byKey)) {
-      const link = document.getElementById(jsonPath) ? (
-        <Link to={`#${encodeURI(jsonPath)}`}>{formatJPath(jsonPath)}</Link>
-      ) : (
-        formatJPath(jsonPath)
-      );
+      // using `<a href` instead of `<Link` as Link does not properly handle
+      // standard hash/anchor links.  For that the library
+      // `react-router-hash-link` is needed, however in this situation, we are
+      // not changing the view in any way, so a normal HTML anchor link works
+      // fine.
+      const element = document.getElementById(jsonPath);
+
+      const link = element == null
+        ? formatJPath(jsonPath)
+        : (
+          <button
+            className="error-link"
+            type="button"
+            onClick={() => {
+              element.scrollIntoView();
+              element.focus();
+            }}
+          >
+            {formatJPath(jsonPath)}
+          </button>
+        );
 
       for (const msg of errors.byKey[jsonPath]) {
-        elements.push(
-          newLI(
-            <>
-              {link}: {msg}
-            </>
-          )
-        );
+        elements.push(newLI(<>{link}: {msg}</>));
       }
     }
   }
