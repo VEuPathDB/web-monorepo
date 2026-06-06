@@ -14,7 +14,7 @@ import { SiteSearchInput } from '../../components';
 
 import './HeaderNav.scss';
 // @ts-ignore
-import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 
 class HeaderNav extends React.Component {
   constructor(props) {
