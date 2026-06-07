@@ -12,7 +12,7 @@ import { useLocation } from 'react-router';
 import { get, memoize } from 'lodash';
 
 // @ts-ignore
-import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 // @ts-ignore
 import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 

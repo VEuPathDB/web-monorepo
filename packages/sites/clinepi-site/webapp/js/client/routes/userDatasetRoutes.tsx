@@ -35,7 +35,7 @@ const UserDatasetRouter = React.lazy(
   () => import('../controllers/UserDatasetRouter')
 );
 
-const USER_DATASETS_HELP_PAGE = `${projectId}/user_datasets_help.html`;
+const USER_DATASETS_HELP_PAGE = `dataExplorer/user_datasets_help.html`;
 
 export const userDatasetRoutes: RouteEntry[] = [
   {

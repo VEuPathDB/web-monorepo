@@ -215,6 +215,8 @@ export function RecordAttributeSection(props) {
   switch (restProps.attribute.name) {
     case 'description':
       return <BlockRecordAttributeSection {...restProps} />;
+    case 'disclaimer':
+      return <BlockRecordAttributeSection {...restProps} />;
     case 'dataFiles':
       return <DataFilesSection {...restProps} />;
     default:
