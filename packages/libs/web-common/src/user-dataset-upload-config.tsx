@@ -358,22 +358,31 @@ function rnaseqFormConfigurator(
     dataInputConfig: {
       file: { enabled: true },
       helpText: () => (
+    <details style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
+      <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
+        Instructions to upload your RNA-Seq dataset
+      </summary>
+      <div style={{ marginTop: '10px' }}>
         <div className="formInfo">
-          To upload your dataset:
           <ol>
             <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
             <li>compress the set of files, not a folder containing them.</li>
             <li>make sure there are no empty files.</li>
+            <li>files saved on some Windows editors may have incompatible line endings; before zipping, open each file in a text editor like Notepad++ and convert line endings to Unix format.</li>
           </ol>
           The upload requires:
           <ol>
             <li>
-              <b>a counts file per sample</b> - each sample must have only one
-              tab-delimited file (use extension .txt) containing two columns
-              with these headers:
+              <b>a counts file per sample</b> 
               <ul>
-                <li>'gene_id'</li>
-                <li>'FPKM' or 'TPM'</li>
+              <li>a tab-delimited file (use extension .txt) containing two columns
+              with these headers:
+                <ul>
+                  <li>'gene_id'</li>
+                  <li>'FPKM' or 'TPM'</li>
+                </ul>
+              </li>
+              <li>all values in the second column must be floating point — use 0.0, not 0; 22.0, not 22.</li>
               </ul>
             </li>
             <li>
@@ -400,6 +409,8 @@ function rnaseqFormConfigurator(
             <li>make sure there are no empty files.</li>
           </ol>
         </div>
+      </div>
+    </details>
       ),
     },
     dependencies: {
