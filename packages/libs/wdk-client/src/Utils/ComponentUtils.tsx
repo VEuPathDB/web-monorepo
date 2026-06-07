@@ -238,6 +238,10 @@ function logShallowComparison<P extends AnyObject>(
   console.groupEnd();
 }
 
+function isPlainText(str: string): boolean {
+  return str.indexOf('<') === -1 && !/(\&(.+?);)/.test(str);
+}
+
 /** Create a React Element using preformatted HTML */
 export function safeHtml<P>(
   str: string,
@@ -260,12 +264,7 @@ export function safeHtml<P>(
   Component: any = 'span'
 ): JSX.Element {
   str = str ?? '';
-  /**
-   * To improve performance, let's skip the element creation and innerHTML magic
-   * when we detect neither HTML nor an HTML entity in the string
-   */
-  const isHtmlEntityFound = /(\&(.+?);)/.test(str);
-  if (str.indexOf('<') === -1 && !isHtmlEntityFound) {
+  if (isPlainText(str)) {
     return <Component {...props}>{str}</Component>;
   }
   return (
@@ -311,9 +310,22 @@ export function formatAttributeValue(value?: AttributeValue): string {
 export function renderAttributeValue<P>(
   value: AttributeValue,
   props?: P,
+  Component = 'span',
+  autoBreak = false
+) {
+  let str = formatAttributeValue(value);
+  if (autoBreak && str && isPlainText(str)) {
+    str = str.replace(/\r?\n/g, '<br/>');
+  }
+  return safeHtml(str, props, Component);
+}
+
+export function renderAttributeValueAutoBreak<P>(
+  value: AttributeValue,
+  props?: P,
   Component = 'span'
 ) {
-  return safeHtml(formatAttributeValue(value), props, Component);
+  return renderAttributeValue(value, props, Component, true);
 }
 
 /**
