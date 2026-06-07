@@ -56,6 +56,7 @@ export function RecordHeading(props) {
     name,
     creation_date,
     summary,
+    is_public,
     accessibility,
     owner_name,
   } = attributes;
@@ -97,9 +98,11 @@ export function RecordHeading(props) {
           />
 
           <dt>Visibility:</dt>
+          <dd>{is_public}</dd>
+          <dt>Download access:</dt>
           <dd>
             {accessibility}
-            {accessibility === 'private' ? (
+            {accessibility === 'Restricted' ? (
               <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
                 This dataset can only be discovered, explored, and downloaded by
                 the owner and explicitly invited collaborators.
