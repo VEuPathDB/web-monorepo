@@ -57,6 +57,7 @@ export function RecordHeading(props) {
     creation_date,
     summary,
     accessibility,
+    owner_name,
   } = attributes;
 
   let datasetID = record.id[0].value;
@@ -66,24 +67,27 @@ export function RecordHeading(props) {
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-          <dt>Primary Publication:</dt>
+          <dt>Primary publication:</dt>
           {primary_publication ? (
             <>
               <dd>{primary_publication}</dd>
             </>
           ) : null}
 
-          <dt>Primary Contact:</dt>
+          <dt>Primary contact:</dt>
           {primary_contact_name ? (
             <>
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
 
+          <dt>Uploaded by:</dt>
+          <dd>{owner_name}</dd>
+
           <dt>VEuPathDB Dataset ID:</dt>
           <dd>{datasetID}</dd>
 
-          <dt>Dataset Version / Date:</dt>
+          <dt>Dataset version / Date:</dt>
           <dd>v1, {creation_date}</dd>
 
           <dt>Summary:</dt>
@@ -92,7 +96,7 @@ export function RecordHeading(props) {
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
 
-          <dt>Data Accessibility:</dt>
+          <dt>Visibility:</dt>
           <dd>
             {accessibility}
             {accessibility === 'private' ? (
