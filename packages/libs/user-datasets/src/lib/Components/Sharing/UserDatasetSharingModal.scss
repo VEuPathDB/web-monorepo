@@ -10,6 +10,25 @@
   font-size: 1.2em;
   padding: 1em;
 
+  #community-error-list {
+    width: inherit;
+    margin: 1.5em 0 1em 0;
+
+    *, th, td {
+      border: none;
+    }
+
+    th {
+      max-width: 45%;
+      text-align: right;
+      padding-right: 1ch;
+    }
+
+    td {
+      text-align: left;
+    }
+  }
+
   &-CloseBar {
     text-align: right;
   }
@@ -176,7 +195,6 @@
   }
   .wdk-Icon {
     font-size: 50px;
-    margin-bottom: 20px;
   }
 }
 

@@ -436,8 +436,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset, dataNoun, enablePublicUserDatasets } =
-      this.props;
+    const { removeUserDataset, dataNoun } = this.props;
     return [
       {
         callback: (_: DatasetListEntry[]) => {},
@@ -454,7 +453,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                   break;
               }
             }}
-            enablePublicUserDatasets={enablePublicUserDatasets}
+            // FIXME: 2026-06-08 16:38 - Disabled for now due to complexity of
+            //   public dataset sharing requirements.
+            enablePublicUserDatasets={false}
           />
         ),
         selectionRequired: true,

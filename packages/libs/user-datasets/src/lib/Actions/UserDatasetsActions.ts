@@ -1,4 +1,4 @@
-import { capitalize, get } from 'lodash';
+import { get } from 'lodash';
 
 import {
   transitionToInternalPage,
@@ -25,7 +25,10 @@ import {
 
 import { DatasetPatchRequest } from '../Service/Model';
 import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
-import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
+import {
+  CommunityPromotionError,
+  CommunityPromotionValidationError,
+} from '../Components/Sharing/CommunityPromotionError';
 
 export type Action =
   | DetailErrorAction
@@ -535,7 +538,7 @@ export function updateDatasetCommunityVisibility(
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
       async ({ wdkService }) => {
         try {
-          const validationErrors: { datasetId: string; messages: string[] }[] =
+          const validationErrors: CommunityPromotionValidationError[] =
             [];
           const serviceErrors: string[] = [];
 
@@ -554,13 +557,8 @@ export function updateDatasetCommunityVisibility(
                 ({ errors: msgs }) => {
                   validationErrors.push({
                     datasetId,
-                    messages: [
-                      ...msgs.general,
-                      ...Object.entries<string[]>(msgs.byKey).flatMap(
-                        ([key, values]) =>
-                          values.map((it) => `${capitalize(key)} - ${it}`)
-                      ),
-                    ],
+                    general: msgs.general,
+                    byField: msgs.byKey,
                   });
                 },
                 // on misc error

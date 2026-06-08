@@ -16,8 +16,11 @@ export interface CommunityPromotionError {
   /**
    * Validation error messages.
    */
-  readonly validationErrors?: readonly {
-    readonly datasetId: string;
-    readonly messages: readonly string[];
-  }[];
+  readonly validationErrors?: readonly CommunityPromotionValidationError[];
+}
+
+export interface CommunityPromotionValidationError {
+  readonly datasetId: string;
+  readonly general: readonly string[];
+  readonly byField: Record<string, readonly string[]>;
 }
