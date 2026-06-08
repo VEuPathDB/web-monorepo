@@ -95,6 +95,11 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
 
   const files = userDatasetFilesResult.data;
 
+  // No need for this section if there are no data files at all
+  // (e.g. upload failure)
+  const hasUpload = files.upload != null;
+  if (!hasUpload) return null;
+
   const getFileTableColumns = (
     fileType: DatasetFileType
   ): MesaColumn<ZipFileRow>[] => {
