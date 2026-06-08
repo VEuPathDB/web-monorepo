@@ -225,6 +225,10 @@ export default function makeHeaderMenuItemsFactory(
               text: 'My Analyses',
               route: makeEdaRoute(),
             },
+            {
+              text: 'My Studies',
+              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/datasets.html`,
+            },
             ...(useUserDatasetsWorkspace
               ? [
                   {
