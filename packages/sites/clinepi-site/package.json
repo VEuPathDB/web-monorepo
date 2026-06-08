@@ -42,6 +42,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@veupathdb/base-webpack-config": "workspace:^",
     "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/preferred-organisms": "workspace:^",
     "@veupathdb/components": "workspace:^",
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/eda": "workspace:^",
@@ -58,6 +59,7 @@
     "bubleify": "^2.0.0",
     "core-js": "^3.25.3",
     "css-loader": "^6.7.4",
+    "dompurify": "^3.4.7",
     "file-loader": "^3.0.1",
     "html-webpack-plugin": "^4.5.2",
     "ify-loader": "^1.1.0",
@@ -86,9 +88,5 @@
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "@veupathdb/preferred-organisms": "workspace:^",
-    "dompurify": "^3.4.7"
-  }
+  ]
 }

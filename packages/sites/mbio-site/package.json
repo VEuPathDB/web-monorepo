@@ -42,6 +42,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@veupathdb/base-webpack-config": "workspace:^",
     "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/preferred-organisms": "workspace:^",
     "@veupathdb/components": "workspace:^",
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/eda": "workspace:^",
@@ -86,8 +87,5 @@
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "@veupathdb/preferred-organisms": "workspace:^"
-  }
+  ]
 }
