@@ -56,7 +56,9 @@ export function RecordHeading(props) {
     name,
     creation_date,
     summary,
+    is_public,
     accessibility,
+    owner_name,
   } = attributes;
 
   let datasetID = record.id[0].value;
@@ -66,24 +68,27 @@ export function RecordHeading(props) {
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-          <dt>Primary Publication:</dt>
+          <dt>Primary publication:</dt>
           {primary_publication ? (
             <>
               <dd>{primary_publication}</dd>
             </>
           ) : null}
 
-          <dt>Primary Contact:</dt>
+          <dt>Primary contact:</dt>
           {primary_contact_name ? (
             <>
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
 
+          <dt>Uploaded by:</dt>
+          <dd>{owner_name}</dd>
+
           <dt>VEuPathDB Dataset ID:</dt>
           <dd>{datasetID}</dd>
 
-          <dt>Dataset Version / Date:</dt>
+          <dt>Dataset version / Date:</dt>
           <dd>v1, {creation_date}</dd>
 
           <dt>Summary:</dt>
@@ -92,10 +97,12 @@ export function RecordHeading(props) {
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
 
-          <dt>Data Accessibility:</dt>
+          <dt>Visibility:</dt>
+          <dd>{is_public}</dd>
+          <dt>Download access:</dt>
           <dd>
             {accessibility}
-            {accessibility === 'private' ? (
+            {accessibility === 'Restricted' ? (
               <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
                 This dataset can only be discovered, explored, and downloaded by
                 the owner and explicitly invited collaborators.
@@ -214,6 +221,8 @@ export function RecordAttributeSection(props) {
   const { DefaultComponent, ...restProps } = props;
   switch (restProps.attribute.name) {
     case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'disclaimer':
       return <BlockRecordAttributeSection {...restProps} />;
     case 'dataFiles':
       return <DataFilesSection {...restProps} />;

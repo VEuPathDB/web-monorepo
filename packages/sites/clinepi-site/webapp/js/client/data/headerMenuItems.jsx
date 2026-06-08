@@ -87,6 +87,8 @@ export default function makeHeaderMenuItemsFactory(
     const hasUserDatasets =
       filteredUserStudies?.length > 0 || filteredCommunityStudies?.length > 0;
 
+    const projectDisplayName = 'dataExplorer';
+
     return {
       mainMenu: [
         {
@@ -318,19 +320,19 @@ export default function makeHeaderMenuItemsFactory(
           children: [
             {
               text: 'Tutorials',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/tutorials.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/tutorials.html`,
             },
             {
               text: 'Webinars',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/webinars.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/webinars.html`,
             },
             {
               text: 'Workshops',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/workshops.html`,
             },
             {
               text: 'External resources',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/resources.html`,
             },
           ],
         },
@@ -340,23 +342,23 @@ export default function makeHeaderMenuItemsFactory(
           children: [
             {
               text: 'About dataExplorer',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/about.html`,
             },
             {
               text: 'Why use dataExplorer',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/whyDataExplorer.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/whyDataExplorer.html`,
             },
             {
               text: 'FAQ',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/faq.html`,
             },
             /*{
               text: 'Submit Data to dataExplorer',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/submit.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/submit.html`,
             },*/
             {
               text: 'Data Access & Use Policy',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/access_and_use.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/access_and_use.html`,
             },
             {
               text: 'Publications about ClinEpiDB',
@@ -371,11 +373,11 @@ export default function makeHeaderMenuItemsFactory(
             ...socialLinks,
             {
               text: 'News',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/news.html`,
             },
             {
               text: 'Features coming soon',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/newfeatures.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/newfeatures.html`,
             },
           ],
         },

@@ -11,35 +11,48 @@ const Text = {
   product: (
     <span>
       <big>
-        ClinEpi<span style={{ color: '#DD314E' }}>DB</span>{' '}
+        data<span style={{ color: '#DD314E' }}>Explorer</span>{' '}
       </big>
     </span>
   ),
   body: (
     <div>
       <p>
-        Clinical Epidemiology Database Resources, ClinEpiDB
-        (http://ClinEpiDB.org) is charged with ensuring that epidemiologic
-        studies are conveniently accessible to the worldwide community of
-        biomedical researchers. ClinEpiDB is committed to high standards for the
-        protection of all submitted study data provided to ClinEpiDB and made
-        available through the ClinEpiDB platform.
+        dataExplorer (https://dataExplorer.org) is an online platform supporting
+        the contribution, discovery, understanding, exploration, and reuse of
+        datasets by the global research community. We are committed to FAIR
+        (Findable, Accessible, Interoperable, and Reusable) data principles.
       </p>
       <p>
-        Study data is interpretable only to the extent as the study design and
-        context are understood. All dates are obfuscated per participant through
-        the application of a random number algorithm to comply with the ethical
-        conduct of human subjects research. Each study that is submitted to
-        ClinEpiDB is unique and each may require different levels of data access
-        restrictions. Researchers accessing data on ClinEpiDB agree to these
-        policies and to comply with responsible authorized use.{' '}
+        Data are interpretable only to the extent the original study design and
+        context are understood. Researchers reusing data should review available
+        documentation to understand the original study design, context, and
+        limitations before conducting secondary analyses and making conclusions.
+      </p>
+      <p>
+        Personally Identifiable Information (PII) must not be uploaded to
+        dataExplorer. By uploading datasets to this platform, contributors
+        acknowledge and agree that they are solely responsible for ensuring that
+        uploaded data are appropriately de-identified and comply with all
+        applicable ethical, institutional, legal, and regulatory requirements.
+      </p>
+      <p>
+        By using dataExplorer, users agree to comply with the platform’s{' '}
         <a
-          href="/a/app/static-content/ClinEpiDB/access_and_use.html"
+          href="/a/app/static-content/dataExplorer/access_and_use.html"
           target="_blank"
         >
-          Read more about our data access and use policy here
-        </a>
-        . Use the ‘Contact Us’ link above to submit questions or comments.
+          Data Access and Use Policy
+        </a>{' '}
+        and to use datasets responsibly and only as authorized. The dataExplorer
+        team is not responsible for inappropriate sharing or use of datasets
+        contributed to this platform. dataExplorer reserves the right to remove
+        datasets or other content that do not comply with these requirements,
+        including datasets containing PII or other prohibited information.
+      </p>
+      <p>
+        Please use the “Contact Us” link above for questions, comments, or to
+        report datasets that may contain PII or other sensitive information.
       </p>
     </div>
   ),
