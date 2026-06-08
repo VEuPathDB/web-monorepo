@@ -2,6 +2,7 @@ import { NumberDistributionDefaults, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { VariableMapping } from '../api/DataClient/types';
+import { MAX_DISTRIBUTION_BINS } from '../constants';
 import { min, max } from 'lodash';
 
 export function numberDateDefaultAxisRange(
@@ -138,19 +139,19 @@ export function numberDateDefaultAxisRange(
   } else return undefined;
 }
 
-const MAX_EDGE_CASE_BINS = 2000;
-
 /**
  * The basic functionality is to return `min([ displayRangeMin ?? 0, rangeMin, observedMin ])`
  * The zero is targeted at histograms which should start at zero even if rangeMin > 0.
  *
- * However, there is an edge case when rangeMin === rangeMax. (When the default binWidth defaults to 1.)
+ * However, there is an edge case for variables whose values are clustered far from zero
+ * (e.g. a year-like integer with values 2000..2004 and a default `binWidth` of 1).
  * If we are making a `distribution` histogram request in this scenario, we do NOT want
- * to request `{ min: 0, max: rangeMax, binWidth: 1 }`
- * because this will cause an OOM error on the backend if `rangeMax` is large.
+ * to anchor the lower bound at zero and request `{ min: 0, max: rangeMax, binWidth: 1 }`
+ * because the bin count (`rangeMax / binWidth`) would exceed the backend's limit and
+ * produce a "Maximum number of allowed bins exceeded" error.
  *
- * The solution is to check for the edge case and return
- * `rangeMin - binWidth` for the lower bound if the number of bins would be excessive.
+ * The solution is to detect when anchoring at zero would create an excessive number of
+ * bins and instead use `rangeMin - binWidth` for the lower bound.
  */
 function getSafeLowerBound(
   { displayRangeMin, rangeMin, rangeMax, binWidth }: NumberDistributionDefaults,
@@ -162,9 +163,9 @@ function getSafeLowerBound(
   if (displayRangeMin != null) {
     lowerBound = displayRangeMin;
   } else if (
-    // check for the edge-case
-    rangeMin === rangeMax &&
-    rangeMax / (binWidth ?? 1) > MAX_EDGE_CASE_BINS
+    // would anchoring the lower bound at zero create too many bins?
+    rangeMax / (binWidth ?? 1) >
+    MAX_DISTRIBUTION_BINS
   ) {
     lowerBound = rangeMin - (binWidth ?? 1);
   }
