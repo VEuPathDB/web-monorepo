@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   StudyEntity,
@@ -114,7 +115,7 @@ export function VariableDetails(props: Props) {
         )}
         {/* add variable.definition */}
         <div className={cx('-SubsettingVariableDefinition')}>
-          {variable?.definition}
+          {variable?.definition && safeHtml(variable.definition)}
         </div>
       </div>
       {totalEntityCount != null && filteredEntityCount != null ? (
