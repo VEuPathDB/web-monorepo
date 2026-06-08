@@ -35,7 +35,7 @@ export function DatasetUsage({
     <InputBlock header="Dataset Usage" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
         <label className="not-disabled" id={DatasetUsageToggleID}>
-          Important Reuse Considerations
+          Any Reuse Considerations?
         </label>
         <YesNoToggle
           value={hasDisclaimer}
@@ -51,8 +51,10 @@ export function DatasetUsage({
 
         <label
           htmlFor={fieldName}
-          className={hasDisclaimer ? "required" : undefined}
-        >Disclaimers</label>
+          className={hasDisclaimer ? 'required' : undefined}
+        >
+          Reuse Considerations
+        </label>
         <textarea
           name={fieldName}
           id={fieldName}

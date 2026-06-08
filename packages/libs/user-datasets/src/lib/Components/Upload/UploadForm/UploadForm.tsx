@@ -49,9 +49,9 @@ export function UploadForm(props: UploadFormProps): ReactElement {
   // Determine if the upload form should be submittable, and if not, why not.
   const uploadSubmittable = !formIsValid
     ? SubmittableState.Invalid
-    : (props.isSubmitting
-      ? SubmittableState.InProgress
-      : SubmittableState.Submittable);
+    : props.isSubmitting
+    ? SubmittableState.InProgress
+    : SubmittableState.Submittable;
 
   const tempOnSubmit = () => {
     setShowUploadWarning(true);
@@ -89,9 +89,9 @@ export function UploadForm(props: UploadFormProps): ReactElement {
                 Before uploading your dataset, please ensure your data is
                 formatted according to the instructions listed in the{' '}
                 <Link to={{ pathname: `${props.baseUrl}/help` }}>
-                  "Help" tab
-                </Link>
-                .
+                  "My datasets help"
+                </Link>{' '}
+                tab.
               </>
             ),
           }}

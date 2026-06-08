@@ -62,7 +62,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
     <InputBlock header="Dataset Source" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
         <label className="not-disabled" id={DatasetSourcesToggleID}>
-          Available from External Source
+          Available from External Source?
         </label>
         <YesNoToggle
           value={enabled}
@@ -77,7 +77,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
           }
         />
 
-        <span className="multi-input-label">Sources</span>
+        <span className="multi-input-label">External Sources</span>
         <ol className="multi-input non-bold-labels">{inputRows}</ol>
 
         <AddRowButton
