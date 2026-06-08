@@ -1,10 +1,7 @@
 import { numberDateDefaultAxisRange } from './default-axis-range';
 import { NumberVariable } from '../types/study';
 import { NumberRange } from '../types/general';
-
-// The backend rejects `distribution` requests whose bin count exceeds this.
-// See "Maximum number of allowed bins (2000) exceeded" bad-request errors.
-const MAX_ALLOWED_BINS = 2000;
+import { MAX_DISTRIBUTION_BINS } from '../constants';
 
 function makeIntegerVariable(
   distributionDefaults: NumberVariable['distributionDefaults']
@@ -48,7 +45,7 @@ describe('numberDateDefaultAxisRange - max bins protection', () => {
     ) as NumberRange;
 
     const binCount = (range.max - range.min) / binWidth;
-    expect(binCount).toBeLessThanOrEqual(MAX_ALLOWED_BINS);
+    expect(binCount).toBeLessThanOrEqual(MAX_DISTRIBUTION_BINS);
 
     // and the range must still cover the data
     expect(range.min).toBeLessThanOrEqual(2000);

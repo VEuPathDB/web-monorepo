@@ -2,6 +2,7 @@ import { NumberDistributionDefaults, Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { VariableMapping } from '../api/DataClient/types';
+import { MAX_DISTRIBUTION_BINS } from '../constants';
 import { min, max } from 'lodash';
 
 export function numberDateDefaultAxisRange(
@@ -138,8 +139,6 @@ export function numberDateDefaultAxisRange(
   } else return undefined;
 }
 
-const MAX_EDGE_CASE_BINS = 2000;
-
 /**
  * The basic functionality is to return `min([ displayRangeMin ?? 0, rangeMin, observedMin ])`
  * The zero is targeted at histograms which should start at zero even if rangeMin > 0.
@@ -166,7 +165,7 @@ function getSafeLowerBound(
   } else if (
     // would anchoring the lower bound at zero create too many bins?
     rangeMax / (binWidth ?? 1) >
-    MAX_EDGE_CASE_BINS
+    MAX_DISTRIBUTION_BINS
   ) {
     lowerBound = rangeMin - (binWidth ?? 1);
   }
