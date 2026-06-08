@@ -372,8 +372,8 @@ export default function makeHeaderMenuItemsFactory(
             },
             ...socialLinks,
             {
-              text: 'ClinEpiDB News',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`,
+              text: 'News',
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/news.html`,
             },
             {
               text: 'Features coming soon',
