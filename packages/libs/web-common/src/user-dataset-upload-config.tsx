@@ -382,6 +382,7 @@ function rnaseqFormConfigurator(
                   <li>'FPKM' or 'TPM'</li>
                 </ul>
               </li>
+              <li>gene IDs need to be valid VEuPathDB IDs, transcript IDs will not install properly.</li>
               <li>all values in the second column must be floating point — use 0.0, not 0; 22.0, not 22.</li>
               </ul>
             </li>
