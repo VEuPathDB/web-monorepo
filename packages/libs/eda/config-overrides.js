@@ -58,3 +58,25 @@ module.exports = function override(config, env) {
     },
   };
 };
+
+/*
+ * Jest (test runner) config overrides, applied by react-app-rewired.
+ *
+ * Several modules in this package transitively import the d3 family of
+ * packages (e.g. d3, d3-scale), which ship as untransformed ES modules.
+ * CRA's default `transformIgnorePatterns` skips everything in node_modules,
+ * so Jest chokes on the `export` syntax with "Unexpected token 'export'".
+ *
+ * react-app-rewired *concatenates* array overrides from package.json onto
+ * CRA's defaults, so we can't relax the pattern there - the broad default
+ * still matches. Instead we replace `transformIgnorePatterns` outright here,
+ * using a negative lookahead so the d3 packages (and their deps) ARE
+ * transformed while everything else in node_modules is still skipped.
+ */
+module.exports.jest = function (config) {
+  config.transformIgnorePatterns = [
+    '[/\\\\]node_modules[/\\\\](?!(?:d3|d3-[\\w-]+|internmap|delaunator|robust-predicates)[/\\\\]).+\\.(js|jsx|mjs|cjs|ts|tsx)$',
+    '^.+\\.module\\.(css|sass|scss)$',
+  ];
+  return config;
+};
