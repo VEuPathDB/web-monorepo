@@ -28,7 +28,7 @@ export default function SiteHeaderWrapper() {
       useDiyDatasets();
 
     // for now, we default to each studies section being open
-    const [expandUserStudies, setExpandUserStudies] = useState(true);
+    const [expandUserStudies, setExpandUserStudies] = useState(false);
     const [expandCommunityStudies, setExpandCommunityStudies] = useState(true);
     const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
 
@@ -84,7 +84,7 @@ export default function SiteHeaderWrapper() {
           heroImageUrl={heroImageUrl}
           heroImagePosition="left 33%"
           titleFirstPart="data"
-	  titleSecPart="Explorer"
+          titleSecPart="Explorer"
           subTitle="FAIR by design"
           tagline="Share, access, discover, and visualize."
           getSiteData={getStaticSiteData}

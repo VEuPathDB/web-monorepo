@@ -320,13 +320,13 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'owner',
-        name: 'Owner',
+        name: 'Uploaded by',
         sortable: true,
         renderCell: this.renderOwnerCell,
       },
       {
         key: 'sharedWith',
-        name: 'Shared With',
+        name: 'Shared with',
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
@@ -334,7 +334,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         ? [
             {
               key: 'visibility',
-              name: 'Community',
+              name: 'Public',
               sortable: true,
               helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
               style: { textAlign: 'center' },
@@ -352,7 +352,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'fileCount',
-        name: 'File Count',
+        name: 'File count',
         renderCell: textCell('fileCount', (count: number) => count),
       },
       {
@@ -436,8 +436,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset, dataNoun, enablePublicUserDatasets } =
-      this.props;
+    const { removeUserDataset, dataNoun } = this.props;
     return [
       {
         callback: (_: DatasetListEntry[]) => {},
@@ -454,7 +453,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                   break;
               }
             }}
-            enablePublicUserDatasets={enablePublicUserDatasets}
+            // FIXME: 2026-06-08 16:38 - Disabled for now due to complexity of
+            //   public dataset sharing requirements.
+            enablePublicUserDatasets={false}
           />
         ),
         selectionRequired: true,
