@@ -65,7 +65,7 @@ export function CharacteristicsSection({
     >
       <div className={'field-grid' + disabledClass}>
         <label className="not-disabled" id={FieldStudyToggleID}>
-          Field Study or Clinical Trial
+          Field Study or Clinical Trial?
         </label>
         <YesNoToggle
           value={enabled}
