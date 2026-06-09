@@ -355,7 +355,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
               ),
             },
         {
-          attribute: 'Owner',
+          attribute: 'Uploaded by',
           value: isOwner ? 'Me' : datasetUserFullName(userDataset.owner),
         },
         {
@@ -364,7 +364,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
             userDataset.visibility === 'public' ? (
               <>
                 {' '}
-                <Public className="Community-visible" /> This is a "Community{' '}
+                <Public className="Community-visible" /> This is a "Public{' '}
                 {dataNoun.singular}" made accessible to the public by user{' '}
                 {datasetUserFullName(userDataset.owner)}.
               </>
@@ -374,6 +374,13 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
                 owner and those they have shared it with.
               </>
             ),
+        },
+        {
+          attribute: 'Site search status',
+          value:
+            userDataset.visibility === 'public'
+              ? 'enabled for public datasets'
+              : 'disabled for private datasets',
         },
         !isOwner || !shares.length
           ? null
