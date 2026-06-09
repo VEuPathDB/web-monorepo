@@ -142,6 +142,11 @@ function Results(props: Props) {
     margin: '.5em 0',
   };
 
+  const p2Style = {
+    margin: '.5em 0',
+    fontStyle: 'italic',
+  };
+
   if (
     response.searchResults.totalCount === 0 &&
     documentType == null &&
@@ -154,6 +159,12 @@ function Results(props: Props) {
           <Title {...props} />
         </h1>
         <div style={{ fontSize: '1.2em' }}>
+          <p style={p2Style}>
+            Only public user datasets are indexed. Private datasets are
+            excluded, and newly public datasets may take up to 24 hours to
+            appear in search results.
+          </p>
+          <br />
           <p style={pStyle}>Your search returned 0 results.</p>
           <p style={pStyle}>
             Consider using a wildcard to broaden your search. For example,{' '}
