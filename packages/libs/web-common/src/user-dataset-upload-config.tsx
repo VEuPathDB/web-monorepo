@@ -266,7 +266,7 @@ function isasimpleFormConfigurator(
             return (
               <div className="formInfo">
                 <p>
-                  (Optional) Upload a variable annotations file describing the
+                  (Optional) Upload a variable attributes file describing the
                   variables in the data file:
                 </p>
                 <ul>
@@ -277,9 +277,9 @@ function isasimpleFormConfigurator(
                   </li>
                   <li>with one row for every variable in the data file</li>
                 </ul>
-                <p className="important-info">
-                  A valid variable annotations file is required to grant{' '}
-                  <i>Community Access</i> to the dataset.
+                <p className="important-info-bold">
+                  A valid variable attributes file is required to make your
+                  dataset Public.
                 </p>
                 <p>
                   <i>
@@ -302,7 +302,7 @@ function isasimpleFormConfigurator(
       file: {
         enabled: true,
         helpText: (
-          <div>
+          <div className="formInfo">
             <p>
               Upload a single <strong>data file</strong> (maximum{' '}
               {formatFileSize(dataType.vdiConfig.maxFileSize, 'binary')}):
@@ -358,60 +358,79 @@ function rnaseqFormConfigurator(
     dataInputConfig: {
       file: { enabled: true },
       helpText: () => (
-    <details style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '4px' }}>
-      <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
-        Instructions to upload your RNA-Seq dataset
-      </summary>
-      <div style={{ marginTop: '10px' }}>
-        <div className="formInfo">
-          <ol>
-            <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
-            <li>compress the set of files, not a folder containing them.</li>
-            <li>make sure there are no empty files.</li>
-            <li>files saved on some Windows editors may have incompatible line endings; before zipping, open each file in a text editor like Notepad++ and convert line endings to Unix format.</li>
-          </ol>
-          The upload requires:
-          <ol>
-            <li>
-              <b>a counts file per sample</b> 
-              <ul>
-              <li>a tab-delimited file (use extension .txt) containing two columns
-              with these headers:
-                <ul>
-                  <li>'gene_id'</li>
-                  <li>'FPKM' or 'TPM'</li>
-                </ul>
-              </li>
-              <li>gene IDs need to be valid VEuPathDB IDs, transcript IDs will not install properly.</li>
-              <li>all values in the second column must be floating point — use 0.0, not 0; 22.0, not 22.</li>
-              </ul>
-            </li>
-            <li>
-              <b>a manifest file</b> - a tab-delimited file named
-              'manifest.txt', containing three columns without headers:
-              <ul>
-                <li>sample name</li>
-                <li>file name (must match a counts file)</li>
+        <details
+          style={{
+            border: '1px solid #ccc',
+            padding: '10px',
+            borderRadius: '4px',
+          }}
+        >
+          <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
+            Instructions to upload your RNA-Seq dataset
+          </summary>
+          <div style={{ marginTop: '10px' }}>
+            <div className="formInfo">
+              <ol>
+                <li>compress the files into a .tar.gz, .tgz or .zip file.</li>
                 <li>
-                  strandedness ('unstranded' or 'stranded') - Only 'unstranded'
-                  is currently supported.
+                  compress the set of files, not a folder containing them.
                 </li>
-              </ul>
-            </li>
-          </ol>
-          Optionally, you may include <b>bigWig files</b> (.bw extension) in
-          your compressed file:
-          <ol>
-            <li>
-              they are not required but will allow visualization in the genome
-              browser.
-            </li>
-            <li>add these file names in the manifest file.</li>
-            <li>make sure there are no empty files.</li>
-          </ol>
-        </div>
-      </div>
-    </details>
+                <li>make sure there are no empty files.</li>
+                <li>
+                  files saved on some Windows editors may have incompatible line
+                  endings; before zipping, open each file in a text editor like
+                  Notepad++ and convert line endings to Unix format.
+                </li>
+              </ol>
+              The upload requires:
+              <ol>
+                <li>
+                  <b>a counts file per sample</b>
+                  <ul>
+                    <li>
+                      a tab-delimited file (use extension .txt) containing two
+                      columns with these headers:
+                      <ul>
+                        <li>'gene_id'</li>
+                        <li>'FPKM' or 'TPM'</li>
+                      </ul>
+                    </li>
+                    <li>
+                      gene IDs need to be valid VEuPathDB IDs, transcript IDs
+                      will not install properly.
+                    </li>
+                    <li>
+                      all values in the second column must be floating point —
+                      use 0.0, not 0; 22.0, not 22.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <b>a manifest file</b> - a tab-delimited file named
+                  'manifest.txt', containing three columns without headers:
+                  <ul>
+                    <li>sample name</li>
+                    <li>file name (must match a counts file)</li>
+                    <li>
+                      strandedness ('unstranded' or 'stranded') - Only
+                      'unstranded' is currently supported.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+              Optionally, you may include <b>bigWig files</b> (.bw extension) in
+              your compressed file:
+              <ol>
+                <li>
+                  they are not required but will allow visualization in the
+                  genome browser.
+                </li>
+                <li>add these file names in the manifest file.</li>
+                <li>make sure there are no empty files.</li>
+              </ol>
+            </div>
+          </div>
+        </details>
       ),
     },
     dependencies: {
