@@ -83,7 +83,7 @@ export default function UserDatasetSharingModal(
     content = (
       <div className="UserDataset-SharingModal-StatusView">
         <Icon fa="check-circle success" />
-        <h2>Community access updated successfully.</h2>
+        <h2>Public Access updated successfully.</h2>
         <CloseButton />
       </div>
     );
@@ -93,15 +93,14 @@ export default function UserDatasetSharingModal(
         <div className="UserDataset-SharingModal-VisibilitySection">
           <p className="UserDataset-SharingModal-Subtitle">
             <em>
-              Community {dataNoun.plural} can be viewed and downloaded by all
+              Public {dataNoun.plural} can be viewed and downloaded by all
               users.
             </em>
           </p>
           <div>
             <p>
               {totalSelectedDatasets} selected ({totalCommunityDatasets}{' '}
-              {isAre(totalCommunityDatasets)} already in Community{' '}
-              {dataNoun.plural}{' '}
+              {isAre(totalCommunityDatasets)} already Public {dataNoun.plural}{' '}
               {totalNotOwnedDatasets > 0
                 ? `; ${totalNotOwnedDatasets} ${isAre(
                     totalNotOwnedDatasets
@@ -112,7 +111,7 @@ export default function UserDatasetSharingModal(
             <p>
               <strong>
                 {totalOwnedDatasets > 0
-                  ? `Change Community access for ${totalOwnedDatasets} selected ${targetNounLower} that you own:`
+                  ? `Change Public access for ${totalOwnedDatasets} selected ${targetNounLower} that you own:`
                   : `You do not own any of the selected datasets.`}
               </strong>
             </p>
@@ -157,7 +156,7 @@ export default function UserDatasetSharingModal(
 
   return (
     <Modal
-      title={`Manage Community Access to ${datasetNoun}`}
+      title={`Manage Public Access to ${datasetNoun}`}
       themeRole="primary"
       includeCloseButton
       toggleVisible={onClose}
@@ -215,7 +214,7 @@ function UpdateErrors({
   return (
     <div className="UserDataset-SharingModal-StatusView">
       <Icon fa="times-circle danger" />
-      <h2>Unable to Grant Community Access</h2>
+      <h2>Unable to Grant Public Access</h2>
       {content}
       <CloseButton />
     </div>

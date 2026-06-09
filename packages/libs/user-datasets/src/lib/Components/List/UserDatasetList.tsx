@@ -334,7 +334,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         ? [
             {
               key: 'visibility',
-              name: 'Community',
+              name: 'Public',
               sortable: true,
               helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
               style: { textAlign: 'center' },

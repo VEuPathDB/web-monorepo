@@ -199,7 +199,7 @@ export default function makeHeaderMenuItemsFactory(
                             isVisible: filteredCommunityStudies.length > 0,
                             text: (
                               <CollapsibleDetailsSection
-                                summary="Community-Contributed Datasets"
+                                summary="Public Datasets"
                                 collapsibleDetails={filteredCommunityStudies.map(
                                   (study, idx) => (
                                     <DIYStudyMenuItem
