@@ -31,7 +31,13 @@ export function PublicAnalysesRoute({
   const studyRecords = useWdkStudyRecords(subsettingClient);
   const communityDatasets = useWdkService(async (wdkService) => {
     if (isVdiCompatibleWdkService(wdkService))
-      return wdkService.vdi.getCommunityDatasetList();
+      // Community datasets are supplementary and public; a failure to load
+      // them (e.g. a 401 from a stale guest session) should degrade to an
+      // empty list rather than surface a global "something went wrong" modal.
+      return wdkService.vdi.getCommunityDatasetList().catch((error) => {
+        console.error('Failed to load community datasets', error);
+        return [];
+      });
     return [];
   }, []);
 

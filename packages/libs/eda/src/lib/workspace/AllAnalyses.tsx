@@ -190,7 +190,14 @@ export function AllAnalyses(props: Props) {
         const user = await wdkService.getCurrentUser();
         return Promise.all([
           user.isGuest ? [] : wdkService.vdi.getDatasetList(),
-          wdkService.vdi.getCommunityDatasetList(),
+          // Community datasets are supplementary and public; a failure to load
+          // them (e.g. a 401 from a stale guest session) should degrade to an
+          // empty list rather than reject the whole tuple and surface a global
+          // "something went wrong" modal.
+          wdkService.vdi.getCommunityDatasetList().catch((error) => {
+            console.error('Failed to load community datasets', error);
+            return [];
+          }),
         ]);
       }
       return [];
