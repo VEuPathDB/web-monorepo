@@ -7,7 +7,7 @@ import { ReactElement } from 'react';
 export function CommunityAccess(): ReactElement {
   return (
     <em>
-      <strong>Community Access</strong>
+      <strong>Public access</strong>
     </em>
   );
 }
