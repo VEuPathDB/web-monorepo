@@ -32,11 +32,11 @@ export function CoreDatasetInformation({
       <h3>
         <GlobeIcon /> Core Dataset Information
       </h3>
-      <p className="important-info section-description">
-        This information must be completed before you can grant{' '}
-        <CommunityAccess /> to this dataset. If you choose to not provide it,
-        you will still be able to upload the dataset for private use (including
-        personal exploration and sharing with selected collaborators).
+      <p className="section-description">
+        This Core Dataset Information must be completed before you can make this
+        dataset public. If you choose to not provide it, you will still be able
+        to upload the dataset for private use (including personal exploration
+        and sharing with selected collaborators).
       </p>
 
       <CollaboratorsSection

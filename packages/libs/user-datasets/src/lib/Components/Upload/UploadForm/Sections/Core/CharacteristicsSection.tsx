@@ -101,6 +101,9 @@ export function CharacteristicsSection({
           setValues={setRootField('countries')}
           jsonPath={jsonPath.append<PostCharacteristics>('countries')}
           disabled={enabled !== true}
+          helpText={
+            'Country where data or samples were collected from the study population.'
+          }
         />
 
         <YearsInputs
@@ -133,7 +136,7 @@ export function CharacteristicsSection({
           disabled={enabled !== true}
           helpText={
             'Primary disease, condition, or outcome being studied (e.g.,' +
-            ' malaria, anemia, or treatment failure).'
+            ' malaria, anemia, or treatment failure). Enter ‘N/A’ if not applicable.'
           }
         />
 
@@ -147,7 +150,7 @@ export function CharacteristicsSection({
           helpText={
             'Pathogen, exposure, or risk factor associated with the outcome' +
             ' (e.g., Plasmodium falciparum, or insecticide exposure).' +
-            ' Use scientific names for pathogens.'
+            ' Use scientific names for pathogens. Enter ‘N/A’ if not applicable.'
           }
         />
 
@@ -155,7 +158,7 @@ export function CharacteristicsSection({
           fieldName="participantAges"
           label="Participant Ages"
           disabled={enabled !== true}
-          helpText="Age range(s) of participants when data were collected (e.g., '0-5 years; 18+ years')."
+          helpText="Age range(s) of participants when data were collected (e.g., '0-5 years; 18+ years'). Specify units. Enter ‘N/A’ if not applicable."
           value={safeCharacteristics.participantAges}
           onChange={setRootField('participantAges')}
         />
@@ -169,7 +172,7 @@ export function CharacteristicsSection({
           disabled={enabled !== true}
           helpText={
             'Type(s) of biological or environmental samples represented in' +
-            ' this dataset.'
+            ' this dataset. Enter ‘N/A’ if not applicable.'
           }
         />
       </div>
