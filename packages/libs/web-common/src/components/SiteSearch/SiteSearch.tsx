@@ -110,6 +110,10 @@ const cx = makeClassNameHelper('SiteSearch');
 
 const cancelIcon = <i className="fa fa-times" />;
 
+// to show in NO results and in One recordtype results
+const warningUserDatasets =
+  'Only public user datasets are indexed. Private datasets are excluded, and newly public datasets may take up to 24 hours to appear in search results.';
+
 function FilterTitleSegment(props: Props) {
   const filters = [
     !isEmpty(props.filters) && 'fields',
@@ -159,11 +163,7 @@ function Results(props: Props) {
           <Title {...props} />
         </h1>
         <div style={{ fontSize: '1.2em' }}>
-          <p style={p2Style}>
-            Only public user datasets are indexed. Private datasets are
-            excluded, and newly public datasets may take up to 24 hours to
-            appear in search results.
-          </p>
+          <p style={p2Style}>{warningUserDatasets}</p>
           <br />
           <p style={pStyle}>Your search returned 0 results.</p>
           <p style={pStyle}>
@@ -246,6 +246,11 @@ function Title(props: Props) {
   return (
     <React.Fragment>
       {display} matching <strong>{searchString}</strong>{' '}
+      <div
+        style={{ fontSize: '0.45em', fontStyle: 'italic', margin: '0.5em 0' }}
+      >
+        {warningUserDatasets}
+      </div>
       <FilterTitleSegment {...props} />
     </React.Fragment>
   );
