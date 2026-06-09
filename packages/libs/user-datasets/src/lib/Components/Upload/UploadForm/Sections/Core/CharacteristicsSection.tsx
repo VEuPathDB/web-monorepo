@@ -102,7 +102,7 @@ export function CharacteristicsSection({
           jsonPath={jsonPath.append<PostCharacteristics>('countries')}
           disabled={enabled !== true}
           helpText={
-            'Select a country where data or samples were collected from the study population.'
+            'Country where data or samples were collected from the study population.'
           }
         />
 
