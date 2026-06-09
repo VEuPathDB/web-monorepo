@@ -116,7 +116,7 @@ function bigwigFormConfigurator(
   return {
     dataType,
     verbiage: {
-      formTitle: DefaultFormTitle,
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     dataInputConfig: {
       file: { enabled: true },
@@ -158,7 +158,7 @@ function biomFormConfigurator(
   return {
     dataType,
     verbiage: {
-      formTitle: DefaultFormTitle,
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     dataInputConfig: {
       file: { enabled: true },
@@ -189,7 +189,7 @@ function genelistFormConfigurator(
   return {
     dataType,
     verbiage: {
-      formTitle: DefaultFormTitle,
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     datasetCharacteristics: {
       enable: true,
@@ -328,7 +328,7 @@ function phenotypeFormConfigurator(
   return {
     dataType,
     verbiage: {
-      formTitle: DefaultFormTitle,
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     datasetCharacteristics: {
       enable: true,
@@ -353,7 +353,7 @@ function rnaseqFormConfigurator(
   return {
     dataType,
     verbiage: {
-      formTitle: DefaultFormTitle,
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     dataInputConfig: {
       file: { enabled: true },

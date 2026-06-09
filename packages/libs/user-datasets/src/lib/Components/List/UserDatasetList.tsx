@@ -320,13 +320,13 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'owner',
-        name: 'Owner',
+        name: 'Uploaded by',
         sortable: true,
         renderCell: this.renderOwnerCell,
       },
       {
         key: 'sharedWith',
-        name: 'Shared With',
+        name: 'Shared with',
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
@@ -352,7 +352,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'fileCount',
-        name: 'File Count',
+        name: 'File count',
         renderCell: textCell('fileCount', (count: number) => count),
       },
       {
