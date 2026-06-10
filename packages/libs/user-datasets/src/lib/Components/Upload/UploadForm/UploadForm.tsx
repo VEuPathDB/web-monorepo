@@ -91,9 +91,13 @@ export function UploadForm(props: UploadFormProps): ReactElement {
             type: 'info',
             message: (
               <>
-                Before uploading your dataset, please ensure your data is
-                formatted according to the instructions listed in the{' '}
-                <Link to={{ pathname: `${props.baseUrl}/help` }}>
+                Before uploading your dataset, please ensure your{' '}
+                <span style={{ fontWeight: 'bold' }}>files are formatted </span>{' '}
+                according to the instructions listed in the{' '}
+                <Link
+                  to={{ pathname: `${props.baseUrl}/help` }}
+                  style={{ fontWeight: 'bold' }}
+                >
                   "My datasets help"
                 </Link>{' '}
                 tab.
@@ -105,7 +109,13 @@ export function UploadForm(props: UploadFormProps): ReactElement {
           banner={{
             type: 'info',
             message: (
-              <>Click the browser reload button to reset the upload form.</>
+              <>
+                Click the browser reload button to{' '}
+                <span style={{ fontWeight: 'bold' }}>
+                  reset the upload form
+                </span>
+                .
+              </>
             ),
           }}
         />
@@ -115,7 +125,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
             message: (
               <>
                 <span className="important-info-bold">
-                  If you plan to make this a public dataset, all sections marked
+                  If you plan to make this a Public Dataset, all sections marked
                   with a <GlobeIcon />
                   must be completed before upload.{' '}
                 </span>{' '}

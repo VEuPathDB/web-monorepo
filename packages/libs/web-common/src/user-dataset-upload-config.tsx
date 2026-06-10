@@ -260,7 +260,7 @@ function isasimpleFormConfigurator(
       formTitle: DefaultFormTitle,
       formInputs: {
         datasetProperties: {
-          label: 'Variable Attributes',
+          label: 'Variable Attributes File',
           helpText: function HelpText() {
             const { path } = useRouteMatch();
             return (
@@ -281,13 +281,6 @@ function isasimpleFormConfigurator(
                   A valid variable attributes file is required to make your
                   dataset Public.
                 </p>
-                <p>
-                  <i>
-                    See <Link to={path + '/help'}>My datasets help</Link> for
-                    more information on how to properly format your files for
-                    upload.
-                  </i>
-                </p>
               </div>
             );
           },
@@ -304,7 +297,7 @@ function isasimpleFormConfigurator(
         helpText: (
           <div className="formInfo">
             <p>
-              Upload a single <strong>data file</strong> (maximum{' '}
+              Upload a <strong>single data file</strong> (maximum{' '}
               {formatFileSize(dataType.vdiConfig.maxFileSize, 'binary')}):
             </p>
             <ul>
