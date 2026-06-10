@@ -133,7 +133,7 @@ class HeaderNav extends React.Component {
               <i>{titleSecPart}</i>
             </Link>
           </h1>
-          <p>
+          <p className="HeaderNav-subTitle">
             {subTitle} <br />
           </p>
         </div>
