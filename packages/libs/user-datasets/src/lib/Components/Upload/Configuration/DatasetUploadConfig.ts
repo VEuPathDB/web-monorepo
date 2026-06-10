@@ -34,7 +34,7 @@ export interface DatasetCharacteristicsFormSectionConfig {
 
 export interface DependencyInputProps {
   readonly dependencies: readonly DatasetDependency[];
-  readonly setDependencies: Consumer<readonly DatasetDependency[]>;
+  readonly setDependencies: Consumer<DatasetDependency[]>;
 }
 
 export interface DependenciesConfig {

@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { useUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions';
 import { SubmittableState } from '../../Components/UploadButton';
+import { DatasetDependencies } from './DatasetDependencies';
 
 export interface RootDetailsSectionProps {
   readonly formProps: UploadFormProps;
@@ -60,6 +61,13 @@ export function RootDetailsSection(
   const fileUpload = buildFileProps(formProps, fileUploads, setUploads);
   const urlUpload = buildUrlProps(formProps, fileUploads, setUploads);
 
+  const referenceGenome = formProps.dependencies
+    ?  <DatasetDependencies
+      config={formProps.dependencies}
+      datasetDetails={datasetDetails}
+      setDatasetDetails={setMetadata} />
+    : null;
+
   return (
     <section>
       <h3>
@@ -72,7 +80,6 @@ export function RootDetailsSection(
           fieldName={nameKey}
           value={datasetDetails.name}
           onChange={(v) => setMetadata({ ...datasetDetails, name: v })}
-          labelClass="required"
           minLength={3}
           maxLength={1024}
           required={true}
@@ -83,11 +90,12 @@ export function RootDetailsSection(
           fieldName={summaryKey}
           value={datasetDetails.summary}
           onChange={(v) => setMetadata({ ...datasetDetails, summary: v })}
-          labelClass="required"
           minLength={3}
           maxLength={4000}
           required={true}
         />
+
+        {referenceGenome}
 
         <RootDataInput
           pathBuilder={props.contentJsonPath}

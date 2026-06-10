@@ -26,7 +26,7 @@ export type ButtonStyleSpec = {
   };
 };
 
-type ButtonStateStyleSpec = {
+export type ButtonStateStyleSpec = {
   /** Color to use for outline/fill. Will accept any
    * valid CSS color definition. */
   color: CSSProperties['color'];

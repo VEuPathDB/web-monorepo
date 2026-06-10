@@ -71,7 +71,7 @@ export function UploadFormController({
     dispatch(clearBadUpload());
 
     {
-      const validationErrors = validateFormState(formState);
+      const validationErrors = validateFormState(formState, formConfig);
 
       if (!isEmpty(validationErrors)) {
         dispatch(
@@ -157,10 +157,16 @@ export function UploadFormController({
  * performed all required client-side-only form steps before attempting an
  * upload.
  */
-function validateFormState({
-  formMetaState: clientSide,
-}: UploadFormState): Record<string, string[]> {
+function validateFormState(
+  { datasetDetails }: UploadFormState,
+  formConfig: DatasetUploadConfig,
+): Record<string, string[]> {
   const keyedErrors: Record<string, string[]> = {};
+
+  if (formConfig.dependencies?.required === true && isEmpty(datasetDetails.dependencies)) {
+    keyedErrors["$.details.dependencies"] = ["selection is required"];
+  }
+
   /* TODO: to be re-enabled for the update form
   const errorMessage = ['selection is required'];
 
