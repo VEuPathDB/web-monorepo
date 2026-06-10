@@ -1,5 +1,5 @@
 #dataset-upload {
-  $inputPadding: 5px;
+  $inputPadding: 8px;
   $commonRadius: 8px;
 
   max-width: 1024px;
@@ -104,10 +104,15 @@
     margin-bottom: 1em;
   }
 
-  input:not([type='radio']):not([type='checkbox']),
+  input:not([type='radio']):not([type='checkbox']):not([type='file']),
   textarea {
     border-radius: 5px;
     padding: $inputPadding;
+  }
+
+  ::file-selector-button {
+    padding: $inputPadding;
+    margin: 0 1ch 0 0;
   }
 
   input[type='checkbox'],
@@ -166,7 +171,7 @@
 
     .field-grid {
       margin: 0;
-      grid-template-columns: 1fr 5fr;
+      grid-template-columns: 3fr 10fr;
     }
 
     &.narrow-labels {
@@ -220,6 +225,10 @@
     font-weight: bold;
     text-decoration: none;
     padding: 0;
+  }
+
+  .non-bold-labels label {
+    font-weight: normal;
   }
 
   .multi-input {

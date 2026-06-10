@@ -1,9 +1,10 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import PopoverButton from '../../buttons/PopoverButton/PopoverButton';
 import CheckboxTree, {
-  CheckboxTreeProps,
+  CheckboxTreeProps, CheckboxTreeStyleSpec,
   LinksPosition,
 } from '../checkboxes/CheckboxTree/CheckboxTree';
+import { PartialButtonStyleSpec } from '../../buttons';
 
 export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   buttonDisplayContent: ReactNode;
@@ -15,6 +16,30 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
   instantUpdate?: boolean;
   /** Optional. When true, popover (if using) closing will be deferred until this becomes false */
   deferPopoverClosing?: boolean;
+  styleOverrides?: SelectTreeStyleSpec;
+}
+
+export interface SelectTreeStyleSpec extends CheckboxTreeStyleSpec {
+  /**
+   * Style spec passed through to the PopoverButton component if
+   * `hasPopoverButton` is `true`.
+   */
+  readonly popoverButton?: PartialButtonStyleSpec;
+
+  /**
+   * Whether selection text should be truncated at a max width.
+   *
+   * Default: `true`
+   */
+  readonly truncateSelection?: boolean;
+
+  /**
+   * Width the selection content should be truncated to when `truncateSelection`
+   * is `true`.
+   *
+   * Default: `300px`
+   */
+  readonly truncateSelectionWidth?: string;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
@@ -31,6 +56,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     instantUpdate = true,
     wrapPopover,
     deferPopoverClosing = false,
+    styleOverrides,
   } = props;
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
@@ -54,16 +80,18 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   }, [onSelectionChange, localSelectedList]);
 
   function truncatedButtonContent(selectedList: string[]) {
+    const styling: CSSProperties = (styleOverrides?.truncateSelection ?? true)
+      ? {
+        // this styling is copied from SelectList!
+        maxWidth: styleOverrides?.truncateSelectionWidth ?? '300px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }
+      : {};
+
     return (
-      <span
-        style={{
-          // this styling is copied from SelectList!
-          maxWidth: '300px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
+      <span style={styling}>
         {selectedList.join(', ')}
       </span>
     );
@@ -115,7 +143,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       additionalFilters={props.additionalFilters}
       isAdditionalFilterApplied={props.isAdditionalFilterApplied}
       wrapTreeSection={props.wrapTreeSection}
-      styleOverrides={props.styleOverrides}
+      styleOverrides={styleOverrides}
       customTreeNodeCssSelectors={props.customTreeNodeCssSelectors}
     />
   );
@@ -127,6 +155,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
       onClose={onClose}
       isDisabled={props.isDisabled}
       deferClosing={deferPopoverClosing}
+      styleOverrides={styleOverrides?.popoverButton}
     >
       <div
         style={{

@@ -12,13 +12,17 @@ import {
   DependencyInputProps,
   UploadFormConfigurators,
 } from '@veupathdb/user-datasets/lib';
-import { Link } from 'react-router-dom';
 import { useRouteMatch } from 'react-router-dom';
 import {
   DatasetTypeConfig,
   DatasetUploadConfig,
 } from '@veupathdb/user-datasets/lib/Components/Upload';
 import { formatFileSize } from '@veupathdb/user-datasets/lib/Utils/formatting';
+import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
+import {
+  ButtonStateStyleSpec,
+  PartialButtonStyleSpec,
+} from '@veupathdb/coreui/lib/components/buttons';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -68,7 +72,12 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
 /**
  * Dataset type specific upload form configuration constructors.
  *
- * One should exist for every dataset type that users can upload.
+ * Each entry in the following array should be a tuple of dataset type
+ * identifier and type-specific form config constructor.
+ *
+ * One should exist for every dataset type that users can upload on any site,
+ * the entries will be filtered by site at a later point based on the VDI
+ * service configuration.
  */
 export const uploadFormConfigurators: UploadFormConfigurators = [
   // bigwig
@@ -441,12 +450,38 @@ function ReferenceGenomeDependency({
   dependencies,
   setDependencies,
 }: DependencyInputProps): ReactElement | null {
-  const styleOverrides = {
+  const popoverStyle: Partial<ButtonStateStyleSpec> = {
+    dropShadow: {
+      offsetX: 'none',
+      offsetY: '',
+      blurRadius: '',
+      color: '',
+    },
+    border: {
+      color: '#afafaf',
+      width: 1,
+      style: 'solid',
+    },
+  };
+
+  const styleOverrides: SelectTreeStyleSpec = {
     treeNode: {
       labelTextWrapper: {
         fontSize: '1.1em',
       },
     },
+
+    truncateSelectionWidth: '500px',
+
+    popoverButton: {
+      container: {
+        marginBottom: '1em',
+      },
+      default: popoverStyle,
+      disabled: popoverStyle,
+      hover: popoverStyle,
+      pressed: popoverStyle,
+    }
   };
 
   const selectedList = dependencies?.map((entry) => entry.resourceDisplayName);

@@ -1,4 +1,10 @@
-import { ReactElement, useEffect, useState } from 'react';
+import {
+  ReactElement,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -11,18 +17,16 @@ import {
 } from './Components';
 import { MetadataSection, RootDetailsSection } from './Sections';
 import { DatasetUploadConfig } from '../Configuration';
-import { VdiServiceMetadata } from '../../../Service';
+import { DatasetPostDetails, VdiServiceMetadata } from '../../../Service';
 import { JsonPathBuilder, Runnable } from '../../../Utils';
 import { BadUpload } from '../../../StoreModules';
 import { UploadUrlParams } from './DataModel';
 
 import './UploadForm.scss';
 import { UploadWarningModal } from './UploadWarningModal';
-import { CommunityAccess } from '../../Misc/CommunityAccess';
 import { SubmittableState } from './Components/UploadButton';
 import { useUploadFormState } from '../../../StoreModules/UserDatasetUploadStoreModule';
-
-const DatasetUploadSectionID = 'dataset-upload';
+import { isEmpty } from 'lodash';
 
 export interface UploadFormProps extends DatasetUploadConfig {
   readonly baseUrl: string;
@@ -70,14 +74,16 @@ export function UploadForm(props: UploadFormProps): ReactElement {
 
   const { datasetDetails, fileUploads } = useUploadFormState();
 
+  const uploadSection = useRef<HTMLElement>(null);
+
   useEffect(() => {
     setFormIsValid(
-      calcFormIsValid(document.getElementById(DatasetUploadSectionID)!)
+      calcFormIsValid(datasetDetails, props, uploadSection)
     );
-  }, [setFormIsValid, datasetDetails, fileUploads]);
+  }, [setFormIsValid, datasetDetails, fileUploads, props]);
 
   return (
-    <section id={DatasetUploadSectionID}>
+    <section id="dataset-upload" ref={uploadSection}>
       <header>
         <UploadErrorBanner errors={props.badUploadState} />
 
@@ -164,6 +170,16 @@ export function UploadForm(props: UploadFormProps): ReactElement {
   );
 }
 
-function calcFormIsValid(e: Element): boolean {
-  return e.querySelectorAll(':invalid').length === 0;
+function calcFormIsValid(
+  metadata: DatasetPostDetails,
+  config: DatasetUploadConfig,
+  uploadSection: RefObject<HTMLElement>,
+): boolean {
+  const allInputsValid = uploadSection.current
+    ?.querySelectorAll(':invalid').length === 0;
+
+  const missingDependencies = config.dependencies?.required === true
+    && isEmpty(metadata.dependencies);
+
+  return allInputsValid && !missingDependencies;
 }

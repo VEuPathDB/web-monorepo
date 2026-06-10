@@ -120,7 +120,7 @@ function ContactBlock({ path, ...props }: ContactBlockProps): ReactElement {
         />
 
         <TextField
-          label="Middle Name"
+          label="Middle Name (optional)"
           field="middleName"
           pathBuilder={path}
           value={props.contact.middleName}
