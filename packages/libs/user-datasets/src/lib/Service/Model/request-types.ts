@@ -3,6 +3,7 @@ import * as vdi from './response-decoders';
 import {
   DatasetCharacteristics,
   DatasetMetaBase,
+  DatasetOrganism,
   DatasetSource as ApiSource,
   DatasetVisibility,
   SampleYearRange,
@@ -15,13 +16,16 @@ export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
 // region Create Dataset
 
 export type DatasetPostDetails = Readonly<
-  Partial<Omit<DatasetMetaBase, 'datasetCharacteristics' | 'datasetSources'>>
+  Partial<Omit<DatasetMetaBase, 'datasetCharacteristics' | 'datasetSources' | 'experimentalOrganism'>>
 > & {
   readonly type?: DatasetTypeSelection;
   readonly visibility?: DatasetVisibility;
   readonly datasetCharacteristics?: PostCharacteristics;
   readonly datasetSources?: PostDatasetSource[];
+  readonly experimentalOrganism?: PostOrganism;
 };
+
+export type PostOrganism = Readonly<Partial<DatasetOrganism>>;
 
 export type PostCharacteristics = Readonly<
   Partial<Omit<DatasetCharacteristics, 'years'>>

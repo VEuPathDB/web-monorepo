@@ -70,6 +70,7 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
     funding: removeEmpties(details.funding),
     linkedDatasets: removeEmpties(details.linkedDatasets),
     publications: removeEmpties(details.publications),
+    experimentalOrganism: scrubSimpleObject(details.experimentalOrganism),
 
     externalIdentifiers: scrubExternalIdentifiers(details.externalIdentifiers),
     datasetCharacteristics: scrubDatasetCharacteristics(
@@ -111,6 +112,32 @@ function scrubExternalIdentifiers(
     hyperlinks: removeEmpties(ext.hyperlinks),
     bioprojectIds: removeEmpties(ext.bioprojectIds),
   };
+}
+
+
+type SimpleObject = Record<string, string | number | undefined>;
+function scrubSimpleObject(
+  obj: SimpleObject | undefined
+): SimpleObject | undefined {
+  if (!obj)
+    return undefined;
+
+  const out: SimpleObject = {};
+
+  for (const [ key, value ] of Object.entries(obj)) {
+    switch (typeof value) {
+      case "string":
+        if (value.length > 0)
+          out[key] = value
+        break;
+
+      case "number":
+        out[key] = value
+        break;
+    }
+  }
+
+  return isEmpty(out) ? undefined : out;
 }
 
 function scrubDatasetCharacteristics(

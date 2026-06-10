@@ -25,6 +25,8 @@ export interface DatasetUploadConfig<
   readonly dependencies?: DependenciesConfig;
 
   readonly datasetCharacteristics?: DatasetCharacteristicsFormSectionConfig;
+
+  readonly enableExperimentalOrganism?: boolean;
 }
 
 export interface DatasetCharacteristicsFormSectionConfig {
