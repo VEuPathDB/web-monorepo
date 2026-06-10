@@ -442,7 +442,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         callback: (_: DatasetListEntry[]) => {},
         element: (
           <ThemedGrantAccessButton
-            buttonText={`Grant Access to ${dataNoun.plural}`}
+            buttonText={'Manage individual access'}
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':

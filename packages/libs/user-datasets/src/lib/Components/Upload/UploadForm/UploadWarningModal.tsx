@@ -51,14 +51,14 @@ export function UploadWarningModal(
           after upload is planned for a future release.
         </p>
         <p>
-          If you intend to make this dataset available through{' '}
-          <CommunityAccess />, please ensure that all required{' '}
+          If you intend to make this dataset public, please ensure that all
+          required{' '}
           <strong>
             <em>Core Dataset Information</em>
           </strong>{' '}
           and any required supporting files (such as a{' '}
           <strong>
-            <em>Variable Annotations</em>
+            <em>Variable Attributes</em>
           </strong>{' '}
           file) are included before uploading.
         </p>

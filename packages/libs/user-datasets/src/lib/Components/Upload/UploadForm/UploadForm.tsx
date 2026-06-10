@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
-import { SubmissionModal, UploadButton, UploadErrorBanner } from './Components';
+import {
+  GlobeIcon,
+  SubmissionModal,
+  UploadButton,
+  UploadErrorBanner,
+} from './Components';
 import { MetadataSection, RootDetailsSection } from './Sections';
 import { DatasetUploadConfig } from '../Configuration';
 import { VdiServiceMetadata } from '../../../Service';
@@ -83,7 +88,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
 
         <Banner
           banner={{
-            type: 'warning',
+            type: 'info',
             message: (
               <>
                 Before uploading your dataset, please ensure your data is
@@ -98,17 +103,24 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         />
         <Banner
           banner={{
+            type: 'info',
+            message: (
+              <>Click the browser reload button to reset the upload form.</>
+            ),
+          }}
+        />
+        <Banner
+          banner={{
             type: 'warning',
             message: (
               <>
-                <span className="important-info">
-                  If you plan to make this dataset discoverable through{' '}
-                  <CommunityAccess />, all sections marked with a globe icon
-                  must be completed before upload.
+                <span className="important-info-bold">
+                  If you plan to make this a public dataset, all sections marked
+                  with a <GlobeIcon />
+                  must be completed before upload.{' '}
                 </span>{' '}
-                Datasets uploaded with only a name, summary, and data files will
-                be restricted to personal use and sharing with selected
-                collaborators.
+                Otherwise, the dataset will remain private and accessible only
+                to you and collaborators you explicitly invite.
               </>
             ),
           }}

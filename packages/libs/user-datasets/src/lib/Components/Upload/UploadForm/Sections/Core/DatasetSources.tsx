@@ -77,7 +77,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
           }
         />
 
-        <span className="multi-input-label">External Sources</span>
+        <span className="multi-input-label">External Source Information</span>
         <ol className="multi-input non-bold-labels">{inputRows}</ol>
 
         <AddRowButton
@@ -85,7 +85,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
           onClick={addSource}
           disabled={!enabled}
         >
-          + Additional Dataset Source
+          + Additional External Source
         </AddRowButton>
       </div>
     </InputBlock>
