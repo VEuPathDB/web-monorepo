@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
+import { useEda } from '@veupathdb/web-common/lib/config';
 
 // Wrapping WDKClient AnswerController for specific rendering on primary_key column for user datasets
 function UDAnswerController(props) {
@@ -26,10 +28,10 @@ interface RenderCellProps extends CellContentProps {
 */
 
 const makeRenderCellContent = () => (props) => {
-  // Override primary_key column to link to user dataset detail page
-  if (props.attribute.name === 'primary_key') {
+  // Override primary_key column to link to EDA workspace, matching StudyAnswerController pattern
+  if (props.attribute.name === 'primary_key' && useEda) {
     return (
-      <Link to={`/workspace/analyses/${props.record.id[0].value}/new`}>
+      <Link to={`${makeEdaRoute(props.record.id[0].value)}/new/details`}>
         {safeHtml(props.record.attributes.primary_key)}
       </Link>
     );
