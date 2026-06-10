@@ -246,7 +246,7 @@ class UserDatasetDetail<S = {}> extends React.Component<DetailViewProps, S> {
     return (
       <Link className="AllDatasetsLink" to={this.props.baseUrl}>
         <Icon fa="chevron-left" />
-        &nbsp; All {this.props.workspaceTitle}
+        &nbsp; Manage {this.props.workspaceTitle}
       </Link>
     );
   }
