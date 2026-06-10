@@ -8,7 +8,7 @@ import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { UploadFormProps } from '../../UploadForm';
 import { GlobeIcon } from '../../Components';
-import { CommunityAccess } from '../../../../Misc/CommunityAccess';
+import { ExperimentalOrganism } from './ExperimentalOrganism';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: DatasetPostDetails;
@@ -55,6 +55,14 @@ export function CoreDatasetInformation({
           pathBuilder={jsonPath.append<DatasetPostDetails>(
             'datasetCharacteristics'
           )}
+        />
+      )}
+
+      {formProps.enableExperimentalOrganism && (
+        <ExperimentalOrganism
+          setDatasetDetails={setDatasetMeta}
+          datasetDetails={datasetMeta}
+          jsonPath={jsonPath.append<DatasetPostDetails>('experimentalOrganism')}
         />
       )}
 

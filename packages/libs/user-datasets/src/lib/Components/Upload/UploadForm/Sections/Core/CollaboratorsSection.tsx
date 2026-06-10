@@ -217,7 +217,6 @@ function TextField({
       fieldName={pathBuilder.appendToString(field)}
       value={value}
       onChange={onChange}
-      labelClass={required ? 'required' : undefined}
       required={required}
       minLength={minLength}
       maxLength={maxLength}

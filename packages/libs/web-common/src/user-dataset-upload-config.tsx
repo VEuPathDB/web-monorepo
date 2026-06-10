@@ -154,10 +154,7 @@ function bigwigFormConfigurator(
       required: true,
       renderInput: ReferenceGenomeDependency,
     },
-    datasetCharacteristics: {
-      enable: true,
-      studyDesignVocab: StudyDesignVocab,
-    },
+    enableExperimentalOrganism: true,
   };
 }
 
@@ -200,10 +197,7 @@ function genelistFormConfigurator(
     verbiage: {
       formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
-    datasetCharacteristics: {
-      enable: true,
-      studyDesignVocab: StudyDesignVocab,
-    },
+    enableExperimentalOrganism: true,
     dataInputConfig: {
       file: {
         enabled: true,
@@ -332,10 +326,7 @@ function phenotypeFormConfigurator(
     verbiage: {
       formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
-    datasetCharacteristics: {
-      enable: true,
-      studyDesignVocab: StudyDesignVocab,
-    },
+    enableExperimentalOrganism: true,
     dataInputConfig: {
       file: {
         enabled: true,
@@ -439,10 +430,7 @@ function rnaseqFormConfigurator(
       required: true,
       renderInput: ReferenceGenomeDependency,
     },
-    datasetCharacteristics: {
-      enable: true,
-      studyDesignVocab: StudyDesignVocab,
-    },
+    enableExperimentalOrganism: true,
   };
 }
 
