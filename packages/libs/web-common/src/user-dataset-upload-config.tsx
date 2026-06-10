@@ -390,7 +390,7 @@ function rnaseqFormConfigurator(
                     </li>
                     <li>
                       gene IDs need to be valid VEuPathDB IDs, transcript IDs
-                      will not install properly.
+                      will not install properly. There cannot be duplicates.
                     </li>
                     <li>
                       all values in the second column must be floating point —
@@ -402,7 +402,7 @@ function rnaseqFormConfigurator(
                   <b>a manifest file</b> - a tab-delimited file named
                   'manifest.txt', containing three columns without headers:
                   <ul>
-                    <li>sample name</li>
+                    <li>sample name; avoid spaces</li>
                     <li>file name (must match a counts file)</li>
                     <li>
                       strandedness ('unstranded' or 'stranded') - Only

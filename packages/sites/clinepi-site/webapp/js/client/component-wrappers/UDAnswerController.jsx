@@ -4,12 +4,42 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 import { useEda } from '@veupathdb/web-common/lib/config';
 
+const USERDATASET_SORTING = [
+  { attributeName: 'creation_date', direction: 'DESC' },
+];
+
 // Wrapping WDKClient AnswerController for specific rendering on primary_key column for user datasets
 function UDAnswerController(props) {
   const renderCellContent = useMemo(() => makeRenderCellContent(), []);
 
+  // Wrap dispatchProps to inject custom sorting on initial load
+  const customDispatchProps = useMemo(
+    () => ({
+      ...props.dispatchProps,
+      loadAnswer: (searchName, recordClassName, opts) => {
+        const customOpts = {
+          ...opts,
+          displayInfo: {
+            ...opts.displayInfo,
+            sorting: USERDATASET_SORTING,
+          },
+        };
+        return props.dispatchProps.loadAnswer(
+          searchName,
+          recordClassName,
+          customOpts
+        );
+      },
+    }),
+    [props.dispatchProps]
+  );
+
   return (
-    <props.DefaultComponent {...props} renderCellContent={renderCellContent} />
+    <props.DefaultComponent
+      {...props}
+      dispatchProps={customDispatchProps}
+      renderCellContent={renderCellContent}
+    />
   );
 }
 
