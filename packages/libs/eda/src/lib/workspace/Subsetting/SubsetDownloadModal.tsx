@@ -166,6 +166,7 @@ export default function SubsetDownloadModal({
   // Required columns
   const requiredColumns = usePromise(
     useCallback(async () => {
+      if (!canLoadTablePreview) return null;
       const data = await subsettingClient.getTabularData(
         studyMetadata.id,
         currentEntity.id,
@@ -179,7 +180,14 @@ export default function SubsetDownloadModal({
         }
       );
       return processGridData(data, entities, currentEntity)[0];
-    }, [subsettingClient, studyMetadata.id, entities, currentEntity, mergeKeys])
+    }, [
+      subsettingClient,
+      studyMetadata.id,
+      entities,
+      currentEntity,
+      mergeKeys,
+      canLoadTablePreview,
+    ])
   );
 
   const requiredColumnAccessors = requiredColumns.value?.map(
