@@ -34,8 +34,8 @@ function uploadsEqual(
 }
 
 /**
- * checks that two objects are equivalent without necessarily being the same
- * instance.
+ * checks that two json-compatible objects are equivalent without necessarily
+ * being the same instance.
  */
 function dumbObjectEquality(
   a: Record<string, any>,
@@ -85,8 +85,8 @@ function dumbObjectEquality(
 }
 
 /**
- * checks that two arrays are equivalent without necessarily being the same
- * instance.
+ * checks that two json-compatible arrays are equivalent without necessarily
+ * being the same instance.
  */
 function dumbArrayEquality(
   a: any[],
