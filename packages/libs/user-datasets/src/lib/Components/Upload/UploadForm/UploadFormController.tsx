@@ -24,14 +24,9 @@ import { BadUpload, UploadFormState } from '../../../StoreModules';
 import { DatasetUploadConfig } from '../Configuration';
 import { UploadForm } from './UploadForm';
 import {
-  defaultUploadFormState,
+  DefaultUploadFormState,
   useUploadFormState,
 } from '../../../StoreModules/UserDatasetUploadStoreModule';
-import {
-  DatasetSourcesToggleID,
-  DatasetUsageToggleID,
-  FieldStudyToggleID,
-} from './Sections/Core';
 import { isEmpty } from 'lodash';
 import { createValidationError } from '../../../Service/Model/constructors';
 
@@ -104,7 +99,7 @@ export function UploadFormController({
             dispatch(trackUploadProgress(progress)),
           onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
             setSubmitting(false);
-            dispatch(updateFormState(defaultUploadFormState()));
+            dispatch(updateFormState(DefaultUploadFormState));
             transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`);
           },
           onError: (error: BadUpload) => dispatch(receiveBadUpload(error)),
