@@ -13,6 +13,7 @@ import {
   DatasetUploads,
   ValidationErrors,
 } from '../Service';
+import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
 import { defaultDatasetDetails } from '../Service/Model/constructors';
@@ -43,19 +44,17 @@ export interface UploadFormState {
   readonly formMetaState: ClientSideUploadFormState;
 }
 
-export function defaultUploadFormState(): UploadFormState {
-  return {
-    datasetDetails: defaultDatasetDetails(),
-    fileUploads: {},
-    formMetaState: defaultClientOnlyFormState(),
-  };
-}
+export const DefaultUploadFormState: UploadFormState = {
+  datasetDetails: defaultDatasetDetails(),
+  fileUploads: {},
+  formMetaState: defaultClientOnlyFormState(),
+};
 
 export function useUploadFormState(): UploadFormState {
-  return (
-    useSelector((state: StateSlice) => state.userDatasetUpload.formState) ??
-    defaultUploadFormState()
-  );
+  return useSelector(
+    (state: StateSlice) => state.userDatasetUpload.formState,
+    isEqual,
+  ) ?? DefaultUploadFormState;
 }
 
 export interface State {
