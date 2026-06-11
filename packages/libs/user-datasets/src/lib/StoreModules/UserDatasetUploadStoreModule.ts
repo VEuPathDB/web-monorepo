@@ -13,12 +13,10 @@ import {
   DatasetUploads,
   ValidationErrors,
 } from '../Service';
+import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
 import { defaultDatasetDetails } from '../Service/Model/constructors';
-import {
-  formStateEquals,
-} from '../Service/utils/comparisons';
 
 export const key = 'userDatasetUpload';
 
@@ -55,7 +53,7 @@ export const DefaultUploadFormState: UploadFormState = {
 export function useUploadFormState(): UploadFormState {
   return useSelector(
     (state: StateSlice) => state.userDatasetUpload.formState,
-    formStateEquals,
+    isEqual,
   ) ?? DefaultUploadFormState;
 }
 
