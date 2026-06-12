@@ -299,6 +299,7 @@ export function DifferentialExpressionConfiguration(
     showStepNumber = true,
     readonlyInputNames,
     onCountGatingChange,
+    autoSelectFeatured,
   } = props;
 
   const computation = useComputation(analysisState, computationId);
@@ -689,6 +690,7 @@ export function DifferentialExpressionConfiguration(
             constraints={geneExpressionConstraints}
             dataElementDependencyOrder={geneExpressionDependencyOrder}
             additionalDisabledVariables={additionalDisabledVariables}
+            autoSelectFeatured={autoSelectFeatured}
             starredVariables={
               analysisState.analysis?.descriptor.starredVariables ?? []
             }

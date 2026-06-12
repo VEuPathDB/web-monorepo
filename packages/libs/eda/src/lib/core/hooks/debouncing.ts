@@ -24,6 +24,23 @@ export function useDebounce<T>(value: T, delay: number) {
 }
 
 /**
+ * Like `useDebounce`, but trailing-edge only: returns `undefined` until the
+ * value has been stable for `delay` ms. Useful when you want to suppress the
+ * initial emission (e.g. to avoid a request before dependent effects have
+ * settled).
+ */
+export function useDebounceTrailing<T>(value: T, delay: number): T | undefined {
+  const [debouncedValue, setDebouncedValue] = useState<T | undefined>(
+    undefined
+  );
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
+/**
  * Returns a stable function that calls the input function after `delayMs` time in milliseconds.
  * If the returned function is called multiple times with the `delayMs` time window, previoius
  * calls will be cancelled. Furthermore, when the component is unmounted, any queued function
