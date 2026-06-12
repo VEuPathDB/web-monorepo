@@ -36,8 +36,7 @@ Unchanged — step 2 (Generating comment) remains active. The error occurred dur
 | ✓ green tick  | Fetching gene synonyms                       |
 | ✗ red cross   | Scanning gene mentions                       |
 | ○ grey circle | Generating summary (pending — never reached) |
-| ○ grey circle | Validating (pending — never reached)         |
-| ○ grey circle | Creating comment (pending — never reached)   |
+| ○ grey circle | Persisting (pending — never reached)         |
 
 **Error message box** — directly below the checklist. Light red/pink background, thin red border, warning icon on the left:
 

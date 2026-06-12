@@ -1,4 +1,14 @@
-# Frame 06 — Add form: success / redirecting state
+# Frame 06 — Add form: generating complete / transitioning to review
+
+> **⚠️ NEEDS FULL REWRITE** — this frame pre-dates the review-on-approval pivot (2026-06-02).
+> The old design redirected to `/user-comments/edit?commentId=…` and showed "Comment draft created!".
+> In the current design there is **no redirect** and **no comment is created** at this point.
+> Instead, the controller transitions `phase` from `polling` to `review` in-place: the breadcrumb
+> advances to step 3 and the review-and-publish form replaces the progress view on the same page.
+> This frame should therefore be regenerated to show either:
+> (a) A brief "Generation complete — loading your review…" flash still on step 2, OR
+> (b) The very first render of the review form at step 3 (which is covered by frame 08).
+> Option (b) means this frame may be redundant. Discuss with team before regenerating.
 
 Continue with the same PlasmoDB chrome, page heading, and layout established in the previous frames.
 
@@ -6,36 +16,31 @@ Continue with the same PlasmoDB chrome, page heading, and layout established in 
 
 ### Breadcrumb trail
 
-Unchanged from frame 05 — step 2 remains active. The breadcrumb only advances to step 3 once the user lands on the edit page:
+The breadcrumb advances to step 3 as the review form appears — there is no intermediate redirect:
 
 - ① Publication source — mid-grey circle, normal weight, full opacity (completed)
 - → mid-grey arrow
-- ② **Generating comment** — deep maroon circle, **bold** label, full opacity (active)
+- ② Generating comment — mid-grey circle, normal weight, full opacity (completed)
 - → mid-grey arrow
-- ③ Review & publish — faded, ~45% opacity (future)
+- ③ **Review & publish** — deep maroon circle, **bold** label, full opacity (active)
 
-### Content — Success / redirect view
+### Content — Generation complete view
 
-**Stage checklist**: all stages now show a ✓ green tick (done), including "Creating comment" at the bottom. No spinner, no pending circles — the list is entirely green ticks.
+**Stage checklist**: all stages now show a ✓ green tick (done), including "Persisting" at the bottom (no "Validating" stage). No spinner, no pending circles — the list is entirely green ticks.
 
 **Success message box** — replaces the footer row. A visually distinct box below the checklist with a light green background, thin green border, and a checkmark icon on the left:
 
-> **Comment draft created!**
-> Taking you to the review page…
+> **Generation complete!**
+> Loading your review form…
 
-Beside or below the message text: a small subtle spinner (thin ring, teal colour) indicating the redirect is in progress.
-
-**Fallback link** — small text directly below the message box:
-
-> If you are not redirected automatically, [click here to continue to the review page](#) (the bracketed text is a teal underlined link)
+Beside or below the message text: a small subtle spinner (thin ring, teal colour).
 
 The Cancel button is gone.
 
 ## Annotations
 
-- ① **Breadcrumb stays on step 2** — the add page owns steps 1 and 2 throughout its lifetime; step 3 only becomes active once the user lands on the edit page
-- ② **All stages complete** — every stage shows a green tick; "Creating comment" confirms the draft comment row has been persisted
-- ③ **Auto-redirect** — navigation to `/user-comments/edit?commentId=…` happens automatically; no user action required
-- ④ **Fallback link** — in case the redirect is delayed or blocked, the user can navigate manually
+- ① **Breadcrumb advances to step 3** — transitions in-place as the review form loads; no page navigation
+- ② **All stages complete** — every stage shows a green tick; "Persisting" confirms the AI output has been cached server-side
+- ③ **No comment created yet** — the comment row is only written when the user clicks Publish on the review form
 
 Save as: `mockup-frame-06-success-redirect.png`

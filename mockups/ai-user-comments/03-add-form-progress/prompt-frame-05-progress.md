@@ -35,7 +35,7 @@ The input form is gone entirely. The content pane (below the breadcrumb) now sho
 
 **1. Submission summary** — a compact read-only box at the top, light grey background, small text, rounded corners:
 
-> PubMed ID: 38429021 · Gene: PF3D7_0315200 · Validate output: on
+> PubMed ID: 38429021 · Gene: PF3D7_0315200
 
 **2. Stage checklist** — a vertical list of pipeline stages. Each row has an icon on the left and a stage label on the right. The current stage also shows a smaller italic message line below its label:
 
@@ -45,8 +45,7 @@ The input form is gone entirely. The content pane (below the breadcrumb) now sho
 | ✓ green tick            | Fetching gene synonyms | (done — muted grey text)                                                                           |
 | ✓ green tick            | Scanning gene mentions | (done — muted grey text)                                                                           |
 | ⟳ animated blue spinner | **Generating summary** | `Summarising PF3D7_0315200 function from article text…` (italic, dark text, slightly smaller font) |
-| ○ grey circle           | Validating             | (pending — grey text, ~50% opacity)                                                                |
-| ○ grey circle           | Creating comment       | (pending — grey text, ~50% opacity)                                                                |
+| ○ grey circle           | Persisting             | (pending — grey text, ~50% opacity)                                                                |
 
 **3. Footer row** below the checklist:
 

@@ -90,21 +90,22 @@ The checkbox is **unchecked** in this initial state.
 
 ### 7. Action buttons
 
-Two buttons below the checkbox, left-aligned, with a small gap between them:
+Three actions below the checkbox:
 
 - `Publish comment` — primary button, **disabled and visually greyed out** (not teal) because the confirmation checkbox is unchecked. Small hint text below: `Check the box above to confirm your review before publishing.`
-- `Delete comment` — danger button (red or dark red fill, white text), right-aligned or below the publish button. Opens a confirmation dialog before acting.
+- `Try a different publication` — white outlined secondary button; abandons this result (no DB write — there is no draft comment to delete) and returns to the input form.
+- `Back to gene page` — a small plain text link below the buttons; navigates away from the flow.
 
 ## Annotations
 
 Figma-style: purple-filled circle with white number label, thin connecting line, purple rounded-rectangle callout bubble.
 
-- ① **Breadcrumb at step 3** — advances to "Review & publish" when the user lands here after the redirect from the add form; both prior steps shown as completed (grey circles)
+- ① **Breadcrumb at step 3** — advances to "Review & publish" when the controller transitions in-place after the job completes; both prior steps shown as completed (grey circles); no page navigation occurs
 - ② **Provenance panel** — read-only; always visible so the reviewer knows which publication sourced the AI output
 - ③ **Editable content** — the user is expected to review and refine the AI-generated headline and content before publishing
 - ④ **Restore original** — disabled until the user makes an edit; resets both fields to the AI-generated originals stored in `aiProvenance`
 - ⑤ **Confirmation checkbox** — must be checked before the publish button activates; replaces the old review-level radio group
 - ⑥ **Publish disabled** — greyed out until the checkbox is checked; the back end automatically records whether the content was edited or left unchanged
-- ⑦ **Delete comment** — discards the draft entirely; triggers a "Are you sure?" confirmation dialog before acting
+- ⑦ **Try a different publication** — abandons the review; no comment exists yet so nothing is deleted; returns to the input form. "Back to gene page" link provides a tertiary exit.
 
 Save as: `mockup-frame-08-review-edit.png`

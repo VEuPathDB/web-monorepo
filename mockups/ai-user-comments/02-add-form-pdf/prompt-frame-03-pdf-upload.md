@@ -37,17 +37,12 @@ Same page heading ("AI-assisted comment for gene PF3D7_0315200") and breadcrumb 
 
 **Privacy notice** — a visually distinct notice box directly below the file picker (light yellow or light blue background, thin border, small info icon on the left):
 
-> This PDF will be sent to our AI service for analysis only and will not be stored. For provenance, optionally add a public link to the publication below.
+> Your PDF is processed entirely in your browser — only the extracted text is sent to our servers, never the file itself. For provenance, optionally add a public link to the publication below.
 
 **Optional link fields** (label left, field right, below the notice):
 
 - Label: `Publication URL` — empty text input, placeholder `https://biorxiv.org/…`
 - Label: `Link text` — empty text input, placeholder `e.g. Smith et al. 2024 (bioRxiv)`
-
-**Options section** (identical to frame 01):
-
-- ☐ Generate product description
-- ☑ Validate output
 
 **Submit button**:
 

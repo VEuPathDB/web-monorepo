@@ -1,7 +1,5 @@
 # Plan: AI-Assisted User Comments — Front End
 
-**TO DO:** validation step has been removed from the back-end. Remove also from the front end plan and mock-up prompts (and user to remake relevant mockups via ChatGPT).
-
 ## Context
 
 VEuPathDB is adding a new kind of user comment: an **AI-assisted gene-publication summary**. A user supplies a gene (via URL param `stableId`) and a publication (either a PubMed ID or an uploaded PDF). A new back-end service resolves the publication text, checks that the gene or its synonyms are mentioned, runs an LLM to produce a gene-function description from the publication's perspective, and caches that output server-side (a `comment_ai_run` row). The user is taken to a **review-and-publish** step seeded with that AI output; **a user-comment record is created only when they click Publish** — at which point its `aiProvenance` field records the source.
@@ -53,7 +51,6 @@ PDF uploads are handled client-side: by the time we POST, the FE has already ext
   "external_url": "string (optional, upload provenance)",
   "external_title": "string (optional, upload provenance)",
   "options": {
-    "validate": true,
     "generate_product_description": false
   }
 }
@@ -93,7 +90,6 @@ Returns `{ comment_id: number }` (HTTP 201). The back end reads the run row for 
 interface AiOutput {
   headline: string; // suggested comment headline
   content: string; // main AI-generated description, plain text valid as markdown
-  // future: validation notes / confidence
 }
 
 // Counts over comment_ai_provenance rows pointing at the same run_job_id.
@@ -110,7 +106,6 @@ type JobStage =
   | 'fetching-article' // PMC fetch on the PubMed path; symbolic no-op for upload (text already in body)
   | 'scanning-gene-mentions' // deterministic regex scan
   | 'generating-summary' // first LLM call
-  | 'validating' // iff options.validate
   | 'persisting'; // writes the comment_ai_run cache row (always, for a cacheable outcome)
 
 interface JobProgress {
@@ -146,8 +141,6 @@ type AiGenePublicationJobStatus =
     }
   // terminal — fetch failed (not cached; retry is free; not publishable)
   | { type: 'text-unavailable'; reason: string }
-  // terminal — validation pass found unrecoverable issues
-  | { type: 'validation-error'; errors: string[] }
   | { type: 'internal-error'; error: string }
   | { type: 'cancelled' };
 ```
@@ -172,7 +165,7 @@ A `GET` against an unknown / expired / never-existed `jobId` returns `404`. The 
 ### Notes
 
 - **Polling cadence**: ~1 s during `running`. No exponential back-off in v1 — stages are seconds-long. Recursive `setTimeout` to avoid overlapping requests.
-- **Stages are advisory, not guaranteed.** The back end only emits stages relevant to the chosen options (e.g. `validating` only appears if `options.validate`). The FE renders defensively — an unknown future stage should fall through to showing the raw `message`.
+- **Stages are advisory, not guaranteed.** The FE renders defensively — an unknown future stage should fall through to showing the raw `message`.
 - **`is_edited`** is derived by the BE at publish time by comparing the user's submitted headline+content against `comment_ai_run.ai_headline` / `ai_content`. The FE doesn't send or pick it.
 - **No comment exists until Publish.** A cache hit (or a freshly-finished run) returns only the cached `ai_output` + `sibling_summary`. The FE seeds its review form from that and stays in the AI flow keyed by `job_id`; on Publish it calls `…/{job_id}/publish` to create the comment, then leaves the flow. A page refresh on the review step re-fetches via `GET …/{job_id}` (served from the in-memory registry or, after eviction, the permanent `comment_ai_run` cache), so the review survives reload without resubmitting.
 - **Per-follower DELETE not supported in v1.** A DELETE from any follower cancels the underlying job for _all_ attached followers. In practice this is fine — followers attaching to in-flight jobs is rare; the user-visible "Cancel" button still does what the user expects (it kills _their_ job).
@@ -219,7 +212,6 @@ export type AiGenePublicationJobStage =
   | 'fetching-article'
   | 'scanning-gene-mentions'
   | 'generating-summary'
-  | 'validating'
   | 'persisting';
 
 export interface JobProgress {
@@ -249,7 +241,6 @@ export type AiGenePublicationJobStatus =
       siblingSummary: SiblingSummary;
     }
   | { type: 'text-unavailable'; reason: string }
-  | { type: 'validation-error'; errors: string[] }
   | { type: 'internal-error'; error: string }
   | { type: 'cancelled' };
 
@@ -388,7 +379,6 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - Radio group: **PubMed ID** vs **Upload PDF** (discriminated union state).
    - If PubMed: single `TextBox` for PMID. Optional inline PubMed metadata preview using the existing `getPubmedPreview` service (re-use `PubmedIdEntry.tsx` for the rendered chip).
    - If Upload: `<FileInput>` (WDK client) scoped to `.pdf`. **Prominent privacy notice: "Your PDF is processed entirely in your browser — only the extracted text is sent to our servers, never the file itself. For provenance, optionally add a public link to the publication below."** Optional `TextBox` pair for `externalUrl` and `externalTitle`. See "Client-side PDF extraction" below for the full sub-flow this triggers on file selection.
-   - "Validate output" checkbox (maps to `options.validate`), default **on**. (No product-description checkbox in v1 — see Follow-ups.)
    - Submit button. Disable the form during submit. For the upload path, also disable until the client-side extraction has produced both `paperText` and `pdfContentSha256` (or shown an error).
    - `// TODO(dedup)` marker near the submit button noting where a duplicate-warning UI will plug in later.
 
@@ -400,14 +390,14 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    > [Frame 07 — terminal error: gene not mentioned, synonyms listed, recovery buttons](mockups/ai-user-comments/04-add-form-error/mockup-frame-07-gene-not-mentioned.png)
 
    - Form inputs hidden or shown read-only (summary of what was submitted).
-   - **Stage checklist**: render all stages relevant to the submitted options in fixed order — `fetching-article` → `scanning-gene-mentions` → `generating-summary` → `validating` (iff `options.validate`) → `persisting`. Each stage shows _done_ (tick), _current_ (spinner + live `progress.message`), or _pending_ (greyed). Unknown future stages fall through to rendering the raw `message` string so the UI doesn't break if the back end adds stages.
+   - **Stage checklist**: render all stages in fixed order — `fetching-article` → `scanning-gene-mentions` → `generating-summary` → `persisting`. Each stage shows _done_ (tick), _current_ (spinner + live `progress.message`), or _pending_ (greyed). Unknown future stages fall through to rendering the raw `message` string so the UI doesn't break if the back end adds stages.
    - For the upload path, BE still emits a `fetching-article` event for symmetry but resolves it immediately (the text was in the POST body). The FE doesn't need to special-case this.
    - Elapsed-time indicator.
    - **Cancel** button (fires `deleteAiGenePublicationJob`; UI shows a "cancelling…" state until the next poll returns `type: 'cancelled'`). The cancel cancels for _all_ attached followers in v1 — fine in practice (see BE contract notes).
    - On terminal `success`, the controller transitions to `phase: 'review'` **in place** (no navigation) and renders the review-and-publish form seeded from `ai_output`. The `jobId` stays in the URL so a refresh re-fetches the cached output.
    - On terminal `mentioned-in-passing`, transition to `phase: 'review'` but render an inline notice above the (empty) editor ("The AI determined this paper only mentions the gene in passing — no summary was generated. You can still write and publish your own observations below.") plus a **Try a different publication** button.
    - On terminal `gene-not-mentioned`, transition to `phase: 'review'` with the `synonymsChecked` listed and the same empty-body review form ("none of these names were found in the paper — you can still publish your own comment"), plus **Try a different publication**.
-   - On other terminal errors, show a per-case message (`text-unavailable` explains likely cause; `validation-error`/`internal-error` render their strings) — these are **not publishable** (no cached run), so no review form. Include a "Try a different publication" button (primary) that clears the jobId from the URL and returns to input mode with the previous form values preserved, and a "Back to gene page" link (secondary).
+   - On other terminal errors, show a per-case message (`text-unavailable` explains likely cause; `internal-error` renders its string) — these are **not publishable** (no cached run), so no review form. Include a "Try a different publication" button (primary) that clears the jobId from the URL and returns to input mode with the previous form values preserved, and a "Back to gene page" link (secondary).
    - On `not-found` from the poller (expired / unknown jobId — e.g. the user returned to a stale URL after server restart), show a friendly "That job has expired — please submit again" message and fall back to input mode. The user can resubmit; if the original job completed before restart, the resubmission will hit the `comment_ai_run` cache and resolve instantly.
    - On `server-busy` (503) from the submit call, surface a toast — see "Pool exhaustion" below.
 
@@ -431,8 +421,8 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
 
 2. **`AiGenePublicationAddController.tsx`** — minimal controller. Props: `{ stableId: string; jobId?: string }`. Holds local React state (no Redux — the flow is one-shot and short-lived):
 
-   - Form-field state (source radio, pubmedId, the selected `File` plus derived `paperText` + `pdfContentSha256`, externalUrl/externalTitle, option checkboxes, and an extraction-status sub-state for the upload path).
-   - Job state: `{ phase: 'idle' } | { phase: 'submitting' } | { phase: 'polling'; jobId: string; lastStatus: AiGenePublicationJobStatus } | { phase: 'review'; jobId: string; status: AiGenePublicationJobStatus; publishing?: boolean } | { phase: 'terminal-error'; status: AiGenePublicationJobStatus } | { phase: 'server-busy'; retryAfterSeconds?: number }`. The `review` phase holds a _publishable_ terminal (`success`/`mentioned-in-passing`/`gene-not-mentioned`); `terminal-error` holds the non-publishable ones (`text-unavailable`/`validation-error`/`internal-error`/`cancelled`).
+   - Form-field state (source radio, pubmedId, the selected `File` plus derived `paperText` + `pdfContentSha256`, externalUrl/externalTitle, and an extraction-status sub-state for the upload path).
+   - Job state: `{ phase: 'idle' } | { phase: 'submitting' } | { phase: 'polling'; jobId: string; lastStatus: AiGenePublicationJobStatus } | { phase: 'review'; jobId: string; status: AiGenePublicationJobStatus; publishing?: boolean } | { phase: 'terminal-error'; status: AiGenePublicationJobStatus } | { phase: 'server-busy'; retryAfterSeconds?: number }`. The `review` phase holds a _publishable_ terminal (`success`/`mentioned-in-passing`/`gene-not-mentioned`); `terminal-error` holds the non-publishable ones (`text-unavailable`/`internal-error`/`cancelled`).
 
    Behaviour:
 
@@ -441,12 +431,12 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    - **Submit**: build the JSON body with snake_case keys (`gene_id`, `document_type`, `pubmed_id` | `paper_text` + `pdf_content_sha256`, `external_url`, `external_title`, `options`). Call `postAiGenePublication`. The result is one of:
      - `running { jobId }` → `history.replace` to `?stableId=...&jobId={jobId}` and start the poll loop.
      - publishable terminal `success` / `mentioned-in-passing` / `gene-not-mentioned` (cache hit, **no comment yet**) → `history.replace` the `jobId` into the URL and transition straight to `phase: 'review'`, seeding the form from `ai_output` (empty for the two passing/not-mentioned cases).
-     - terminal `text-unavailable` (rare — PubMed path only) / `validation-error` → transition to `terminal-error` and render the error UI in place.
+     - terminal `text-unavailable` (rare — PubMed path only) → transition to `terminal-error` and render the error UI in place.
      - `server-busy` (503) → transition to `server-busy` phase to drive the toast; auto-revert to `idle` after the user dismisses or after the `retryAfterSeconds` countdown.
    - **Poll loop**: recursive `setTimeout`-driven (not `setInterval`, to avoid overlapping requests if a poll is slow). Interval 1000 ms. Clear the timeout on unmount and on terminal responses. Do not retry automatically on transient fetch errors — surface a small "reconnecting…" indicator and try again on the next tick. A `404` terminates the loop with `type: 'not-found'`.
    - **Terminal handling**:
      - `success` / `mentioned-in-passing` / `gene-not-mentioned` → transition to `phase: 'review'` (no navigation); render the review-and-publish form.
-     - `cancelled` / `text-unavailable` / `validation-error` / `internal-error` → `phase: 'terminal-error'`; show the message, offer "Try a different publication" and "Back to gene page".
+     - `cancelled` / `text-unavailable` / `internal-error` → `phase: 'terminal-error'`; show the message, offer "Try a different publication" and "Back to gene page".
      - `not-found` → friendly "that job has expired" message, fall back to input mode.
    - **Publish** (from the `review` phase): set `publishing: true`, call `publishAiGenePublication(jobId, { headline, content })`. On `{ type: 'published', commentId }` → lift the nav-away guard and navigate to the published comment (e.g. `/user-comments/show?…` or back to the gene page). On `not-found` (run evicted _and_ never cached — should be rare) → show "this result is no longer available, please resubmit". On `validation-error` → surface inline (empty headline/content).
    - **Cancel** (from `polling`): call `deleteAiGenePublicationJob`; the UI updates when the next poll returns `cancelled`. Polling is the source of truth.
@@ -529,9 +519,7 @@ interface AiGenePublicationRequest {
   externalUrl?: string;
   externalTitle?: string;
   options: {
-    validate: boolean;
     // generateProductDescription is wire-supported but ignored by the BE in v1; not exposed in v1 UI.
-    // (create_user_comment removed — the generate POST never creates a comment.)
   };
 }
 
@@ -541,9 +529,7 @@ function postAiGenePublication(
   const body: Record<string, unknown> = {
     gene_id: request.geneId,
     document_type: request.source,
-    options: {
-      validate: request.options.validate,
-    },
+    options: {},
   };
   if (request.source === 'pubmed') {
     body.pubmed_id = request.pubmedId;
@@ -685,7 +671,7 @@ Reused without modification:
 1. `yarn workspace @veupathdb/genomics-site compile:check` should type-check cleanly, particularly around the new discriminated `AiProvenance` and the `AiGenePublicationJobStatus` / `SiblingSummary` types.
 2. Run the genomics-site dev server locally. In a browser:
    - Log in, navigate to `/user-comments/ai-gene-publication/add?stableId=PF3D7_0315200` (any gene).
-   - **PubMed happy path**: enter a known PMID that mentions the gene → expect URL to gain a `&jobId=…` on submit; watch the stage checklist advance (`fetching-article` → `scanning-gene-mentions` → `generating-summary` → `validating` → `persisting`). On terminal `success`, expect the **review step in place** (no navigation; breadcrumb on step 3) with the headline/content seeded from `ai_output`. Check the confirmation checkbox and click **Publish** → confirm the publish call returns a `commentId`, the nav-away guard lifts, and you're taken to the published comment. Confirm a `comments` row + `comment_ai_provenance` row now exist (and **did not** exist before Publish).
+   - **PubMed happy path**: enter a known PMID that mentions the gene → expect URL to gain a `&jobId=…` on submit; watch the stage checklist advance (`fetching-article` → `scanning-gene-mentions` → `generating-summary` → `persisting`). On terminal `success`, expect the **review step in place** (no navigation; breadcrumb on step 3) with the headline/content seeded from `ai_output`. Check the confirmation checkbox and click **Publish** → confirm the publish call returns a `commentId`, the nav-away guard lifts, and you're taken to the published comment. Confirm a `comments` row + `comment_ai_provenance` row now exist (and **did not** exist before Publish).
    - **Restore button**: in the review step, edit the headline or content, then click "Restore original" — confirm both fields reset to the AI-generated values from `ai_output`.
    - **Nav-away guard**: from the review step (un-published), attempt to navigate away (browser back, close tab, in-app link) → confirm the "you haven't published yet" guard fires. Confirm it does **not** fire after a successful Publish or after clicking "Try a different publication".
    - **Upload path — client-side PDF extraction**:

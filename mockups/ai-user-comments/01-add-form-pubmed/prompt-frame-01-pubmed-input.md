@@ -53,13 +53,7 @@ Single-column content area (no left sidebar). Structure from top to bottom:
 - Input: empty text field, placeholder `e.g. 38429021`
 - Below input: small grey hint text — `Enter a PubMed ID to look up the publication`
 
-**Options section** (below the PubMed field, with a small gap):
-
-- Bold label: "Options"
-- ☐ Generate product description
-- ☑ Validate output (checked)
-
-**Submit button** (left-aligned, below the checkboxes):
+**Submit button** (left-aligned, below the PubMed field):
 
 - Label: `Generate AI comment`
 - State: **disabled** — muted grey fill, no PMID entered yet
@@ -72,7 +66,6 @@ Figma-style: purple-filled circle with white number label, thin connecting line 
 - ① **Breadcrumb trail** — Step 1 "Publication source" is bold and active; steps 2 and 3 are grayed out to show the user's position in the flow
 - ② **Source selector** — Radio group to choose between a PubMed ID or a PDF upload; selecting "Upload PDF" replaces the PMID field with a file picker
 - ③ **PubMed ID field** — Accepts a numeric PubMed ID; once a valid ID is entered an inline metadata preview will appear confirming the publication
-- ④ **Validate output** — On by default; adds an LLM validation step to the back-end pipeline before the draft comment is created
-- ⑤ **Generate AI comment** — Disabled until a PMID is entered; submitting kicks off an async job and advances the breadcrumb to step 2
+- ④ **Generate AI comment** — Disabled until a PMID is entered; submitting kicks off an async job and advances the breadcrumb to step 2
 
 Save as: `mockup-frame-01-pubmed-input.png`
