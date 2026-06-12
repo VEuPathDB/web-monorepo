@@ -79,12 +79,18 @@ $red: #dd314e;
       font-size: 55px;
     }
 
-    p {
+    .BetaBadge {
+      position: absolute;
+      left: calc(42em - 80px);
+      width: 40px;
+    }
+
+    p.HeaderNav-subTitle {
       margin: 0;
-      padding: 0;
+      padding: 0px 0px 0px 3px;
       opacity: 0.5;
       font-size: 16px;
-      font-weight: 200;
+      font-weight: 250;
       line-height: 1.3em;
       letter-spacing: 0.2px;
       code {
@@ -137,9 +143,9 @@ $red: #dd314e;
   &:hover {
     color: $red;
     text-decoration: none;
-    transition: all 0.5s;
+    transition: transform 200ms ease;
     &:hover {
-      transform: scale(0.95);
+      transform: scale(1.02);
     }
     mark {
       color: white;

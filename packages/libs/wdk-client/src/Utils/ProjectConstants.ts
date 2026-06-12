@@ -20,6 +20,14 @@ export const GENOMICS_PROJECTS = [
   'VectorBase',
 ] as const;
 
+/**
+ * Tests if the given project id string exists as one of the genomics project
+ * id values.
+ */
+export function isGenomicsProject(projectId: string): boolean {
+  return GENOMICS_PROJECTS.some((id) => id === projectId);
+}
+
 export const OTHER_PROJECTS = [
   'OrthoMCL',
   'dataExplorer',

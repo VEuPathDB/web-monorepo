@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import React, {
   useCallback,
   useEffect,
@@ -393,7 +394,7 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
         ref={ref}
         className={cx('SelectionBodyContent', isExpanded && 'expanded')}
         dangerouslySetInnerHTML={{
-          __html: entry?.output || '...',
+          __html: DOMPurify.sanitize(entry?.output || '...'),
         }}
       ></div>
       {isOverflowing && (

@@ -16,13 +16,6 @@ class EdaDatasetDetail extends UserDatasetDetail {
       edaMapUrl,
     } = this.props;
 
-    const isInstalled =
-      status?.import.status === 'complete' &&
-      status?.install?.find((d) => d.installTarget === projectId)?.data.status ===
-        'complete';
-
-    if (!isInstalled) return null;
-
     if (edaWorkspaceUrl == null && edaMapUrl == null) return null;
 
     return (

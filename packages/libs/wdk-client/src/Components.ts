@@ -5,6 +5,7 @@ import RecordHeading from './Views/Records/RecordHeading';
 import RecordActionLink from './Views/Records/RecordActionLink';
 import RecordLink from './Views/Records/RecordLink';
 import RecordMainSection from './Views/Records/RecordMain/RecordMainSection';
+import RecordMainCategorySection from './Views/Records/RecordMain/RecordMainCategorySection';
 import RecordTable from './Views/Records/RecordTable/RecordTable';
 import RecordTableDescription from './Views/Records/RecordTable/RecordTableDescription';
 import RecordTableSection from './Views/Records/RecordTable/RecordTableSection';
@@ -121,6 +122,7 @@ export {
   RecordHeading,
   RecordLink,
   RecordMainSection,
+  RecordMainCategorySection,
   RecordNavigationSection,
   RecordTable,
   RecordTableDescription,

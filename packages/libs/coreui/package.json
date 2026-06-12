@@ -33,6 +33,7 @@
   "dependencies": {
     "@react-hook/size": "^2.1.2",
     "core-js": "^3.25.3",
+    "dompurify": "^3.4.7",
     "lodash": "^4.17.21",
     "react-cool-dimensions": "^2.0.7",
     "react-draggable": "^4.4.5",

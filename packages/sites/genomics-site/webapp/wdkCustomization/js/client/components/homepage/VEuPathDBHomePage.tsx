@@ -12,7 +12,7 @@ import { useLocation } from 'react-router';
 import { get, memoize } from 'lodash';
 
 // @ts-ignore
-import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 // @ts-ignore
 import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
@@ -47,6 +47,7 @@ import {
   useAlphabetizedSearchTree,
 } from '@veupathdb/web-common/lib/components/homepage/Utils';
 import {
+  communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
   showUnreleasedData,
@@ -595,15 +596,15 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           url: `/pubcrawler/${displayName}`,
         },
-        /*{
+        {
           key: 'toxo-rflp',
           display: 'RFLP Genotypes',
           type: 'reactRoute',
           url: '/workspace/analyses/DS_6d31c76b75/new',
           metadata: {
-            include: [ToxoDB,UniDB],
+            include: [ToxoDB, UniDB],
           },
-        },*/
+        },
         {
           key: 'srt',
           display: 'Sequence retrieval',
@@ -681,6 +682,15 @@ const useHeaderMenuItems = (
           display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
+        },
+        {
+          key: 'community-userdatasets',
+          display: 'Community-Contributed Datasets',
+          type: 'reactRoute',
+          url: '/search/userdataset/AllUserDatasets/result',
+          metadata: {
+            test: () => Boolean(communityDatasetsEnabled),
+          },
         },
         {
           key: 'data-files-eupathdb-beta',

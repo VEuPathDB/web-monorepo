@@ -1,6 +1,7 @@
 import React from 'react';
 
 import StudyAnswerController from '@veupathdb/web-common/lib/component-wrappers/StudyAnswerController';
+import UDAnswerController from './UDAnswerController';
 
 import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 
@@ -10,6 +11,15 @@ export default (AnswerController) => (props) => {
   if (props.ownProps.recordClass === 'dataset') {
     return (
       <ClinEpiStudyAnswerController
+        {...props}
+        DefaultComponent={AnswerController}
+      />
+    );
+  }
+
+  if (props.ownProps.recordClass === 'userdataset') {
+    return (
+      <UDAnswerController
         {...props}
         DefaultComponent={AnswerController}
       />

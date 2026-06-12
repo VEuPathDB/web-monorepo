@@ -74,7 +74,7 @@ export function ThemedGrantAccessButton({
         {
           display: (
             <>
-              <Share fill="black" /> Community access
+              <Share fill="black" /> Public access
             </>
           ),
           value: 'community',

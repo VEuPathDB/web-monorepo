@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import { RecordFilter } from './RecordFilter';
 import {
-  renderAttributeValue,
+  renderAttributeValueAutoBreak,
   pure,
   wrappable,
   safeHtml,
@@ -338,7 +338,9 @@ class RecordTable extends Component {
           {chunk(value, listColumnSize).map((tableChunk, index) => (
             <ul key={index} className="wdk-RecordTableList">
               {tableChunk.map((row, index) => (
-                <li key={index}>{renderAttributeValue(row[attributeName])}</li>
+                <li key={index}>
+                  {renderAttributeValueAutoBreak(row[attributeName])}
+                </li>
               ))}
             </ul>
           ))}
