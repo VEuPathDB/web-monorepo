@@ -56,6 +56,16 @@ import { useReferenceStrains } from '../hooks/referenceStrains';
 import { useMaxRecommendedGate } from '../hooks/maxRecommendedGate';
 
 import { OrganismPreferencesWarning } from './OrganismPreferencesWarning';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { WdkService } from '@veupathdb/wdk-client';
+
+import {
+  arrayOf,
+  decodeOrElse,
+  string,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
+import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import _ from 'lodash';
 
 type FlatEnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam;
 
@@ -70,6 +80,9 @@ export const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY =
 export const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 export const MAX_RECOMMENDED_PROPERTY = 'maxRecommended';
 export const MAX_RECOMMENDED_MSG_PROPERTY = 'maxRecommendedMsg';
+
+export const ORGANISM_VALUES_PREFERENCE_KEY = 'organism_param_value_preference';
+export const ORGANISM_VALUES_PREFERENCE_SCOPE = 'project';
 
 interface OrganismParamProps<T extends Parameter, S = void>
   extends DefaultParamProps<T, S> {
@@ -114,6 +127,25 @@ function TreeBoxOrganismEnumParam(
 
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
+  // track the last time we refreshed organismValuePresets
+  let orgValuePrefUpdated = new Date().getTime();
+  const organismValuePreset = useWdkService(
+    (wdkService) => {
+      return fetchOrganismValuePreset(wdkService);
+    },
+    [orgValuePrefUpdated]
+  );
+
+  // create an updater factory to assign organism presets
+  const currentSelection = decodeOrElse(arrayOf(string), [], props.value);
+  const updateOrgValuePref = () => {
+    useWdkEffect((wdkService) => {
+      updateOrganismValuePreset(wdkService, currentSelection).then(() => {
+        orgValuePrefUpdated = new Date().getTime();
+      });
+    });
+  };
+
   // Extract maxRecommended before computing leafTerms
   const maxRecommended = Number(
     props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0]
@@ -144,6 +176,13 @@ function TreeBoxOrganismEnumParam(
     maxRecommendedMsg,
     leafTerms
   );
+
+  const selectOrgValuePref = () => {
+    const trimmedPresets = Array.from(
+      new Set(organismValuePreset).intersection(leafTerms)
+    );
+    wrappedOnChange(trimmedPresets);
+  };
 
   const { maxSelectedCount } = paramWithPrunedVocab;
 
@@ -211,6 +250,12 @@ function TreeBoxOrganismEnumParam(
 
   return (
     <>
+      <button value="Save these presets" onClick={updateOrgValuePref} />
+      <button
+        disabled={organismValuePreset != null}
+        value={'Load my ' + (organismValuePreset?.length || '') + ' prefs'}
+        onClick={selectOrgValuePref}
+      />
       {hasEmptyVocabularly(paramWithPrunedVocab) ? (
         <EmptyParamWarning />
       ) : (
@@ -561,5 +606,31 @@ function EmptyParamWarning() {
       action="use this search"
       explanation="Your current preferences exclude all organisms used in this search."
     />
+  );
+}
+
+async function fetchOrganismValuePreset(
+  wdkService: WdkService
+): Promise<string[]> {
+  return await wdkService
+    .getCurrentUserPreferences()
+    .then(
+      (prefs) =>
+        prefs[ORGANISM_VALUES_PREFERENCE_SCOPE][
+          ORGANISM_VALUES_PREFERENCE_KEY
+        ] ?? '[]'
+    )
+    .then((prefsArrayStr) => decodeOrElse(arrayOf(string), [], prefsArrayStr));
+}
+
+async function updateOrganismValuePreset(
+  wdkService: WdkService,
+  orgValuesPreference: string[]
+) {
+  await wdkService.patchScopedUserPreferences(
+    ORGANISM_VALUES_PREFERENCE_SCOPE,
+    {
+      [ORGANISM_VALUES_PREFERENCE_KEY]: JSON.stringify(orgValuesPreference),
+    }
   );
 }
