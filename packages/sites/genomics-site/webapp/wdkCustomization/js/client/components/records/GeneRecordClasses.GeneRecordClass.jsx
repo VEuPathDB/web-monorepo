@@ -1922,7 +1922,11 @@ const TranscriptionSummaryForm = connect(
 );
 
 const UserCommentsTable = addCommentLink(
-  (props) => props.record.attributes.user_comment_link_url
+  (props) => props.record.attributes.user_comment_link_url,
+  (props) =>
+    `/user-comments/ai-gene-publication/add?stableId=${encodeURIComponent(
+      props.record.attributes.source_id
+    )}`
 );
 
 /**
