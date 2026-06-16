@@ -8809,6 +8809,7 @@ __metadata:
     jquery: "npm:1.9.1"
     js-cookie: "npm:^2.2.0"
     mini-css-extract-plugin: "npm:^2.7.6"
+    mupdf: "npm:^1.27.0"
     notistack: "npm:^3.0.1"
     npm-run-all: "npm:^4.1.5"
     popper.js: "npm:^1.16.1"
@@ -27057,6 +27058,13 @@ __metadata:
   dependencies:
     almost-equal: "npm:^1.1.0"
   checksum: 10/9d8e84bb7bd3aa774aa6862c38b46a5e5e4b4cd94c29a781c19e5cdf48fa24d96ddb2d99277ba5d007dbcfe21241249da5e0797c71ac868496e2f838696b4a70
+  languageName: node
+  linkType: hard
+
+"mupdf@npm:^1.27.0":
+  version: 1.27.0
+  resolution: "mupdf@npm:1.27.0"
+  checksum: 10/9e28b27df4cb7bc9f158d48ffb629b94098f5ea2c5d6f95f134706f3be624f08b0621fce5f97b87a35f1644886ca74119fe1ac0e91bb1193a642446ee41db749
   languageName: node
   linkType: hard
 
