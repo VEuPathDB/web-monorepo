@@ -1,0 +1,871 @@
+import React, { useEffect, useState } from 'react';
+import {
+  TextBox,
+  RadioList,
+  FileInput,
+} from '@veupathdb/wdk-client/lib/Components';
+import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
+import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
+import { PubmedPreviewEntry } from '../../../types/userCommentTypes';
+import { AiGenePublicationJobStatus } from '../../../types/aiGenePublicationTypes';
+import {
+  PdfExtractionProgress,
+  PdfExtractionSuccess,
+  PdfExtractionFailure,
+} from './extractPdfText';
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled job status: ${JSON.stringify(value)}`);
+}
+
+export type PublicationSource = 'pubmed' | 'upload';
+
+// Upload-path PDF extraction sub-state (owned by the controller, rendered here).
+export type UploadExtractionState =
+  | { status: 'idle' } // no file selected yet
+  | { status: 'extracting'; progress: PdfExtractionProgress } // lazy-load + hash + extract in flight
+  | { status: 'ready'; result: PdfExtractionSuccess } // paperText + sha ready
+  | { status: 'error'; failure: PdfExtractionFailure }; // could not extract
+
+// Read-only echo of what was submitted, shown in progress mode.
+export type SubmittedSummary =
+  | { source: 'pubmed'; pubmedId: string }
+  | {
+      source: 'upload';
+      fileName?: string;
+      externalUrl?: string;
+      externalTitle?: string;
+    };
+
+export interface AiGenePublicationAddViewProps {
+  stableId: string;
+
+  // ---- input mode (form). Always supplied; the form is shown when `job` is undefined. ----
+  form: {
+    source: PublicationSource;
+    onSourceChange: (source: PublicationSource) => void;
+    // PubMed path
+    pubmedId: string;
+    onPubmedIdChange: (value: string) => void;
+    pubmedPreview?: PubmedPreviewEntry; // optional metadata chip (controller fetches it)
+    // Upload path
+    onFileSelected: (file: File | null) => void;
+    selectedFileName?: string;
+    extraction: UploadExtractionState;
+    externalUrl: string;
+    onExternalUrlChange: (value: string) => void;
+    externalTitle: string;
+    onExternalTitleChange: (value: string) => void;
+    // Submit
+    canSubmit: boolean; // controller computes this; you just disable on !canSubmit
+    submitting: boolean; // true between click and the POST resolving
+    onSubmit: () => void;
+  };
+
+  // ---- progress mode. When present, render this INSTEAD of the form. ----
+  job?: {
+    status: AiGenePublicationJobStatus; // running | terminal
+    submitted: SubmittedSummary;
+    startedAt: number; // ms epoch; for the elapsed timer
+    cancelling: boolean; // Cancel clicked, awaiting poll confirmation
+    onCancel: () => void;
+    onTryDifferentPublication: () => void;
+    onBackToGenePage: () => void;
+  };
+
+  // ---- shown above the input form when a previous poll expired ----
+  expiredNotice?: boolean;
+
+  // ---- 503 toast ----
+  serverBusy?: { retryAfterSeconds?: number; onDismiss: () => void };
+}
+
+// The four known pipeline stages in their fixed execution order.
+const KNOWN_STAGE_ORDER = [
+  'fetching-article',
+  'scanning-gene-mentions',
+  'generating-summary',
+  'persisting',
+] as const;
+
+type KnownStage = (typeof KNOWN_STAGE_ORDER)[number];
+
+const STAGE_LABELS: Record<KnownStage, string> = {
+  'fetching-article': 'Fetching article',
+  'scanning-gene-mentions': 'Scanning gene mentions',
+  'generating-summary': 'Generating summary',
+  persisting: 'Persisting',
+};
+
+function isKnownStage(stage: string): stage is KnownStage {
+  return (KNOWN_STAGE_ORDER as readonly string[]).includes(stage);
+}
+
+// ---- sub-components ----
+
+function ElapsedTimer({ startedAt }: { startedAt: number }) {
+  const [seconds, setSeconds] = useState(() =>
+    Math.floor((Date.now() - startedAt) / 1000)
+  );
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setSeconds(Math.floor((Date.now() - startedAt) / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+
+  return (
+    <span style={{ color: '#555', fontSize: '13px' }}>
+      Running for {seconds} second{seconds === 1 ? '' : 's'}
+    </span>
+  );
+}
+
+const CHECK_GREEN = '#2d7d2d';
+const GREY = '#888';
+const SPINNER_ORANGE = '#c87022';
+
+function StageRow({
+  label,
+  state,
+  message,
+}: {
+  label: string;
+  state: 'done' | 'current' | 'pending';
+  message?: string;
+}) {
+  const iconStyle: React.CSSProperties = {
+    width: '20px',
+    flexShrink: 0,
+    textAlign: 'center',
+  };
+
+  if (state === 'done') {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '8px',
+        }}
+      >
+        <span style={{ ...iconStyle, color: CHECK_GREEN, fontWeight: 700 }}>
+          ✓
+        </span>
+        <span style={{ color: CHECK_GREEN }}>{label}</span>
+        <span style={{ color: GREY, fontSize: '12px' }}>Done</span>
+      </div>
+    );
+  }
+
+  if (state === 'current') {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '8px',
+          marginBottom: '8px',
+        }}
+      >
+        <span style={{ ...iconStyle, color: SPINNER_ORANGE }}>⟳</span>
+        <div>
+          <span style={{ fontWeight: 600 }}>{label}</span>
+          {message && (
+            <div style={{ color: '#555', fontSize: '13px', marginTop: '2px' }}>
+              {message}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // pending
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        marginBottom: '8px',
+        opacity: 0.45,
+      }}
+    >
+      <span style={iconStyle}>○</span>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function ExtractionStatus({
+  extraction,
+  onClear,
+}: {
+  extraction: UploadExtractionState;
+  onClear: () => void;
+}) {
+  if (extraction.status === 'idle') return null;
+
+  if (extraction.status === 'extracting') {
+    const { stage, pagesDone, pageCount } = extraction.progress;
+    let msg = 'Processing…'; // fallback for any future extraction stage
+    if (stage === 'loading-reader') msg = 'Preparing PDF reader…';
+    else if (stage === 'hashing') msg = 'Hashing file…';
+    else if (stage === 'extracting') {
+      msg = 'Extracting text…';
+      if (pageCount != null && pagesDone != null) {
+        msg += ` (page ${pagesDone + 1} of ${pageCount})`;
+      }
+    }
+    return (
+      <div
+        style={{
+          marginTop: '6px',
+          color: '#555',
+          fontSize: '13px',
+          fontStyle: 'italic',
+        }}
+      >
+        {msg}
+      </div>
+    );
+  }
+
+  if (extraction.status === 'ready') {
+    const { characterCount, pageCount } = extraction.result;
+    return (
+      <div style={{ marginTop: '6px', color: CHECK_GREEN, fontSize: '13px' }}>
+        Extracted {characterCount.toLocaleString()} characters across{' '}
+        {pageCount} page{pageCount === 1 ? '' : 's'}.
+      </div>
+    );
+  }
+
+  // error
+  return (
+    <div
+      style={{
+        marginTop: '6px',
+        padding: '8px 12px',
+        backgroundColor: '#fdf0f0',
+        border: '1px solid #e8a0a0',
+        borderRadius: '4px',
+        fontSize: '13px',
+        color: '#8b1a1a',
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: '8px',
+      }}
+    >
+      <span>{extraction.failure.message}</span>
+      <button
+        type="button"
+        onClick={onClear}
+        style={{
+          background: 'transparent',
+          border: '1px solid #e8a0a0',
+          borderRadius: '3px',
+          cursor: 'pointer',
+          color: '#8b1a1a',
+          fontSize: '12px',
+          padding: '2px 8px',
+          flexShrink: 0,
+        }}
+      >
+        Clear
+      </button>
+    </div>
+  );
+}
+
+function SubmittedSummaryDisplay({
+  stableId,
+  submitted,
+}: {
+  stableId: string;
+  submitted: SubmittedSummary;
+}) {
+  const rowStyle: React.CSSProperties = {
+    display: 'flex',
+    gap: '8px',
+    marginBottom: '4px',
+    fontSize: '14px',
+  };
+  const labelStyle: React.CSSProperties = { color: GREY, minWidth: '80px' };
+
+  return (
+    <div
+      style={{
+        backgroundColor: '#f5f5f5',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        padding: '10px 14px',
+        marginBottom: '16px',
+        fontSize: '14px',
+      }}
+    >
+      <div style={rowStyle}>
+        <span style={labelStyle}>Gene ID:</span>
+        <span>{stableId}</span>
+      </div>
+      {submitted.source === 'pubmed' && (
+        <div style={rowStyle}>
+          <span style={labelStyle}>PubMed ID:</span>
+          <span>{submitted.pubmedId}</span>
+        </div>
+      )}
+      {submitted.source === 'upload' && (
+        <>
+          {submitted.fileName && (
+            <div style={rowStyle}>
+              <span style={labelStyle}>File:</span>
+              <span>{submitted.fileName}</span>
+            </div>
+          )}
+          {submitted.externalUrl && (
+            <div style={rowStyle}>
+              <span style={labelStyle}>URL:</span>
+              <a
+                href={submitted.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {submitted.externalTitle || submitted.externalUrl}
+              </a>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+// ---- main component ----
+
+export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
+  const { stableId, form, job, expiredNotice, serverBusy } = props;
+
+  // Once a job exists the user is on step 2 — including while a terminal error
+  // / cancellation is shown (the plan keeps cancel/error on step 2). The review
+  // step (3) is a different component, so this view never shows it.
+  const activeStep = job == null ? 'publication-source' : 'generating-comment';
+
+  const submitEnabled = form.canSubmit && !form.submitting;
+
+  return (
+    <div style={{ maxWidth: '720px', fontFamily: 'inherit' }}>
+      <AiGenePublicationBreadcrumb activeStep={activeStep} />
+
+      <h2
+        style={{
+          marginTop: '8px',
+          marginBottom: '16px',
+          fontSize: '20px',
+          fontWeight: 600,
+        }}
+      >
+        AI-assisted comment for gene {stableId}
+      </h2>
+
+      {/* 503 server-busy toast */}
+      {serverBusy && (
+        <div
+          role="alert"
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            backgroundColor: '#fff8e1',
+            border: '1px solid #f5c842',
+            borderRadius: '4px',
+            padding: '10px 12px',
+            marginBottom: '16px',
+            fontSize: '13px',
+            color: '#7a5c00',
+            gap: '8px',
+          }}
+        >
+          <span>
+            The AI service is busy. Please try again in a moment.
+            {serverBusy.retryAfterSeconds != null && (
+              <>
+                {' '}
+                Retry after {serverBusy.retryAfterSeconds} second
+                {serverBusy.retryAfterSeconds === 1 ? '' : 's'}.
+              </>
+            )}
+          </span>
+          <button
+            type="button"
+            onClick={serverBusy.onDismiss}
+            aria-label="Dismiss"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#7a5c00',
+              fontSize: '16px',
+              lineHeight: '1',
+              padding: '0',
+              flexShrink: 0,
+            }}
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
+      {/* INPUT MODE */}
+      {job == null && (
+        <div>
+          {expiredNotice && (
+            <div
+              role="note"
+              style={{
+                backgroundColor: '#fff3cd',
+                border: '1px solid #ffc107',
+                borderRadius: '4px',
+                padding: '10px 12px',
+                marginBottom: '16px',
+                fontSize: '13px',
+                color: '#856404',
+              }}
+            >
+              That job has expired — please submit again.
+            </div>
+          )}
+
+          <fieldset style={{ border: 'none', margin: 0, padding: 0 }}>
+            <legend
+              style={{
+                fontSize: '16px',
+                fontWeight: 600,
+                marginBottom: '12px',
+              }}
+            >
+              Publication details
+            </legend>
+
+            {/* Source selector */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontWeight: 500, marginBottom: '6px' }}>Source</div>
+              <RadioList
+                name="ai-publication-source"
+                value={form.source}
+                onChange={(val) =>
+                  form.onSourceChange(val as PublicationSource)
+                }
+                items={[
+                  { value: 'pubmed', display: 'PubMed ID' },
+                  { value: 'upload', display: 'Upload PDF' },
+                ]}
+              />
+            </div>
+
+            {/* PubMed path */}
+            {form.source === 'pubmed' && (
+              <div style={{ marginBottom: '16px' }}>
+                <label
+                  htmlFor="ai-pubmed-id-input"
+                  style={{
+                    display: 'block',
+                    fontWeight: 500,
+                    marginBottom: '4px',
+                  }}
+                >
+                  PubMed ID
+                </label>
+                <TextBox
+                  id="ai-pubmed-id-input"
+                  value={form.pubmedId}
+                  onChange={form.onPubmedIdChange}
+                  placeholder="e.g. 38429021"
+                  style={{ width: '280px' }}
+                />
+                <div
+                  style={{ marginTop: '4px', fontSize: '12px', color: GREY }}
+                >
+                  Enter a PubMed ID to look up the publication
+                </div>
+                {form.pubmedPreview && (
+                  <div style={{ marginTop: '10px' }}>
+                    <PubmedIdEntry
+                      id={form.pubmedPreview.id}
+                      title={form.pubmedPreview.title}
+                      author={form.pubmedPreview.author}
+                      journal={form.pubmedPreview.journal}
+                      url={form.pubmedPreview.url}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Upload path */}
+            {form.source === 'upload' && (
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ marginBottom: '8px' }}>
+                  <label
+                    htmlFor="ai-pdf-file-input"
+                    style={{
+                      display: 'block',
+                      fontWeight: 500,
+                      marginBottom: '4px',
+                    }}
+                  >
+                    PDF file
+                  </label>
+                  <FileInput
+                    id="ai-pdf-file-input"
+                    accept=".pdf,application/pdf"
+                    onChange={form.onFileSelected}
+                  />
+                  {form.selectedFileName && (
+                    <span
+                      style={{
+                        marginLeft: '8px',
+                        fontSize: '13px',
+                        color: '#333',
+                      }}
+                    >
+                      {form.selectedFileName}
+                    </span>
+                  )}
+                  <ExtractionStatus
+                    extraction={form.extraction}
+                    onClear={() => form.onFileSelected(null)}
+                  />
+                </div>
+
+                {/* Privacy notice */}
+                <div
+                  role="note"
+                  style={{
+                    backgroundColor: '#e8f4fd',
+                    border: '1px solid #90c8f0',
+                    borderRadius: '4px',
+                    padding: '8px 12px',
+                    marginBottom: '12px',
+                    fontSize: '13px',
+                    color: '#1a4a6e',
+                    lineHeight: '1.5',
+                  }}
+                >
+                  <span role="img" aria-label="Info">
+                    ℹ️
+                  </span>{' '}
+                  Your PDF is processed entirely in your browser — only the
+                  extracted text is sent to our servers, never the file itself.
+                  For provenance, optionally add a public link to the
+                  publication below.
+                </div>
+
+                {/* Optional provenance fields */}
+                <div style={{ marginBottom: '8px' }}>
+                  <label
+                    htmlFor="ai-external-url-input"
+                    style={{
+                      display: 'block',
+                      fontWeight: 500,
+                      marginBottom: '4px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Publication URL
+                  </label>
+                  <TextBox
+                    id="ai-external-url-input"
+                    value={form.externalUrl}
+                    onChange={form.onExternalUrlChange}
+                    placeholder="https://…"
+                    style={{ width: '400px' }}
+                  />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <label
+                    htmlFor="ai-external-title-input"
+                    style={{
+                      display: 'block',
+                      fontWeight: 500,
+                      marginBottom: '4px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Link text
+                  </label>
+                  <TextBox
+                    id="ai-external-title-input"
+                    value={form.externalTitle}
+                    onChange={form.onExternalTitleChange}
+                    placeholder="e.g. Smith et al. 2024 (preprint)"
+                    style={{ width: '400px' }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Submit */}
+            <div
+              style={{
+                marginTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <button
+                type="button"
+                onClick={form.onSubmit}
+                disabled={!submitEnabled}
+                style={{
+                  padding: '8px 18px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  backgroundColor: submitEnabled ? '#336f99' : '#aaa',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: submitEnabled ? 'pointer' : 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                {form.submitting ? 'Submitting…' : 'Generate AI comment'}
+              </button>
+              <span style={{ fontSize: '13px', color: GREY }}>
+                No comment is created until you review and publish.
+              </span>
+              {/* TODO(dedup): duplicate-warning UI plugs in here */}
+            </div>
+          </fieldset>
+        </div>
+      )}
+
+      {/* PROGRESS MODE */}
+      {job != null && (
+        <div>
+          <SubmittedSummaryDisplay
+            stableId={stableId}
+            submitted={job.submitted}
+          />
+
+          {(() => {
+            const { status } = job;
+            switch (status.type) {
+              case 'running': {
+                const currentStage = status.progress.stage;
+                const currentKnownIndex = isKnownStage(currentStage)
+                  ? KNOWN_STAGE_ORDER.indexOf(currentStage as KnownStage)
+                  : -1;
+
+                return (
+                  <div>
+                    {/* Stage checklist */}
+                    <div style={{ marginBottom: '16px' }}>
+                      {KNOWN_STAGE_ORDER.map((stage, index) => {
+                        let state: 'done' | 'current' | 'pending';
+                        if (currentKnownIndex === -1) {
+                          // Unknown current stage — all known stages are pending
+                          state = 'pending';
+                        } else if (index < currentKnownIndex) {
+                          state = 'done';
+                        } else if (index === currentKnownIndex) {
+                          state = 'current';
+                        } else {
+                          state = 'pending';
+                        }
+
+                        return (
+                          <StageRow
+                            key={stage}
+                            label={STAGE_LABELS[stage]}
+                            state={state}
+                            message={
+                              state === 'current' && isKnownStage(currentStage)
+                                ? status.progress.message
+                                : undefined
+                            }
+                          />
+                        );
+                      })}
+
+                      {/* Defensive unknown-stage row (e.g. future "Fetching gene synonyms") */}
+                      {!isKnownStage(currentStage) && (
+                        <StageRow
+                          label={currentStage}
+                          state="current"
+                          message={status.progress.message}
+                        />
+                      )}
+                    </div>
+
+                    {/* Elapsed timer + Cancel */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '16px',
+                        marginTop: '12px',
+                      }}
+                    >
+                      <ElapsedTimer startedAt={job.startedAt} />
+                      <button
+                        type="button"
+                        onClick={job.onCancel}
+                        disabled={job.cancelling}
+                        style={{
+                          padding: '6px 14px',
+                          fontSize: '13px',
+                          backgroundColor: 'transparent',
+                          border: '1px solid #aaa',
+                          borderRadius: '4px',
+                          cursor: job.cancelling ? 'not-allowed' : 'pointer',
+                          color: job.cancelling ? GREY : '#333',
+                        }}
+                      >
+                        {job.cancelling ? 'Cancelling…' : 'Cancel'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+
+              case 'cancelled':
+              case 'text-unavailable':
+              case 'internal-error': {
+                let errorMessage: React.ReactNode;
+                if (status.type === 'cancelled') {
+                  errorMessage = 'This job was cancelled.';
+                } else if (status.type === 'text-unavailable') {
+                  errorMessage = (
+                    <>
+                      We couldn&apos;t retrieve the article text.{' '}
+                      {status.reason} You can try a different publication.
+                    </>
+                  );
+                } else {
+                  errorMessage = status.error;
+                }
+
+                // Show all known stages as done up to the failure point — we don't know where
+                // it failed, so render all as pending (consistent with the mockup error state).
+                return (
+                  <div>
+                    <div style={{ marginBottom: '12px' }}>
+                      {KNOWN_STAGE_ORDER.map((stage) => (
+                        <StageRow
+                          key={stage}
+                          label={STAGE_LABELS[stage]}
+                          state="pending"
+                        />
+                      ))}
+                    </div>
+                    <div
+                      role="alert"
+                      style={{
+                        backgroundColor: '#fdf0f0',
+                        border: '1px solid #e8a0a0',
+                        borderRadius: '4px',
+                        padding: '12px 14px',
+                        marginBottom: '16px',
+                        fontSize: '14px',
+                        color: '#8b1a1a',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px',
+                      }}
+                    >
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>⚠</span>
+                      <span>{errorMessage}</span>
+                    </div>
+                    <TerminalRecoveryButtons
+                      onTryDifferentPublication={job.onTryDifferentPublication}
+                      onBackToGenePage={job.onBackToGenePage}
+                    />
+                  </div>
+                );
+              }
+
+              case 'success':
+              case 'mentioned-in-passing':
+              case 'gene-not-mentioned': {
+                // These are routed by the controller to the review view (Task 7).
+                // Render a brief neutral fallback while the transition happens.
+                return (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      color: CHECK_GREEN,
+                    }}
+                  >
+                    <span style={{ fontSize: '20px' }}>✓</span>
+                    <span>Generation complete — preparing review…</span>
+                  </div>
+                );
+              }
+
+              default: {
+                // Exhaustiveness check: TypeScript will error if a case is
+                // missed. At runtime an unanticipated status surfaces an error
+                // rather than rendering nothing.
+                return assertNever(status);
+              }
+            }
+          })()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TerminalRecoveryButtons({
+  onTryDifferentPublication,
+  onBackToGenePage,
+}: {
+  onTryDifferentPublication: () => void;
+  onBackToGenePage: () => void;
+}) {
+  return (
+    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+      <button
+        type="button"
+        onClick={onTryDifferentPublication}
+        style={{
+          padding: '8px 16px',
+          fontSize: '14px',
+          fontWeight: 600,
+          backgroundColor: '#336f99',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Try a different publication
+      </button>
+      <button
+        type="button"
+        onClick={onBackToGenePage}
+        style={{
+          padding: '8px 16px',
+          fontSize: '14px',
+          backgroundColor: 'transparent',
+          color: '#336f99',
+          border: '1px solid #336f99',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Back to gene page
+      </button>
+    </div>
+  );
+}
