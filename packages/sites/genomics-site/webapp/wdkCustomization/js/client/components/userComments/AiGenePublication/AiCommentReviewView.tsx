@@ -84,8 +84,20 @@ export function AiCommentReviewView(
     const synonymList = status.synonymsChecked.join(', ');
     noticeAboveEditor = (
       <>
-        None of these names were found in the paper: {synonymList}. You can
-        still publish your own comment.
+        {synonymList
+          ? `None of these names were found in the paper: ${synonymList}. `
+          : `The gene's known names weren't found in the paper. `}
+        You can still publish your own comment.
+        {/* PubMed only: full text comes from PMC BioC, which we scan by
+            section. Uploaded PDFs are scanned in full, so the caveat doesn't
+            apply there. */}
+        {source.kind === 'pubmed' && (
+          <div style={{ marginTop: '8px' }}>
+            Note: for PubMed articles the abstract, introduction and methods
+            sections aren't scanned, so a gene mentioned only there may be
+            missed.
+          </div>
+        )}
       </>
     );
   } else if (status.type === 'success') {

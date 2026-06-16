@@ -63,14 +63,16 @@ function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
       return {
         type: 'mentioned-in-passing',
         jobId: payload.job_id,
-        synonymsChecked: payload.synonyms_checked,
+        // Cache-hit responses currently omit synonyms_checked (the live path
+        // includes it); default to [] so the field honours its non-optional type.
+        synonymsChecked: payload.synonyms_checked ?? [],
         siblingSummary: toSiblingSummary(payload.sibling_summary),
       };
     case 'gene-not-mentioned':
       return {
         type: 'gene-not-mentioned',
         jobId: payload.job_id,
-        synonymsChecked: payload.synonyms_checked,
+        synonymsChecked: payload.synonyms_checked ?? [],
         siblingSummary: toSiblingSummary(payload.sibling_summary),
       };
     case 'text-unavailable':
