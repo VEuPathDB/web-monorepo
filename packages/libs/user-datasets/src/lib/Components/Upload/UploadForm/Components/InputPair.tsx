@@ -1,5 +1,5 @@
 import { Consumer } from '../../../../Utils';
-import { ChangeEvent, ReactElement, ReactNode } from 'react';
+import { ChangeEvent, ReactElement, ReactNode, RefObject } from 'react';
 import { FieldHelpText } from './FieldHelpText';
 
 interface BaseInputProps<T extends object = object> {
@@ -12,6 +12,7 @@ interface BaseInputProps<T extends object = object> {
   readonly helpText?: ReactNode;
   readonly disabled?: boolean;
   readonly required?: boolean;
+  readonly inputRef?: RefObject<HTMLInputElement>;
 }
 
 interface TextProps<T extends object = object> extends BaseInputProps<T> {
@@ -99,6 +100,7 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
     <span>
       <input
         type="checkbox"
+        ref={props.inputRef}
         id={props.idOverride ?? props.fieldName}
         name={props.nameOverride ?? props.fieldName}
         className={props.className}
@@ -115,6 +117,7 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
   return (
     <input
       type="number"
+      ref={props.inputRef}
       min={props.minimum}
       max={props.maximum}
       id={props.idOverride ?? props.fieldName}
@@ -133,6 +136,7 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
     <span>
       <input
         type="radio"
+        ref={props.inputRef}
         id={props.idOverride ?? props.fieldName}
         name={props.nameOverride ?? props.fieldName}
         value={props.value}
@@ -150,6 +154,7 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   return (
     <input
       type={props.type ?? 'text'}
+      ref={props.inputRef}
       id={props.idOverride ?? props.fieldName}
       name={props.nameOverride ?? props.fieldName}
       className={props.className}
