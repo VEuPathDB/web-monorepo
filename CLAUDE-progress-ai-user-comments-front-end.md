@@ -72,7 +72,7 @@ user-datasets **lib**, which has its own emotion-enabled babel config).
 | 3   | MuPDF dep + webpack wiring + `extractPdfText.ts`                                                   | Opus     | ✅ done (commit 33c50f97d4) |
 | 4   | `AiGenePublicationBreadcrumb.tsx`                                                                  | Sonnet   | ✅ done (commit 271c1de38d) |
 | 5   | `SiblingSummaryBanner.tsx`                                                                         | Sonnet   | ✅ done (commit bfe63922f9) |
-| 6   | `AiGenePublicationAddView.tsx` (input + progress modes)                                            | Sonnet   | pending                     |
+| 6   | `AiGenePublicationAddView.tsx` (input + progress modes)                                            | Sonnet   | ✅ done (commit 0f6d012c95) |
 | 7   | Shared review sub-component + `AiCommentReviewView.tsx` + `AiCommentEditView.tsx`                  | Sonnet   | pending                     |
 | 8   | `AiGenePublicationAddController.tsx` (state machine, poll, publish, nav guard)                     | Opus     | pending                     |
 | 9   | Route addition + `UserCommentFormController` `aiProvenance` branch                                 | Sonnet   | pending                     |
@@ -92,6 +92,21 @@ Verification gate (per plan §Verification):
   `compile:check` has 9 PRE-EXISTING errors in `userDatasetRoutes.tsx` + `libs/user-datasets/lib/*.d.ts`
   (stale lib build / missing `@veupathdb/web-common/lib/config` exports) — unrelated to this feature;
   all AI-comment code is type-clean. Checkpoint here for possible fresh-context restart.
+
+- 2026-06-16 (session 2): Task 6 done (commit 0f6d012c95). **Key contract decisions (Task 8 must honour):**
+  - `AiGenePublicationAddView` is fully **presentational/controlled** — exports `PublicationSource`,
+    `UploadExtractionState`, `SubmittedSummary`, `AiGenePublicationAddViewProps`. The controller (Task 8)
+    supplies all state + callbacks (incl. the optional `getPubmedPreview` chip and the extraction sub-state).
+    The view does NO fetching.
+  - **Routing of terminal statuses:** AddView's progress mode renders only `running` + the **non-publishable**
+    terminals (`cancelled`/`text-unavailable`/`internal-error`) as error UIs. The **publishable** terminals
+    (`success`/`mentioned-in-passing`/`gene-not-mentioned`) are routed by the controller to the review view
+    (Task 7), NOT AddView — AddView just shows a brief "preparing review…" fallback for them. This follows the
+    plan prose (post-pivot), even though mockup `04-add-form-error` drew gene-not-mentioned inside the stage view.
+  - Breadcrumb `activeStep`: `job==null → 'publication-source'`, else `'generating-comment'` (incl. terminal-error,
+    per plan "cancel/error stays on step 2"). Review step (3) lives in Task 7's component.
+  - Compile baseline is now FULLY CLEAN (0 errors) — the previously-noted 9 user-datasets errors no longer appear
+    (lib likely rebuilt). Treat any new compile error as caused by this feature.
 
 ### Resume instructions (cold start)
 
