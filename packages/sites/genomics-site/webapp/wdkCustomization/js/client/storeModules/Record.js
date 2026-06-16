@@ -204,6 +204,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 
     // Always show UserDatasetsTranscriptomicsGraphs regardless of MetaTable
     if (tableName === 'UserDatasetsTranscriptomicsGraphs') return true;
+    if (tableName === 'UserDatasetsEdaPhenotype') return true;
     if (tableName === 'SNPsAlignment' || tableName === 'Products') return false;
 
       if (metaTableIndex[key] === undefined) return true;
