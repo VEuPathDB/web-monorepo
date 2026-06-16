@@ -57,7 +57,7 @@ export function EDAWorkspaceContainer(props: Props) {
       />
     );
 
-  if (wdkStudyRecordState == null || studyMetadata.value == null)
+  if (wdkStudyRecordState == null || studyMetadata.value == null || studyMetadata.pending)
     return <Loading />;
 
   return (
