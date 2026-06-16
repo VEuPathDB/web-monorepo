@@ -214,6 +214,19 @@ export default (base: ServiceBase) => {
     );
   }
 
+  // Headers for the raw-fetch AI endpoints. Mirrors postUserComment: the WDK
+  // backend negotiates on the client version header, so every call must send it
+  // (base._fetchJson adds it automatically, but these use raw fetch).
+  function aiHeaders(withJsonBody: boolean): Headers {
+    const headers = new Headers(
+      withJsonBody ? { 'Content-Type': 'application/json' } : {}
+    );
+    if (base._version) {
+      headers.append(CLIENT_WDK_VERSION_HEADER, String(base._version));
+    }
+    return headers;
+  }
+
   function postAiGenePublication(
     request: AiGenePublicationRequest
   ): Promise<AiGenePublicationSubmitOutcome> {
@@ -233,7 +246,7 @@ export default (base: ServiceBase) => {
     return fetch(`${base.serviceUrl}/user-comments/ai-gene-publication`, {
       method: 'POST',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: aiHeaders(true),
       body: JSON.stringify(body),
     }).then(async (response) => {
       if (response.status === 503) {
@@ -249,6 +262,13 @@ export default (base: ServiceBase) => {
           errors: await response.json(),
         };
       }
+      if (!response.ok) {
+        // Surface a meaningful message rather than letting response.json()
+        // reject on a non-JSON error body (e.g. a 500 HTML page).
+        throw new Error(
+          `AI gene-publication submit failed (${response.status})`
+        );
+      }
       const payload = await response.json();
       return deserializeJobStatus(payload);
     });
@@ -259,9 +279,18 @@ export default (base: ServiceBase) => {
   ): Promise<AiGenePublicationJobStatus | { type: 'not-found' }> {
     return fetch(
       `${base.serviceUrl}/user-comments/ai-gene-publication/${jobId}`,
-      { credentials: 'include' }
+      { credentials: 'include', headers: aiHeaders(false) }
     ).then(async (r) => {
       if (r.status === 404) return { type: 'not-found' as const };
+      if (!r.ok) {
+        // A persistent server error (e.g. 401 session-expired, 500) must NOT be
+        // treated as a transient poll hiccup — return a terminal status so the
+        // poll loop exits instead of retrying "Reconnecting…" forever.
+        return {
+          type: 'internal-error' as const,
+          error: `Could not retrieve job status (${r.status})`,
+        };
+      }
       return deserializeJobStatus(await r.json());
     });
   }
@@ -282,7 +311,7 @@ export default (base: ServiceBase) => {
       {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: aiHeaders(true),
         body: JSON.stringify(body),
       }
     ).then(async (response) => {
@@ -292,6 +321,9 @@ export default (base: ServiceBase) => {
           type: 'validation-error' as const,
           errors: await response.json(),
         };
+      }
+      if (!response.ok) {
+        throw new Error(`Publish failed (${response.status})`);
       }
       const payload = await response.json();
       return { type: 'published' as const, commentId: payload.comment_id };

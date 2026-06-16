@@ -75,8 +75,8 @@ user-datasets **lib**, which has its own emotion-enabled babel config).
 | 6   | `AiGenePublicationAddView.tsx` (input + progress modes)                                            | Sonnet   | ✅ done (commit 0f6d012c95) |
 | 7   | Shared review sub-component + `AiCommentReviewView.tsx` + `AiCommentEditView.tsx`                  | Sonnet   | ✅ done (commit bd3784156e) |
 | 8   | `AiGenePublicationAddController.tsx` (state machine, poll, publish, nav guard)                     | Opus     | ✅ done                     |
-| 9   | Route addition + `UserCommentFormController` `aiProvenance` branch                                 | Sonnet   | pending                     |
-| 10  | Entry-point buttons on gene record page                                                            | Sonnet   | pending                     |
+| 9   | Route addition + `UserCommentFormController` `aiProvenance` branch                                 | Sonnet   | ✅ done (commit 4ba5ca71ed) |
+| 10  | Entry-point buttons on gene record page                                                            | Sonnet   | ✅ done (commit 1cfbf76d88) |
 
 Each Sonnet task goes through two-stage review (spec compliance, then code quality) per
 subagent-driven-development. Opus tasks are self-reviewed + compile-checked.
