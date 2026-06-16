@@ -310,6 +310,11 @@ function isasimpleFormConfigurator(
               </li>
               <li>with variables as columns, records as rows</li>
               <li>first row must be column headings (variable names)</li>
+              <li>
+                To prevent accented letters and other special characters from
+                displaying incorrectly, files should use UTF-8 encoding
+                (recommended). ISO-8859-1 and Windows-1252 are also supported.
+              </li>
             </ul>
           </div>
         ),
@@ -497,7 +502,7 @@ function ReferenceGenomeDependency({
       disabled: popoverStyle,
       hover: popoverStyle,
       pressed: popoverStyle,
-    }
+    },
   };
 
   const selectedList = dependencies?.map((entry) => entry.resourceDisplayName);
