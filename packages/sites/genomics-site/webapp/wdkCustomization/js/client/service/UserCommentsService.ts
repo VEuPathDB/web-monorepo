@@ -9,9 +9,79 @@ import {
   PubmedPreview,
   UserCommentGetResponse,
 } from '../types/userCommentTypes';
+import {
+  AiGenePublicationRequest,
+  AiGenePublicationJobStatus,
+  AiGenePublicationSubmitOutcome,
+  AiGenePublicationPublishOutcome,
+  JobProgress,
+  SiblingSummary,
+} from '../types/aiGenePublicationTypes';
 
 // TODO: this should be defined here or in wdk model or someplace, and imported in the store module
 import { CategoryChoice } from '../storeModules/UserCommentFormStoreModule';
+
+function toProgress(p: any): JobProgress {
+  return {
+    stage: p.stage,
+    message: p.message,
+    updatedAt: p.updated_at,
+  };
+}
+
+function toSiblingSummary(s: any): SiblingSummary {
+  return {
+    reviewed: s.reviewed,
+    edited: s.edited,
+    latestAt: s.latest_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
+  switch (payload.type) {
+    case 'running':
+      return {
+        type: 'running',
+        jobId: payload.job_id,
+        progress: toProgress(payload.progress),
+      };
+    case 'success':
+      return {
+        type: 'success',
+        jobId: payload.job_id,
+        aiOutput: {
+          headline: payload.ai_output.headline,
+          content: payload.ai_output.content,
+        },
+        siblingSummary: toSiblingSummary(payload.sibling_summary),
+      };
+    case 'mentioned-in-passing':
+      return {
+        type: 'mentioned-in-passing',
+        jobId: payload.job_id,
+        synonymsChecked: payload.synonyms_checked,
+        siblingSummary: toSiblingSummary(payload.sibling_summary),
+      };
+    case 'gene-not-mentioned':
+      return {
+        type: 'gene-not-mentioned',
+        jobId: payload.job_id,
+        synonymsChecked: payload.synonyms_checked,
+        siblingSummary: toSiblingSummary(payload.sibling_summary),
+      };
+    case 'text-unavailable':
+      return { type: 'text-unavailable', reason: payload.reason };
+    case 'internal-error':
+      return { type: 'internal-error', error: payload.error };
+    case 'cancelled':
+      return { type: 'cancelled' };
+    default:
+      throw new Error(
+        `deserializeJobStatus: unrecognised job type '${payload.type}'`
+      );
+  }
+}
 
 export type UserCommentPostResponseData =
   | {
@@ -144,6 +214,90 @@ export default (base: ServiceBase) => {
     );
   }
 
+  function postAiGenePublication(
+    request: AiGenePublicationRequest
+  ): Promise<AiGenePublicationSubmitOutcome> {
+    const body: Record<string, unknown> = {
+      gene_id: request.geneId,
+      document_type: request.source,
+      options: {},
+    };
+    if (request.source === 'pubmed') {
+      body.pubmed_id = request.pubmedId;
+    } else {
+      body.paper_text = request.paperText;
+      body.pdf_content_sha256 = request.pdfContentSha256;
+      if (request.externalUrl) body.external_url = request.externalUrl;
+      if (request.externalTitle) body.external_title = request.externalTitle;
+    }
+    return fetch(`${base.serviceUrl}/user-comments/ai-gene-publication`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(async (response) => {
+      if (response.status === 503) {
+        const retryAfter = response.headers.get('Retry-After');
+        return {
+          type: 'server-busy' as const,
+          retryAfterSeconds: retryAfter ? Number(retryAfter) : undefined,
+        };
+      }
+      if (response.status === 400) {
+        return {
+          type: 'validation-error' as const,
+          errors: await response.json(),
+        };
+      }
+      const payload = await response.json();
+      return deserializeJobStatus(payload);
+    });
+  }
+
+  function getAiGenePublicationJobStatus(
+    jobId: string
+  ): Promise<AiGenePublicationJobStatus | { type: 'not-found' }> {
+    return fetch(
+      `${base.serviceUrl}/user-comments/ai-gene-publication/${jobId}`,
+      { credentials: 'include' }
+    ).then(async (r) => {
+      if (r.status === 404) return { type: 'not-found' as const };
+      return deserializeJobStatus(await r.json());
+    });
+  }
+
+  function deleteAiGenePublicationJob(jobId: string): Promise<void> {
+    return base._fetchJson<void>(
+      'delete',
+      `/user-comments/ai-gene-publication/${jobId}`
+    );
+  }
+
+  function publishAiGenePublication(
+    jobId: string,
+    body: { headline: string; content: string }
+  ): Promise<AiGenePublicationPublishOutcome> {
+    return fetch(
+      `${base.serviceUrl}/user-comments/ai-gene-publication/${jobId}/publish`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    ).then(async (response) => {
+      if (response.status === 404) return { type: 'not-found' as const };
+      if (response.status === 400) {
+        return {
+          type: 'validation-error' as const,
+          errors: await response.json(),
+        };
+      }
+      const payload = await response.json();
+      return { type: 'published' as const, commentId: payload.comment_id };
+    });
+  }
+
   return {
     getUserComment,
     getPubmedPreview,
@@ -153,5 +307,9 @@ export default (base: ServiceBase) => {
     deleteUserComment,
     postUserCommentAttachedFile,
     deleteUserCommentAttachedFile,
+    postAiGenePublication,
+    getAiGenePublicationJobStatus,
+    deleteAiGenePublicationJob,
+    publishAiGenePublication,
   };
 };
