@@ -178,8 +178,11 @@ function calcFormIsValid(
   const allInputsValid = uploadSection.current
     ?.querySelectorAll(':invalid').length === 0;
 
+  const noCustomErrors = uploadSection.current
+    ?.querySelectorAll('.invalid').length === 0;
+
   const missingDependencies = config.dependencies?.required === true
     && isEmpty(metadata.dependencies);
 
-  return allInputsValid && !missingDependencies;
+  return allInputsValid && noCustomErrors && !missingDependencies;
 }

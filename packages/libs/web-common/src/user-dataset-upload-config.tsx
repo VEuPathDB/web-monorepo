@@ -325,6 +325,34 @@ function phenotypeFormConfigurator(
     dataType,
     verbiage: {
       formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
+      formInputs: {
+        datasetProperties: {
+          label: 'Variable Attributes File',
+          helpText: function HelpText() {
+            const { path } = useRouteMatch();
+            return (
+              <div className="formInfo">
+                <p>
+                  (Optional) Upload a variable attributes file describing the
+                  variables in the data file:
+                </p>
+                <ul>
+                  <li>in .csv, .tsv, or tab-delimited .txt format</li>
+                  <li>
+                    with columns labeled (i) variable; (ii) label; (iii)
+                    definition, and
+                  </li>
+                  <li>with one row for every variable in the data file</li>
+                </ul>
+                <p className="important-info-bold">
+                  A valid variable attributes file is required to make your
+                  dataset Public.
+                </p>
+              </div>
+            );
+          },
+        },
+      },
     },
     enableExperimentalOrganism: true,
     dataInputConfig: {
