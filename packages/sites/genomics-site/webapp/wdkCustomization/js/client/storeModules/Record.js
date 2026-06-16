@@ -204,14 +204,15 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 
     // Always show UserDatasetsTranscriptomicsGraphs regardless of MetaTable
     if (tableName === 'UserDatasetsTranscriptomicsGraphs') return true;
+    if (tableName === 'SNPsAlignment' || tableName === 'Products') return false;
 
-    //   if (metaTableIndex[key] === undefined) return true;
-    if ( (metaTableIndex[key] === undefined) && (targetType == 'table') ) {
+      if (metaTableIndex[key] === undefined) return true;
+/*    if ( (metaTableIndex[key] === undefined) && (targetType == 'table') ) {
       console.log('FILTERING OUT table (not in MetaTable):', tableName);
       return false;
     }
     if ( (metaTableIndex[key] === undefined) && (targetType == 'attribute') ) return true;
-
+*/
     const shouldKeep = metaTableIndex[key].keep;
     if (targetType === 'table' && !shouldKeep) {
       console.log('FILTERING OUT table (wrong organism):', tableName, 'keep:', shouldKeep);
