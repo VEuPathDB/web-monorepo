@@ -73,8 +73,8 @@ user-datasets **lib**, which has its own emotion-enabled babel config).
 | 4   | `AiGenePublicationBreadcrumb.tsx`                                                                  | Sonnet   | ✅ done (commit 271c1de38d) |
 | 5   | `SiblingSummaryBanner.tsx`                                                                         | Sonnet   | ✅ done (commit bfe63922f9) |
 | 6   | `AiGenePublicationAddView.tsx` (input + progress modes)                                            | Sonnet   | ✅ done (commit 0f6d012c95) |
-| 7   | Shared review sub-component + `AiCommentReviewView.tsx` + `AiCommentEditView.tsx`                  | Sonnet   | pending                     |
-| 8   | `AiGenePublicationAddController.tsx` (state machine, poll, publish, nav guard)                     | Opus     | pending                     |
+| 7   | Shared review sub-component + `AiCommentReviewView.tsx` + `AiCommentEditView.tsx`                  | Sonnet   | ✅ done (commit bd3784156e) |
+| 8   | `AiGenePublicationAddController.tsx` (state machine, poll, publish, nav guard)                     | Opus     | ✅ done                     |
 | 9   | Route addition + `UserCommentFormController` `aiProvenance` branch                                 | Sonnet   | pending                     |
 | 10  | Entry-point buttons on gene record page                                                            | Sonnet   | pending                     |
 
@@ -94,6 +94,7 @@ Verification gate (per plan §Verification):
   all AI-comment code is type-clean. Checkpoint here for possible fresh-context restart.
 
 - 2026-06-16 (session 2): Task 6 done (commit 0f6d012c95). **Key contract decisions (Task 8 must honour):**
+
   - `AiGenePublicationAddView` is fully **presentational/controlled** — exports `PublicationSource`,
     `UploadExtractionState`, `SubmittedSummary`, `AiGenePublicationAddViewProps`. The controller (Task 8)
     supplies all state + callbacks (incl. the optional `getPubmedPreview` chip and the extraction sub-state).
@@ -107,6 +108,26 @@ Verification gate (per plan §Verification):
     per plan "cancel/error stays on step 2"). Review step (3) lives in Task 7's component.
   - Compile baseline is now FULLY CLEAN (0 errors) — the previously-noted 9 user-datasets errors no longer appear
     (lib likely rebuilt). Treat any new compile error as caused by this feature.
+
+- 2026-06-16 (session 3): Task 7 confirmed done (commit bd3784156e; progress table was stale).
+  Task 8 done (controller + service wiring). **Key decisions Task 9 must honour:**
+  - **Service wiring:** the 4 AI methods were NOT exposed on `GenomicsService` — added them to
+    `wrapWdkService.tsx` (`genomicsServiceWrappers` + `addGenomicsServices`; `isGenomicsService`
+    auto-derives). Controller gets the service via
+    `useNonNullableContext(WdkDependenciesContext).wdkService as GenomicsService`.
+  - **Controller is a functional component**, default-exported via `wrappable(...)`. Props
+    `{ stableId: string; jobId?: string }` — Task 9's route must parse `stableId` + optional
+    `jobId` from the query string and pass them as props (NOT as the legacy `UserCommentFormController`
+    `target`/`commentId` shape). Mirror the plan's route snippet (§Routing).
+  - **Nav guard** uses imperative `history.block(msg)` + a `beforeunload` listener (active only in
+    `review` phase), lifted synchronously before publish-success / try-different / back-to-gene
+    navigations. Did NOT use `<Prompt>` (can't be turned off synchronously before a programmatic push).
+  - **Publish navigates** to `/user-comments/show?stableId={id}&commentTargetId=gene#{commentId}`.
+  - **Resume-on-mount** (jobId prop set): seeds a placeholder `running` status and polls immediately.
+    The original source/provenance can't be recovered from a bare jobId, so `submittedSource` falls
+    back to a generic `{ kind: 'upload' }` — documented acceptable limitation.
+  - `React` import shows an unused-hint under react-jsx tsconfig but is REQUIRED at runtime (classic
+    babel transform). Leave it. `compile:check` is fully clean.
 
 ### Resume instructions (cold start)
 

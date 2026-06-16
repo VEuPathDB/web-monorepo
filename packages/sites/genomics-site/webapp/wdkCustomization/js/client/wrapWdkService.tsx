@@ -12,12 +12,9 @@ import { wrapWdkService as addMultiBlastService } from '@veupathdb/multi-blast/l
 import { wrapWdkService as addUserDatasetsServices } from '@veupathdb/user-datasets/lib/Service';
 import userCommentsService from './service/UserCommentsService';
 
-export type GenomicsService = WdkService &
-  {
-    [K in keyof GenomicsServiceWrappers]: ReturnType<
-      GenomicsServiceWrappers[K]
-    >;
-  };
+export type GenomicsService = WdkService & {
+  [K in keyof GenomicsServiceWrappers]: ReturnType<GenomicsServiceWrappers[K]>;
+};
 
 const getUserCommentsInstance = memoize(userCommentsService);
 
@@ -40,6 +37,14 @@ export const genomicsServiceWrappers = {
     getUserCommentsInstance(wdkService).deleteUserCommentAttachedFile,
   postUserCommentAttachedFile: (wdkService: WdkService) =>
     getUserCommentsInstance(wdkService).postUserCommentAttachedFile,
+  postAiGenePublication: (wdkService: WdkService) =>
+    getUserCommentsInstance(wdkService).postAiGenePublication,
+  getAiGenePublicationJobStatus: (wdkService: WdkService) =>
+    getUserCommentsInstance(wdkService).getAiGenePublicationJobStatus,
+  deleteAiGenePublicationJob: (wdkService: WdkService) =>
+    getUserCommentsInstance(wdkService).deleteAiGenePublicationJob,
+  publishAiGenePublication: (wdkService: WdkService) =>
+    getUserCommentsInstance(wdkService).publishAiGenePublication,
   incrementOrganismCount: (wdkService: WdkService) =>
     function (
       organismBearingEntity:
@@ -103,6 +108,14 @@ export const wrapWdkService = flowRight(
         genomicsServiceWrappers.deleteUserCommentAttachedFile(wdkService),
       postUserCommentAttachedFile:
         genomicsServiceWrappers.postUserCommentAttachedFile(wdkService),
+      postAiGenePublication:
+        genomicsServiceWrappers.postAiGenePublication(wdkService),
+      getAiGenePublicationJobStatus:
+        genomicsServiceWrappers.getAiGenePublicationJobStatus(wdkService),
+      deleteAiGenePublicationJob:
+        genomicsServiceWrappers.deleteAiGenePublicationJob(wdkService),
+      publishAiGenePublication:
+        genomicsServiceWrappers.publishAiGenePublication(wdkService),
     };
   }
 );
