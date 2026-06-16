@@ -44,7 +44,10 @@ function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
       return {
         type: 'running',
         jobId: payload.job_id,
-        progress: toProgress(payload.progress),
+        // The server returns a running job's stage/message/updated_at as flat
+        // fields on the payload (e.g. `{ type: 'running', job_id, stage: 'queued' }`),
+        // not nested under a `progress` object.
+        progress: toProgress(payload),
       };
     case 'success':
       return {
