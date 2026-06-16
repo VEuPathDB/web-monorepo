@@ -64,8 +64,9 @@ import {
   decodeOrElse,
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
-import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { useWdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import _ from 'lodash';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 type FlatEnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam;
 
@@ -127,24 +128,21 @@ function TreeBoxOrganismEnumParam(
 
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
-  // track the last time we refreshed organismValuePresets
-  let orgValuePrefUpdated = new Date().getTime();
-  const organismValuePreset = useWdkService(
-    (wdkService) => {
-      return fetchOrganismValuePreset(wdkService);
-    },
-    [orgValuePrefUpdated]
-  );
+  // keep org preset as local state, updating server as necessary;
+  //   this means setting in a different tab will not update this component until remount
+  const [localOrganismValuePreset, setLocalOrganismValuePreset] =
+    useState<string[]>();
 
-  // create an updater factory to assign organism presets
-  const currentSelection = decodeOrElse(arrayOf(string), [], props.value);
-  const updateOrgValuePref = () => {
-    useWdkEffect((wdkService) => {
-      updateOrganismValuePreset(wdkService, currentSelection).then(() => {
-        orgValuePrefUpdated = new Date().getTime();
-      });
-    });
-  };
+  const [presetSaving, setPresetSaving] = useState(false);
+
+  useWdkService((wdkService) => {
+    return fetchOrganismValuePreset(wdkService).then((preset) =>
+      setLocalOrganismValuePreset(preset)
+    );
+  }, []);
+
+  // need to use wdkService below
+  const { wdkService } = useWdkDependenciesContext();
 
   // Extract maxRecommended before computing leafTerms
   const maxRecommended = Number(
@@ -177,11 +175,32 @@ function TreeBoxOrganismEnumParam(
     leafTerms
   );
 
-  const selectOrgValuePref = () => {
-    const trimmedPresets = Array.from(
-      new Set(organismValuePreset).intersection(leafTerms)
+  const selectOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
+    event.preventDefault();
+    if (localOrganismValuePreset == null) return;
+    const trimmedPresets = _.intersection(
+      localOrganismValuePreset,
+      Array.from(leafTerms)
     );
     wrappedOnChange(trimmedPresets);
+  };
+
+  const currentSelection = _.intersection(
+    decodeOrElse(arrayOf(string), [], props.value),
+    Array.from(leafTerms)
+  );
+
+  const updateOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
+    event.preventDefault();
+    setPresetSaving(true);
+    updateOrganismValuePreset(wdkService, currentSelection, () => {
+      setLocalOrganismValuePreset(currentSelection);
+      setPresetSaving(false);
+    });
   };
 
   const { maxSelectedCount } = paramWithPrunedVocab;
@@ -248,19 +267,42 @@ function TreeBoxOrganismEnumParam(
     ]
   );
 
+  let savePresetText =
+    'Apply ' + (localOrganismValuePreset?.length || '') + ' preset values';
+  let buttonStyle = { margin: '5px', borderRadius: '6px' };
+  let PresetButtons = (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      {presetSaving && (
+        <>
+          <Icon style={{ margin: '5px' }} fa="spinner" />{' '}
+        </>
+      )}
+      <button
+        style={buttonStyle}
+        value="Save current as preset"
+        onClick={updateOrgValuePref}
+      >
+        <Icon fa="folder-open" /> Save selection as preset
+      </button>
+      <button
+        style={buttonStyle}
+        disabled={localOrganismValuePreset == null}
+        value={savePresetText}
+        onClick={selectOrgValuePref}
+      >
+        <Icon fa="play" /> {savePresetText}
+      </button>
+    </div>
+  );
+
   return (
     <>
-      <button value="Save these presets" onClick={updateOrgValuePref} />
-      <button
-        disabled={organismValuePreset != null}
-        value={'Load my ' + (organismValuePreset?.length || '') + ' prefs'}
-        onClick={selectOrgValuePref}
-      />
       {hasEmptyVocabularly(paramWithPrunedVocab) ? (
         <EmptyParamWarning />
       ) : (
         <TreeBoxEnumParamComponent
           {...props}
+          postSelectionElement={PresetButtons}
           selectedValues={selectedValues}
           onChange={wrappedOnChange}
           context={props.ctx}
@@ -625,12 +667,12 @@ async function fetchOrganismValuePreset(
 
 async function updateOrganismValuePreset(
   wdkService: WdkService,
-  orgValuesPreference: string[]
+  orgValuesPreference: string[],
+  onComplete: () => void
 ) {
-  await wdkService.patchScopedUserPreferences(
-    ORGANISM_VALUES_PREFERENCE_SCOPE,
-    {
+  await wdkService
+    .patchScopedUserPreferences(ORGANISM_VALUES_PREFERENCE_SCOPE, {
       [ORGANISM_VALUES_PREFERENCE_KEY]: JSON.stringify(orgValuesPreference),
-    }
-  );
+    })
+    .finally(onComplete);
 }

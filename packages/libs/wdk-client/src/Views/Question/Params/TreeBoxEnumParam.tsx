@@ -32,6 +32,7 @@ import {
 } from '../../../Actions/TreeBoxEnumParamActions';
 import { Action } from '../../../Actions';
 import { DispatchAction } from '../../../Core/CommonTypes';
+import { ReactComponentLike } from 'prop-types';
 
 // Types
 // -----
@@ -46,6 +47,7 @@ export type TreeBoxProps = {
   selectedValues: string[];
   onChange: (newValue: string[]) => void;
   uiState: State;
+  postSelectionElement?: JSX.Element;
   context: Context<TreeBoxEnumParam>;
   dispatch: DispatchAction;
   wrapCheckboxTreeProps?: (
@@ -184,6 +186,8 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
       ? checkboxTreeProps
       : props.wrapCheckboxTreeProps(checkboxTreeProps);
 
+  const postSelectionElement = props.postSelectionElement || <></>;
+
   return (
     <div className="wdk-TreeBoxParam">
       <SelectionInfo
@@ -191,6 +195,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         {...selectionCounts}
         alwaysShowCount
       />
+      {postSelectionElement}
       <CheckboxTree {...wrappedCheckboxTreeProps} />
     </div>
   );
