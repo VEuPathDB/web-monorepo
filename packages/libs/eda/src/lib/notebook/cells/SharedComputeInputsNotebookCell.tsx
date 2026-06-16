@@ -126,6 +126,7 @@ export function SharedComputeInputsNotebookCell(
                 toggleStarredVariable={toggleStarredVariable}
                 labelWidth="14em"
                 autoSelectWhenPossible
+                autoSelectFeatured
               />
             </div>
           </div>

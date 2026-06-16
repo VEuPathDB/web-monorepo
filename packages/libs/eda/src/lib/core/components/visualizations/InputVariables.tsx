@@ -1,4 +1,5 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { useFeaturedFields } from '../variableSelectors/hooks';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -174,6 +175,12 @@ export interface Props {
    * Auto-selected inputs are rendered as readonly — no dropdown is shown.
    */
   autoSelectWhenPossible?: boolean;
+  /**
+   * When true, automatically selects an input with the first `isFeatured`
+   * variable that satisfies the input's constraints. Falls back gracefully
+   * when no featured variables exist.
+   */
+  autoSelectFeatured?: boolean;
   /** Extra disabled variables to merge in, keyed by input name. */
   additionalDisabledVariables?: Record<string, VariableDescriptor[]>;
 }
@@ -197,6 +204,7 @@ export function InputVariables(props: Props) {
     flexDirection,
     labelWidth,
     autoSelectWhenPossible,
+    autoSelectFeatured,
     additionalDisabledVariables,
   } = props;
   const classes = useInputStyles(flexDirection);
@@ -356,6 +364,53 @@ export function InputVariables(props: Props) {
     singleEnabledVariableByInput,
     selectedVariables,
     inputs,
+    onChange,
+  ]);
+
+  const featuredFields = useFeaturedFields(entities, 'variableTree');
+
+  // allow autoSelections to be removed with the (x) (showClearSelectionButton)
+  const autoSelectedFeaturedRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      autoSelectedFeaturedRef.current ||
+      !autoSelectFeatured ||
+      !featuredFields.length
+    )
+      return;
+
+    const autoSelections: VariablesByInputName = {};
+    for (const input of inputs) {
+      if (input.readonlyValue) continue;
+      if (selectedVariables[input.name] != null) continue;
+
+      const disabled = disabledVariablesByInputName[input.name];
+      // Skip inputs whose constraints haven't been resolved yet (disabled === undefined
+      // means "unknown", not "unrestricted" — same guard as autoSelectWhenPossible).
+      if (disabled == null) continue;
+      const first = featuredFields.find((field) => {
+        const [entityId, variableId] = field.term.split('/');
+        if (!disabled.length) return true;
+        return !disabled.some(
+          (d) => d.entityId === entityId && d.variableId === variableId
+        );
+      });
+      if (first) {
+        const [entityId, variableId] = first.term.split('/');
+        autoSelections[input.name] = { entityId, variableId };
+      }
+    }
+
+    if (Object.keys(autoSelections).length === 0) return;
+    onChange({ ...selectedVariables, ...autoSelections });
+    autoSelectedFeaturedRef.current = true;
+  }, [
+    autoSelectFeatured,
+    featuredFields,
+    inputs,
+    selectedVariables,
+    disabledVariablesByInputName,
     onChange,
   ]);
 

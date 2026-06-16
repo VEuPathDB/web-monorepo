@@ -299,6 +299,11 @@ export interface ScatterplotOptions
    * coverage data is not meaningful (e.g. a PCA plot where all samples are always used).
    */
   hideCoverageData?: boolean;
+  // Currently used only for DE notebook PCA cells. Could be extended to all
+  // visualization plugins if the auto-select-featured behaviour proves useful
+  // more broadly.
+  autoSelectFeatured?: boolean;
+  autoSelectWhenPossible?: boolean;
 }
 
 // Keep a local alias so the rest of the file doesn't need renaming.
@@ -731,7 +736,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     []
   );
 
-  const dataRequestDeps =
+  const autoSelectActive = !!(
+    options?.autoSelectFeatured || options?.autoSelectWhenPossible
+  );
+
+  // When auto-select is active it fires useEffects that update vizConfig.overlayVariable
+  // in rapid succession (e.g. clear → select), each of which would otherwise trigger a
+  // backend request. We suppress this by holding back the first request for 1000ms after
+  // the component becomes ready (compute job done, /meta fetched, x/y set, etc.), giving
+  // the auto-select effects time to settle before the request goes out.
+  // Re-arms automatically whenever isDataReady transitions false → true (e.g. after a
+  // filter change that triggers a new compute job and fresh auto-selection).
+  const [autoSelectSettling, setAutoSelectSettling] =
+    useState(autoSelectActive);
+
+  const dataRequestDepsBase =
     // Wait for compute job and /meta when there's a computation
     (computeName &&
       (computeJobStatus !== 'complete' || computedVarMetadata.pending)) ||
@@ -769,6 +788,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           overlayMax,
           computedOverlayVariableDescriptor,
         };
+
+  const isDataReady = dataRequestDepsBase != null;
+
+  useEffect(() => {
+    if (!autoSelectActive || !isDataReady) return;
+    setAutoSelectSettling(true);
+    const timer = setTimeout(() => setAutoSelectSettling(false), 250);
+    return () => clearTimeout(timer);
+  }, [autoSelectActive, isDataReady]);
+
+  const dataRequestDeps =
+    autoSelectActive && autoSelectSettling ? undefined : dataRequestDepsBase;
 
   const data = useCachedPromise(
     async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
@@ -2239,6 +2270,16 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 : onShowMissingnessChange
             }
             outputEntity={outputEntity}
+            autoSelectFeatured={
+              options?.autoSelectFeatured &&
+              hasComputedXAxis &&
+              hasComputedYAxis
+            }
+            autoSelectWhenPossible={
+              options?.autoSelectWhenPossible &&
+              hasComputedXAxis &&
+              hasComputedYAxis
+            }
           />
         )}
       </div>

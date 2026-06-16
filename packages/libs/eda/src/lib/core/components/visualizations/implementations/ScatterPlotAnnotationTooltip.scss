@@ -3,9 +3,12 @@
   background: #fafafa;
   font-size: 12px;
   height: 200px;
+  min-height: 60px;
   width: 400px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  resize: vertical;
 }
 
 .AnnotationPanel__header {

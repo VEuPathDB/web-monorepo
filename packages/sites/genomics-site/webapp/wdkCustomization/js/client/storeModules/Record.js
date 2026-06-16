@@ -191,6 +191,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     }
     return index;
   }, {});
+
   // show tables in individual (ontology) that in metatable apply to this organim,
   //  and tables in individual that are not in metatable
   //  (so exclude tables in metatable that do not apply to this organim)
@@ -198,10 +199,27 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     if (individual.children.length > 0) return true;
     if (individual.wdkReference == null) return false;
     let key = cat.getRefName(individual) + '-' + cat.getTargetType(individual);
- //   if (metaTableIndex[key] === undefined) return true;
-    if ( (metaTableIndex[key] === undefined) && (cat.getTargetType(individual) == 'table') ) return false;
-    if ( (metaTableIndex[key] === undefined) && (cat.getTargetType(individual) == 'attribute') ) return true;
-    return metaTableIndex[key].keep;
+    const tableName = cat.getRefName(individual);
+    const targetType = cat.getTargetType(individual);
+
+    // Always show UserDatasetsTranscriptomicsGraphs regardless of MetaTable
+    if (tableName === 'UserDatasetsTranscriptomicsGraphs') return true;
+    if (tableName === 'UserDatasetsEdaPhenotype') return true;
+    if (tableName === 'SNPsAlignment' || tableName === 'Products') return false;
+
+      if (metaTableIndex[key] === undefined) return true;
+/*    if ( (metaTableIndex[key] === undefined) && (targetType == 'table') ) {
+      console.log('FILTERING OUT table (not in MetaTable):', tableName);
+      return false;
+    }
+    if ( (metaTableIndex[key] === undefined) && (targetType == 'attribute') ) return true;
+*/
+    const shouldKeep = metaTableIndex[key].keep;
+    if (targetType === 'table' && !shouldKeep) {
+      console.log('FILTERING OUT table (wrong organism):', tableName, 'keep:', shouldKeep);
+    }
+
+    return shouldKeep;
   }, categoryTree);
 }
 

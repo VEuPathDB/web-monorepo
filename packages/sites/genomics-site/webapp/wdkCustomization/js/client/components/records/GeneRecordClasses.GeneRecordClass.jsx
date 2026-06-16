@@ -574,8 +574,8 @@ export function RecordTable(props) {
         <props.DefaultComponent {...props} childRow={SequencesTableChildRow} />
       );
 
-    case 'UserComments':
-      return <UserCommentsTable {...props} />;
+   // case 'UserComments':
+   //   return <UserCommentsTable {...props} />;
 
     case 'SNPsAlignment':
       return <SNPsAlignment {...props} />;
