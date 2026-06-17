@@ -32,7 +32,6 @@ import {
 } from '../../../Actions/TreeBoxEnumParamActions';
 import { Action } from '../../../Actions';
 import { DispatchAction } from '../../../Core/CommonTypes';
-import { ReactComponentLike } from 'prop-types';
 
 // Types
 // -----
