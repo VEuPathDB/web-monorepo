@@ -637,14 +637,30 @@ const useHeaderMenuItems = (
           url: '/workspace/blast/all',
         },
         {
-          key: 'user-data-sets',
+          key: 'user-datasets',
           display: 'My datasets',
-          type: 'reactRoute',
-          url: '/workspace/datasets',
-          metadata: {
-            exclude: [EuPathDB],
-            test: () => Boolean(useUserDatasetsWorkspace),
-          },
+          type: 'subMenu',
+          openByDefault: true,
+          items: [
+            {
+              key: 'upload',
+              display: 'Upload my dataset',
+              type: 'reactRoute',
+              url: '/workspace/datasets/new',
+              metadata: {
+                test: () => Boolean(useUserDatasetsWorkspace),
+              },
+            },
+            {
+              key: 'manage',
+              display: 'Manage my datasets',
+              type: 'reactRoute',
+              url: '/workspace/datasets',
+              metadata: {
+                test: () => Boolean(useUserDatasetsWorkspace),
+              },
+            },
+          ]
         },
         {
           key: 'favorites',
@@ -685,7 +701,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'community-userdatasets',
-          display: 'Public User Datasets',
+          display: 'User Datasets (public)',
           type: 'reactRoute',
           url: '/search/userdataset/AllUserDatasets/result',
           metadata: {
