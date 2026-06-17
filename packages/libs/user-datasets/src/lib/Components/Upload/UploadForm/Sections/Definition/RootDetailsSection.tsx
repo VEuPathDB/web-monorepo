@@ -71,7 +71,7 @@ export function RootDetailsSection(
   return (
     <section>
       <h3>
-        <GlobeIcon /> Define Dataset:
+        <GlobeIcon /> Define Dataset
       </h3>
 
       <div className="field-grid">

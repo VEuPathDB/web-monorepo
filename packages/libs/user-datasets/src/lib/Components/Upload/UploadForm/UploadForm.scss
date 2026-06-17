@@ -61,7 +61,11 @@
     display: inline;
   }
 
+  div.input-block:nth-last-child(1 of .input-block) {
+    margin-bottom: 3em;
+  }
   div.input-block {
+    margin-top: 1em;
     border-width: 1px;
     border-style: solid;
     border-color: #999;
@@ -87,19 +91,12 @@
     }
   }
 
-  form {
-    .description {
+  form .description {
       color: var(--coreui-gray-900);
       font-style: italic;
       padding-bottom: 0.5em;
       position: relative;
       margin-top: -1em;
-    }
-
-    > section,
-    .input-block {
-      margin-top: 1.5em;
-    }
   }
 
   input,
@@ -158,7 +155,7 @@
 
   .relative-root {
     position: relative;
-    margin-top: 5em;
+    margin-top: 3em;
 
     > *:not(h2) {
       margin-left: 32px;
