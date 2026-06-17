@@ -257,7 +257,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
       <div className="UserDatasetFiles-MesaWrapper">
         <Mesa state={uploadZipFileState} />
       </div>
-      {hasInstall && (
+     {/* {hasInstall && (
         <>
           <h3
             style={{
@@ -277,7 +277,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
             <Mesa state={processedZipFileState} />
           </div>
         </>
-      )}
+      )} */}
       {hasDocuments && (
         <>
           <h3

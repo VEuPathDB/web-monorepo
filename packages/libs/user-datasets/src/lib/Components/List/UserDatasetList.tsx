@@ -234,7 +234,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'name',
         sortable: true,
-        name: 'Name / ID',
+        name: 'Dataset name',
         helpText: '',
         renderCell: (cellProps: MesaDataCellProps) => {
           const dataset = cellProps.row;
@@ -285,7 +285,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'type',
-        name: 'Type',
+        name: 'Data type',
         sortable: true,
         renderCell: textCell('type', (datasetType: DatasetTypeOutput) => {
           const { category, version } = datasetType;
@@ -334,7 +334,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         ? [
             {
               key: 'visibility',
-              name: 'Public',
+              name: 'Visibility',
               sortable: true,
               helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
               style: { textAlign: 'center' },

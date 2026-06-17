@@ -181,18 +181,18 @@ function fileInput(props: FileUploadProps): ReactElement {
   );
 
   const helpText = (
-    <div className="column-2 file-input-help">
+    <div className="column-2 file-input-help"><i>
       {props.helpText ??
-        'Files cannot be greater than ' +
+        'File cannot be greater than ' +
           formatFileSize(props.dataType.vdiConfig.maxFileSize, 'binary') +
           '.'}
-    </div>
+    </i></div>
   );
 
   return (
     <>
       <label className={className} htmlFor={fieldName}>
-        Data Files
+        Data File
       </label>
       {props.renderOverride ? props.renderOverride(baseField) : baseField}
       {helpText}

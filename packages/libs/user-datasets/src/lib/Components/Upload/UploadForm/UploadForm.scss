@@ -4,6 +4,7 @@
 
   max-width: 1024px;
   padding: 1em 3em;
+  font-size: 120%;
 
   h3 {
     margin-bottom: 0.5em;
@@ -157,6 +158,7 @@
 
   .relative-root {
     position: relative;
+    margin-top: 5em;
 
     > *:not(h2) {
       margin-left: 32px;
