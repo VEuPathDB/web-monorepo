@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { siteSearchServiceUrl } from '../../config';
 import SiteMenu from '../../App/SiteMenu';
 import { UserMenu, UserMenuGuest } from '../../App/UserMenu';
@@ -12,6 +13,8 @@ import partofveupath from '../../../images/partofveupath.png';
 import { SiteSearchInput } from '../../components';
 
 import './HeaderNav.scss';
+// @ts-ignore
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 
 class HeaderNav extends React.Component {
   constructor(props) {
@@ -117,7 +120,7 @@ class HeaderNav extends React.Component {
     logoUrl,
   }) {
     const { buildNumber, releaseDate } = config;
-
+    const isBetaSite = 1; //window.location.hostname.startsWith('beta');
     return (
       <div className="box row HeaderNav-Branding">
         <Link to="/" className="box">
@@ -130,10 +133,11 @@ class HeaderNav extends React.Component {
               <i>{titleSecPart}</i>
             </Link>
           </h1>
-          <p>
+          <p className="HeaderNav-subTitle">
             {subTitle} <br />
           </p>
         </div>
+        {isBetaSite && <img className="BetaBadge" src={betaImage} alt="beta" />}
       </div>
     );
   }
@@ -210,7 +214,9 @@ class HeaderNav extends React.Component {
             <Branding {...this.props} />
           </div>
           <div style={{ alignSelf: 'center' }}>
-            <h3 dangerouslySetInnerHTML={{ __html: tagline }} />
+            <h3
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tagline) }}
+            />
           </div>
           <a href="https://veupathdb.org" target="_blank">
             <img src={partofveupath} id="VEuPathLogo" />

@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 import { getStudyByQuestionName } from '../selectors/siteData';
@@ -34,7 +35,7 @@ export default (QuestionWizard) =>
               <span id="prompt">Summary: </span>
               <span
                 dangerouslySetInnerHTML={{
-                  __html: wizardState.question.summary,
+                  __html: DOMPurify.sanitize(wizardState.question.summary),
                 }}
               />
             </div>

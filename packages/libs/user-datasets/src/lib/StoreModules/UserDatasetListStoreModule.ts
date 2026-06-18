@@ -16,7 +16,8 @@ import {
   LIST_ITEM_UPDATE_SUCCESS,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetListEntry } from '../Utils/types';
+import { DatasetListEntry } from '../Service';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export const key = 'userDatasetList';
 
@@ -28,7 +29,7 @@ type SharingModalState = {
   communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
 };
 
 type InitialState = SharingModalState & {
@@ -111,7 +112,7 @@ export function reduce(state: State = initialState, action: Action): State {
             userDatasets: state.userDatasets.map((it) =>
               it.datasetId === action.payload.userDataset.datasetId
                 ? action.payload.userDataset
-                : it,
+                : it
             ),
           }
         : state;
@@ -121,7 +122,7 @@ export function reduce(state: State = initialState, action: Action): State {
         ? {
             ...state,
             userDatasets: state.userDatasets.filter(
-              it => it.datasetId !== action.payload.datasetId,
+              (it) => it.datasetId !== action.payload.datasetId
             ),
           }
         : state;

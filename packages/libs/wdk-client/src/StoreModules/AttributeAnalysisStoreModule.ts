@@ -21,6 +21,7 @@ import {
 } from '../Utils/ActionCreatorUtils';
 import { RootState } from '../Core/State/Types';
 import { ResultType, getCustomReport } from '../Utils/WdkResult';
+import { ServiceError } from '../Service/ServiceError';
 
 export const key = 'attributeAnalysis';
 
@@ -157,7 +158,11 @@ async function getAttributeReport(
     });
     return fulfillAttributeReport(reporterName, resultType, report);
   } catch (error) {
-    return errorAttributeReport(reporterName, resultType, error);
+    if (error instanceof ServiceError)
+      return errorAttributeReport(reporterName, resultType, error);
+
+    // unexpected unknown error.
+    throw error;
   }
 }
 

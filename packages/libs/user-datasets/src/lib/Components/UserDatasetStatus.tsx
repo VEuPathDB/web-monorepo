@@ -2,25 +2,25 @@ import * as React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
+import { DataNoun } from '../Utils/types';
 import {
-  DataNoun,
-  DatasetDetails,
+  DatasetGetResponseBody,
   DatasetListEntry,
   DatasetStatusInfo,
   DatasetUploadStatusInfo,
-} from '../Utils/types';
+  VdiReconcilerConfig,
+  VdiServiceConfig,
+} from '../Service';
 
-// NOTE: The reinstall interval is configured in the VDI service and thus may change
-const VDI_REINSTALL_INTERVAL = 6;
-
-interface Props {
+export interface Props {
   baseUrl: string;
-  userDataset: DatasetListEntry | DatasetDetails;
+  userDataset: DatasetListEntry | DatasetGetResponseBody;
   projectId: string;
   displayName: string;
   linkToDataset: boolean;
   useTooltip: boolean;
   dataNoun: DataNoun;
+  readonly vdiConfig: VdiServiceConfig;
 }
 
 const orderedStatuses = [
@@ -52,7 +52,8 @@ function getStatus(
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
-  projects: string[]
+  projects: string[],
+  vdiConfig: VdiReconcilerConfig
 ): { content: React.ReactNode; icon: string } {
   const isTargetingCurrentSite = projects.includes(projectId);
 
@@ -64,9 +65,15 @@ function getStatus(
   }
 
   if (status.upload.status !== 'success')
-    return getUploadStatus(status.upload, dataNoun)
+    return getUploadStatus(status.upload, dataNoun);
   else
-    return getPostUploadStatus(status, projectId, dataNoun, projectDisplayName);
+    return getPostUploadStatus(
+      status,
+      projectId,
+      dataNoun,
+      projectDisplayName,
+      vdiConfig
+    );
 }
 
 const queuedStatus = (dataNoun: string) => ({
@@ -76,32 +83,36 @@ const queuedStatus = (dataNoun: string) => ({
 
 function getUploadStatus(
   details: DatasetUploadStatusInfo,
-  dataNoun: string,
-): { content: React.ReactNode; icon: string; } {
+  dataNoun: string
+): { content: React.ReactNode; icon: string } {
   switch (details.status) {
     case 'running':
       return queuedStatus(dataNoun);
 
     case 'rejected':
       return {
-        content: <>
-          This {dataNoun} was rejected during initial upload processing:{' '}
-          {details.message}
-        </>,
+        content: (
+          <>
+            This {dataNoun} was rejected during initial upload processing:{' '}
+            {details.message}
+          </>
+        ),
         icon: 'exclamation-circle',
       };
 
     case 'failed':
       return {
-        content: <>
-          Initial processing of your uploaded {dataNoun} failed. Please try
-          uploading your {dataNoun} again. If the problem persists, please let
-          us know through our{' '}
-          <Link to="/contact-us" target="_blank">
-            support form
-          </Link>
-          .
-        </>,
+        content: (
+          <>
+            Initial processing of your uploaded {dataNoun} failed. Please try
+            uploading your {dataNoun} again. If the problem persists, please let
+            us know through our{' '}
+            <Link to="/contact-us" target="_blank">
+              support form
+            </Link>
+            .
+          </>
+        ),
         icon: 'times-circle',
       };
 
@@ -125,6 +136,7 @@ function getPostUploadStatus(
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
+  vdiConfig: VdiReconcilerConfig
 ): { content: React.ReactNode; icon: string } {
   const importStatus = status.import?.status;
   switch (importStatus) {
@@ -132,28 +144,33 @@ function getPostUploadStatus(
     case 'queued':
     case 'in-progress':
       return {
-        content: `This ${dataNoun} is queued. Please check again soon (reload ` +
-          "the page).",
+        content:
+          `This ${dataNoun} is queued. Please check again soon (reload ` +
+          'the page).',
         icon: 'clock-o',
       };
     case 'invalid':
       return {
-        content: <>
-          This {dataNoun} was rejected as invalid during the import phase:{' '}
-          {status.import!.messages?.join(', ')}
-        </>,
+        content: (
+          <>
+            This {dataNoun} was rejected as invalid during the import phase:{' '}
+            {status.import!.messages?.join(', ')}
+          </>
+        ),
         icon: 'exclamation-circle',
       };
     case 'failed':
       return {
-        content: <>
-          Failed during the import phase. If the problem persists, please let
-          us know through our{' '}
-          <Link to="/contact-us" target="_blank">
-            support form
-          </Link>
-          .
-        </>,
+        content: (
+          <>
+            Failed during the import phase. If the problem persists, please let
+            us know through our{' '}
+            <Link to="/contact-us" target="_blank">
+              support form
+            </Link>
+            .
+          </>
+        ),
         icon: 'times-circle',
       };
   }
@@ -190,41 +207,49 @@ function getPostUploadStatus(
         };
       case 'failed-validation':
         return {
-          content: <>
-            This {dataNoun} was rejected as invalid during the install phase:{' '}
-            {metaMessage}
-            {metaMessage.length && dataMessage.length ? '; ' : ''}
-            {dataMessage}
-          </>,
+          content: (
+            <>
+              This {dataNoun} was rejected as invalid during the install phase:{' '}
+              {metaMessage}
+              {metaMessage.length && dataMessage.length ? '; ' : ''}
+              {dataMessage}
+            </>
+          ),
           icon: 'exclamation-circle',
         };
       case 'failed-installation':
         return {
-          content: <>
-            Failed during the install phase. If the problem persists, please
-            let us know through our{' '}
-            <Link to="/contact-us" target="_blank">
-              support form
-            </Link>
-            .
-          </>,
+          content: (
+            <>
+              Failed during the install phase. If the problem persists, please
+              let us know through our{' '}
+              <Link to="/contact-us" target="_blank">
+                support form
+              </Link>
+              .
+            </>
+          ),
           icon: 'times-circle',
         };
       case 'ready-for-reinstall':
         return {
-          content: <>
-            This {dataNoun} will be reinstalled within {VDI_REINSTALL_INTERVAL}
-            hours. Please check again soon.
-          </>,
+          content: (
+            <>
+              This {dataNoun} will be reinstalled within
+              {vdiConfig.fullRunInterval}. Please check again soon.
+            </>
+          ),
           icon: 'minus-circle',
         };
       case 'missing-dependency':
         return {
-          content: <>
-            This {dataNoun} is incompatible: {metaMessage}
-            {metaMessage.length && dataMessage.length ? '; ' : ''}
-            {dataMessage}
-          </>,
+          content: (
+            <>
+              This {dataNoun} is incompatible: {metaMessage}
+              {metaMessage.length && dataMessage.length ? '; ' : ''}
+              {dataMessage}
+            </>
+          ),
           icon: 'exclamation-circle',
         };
       default:
@@ -246,7 +271,8 @@ export default function UserDatasetStatus(props: Props) {
     projectId,
     lowercaseSingularDataNoun,
     displayName,
-    installTargets
+    installTargets,
+    props.vdiConfig.daemons.reconciler
   );
 
   const link = `${baseUrl}/${userDataset.datasetId}`;

@@ -8,7 +8,10 @@ import { Analysis, NewAnalysis } from '../core';
 import { AnalysisDescriptor } from '../core/types/analysis';
 import { Computation } from '../core/types/visualization';
 import { DifferentialExpressionConfig } from '../core/types/apps';
-import { VolcanoPlotConfig } from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
+import {
+  VolcanoPlotConfig,
+  effectDirectionLabels,
+} from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
 import {
   entityTreeToArray,
   findEntityAndVariable,
@@ -165,11 +168,7 @@ function ComputationSummary({
         <ReviewRow
           label="Direction"
           value={
-            volcanoConfig?.effectDirection === 'up only'
-              ? 'Up-regulated only'
-              : volcanoConfig?.effectDirection === 'down only'
-              ? 'Down-regulated only'
-              : 'Up- or down-regulated'
+            effectDirectionLabels[volcanoConfig?.effectDirection ?? 'upAndDown']
           }
         />
       </ReviewCard>

@@ -14,7 +14,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
   .wdk-RecordActions
-  a[title='Download Data Set'] {
+  a[title='Download Dataset'] {
     visibility: hidden;
   }
 

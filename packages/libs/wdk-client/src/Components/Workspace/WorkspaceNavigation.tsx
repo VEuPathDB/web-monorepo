@@ -4,7 +4,7 @@ import { NavLink, NavLinkProps } from 'react-router-dom';
 
 import './WorkspaceNavigation.scss';
 
-interface WorkspaceNavigationItem
+export interface WorkspaceNavigationItem
   extends Pick<NavLinkProps, 'isActive' | 'replace'> {
   display: ReactNode;
   route: string;

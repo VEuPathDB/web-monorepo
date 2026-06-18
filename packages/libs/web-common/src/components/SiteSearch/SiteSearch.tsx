@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { Tooltip } from '@veupathdb/coreui';
 import { DataGrid } from '@veupathdb/coreui';
 import {
@@ -102,11 +103,16 @@ interface Props {
   referenceStrains?: Set<string>;
 }
 
-const LARGE_EXPORT_WARNING_THRESHOLD = 50000;
+// note: this value should be coordinated with SiteSearchService:SearchRequest.java:MAX_RECORDS_IN_TABULAR_RESPONSE
+const MAX_RESULT_SIZE_FOR_EXPORT = 100000;
 
 const cx = makeClassNameHelper('SiteSearch');
 
 const cancelIcon = <i className="fa fa-times" />;
+
+// to show in NO results and in One recordtype results
+const warningUserDatasets =
+  'Only public user datasets are indexed. Private datasets are excluded, and newly public datasets may take up to 24 hours to appear in search results.';
 
 function FilterTitleSegment(props: Props) {
   const filters = [
@@ -140,6 +146,11 @@ function Results(props: Props) {
     margin: '.5em 0',
   };
 
+  const p2Style = {
+    margin: '.5em 0',
+    fontStyle: 'italic',
+  };
+
   if (
     response.searchResults.totalCount === 0 &&
     documentType == null &&
@@ -152,6 +163,8 @@ function Results(props: Props) {
           <Title {...props} />
         </h1>
         <div style={{ fontSize: '1.2em' }}>
+          <p style={p2Style}>{warningUserDatasets}</p>
+          <br />
           <p style={pStyle}>Your search returned 0 results.</p>
           <p style={pStyle}>
             Consider using a wildcard to broaden your search. For example,{' '}
@@ -233,6 +246,11 @@ function Title(props: Props) {
   return (
     <React.Fragment>
       {display} matching <strong>{searchString}</strong>{' '}
+      <div
+        style={{ fontSize: '0.45em', fontStyle: 'italic', margin: '0.5em 0' }}
+      >
+        {warningUserDatasets}
+      </div>
       <FilterTitleSegment {...props} />
     </React.Fragment>
   );
@@ -781,7 +799,7 @@ function StrategyLinkout(props: Props) {
   const [loading, setLoading] = useState(false);
 
   const isLargeSearchResult =
-    response.searchResults.totalCount > LARGE_EXPORT_WARNING_THRESHOLD;
+    response.searchResults.totalCount > MAX_RESULT_SIZE_FOR_EXPORT;
   const [showLargeExportModal, setShowLargeExportModal] = useState(false);
 
   const history = useHistory();
@@ -903,8 +921,9 @@ function StrategyLinkout(props: Props) {
               margin: 0,
             }}
           >
-            Your result ({response.searchResults.totalCount.toLocaleString()})
-            is large and may result in a timeout or slow response.
+            Unable to export as a search strategy. Your result size (
+            {response.searchResults.totalCount.toLocaleString()}) exceeds the
+            maximum allowed ({MAX_RESULT_SIZE_FOR_EXPORT.toLocaleString()}).
           </p>
           <br />
           <p
@@ -942,9 +961,9 @@ function StrategyLinkout(props: Props) {
               type="button"
               onClick={() => setShowLargeExportModal(false)}
             >
-              Cancel
+              Ok
             </button>
-            <button
+            {/*<button
               className="btn"
               type="button"
               onClick={() => {
@@ -953,7 +972,7 @@ function StrategyLinkout(props: Props) {
               }}
             >
               Continue to export
-            </button>
+            </button>*/}
           </div>
         </div>
       </CommonModal>
@@ -1207,7 +1226,7 @@ function resultDetails(
   );
 
   // wdk records
-  if (documentType.isWdkRecordType) {
+  if (documentType.isWdkRecordType || projectId != 'ClinEpiDB') {
     return {
       display: makeRecordLink(
         document,
@@ -1220,7 +1239,7 @@ function resultDetails(
   }
 
   // eda study
-  if (documentType.id === 'dataset') {
+  if (documentType.id === 'dataset' || projectId === 'ClinEpiDB') {
     const [datasetId] = document.primaryKey;
     return {
       display: {
@@ -1583,15 +1602,11 @@ function makeGenericSummary(
 
 function HtmlString(props: { value: string }) {
   const { value } = props;
-  const formattedValue = useMemo(() => {
-    const div = document.createElement('div');
-    div.innerHTML = value;
-    div
-      .querySelectorAll('img, object, iframe')
-      .forEach((el) => el.parentElement?.removeChild(el));
-    return div.innerHTML;
-  }, [value]);
-  return <span dangerouslySetInnerHTML={{ __html: formattedValue }} />;
+  const sanitized = useMemo(
+    () => DOMPurify.sanitize(value, { FORBID_TAGS: ['img'] }),
+    [value]
+  );
+  return <span dangerouslySetInnerHTML={{ __html: sanitized }} />;
 }
 
 function formatSummaryFieldValue(value?: string | string[]) {

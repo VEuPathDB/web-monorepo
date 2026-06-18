@@ -49,6 +49,14 @@ export default (base: ServiceBase) => {
     return base._fetchJson<void>('delete', url);
   }
 
+  function getUserIdsByEmail(emails: string[]) {
+    return base._fetchJson<{ results: Record<string, number> }>(
+      'POST',
+      '/user-id-query',
+      JSON.stringify({ emails })
+    );
+  }
+
   return {
     getCurrentUser,
     createNewUser,
@@ -56,5 +64,6 @@ export default (base: ServiceBase) => {
     updateCurrentUserPassword,
     resetUserPassword,
     deleteAccount,
+    getUserIdsByEmail,
   };
 };

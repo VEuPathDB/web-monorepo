@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -23,6 +23,7 @@ import { DownloadClient } from '../api/DownloadClient';
 import { entityTreeToArray } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
 import { useDeepValue } from '../hooks/immutability';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export interface Props {
   studyId: string;
@@ -44,8 +45,21 @@ export function EDAWorkspaceContainer(props: Props) {
 
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
-  if (wdkStudyRecordState == null || studyMetadata.value == null)
+
+  if (studyMetadata.error)
+    return (
+      <Banner
+        banner={{
+          type: 'warning',
+          message:
+            'The dataset you requested could not be found. Please check the URL and try again.',
+        }}
+      />
+    );
+
+  if (wdkStudyRecordState == null || studyMetadata.value == null || studyMetadata.pending)
     return <Loading />;
+
   return (
     <EDAWorkspaceContainerWithLoadedData
       {...props}

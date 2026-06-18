@@ -22,15 +22,17 @@ type Props<T, U> = {
   recordClass: RecordClass;
   summaryView: string;
   ontology: Ontology<CategoryTreeNode>;
-  formState: any;
-  formUiState: any;
+  formState: T & any;
+  formUiState: U & any;
   updateFormState: (state: T) => T;
   updateFormUiState: (uiState: U) => U;
   onSubmit: () => void;
   includeSubmit: boolean;
 };
 
-function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
+function WdkServiceJsonReporterForm<T extends {}, U extends {}>(
+  props: Props<T, U>
+) {
   let {
     scope,
     question,

@@ -1,11 +1,14 @@
 .UnhandledErrors {
   position: relative;
-  width: 100vw;
-  max-height: 80vh;
+  width: fit-content;
+  min-width: 90vw;
+  max-width: 95vw;
+  max-height: 85vh;
   background: white;
   padding: 2em;
   border-radius: 1em;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+  overflow: auto;
 
   display: flex;
   flex-direction: column;
@@ -13,8 +16,7 @@
 
   @media screen and (min-width: 768px) {
     min-width: 60em;
-    max-width: 80vw;
-    width: 44vw;
+    max-width: 90vw;
   }
 
   h1 {
@@ -54,13 +56,14 @@
 
   &--Details {
     overflow: auto;
-    max-height: calc(80vh - 46em);
+    max-height: calc(85vh - 15em);
     font-size: 0.9em;
     color: #000000e6;
 
     h3 {
       margin-top: 1em;
-      white-space: pre;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
     }
   }
 
@@ -83,5 +86,7 @@
     background: #8888881a;
     border-radius: 0.5em;
     color: #333;
+    overflow-x: auto;
+    word-wrap: break-word;
   }
 }

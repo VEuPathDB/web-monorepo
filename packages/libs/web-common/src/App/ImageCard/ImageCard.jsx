@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 import './ImageCard.scss';
 
@@ -34,9 +35,15 @@ class ImageCard extends React.Component {
         />
         <div className="box ImageCard-Title">
           <a href={linkUrl}>
-            <h3 dangerouslySetInnerHTML={{ __html: title }} />
+            <h3
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(title) }}
+            />
           </a>
-          <p dangerouslySetInnerHTML={{ __html: description }} />
+          <p
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(description),
+            }}
+          />
         </div>
         <a className="ImageCard-Footer" href={linkUrl} target={linkTarget}>
           {linkText} <Icon fa={'chevron-circle-right'} />

@@ -297,14 +297,14 @@ function RecordOverview(props) {
                   <span className="eupathdb-GeneOverviewHighlighted">
                     {r('num_user_comments')}
                   </span>{' '}
-                  / Add a new one
+                  {/*  / Add a new one  */}
                 </a>
               </div>
-              <div data-show-num-user-comments="0" data-label="User Comments">
+              {/*  <div data-show-num-user-comments="0" data-label="User Comments">
                 <a href={record.attributes['user_comment_link_url']}>
                   Add the first <i className="fa fa-comment"></i>
                 </a>
-              </div>
+              </div>  */}
             </dd>
 
             <div data-show-apollo="1">
@@ -574,8 +574,8 @@ export function RecordTable(props) {
         <props.DefaultComponent {...props} childRow={SequencesTableChildRow} />
       );
 
-    case 'UserComments':
-      return <UserCommentsTable {...props} />;
+   // case 'UserComments':
+   //   return <UserCommentsTable {...props} />;
 
     case 'SNPsAlignment':
       return <SNPsAlignment {...props} />;

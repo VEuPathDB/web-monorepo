@@ -53,7 +53,7 @@ import {
   ancestorEntitiesForEntityId,
 } from '../../../utils/data-element-constraints';
 import { DifferentialExpressionConfig } from '../../../types/apps';
-import { useGroupCounts } from '../../../hooks/groupCounts';
+import { useGroupCounts, makeExpressionValueRangeFilter } from '../groupCounts';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
@@ -176,6 +176,17 @@ export const plugin: ComputationPlugin = {
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
     'These visualizations are only available for studies with compatible assay data.',
+  getCountWarning(counts) {
+    const root = counts['root'];
+    if (!root || root.pending || root.value == null) return { type: 'pending' };
+    if (root.value < 4)
+      return {
+        type: 'warning',
+        message:
+          'At least 4 samples (2 per group) are required to run differential expression. Please relax your filtering criteria.',
+      };
+    return { type: 'ok' };
+  },
 };
 
 function DifferentialExpressionConfigDescriptionComponent({
@@ -288,6 +299,7 @@ export function DifferentialExpressionConfiguration(
     showStepNumber = true,
     readonlyInputNames,
     onCountGatingChange,
+    autoSelectFeatured,
   } = props;
 
   const computation = useComputation(analysisState, computationId);
@@ -433,7 +445,15 @@ export function DifferentialExpressionConfiguration(
       configuration.comparator.variable.variableId,
       {
         valueSpec: 'count',
-        filters: otherFilters,
+        filters: [
+          ...(otherFilters ?? []),
+          ...[
+            makeExpressionValueRangeFilter(
+              configuration.differentialExpressionMethod,
+              configuration.valueVariable
+            ),
+          ].filter((f): f is Filter => f != null),
+        ],
       }
     );
 
@@ -476,12 +496,15 @@ export function DifferentialExpressionConfiguration(
     groupBCountPending,
     groupAFilter,
     groupBFilter,
-  } = useGroupCounts(
+  } = useGroupCounts({
     comparatorVariable,
-    configuration.comparator?.groupA,
-    configuration.comparator?.groupB,
-    filters
-  );
+    groupA: configuration.comparator?.groupA,
+    groupB: configuration.comparator?.groupB,
+    filters,
+    method: configuration.differentialExpressionMethod,
+    valueVariable: configuration.valueVariable,
+    comparatorVariableType: selectedComparatorVariable?.variable.type,
+  });
 
   // Report per-group count gating to the parent (e.g. ComputeNotebookCell)
   useEffect(() => {
@@ -574,11 +597,7 @@ export function DifferentialExpressionConfiguration(
   const disabledVariableValues =
     selectedComparatorVariable?.variable.vocabulary?.filter((value) => {
       // Let all values pass if there was no filteredComparatorVariableDistribution
-      if (
-        filteredComparatorVariableDistribution.value == null ||
-        filteredComparatorVariableDistribution.value.histogram.length === 0
-      )
-        return false;
+      if (filteredComparatorVariableDistribution.value == null) return false;
 
       // Disable a variable if it does not appear in filteredComparatorVariableDistribution
       return !filteredComparatorVariableDistribution.value.histogram.some(
@@ -671,6 +690,7 @@ export function DifferentialExpressionConfiguration(
             constraints={geneExpressionConstraints}
             dataElementDependencyOrder={geneExpressionDependencyOrder}
             additionalDisabledVariables={additionalDisabledVariables}
+            autoSelectFeatured={autoSelectFeatured}
             starredVariables={
               analysisState.analysis?.descriptor.starredVariables ?? []
             }

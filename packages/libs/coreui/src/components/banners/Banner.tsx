@@ -211,7 +211,7 @@ export default function Banner(props: BannerComponentProps) {
             align-items: center;
             font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI',
               Arial, freesans, sans-serif;
-            font-size: ${fontSize != null ? fontSize : '13px'};
+            font-size: ${fontSize != null ? fontSize : '100%'};
             // for fadeout effect
             opacity: ${fadeoutEffect ? 0 : 1};
             transition: ${fadeoutEffect ? 'opacity 1s ease' : undefined};

@@ -14,6 +14,7 @@ import { alert } from '../Utils/Platform';
 import { pendingPromise } from '../Utils/PromiseUtils';
 import { Question } from '../Utils/WdkModel';
 import { appendUrlAndRethrow, makeTraceid } from './ServiceUtils';
+import { getTypedError } from '../Utils/Errors';
 
 /**
  * Header added to service requests to indicate the version of the model
@@ -229,13 +230,13 @@ export const ServiceBase = (serviceUrl: string) => {
     );
   }
 
-  async function submitErrorIfNot500(error: Error, extra?: any): Promise<void> {
+  async function submitErrorIfNot500(error: unknown, extra?: any): Promise<void> {
     if (isServerError(error)) return;
-    return submitError(error, extra);
+    return submitError(getTypedError(error), extra);
   }
 
   async function submitErrorIfUndelayedAndNot500(
-    error: Error,
+    error: unknown,
     extra?: any
   ): Promise<void> {
     if (isDelayedResultError(error)) return;
