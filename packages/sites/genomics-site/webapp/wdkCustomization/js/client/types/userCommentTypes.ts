@@ -23,7 +23,14 @@ export interface PubmedPreviewEntry {
 // `upload` variant; PubMed-sourced comments rely on the PMID alone.
 export type AiProvenanceSource =
   | { kind: 'pubmed'; pubmedId: string }
-  | { kind: 'upload'; externalUrl?: string; externalTitle?: string };
+  | {
+      kind: 'upload';
+      externalUrl?: string;
+      externalTitle?: string;
+      // PDF content digest; lets the client match an uploaded PDF to an existing
+      // published comment, the upload-path analogue of matching by PMID.
+      pdfContentSha256?: string;
+    };
 
 export interface AiProvenance {
   isEdited: boolean; // true iff the published text differs from the AI original

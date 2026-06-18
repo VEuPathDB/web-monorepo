@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useHistory, useLocation } from 'react-router';
 
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -15,7 +21,12 @@ import {
 import {
   AiProvenanceSource,
   PubmedPreviewEntry,
+  UserCommentGetResponse,
 } from '../types/userCommentTypes';
+import {
+  findDuplicateAiComments,
+  AiSourceKey,
+} from '../components/userComments/AiGenePublication/findDuplicateAiComments';
 import {
   AiGenePublicationAddView,
   AiGenePublicationAddViewProps,
@@ -101,6 +112,17 @@ function AiGenePublicationAddController({
   });
   const [externalUrl, setExternalUrl] = useState('');
   const [externalTitle, setExternalTitle] = useState('');
+
+  // ---- duplicate-publication detection (pre-submit warning) ----
+  // The gene's existing AI comments, fetched once; we match the current form's
+  // publication against these to warn before generating a likely duplicate.
+  const [geneAiComments, setGeneAiComments] = useState<
+    UserCommentGetResponse[]
+  >([]);
+  // The user's explicit "generate anyway" acknowledgement, required to submit
+  // when a duplicate is detected. Reset whenever the candidate publication
+  // changes (see the source-key effect below).
+  const [dupAcknowledged, setDupAcknowledged] = useState(false);
 
   // ---- phase + auxiliary UI state ----
   const [state, setState] = useState<Phase>(() =>
@@ -256,6 +278,59 @@ function AiGenePublicationAddController({
       clearTimeout(handle);
     };
   }, [source, pubmedId, service]);
+
+  // ---- fetch the gene's existing AI comments once (for duplicate detection) ----
+  // Fail open: a comments-fetch failure must never block generation, so on error
+  // we simply leave the list empty (no warning shown).
+  useEffect(() => {
+    let cancelled = false;
+    service.getUserComments('gene', stableId).then(
+      (comments) => {
+        if (!cancelled) {
+          setGeneAiComments(comments.filter((c) => c.aiProvenance != null));
+        }
+      },
+      () => {
+        /* fail open — no duplicate warning */
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [stableId, service]);
+
+  // The identifier for the publication currently entered in the form, or
+  // undefined when nothing identifiable is selected yet (no valid PMID / no
+  // extracted PDF). Drives both the duplicate match and the acknowledgement reset.
+  const sourceKey = useMemo<AiSourceKey | undefined>(() => {
+    if (source === 'pubmed') {
+      const trimmed = pubmedId.trim();
+      return /^\d+$/.test(trimmed)
+        ? { kind: 'pubmed', pubmedId: trimmed }
+        : undefined;
+    }
+    return extraction.status === 'ready'
+      ? { kind: 'upload', pdfContentSha256: extraction.result.pdfContentSha256 }
+      : undefined;
+  }, [source, pubmedId, extraction]);
+
+  const duplicates = useMemo(
+    () => findDuplicateAiComments(geneAiComments, sourceKey),
+    [geneAiComments, sourceKey]
+  );
+
+  // Re-gate whenever the candidate publication changes, so acknowledging one
+  // duplicate doesn't carry over to a different PMID/PDF.
+  const sourceKeyId = sourceKey
+    ? `${sourceKey.kind}:${
+        sourceKey.kind === 'pubmed'
+          ? sourceKey.pubmedId
+          : sourceKey.pdfContentSha256
+      }`
+    : '';
+  useEffect(() => {
+    setDupAcknowledged(false);
+  }, [sourceKeyId]);
 
   // ---- PDF file selection -> lazy MuPDF load + SHA-256 + extraction ----
   const extractionTokenRef = useRef(0);
@@ -499,10 +574,21 @@ function AiGenePublicationAddController({
   };
 
   // ---- assemble view props ----
+  // A detected duplicate must be explicitly acknowledged before submitting.
+  const hasUnacknowledgedDuplicate = duplicates.length > 0 && !dupAcknowledged;
   const canSubmit =
-    source === 'pubmed'
+    (source === 'pubmed'
       ? /^\d+$/.test(pubmedId.trim())
-      : extraction.status === 'ready';
+      : extraction.status === 'ready') && !hasUnacknowledgedDuplicate;
+
+  const duplicateComments = duplicates.map((dup) => ({
+    id: dup.id,
+    headline: dup.headline,
+    content: dup.content,
+    href: `/user-comments/show?stableId=${encodeURIComponent(
+      stableId
+    )}&commentTargetId=gene#${dup.id}`,
+  }));
 
   const formProps: AiGenePublicationAddViewProps['form'] = {
     source,
@@ -517,6 +603,9 @@ function AiGenePublicationAddController({
     onExternalUrlChange: setExternalUrl,
     externalTitle,
     onExternalTitleChange: setExternalTitle,
+    duplicates: duplicateComments,
+    acknowledged: dupAcknowledged,
+    onAcknowledgedChange: setDupAcknowledged,
     canSubmit,
     submitting: state.kind === 'submitting',
     onSubmit: handleSubmit,

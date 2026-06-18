@@ -3,6 +3,7 @@ import {
   TextBox,
   RadioList,
   FileInput,
+  Checkbox,
 } from '@veupathdb/wdk-client/lib/Components';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
@@ -56,6 +57,17 @@ export interface AiGenePublicationAddViewProps {
     onExternalUrlChange: (value: string) => void;
     externalTitle: string;
     onExternalTitleChange: (value: string) => void;
+    // Duplicate-publication warning: existing AI comments on this gene that match
+    // the currently-entered publication. When non-empty, the user must tick the
+    // acknowledgement before `canSubmit` becomes true (the controller enforces this).
+    duplicates: {
+      id: number;
+      headline?: string;
+      content: string;
+      href: string;
+    }[];
+    acknowledged: boolean;
+    onAcknowledgedChange: (acknowledged: boolean) => void;
     // Submit
     canSubmit: boolean; // controller computes this; you just disable on !canSubmit
     submitting: boolean; // true between click and the POST resolving
@@ -344,6 +356,86 @@ function SubmittedSummaryDisplay({
   );
 }
 
+function DuplicatePublicationWarning({
+  duplicates,
+  acknowledged,
+  onAcknowledgedChange,
+}: {
+  duplicates: AiGenePublicationAddViewProps['form']['duplicates'];
+  acknowledged: boolean;
+  onAcknowledgedChange: (acknowledged: boolean) => void;
+}) {
+  if (duplicates.length === 0) return null;
+  const count = duplicates.length;
+
+  return (
+    <div
+      role="alert"
+      style={{
+        backgroundColor: '#fff3cd',
+        border: '1px solid #ffc107',
+        borderRadius: '4px',
+        padding: '12px 14px',
+        marginBottom: '16px',
+        fontSize: '14px',
+        color: '#856404',
+      }}
+    >
+      <div style={{ fontWeight: 600, marginBottom: '6px' }}>
+        {count === 1
+          ? 'An AI-assisted comment for this gene from this publication has already been published.'
+          : `${count} AI-assisted comments for this gene from this publication have already been published.`}
+      </div>
+      <div style={{ marginBottom: '10px' }}>
+        You can still generate another, but please check it won&apos;t duplicate
+        existing content.
+      </div>
+
+      {duplicates.map((dup) => (
+        <details key={dup.id} style={{ marginBottom: '6px' }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 500 }}>
+            {dup.headline || `Comment ${dup.id}`}
+          </summary>
+          <div
+            style={{
+              whiteSpace: 'pre-wrap',
+              maxWidth: '80ch',
+              margin: '6px 0',
+              color: '#333',
+            }}
+          >
+            {dup.content}
+          </div>
+          <a href={dup.href} target="_blank" rel="noopener noreferrer">
+            View on comments page
+          </a>
+        </details>
+      ))}
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '8px',
+          marginTop: '10px',
+        }}
+      >
+        <Checkbox
+          id="ai-duplicate-ack"
+          value={acknowledged}
+          onChange={onAcknowledgedChange}
+        />
+        <label
+          htmlFor="ai-duplicate-ack"
+          style={{ cursor: 'pointer', lineHeight: '1.4' }}
+        >
+          I understand and want to generate another comment anyway.
+        </label>
+      </div>
+    </div>
+  );
+}
+
 // ---- main component ----
 
 export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
@@ -608,6 +700,13 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
               </div>
             )}
 
+            {/* Duplicate-publication warning (above the submit button) */}
+            <DuplicatePublicationWarning
+              duplicates={form.duplicates}
+              acknowledged={form.acknowledged}
+              onAcknowledgedChange={form.onAcknowledgedChange}
+            />
+
             {/* Submit */}
             <div
               style={{
@@ -641,7 +740,6 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
               <span style={{ fontSize: '13px', color: GREY }}>
                 No comment is created until you review and publish.
               </span>
-              {/* TODO(dedup): duplicate-warning UI plugs in here */}
             </div>
           </fieldset>
         </div>
