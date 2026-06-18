@@ -226,7 +226,11 @@ const mergeProps = (
       {
         key: 'comment',
         label: 'Content:',
-        field: comment.content,
+        field: (
+          <div style={{ whiteSpace: 'pre-wrap', maxWidth: '80ch' }}>
+            {comment.content}
+          </div>
+        ),
       },
       {
         key: 'genBankAccessions',
