@@ -8,6 +8,7 @@ import {
   UserCommentAttachedFileSpec,
   PubmedPreview,
   UserCommentGetResponse,
+  AiProvenanceSource,
 } from '../types/userCommentTypes';
 import {
   AiGenePublicationRequest,
@@ -15,7 +16,6 @@ import {
   AiGenePublicationSubmitOutcome,
   AiGenePublicationPublishOutcome,
   JobProgress,
-  SiblingSummary,
 } from '../types/aiGenePublicationTypes';
 
 // TODO: this should be defined here or in wdk model or someplace, and imported in the store module
@@ -29,12 +29,18 @@ function toProgress(p: any): JobProgress {
   };
 }
 
-function toSiblingSummary(s: any): SiblingSummary {
-  return {
-    reviewed: s.reviewed,
-    edited: s.edited,
-    latestAt: s.latest_at,
-  };
+// Normalise the snake_case status-response `source` into the camelCase
+// AiProvenanceSource used throughout the FE (the same shape GET /user-comments
+// already returns). Upload metadata keys are absent (not null) when unknown.
+function toAiProvenanceSource(s: any): AiProvenanceSource {
+  return s.kind === 'pubmed'
+    ? { kind: 'pubmed', pubmedId: s.pubmed_id }
+    : {
+        kind: 'upload',
+        pdfContentSha256: s.pdf_content_sha256,
+        externalUrl: s.external_url,
+        externalTitle: s.external_title,
+      };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,6 +54,9 @@ function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
         // fields on the payload (e.g. `{ type: 'running', job_id, stage: 'queued' }`),
         // not nested under a `progress` object.
         progress: toProgress(payload),
+        source: payload.source
+          ? toAiProvenanceSource(payload.source)
+          : undefined,
       };
     case 'success':
       return {
@@ -57,7 +66,7 @@ function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
           headline: payload.ai_output.headline,
           content: payload.ai_output.content,
         },
-        siblingSummary: toSiblingSummary(payload.sibling_summary),
+        source: toAiProvenanceSource(payload.source),
       };
     case 'mentioned-in-passing':
       return {
@@ -66,14 +75,14 @@ function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
         // Cache-hit responses currently omit synonyms_checked (the live path
         // includes it); default to [] so the field honours its non-optional type.
         synonymsChecked: payload.synonyms_checked ?? [],
-        siblingSummary: toSiblingSummary(payload.sibling_summary),
+        source: toAiProvenanceSource(payload.source),
       };
     case 'gene-not-mentioned':
       return {
         type: 'gene-not-mentioned',
         jobId: payload.job_id,
         synonymsChecked: payload.synonyms_checked ?? [],
-        siblingSummary: toSiblingSummary(payload.sibling_summary),
+        source: toAiProvenanceSource(payload.source),
       };
     case 'text-unavailable':
       return { type: 'text-unavailable', reason: payload.reason };

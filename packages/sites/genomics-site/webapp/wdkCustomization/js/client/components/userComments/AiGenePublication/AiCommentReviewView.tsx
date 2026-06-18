@@ -6,7 +6,6 @@ import {
   PubmedPreviewEntry,
 } from '../../../types/userCommentTypes';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
-import { SiblingSummaryBanner } from './SiblingSummaryBanner';
 import { AiCommentEditorBody } from './AiCommentEditorBody';
 
 function assertNever(value: never): never {
@@ -34,7 +33,6 @@ export interface AiCommentReviewViewProps {
 }
 
 const BLUE = '#336f99';
-const GREY = '#888';
 
 export function AiCommentReviewView(
   props: AiCommentReviewViewProps
@@ -59,7 +57,6 @@ export function AiCommentReviewView(
   const [headline, setHeadline] = useState(initialHeadline);
   const [content, setContent] = useState(initialContent);
   const [confirmed, setConfirmed] = useState(false);
-  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   const canPublish =
     confirmed && headline.trim() !== '' && content.trim() !== '' && !publishing;
@@ -107,13 +104,6 @@ export function AiCommentReviewView(
     // exhaustiveness
     assertNever(status);
   }
-
-  const topSlot = !bannerDismissed ? (
-    <SiblingSummaryBanner
-      summary={status.siblingSummary}
-      onDismiss={() => setBannerDismissed(true)}
-    />
-  ) : undefined;
 
   const actions = (
     <div>
@@ -235,7 +225,6 @@ export function AiCommentReviewView(
         onHeadlineChange={setHeadline}
         onContentChange={setContent}
         original={original}
-        topSlot={topSlot}
         noticeAboveEditor={noticeAboveEditor}
         encouragement="Please review the AI-generated content above and edit as needed before publishing."
         actions={actions}

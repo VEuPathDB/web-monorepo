@@ -19,7 +19,6 @@ import {
   AiGenePublicationPublishOutcome,
 } from '../types/aiGenePublicationTypes';
 import {
-  AiProvenanceSource,
   PubmedPreviewEntry,
   UserCommentGetResponse,
 } from '../types/userCommentTypes';
@@ -149,17 +148,12 @@ function AiGenePublicationAddController({
     undefined
   );
 
-  // The read-only summary + provenance source shown once a job is in flight.
-  // On a cold resume (only a jobId is known) we can't recover the original
-  // source, so we fall back to a generic upload provenance — the AI output is
-  // still re-seeded from the cached run; only the un-saved provenance detail is
-  // lost, which the plan accepts.
+  // The read-only summary shown in progress mode. On a cold resume (jobId only)
+  // this starts generic; the review step recovers its provenance from the job
+  // status `source` instead (see the review render), so it survives a refresh.
   const [submittedSummary, setSubmittedSummary] = useState<SubmittedSummary>(
     () =>
       initialJobId ? { source: 'upload' } : { source: 'pubmed', pubmedId: '' }
-  );
-  const [submittedSource, setSubmittedSource] = useState<AiProvenanceSource>(
-    () => ({ kind: 'upload' })
   );
   const startedAtRef = useRef<number>(Date.now());
 
@@ -253,18 +247,32 @@ function AiGenePublicationAddController({
     };
   }, [pollingJobId, service]);
 
+  // The PubMed ID we currently want preview metadata for. While polling or
+  // reviewing a job — including one resumed from just a jobId on refresh — we
+  // take it from the job's own provenance so the preview survives reload;
+  // otherwise it's whatever the user is typing into the form.
+  const activePubmedId = useMemo(() => {
+    if (state.kind === 'review' || state.kind === 'polling') {
+      const status = state.status;
+      return 'source' in status && status.source?.kind === 'pubmed'
+        ? status.source.pubmedId
+        : undefined;
+    }
+    return source === 'pubmed' ? pubmedId.trim() : undefined;
+  }, [state, source, pubmedId]);
+
   // ---- optional PubMed metadata preview chip ----
   useEffect(() => {
-    if (source !== 'pubmed') return;
-    const trimmed = pubmedId.trim();
-    if (!/^\d+$/.test(trimmed)) {
+    if (activePubmedId == null || !/^\d+$/.test(activePubmedId)) {
       setPubmedPreview(undefined);
       return;
     }
     let cancelled = false;
     const handle = setTimeout(async () => {
       try {
-        const preview = await service.getPubmedPreview([Number(trimmed)]);
+        const preview = await service.getPubmedPreview([
+          Number(activePubmedId),
+        ]);
         if (cancelled) return;
         setPubmedPreview(
           preview && preview.length > 0 ? preview[0] : undefined
@@ -277,7 +285,7 @@ function AiGenePublicationAddController({
       cancelled = true;
       clearTimeout(handle);
     };
-  }, [source, pubmedId, service]);
+  }, [activePubmedId, service]);
 
   // ---- fetch the gene's existing AI comments once (for duplicate detection) ----
   // Fail open: a comments-fetch failure must never block generation, so on error
@@ -412,15 +420,6 @@ function AiGenePublicationAddController({
         : {
             source: 'upload',
             fileName: selectedFile?.name,
-            externalUrl: trimmedUrl || undefined,
-            externalTitle: trimmedTitle || undefined,
-          }
-    );
-    setSubmittedSource(
-      source === 'pubmed'
-        ? { kind: 'pubmed', pubmedId: trimmedPubmedId }
-        : {
-            kind: 'upload',
             externalUrl: trimmedUrl || undefined,
             externalTitle: trimmedTitle || undefined,
           }
@@ -638,7 +637,7 @@ function AiGenePublicationAddController({
         <AiCommentReviewView
           stableId={stableId}
           status={state.status}
-          source={submittedSource}
+          source={state.status.source}
           pubmedPreview={pubmedPreview}
           publishing={state.publishing}
           publishErrors={state.publishErrors}

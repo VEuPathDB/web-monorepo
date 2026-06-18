@@ -2,17 +2,11 @@
 // The service layer (UserCommentsService.ts) maps snake_case <-> these types at
 // the boundary. See CLAUDE-plan-ai-user-comments-front-end.md "Type additions".
 
+import { AiProvenanceSource } from './userCommentTypes';
+
 export interface AiOutput {
   headline: string;
   content: string;
-}
-
-// Counts over comment_ai_provenance rows pointing at the same run. Provenance
-// rows exist only for PUBLISHED comments, so there is no "unreviewed" count.
-export interface SiblingSummary {
-  reviewed: number; // published without edits
-  edited: number; // published with edits
-  latestAt: string | null; // ISO-8601, most recent publish
 }
 
 export type AiGenePublicationJobStage =
@@ -30,28 +24,35 @@ export interface JobProgress {
 
 export type AiGenePublicationJobStatus =
   // non-terminal
-  | { type: 'running'; jobId: string; progress: JobProgress }
+  | {
+      type: 'running';
+      jobId: string;
+      progress: JobProgress;
+      // Present once the run row exists (the BE includes it); absent on the
+      // FE-fabricated "Resuming…" status before the first poll returns.
+      source?: AiProvenanceSource;
+    }
   // terminal — success (LLM produced a real summary). No commentId: the comment
   // is created later by the publish call.
   | {
       type: 'success';
       jobId: string;
       aiOutput: AiOutput;
-      siblingSummary: SiblingSummary;
+      source: AiProvenanceSource;
     }
   // terminal — LLM ran but flagged the gene as only mentioned in passing
   | {
       type: 'mentioned-in-passing';
       jobId: string;
       synonymsChecked: string[];
-      siblingSummary: SiblingSummary;
+      source: AiProvenanceSource;
     }
   // terminal — regex scan found zero mentions, never reached the LLM
   | {
       type: 'gene-not-mentioned';
       jobId: string;
       synonymsChecked: string[];
-      siblingSummary: SiblingSummary;
+      source: AiProvenanceSource;
     }
   // terminal — fetch failed (not cached; retry is free; not publishable)
   | { type: 'text-unavailable'; reason: string }
