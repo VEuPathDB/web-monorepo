@@ -43,9 +43,12 @@ export function addCommentLink(getLink, getAiLink) {
       return (
         <div>
           <div style={buttonRowStyle}>
+            {/* Vanilla "Add a comment" button hidden for the AI-comments beta
+                demo. Restore for production:
             <a href={link} style={buttonStyle}>
               Add a comment <i className="fa fa-comment" />
             </a>
+            */}
             <Link to={aiLink} style={buttonStyle}>
               Add AI-assisted comment <span style={betaPillStyle}>Beta</span>
             </Link>

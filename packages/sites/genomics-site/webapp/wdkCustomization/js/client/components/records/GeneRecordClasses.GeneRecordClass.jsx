@@ -574,8 +574,10 @@ export function RecordTable(props) {
         <props.DefaultComponent {...props} childRow={SequencesTableChildRow} />
       );
 
-   // case 'UserComments':
-   //   return <UserCommentsTable {...props} />;
+    // Reinstated for the AI-comments beta demo (the vanilla "Add a comment"
+    // button is hidden in addCommentLink; only the AI-assisted button shows).
+    case 'UserComments':
+      return <UserCommentsTable {...props} />;
 
     case 'SNPsAlignment':
       return <SNPsAlignment {...props} />;
