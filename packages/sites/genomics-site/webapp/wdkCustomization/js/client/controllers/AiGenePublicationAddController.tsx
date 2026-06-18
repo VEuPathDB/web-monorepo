@@ -584,9 +584,13 @@ function AiGenePublicationAddController({
     id: dup.id,
     headline: dup.headline,
     content: dup.content,
-    href: `/user-comments/show?stableId=${encodeURIComponent(
-      stableId
-    )}&commentTargetId=gene#${dup.id}`,
+    // createHref prepends the SPA router basename (rootUrl, e.g. /a/app) so the
+    // raw <a target="_blank"> link in the view is a valid absolute URL.
+    href: history.createHref({
+      pathname: '/user-comments/show',
+      search: `?stableId=${encodeURIComponent(stableId)}&commentTargetId=gene`,
+      hash: `#${dup.id}`,
+    }),
   }));
 
   const formProps: AiGenePublicationAddViewProps['form'] = {
