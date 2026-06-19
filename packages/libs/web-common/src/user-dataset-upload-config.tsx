@@ -121,15 +121,22 @@ const StudyDesignVocab: readonly [string, string][] = [
 
 const wranglerDataHelp = (
   <div>
-    <p>Column names must be unique, cannot contain newlines, but can contain spaces.</p>
+    <p>
+      Column names must be unique, cannot contain newlines, but can contain
+      spaces.
+    </p>
     <p>We will consider a column:</p>
     <ul>
       <li>a date, if their values follow the pattern YYYY-MM-DD;</li>
-      <li>geographical longitude, latitude, if their column names are: latitude, lat, longitude, long (case insensitive);</li>
-      <li>numeric when all values are numbers:
+      <li>
+        geographical longitude, latitude, if their column names are: latitude,
+        lat, longitude, long (case insensitive);
+      </li>
+      <li>
+        numeric when all values are numbers:
         <ul>
-        <li>Use a dot for decimals; commas will be removed.</li>
-        <li>Scientific format is allowed.</li>
+          <li>Use a dot for decimals; commas will be removed.</li>
+          <li>Scientific format is allowed.</li>
         </ul>
       </li>
     </ul>
@@ -317,13 +324,15 @@ function isasimpleFormConfigurator(
           </p>
           <ul>
             <li>Have variables as columns, records as rows.</li>
-            <li>The first row must be column headings (variable names).</li>
+            <li>The first row must be column names (= variable names).</li>
           </ul>
           {wranglerDataHelp}
           <p>
-            To prevent accented letters and other special characters from
-            displaying incorrectly, files should use UTF-8 encoding
-            (recommended). ISO-8859-1 and Windows-1252 are also supported.
+            <i>
+              To prevent accented letters and other special characters from
+              displaying incorrectly, files should use UTF-8 encoding
+              (recommended). ISO-8859-1 and Windows-1252 are also supported.
+            </i>
           </p>
         </div>
       ),
