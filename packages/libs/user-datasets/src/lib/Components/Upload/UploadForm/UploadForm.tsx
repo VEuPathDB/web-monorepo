@@ -88,7 +88,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
         <UploadErrorBanner errors={props.badUploadState} />
 
         <h2>{props.verbiage.formTitle}</h2>
-        <p>
+        <p className="section-description-h2">
           <i>Build a home for your dataset and start exploring</i>
         </p>
 

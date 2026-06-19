@@ -24,6 +24,10 @@
     margin-bottom: 1em;
   }
 
+  header > div {
+    margin-left: 32px;
+  }
+ 
   p.description {
     margin: 0 0 1em 0;
   }
@@ -50,6 +54,9 @@
 
   p.section-description {
     margin: -1em 4em 1.3em 4em;
+  }
+  p.section-description-h2 {
+    margin: 0 4em 1.3em 0;
   }
 
   button.error-link {
@@ -160,6 +167,9 @@
     > *:not(h2) {
       margin-left: 32px;
     }
+  }
+  #define-dataset h3 {
+    margin-left: 32px;
   }
 
   .disabled-fields > *:not(.not-disabled) {
