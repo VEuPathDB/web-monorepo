@@ -121,10 +121,17 @@ const StudyDesignVocab: readonly [string, string][] = [
 
 const wranglerDataHelp = (
   <div>
-    <p>We will consider a column numeric when all values are numbers:</p>
+    <p>Column names must be unique, cannot contain newlines, but can contain spaces.</p>
+    <p>We will consider a column:</p>
     <ul>
-      <li>Use a dot for decimals; commas will be removed.</li>
-      <li>Scientific format is allowed.</li>
+      <li>a date, if their values follow the pattern YYYY-MM-DD;</li>
+      <li>geographical longitude, latitude, if their column names are: latitude, lat, longitude, long (case insensitive);</li>
+      <li>numeric when all values are numbers:
+        <ul>
+        <li>Use a dot for decimals; commas will be removed.</li>
+        <li>Scientific format is allowed.</li>
+        </ul>
+      </li>
     </ul>
   </div>
 );
@@ -351,25 +358,14 @@ function phenotypeFormConfigurator(
             <li>a gene ID column with header "geneID", and</li>
             <li>at least one numeric column.</li>
           </ul>
-          <p>The file will be rejected if:</p>
-          <ul>
-            <li>there are duplicated IDs, or</li>
-            <li>
-              in non-numerical columns the values &gt; 1000 chars or contain
-              newlines.
-            </li>
-          </ul>
-          <p>We will consider a column numeric when all values are numbers:</p>
-          <ul>
-            <li>Use a dot for decimals; commas will be removed.</li>
-            <li>Scientific format is allowed.</li>
-          </ul>
+          <p>The file will be rejected if there are duplicated IDs.</p>
           <p>Invalid IDs will be discarded. Valid gene IDs:</p>
           <ul>
             <li>include only these characters [a-zA-Z0-9().:_-],</li>
             <li>have at least one alphabetical character, and</li>
             <li>are at most 80 characters.</li>
           </ul>
+          {wranglerDataHelp}
         </div>
       ),
     },
