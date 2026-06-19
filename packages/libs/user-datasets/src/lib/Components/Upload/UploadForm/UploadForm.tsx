@@ -89,7 +89,7 @@ export function UploadForm(props: UploadFormProps): ReactElement {
 
         <h2>{props.verbiage.formTitle}</h2>
         <p className="section-description-h2">
-          <i>Build a home for your dataset and start exploring</i>
+          <i>Build a home for your dataset and start exploring.</i>
         </p>
 
         <Banner
