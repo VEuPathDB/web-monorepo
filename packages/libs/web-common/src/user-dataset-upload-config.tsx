@@ -182,7 +182,7 @@ function bigwigFormConfigurator(
       file: {
         enabled: true,
         helpText: (
-          <div>Total uncompresssed files cannot be greater than 1GB.</div>
+          <div>Total uncompressed files cannot be greater than 1GB.</div>
         ),
       },
       helpText: () => (
@@ -399,7 +399,7 @@ function rnaseqFormConfigurator(
       file: {
         enabled: true,
         helpText: (
-          <div>Total uncompresssed files cannot be greater than 1GB.</div>
+          <div>Total uncompressed files cannot be greater than 1GB.</div>
         ),
       },
       helpText: () => (

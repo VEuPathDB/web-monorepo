@@ -59,6 +59,8 @@ export function RecordHeading(props) {
     is_public,
     accessibility,
     owner_name,
+    category,
+//    search_link,
   } = attributes;
 
   let datasetID = record.id[0].value;
@@ -82,6 +84,8 @@ export function RecordHeading(props) {
             </>
           ) : null}
 
+          <dt>Data type:</dt>
+          <dd>{category}</dd>
           <dt>Uploaded by:</dt>
           <dd>{owner_name}</dd>
 
@@ -221,6 +225,10 @@ export function RecordAttributeSection(props) {
   const { DefaultComponent, ...restProps } = props;
   switch (restProps.attribute.name) {
     case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'exp_organism':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'ref_organism':
       return <BlockRecordAttributeSection {...restProps} />;
     case 'disclaimer':
       return <BlockRecordAttributeSection {...restProps} />;
