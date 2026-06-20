@@ -160,6 +160,16 @@ const wranglerVarAttrHelp = (
     </p>
   </div>
 );
+const textFilesHelp = (
+  <p>
+    <i>
+      To prevent accented letters and other special characters from displaying
+      incorrectly, text files should use UTF-8 encoding (recommended). UTF-16BE,
+      UTF-16LE, ISO-8859-1 and Windows-1252 are also supported.
+    </i>
+  </p>
+);
+
 function bigwigFormConfigurator(
   dataType: DatasetTypeConfig
 ): DatasetUploadConfig {
@@ -287,6 +297,7 @@ function genelistFormConfigurator(
               Datasets.
             </i>
           </p>
+          {textFilesHelp}
         </div>
       ),
     },
@@ -327,13 +338,7 @@ function isasimpleFormConfigurator(
             <li>The first row must be column names (= variable names).</li>
           </ul>
           {wranglerDataHelp}
-          <p>
-            <i>
-              To prevent accented letters and other special characters from
-              displaying incorrectly, files should use UTF-8 encoding
-              (recommended). ISO-8859-1 and Windows-1252 are also supported.
-            </i>
-          </p>
+          {textFilesHelp}
         </div>
       ),
     },
@@ -375,6 +380,7 @@ function phenotypeFormConfigurator(
             <li>are at most 80 characters.</li>
           </ul>
           {wranglerDataHelp}
+          {textFilesHelp}
         </div>
       ),
     },
@@ -484,6 +490,7 @@ function rnaseqFormConfigurator(
                   </ul>
                 </li>
               </ol>
+              {textFilesHelp}
             </div>
           </div>
         </details>
