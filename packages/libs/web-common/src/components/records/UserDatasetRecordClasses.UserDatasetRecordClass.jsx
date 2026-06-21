@@ -60,10 +60,10 @@ export function RecordHeading(props) {
     accessibility,
     owner_name,
     category,
-//    search_link,
+    search_link,
+    veupathdb_id,
+    veupathdb_project,
   } = attributes;
-
-  let datasetID = record.id[0].value;
 
   return (
     <>
@@ -90,7 +90,7 @@ export function RecordHeading(props) {
           <dd>{owner_name}</dd>
 
           <dt>VEuPathDB Dataset ID:</dt>
-          <dd>{datasetID}</dd>
+          <dd>{veupathdb_id}</dd>
 
           <dt>Dataset version / Date:</dt>
           <dd>v1, {creation_date}</dd>
@@ -118,7 +118,12 @@ export function RecordHeading(props) {
               </div>
             )}
           </dd>
-        </dl>
+	  <dt>Explore:</dt>
+          <dd><Link to={search_link.url}>
+              {search_link.displayText}
+            </Link>
+	  </dd>
+	</dl>
       </div>
     </>
   );
