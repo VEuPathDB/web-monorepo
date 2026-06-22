@@ -242,26 +242,38 @@ function isPlainText(str: string): boolean {
   return str.indexOf('<') === -1 && !/(\&(.+?);)/.test(str);
 }
 
+/**
+ * DOMPurify sanitize config. Callers that embed non-default markup (e.g. a web
+ * component plus its custom attributes) can pass `ADD_TAGS`/`ADD_ATTR` here to
+ * *extend* the default allowlist for that one call, without weakening the
+ * default behavior for every other attribute value on the site.
+ */
+export type SafeHtmlSanitizeConfig = Parameters<typeof DOMPurify.sanitize>[1];
+
 /** Create a React Element using preformatted HTML */
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: React.ComponentClass<P>
+  Component?: React.ComponentClass<P>,
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element;
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: React.FC<P>
+  Component?: React.FC<P>,
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element;
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: string
+  Component?: string,
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element;
 export function safeHtml<P>(
   str: string | null,
   props?: P,
-  Component: any = 'span'
+  Component: any = 'span',
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element {
   str = str ?? '';
   if (isPlainText(str)) {
@@ -270,7 +282,9 @@ export function safeHtml<P>(
   return (
     <Component
       {...props}
-      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(str) }}
+      dangerouslySetInnerHTML={{
+        __html: DOMPurify.sanitize(str, sanitizeConfig),
+      }}
     />
   );
 }
