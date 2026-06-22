@@ -83,9 +83,13 @@ export function RecordHeading(props) {
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
+          {veupathdb_project !== 'ClinEpiDB' ? (
+            <>
+              <dt>Data type:</dt>
+              <dd>{category}</dd>
+            </>
+          ) : null}
 
-          <dt>Data type:</dt>
-          <dd>{category}</dd>
           <dt>Uploaded by:</dt>
           <dd>{owner_name}</dd>
 
@@ -118,12 +122,15 @@ export function RecordHeading(props) {
               </div>
             )}
           </dd>
-	  <dt>Explore:</dt>
-          <dd><Link to={search_link.url}>
-              {search_link.displayText}
-            </Link>
-	  </dd>
-	</dl>
+          {veupathdb_project !== 'ClinEpiDB' ? (
+            <>
+              <dt>Explore:</dt>
+              <dd>
+                <Link to={search_link.url}>{search_link.displayText}</Link>
+              </dd>
+            </>
+          ) : null}
+        </dl>
       </div>
     </>
   );
