@@ -123,9 +123,7 @@ const wranglerDataHelp = (
   <div>
     <p>
       Column names must be unique, cannot contain newlines, but can contain
-      spaces.
-    </p>
-    <p>We will consider a column:</p>
+      spaces.{' '}We will consider a column:</p>
     <ul>
       <li>a date, if their values follow the pattern YYYY-MM-DD;</li>
       <li>
@@ -144,7 +142,7 @@ const wranglerDataHelp = (
 );
 const wranglerVarAttrHelp = (
   <div>
-    <p>
+    <p style={{marginTop: 0}}>
       (Optional) Upload a variable attributes file describing the variables in
       the data file:
     </p>
@@ -271,34 +269,29 @@ function genelistFormConfigurator(
         },
       },
       helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
         <div className="formInfo">
           <p>
             Upload a file containing gene IDs. Gene IDs need to be valid and be
-            separated by valid delimiters.
-          </p>
-          <p>Valid gene IDs should:</p>
+            separated by valid delimiters. {' '}Valid gene IDs should:</p>
           <ul>
             <li>include only these characters [a-zA-Z0-9().:_-],</li>
             <li>have at least one alphabetical character, and</li>
             <li>be at most 80 characters.</li>
           </ul>
-          <p>Invalid IDs and duplicated IDs will be discarded.</p>
-          <p>Valid delimiters are:</p>
+          <p>Invalid IDs and duplicated IDs will be discarded.
+          {' '}Valid delimiters are:</p>
           <ul>
             <li>white space (newline, space, tab),</li>
             <li>comma, and </li>
             <li>semi-colon.</li>
           </ul>
-          <p>
-            <i>
-              Gene lists can also be added from a search strategy results
-              section: click on the "Send to" menu near the "Download" button,
-              and choose the "My Datasets" option to install the gene list in My
-              Datasets.
-            </i>
-          </p>
           {textFilesHelp}
         </div>
+        </details>
       ),
     },
   };
@@ -328,6 +321,10 @@ function isasimpleFormConfigurator(
     dataInputConfig: {
       file: { enabled: true },
       helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
         <div className="formInfo">
           <p>
             Upload a single data file in .csv, .tsv, or tab-delimited .txt
@@ -340,6 +337,7 @@ function isasimpleFormConfigurator(
           {wranglerDataHelp}
           {textFilesHelp}
         </div>
+        </details>
       ),
     },
   };
@@ -366,14 +364,18 @@ function phenotypeFormConfigurator(
     dataInputConfig: {
       file: { enabled: true },
       helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
         <div className="formInfo">
           <p>Upload a tab-delimited .txt file. The file should contain:</p>
           <ul>
             <li>a gene ID column with header "geneID", and</li>
             <li>at least one numeric column.</li>
           </ul>
-          <p>The file will be rejected if there are duplicated IDs.</p>
-          <p>Invalid IDs will be discarded. Valid gene IDs:</p>
+          <p>The file will be rejected if there are duplicated IDs.
+          {' '}Invalid IDs will be discarded. Valid gene IDs:</p>
           <ul>
             <li>include only these characters [a-zA-Z0-9().:_-],</li>
             <li>have at least one alphabetical character, and</li>
@@ -382,6 +384,7 @@ function phenotypeFormConfigurator(
           {wranglerDataHelp}
           {textFilesHelp}
         </div>
+        </details>
       ),
     },
   };
@@ -403,17 +406,10 @@ function rnaseqFormConfigurator(
         ),
       },
       helpText: () => (
-        <details
-          style={{
-            border: '1px solid #ccc',
-            padding: '10px',
-            borderRadius: '4px',
-          }}
-        >
-          <summary style={{ fontWeight: 'bold', cursor: 'pointer' }}>
-            Instructions to upload your RNA-Seq dataset
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
           </summary>
-          <div style={{ marginTop: '10px' }}>
             <div className="formInfo">
               <p>Prepare your data for upload:</p>
               <ul>
@@ -421,47 +417,37 @@ function rnaseqFormConfigurator(
                   Compress the files into a .tar.gz, .tgz or .zip archive file.
                 </li>
                 <li>
-                  Add files directly to the archive (do not place them in a
-                  folder before archiving).
+                  Add files directly to the archive (do not add any folders).
                 </li>
                 <li>Ensure all files are non-empty.</li>
-                <li>
-                  Files saved on some Windows editors may have incompatible line
-                  endings; before zipping, open each file in a text editor like
-                  Notepad++ and convert line endings to Unix format.
-                </li>
               </ul>
               <p>Include the following files in your archive:</p>
               <ol>
                 <li>
                   <b>Counts files</b> <i>(required)</i>
                   <ul>
-                    <li>Provide one tab-delimited .txt file per sample.</li>
+                    <li>Provide one tab-delimited per sample (any or no extension).</li>
                     <li>
                       Each file must provide exactly two columns, labeled:
                       <ul>
-                        <li>'gene_id', and</li>
-                        <li>'FPKM' or 'TPM'.</li>
+                        <li>'Gene ID' (or similar) and</li>
+                        <li>'FPKM' or 'TPM' (lower case also accepted).</li>
                       </ul>
                     </li>
                     <li>
-                      Gene IDs need to be valid VEuPathDB IDs; transcript IDs
-                      will not install properly. There cannot be duplicates.
-                    </li>
-                    <li>
-                      All values in the counts column must be floating point:
-                      use 0.0, not 0; use 22.0, not 22.
+                      Gene IDs must be valid VEuPathDB IDs or valid aliases; transcript IDs
+                      are also allowed, but not a mix of genes IDs and transcript IDs.
                     </li>
                   </ul>
                 </li>
                 <li>
-                  <b>Manifest file</b>i <i>(required)</i>
+                  <b>Manifest file</b> <i>(required)</i>
                   <ul>
                     <li>Provide a tab-delimited file named 'manifest.txt'.</li>
                     <li>
                       Include three or four unlabeled columns in this order:
                       <ul>
-                        <li>sample name (avoid spaces),</li>
+                        <li>sample name,</li>
                         <li>counts file name (must match exactly),</li>
                         <li>
                           strandedness ('unstranded' or 'stranded'),{' '}
@@ -492,7 +478,6 @@ function rnaseqFormConfigurator(
               </ol>
               {textFilesHelp}
             </div>
-          </div>
         </details>
       ),
     },

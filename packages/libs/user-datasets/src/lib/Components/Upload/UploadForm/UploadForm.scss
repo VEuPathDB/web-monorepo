@@ -312,17 +312,29 @@
     padding: 1em 0;
   }
 
+  /* INSTRUCTIONS */
+
   .formInfo {
     > *:first-child {
       margin-top: 0;
     }
-
     ul {
       margin-bottom: 1em;
     }
-
     li:not(:last-child) {
       margin-bottom: 0.4em;
     }
+  }
+  div.column-2 details {
+    border: 1px solid #ccc;
+    padding: 1em;
+    border-radius: 1em;
+  }
+  div.column-2 details summary {
+    font-weight: bold;
+    cursor: pointer; 
+  }
+  div.column-2 details > div {
+    margin-top: 2em;
   }
 }
