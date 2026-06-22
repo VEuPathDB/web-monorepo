@@ -15,11 +15,11 @@ import {
 import { useRouteMatch } from 'react-router-dom';
 import { formatFileSize } from '@veupathdb/user-datasets/lib/Utils/formatting';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
+import { ButtonStateStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import {
-  ButtonStateStyleSpec,
-} from '@veupathdb/coreui/lib/components/buttons';
-import { DatasetTypeConfig } from '@veupathdb/user-datasets/lib/Common/Configuration';
-import { DatasetUploadConfig } from '@veupathdb/user-datasets/lib/Components/Upload/Configuration';
+  DatasetFormConfig,
+  DatasetTypeConfig,
+} from '@veupathdb/user-datasets/lib/Common/Configuration';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -118,7 +118,7 @@ const StudyDesignVocab: readonly [string, string][] = [
 
 function bigwigFormConfigurator(
   dataType: DatasetTypeConfig
-): DatasetUploadConfig {
+): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -155,9 +155,7 @@ function bigwigFormConfigurator(
   };
 }
 
-function biomFormConfigurator(
-  dataType: DatasetTypeConfig
-): DatasetUploadConfig {
+function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -188,7 +186,7 @@ function biomFormConfigurator(
 
 function genelistFormConfigurator(
   dataType: DatasetTypeConfig
-): DatasetUploadConfig {
+): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -253,7 +251,7 @@ function genelistFormConfigurator(
 
 function isasimpleFormConfigurator(
   dataType: DatasetTypeConfig
-): DatasetUploadConfig {
+): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -262,7 +260,6 @@ function isasimpleFormConfigurator(
         datasetProperties: {
           label: 'Variable Attributes File',
           helpText: function HelpText() {
-            const { path } = useRouteMatch();
             return (
               <div className="formInfo">
                 <p>
@@ -317,7 +314,7 @@ function isasimpleFormConfigurator(
 
 function phenotypeFormConfigurator(
   dataType: DatasetTypeConfig
-): DatasetUploadConfig {
+): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -326,7 +323,6 @@ function phenotypeFormConfigurator(
         datasetProperties: {
           label: 'Variable Attributes File',
           helpText: function HelpText() {
-            const { path } = useRouteMatch();
             return (
               <div className="formInfo">
                 <p>
@@ -367,7 +363,7 @@ function phenotypeFormConfigurator(
 
 function rnaseqFormConfigurator(
   dataType: DatasetTypeConfig
-): DatasetUploadConfig {
+): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -494,7 +490,7 @@ function ReferenceGenomeDependency({
       disabled: popoverStyle,
       hover: popoverStyle,
       pressed: popoverStyle,
-    }
+    },
   };
 
   const selectedList = dependencies?.map((entry) => entry.resourceDisplayName);

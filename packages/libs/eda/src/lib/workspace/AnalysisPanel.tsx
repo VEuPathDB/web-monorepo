@@ -29,7 +29,6 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
-import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram } from '../core';
 import { ComputationRoute } from './ComputationRoute';
@@ -45,19 +44,18 @@ import NotesTab from './NotesTab';
 import DownloadTab from './DownloadTab';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
-import { useAnalysis } from '../core/hooks/analysis';
+import { useAnalysis } from '../core';
 import { ApprovalStatus } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
-import { DownloadClient } from '../core/api/DownloadClient';
+import { DownloadClient } from '../core/api';
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 import { Public } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import { AnalysisError } from '../core/components/AnalysisError';
-import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -192,7 +190,6 @@ export function AnalysisPanel({
   );
 
   const previousAnalysisId = usePrevious(analysisId);
-  const { isUserStudy } = studyMetadata;
 
   useEffect(() => {
     if (

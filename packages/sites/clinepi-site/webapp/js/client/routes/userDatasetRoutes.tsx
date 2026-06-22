@@ -8,13 +8,10 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
-import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Detail/UserDatasetDetail';
-
 import {
   communityDatasetsEnabled,
   communitySite,
   edaServiceUrl,
-  projectId,
 } from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
@@ -25,10 +22,13 @@ import {
   uploadFormConfigurators,
   userDatasetTypeConfigs,
 } from '@veupathdb/web-common/lib/user-dataset-upload-config';
+import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagement';
 
 const EdaDatasetDetail = React.lazy(
   () =>
-    import('@veupathdb/user-datasets/lib/Components/Detail/EdaDatasetDetail')
+    import(
+      '@veupathdb/user-datasets/lib/Components/Management/EdaDatasetManagement'
+    )
 );
 
 const UserDatasetRouter = React.lazy(
