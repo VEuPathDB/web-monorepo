@@ -1,0 +1,86 @@
+import React, { ReactElement } from 'react';
+import { CollaboratorsSection } from './Collaborators/CollaboratorsSection';
+import { DatasetPostDetails } from '../../../../../Service';
+import { CharacteristicsSection } from './CharacteristicsSection';
+import { DatasetSources } from './DatasetSources';
+import { Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { DatasetUsage } from './DatasetUsage';
+import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { GlobeIcon } from '../../index';
+import { ExperimentalOrganism } from './ExperimentalOrganism';
+import { DatasetFormProps } from '../../../DatasetFormProps';
+
+export interface CoreDatasetInformationProps {
+  readonly datasetMeta:        DatasetPostDetails;
+  readonly setDatasetMeta:     Consumer<DatasetPostDetails>;
+  readonly clientSideState:    ClientSideUploadFormState;
+  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
+  readonly jsonPath:           JsonPathBuilder;
+  readonly formProps:          DatasetFormProps;
+}
+
+export function CoreDatasetInformation({
+  datasetMeta,
+  setDatasetMeta,
+  clientSideState,
+  setClientSideState,
+  jsonPath,
+  formProps: { formConfig },
+}: CoreDatasetInformationProps): ReactElement {
+  return (
+    <>
+      <h3>
+        <GlobeIcon /> Core Dataset Information
+      </h3>
+      <p className="section-description">
+        This Core Dataset Information must be completed before you can make this
+        dataset public. If you choose to not provide it, you will still be able
+        to upload the dataset for private use (including personal exploration
+        and sharing with selected collaborators).
+      </p>
+
+      <CollaboratorsSection
+        datasetMeta={datasetMeta}
+        setDatasetMeta={setDatasetMeta}
+        pathBuilder={jsonPath.append<DatasetPostDetails>('contacts')}
+      />
+
+      {formConfig.datasetCharacteristics?.enable && (
+        <CharacteristicsSection
+          formProps={formConfig.datasetCharacteristics}
+          datasetMeta={datasetMeta}
+          setDatasetMeta={setDatasetMeta}
+          clientSideState={clientSideState}
+          setClientSideState={setClientSideState}
+          pathBuilder={jsonPath.append<DatasetPostDetails>(
+            'datasetCharacteristics'
+          )}
+        />
+      )}
+
+      {formConfig.enableExperimentalOrganism && (
+        <ExperimentalOrganism
+          setDatasetDetails={setDatasetMeta}
+          datasetDetails={datasetMeta}
+          jsonPath={jsonPath.append<DatasetPostDetails>('experimentalOrganism')}
+        />
+      )}
+
+      <DatasetSources
+        datasetMeta={datasetMeta}
+        setDatasetMeta={setDatasetMeta}
+        clientState={clientSideState}
+        setClientState={setClientSideState}
+        jsonPath={jsonPath.append<DatasetPostDetails>('datasetSources')}
+      />
+
+      <DatasetUsage
+        datasetMeta={datasetMeta}
+        setDatasetMeta={setDatasetMeta}
+        clientSideState={clientSideState}
+        setClientSideState={setClientSideState}
+        jsonPath={jsonPath}
+      />
+    </>
+  );
+}

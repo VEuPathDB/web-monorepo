@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { identity, isEmpty } from 'lodash';
 import { Switch, Redirect } from 'react-router-dom';
 
@@ -8,14 +8,7 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 import { projectId } from '../config';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-import {
-  ClientDatasetTypeConfig,
-  DatasetTypeConfig,
-  UploadFormConfigurators,
-  DatasetUploadRoute,
-  filterAvailableDataTypes,
-  promoteTypeConfig,
-} from './Upload';
+import { DatasetUploadRoute } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import { DataNoun } from '../Utils/types';
 import {
@@ -24,17 +17,26 @@ import {
   VdiService,
   useVdiService,
 } from '../Service';
+import {
+  ClientDatasetTypeConfig,
+  DatasetFormConfigurators,
+  DatasetTypeConfig,
+  filterAvailableDataTypes,
+  promoteTypeConfig
+} from '../Common/Configuration';
 
 export interface UserDatasetWorkspaceProps {
   baseUrl: string;
   helpRoute: string;
   urlParams: Record<string, string>;
-  readonly datasetTypes: readonly ClientDatasetTypeConfig[];
-  readonly formConfigs: UploadFormConfigurators;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+
+  readonly datasetTypes: readonly ClientDatasetTypeConfig[];
+  readonly formConfigs: DatasetFormConfigurators;
+  readonly datasetId?: string;
 }
 
 export function UserDatasetsWorkspace(
@@ -129,7 +131,6 @@ export function UserDatasetsWorkspace(
             vdi={vdi!}
             vdiConfig={features}
             plugins={plugins}
-            formConfigs={props.formConfigs}
             datasetTypes={datasetTypes}
           />
         )}

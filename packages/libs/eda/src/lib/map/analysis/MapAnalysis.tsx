@@ -86,7 +86,7 @@ import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 import { getGeoConfig } from '../../core/utils/geoVariables';
-import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
+import DatasetManagementController from '@veupathdb/user-datasets/src/lib/Components/Management/DatasetManagementController';
 import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 enum MapSideNavItemLabels {
@@ -715,7 +715,7 @@ function MapAnalysisImpl(props: ImplProps) {
               // Note that we are not inluding the custom detail page.
               // As of this writing, details pages only add a link to
               // EDA. Since we are in EDA, we don't want to add it here.
-              <UserDatasetDetailController
+              <DatasetManagementController
                 baseUrl={url}
                 detailsPageTitle={'My Study'}
                 workspaceTitle={'My Studies'}

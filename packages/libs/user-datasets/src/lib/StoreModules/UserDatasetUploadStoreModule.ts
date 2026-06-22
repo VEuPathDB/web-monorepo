@@ -4,7 +4,7 @@ import {
   receiveBadUpload,
   receiveBadUploadHistoryAction,
   clearBadUpload,
-  updateFormState,
+  updateFormState, updateFormMetadata
 } from '../Actions/UserDatasetUploadActions';
 
 import { UserDatasetUpload } from '../Utils/types';
@@ -38,27 +38,34 @@ function defaultClientOnlyFormState(): ClientSideUploadFormState {
   };
 }
 
-export interface UploadFormState {
+export interface DatasetFormState {
   readonly datasetDetails: DatasetPostDetails;
   readonly fileUploads: DatasetUploads;
   readonly formMetaState: ClientSideUploadFormState;
 }
 
-export const DefaultUploadFormState: UploadFormState = {
+export const DefaultUploadFormState: DatasetFormState = {
   datasetDetails: defaultDatasetDetails(),
   fileUploads: {},
   formMetaState: defaultClientOnlyFormState(),
 };
 
-export function useUploadFormState(): UploadFormState {
+export function useDatasetFormState(): DatasetFormState {
   return useSelector(
     (state: StateSlice) => state.userDatasetUpload.formState,
     isEqual,
   ) ?? DefaultUploadFormState;
 }
 
+export function useDatasetFormMetadata(): DatasetPostDetails {
+  return useSelector(
+    (state: StateSlice) => state.userDatasetUpload.formState?.datasetDetails,
+    isEqual,
+  ) ?? DefaultUploadFormState.datasetDetails;
+}
+
 export interface State {
-  readonly formState?: UploadFormState;
+  readonly formState?: DatasetFormState;
   readonly uploads?: Array<UserDatasetUpload>;
   readonly badUploadMessage?: BadUpload;
   readonly badAllUploadsActionMessage?: { message: string; timestamp: number };
@@ -80,6 +87,11 @@ export function reduce(state: State = {}, action: Action): State {
       return { ...state, uploadProgress: action.payload };
     case receiveBadUploadHistoryAction.type:
       return { ...state, badAllUploadsActionMessage: action.payload };
+    case updateFormMetadata.type:
+      return { ...state, formState: {
+        ...state.formState!,
+        datasetDetails: action.payload,
+      } };
     case updateFormState.type:
       return { ...state, formState: action.payload };
     default:

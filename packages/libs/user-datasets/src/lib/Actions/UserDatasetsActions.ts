@@ -29,6 +29,8 @@ import {
   CommunityPromotionError,
   CommunityPromotionValidationError,
 } from '../Components/Sharing/CommunityPromotionError';
+import { ValidationErrorBody } from '../Service/Model/response-decoders';
+import { Consumer } from '../Utils';
 
 export type Action =
   | DetailErrorAction
@@ -531,7 +533,8 @@ type CommunityAction =
 export function updateDatasetCommunityVisibility(
   datasetIds: string[],
   isVisibleToCommunity: boolean,
-  context: 'datasetDetails' | 'datasetsList'
+  context: 'datasetDetails' | 'datasetsList',
+  onError?: Consumer<ValidationErrorBody>,
 ) {
   return [
     updateDatasetCommunityVisibilityPending(),
@@ -554,12 +557,15 @@ export function updateDatasetCommunityVisibility(
                 // on success
                 undefined,
                 // on validation error
-                ({ errors: msgs }) => {
-                  validationErrors.push({
-                    datasetId,
-                    general: msgs.general,
-                    byField: msgs.byKey,
-                  });
+                (response) => {
+                  if (onError)
+                    onError(response);
+                  else
+                    validationErrors.push({
+                      datasetId,
+                      general: response.errors.general,
+                      byField: response.errors.byKey,
+                    });
                 },
                 // on misc error
                 ({ message }) => {

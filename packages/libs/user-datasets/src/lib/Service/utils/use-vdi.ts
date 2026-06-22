@@ -8,7 +8,8 @@ import { wrapWdkService } from './compatibility';
 
 export function useVdiService<T>(
   fn: (vdi: VdiService) => Promise<T>,
-  vdiUrl: string = vdiServiceUrl
+  deps: any[] = [],
+  vdiUrl: string = vdiServiceUrl,
 ): T | undefined {
   const [value, setValue] = useState<T>();
 
@@ -20,7 +21,7 @@ export function useVdiService<T>(
 
       setValue(await fn(wrapped.vdi));
     },
-    [vdiUrl]
+    [...deps, vdiUrl]
   );
 
   return value;

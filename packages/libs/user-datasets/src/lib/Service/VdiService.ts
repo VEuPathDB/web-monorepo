@@ -183,6 +183,8 @@ export class VdiService extends FetchClientWithCredentials {
     // unless someone changed the decoders, there can be no other possible valid
     // response types.
     onError?.(responseBody as SimpleServiceErrorBody | ServerErrorBody);
+
+    return responseBody;
   }
 
   /**

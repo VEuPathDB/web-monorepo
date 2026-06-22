@@ -22,6 +22,7 @@ export type {
   DatasetTypeOutput,
   DatasetUploadStatusInfo,
   DatasetUser,
+  DatasetVisibility,
   PluginDataType,
   SampleYearRange,
   ShareOfferAction,

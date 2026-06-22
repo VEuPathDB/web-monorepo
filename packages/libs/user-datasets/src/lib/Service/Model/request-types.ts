@@ -9,7 +9,7 @@ import {
   SampleYearRange,
 } from './response-decoders';
 
-import { DatasetTypeSelection } from '../../Components/Upload/Configuration';
+import { DatasetTypeSelection } from '../../Common/Configuration';
 
 export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
 

@@ -10,19 +10,16 @@ import {
   ClientDatasetTypeConfig,
   DatasetDependency,
   DependencyInputProps,
-  UploadFormConfigurators,
+  DatasetFormConfigurators,
 } from '@veupathdb/user-datasets/lib';
 import { useRouteMatch } from 'react-router-dom';
-import {
-  DatasetTypeConfig,
-  DatasetUploadConfig,
-} from '@veupathdb/user-datasets/lib/Components/Upload';
 import { formatFileSize } from '@veupathdb/user-datasets/lib/Utils/formatting';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
 import {
   ButtonStateStyleSpec,
-  PartialButtonStyleSpec,
 } from '@veupathdb/coreui/lib/components/buttons';
+import { DatasetTypeConfig } from '@veupathdb/user-datasets/lib/Common/Configuration';
+import { DatasetUploadConfig } from '@veupathdb/user-datasets/lib/Components/Upload/Configuration';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -79,7 +76,7 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
  * the entries will be filtered by site at a later point based on the VDI
  * service configuration.
  */
-export const uploadFormConfigurators: UploadFormConfigurators = [
+export const uploadFormConfigurators: DatasetFormConfigurators = [
   // bigwig
   [implementedUploadTypes.bigwigfiles, bigwigFormConfigurator],
 

@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { IconAlt as Icon, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Modal } from '@veupathdb/coreui';
 import { FilledButton } from '@veupathdb/coreui';
@@ -10,8 +8,8 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { DatasetGetResponseBody, DatasetListEntry } from '../../Service';
 import { updateDatasetCommunityVisibility } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
-import { CommunityPromotionError, CommunityPromotionValidationError } from './CommunityPromotionError';
-import { ReactElement, ReactNode } from 'react';
+import { CommunityPromotionError } from './CommunityPromotionError';
+import React, { ReactElement, ReactNode } from 'react';
 import { CommunityAccess } from '../Misc/CommunityAccess';
 
 export interface CommunityModalProps {

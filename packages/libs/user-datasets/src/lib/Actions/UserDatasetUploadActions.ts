@@ -2,7 +2,8 @@ import {
   makeActionCreator,
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
-import { BadUpload, UploadFormState } from '../StoreModules';
+import { BadUpload, DatasetFormState } from '../StoreModules';
+import { DatasetPostDetails } from '../Service';
 
 export const trackUploadProgress = makeActionCreator(
   'user-dataset-upload/upload-progress',
@@ -40,8 +41,13 @@ export const receiveBadUploadHistoryAction = makeActionCreator(
 );
 
 export const updateFormState = makeActionCreator(
-  'user-dataset-upload/update-form-meta',
-  (formState: UploadFormState) => formState
+  'user-dataset-upload/update-form-state',
+  (formState: DatasetFormState) => formState
+);
+
+export const updateFormMetadata = makeActionCreator(
+  'user-dataset-form/update-dataset-metadata',
+  (metadata: DatasetPostDetails) => metadata,
 );
 
 export type Action =
@@ -52,4 +58,5 @@ export type Action =
   | InferAction<typeof clearMessages>
   | InferAction<typeof requestUploadMessages>
   | InferAction<typeof receiveBadUploadHistoryAction>
-  | InferAction<typeof updateFormState>;
+  | InferAction<typeof updateFormState>
+  | InferAction<typeof updateFormMetadata>;
