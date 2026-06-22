@@ -3,7 +3,9 @@ import { Public } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
-import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import {
+  WdkDependenciesContext,
+} from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
@@ -37,7 +39,7 @@ import { DataNoun } from '../../Utils/types';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
-  VdiServiceMetadata,
+  VdiServiceMetadata
 } from '../../Service';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
@@ -46,11 +48,7 @@ import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
 import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 import { UpdateFormController } from '../Update/UpdateFormController';
-import {
-  DatasetFormConfigurators,
-  DatasetTypeConfig,
-  findDatasetTypeConfig,
-} from '../../Common/Configuration';
+import { DatasetFormConfigurators, DatasetTypeConfig, findDatasetTypeConfig } from '../../Common/Configuration';
 import { isEmpty } from 'lodash';
 
 const classify = makeClassifier('DatasetManagement');
@@ -115,15 +113,15 @@ export interface DatasetManagementState {
   readonly isUpdating: boolean;
 }
 
-class DatasetManagement<
-  S extends DatasetManagementState = DatasetManagementState
-> extends React.Component<DetailViewProps, S> {
+class DatasetManagement<S extends DatasetManagementState = DatasetManagementState>
+  extends React.Component<DetailViewProps, S>
+{
   constructor(props: DetailViewProps) {
     super(props);
 
     this.state = {
       ...this.state,
-      isUpdating: false,
+      isUpdating: false
     };
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -227,11 +225,8 @@ class DatasetManagement<
 
     const shares = this.getGrantedShares();
 
-    const editable =
-      !isEmpty(this.props.datasetTypes) &&
-      !isEmpty(
-        findDatasetTypeConfig(userDataset.type, this.props.datasetTypes!)
-      );
+    const editable = !isEmpty(this.props.datasetTypes)
+      && !isEmpty(findDatasetTypeConfig(userDataset.type,  this.props.datasetTypes!));
 
     return (
       [
@@ -239,25 +234,21 @@ class DatasetManagement<
           ? {
               attribute: this.props.detailsPageTitle,
               className: classify('Name'),
-              value: (
-                <>
-                  {userDataset.name}
-                  {editable && (
-                    <button
-                      type="button"
-                      title="Edit Dataset"
-                      onClick={() =>
-                        setState((s) => ({
-                          ...s,
-                          isUpdating: true,
-                        }))
-                      }
-                    >
-                      <Icon fa="pencil edit" />
-                    </button>
-                  )}
-                </>
-              ),
+              value: <>
+                {userDataset.name}
+                {editable && (
+                  <button
+                    type="button"
+                    title="Edit Dataset"
+                    onClick={() => setState((s) => ({
+                      ...s,
+                      isUpdating: true
+                    }))}
+                  >
+                    <Icon fa="pencil edit"/>
+                  </button>
+                )}
+              </>,
             }
           : null,
         {
@@ -561,18 +552,16 @@ class DatasetManagement<
             context="datasetDetails"
             onClose={() => updateCommunityModalVisibility(false)}
             dataNoun={dataNoun}
-            updateDatasetCommunityVisibility={(
-              datasetIds,
-              isVisibleToCommunity,
-              context
-            ) => {
-              this.setState((s) => ({ ...s, isUpdating: true }));
-              return updateDatasetCommunityVisibility(
-                datasetIds,
-                isVisibleToCommunity,
-                context
-              );
-            }}
+            updateDatasetCommunityVisibility={
+              (datasetIds, isVisibleToCommunity, context) => {
+                this.setState((s) => ({ ...s, isUpdating: true }))
+                return updateDatasetCommunityVisibility(
+                  datasetIds,
+                  isVisibleToCommunity,
+                  context,
+                );
+              }
+            }
             updatePending={updateDatasetCommunityVisibilityPending}
             updateSuccessful={updateDatasetCommunityVisibilitySuccess}
             updateError={updateDatasetCommunityVisibilityError}
@@ -581,15 +570,12 @@ class DatasetManagement<
         {isOwner && this.state.isUpdating && (
           <UpdateFormController
             datasetId={userDataset.datasetId}
-            closeModal={() =>
-              this.setState((s) => ({ ...s, isUpdating: false }))
-            }
+            closeModal={() => this.setState(s => ({ ...s, isUpdating: false }))}
             baseUrl={this.props.baseUrl}
             vdiConfig={this.props.vdiConfig}
             isPromotingToPublic={this.state.isUpdating}
             formConfigs={this.props.formConfigs!}
-            datasetTypes={this.props.datasetTypes!}
-          />
+            datasetTypes={this.props.datasetTypes!} />
         )}
       </div>
     );

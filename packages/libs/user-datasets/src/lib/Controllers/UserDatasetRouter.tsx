@@ -1,10 +1,4 @@
-import React, {
-  ComponentType,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { ComponentType, ReactNode, useEffect, useMemo, useState } from 'react';
 
 import {
   RouteComponentProps,
@@ -24,16 +18,10 @@ import { DetailViewProps } from '../Components/Management/DatasetManagement';
 import {
   ClientDatasetTypeConfig,
   DatasetFormConfigurators,
-  DatasetTypeConfig,
-  filterAvailableDataTypes,
-  promoteTypeConfig,
+  DatasetTypeConfig, filterAvailableDataTypes,
+  promoteTypeConfig
 } from '../Common/Configuration';
-import {
-  useVdiService,
-  VdiPluginConfig,
-  VdiService,
-  VdiServiceMetadata,
-} from '../Service';
+import { useVdiService, VdiPluginConfig, VdiService, VdiServiceMetadata } from '../Service';
 import { identity } from 'lodash';
 import { projectId } from '../config';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -196,9 +184,7 @@ export function UserDatasetRouter({
       <WdkRoute
         path={`${path}/:id`}
         requiresLogin
-        component={function Component(
-          props: RouteComponentProps<{ id: string }>
-        ) {
+        component={function Component(props: RouteComponentProps<{ id: string }>) {
           const vdi = useVdiService<VdiService>(identity);
 
           const [plugins, setPlugins] = useState<readonly VdiPluginConfig[]>();
@@ -211,10 +197,7 @@ export function UserDatasetRouter({
 
           if (!Array.isArray(plugins) || !features) return <Loading />;
 
-          const datasetTypes = filterAvailableDataTypes(
-            datasetTypeConfigs,
-            plugins
-          )
+          const datasetTypes = filterAvailableDataTypes(datasetTypeConfigs, plugins)
             .map((cdt) => promoteTypeConfig(cdt, plugins))
             .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 

@@ -4,7 +4,7 @@ import {
   DatasetPostDetails,
   useVdiService,
   VdiService,
-  VdiServiceMetadata,
+  VdiServiceMetadata
 } from '../../Service';
 import { DatasetFormController } from '../../Common/Forms/DatasetFormController';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -13,10 +13,7 @@ import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreMo
 import { useDispatch } from 'react-redux';
 import { updateFormState } from '../../Actions/UserDatasetUploadActions';
 import { UpdateForm } from './UpdateForm';
-import {
-  configureFormProps,
-  findDatasetTypeConfig,
-} from '../../Common/Configuration';
+import { configureFormProps, findDatasetTypeConfig } from '../../Common/Configuration';
 import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormControllerConfig';
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../Utils';
@@ -29,11 +26,9 @@ export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly closeModal: Runnable;
 }
 
-export function UpdateFormController(
-  props: UpdateFormControllerProps
-): ReactElement {
+export function UpdateFormController(props: UpdateFormControllerProps): ReactElement {
   const vdi = useVdiService<VdiService>(identity);
-  const [dataset, setDataset] = useState<DatasetGetResponseBody>();
+  const [ dataset, setDataset ] = useState<DatasetGetResponseBody>();
 
   const dispatch = useDispatch();
   const formState = useDatasetFormState();
@@ -41,7 +36,7 @@ export function UpdateFormController(
   useEffect(() => {
     if (vdi && props.datasetId)
       (async () => setDataset(await vdi.getDatasetDetails(props.datasetId)))();
-  }, [vdi, props.datasetId]);
+  }, [ vdi, props.datasetId ]);
 
   useEffect(
     () => {
@@ -53,32 +48,27 @@ export function UpdateFormController(
 
       if (dataset) {
         document.title = `Edit My Dataset: ${dataset?.name}`;
-        dispatch(
-          updateFormState({
-            ...formState,
-            datasetDetails: convertMeta(dataset),
-          })
-        );
+        dispatch(updateFormState({ ...formState, datasetDetails: convertMeta(dataset) }))
       }
 
-      return () => {
-        document.title = title;
-      };
+      return () => { document.title = title; }
     },
 
     // This should only be triggered when the vdi dataset result changes.
     //
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataset]
+    [ dataset ]
   );
 
   const formConfig = useMemo(
     () => {
-      if (!dataset?.type || !vdi) return null;
+      if (!dataset?.type || !vdi)
+        return null;
 
       const type = findDatasetTypeConfig(dataset.type, props.datasetTypes);
 
-      if (!type) return null;
+      if (!type)
+        return null;
 
       return {
         ...configureFormProps(type, props.formConfigs, vdi),
@@ -91,29 +81,28 @@ export function UpdateFormController(
     // at best, and expensive at worst.
     //
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataset, vdi]
+    [ dataset, vdi ]
   );
 
-  if (!dataset || !formConfig) return <Loading />;
+  if (!dataset || !formConfig)
+    return <Loading />;
 
-  return (
-    <>
-      <Modal
-        visible={true}
-        toggleVisible={props.closeModal}
-        includeCloseButton={true}
-        title={document.title}
-        titleSize="medium"
-      >
-        <DatasetFormController
-          {...props}
-          propFactory={identity}
-          form={UpdateForm}
-          formConfig={formConfig}
-        />
-      </Modal>
-    </>
-  );
+  return<>
+    <Modal
+      visible={true}
+      toggleVisible={props.closeModal}
+      includeCloseButton={true}
+      title={document.title}
+      titleSize="medium"
+    >
+      <DatasetFormController
+        {...props}
+        propFactory={identity}
+        form={UpdateForm}
+        formConfig={formConfig}
+      />
+    </Modal>
+  </>;
 }
 
 /**

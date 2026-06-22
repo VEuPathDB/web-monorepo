@@ -15,11 +15,10 @@ import {
 import { useRouteMatch } from 'react-router-dom';
 import { formatFileSize } from '@veupathdb/user-datasets/lib/Utils/formatting';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
-import { ButtonStateStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import {
-  DatasetFormConfig,
-  DatasetTypeConfig,
-} from '@veupathdb/user-datasets/lib/Common/Configuration';
+  ButtonStateStyleSpec,
+} from '@veupathdb/coreui/lib/components/buttons';
+import { DatasetFormConfig, DatasetTypeConfig } from '@veupathdb/user-datasets/lib/Common/Configuration';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -155,7 +154,9 @@ function bigwigFormConfigurator(
   };
 }
 
-function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
+function biomFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetFormConfig {
   return {
     dataType,
     verbiage: {
@@ -490,7 +491,7 @@ function ReferenceGenomeDependency({
       disabled: popoverStyle,
       hover: popoverStyle,
       pressed: popoverStyle,
-    },
+    }
   };
 
   const selectedList = dependencies?.map((entry) => entry.resourceDisplayName);

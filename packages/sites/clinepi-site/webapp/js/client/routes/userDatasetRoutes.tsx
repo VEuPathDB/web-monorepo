@@ -8,6 +8,7 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
 import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
+
 import {
   communityDatasetsEnabled,
   communitySite,
@@ -26,9 +27,7 @@ import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Managem
 
 const EdaDatasetDetail = React.lazy(
   () =>
-    import(
-      '@veupathdb/user-datasets/lib/Components/Management/EdaDatasetManagement'
-    )
+    import('@veupathdb/user-datasets/lib/Components/Management/EdaDatasetManagement')
 );
 
 const UserDatasetRouter = React.lazy(
