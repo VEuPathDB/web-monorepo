@@ -52,4 +52,20 @@
       text-decoration: underline;
     }
   }
+
+  // Source selector (PubMed ID / Upload PDF): lay the options out in a row.
+  // RadioList has no orientation prop — its <li>s are block-level by default —
+  // so we override the layout here rather than pulling in a heavier component.
+  .wdk-RadioList.ai-source-radio {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5em;
+    // Reset RadioList.css's vertical indent/spacing.
+    margin-left: 0;
+    padding-left: 0;
+
+    li {
+      margin: 0;
+    }
+  }
 }

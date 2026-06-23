@@ -549,6 +549,7 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
               <div style={{ fontWeight: 500, marginBottom: '6px' }}>Source</div>
               <RadioList
                 name="ai-publication-source"
+                className="ai-source-radio"
                 value={form.source}
                 onChange={(val) =>
                   form.onSourceChange(val as PublicationSource)
@@ -578,7 +579,7 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                   value={form.pubmedId}
                   onChange={form.onPubmedIdChange}
                   placeholder="e.g. 38429021"
-                  style={{ width: '280px' }}
+                  style={{ width: '140px' }}
                 />
                 <div
                   style={{ marginTop: '4px', fontSize: '12px', color: GREY }}
