@@ -8,6 +8,7 @@ import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSear
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
+import { PathfinderController } from './components/controllers/PathfinderController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
@@ -163,15 +164,17 @@ function DownloadsRouteComponent() {
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
-
-  // Allow guests to access dataset record pages for SEO and public visibility                                                                                             
-  {                                                                                                                                                                        
-    path: '/record/dataset/:primaryKey+',                                                                                                                                  
-    requiresLogin: false,                                                                                                                                                  
-    component: (props) => (                                                                                                                                                
-      <RecordController recordClass="dataset" primaryKey={props.match.params.primaryKey} />
-    ),                                                                                                                                                                     
-  },      
+  // Allow guests to access dataset record pages for SEO and public visibility
+  {
+    path: '/record/dataset/:primaryKey+',
+    requiresLogin: false,
+    component: (props) => (
+      <RecordController
+        recordClass="dataset"
+        primaryKey={props.match.params.primaryKey}
+      />
+    ),
+  },
 
   // Allow guests to access All Datasets and All Organisms for SEO and public visibility
   {
@@ -225,6 +228,12 @@ export const wrapRoutes = (ebrcRoutes) => [
     path: '/jbrowse',
     component: JBrowseController,
     rootClassNameModifier: 'jbrowse',
+  },
+
+  {
+    path: '/pathfinder',
+    component: PathfinderController,
+    rootClassNameModifier: 'pathfinder',
   },
 
   {
