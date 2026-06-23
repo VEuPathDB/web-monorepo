@@ -249,6 +249,7 @@ export function RecordTableDescription(DefaultComponent) {
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
+          !(record.recordClassName == 'UserDatasetRecordClasses.UserDatasetRecordClass')
           ontologyProperties.scope.includes('download');
 
         let hideDatasetLinkFromProperty =
@@ -259,7 +260,7 @@ export function RecordTableDescription(DefaultComponent) {
         let showDatasetsLink =
           record.tables[table.name] &&
           !(record.recordClassName == 'UserDatasetRecordClasses.UserDatasetRecordClass') &&
-          !table.name.startsWith('UserDatasets') &&
+          !table.name.startsWith('UserDataset') &&
           !hideDatasetLinkFromProperty;
 
         var hasTaxonId = 0;
