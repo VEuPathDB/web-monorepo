@@ -7,6 +7,8 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
+
+import './AiGenePublicationAddView.scss';
 import { PubmedPreviewEntry } from '../../../types/userCommentTypes';
 import { AiGenePublicationJobStatus } from '../../../types/aiGenePublicationTypes';
 import {

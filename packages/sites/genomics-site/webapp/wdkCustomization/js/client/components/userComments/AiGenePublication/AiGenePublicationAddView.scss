@@ -1,0 +1,55 @@
+// Styling for the PubMed metadata preview chip in the AI-assisted comment flow.
+//
+// The chip uses the shared <PubmedIdEntry> markup (alternating <label>/<div>
+// children in a 2-column grid). Scoped under .wdk-UserComments — the AI
+// controller's wrapper — so it does NOT affect the classic comment form/show
+// views (.wdk-UserComments-Form / .wdk-UserComments-Show), which style
+// .wdk-PubmedIdEntry with their own rules. This same chip appears both below
+// the PubMed ID field (add form) and in the review-step source panel.
+.wdk-UserComments {
+  .wdk-PubmedIdEntry {
+    display: grid;
+    grid-template-columns: 10ch 1fr;
+    // Grey label cells stretch to match a wrapped (multi-line) value's height.
+    align-items: stretch;
+    max-width: 480px;
+    margin: 0;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.4;
+
+    // Every cell: padding + a thin row divider.
+    > * {
+      padding: 6px 10px;
+      border-bottom: 1px solid #e6e6e6;
+    }
+
+    // Narrow grey label column (odd children).
+    > label {
+      margin: 0;
+      background-color: #f2f2f2;
+      font-weight: 600;
+      color: #555;
+    }
+
+    // White value column (even children).
+    > div {
+      background-color: #fff;
+      color: #333;
+      word-break: break-word;
+    }
+
+    // The card's own border closes the last row — drop that row's divider.
+    > *:nth-last-child(-n + 2) {
+      border-bottom: none;
+    }
+
+    // PMID rendered as a blue underlined link.
+    a {
+      color: #1a6ebd;
+      text-decoration: underline;
+    }
+  }
+}
