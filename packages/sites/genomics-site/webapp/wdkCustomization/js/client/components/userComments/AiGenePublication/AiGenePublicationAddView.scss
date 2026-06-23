@@ -48,7 +48,7 @@
 
     // PMID rendered as a blue underlined link.
     a {
-      color: #1a6ebd;
+      // color: #1a6ebd; // already blue, no need to specify
       text-decoration: underline;
     }
   }
