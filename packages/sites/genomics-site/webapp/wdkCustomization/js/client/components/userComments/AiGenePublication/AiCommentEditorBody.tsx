@@ -32,26 +32,21 @@ function ProvenancePanel({
   source: AiProvenanceSource;
   pubmedPreview?: PubmedPreviewEntry;
 }) {
-  const panelStyle: React.CSSProperties = {
-    backgroundColor: '#f5f5f5',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    padding: '10px 14px',
-    marginBottom: SECTION_GAP,
+  // A bold section header (matching the Headline/Content labels) sits directly
+  // above the citation — no grey wrapper, so the PubmedIdEntry card isn't a
+  // grey box nested inside another grey box.
+  const headerStyle: React.CSSProperties = {
+    display: 'block',
+    fontWeight: 600,
+    marginBottom: '4px',
     fontSize: '14px',
   };
-
-  const labelStyle: React.CSSProperties = {
-    color: GREY,
-    fontWeight: 500,
-    marginBottom: '4px',
-    fontSize: '13px',
-  };
+  const containerStyle: React.CSSProperties = { marginBottom: SECTION_GAP };
 
   if (source.kind === 'pubmed') {
     return (
-      <div style={panelStyle}>
-        <div style={labelStyle}>Source publication</div>
+      <div style={containerStyle}>
+        <div style={headerStyle}>Source publication</div>
         {pubmedPreview ? (
           <PubmedIdEntry
             id={pubmedPreview.id}
@@ -61,7 +56,7 @@ function ProvenancePanel({
             url={pubmedPreview.url}
           />
         ) : (
-          <div>
+          <div style={{ fontSize: '14px' }}>
             PubMed ID:{' '}
             <a
               href={`https://pubmed.ncbi.nlm.nih.gov/${source.pubmedId}`}
@@ -78,10 +73,10 @@ function ProvenancePanel({
 
   // kind === 'upload'
   return (
-    <div style={panelStyle}>
-      <div style={labelStyle}>Source publication</div>
+    <div style={containerStyle}>
+      <div style={headerStyle}>Source publication</div>
       {source.externalUrl && (
-        <div style={{ marginBottom: '4px' }}>
+        <div style={{ marginBottom: '4px', fontSize: '14px' }}>
           <a
             href={source.externalUrl}
             target="_blank"
