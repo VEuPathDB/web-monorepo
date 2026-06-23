@@ -37,6 +37,10 @@ import {
   AiCommentReviewView,
   PublishableJobStatus,
 } from '../components/userComments/AiGenePublication/AiCommentReviewView';
+import {
+  AiCommentRejectView,
+  RejectJobStatus,
+} from '../components/userComments/AiGenePublication/AiCommentRejectView';
 import { extractPdfText } from '../components/userComments/AiGenePublication/extractPdfText';
 
 const POLL_INTERVAL_MS = 1000;
@@ -81,7 +85,11 @@ type Phase =
       status: PublishableJobStatus;
       publishing: boolean;
       publishErrors?: string[];
-    };
+    }
+  // The AI ran but produced nothing publishable (gene not mentioned / only in
+  // passing). Dead-ended with recovery options — no editor, so a from-scratch
+  // comment can't be mislabelled "AI-assisted".
+  | { kind: 'reject'; jobId: string; status: RejectJobStatus };
 
 function AiGenePublicationAddController({
   stableId,
@@ -221,9 +229,15 @@ function AiGenePublicationAddController({
           timeoutId = setTimeout(tick, POLL_INTERVAL_MS);
           break;
         }
-        case 'success':
         case 'mentioned-in-passing':
         case 'gene-not-mentioned': {
+          // The AI produced nothing publishable — dead-end immediately (no
+          // linger): there's no summary, so implying "Finishing up…" would
+          // misrepresent the outcome.
+          setState({ kind: 'reject', jobId: pollingJobId, status: result });
+          break;
+        }
+        case 'success': {
           // Capture the narrowed value: `result` is a reassignable `let`, so its
           // control-flow narrowing to PublishableJobStatus is lost inside the
           // deferred setTimeout closure unless we pin it in a const here.
@@ -497,8 +511,6 @@ function AiGenePublicationAddController({
         });
         break;
       case 'success':
-      case 'mentioned-in-passing':
-      case 'gene-not-mentioned':
         replaceJobIdInUrl(outcome.jobId);
         setState({
           kind: 'review',
@@ -506,6 +518,11 @@ function AiGenePublicationAddController({
           status: outcome,
           publishing: false,
         });
+        break;
+      case 'mentioned-in-passing':
+      case 'gene-not-mentioned':
+        replaceJobIdInUrl(outcome.jobId);
+        setState({ kind: 'reject', jobId: outcome.jobId, status: outcome });
         break;
       case 'text-unavailable':
       case 'internal-error':
@@ -678,6 +695,20 @@ function AiGenePublicationAddController({
           onDismiss: () => setState({ kind: 'idle' }),
         }
       : undefined;
+
+  if (state.kind === 'reject') {
+    return (
+      <div className="wdk-UserComments">
+        <AiCommentRejectView
+          stableId={stableId}
+          status={state.status}
+          source={state.status.source}
+          onTryDifferentPublication={handleTryDifferentPublication}
+          onBackToGenePage={handleBackToGenePage}
+        />
+      </div>
+    );
+  }
 
   if (state.kind === 'review') {
     return (

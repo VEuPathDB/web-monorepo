@@ -8,16 +8,14 @@ import {
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { AiCommentEditorBody } from './AiCommentEditorBody';
 
-function assertNever(value: never): never {
-  throw new Error(`Unhandled status type: ${JSON.stringify(value)}`);
-}
-
-// Only the three publishable terminal statuses reach this view.
+// Only `success` reaches this view — it's the one terminal status that carries
+// AI-generated content to review and publish. The "produced nothing" statuses
+// (mentioned-in-passing / gene-not-mentioned) are dead-ended by
+// AiCommentRejectView instead, so a from-scratch comment isn't mislabelled
+// "AI-assisted".
 export type PublishableJobStatus = Extract<
   AiGenePublicationJobStatus,
-  | { type: 'success' }
-  | { type: 'mentioned-in-passing' }
-  | { type: 'gene-not-mentioned' }
+  { type: 'success' }
 >;
 
 export interface AiCommentReviewViewProps {
@@ -49,61 +47,18 @@ export function AiCommentReviewView(
     onBackToGenePage,
   } = props;
 
-  const initialHeadline =
-    status.type === 'success' ? status.aiOutput.headline : '';
-  const initialContent =
-    status.type === 'success' ? status.aiOutput.content : '';
-
-  const [headline, setHeadline] = useState(initialHeadline);
-  const [content, setContent] = useState(initialContent);
+  const [headline, setHeadline] = useState(status.aiOutput.headline);
+  const [content, setContent] = useState(status.aiOutput.content);
   const [confirmed, setConfirmed] = useState(false);
 
   const canPublish =
     confirmed && headline.trim() !== '' && content.trim() !== '' && !publishing;
 
-  // Build the original prop for 'success' only (enables Restore button)
-  const original =
-    status.type === 'success'
-      ? { headline: status.aiOutput.headline, content: status.aiOutput.content }
-      : undefined;
-
-  // Build noticeAboveEditor for non-success statuses
-  let noticeAboveEditor: React.ReactNode = undefined;
-  if (status.type === 'mentioned-in-passing') {
-    noticeAboveEditor = (
-      <>
-        The AI determined this paper only mentions the gene in passing — no
-        summary was generated. You can still write and publish your own
-        observations below.
-      </>
-    );
-  } else if (status.type === 'gene-not-mentioned') {
-    const synonymList = status.synonymsChecked.join(', ');
-    noticeAboveEditor = (
-      <>
-        {synonymList
-          ? `None of these names were found in the paper: ${synonymList}. `
-          : `The gene's known names weren't found in the paper. `}
-        You can still publish your own comment.
-        {/* PubMed only: full text comes from PMC BioC, which we scan by
-            section. Uploaded PDFs are scanned in full, so the caveat doesn't
-            apply there. */}
-        {source.kind === 'pubmed' && (
-          <div style={{ marginTop: '8px' }}>
-            Note: for PubMed articles the abstract, introduction and methods
-            sections aren't scanned, so a gene mentioned only there may be
-            missed.
-          </div>
-        )}
-      </>
-    );
-  } else if (status.type === 'success') {
-    // no notice for success
-    noticeAboveEditor = undefined;
-  } else {
-    // exhaustiveness
-    assertNever(status);
-  }
+  // The unedited AI output, so the editor can offer a Restore button.
+  const original = {
+    headline: status.aiOutput.headline,
+    content: status.aiOutput.content,
+  };
 
   const actions = (
     <div>
@@ -225,7 +180,6 @@ export function AiCommentReviewView(
         onHeadlineChange={setHeadline}
         onContentChange={setContent}
         original={original}
-        noticeAboveEditor={noticeAboveEditor}
         encouragement="Please review the AI-generated content above and edit as needed before publishing."
         actions={actions}
       />
