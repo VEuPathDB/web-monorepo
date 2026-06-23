@@ -1,0 +1,10 @@
+{
+  "extends": "@veupathdb/site-tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "mupdf": ["../../../node_modules/mupdf/dist/mupdf"]
+    }
+  },
+  "include": ["./webapp/**/*"]
+}

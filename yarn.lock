@@ -9120,6 +9120,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@veupathdb/mupdf-test@workspace:packages/sites/mupdf-test":
+  version: 0.0.0-use.local
+  resolution: "@veupathdb/mupdf-test@workspace:packages/sites/mupdf-test"
+  dependencies:
+    "@babel/core": "npm:^7.17.9"
+    "@babel/preset-env": "npm:^7.16.11"
+    "@babel/preset-react": "npm:^7.14.5"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.0"
+    "@veupathdb/browserslist-config": "workspace:^"
+    "@veupathdb/site-babel-config": "workspace:^"
+    "@veupathdb/site-tsconfig": "workspace:^"
+    "@veupathdb/site-webpack-config": "workspace:^"
+    babel-loader: "npm:^8.3.0"
+    html-webpack-plugin: "npm:^4.5.2"
+    mupdf: "npm:^1.27.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    ts-loader: "npm:^5.4.5"
+    typescript: "npm:~4.3.5"
+    webpack: "npm:^5.84.1"
+    webpack-cli: "npm:^5.1.1"
+    webpack-dev-server: "npm:^4.15.0"
+  languageName: unknown
+  linkType: soft
+
 "@veupathdb/ortho-site@workspace:packages/sites/ortho-site":
   version: 0.0.0-use.local
   resolution: "@veupathdb/ortho-site@workspace:packages/sites/ortho-site"
@@ -17914,7 +17940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^4.3.0, enhanced-resolve@npm:^4.5.0":
+"enhanced-resolve@npm:^4.0.0, enhanced-resolve@npm:^4.3.0, enhanced-resolve@npm:^4.5.0":
   version: 4.5.0
   resolution: "enhanced-resolve@npm:4.5.0"
   dependencies:
@@ -34540,6 +34566,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:^5.0.1":
+  version: 5.7.2
+  resolution: "semver@npm:5.7.2"
+  bin:
+    semver: bin/semver
+  checksum: 10/fca14418a174d4b4ef1fecb32c5941e3412d52a4d3d85165924ce3a47fbc7073372c26faf7484ceb4bbc2bde25880c6b97e492473dc7e9708fdfb1c6a02d546e
+  languageName: node
+  linkType: hard
+
 "semver@npm:^6.0.0, semver@npm:^6.1.1, semver@npm:^6.1.2, semver@npm:^6.2.0, semver@npm:^6.3.0":
   version: 6.3.0
   resolution: "semver@npm:6.3.0"
@@ -37196,6 +37231,21 @@ __metadata:
   bin:
     ts-jest: cli.js
   checksum: 10/b13bfb5725b16d82119122d0ee874e666a7c481eca40a09672826185c690a42c8222ae3c49246f9dd8e37ab5d6bca6494573feffad957d7a9818771120dbad59
+  languageName: node
+  linkType: hard
+
+"ts-loader@npm:^5.4.5":
+  version: 5.4.5
+  resolution: "ts-loader@npm:5.4.5"
+  dependencies:
+    chalk: "npm:^2.3.0"
+    enhanced-resolve: "npm:^4.0.0"
+    loader-utils: "npm:^1.0.2"
+    micromatch: "npm:^3.1.4"
+    semver: "npm:^5.0.1"
+  peerDependencies:
+    typescript: "*"
+  checksum: 10/75ca900e60488e88a12cdc84d1f15c6b773da20e6ebd8475ba62dbc059882bfd5b3bc00642dd1b661136287b14d115cb5d9f7cb8eb7f2d294595d6369668a724
   languageName: node
   linkType: hard
 

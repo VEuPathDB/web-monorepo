@@ -1,0 +1,32 @@
+{
+  "name": "@veupathdb/mupdf-test",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack serve --mode=development --config webpack.config.local.mjs"
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.14.5",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/site-babel-config": "workspace:^",
+    "@veupathdb/site-tsconfig": "workspace:^",
+    "@veupathdb/site-webpack-config": "workspace:^",
+    "babel-loader": "^8.3.0",
+    "html-webpack-plugin": "^4.5.2",
+    "mupdf": "^1.27.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "ts-loader": "^5.4.5",
+    "typescript": "~4.3.5",
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
+  }
+}
