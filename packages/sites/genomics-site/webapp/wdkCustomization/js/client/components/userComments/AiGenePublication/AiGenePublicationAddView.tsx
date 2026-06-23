@@ -138,7 +138,6 @@ function ElapsedTimer({ startedAt }: { startedAt: number }) {
 
 const CHECK_GREEN = '#2d7d2d';
 const GREY = '#888';
-const SPINNER_ORANGE = '#c87022';
 
 function StageRow({
   label,
@@ -149,49 +148,23 @@ function StageRow({
   state: 'done' | 'current' | 'pending';
   message?: string;
 }) {
-  const iconStyle: React.CSSProperties = {
-    width: '20px',
-    flexShrink: 0,
-    textAlign: 'center',
-  };
-
   if (state === 'done') {
     return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          marginBottom: '8px',
-        }}
-      >
-        <span style={{ ...iconStyle, color: CHECK_GREEN, fontWeight: 700 }}>
-          ✓
-        </span>
-        <span style={{ color: CHECK_GREEN }}>{label}</span>
-        <span style={{ color: GREY, fontSize: '12px' }}>Done</span>
+      <div className="ai-stage-row ai-stage-row--done">
+        <span className="ai-stage-icon ai-stage-icon--done">✓</span>
+        <span className="ai-stage-label">{label}</span>
+        <span className="ai-stage-done-tag">done</span>
       </div>
     );
   }
 
   if (state === 'current') {
     return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '8px',
-          marginBottom: '8px',
-        }}
-      >
-        <span style={{ ...iconStyle, color: SPINNER_ORANGE }}>⟳</span>
+      <div className="ai-stage-row ai-stage-row--current">
+        <span className="ai-stage-icon ai-stage-icon--current" />
         <div>
-          <span style={{ fontWeight: 600 }}>{label}</span>
-          {message && (
-            <div style={{ color: '#555', fontSize: '13px', marginTop: '2px' }}>
-              {message}
-            </div>
-          )}
+          <span className="ai-stage-label">{label}</span>
+          {message && <div className="ai-stage-message">{message}</div>}
         </div>
       </div>
     );
@@ -199,17 +172,9 @@ function StageRow({
 
   // pending
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        marginBottom: '8px',
-        opacity: 0.45,
-      }}
-    >
-      <span style={iconStyle}>○</span>
-      <span>{label}</span>
+    <div className="ai-stage-row ai-stage-row--pending">
+      <span className="ai-stage-icon ai-stage-icon--pending" />
+      <span className="ai-stage-label">{label}</span>
     </div>
   );
 }
@@ -768,7 +733,7 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 return (
                   <div>
                     {/* Stage checklist */}
-                    <div style={{ marginBottom: '16px' }}>
+                    <div className="ai-progress-checklist">
                       {KNOWN_STAGE_ORDER.map((stage, index) => {
                         let state: 'done' | 'current' | 'pending';
                         if (currentKnownIndex === -1) {
@@ -806,15 +771,9 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                       )}
                     </div>
 
-                    {/* Elapsed timer + Cancel */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '16px',
-                        marginTop: '12px',
-                      }}
-                    >
+                    {/* Elapsed timer + Cancel: space-between keeps Cancel
+                        pinned right so the timer's width changes don't shift it */}
+                    <div className="ai-progress-footer">
                       <ElapsedTimer startedAt={job.startedAt} />
                       <button
                         type="button"

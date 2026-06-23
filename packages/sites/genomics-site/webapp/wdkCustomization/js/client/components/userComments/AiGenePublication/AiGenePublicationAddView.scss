@@ -68,4 +68,98 @@
       margin: 0;
     }
   }
+
+  // ---- "Generating comment" progress / polling view ----
+
+  .ai-progress-checklist {
+    margin: 4px 0 8px;
+  }
+
+  .ai-stage-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 15px;
+
+    // Current stage shows a message under its label — top-align the icon.
+    &--current {
+      align-items: flex-start;
+    }
+
+    &--pending {
+      opacity: 0.5;
+    }
+  }
+
+  // Circular status badge to the left of each stage label.
+  .ai-stage-icon {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    // Done: solid green disc with a white tick.
+    &--done {
+      background-color: #2d7d2d;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    // Pending: hollow grey ring.
+    &--pending {
+      border: 2px solid #b0b0b0;
+    }
+
+    // Current: animated blue ring spinner.
+    &--current {
+      border: 2px solid #cdddef;
+      border-top-color: #1a6ebd;
+      animation: ai-stage-spin 0.8s linear infinite;
+    }
+  }
+
+  .ai-stage-label {
+    font-weight: 500;
+  }
+
+  .ai-stage-row--done .ai-stage-label {
+    color: #2d7d2d;
+    font-weight: 400;
+  }
+
+  .ai-stage-done-tag {
+    color: #888;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .ai-stage-message {
+    margin-top: 3px;
+    color: #555;
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  // Footer: timer (left) and Cancel (right) at opposite ends, so the timer's
+  // single/double-digit width changes never shift the Cancel button.
+  .ai-progress-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+  }
+}
+
+// Keyframes must live at the stylesheet root (Sass does not bubble @keyframes
+// out of a nested selector).
+@keyframes ai-stage-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
