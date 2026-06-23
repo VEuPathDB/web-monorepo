@@ -805,8 +805,9 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 } else if (status.type === 'text-unavailable') {
                   errorMessage = (
                     <>
-                      We couldn&apos;t retrieve the article text.{' '}
-                      {status.reason} You can try a different publication.
+                      We couldn't retrieve the full text for this article — it
+                      may not be freely available. Try a different publication,
+                      or upload the PDF if you have it.
                     </>
                   );
                 } else {
