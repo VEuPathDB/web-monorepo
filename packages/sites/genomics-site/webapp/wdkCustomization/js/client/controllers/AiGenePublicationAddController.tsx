@@ -189,6 +189,10 @@ function AiGenePublicationAddController({
     if (pollingJobId == null) return;
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    // Whether we've observed a live `running` poll for this job. If the very
+    // first poll is already terminal (e.g. a cold page refresh of a finished
+    // job), there's no pipeline to round off, so we skip the completion linger.
+    let sawRunningPoll = false;
 
     const tick = async () => {
       if (cancelled) return;
@@ -207,6 +211,7 @@ function AiGenePublicationAddController({
 
       switch (result.type) {
         case 'running': {
+          sawRunningPoll = true;
           const running = result;
           setState((prev) =>
             prev.kind === 'polling' && prev.jobId === pollingJobId
@@ -218,14 +223,53 @@ function AiGenePublicationAddController({
         }
         case 'success':
         case 'mentioned-in-passing':
-        case 'gene-not-mentioned':
-          setState({
-            kind: 'review',
-            jobId: pollingJobId,
-            status: result,
-            publishing: false,
-          });
+        case 'gene-not-mentioned': {
+          // Capture the narrowed value: `result` is a reassignable `let`, so its
+          // control-flow narrowing to PublishableJobStatus is lost inside the
+          // deferred setTimeout closure unless we pin it in a const here.
+          const reviewStatus = result;
+          // No live pipeline was seen (job already done on first poll, e.g. a
+          // cold refresh) — skip the linger and go straight to review.
+          if (!sawRunningPoll) {
+            setState({
+              kind: 'review',
+              jobId: pollingJobId,
+              status: reviewStatus,
+              publishing: false,
+            });
+            break;
+          }
+          // Pin the progress view to its final stage so the pipeline visibly
+          // completes and lingers there for a beat before flipping to review,
+          // rather than jumping straight from a mid-pipeline poll.
+          setState((prev) =>
+            prev.kind === 'polling' && prev.jobId === pollingJobId
+              ? {
+                  ...prev,
+                  status: {
+                    type: 'running',
+                    jobId: pollingJobId,
+                    progress: {
+                      stage: 'persisting',
+                      message: 'Finishing up…',
+                      updatedAt: '',
+                    },
+                    source: reviewStatus.source,
+                  },
+                }
+              : prev
+          );
+          timeoutId = setTimeout(() => {
+            if (cancelled) return;
+            setState({
+              kind: 'review',
+              jobId: pollingJobId,
+              status: reviewStatus,
+              publishing: false,
+            });
+          }, 2000);
           break;
+        }
         case 'cancelled':
         case 'text-unavailable':
         case 'internal-error':
