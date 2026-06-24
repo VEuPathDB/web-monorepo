@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useLocation } from 'react-router';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { CheckboxTreeProps } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { Tooltip } from '@veupathdb/coreui';
 
@@ -130,16 +130,26 @@ function TreeBoxOrganismEnumParam(
 
   // keep org preset as local state, updating server as necessary;
   //   this means setting in a different tab will not update this component until remount
-  const [localOrganismValuePreset, setLocalOrganismValuePreset] =
+  const [organismValuePreset, setLocalOrganismValuePreset] =
     useState<string[]>();
 
-  const [presetSaving, setPresetSaving] = useState(false);
-
+  // fetch organism preset and set to local state
   useWdkService((wdkService) => {
     return fetchOrganismValuePreset(wdkService).then((preset) =>
       setLocalOrganismValuePreset(preset)
     );
   }, []);
+
+  // get current project
+  const projectId =
+    useWdkService(
+      (wdkService) =>
+        wdkService.getConfig().then((config) => config.displayName),
+      []
+    ) || 'VEuPathDB';
+
+  // keep track of whether preset is being saved (shows spinner during saving)
+  const [presetSaving, setPresetSaving] = useState(false);
 
   // need to use wdkService below
   const { wdkService } = useWdkDependenciesContext();
@@ -175,22 +185,45 @@ function TreeBoxOrganismEnumParam(
     leafTerms
   );
 
-  const selectOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
+  const trimmedPresets = _.intersection(
+    organismValuePreset,
+    Array.from(leafTerms)
+  );
+
+  const applyOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
     event.preventDefault();
-    if (localOrganismValuePreset == null) return;
-    const trimmedPresets = _.intersection(
-      localOrganismValuePreset,
-      Array.from(leafTerms)
-    );
-    wrappedOnChange(trimmedPresets);
+    if (organismValuePreset == null) return;
+    // using onChange here instead of wrappedOnChange prevents annoying
+    //   max-recommended dialog every time user selects their organism presets
+    //   (even if the preset is higher than the max recommended)
+    onChange(trimmedPresets);
   };
 
+  // current selection should reflect only leaf nodes
   const currentSelection = _.intersection(
     decodeOrElse(arrayOf(string), [], props.value),
     Array.from(leafTerms)
   );
+
+  /* Preset button behavior:
+   * - If none selected, disable save button
+   * - If no preset set, disable apply button
+   * - If preset set and selection exactly matches preset, show save checkmark and disable save button
+   * - If preset set and all applicable presets equals selection, show apply checkmark and disable apply button
+   */
+  const sortedSelection = _.sortBy(currentSelection);
+  const showApplyButtonCheckmark =
+    organismValuePreset != null &&
+    _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
+  const disableApplyButton =
+    organismValuePreset == null || showApplyButtonCheckmark;
+  const showSaveButtonCheckmark =
+    organismValuePreset != null &&
+    _.isEqual(sortedSelection, _.sortBy(organismValuePreset));
+  const disableSaveButton =
+    currentSelection.length == 0 || showSaveButtonCheckmark;
 
   const updateOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
     event
@@ -267,31 +300,81 @@ function TreeBoxOrganismEnumParam(
     ]
   );
 
-  let savePresetText =
-    'Apply ' + (localOrganismValuePreset?.length || '') + ' preset values';
+  // preset buttons componenet to be passed to the tree
+  let applyButtonText =
+    organismValuePreset == null
+      ? 'No preset values have been saved'
+      : 'Apply my ' + organismValuePreset.length + ' preset values';
   let buttonStyle = { margin: '5px', borderRadius: '6px' };
+  let saveButtonText = (function (size: number) {
+    switch (size) {
+      case 0:
+        return 'Unable to save zero selections';
+      case 1:
+        return 'Save this 1 value as my preset';
+      default:
+        return 'Save these ' + size + ' values as my preset';
+    }
+  })(currentSelection.length);
   let PresetButtons = (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      {presetSaving && (
-        <>
-          <Icon style={{ margin: '5px' }} fa="spinner" />{' '}
-        </>
-      )}
-      <button
-        style={buttonStyle}
-        value="Save current as preset"
-        onClick={updateOrgValuePref}
+      <div
+        style={{
+          display: 'inline-block',
+          borderRadius: '5px',
+          border: '1px solid gray',
+        }}
       >
-        <Icon fa="folder-open" /> Save selection as preset
-      </button>
-      <button
-        style={buttonStyle}
-        disabled={localOrganismValuePreset == null}
-        value={savePresetText}
-        onClick={selectOrgValuePref}
-      >
-        <Icon fa="play" /> {savePresetText}
-      </button>
+        <span style={{ fontWeight: 'bold', margin: '9px' }}>
+          Use Organism Presets{' '}
+        </span>
+        <HelpIcon>
+          <>
+            <p>
+              Organism Presets allow you to save and apply a selection of
+              organisms across various {projectId} searches. Select a set of
+              organisms you commonly use and click 'Save'. Then in any search
+              with an organism parameter, you can apply your saved selection.
+            </p>
+            <p>
+              Some searchs have different organism vocabularies; only those
+              saved selections applicable to each search will be used, and your
+              saved selection will not change unless you click 'Save' again.
+            </p>
+          </>
+        </HelpIcon>{' '}
+        {presetSaving && (
+          <>
+            <Icon style={{ margin: '5px' }} fa="spinner" />{' '}
+          </>
+        )}
+        <button
+          style={buttonStyle}
+          disabled={disableSaveButton}
+          value={saveButtonText}
+          onClick={updateOrgValuePref}
+        >
+          <Icon fa="folder-open" /> {saveButtonText}
+        </button>
+        {showSaveButtonCheckmark && (
+          <>
+            <Icon style={{ margin: '5px' }} fa="check" />{' '}
+          </>
+        )}
+        <button
+          style={buttonStyle}
+          disabled={disableApplyButton}
+          value={applyButtonText}
+          onClick={applyOrgValuePref}
+        >
+          <Icon fa="play" /> {applyButtonText}
+        </button>
+        {showApplyButtonCheckmark && (
+          <>
+            <Icon style={{ margin: '5px' }} fa="check" />{' '}
+          </>
+        )}
+      </div>
     </div>
   );
 

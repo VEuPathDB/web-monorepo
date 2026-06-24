@@ -185,8 +185,6 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
       ? checkboxTreeProps
       : props.wrapCheckboxTreeProps(checkboxTreeProps);
 
-  const postSelectionElement = props.postSelectionElement || <></>;
-
   return (
     <div className="wdk-TreeBoxParam">
       <SelectionInfo
@@ -194,7 +192,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         {...selectionCounts}
         alwaysShowCount
       />
-      {postSelectionElement}
+      {props.postSelectionElement}
       <CheckboxTree {...wrappedCheckboxTreeProps} />
     </div>
   );
