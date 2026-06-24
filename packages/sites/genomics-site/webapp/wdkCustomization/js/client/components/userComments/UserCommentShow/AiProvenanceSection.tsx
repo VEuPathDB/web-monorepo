@@ -13,7 +13,8 @@ interface Props {
 // AI provenance shown below the comment content (the headline + content stay the
 // visual priority; the "AI-assisted" pill in the header does the highlighting).
 // Rendered as labelled rows in the same style as the other references, with the
-// source under the standard "PMID(s)" heading so AI and human comments match.
+// source under the standard "PubMed Article(s)" heading so AI and human comments
+// match.
 export function AiProvenanceSection({ aiProvenance }: Props): JSX.Element {
   const { isEdited, source, originalHeadline, originalContent } = aiProvenance;
 
@@ -45,7 +46,7 @@ export function AiProvenanceSection({ aiProvenance }: Props): JSX.Element {
       </Row>
 
       {source.kind === 'pubmed' ? (
-        <Row label="PMID(s)">
+        <Row label="PubMed Article(s)">
           <LazyPubmedPreview pubmedId={source.pubmedId} />
         </Row>
       ) : (
