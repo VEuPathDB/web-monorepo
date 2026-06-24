@@ -1,4 +1,3 @@
-import { projectId } from '@veupathdb/web-common/lib/config';
 import { ReactElement } from 'react';
 import {
   FieldHelpText,
@@ -61,7 +60,8 @@ export function ExperimentalOrganism({
         </p>
 
         <div className={'field-grid' + disabledClass}>
-          {projectId === 'ClinEpiDB' ? (
+          {datasetDetails.installTargets !== undefined &&
+          datasetDetails.installTargets[0] === 'ClinEpiDB' ? (
             <>
               <label className="not-disabled" id={ExpOrganismToggleID}>
                 Available Experimental Organism?
