@@ -1,4 +1,4 @@
-import React, { ReactElement, RefObject, useMemo, useRef } from 'react';
+import React, { ReactElement, RefObject, useEffect, useMemo, useRef } from 'react';
 import { partialRight } from 'lodash';
 
 import {
@@ -8,8 +8,8 @@ import {
   BiConsumer,
 } from '../../../../../Utils';
 import {
-  DatasetPostDetails,
-  PostCharacteristics,
+  PartialDatasetDetails,
+  PartialCharacteristics,
   SampleYearRange,
 } from '../../../../../Service';
 import {
@@ -18,14 +18,14 @@ import {
   InputPair,
   YesNoToggle,
 } from '../../index';
-import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../../Configuration/DatasetFormConfig';
 
 export const FieldStudyToggleID = 'field-study-toggle';
 
 export interface CharacteristicsSectionProps {
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta: PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly pathBuilder: JsonPathBuilder;
@@ -41,13 +41,23 @@ export function CharacteristicsSection({
   formProps,
 }: CharacteristicsSectionProps): ReactElement {
   const { isStudy: enabled } = clientSideState;
+
+  const setEnabled = (enabled: boolean) =>
+    setClientSideState({ ...clientSideState, isStudy: enabled });
+
+  useEffect(
+    () => {
+      if (enabled === undefined && metadata.datasetCharacteristics !== undefined)
+        setEnabled(true);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ enabled, metadata.datasetCharacteristics ],
+  );
+
   const safeCharacteristics = metadata.datasetCharacteristics ?? {
     studyDesign: formProps.studyDesignVocab[0][0],
     studyType: formProps.studyDesignVocab[0][1],
   };
-
-  const setEnabled = (enabled: boolean) =>
-    setClientSideState({ ...clientSideState, isStudy: enabled });
 
   const requireAll = useMemo(
     () => enabled === true && metadata.visibility === 'public',
@@ -55,7 +65,7 @@ export function CharacteristicsSection({
   );
 
   const setRootField = partialRight(
-    changeHandler<PostCharacteristics>,
+    changeHandler<PartialCharacteristics>,
     safeCharacteristics,
     (v) => setMetadata({ ...metadata, datasetCharacteristics: v })
   );
@@ -105,7 +115,7 @@ export function CharacteristicsSection({
           values={safeCharacteristics.countries}
           required={requireAll}
           setValues={setRootField('countries')}
-          jsonPath={jsonPath.append<PostCharacteristics>('countries')}
+          jsonPath={jsonPath.append<PartialCharacteristics>('countries')}
           disabled={enabled !== true}
           helpText={
             'Country where data or samples were collected from the study population.'
@@ -116,7 +126,7 @@ export function CharacteristicsSection({
           years={safeCharacteristics.years}
           setYears={setRootField('years')}
           required={requireAll}
-          jsonPath={jsonPath.append<PostCharacteristics>('years')}
+          jsonPath={jsonPath.append<PartialCharacteristics>('years')}
           disabled={enabled !== true}
         />
 
@@ -126,7 +136,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.studySpecies}
           setValues={setRootField('studySpecies')}
-          jsonPath={jsonPath.append<PostCharacteristics>('studySpecies')}
+          jsonPath={jsonPath.append<PartialCharacteristics>('studySpecies')}
           disabled={enabled !== true}
           helpText={
             'Scientific name of the population the study is based on (e.g.,' +
@@ -141,7 +151,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.outcomes}
           setValues={setRootField('outcomes')}
-          jsonPath={jsonPath.append<PostCharacteristics>('outcomes')}
+          jsonPath={jsonPath.append<PartialCharacteristics>('outcomes')}
           disabled={enabled !== true}
           helpText={
             'Primary disease, condition, or outcome being studied (e.g.,' +
@@ -155,7 +165,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.associatedFactors}
           setValues={setRootField('associatedFactors')}
-          jsonPath={jsonPath.append<PostCharacteristics>('associatedFactors')}
+          jsonPath={jsonPath.append<PartialCharacteristics>('associatedFactors')}
           disabled={enabled !== true}
           helpText={
             'Pathogen, exposure, or risk factor associated with the outcome' +
@@ -164,7 +174,7 @@ export function CharacteristicsSection({
           }
         />
 
-        <InputPair<PostCharacteristics>
+        <InputPair<PartialCharacteristics>
           fieldName="participantAges"
           label="Participant Ages"
           disabled={enabled !== true}
@@ -180,7 +190,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.sampleTypes}
           setValues={setRootField('sampleTypes')}
-          jsonPath={jsonPath.append<PostCharacteristics>('sampleTypes')}
+          jsonPath={jsonPath.append<PartialCharacteristics>('sampleTypes')}
           disabled={enabled !== true}
           helpText={
             'Type(s) of biological or environmental samples represented in' +

@@ -8,7 +8,7 @@ import {
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { GlobeIcon, InputPair, UploadButton } from '../../index';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
-import { DatasetPostDetails, DatasetUploads } from '../../../../../Service';
+import { PartialDatasetDetails, DatasetUploads } from '../../../../../Service';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useDatasetFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
@@ -62,11 +62,11 @@ export function RootDetailsSection(
   const dispatch = useDispatch();
   const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
 
-  const nameKey = jsonPath.appendToString<DatasetPostDetails>('name');
-  const summaryKey = jsonPath.appendToString<DatasetPostDetails>('summary');
+  const nameKey = jsonPath.appendToString<PartialDatasetDetails>('name');
+  const summaryKey = jsonPath.appendToString<PartialDatasetDetails>('summary');
 
   const setMetadata = useCallback(
-    (datasetDetails: DatasetPostDetails) =>
+    (datasetDetails: PartialDatasetDetails) =>
       dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
     [dispatch, fileUploads, formMetaState]
   );

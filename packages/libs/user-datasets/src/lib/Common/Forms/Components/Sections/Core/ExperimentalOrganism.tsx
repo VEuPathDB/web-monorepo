@@ -2,13 +2,13 @@ import React, { ReactElement } from 'react';
 import { FieldHelpText, InputBlock, InputPair } from '../../index';
 import { partialRight } from 'lodash';
 import { changeHandler, Consumer, JsonPathBuilder } from '../../../../../Utils';
-import { DatasetPostDetails } from '../../../../../Service';
-import { PostOrganism } from '../../../../../Service/Model/request-types';
+import { PartialDatasetDetails } from '../../../../../Service';
+import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { isNonBlankString } from '../../../../../Utils/value-tests';
 
 export interface ExperimentalOrganismProps {
-  readonly setDatasetDetails: Consumer<DatasetPostDetails>;
-  readonly datasetDetails: DatasetPostDetails;
+  readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
+  readonly datasetDetails: PartialDatasetDetails;
   readonly jsonPath: JsonPathBuilder;
 }
 
@@ -16,7 +16,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
   const safeExperimentalOrganism = props.datasetDetails.experimentalOrganism ?? {};
 
   const onChange = partialRight(
-    changeHandler<PostOrganism>,
+    changeHandler<PartialOrganism>,
     safeExperimentalOrganism,
     org => props.setDatasetDetails({ ...props.datasetDetails, experimentalOrganism: org })
   );
@@ -38,7 +38,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
           <InputPair
             label="Species"
             type="text"
-            fieldName={props.jsonPath.appendToString<PostOrganism>('species')}
+            fieldName={props.jsonPath.appendToString<PartialOrganism>('species')}
             value={props.datasetDetails.experimentalOrganism?.species}
             onChange={onChange('species')}
             required={required}
@@ -53,7 +53,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
           <InputPair
             label="Strain"
             type="text"
-            fieldName={props.jsonPath.appendToString<PostOrganism>('strain')}
+            fieldName={props.jsonPath.appendToString<PartialOrganism>('strain')}
             value={props.datasetDetails.experimentalOrganism?.strain}
             required={required}
             onChange={onChange('strain')}

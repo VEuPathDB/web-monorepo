@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
-import { DatasetPostDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetInformationSection } from './DatasetInformationSection';
 
 export interface RecommendedInformationProps {
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta: PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 

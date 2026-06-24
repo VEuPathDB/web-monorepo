@@ -6,7 +6,7 @@ import {
   ClientSideUploadFormState,
   useDatasetFormState,
 } from '../../../../StoreModules/UserDatasetUploadStoreModule';
-import { DatasetPostDetails } from '../../../../Service';
+import { PartialDatasetDetails } from '../../../../Service';
 import { updateFormState } from '../../../../Actions/UserDatasetUploadActions';
 import { RecommendedInformation } from './Recommended';
 import { DatasetFormProps } from '../../DatasetFormProps';
@@ -24,7 +24,7 @@ export function MetadataSection({
   const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
 
   const setMetadata = useCallback(
-    (datasetDetails: DatasetPostDetails) =>
+    (datasetDetails: PartialDatasetDetails) =>
       dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
     [dispatch, fileUploads, formMetaState]
   );

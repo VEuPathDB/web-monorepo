@@ -4,15 +4,17 @@ import { PartialButtonStyleSpec } from '@veupathdb/coreui/lib/components/buttons
 import React, { useMemo } from 'react';
 
 interface Props {
-  enablePublicUserDatasets: boolean;
-  buttonText: string;
-  onPress: (grantType: 'community' | 'individual') => void;
+  readonly disableCommunityReason?: string;
+  readonly communityDatasetsEnabled: boolean;
+  readonly buttonText: string;
+  readonly onPress: (grantType: 'community' | 'individual') => void;
 }
 
 export function ThemedGrantAccessButton({
   buttonText,
   onPress,
-  enablePublicUserDatasets,
+  communityDatasetsEnabled,
+  disableCommunityReason,
 }: Props) {
   const theme = useUITheme();
   const bgHue = theme?.palette.primary.hue;
@@ -54,7 +56,7 @@ export function ThemedGrantAccessButton({
     [bgHue, bgLevel]
   );
 
-  if (!enablePublicUserDatasets) {
+  if (!communityDatasetsEnabled) {
     return (
       <MesaButton
         text={buttonText}
@@ -72,12 +74,11 @@ export function ThemedGrantAccessButton({
       styleOverrides={styleOverrides}
       items={[
         {
-          display: (
-            <>
-              <Share fill="black" /> Public access
-            </>
-          ),
+          display: disableCommunityReason
+            ? <span title={disableCommunityReason}><Share fill="black" /> Public access</span>
+            : <><Share fill="black" /> Public access</>,
           value: 'community',
+          disabled: true
         },
         {
           display: (

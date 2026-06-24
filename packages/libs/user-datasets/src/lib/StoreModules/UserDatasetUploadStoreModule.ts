@@ -9,7 +9,7 @@ import {
 
 import { UserDatasetUpload } from '../Utils/types';
 import {
-  DatasetPostDetails,
+  PartialDatasetDetails,
   DatasetUploads,
   ValidationErrors,
 } from '../Service';
@@ -39,7 +39,7 @@ function defaultClientOnlyFormState(): ClientSideUploadFormState {
 }
 
 export interface DatasetFormState {
-  readonly datasetDetails: DatasetPostDetails;
+  readonly datasetDetails: PartialDatasetDetails;
   readonly fileUploads: DatasetUploads;
   readonly formMetaState: ClientSideUploadFormState;
 }
@@ -57,7 +57,7 @@ export function useDatasetFormState(): DatasetFormState {
   ) ?? DefaultUploadFormState;
 }
 
-export function useDatasetFormMetadata(): DatasetPostDetails {
+export function useDatasetFormMetadata(): PartialDatasetDetails {
   return useSelector(
     (state: StateSlice) => state.userDatasetUpload.formState?.datasetDetails,
     isEqual,

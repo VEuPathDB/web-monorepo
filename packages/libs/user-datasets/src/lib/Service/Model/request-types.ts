@@ -2,11 +2,14 @@ import * as vdi from './response-decoders';
 
 import {
   DatasetCharacteristics,
+  DatasetContact, DatasetFundingAward,
   DatasetMetaBase,
   DatasetOrganism,
+  DatasetPublication,
   DatasetSource as ApiSource,
-  DatasetVisibility,
-  SampleYearRange,
+  DatasetVisibility, ExternalIdentifiers,
+  LinkedDataset,
+  SampleYearRange
 } from './response-decoders';
 
 import { DatasetTypeSelection } from '../../Common/Configuration';
@@ -15,19 +18,34 @@ export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
 
 // region Create Dataset
 
-export type DatasetPostDetails = Readonly<
-  Partial<Omit<DatasetMetaBase, 'datasetCharacteristics' | 'datasetSources' | 'experimentalOrganism'>>
+export type PartialDatasetDetails = Readonly<
+  Partial<Omit<
+    DatasetMetaBase,
+    'datasetCharacteristics'
+    | 'datasetSources'
+    | 'experimentalOrganism'
+    | 'hostOrganism'
+    | 'publications'
+    | 'contacts'
+    | 'linkedDatasets'
+    | 'funding'
+  >>
 > & {
   readonly type?: DatasetTypeSelection;
   readonly visibility?: DatasetVisibility;
-  readonly datasetCharacteristics?: PostCharacteristics;
-  readonly datasetSources?: PostDatasetSource[];
-  readonly experimentalOrganism?: PostOrganism;
+  readonly datasetCharacteristics?: PartialCharacteristics;
+  readonly datasetSources?: readonly PostDatasetSource[];
+  readonly experimentalOrganism?: PartialOrganism;
+  readonly hostOrganism?: PartialOrganism;
+  readonly publications?: readonly PartialDatasetPublication[];
+  readonly contacts?: readonly PartialDatasetContact[];
+  readonly linkedDatasets?: readonly PartialLinkedDataset[];
+  readonly funding?: readonly PartialDatasetFunding[];
 };
 
-export type PostOrganism = Readonly<Partial<DatasetOrganism>>;
+export type PartialOrganism = Readonly<Partial<DatasetOrganism>>;
 
-export type PostCharacteristics = Readonly<
+export type PartialCharacteristics = Readonly<
   Partial<Omit<DatasetCharacteristics, 'years'>>
 > & {
   readonly years?: PostSampleYearRange;
@@ -37,19 +55,56 @@ export type PostSampleYearRange = Readonly<Partial<SampleYearRange>>;
 
 export type PostDatasetSource = Readonly<Partial<ApiSource>>;
 
+export type PartialDatasetPublication = Readonly<Partial<DatasetPublication>>;
+
+export type PartialDatasetContact = Readonly<Partial<DatasetContact>>;
+
+export type PartialLinkedDataset = Readonly<Partial<LinkedDataset>>;
+
+export type PartialDatasetFunding = Readonly<Partial<DatasetFundingAward>>;
+
 // endregion CreateDataset
 
 // region Patch Dataset
 
-interface ValuePatch<T> {
-  value: T;
+export interface ValuePatch<T> {
+  readonly value: T;
 }
 
-interface OptionalValuePatch<T> {
-  value?: T;
+export interface OptionalValuePatch<T> {
+  readonly value?: T;
 }
 
-export interface StudyCharacteristicsPatch {
+export type PatchableDatasetDetails = Omit<
+  PartialDatasetDetails,
+  'installTargets'
+  | 'origin'
+  | 'dependencies'
+>;
+
+export interface DatasetPatchRequest {
+  readonly type?: ValuePatch<DatasetTypeSelection>;
+  readonly visibility?: ValuePatch<vdi.DatasetVisibility>;
+  readonly name?: ValuePatch<string>;
+  readonly summary?: ValuePatch<string>;
+  readonly description?: OptionalValuePatch<string>;
+  readonly publications?: OptionalValuePatch<Array<vdi.DatasetPublication>>;
+  readonly contacts?: OptionalValuePatch<Array<vdi.DatasetContact>>;
+  readonly projectName?: OptionalValuePatch<string>;
+  readonly programName?: OptionalValuePatch<string>;
+  readonly linkedDatasets?: OptionalValuePatch<Array<vdi.LinkedDataset>>;
+  readonly experimentalOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
+  readonly hostOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
+  readonly studyCharacteristics?: DatasetCharacteristicsPatch;
+  readonly externalIdentifiers?: ExternalIdentifiersPatch;
+  readonly funding?: OptionalValuePatch<Array<vdi.DatasetFundingAward>>;
+  readonly shortAttribution?: OptionalValuePatch<string>;
+  readonly daysForApproval?: OptionalValuePatch<number>;
+  readonly dataDisclaimer?: OptionalValuePatch<string>;
+  readonly datasetSources?: OptionalValuePatch<Array<vdi.DatasetSource>>;
+}
+
+export interface DatasetCharacteristicsPatch {
   readonly studyDesign?: OptionalValuePatch<string>;
   readonly studyType?: OptionalValuePatch<string>;
   readonly countries?: OptionalValuePatch<Array<string>>;
@@ -65,28 +120,6 @@ export interface ExternalIdentifiersPatch {
   readonly dois?: OptionalValuePatch<Array<vdi.DOIReference>>;
   readonly hyperlinks?: OptionalValuePatch<Array<vdi.DatasetHyperlink>>;
   readonly bioprojectIds?: OptionalValuePatch<Array<vdi.BioProjectId>>;
-}
-
-export interface DatasetPatchRequest {
-  readonly type?: ValuePatch<DatasetTypeSelection>;
-  readonly visibility?: ValuePatch<vdi.DatasetVisibility>;
-  readonly name?: ValuePatch<string>;
-  readonly summary?: ValuePatch<string>;
-  readonly description?: OptionalValuePatch<string>;
-  readonly publications?: OptionalValuePatch<Array<vdi.DatasetPublication>>;
-  readonly contacts?: OptionalValuePatch<Array<vdi.DatasetContact>>;
-  readonly projectName?: OptionalValuePatch<string>;
-  readonly programName?: OptionalValuePatch<string>;
-  readonly linkedDatasets?: OptionalValuePatch<Array<vdi.LinkedDataset>>;
-  readonly experimentalOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
-  readonly hostOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
-  readonly studyCharacteristics?: StudyCharacteristicsPatch;
-  readonly externalIdentifiers?: ExternalIdentifiersPatch;
-  readonly funding?: OptionalValuePatch<Array<vdi.DatasetFundingAward>>;
-  readonly shortAttribution?: OptionalValuePatch<string>;
-  readonly daysForApproval?: OptionalValuePatch<number>;
-  readonly dataDisclaimer?: OptionalValuePatch<string>;
-  readonly datasetSources?: OptionalValuePatch<Array<vdi.DatasetSource>>;
 }
 
 // endregion Patch Dataset

@@ -424,6 +424,11 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
 
   renderDatasetActions() {
     const { isOwner } = this.props;
+
+    const notInstalledMessage = this.isInstalled()
+      ? undefined
+      : 'Datasets that have not been installed cannot be made public.'
+
     return (
       <div className={classify('Actions')}>
         {!isOwner ? null : (
@@ -442,7 +447,8 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
                   break;
               }
             }}
-            enablePublicUserDatasets={this.props.enablePublicUserDatasets}
+            disableCommunityReason={notInstalledMessage}
+            communityDatasetsEnabled={this.props.enablePublicUserDatasets}
           />
         )}
         {isOwner ? (

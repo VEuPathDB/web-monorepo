@@ -59,7 +59,9 @@ export function GrowableStringList({
 
   return (
     <>
-      <label>{props.labelPlural}</label>
+      <label className={props.required ? 'required' : undefined}>
+        {props.labelPlural}
+      </label>
       <ol className="multi-input">
         <InputList
           values={safeValues}
@@ -108,31 +110,4 @@ function InputList(props: InputListProps): ReactElement {
       );
     })}
   </>;
-}
-
-function createListInputs(
-  values: string[],
-  setValues: Consumer<string[]>,
-  jsonPath: JsonPathBuilder,
-  disabled: boolean,
-  required: boolean,
-): ReactElement[] {
-  return values.map((value, index) => {
-    const fieldName = jsonPath.appendToString(index);
-
-    return (
-      <li key={fieldName}>
-        <input
-          type="text"
-          name={fieldName}
-          id={fieldName}
-          onChange={textChange((v) => {
-            if (!disabled) setValues(replaceElement(values, index, v ?? ''));
-          })}
-          value={value}
-          disabled={disabled}
-        />
-      </li>
-    );
-  });
 }

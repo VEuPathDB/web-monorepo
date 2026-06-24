@@ -2,32 +2,24 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { AddRowButton, InputBlock } from '../../../index';
 import { Consumer, JsonPathBuilder } from '../../../../../../Utils';
-import { DatasetContact, DatasetPostDetails } from '../../../../../../Service';
+import { DatasetContact, PartialDatasetDetails } from '../../../../../../Service';
 import { ContactBlock } from './ContactBlock';
 import { isEmpty } from 'lodash';
 
 export interface CollaboratorsSectionProps {
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta: PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly pathBuilder: JsonPathBuilder;
 }
 
 export function CollaboratorsSection(
   props: CollaboratorsSectionProps
 ): ReactElement {
-  const safeContacts = useMemo(
-    () => isEmpty(props.datasetMeta.contacts)
-      ? [ {} ]
-      : props.datasetMeta.contacts!,
-    [ props.datasetMeta.contacts ]
-  );
+  const safeContacts = isEmpty(props.datasetMeta.contacts)
+    ? [ {} ]
+    : props.datasetMeta.contacts!;
 
-  const hasPrimary = useMemo(
-    () => safeContacts.some(it => it.isPrimary),
-    [ safeContacts ]
-  );
-
-  const [selection, setSelection] = useState(-1);
+  const hasPrimary = safeContacts.some(it => it.isPrimary);
 
   const setContacts = (contacts: Array<DatasetContact>) =>
     props.setDatasetMeta({ ...props.datasetMeta, contacts: contacts });
@@ -37,21 +29,13 @@ export function CollaboratorsSection(
       Array.isArray(props.datasetMeta.contacts) &&
       props.datasetMeta.contacts.length > 0
     ) {
-      const newContacts = [...props.datasetMeta.contacts];
-      newContacts[index] = contact;
+      const newContacts = scrubContactPrimaries(props.datasetMeta.contacts, contact.isPrimary === true);
+      newContacts[index] = scrubContactPrimary(contact);
       setContacts(newContacts);
     } else {
-      setContacts([contact]);
+      setContacts([scrubContactPrimary(contact)]);
     }
   };
-
-  useEffect(() => {
-    for (let i = 0; i < safeContacts.length; i++) {
-      if (i !== selection && safeContacts[i].isPrimary) {
-        safeContacts[i] = { ...safeContacts[i], isPrimary: undefined };
-      }
-    }
-  }, [selection, safeContacts]);
 
   const isPublic = props.datasetMeta.visibility === 'public';
 
@@ -65,8 +49,6 @@ export function CollaboratorsSection(
         index={index}
         contact={contact}
         updateContact={onUpdateContact}
-        selection={selection}
-        setSelection={setSelection}
         isPublic={isPublic}
         primaryExists={hasPrimary}
       />
@@ -93,4 +75,19 @@ export function CollaboratorsSection(
       </div>
     </InputBlock>
   );
+}
+
+function scrubContactPrimaries(contacts: readonly DatasetContact[], unsetAll: boolean = false): DatasetContact[] {
+  return unsetAll
+    ? contacts.map(({ isPrimary: _, ...contact }) => contact)
+    : contacts.map(scrubContactPrimary);
+}
+
+function scrubContactPrimary(contact: DatasetContact): DatasetContact {
+  if (contact.isPrimary === true)
+    return contact;
+
+  const { isPrimary: _, ...prunedContact } = contact;
+
+  return prunedContact;
 }

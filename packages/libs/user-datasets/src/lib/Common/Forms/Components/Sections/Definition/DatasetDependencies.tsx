@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
-import { DatasetDependency, DatasetPostDetails } from '../../../../../Service';
+import { DatasetDependency, PartialDatasetDetails } from '../../../../../Service';
 import { Consumer } from '../../../../../Utils';
 import { DependenciesConfig } from '../../../../Configuration';
 
 export interface DatasetDependenciesProps {
-  readonly datasetDetails: DatasetPostDetails;
-  readonly setDatasetDetails: Consumer<DatasetPostDetails>;
+  readonly datasetDetails: PartialDatasetDetails;
+  readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
   readonly config: DependenciesConfig;
 }
 

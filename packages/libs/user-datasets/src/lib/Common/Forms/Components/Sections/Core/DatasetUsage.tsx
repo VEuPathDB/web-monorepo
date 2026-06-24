@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { DatasetPostDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock, YesNoToggle } from '../../index';
 import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
@@ -9,8 +9,8 @@ export const DatasetUsageToggleID = 'dataset-usage-toggle';
 export interface DatasetUsageProps {
   readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta: PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 
@@ -22,7 +22,7 @@ export function DatasetUsage({
   jsonPath,
 }: DatasetUsageProps): ReactElement {
   const fieldName =
-    jsonPath.appendToString<DatasetPostDetails>('dataDisclaimer');
+    jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
 
   const { hasDisclaimer } = clientSideState;
 

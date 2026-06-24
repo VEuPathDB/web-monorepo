@@ -1,8 +1,8 @@
 import {
-  DatasetPostDetails,
+  PartialDatasetDetails,
   DatasetPostResponseBody,
   DatasetUploads,
-  PostCharacteristics,
+  PartialCharacteristics,
 } from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
 import { BadUpload } from '../../StoreModules';
@@ -17,7 +17,7 @@ export interface NewDatasetSubmission {
   readonly onSuccess?: Consumer<DatasetPostResponseBody>;
   readonly onError?: Consumer<BadUpload>;
 
-  readonly details: DatasetPostDetails;
+  readonly details: PartialDatasetDetails;
   readonly uploads: DatasetUploads;
 }
 
@@ -59,7 +59,7 @@ export async function submitNewDataset({
  *
  * @param details
  */
-function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
+function scrubDetails(details: PartialDatasetDetails): PartialDatasetDetails {
   return {
     ...details,
 
@@ -87,7 +87,7 @@ function scrubDetails(details: DatasetPostDetails): DatasetPostDetails {
  * undefined will be returned.
  */
 function pruneSimpleRecords<T extends object>(
-  records: T[] | undefined
+  records: readonly T[] | undefined
 ): T[] | undefined {
   if (!records)
     return undefined;
@@ -141,8 +141,8 @@ function scrubSimpleObject(
 }
 
 function scrubDatasetCharacteristics(
-  dChars: PostCharacteristics | undefined
-): PostCharacteristics | undefined {
+  dChars: PartialCharacteristics | undefined
+): PartialCharacteristics | undefined {
   if (isEmpty(dChars)) return undefined;
 
   return {
@@ -166,7 +166,7 @@ function isEmptyObject(obj: Record<string, any>): boolean {
   return true;
 }
 
-function removeEmpties<T>(values: T[] | undefined): T[] | undefined {
+function removeEmpties<T>(values: readonly T[] | undefined): T[] | undefined {
   if (isEmpty(values)) return undefined;
 
   const out = [];

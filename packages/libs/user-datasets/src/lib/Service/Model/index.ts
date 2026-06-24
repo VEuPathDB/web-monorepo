@@ -1,8 +1,8 @@
 export type {
   DatasetPatchRequest,
-  DatasetPostDetails,
+  PartialDatasetDetails,
   DatasetPutDetails,
-  PostCharacteristics,
+  PartialCharacteristics,
   PostDatasetSource,
 } from './request-types';
 

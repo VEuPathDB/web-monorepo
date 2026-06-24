@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
-import { DatasetPostDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { changeHandler, Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { FieldHelpText, InputBlock } from '../../index';
 
 export interface DatasetInformationSectionProps {
-  readonly datasetMeta: DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta: PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 
@@ -13,7 +13,7 @@ export function DatasetInformationSection(
   props: DatasetInformationSectionProps
 ): ReactElement {
   const fieldName =
-    props.jsonPath.appendToString<DatasetPostDetails>('description');
+    props.jsonPath.appendToString<PartialDatasetDetails>('description');
 
   return (
     <InputBlock header="Dataset Information">

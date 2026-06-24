@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { CollaboratorsSection } from './Collaborators/CollaboratorsSection';
-import { DatasetPostDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
@@ -11,8 +11,8 @@ import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 
 export interface CoreDatasetInformationProps {
-  readonly datasetMeta:        DatasetPostDetails;
-  readonly setDatasetMeta:     Consumer<DatasetPostDetails>;
+  readonly datasetMeta:        PartialDatasetDetails;
+  readonly setDatasetMeta:     Consumer<PartialDatasetDetails>;
   readonly clientSideState:    ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath:           JsonPathBuilder;
@@ -42,7 +42,7 @@ export function CoreDatasetInformation({
       <CollaboratorsSection
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
-        pathBuilder={jsonPath.append<DatasetPostDetails>('contacts')}
+        pathBuilder={jsonPath.append<PartialDatasetDetails>('contacts')}
       />
 
       {formConfig.datasetCharacteristics?.enable && (
@@ -52,7 +52,7 @@ export function CoreDatasetInformation({
           setDatasetMeta={setDatasetMeta}
           clientSideState={clientSideState}
           setClientSideState={setClientSideState}
-          pathBuilder={jsonPath.append<DatasetPostDetails>(
+          pathBuilder={jsonPath.append<PartialDatasetDetails>(
             'datasetCharacteristics'
           )}
         />
@@ -62,7 +62,7 @@ export function CoreDatasetInformation({
         <ExperimentalOrganism
           setDatasetDetails={setDatasetMeta}
           datasetDetails={datasetMeta}
-          jsonPath={jsonPath.append<DatasetPostDetails>('experimentalOrganism')}
+          jsonPath={jsonPath.append<PartialDatasetDetails>('experimentalOrganism')}
         />
       )}
 
@@ -71,7 +71,7 @@ export function CoreDatasetInformation({
         setDatasetMeta={setDatasetMeta}
         clientState={clientSideState}
         setClientState={setClientSideState}
-        jsonPath={jsonPath.append<DatasetPostDetails>('datasetSources')}
+        jsonPath={jsonPath.append<PartialDatasetDetails>('datasetSources')}
       />
 
       <DatasetUsage

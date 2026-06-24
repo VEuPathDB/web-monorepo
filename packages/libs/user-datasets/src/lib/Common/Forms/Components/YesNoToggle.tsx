@@ -13,8 +13,6 @@ export interface YesNoToggleProps {
 }
 
 export function YesNoToggle(props: YesNoToggleProps): ReactElement {
-  const [current, setCurrent] = useState(props.value);
-
   const yesId = props.fieldName + '-yes';
   const noId = props.fieldName + '-no';
 
@@ -34,26 +32,22 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
           value="1"
           idOverride={yesId}
           fieldName={props.fieldName}
-          checked={current === true}
+          checked={props.value === true}
           required={props.required}
           flipped={true}
-          onChange={(e) => {
-            setCurrent(e.currentTarget.checked);
-            props.setValue(e.currentTarget.checked);
-          }} />
+          onChange={(e) => props.setValue(e.currentTarget.checked)}
+        />
         <InputPair
           label="No"
           type="radio"
           value="0"
           idOverride={noId}
           fieldName={props.fieldName}
-          checked={current === false}
+          checked={props.value === false}
           required={props.required}
           flipped={true}
-          onChange={(e) => {
-            setCurrent(!e.currentTarget.checked);
-            props.setValue(!e.currentTarget.checked);
-          }} />
+          onChange={(e) => props.setValue(!e.currentTarget.checked)}
+        />
       </p>
       {helpText}
     </>

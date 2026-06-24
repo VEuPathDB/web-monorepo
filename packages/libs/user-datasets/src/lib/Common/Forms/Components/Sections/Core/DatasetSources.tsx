@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 
 import { InputBlock, InputPair, YesNoToggle } from '../../index';
-import { DatasetPostDetails, PostDatasetSource } from '../../../../../Service';
+import { PartialDatasetDetails, PostDatasetSource } from '../../../../../Service';
 import {
   BiConsumer,
   Consumer,
@@ -15,8 +15,8 @@ import { isEmpty } from 'lodash';
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
 export interface DatasetSourcesProps {
-  readonly datasetMeta:    DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta:    PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly clientState:    ClientSideUploadFormState;
   readonly setClientState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath:       JsonPathBuilder;
@@ -31,13 +31,14 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
       hasExternalSources: v,
     });
 
-  const safeSources = props.datasetMeta.datasetSources ?? [];
-  if (safeSources.length < 1) safeSources.push({});
+  const safeSources = isEmpty(props.datasetMeta.datasetSources)
+    ? [{}]
+    : props.datasetMeta.datasetSources!;
 
   const disabledClass = enabled ? '' : ' disabled-fields';
 
   const updateSources = arrayChangeHandler<
-    DatasetPostDetails,
+    PartialDatasetDetails,
     'datasetSources'
   >('datasetSources', props.datasetMeta, props.setDatasetMeta);
 

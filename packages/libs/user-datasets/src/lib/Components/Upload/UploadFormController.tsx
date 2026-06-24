@@ -1,5 +1,5 @@
 import {
-  DatasetPostDetails,
+  PartialDatasetDetails,
   DatasetPostResponseBody,
   VdiServiceMetadata,
 } from '../../Service';
@@ -161,7 +161,7 @@ function validateFormState(
 function filterDetails({
   formMetaState,
   datasetDetails,
-}: DatasetFormState): DatasetPostDetails {
+}: DatasetFormState): PartialDatasetDetails {
   const filtered = { ...datasetDetails };
 
   if (!formMetaState.isStudy) delete filtered['datasetCharacteristics'];

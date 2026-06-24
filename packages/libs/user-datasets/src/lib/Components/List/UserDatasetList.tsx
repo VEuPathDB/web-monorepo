@@ -455,7 +455,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
             }}
             // FIXME: 2026-06-08 16:38 - Disabled for now due to complexity of
             //   public dataset sharing requirements.
-            enablePublicUserDatasets={false}
+            communityDatasetsEnabled={false}
           />
         ),
         selectionRequired: true,

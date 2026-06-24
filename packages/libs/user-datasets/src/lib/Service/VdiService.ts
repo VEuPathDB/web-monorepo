@@ -22,7 +22,7 @@ import {
   DatasetId,
   DatasetListEntry,
   DatasetPatchRequest,
-  DatasetPostDetails,
+  PartialDatasetDetails,
   DatasetPostResponseBody,
   DatasetPutDetails,
   DatasetPutResponseBody,
@@ -94,7 +94,7 @@ export class VdiService extends FetchClientWithCredentials {
   }
 
   async postDataset(
-    details: DatasetPostDetails,
+    details: PartialDatasetDetails,
     uploads: DatasetUpload[],
     dispatchUploadProgress?: Consumer<number>,
     dispatchPageRedirect?: Consumer<DatasetPostResponseBody>,

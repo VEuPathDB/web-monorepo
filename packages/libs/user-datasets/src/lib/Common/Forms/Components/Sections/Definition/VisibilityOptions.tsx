@@ -1,12 +1,12 @@
 import React, { ReactElement } from 'react';
-import { DatasetPostDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetVisibility } from '../../../../../Service/Model';
 import { InputPair } from '../../InputPair';
 
 export interface VisibilityOptionProps {
-  readonly datasetMeta:    DatasetPostDetails;
-  readonly setDatasetMeta: Consumer<DatasetPostDetails>;
+  readonly datasetMeta:    PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath:       JsonPathBuilder;
 }
 
@@ -14,7 +14,7 @@ export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
   const setVisibility = (v: DatasetVisibility) =>
     props.setDatasetMeta({ ...props.datasetMeta, visibility: v });
 
-  const fieldName = props.jsonPath.appendToString<DatasetPostDetails>('visibility');
+  const fieldName = props.jsonPath.appendToString<PartialDatasetDetails>('visibility');
 
   return <>
     <span className="multi-input-label">Data Accessibility</span>

@@ -9,15 +9,6 @@ export interface ContactBlockProps {
   readonly path: JsonPathBuilder;
   readonly contact: DatasetContact;
   readonly updateContact: (contact: DatasetContact, index: number) => void;
-  readonly selection: number;
-
-  /**
-   * Changes the selected 'primary' contact to the contact object at the given
-   * index.
-   *
-   * All other contact objects will have their `isPrimary` flag unset.
-   */
-  readonly setSelection: Consumer<number>;
 
   /**
    * Whether the dataset visibility has been set to public.
@@ -153,11 +144,8 @@ export function ContactBlock(props: ContactBlockProps): ReactElement {
           type="checkbox"
           fieldName={makePath('isPrimary')}
           nameOverride="isPrimaryContact"
-          checked={props.index === props.selection}
-          onChange={(v) => {
-            onChangePart('isPrimary')(v);
-            props.setSelection(v ? props.index : -1);
-          }}
+          checked={props.contact.isPrimary}
+          onChange={(v) => onChangePart('isPrimary')(v)}
         />
       </div>
     </li>
