@@ -121,7 +121,7 @@ git commit -m "feat(user-comments): add viewport intersection hook for lazy PMID
 - [ ] **Step 1: Create the component**
 
 ```tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { GenomicsService } from '../../../wrapWdkService';
@@ -220,7 +220,6 @@ Notes: the original AI text is passed via Banner's `additionalMessage` (not `Col
 - [ ] **Step 1: Create the component**
 
 ```tsx
-import React from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { AiProvenance } from '../../../types/userCommentTypes';
 import { LazyPubmedPreview } from './LazyPubmedPreview';
@@ -341,7 +340,7 @@ These rows are lifted verbatim from the current controller's field list (`UserCo
 - [ ] **Step 1: Create the component**
 
 ```tsx
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { UserCommentGetResponse } from '../../../types/userCommentTypes';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
@@ -485,7 +484,6 @@ git commit -m "feat(user-comments): extract per-comment references renderer"
 - [ ] **Step 1: Create the component**
 
 ```tsx
-import React from 'react';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 export type CommentFilter = 'all' | 'user' | 'ai';
