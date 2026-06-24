@@ -120,6 +120,7 @@
 
     summary {
       cursor: pointer;
+      padding-bottom: 0.6em;
 
       &::marker {
         color: #aaa;
@@ -188,15 +189,22 @@
         padding: 0.625em 1em;
       }
 
+      .wdk-CategoriesCheckboxTree .top-level-node-wrapper {
+        padding: 7px 0;
+      }
+
       details {
         > .ebrc-HeaderMenuItemContent {
           display: list-item;
 
-          font-size: 0.9em;
+          font-size: 1em;
 
-          padding: 0.25em 0;
-          margin-left: 2.5em;
+          padding: 0.45em 0;
+          margin-left: 2em;
           color: #aaa;
+        }
+        :nth-last-child(1 of .ebrc-HeaderMenuItemContent) {
+          padding-bottom: 0;
         }
       }
 

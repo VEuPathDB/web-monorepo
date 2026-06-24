@@ -59,9 +59,11 @@ export function RecordHeading(props) {
     is_public,
     accessibility,
     owner_name,
+    category,
+    search_link,
+    veupathdb_id,
+    veupathdb_project,
   } = attributes;
-
-  let datasetID = record.id[0].value;
 
   return (
     <>
@@ -81,12 +83,18 @@ export function RecordHeading(props) {
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
+          {veupathdb_project !== 'ClinEpiDB' ? (
+            <>
+              <dt>Data type:</dt>
+              <dd>{category}</dd>
+            </>
+          ) : null}
 
           <dt>Uploaded by:</dt>
           <dd>{owner_name}</dd>
 
           <dt>VEuPathDB Dataset ID:</dt>
-          <dd>{datasetID}</dd>
+          <dd>{veupathdb_id}</dd>
 
           <dt>Dataset version / Date:</dt>
           <dd>v1, {creation_date}</dd>
@@ -114,6 +122,14 @@ export function RecordHeading(props) {
               </div>
             )}
           </dd>
+          {veupathdb_project !== 'ClinEpiDB' ? (
+            <>
+              <dt>Explore:</dt>
+              <dd>
+                <Link to={search_link.url}>{search_link.displayText}</Link>
+              </dd>
+            </>
+          ) : null}
         </dl>
       </div>
     </>
@@ -221,6 +237,10 @@ export function RecordAttributeSection(props) {
   const { DefaultComponent, ...restProps } = props;
   switch (restProps.attribute.name) {
     case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'exp_organism':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'ref_organism':
       return <BlockRecordAttributeSection {...restProps} />;
     case 'disclaimer':
       return <BlockRecordAttributeSection {...restProps} />;

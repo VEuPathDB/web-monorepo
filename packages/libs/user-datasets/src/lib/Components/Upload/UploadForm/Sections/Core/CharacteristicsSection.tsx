@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, RefObject, useRef } from 'react';
 import { partialRight } from 'lodash';
 
 import {
@@ -240,37 +240,53 @@ function YearsInputs({
   const startField = jsonPath.appendToString<SampleYearRange>('start');
   const endField = jsonPath.appendToString<SampleYearRange>('end');
 
+  const startRef = useRef<HTMLInputElement>(null);
+  const endRef = useRef<HTMLInputElement>(null);
+
   const setYear = disabled
     ? () => {}
-    : (k: keyof SampleYearRange, v: number | undefined) => {
-        if (!v) return;
+    : (
+      k: keyof SampleYearRange,
+      v: string | undefined,
+      ref: RefObject<HTMLInputElement>,
+    ) => {
+      if (!v)
+        return;
 
-        if (isNaN(v)) return;
+      const parsed = parseInt(v);
 
-        setYears({ ...safeYears, [k]: v });
-      };
+      if (isNaN(parsed))
+        return;
+
+      if (parsed < 1500 || parsed > 9999)
+        ref.current?.classList?.add('invalid')
+      else
+        ref.current?.classList?.remove('invalid')
+
+      setYears({ ...safeYears, [k]: parsed });
+    };
 
   return (
     <>
       <InputPair
         label="Start Year"
-        type="number"
-        minimum={1500}
+        type="text"
+        inputRef={startRef}
         fieldName={startField}
         helpText="Year (YYYY) when data collection was initiated."
-        value={safeYears.start}
-        onChange={(v) => setYear('start', v)}
+        value={safeYears.start?.toString()}
+        onChange={(v) => setYear('start', v, startRef)}
         disabled={disabled}
       />
 
       <InputPair
         label="End Year"
-        type="number"
-        minimum={1500}
+        type="text"
+        inputRef={endRef}
         fieldName={endField}
         helpText="Year (YYYY) when data collection was concluded."
-        value={safeYears.end}
-        onChange={(v) => setYear('end', v)}
+        value={safeYears.end?.toString()}
+        onChange={(v) => setYear('end', v, endRef)}
         disabled={disabled}
       />
     </>

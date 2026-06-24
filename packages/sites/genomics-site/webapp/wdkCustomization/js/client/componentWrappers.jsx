@@ -249,6 +249,7 @@ export function RecordTableDescription(DefaultComponent) {
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
+          !(record.recordClassName == 'UserDatasetRecordClasses.UserDatasetRecordClass')
           ontologyProperties.scope.includes('download');
 
         let hideDatasetLinkFromProperty =
@@ -258,7 +259,8 @@ export function RecordTableDescription(DefaultComponent) {
 
         let showDatasetsLink =
           record.tables[table.name] &&
-          !table.name.startsWith('UserDatasets') &&
+          !(record.recordClassName == 'UserDatasetRecordClasses.UserDatasetRecordClass') &&
+          !table.name.startsWith('UserDataset') &&
           !hideDatasetLinkFromProperty;
 
         var hasTaxonId = 0;
@@ -289,7 +291,8 @@ export function RecordTableDescription(DefaultComponent) {
                 </button>
               </span>
             )}
-            {hasTaxonId == 0 && showDatasetsLink && (
+           {/* UNTIL THESE LINKS GET FIXED in GENE PAGE
+	   {hasTaxonId == 0 && showDatasetsLink && (
               <Link
                 style={{
                   fontSize: '.8em',
@@ -327,7 +330,7 @@ export function RecordTableDescription(DefaultComponent) {
               >
                 <i className="fa fa-database" /> Datasets
               </Link>
-            )}
+            )} */}
           </div>
         );
 
