@@ -28,6 +28,7 @@ export interface ClientSideUploadFormState {
   readonly isStudy: boolean | undefined;
   readonly hasExternalSources: boolean | undefined;
   readonly hasDisclaimer: boolean | undefined;
+  readonly hasExpOrg: boolean | undefined;
 }
 
 function defaultClientOnlyFormState(): ClientSideUploadFormState {
@@ -35,6 +36,7 @@ function defaultClientOnlyFormState(): ClientSideUploadFormState {
     isStudy: undefined,
     hasExternalSources: undefined,
     hasDisclaimer: undefined,
+    hasExpOrg: undefined,
   };
 }
 
@@ -51,10 +53,12 @@ export const DefaultUploadFormState: UploadFormState = {
 };
 
 export function useUploadFormState(): UploadFormState {
-  return useSelector(
-    (state: StateSlice) => state.userDatasetUpload.formState,
-    isEqual,
-  ) ?? DefaultUploadFormState;
+  return (
+    useSelector(
+      (state: StateSlice) => state.userDatasetUpload.formState,
+      isEqual
+    ) ?? DefaultUploadFormState
+  );
 }
 
 export interface State {
