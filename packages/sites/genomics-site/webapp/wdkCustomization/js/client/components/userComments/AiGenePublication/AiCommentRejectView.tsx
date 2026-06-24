@@ -2,6 +2,7 @@ import React from 'react';
 import { AiGenePublicationJobStatus } from '../../../types/aiGenePublicationTypes';
 import { AiProvenanceSource } from '../../../types/userCommentTypes';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 // The two terminal statuses where the AI ran but produced nothing publishable.
 // They never reach the editor: publishing a from-scratch comment here would be
@@ -76,21 +77,15 @@ export function AiCommentRejectView(
         No AI-assisted comment was generated for gene {stableId}
       </h2>
 
-      <div
-        role="note"
-        style={{
-          backgroundColor: '#f5f5f5',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          padding: '12px 14px',
-          marginBottom: '16px',
+      <Banner
+        banner={{
+          type: 'normal',
+          role: 'note',
+          spacing: { margin: '0 0 16px', padding: '12px 14px' },
           fontSize: '14px',
-          color: '#333',
-          lineHeight: '1.5',
+          message: explanation,
         }}
-      >
-        {explanation}
-      </div>
+      />
 
       <p style={{ fontSize: '14px', color: '#555', marginBottom: '16px' }}>
         You can try a different publication, or go back to the gene page.

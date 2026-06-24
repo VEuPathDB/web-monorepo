@@ -42,6 +42,7 @@ import {
   RejectJobStatus,
 } from '../components/userComments/AiGenePublication/AiCommentRejectView';
 import { extractPdfText } from '../components/userComments/AiGenePublication/extractPdfText';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const POLL_INTERVAL_MS = 1000;
 const PUBMED_PREVIEW_DEBOUNCE_MS = 400;
@@ -731,24 +732,23 @@ function AiGenePublicationAddController({
   return (
     <div className="wdk-UserComments">
       {submitErrors != null && submitErrors.length > 0 && (
-        <div
-          role="alert"
-          style={{
-            maxWidth: '720px',
-            backgroundColor: '#fdf0f0',
-            border: '1px solid #e8a0a0',
-            borderRadius: '4px',
-            padding: '10px 14px',
-            marginBottom: '12px',
-            fontSize: '13px',
-            color: '#8b1a1a',
-          }}
-        >
-          <ul style={{ margin: 0, paddingLeft: '16px' }}>
-            {submitErrors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
+        <div style={{ maxWidth: '720px' }}>
+          <Banner
+            banner={{
+              type: 'error',
+              role: 'alert',
+              ariaLive: 'assertive',
+              spacing: { margin: '0 0 12px', padding: '10px 14px' },
+              fontSize: '13px',
+              message: (
+                <ul style={{ margin: 0, paddingLeft: '16px' }}>
+                  {submitErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              ),
+            }}
+          />
         </div>
       )}
       <AiGenePublicationAddView

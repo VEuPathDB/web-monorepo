@@ -5,6 +5,7 @@ import {
   PubmedPreviewEntry,
 } from '../../../types/userCommentTypes';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export interface AiCommentEditorBodyProps {
   heading: React.ReactNode;
@@ -139,21 +140,15 @@ export function AiCommentEditorBody(
       <ProvenancePanel source={source} pubmedPreview={pubmedPreview} />
 
       {noticeAboveEditor && (
-        <div
-          role="note"
-          style={{
-            backgroundColor: '#fff8e1',
-            border: '1px solid #f5c842',
-            borderRadius: '4px',
-            padding: '10px 12px',
-            marginBottom: SECTION_GAP,
+        <Banner
+          banner={{
+            type: 'warning',
+            role: 'note',
+            spacing: { margin: `0 0 ${SECTION_GAP}`, padding: '10px 12px' },
             fontSize: '13px',
-            color: '#7a5c00',
-            lineHeight: '1.5',
+            message: noticeAboveEditor,
           }}
-        >
-          {noticeAboveEditor}
-        </div>
+        />
       )}
 
       <div style={{ marginBottom: SECTION_GAP }}>

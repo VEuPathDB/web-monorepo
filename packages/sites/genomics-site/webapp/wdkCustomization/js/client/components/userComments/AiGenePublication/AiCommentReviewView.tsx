@@ -7,6 +7,7 @@ import {
 } from '../../../types/userCommentTypes';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { AiCommentEditorBody } from './AiCommentEditorBody';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 // Only `success` reaches this view — it's the one terminal status that carries
 // AI-generated content to review and publish. The "produced nothing" statuses
@@ -63,24 +64,22 @@ export function AiCommentReviewView(
   const actions = (
     <div>
       {publishErrors != null && publishErrors.length > 0 && (
-        <div
-          role="alert"
-          style={{
-            backgroundColor: '#fdf0f0',
-            border: '1px solid #e8a0a0',
-            borderRadius: '4px',
-            padding: '10px 14px',
-            marginBottom: '12px',
+        <Banner
+          banner={{
+            type: 'error',
+            role: 'alert',
+            ariaLive: 'assertive',
+            spacing: { margin: '0 0 12px', padding: '10px 14px' },
             fontSize: '13px',
-            color: '#8b1a1a',
+            message: (
+              <ul style={{ margin: 0, paddingLeft: '16px' }}>
+                {publishErrors.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            ),
           }}
-        >
-          <ul style={{ margin: 0, paddingLeft: '16px' }}>
-            {publishErrors.map((err, i) => (
-              <li key={i}>{err}</li>
-            ))}
-          </ul>
-        </div>
+        />
       )}
 
       <div

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { AiProvenanceSource } from '../../../types/userCommentTypes';
 import { AiCommentEditorBody } from './AiCommentEditorBody';
 
@@ -51,30 +52,30 @@ export function AiCommentEditView(props: AiCommentEditViewProps): JSX.Element {
   const actions = (
     <div>
       {hasErrors && (
-        <div
-          role="alert"
-          style={{
-            backgroundColor: '#fdf0f0',
-            border: '1px solid #e8a0a0',
-            borderRadius: '4px',
-            padding: '10px 14px',
-            marginBottom: '12px',
+        <Banner
+          banner={{
+            type: 'error',
+            role: 'alert',
+            ariaLive: 'assertive',
+            spacing: { margin: '0 0 12px', padding: '10px 14px' },
             fontSize: '13px',
-            color: '#8b1a1a',
+            message: (
+              <>
+                {internalError && (
+                  <div style={{ marginBottom: '4px' }}>{internalError}</div>
+                )}
+                {backendValidationErrors != null &&
+                  backendValidationErrors.length > 0 && (
+                    <ul style={{ margin: 0, paddingLeft: '16px' }}>
+                      {backendValidationErrors.map((err, i) => (
+                        <li key={i}>{err}</li>
+                      ))}
+                    </ul>
+                  )}
+              </>
+            ),
           }}
-        >
-          {internalError && (
-            <div style={{ marginBottom: '4px' }}>{internalError}</div>
-          )}
-          {backendValidationErrors != null &&
-            backendValidationErrors.length > 0 && (
-              <ul style={{ margin: 0, paddingLeft: '16px' }}>
-                {backendValidationErrors.map((err, i) => (
-                  <li key={i}>{err}</li>
-                ))}
-              </ul>
-            )}
-        </div>
+        />
       )}
 
       <div

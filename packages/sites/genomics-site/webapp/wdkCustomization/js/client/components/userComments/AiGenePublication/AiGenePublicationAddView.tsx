@@ -7,6 +7,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import './AiGenePublicationAddView.scss';
 import { PubmedPreviewEntry } from '../../../types/userCommentTypes';
@@ -336,70 +337,71 @@ function DuplicatePublicationWarning({
   const count = duplicates.length;
 
   return (
-    <div
-      role="alert"
-      style={{
-        backgroundColor: '#fff3cd',
-        border: '1px solid #ffc107',
-        borderRadius: '4px',
-        padding: '12px 14px',
-        marginBottom: '16px',
+    <Banner
+      banner={{
+        type: 'warning',
+        role: 'alert',
+        ariaLive: 'assertive',
+        hideIcon: true,
+        spacing: { margin: '0 0 16px', padding: '12px 14px' },
         fontSize: '14px',
-        color: '#856404',
+        message: (
+          <>
+            <div style={{ fontWeight: 600, marginBottom: '6px' }}>
+              {count === 1
+                ? 'An AI-assisted comment for this gene from this publication has already been published.'
+                : `${count} AI-assisted comments for this gene from this publication have already been published.`}
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              You can still generate another, but please check it won&apos;t
+              duplicate existing content.
+            </div>
+
+            {duplicates.map((dup) => (
+              <details key={dup.id} style={{ marginBottom: '6px' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 500 }}>
+                  {dup.headline || `Comment ${dup.id}`}
+                </summary>
+                <div
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    maxWidth: '80ch',
+                    margin: '6px 0',
+                    color: '#333',
+                  }}
+                >
+                  {dup.content}
+                </div>
+                <a href={dup.href} target="_blank" rel="noopener noreferrer">
+                  View on comments page
+                </a>
+              </details>
+            ))}
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '8px',
+                marginTop: '10px',
+              }}
+            >
+              <Checkbox
+                id="ai-duplicate-ack"
+                value={acknowledged}
+                onChange={onAcknowledgedChange}
+              />
+              <label
+                htmlFor="ai-duplicate-ack"
+                style={{ cursor: 'pointer', lineHeight: '1.4' }}
+              >
+                I understand and want to generate another comment anyway.
+              </label>
+            </div>
+          </>
+        ),
       }}
-    >
-      <div style={{ fontWeight: 600, marginBottom: '6px' }}>
-        {count === 1
-          ? 'An AI-assisted comment for this gene from this publication has already been published.'
-          : `${count} AI-assisted comments for this gene from this publication have already been published.`}
-      </div>
-      <div style={{ marginBottom: '10px' }}>
-        You can still generate another, but please check it won&apos;t duplicate
-        existing content.
-      </div>
-
-      {duplicates.map((dup) => (
-        <details key={dup.id} style={{ marginBottom: '6px' }}>
-          <summary style={{ cursor: 'pointer', fontWeight: 500 }}>
-            {dup.headline || `Comment ${dup.id}`}
-          </summary>
-          <div
-            style={{
-              whiteSpace: 'pre-wrap',
-              maxWidth: '80ch',
-              margin: '6px 0',
-              color: '#333',
-            }}
-          >
-            {dup.content}
-          </div>
-          <a href={dup.href} target="_blank" rel="noopener noreferrer">
-            View on comments page
-          </a>
-        </details>
-      ))}
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '8px',
-          marginTop: '10px',
-        }}
-      >
-        <Checkbox
-          id="ai-duplicate-ack"
-          value={acknowledged}
-          onChange={onAcknowledgedChange}
-        />
-        <label
-          htmlFor="ai-duplicate-ack"
-          style={{ cursor: 'pointer', lineHeight: '1.4' }}
-        >
-          I understand and want to generate another comment anyway.
-        </label>
-      </div>
-    </div>
+    />
   );
 }
 
@@ -432,70 +434,43 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
 
       {/* 503 server-busy toast */}
       {serverBusy && (
-        <div
-          role="alert"
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            backgroundColor: '#fff8e1',
-            border: '1px solid #f5c842',
-            borderRadius: '4px',
-            padding: '10px 12px',
-            marginBottom: '16px',
+        <Banner
+          onClose={serverBusy.onDismiss}
+          banner={{
+            type: 'warning',
+            role: 'alert',
+            ariaLive: 'assertive',
+            spacing: { margin: '0 0 16px', padding: '10px 12px' },
             fontSize: '13px',
-            color: '#7a5c00',
-            gap: '8px',
+            message: (
+              <span>
+                The AI service is busy. Please try again in a moment.
+                {serverBusy.retryAfterSeconds != null && (
+                  <>
+                    {' '}
+                    Retry after {serverBusy.retryAfterSeconds} second
+                    {serverBusy.retryAfterSeconds === 1 ? '' : 's'}.
+                  </>
+                )}
+              </span>
+            ),
           }}
-        >
-          <span>
-            The AI service is busy. Please try again in a moment.
-            {serverBusy.retryAfterSeconds != null && (
-              <>
-                {' '}
-                Retry after {serverBusy.retryAfterSeconds} second
-                {serverBusy.retryAfterSeconds === 1 ? '' : 's'}.
-              </>
-            )}
-          </span>
-          <button
-            type="button"
-            onClick={serverBusy.onDismiss}
-            aria-label="Dismiss"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#7a5c00',
-              fontSize: '16px',
-              lineHeight: '1',
-              padding: '0',
-              flexShrink: 0,
-            }}
-          >
-            &times;
-          </button>
-        </div>
+        />
       )}
 
       {/* INPUT MODE */}
       {job == null && (
         <div>
           {expiredNotice && (
-            <div
-              role="note"
-              style={{
-                backgroundColor: '#fff3cd',
-                border: '1px solid #ffc107',
-                borderRadius: '4px',
-                padding: '10px 12px',
-                marginBottom: '16px',
+            <Banner
+              banner={{
+                type: 'warning',
+                role: 'note',
+                spacing: { margin: '0 0 16px', padding: '10px 12px' },
                 fontSize: '13px',
-                color: '#856404',
+                message: 'That job has expired — please submit again.',
               }}
-            >
-              That job has expired — please submit again.
-            </div>
+            />
           )}
 
           <fieldset style={{ border: 'none', margin: 0, padding: 0 }}>
@@ -602,27 +577,16 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 </div>
 
                 {/* Privacy notice */}
-                <div
-                  role="note"
-                  style={{
-                    backgroundColor: '#e8f4fd',
-                    border: '1px solid #90c8f0',
-                    borderRadius: '4px',
-                    padding: '8px 12px',
-                    marginBottom: '12px',
+                <Banner
+                  banner={{
+                    type: 'info',
+                    role: 'note',
+                    spacing: { margin: '0 0 12px', padding: '8px 12px' },
                     fontSize: '13px',
-                    color: '#1a4a6e',
-                    lineHeight: '1.5',
+                    message:
+                      'Your PDF is processed entirely in your browser — only the extracted text is sent to our servers, never the file itself. For provenance, optionally add a public link to the publication below.',
                   }}
-                >
-                  <span role="img" aria-label="Info">
-                    ℹ️
-                  </span>{' '}
-                  Your PDF is processed entirely in your browser — only the
-                  extracted text is sent to our servers, never the file itself.
-                  For provenance, optionally add a public link to the
-                  publication below.
-                </div>
+                />
 
                 {/* Optional provenance fields */}
                 <div style={{ marginBottom: '8px' }}>
@@ -827,24 +791,16 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                         />
                       ))}
                     </div>
-                    <div
-                      role="alert"
-                      style={{
-                        backgroundColor: '#fdf0f0',
-                        border: '1px solid #e8a0a0',
-                        borderRadius: '4px',
-                        padding: '12px 14px',
-                        marginBottom: '16px',
+                    <Banner
+                      banner={{
+                        type: 'error',
+                        role: 'alert',
+                        ariaLive: 'assertive',
+                        spacing: { margin: '0 0 16px', padding: '12px 14px' },
                         fontSize: '14px',
-                        color: '#8b1a1a',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '8px',
+                        message: errorMessage,
                       }}
-                    >
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>⚠</span>
-                      <span>{errorMessage}</span>
-                    </div>
+                    />
                     <TerminalRecoveryButtons
                       onTryDifferentPublication={job.onTryDifferentPublication}
                       onBackToGenePage={job.onBackToGenePage}
