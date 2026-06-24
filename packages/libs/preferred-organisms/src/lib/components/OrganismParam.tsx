@@ -303,21 +303,23 @@ function TreeBoxOrganismEnumParam(
   // preset buttons componenet to be passed to the tree
   let applyButtonText =
     organismValuePreset == null
-      ? 'No preset values have been saved'
-      : 'Apply my ' + organismValuePreset.length + ' preset values';
+      ? 'Apply my preset organisms'
+      : 'Apply my ' + organismValuePreset.length + ' preset organisms';
   let buttonStyle = { margin: '5px', borderRadius: '6px' };
   let saveButtonText = (function (size: number) {
     switch (size) {
       case 0:
-        return 'Unable to save zero selections';
+        return 'Save organisms as my preset';
       case 1:
-        return 'Save this 1 value as my preset';
+        return 'Save this organism as my preset';
       default:
-        return 'Save these ' + size + ' values as my preset';
+        return 'Save these ' + size + ' organisms as my preset';
     }
   })(currentSelection.length);
   let PresetButtons = (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div
+      style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}
+    >
       <div
         style={{
           display: 'inline-block',
@@ -326,7 +328,7 @@ function TreeBoxOrganismEnumParam(
         }}
       >
         <span style={{ fontWeight: 'bold', margin: '9px' }}>
-          Use Organism Presets{' '}
+          Organism Presets
         </span>
         <HelpIcon>
           <>
@@ -337,7 +339,7 @@ function TreeBoxOrganismEnumParam(
               with an organism parameter, you can apply your saved selection.
             </p>
             <p>
-              Some searchs have different organism vocabularies; only those
+              Some searches have different organism vocabularies; only those
               saved selections applicable to each search will be used, and your
               saved selection will not change unless you click 'Save' again.
             </p>
@@ -356,11 +358,12 @@ function TreeBoxOrganismEnumParam(
         >
           <Icon fa="folder-open" /> {saveButtonText}
         </button>
-        {showSaveButtonCheckmark && (
-          <>
-            <Icon style={{ margin: '5px' }} fa="check" />{' '}
-          </>
-        )}
+        {showSaveButtonCheckmark &&
+          false && ( // disable save button checkmark for now
+            <>
+              <Icon style={{ margin: '5px' }} fa="check" />{' '}
+            </>
+          )}
         <button
           style={buttonStyle}
           disabled={disableApplyButton}
