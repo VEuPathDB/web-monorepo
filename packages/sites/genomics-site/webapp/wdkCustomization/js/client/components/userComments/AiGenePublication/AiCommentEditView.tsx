@@ -47,7 +47,7 @@ export function AiCommentEditView(props: AiCommentEditViewProps): JSX.Element {
 
   const hasErrors =
     (backendValidationErrors != null && backendValidationErrors.length > 0) ||
-    internalError != null;
+    internalError;
 
   const actions = (
     <div>
