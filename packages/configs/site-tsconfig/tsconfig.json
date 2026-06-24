@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
     "sourceMap": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "strict": true,
     "alwaysStrict": true,
     "lib": [
