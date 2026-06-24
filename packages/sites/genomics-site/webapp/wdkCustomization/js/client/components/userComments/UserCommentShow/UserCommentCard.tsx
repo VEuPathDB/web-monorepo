@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { UserCommentGetResponse } from '../../../types/userCommentTypes';
-import { AiProvenanceBanner } from './AiProvenanceBanner';
+import { AiProvenanceSection } from './AiProvenanceSection';
 import { CommentReferences } from './CommentReferences';
 
 interface Props {
@@ -29,8 +29,8 @@ export function UserCommentCard({
       style={{
         border: `1px solid ${gray[400]}`,
         borderRadius: 7,
-        padding: 16,
-        marginBottom: 16,
+        padding: '10px 16px 14px',
+        marginBottom: 12,
         background: 'white',
       }}
     >
@@ -43,24 +43,26 @@ export function UserCommentCard({
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h3 style={{ margin: 0 }}>{comment.headline}</h3>
+            <h3 style={{ margin: 0, paddingTop: 10 }}>{comment.headline}</h3>
             {comment.aiProvenance != null && (
               <span
                 style={{
                   background: TEAL,
                   color: 'white',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                   padding: '2px 8px',
                   borderRadius: '10px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
                 AI-assisted
               </span>
             )}
           </div>
-          <div style={{ color: gray[600], fontSize: '13px', marginTop: '4px' }}>
+          <div style={{ color: gray[600], fontSize: '14px', marginTop: '4px' }}>
             {comment.author.firstName} {comment.author.lastName}
             {comment.author.organization
               ? `, ${comment.author.organization}`
@@ -95,31 +97,34 @@ export function UserCommentCard({
         )}
       </div>
 
-      {comment.aiProvenance != null && (
-        <div style={{ marginTop: '12px' }}>
-          <AiProvenanceBanner aiProvenance={comment.aiProvenance} />
-        </div>
-      )}
-
-      <div
-        style={{ whiteSpace: 'pre-wrap', maxWidth: '80ch', marginTop: '12px' }}
-      >
+      <div style={{ whiteSpace: 'pre-wrap', marginTop: '12px' }}>
         {comment.content}
       </div>
 
       <div style={{ marginTop: '12px' }}>
+        {comment.aiProvenance != null && (
+          <AiProvenanceSection aiProvenance={comment.aiProvenance} />
+        )}
         <CommentReferences comment={comment} webAppUrl={webAppUrl} />
       </div>
 
-      <div style={{ color: gray[500], fontSize: '12px', marginTop: '12px' }}>
+      <div style={{ color: gray[500], fontSize: '13px', marginTop: '12px' }}>
         Comment #{comment.id}
-        {comment.project.name
-          ? ` · ${comment.project.name} ${comment.project.version}`
-          : ''}
-        {comment.organism ? ` · ${comment.organism}` : ''}
-        {comment.additionalAuthors.length > 0
-          ? ` · Other authors: ${comment.additionalAuthors.join(', ')}`
-          : ''}
+        {comment.project.name && (
+          <>
+            {' '}
+            · {comment.project.name} {comment.project.version}
+          </>
+        )}
+        {comment.organism && (
+          <>
+            {' '}
+            · <em>{comment.organism}</em>
+          </>
+        )}
+        {comment.additionalAuthors.length > 0 && (
+          <> · Other authors: {comment.additionalAuthors.join(', ')}</>
+        )}
       </div>
     </div>
   );

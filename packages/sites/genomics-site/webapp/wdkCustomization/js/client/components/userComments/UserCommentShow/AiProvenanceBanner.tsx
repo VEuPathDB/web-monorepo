@@ -79,6 +79,7 @@ export function AiProvenanceBanner({ aiProvenance }: Props): JSX.Element {
     <Banner
       banner={{
         type: 'info',
+        hideIcon: true,
         message,
         additionalMessage,
         showMoreLinkText: 'Show original AI-generated text',
