@@ -57,7 +57,7 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
   },
   {
     ...implementedUploadTypes.isasimple,
-    description: `Integrate your study data in ${projectId}.`,
+    description: `Integrate your data table in ${projectId}.`,
   },
   {
     ...implementedUploadTypes.phenotype,
