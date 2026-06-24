@@ -9,7 +9,7 @@
     line-height: 1.55;
 
     // These render inside the cards now (CommentReferences, LazyPubmedPreview,
-    // AiProvenanceBanner), so their styling lives at the body level rather than
+    // AiProvenanceSection), so their styling lives at the body level rather than
     // scoped to the old per-comment group markup that the rewrite removed.
     .wdk-PubmedIdEntry {
       // padding-bottom: 0.5em;

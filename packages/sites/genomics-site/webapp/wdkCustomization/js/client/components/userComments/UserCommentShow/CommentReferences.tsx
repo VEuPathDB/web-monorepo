@@ -14,9 +14,10 @@ export function CommentReferences({ comment, webAppUrl }: Props): JSX.Element {
   return (
     <>
       {/* AI-assisted comments carry their source PMID in aiProvenance (rendered
-          in AiProvenanceBanner via LazyPubmedPreview), NOT in pubMedRefs, so this
-          row stays empty for them and the PMID isn't shown twice. If the backend
-          ever populates pubMedRefs on AI comments too, dedupe here. */}
+          under a "PMID(s)" row by AiProvenanceSection via LazyPubmedPreview), NOT
+          in pubMedRefs, so this row stays empty for them and the PMID isn't shown
+          twice. If the backend ever populates pubMedRefs on AI comments too,
+          dedupe here. */}
       {comment.pubMedRefs.length > 0 && (
         <Row label="PMID(s)">
           {comment.pubMedRefs.map((ref) => (
