@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useLocation } from 'react-router';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { CheckboxTreeProps } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { Tooltip } from '@veupathdb/coreui';
 
@@ -56,6 +56,17 @@ import { useReferenceStrains } from '../hooks/referenceStrains';
 import { useMaxRecommendedGate } from '../hooks/maxRecommendedGate';
 
 import { OrganismPreferencesWarning } from './OrganismPreferencesWarning';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { WdkService } from '@veupathdb/wdk-client';
+
+import {
+  arrayOf,
+  decodeOrElse,
+  string,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
+import { useWdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import _ from 'lodash';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 type FlatEnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam;
 
@@ -70,6 +81,9 @@ export const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY =
 export const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 export const MAX_RECOMMENDED_PROPERTY = 'maxRecommended';
 export const MAX_RECOMMENDED_MSG_PROPERTY = 'maxRecommendedMsg';
+
+export const ORGANISM_VALUES_PREFERENCE_KEY = 'organism_param_value_preference';
+export const ORGANISM_VALUES_PREFERENCE_SCOPE = 'project';
 
 interface OrganismParamProps<T extends Parameter, S = void>
   extends DefaultParamProps<T, S> {
@@ -114,6 +128,32 @@ function TreeBoxOrganismEnumParam(
 
   const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
+  // keep org preset as local state, updating server as necessary;
+  //   this means setting in a different tab will not update this component until remount
+  const [organismValuePreset, setLocalOrganismValuePreset] =
+    useState<string[]>();
+
+  // fetch organism preset and set to local state
+  useWdkService((wdkService) => {
+    return fetchOrganismValuePreset(wdkService).then((preset) =>
+      setLocalOrganismValuePreset(preset)
+    );
+  }, []);
+
+  // get current project
+  const projectId =
+    useWdkService(
+      (wdkService) =>
+        wdkService.getConfig().then((config) => config.displayName),
+      []
+    ) || 'VEuPathDB';
+
+  // keep track of whether preset is being saved (shows spinner during saving)
+  const [presetSaving, setPresetSaving] = useState(false);
+
+  // need to use wdkService below
+  const { wdkService } = useWdkDependenciesContext();
+
   // Extract maxRecommended before computing leafTerms
   const maxRecommended = Number(
     props.parameter.properties?.[MAX_RECOMMENDED_PROPERTY]?.[0]
@@ -144,6 +184,56 @@ function TreeBoxOrganismEnumParam(
     maxRecommendedMsg,
     leafTerms
   );
+
+  const trimmedPresets = _.intersection(
+    organismValuePreset,
+    Array.from(leafTerms)
+  );
+
+  const applyOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
+    event.preventDefault();
+    if (organismValuePreset == null) return;
+    // using onChange here instead of wrappedOnChange prevents annoying
+    //   max-recommended dialog every time user selects their organism presets
+    //   (even if the preset is higher than the max recommended)
+    onChange(trimmedPresets);
+  };
+
+  // current selection should reflect only leaf nodes
+  const currentSelection = _.intersection(
+    decodeOrElse(arrayOf(string), [], props.value),
+    Array.from(leafTerms)
+  );
+
+  /* Preset button behavior:
+   * - If none selected, disable save button
+   * - If no preset set, disable apply button
+   * - If preset set and selection exactly matches preset, show save checkmark and disable save button
+   * - If preset set and all applicable presets equals selection, show apply checkmark
+   */
+  const sortedSelection = _.sortBy(currentSelection);
+  const showApplyButtonCheckmark =
+    organismValuePreset != null &&
+    _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
+  const disableApplyButton = organismValuePreset == null;
+  const showSaveButtonCheckmark =
+    organismValuePreset != null &&
+    _.isEqual(sortedSelection, _.sortBy(organismValuePreset));
+  const disableSaveButton =
+    currentSelection.length == 0 || showSaveButtonCheckmark;
+
+  const updateOrgValuePref: React.MouseEventHandler<HTMLButtonElement> = (
+    event
+  ) => {
+    event.preventDefault();
+    setPresetSaving(true);
+    updateOrganismValuePreset(wdkService, currentSelection, () => {
+      setLocalOrganismValuePreset(currentSelection);
+      setPresetSaving(false);
+    });
+  };
 
   const { maxSelectedCount } = paramWithPrunedVocab;
 
@@ -209,6 +299,87 @@ function TreeBoxOrganismEnumParam(
     ]
   );
 
+  // preset buttons componenet to be passed to the tree
+  let applyButtonText =
+    organismValuePreset == null
+      ? 'Apply my preset organisms'
+      : 'Apply my ' + organismValuePreset.length + ' preset organisms';
+  let buttonStyle = { margin: '5px', borderRadius: '6px' };
+  let saveButtonText = (function (size: number) {
+    switch (size) {
+      case 0:
+        return 'Save organisms as my preset';
+      case 1:
+        return 'Save this organism as my preset';
+      default:
+        return 'Save these ' + size + ' organisms as my preset';
+    }
+  })(currentSelection.length);
+  let PresetButtons = (
+    <div
+      style={{ display: 'flex', justifyContent: 'center', marginTop: '5px' }}
+    >
+      <div
+        style={{
+          display: 'inline-block',
+          borderRadius: '5px',
+          border: '1px solid gray',
+        }}
+      >
+        <span style={{ fontWeight: 'bold', margin: '9px' }}>
+          Organism Presets
+        </span>
+        <HelpIcon>
+          <>
+            <p>
+              Organism Presets allow you to save and apply a selection of
+              organisms across various {projectId} searches. Select a set of
+              organisms you commonly use and click 'Save'. Then in any search
+              with an organism parameter, you can apply your saved selection.
+            </p>
+            <p>
+              Some searches have different organism vocabularies; only those
+              saved selections applicable to each search will be used, and your
+              saved selection will not change unless you click 'Save' again.
+            </p>
+          </>
+        </HelpIcon>{' '}
+        {presetSaving && (
+          <>
+            <Icon style={{ margin: '5px' }} fa="spinner" />{' '}
+          </>
+        )}
+        <button
+          style={buttonStyle}
+          disabled={disableSaveButton}
+          value={saveButtonText}
+          onClick={updateOrgValuePref}
+        >
+          <Icon fa="folder-open" /> {saveButtonText}
+        </button>
+        {showSaveButtonCheckmark &&
+          false && ( // disable save button checkmark for now
+            <>
+              <Icon style={{ margin: '5px' }} fa="check" />{' '}
+            </>
+          )}
+        <button
+          style={buttonStyle}
+          disabled={disableApplyButton}
+          value={applyButtonText}
+          onClick={applyOrgValuePref}
+        >
+          <Icon fa="play" /> {applyButtonText}
+        </button>
+        {showApplyButtonCheckmark && (
+          <>
+            <Icon style={{ margin: '5px' }} fa="check" />{' '}
+          </>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
       {hasEmptyVocabularly(paramWithPrunedVocab) ? (
@@ -216,6 +387,7 @@ function TreeBoxOrganismEnumParam(
       ) : (
         <TreeBoxEnumParamComponent
           {...props}
+          postSelectionElement={PresetButtons}
           selectedValues={selectedValues}
           onChange={wrappedOnChange}
           context={props.ctx}
@@ -562,4 +734,30 @@ function EmptyParamWarning() {
       explanation="Your current preferences exclude all organisms used in this search."
     />
   );
+}
+
+async function fetchOrganismValuePreset(
+  wdkService: WdkService
+): Promise<string[]> {
+  return await wdkService
+    .getCurrentUserPreferences()
+    .then(
+      (prefs) =>
+        prefs[ORGANISM_VALUES_PREFERENCE_SCOPE][
+          ORGANISM_VALUES_PREFERENCE_KEY
+        ] ?? '[]'
+    )
+    .then((prefsArrayStr) => decodeOrElse(arrayOf(string), [], prefsArrayStr));
+}
+
+async function updateOrganismValuePreset(
+  wdkService: WdkService,
+  orgValuesPreference: string[],
+  onComplete: () => void
+) {
+  await wdkService
+    .patchScopedUserPreferences(ORGANISM_VALUES_PREFERENCE_SCOPE, {
+      [ORGANISM_VALUES_PREFERENCE_KEY]: JSON.stringify(orgValuesPreference),
+    })
+    .finally(onComplete);
 }
