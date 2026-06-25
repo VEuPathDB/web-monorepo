@@ -12,6 +12,9 @@ export interface DuplicateAiComment {
   id: number;
   headline?: string;
   content: string;
+  // The comment author's user id, so the caller can tell which duplicates the
+  // current user owns (and may edit) versus other people's.
+  authorUserId: number;
 }
 
 // Returns the already-published AI comments on this gene whose provenance source
@@ -41,5 +44,25 @@ export function findDuplicateAiComments(
       id: comment.id,
       headline: comment.headline,
       content: comment.content,
+      authorUserId: comment.author.userId,
     }));
+}
+
+// Splits matched duplicates into those authored by the current user (who can
+// edit them) and everyone else's. A missing current user id (guest, or not yet
+// loaded) means the viewer owns nothing, so every duplicate falls into `others`.
+export function partitionDuplicatesByOwner(
+  duplicates: DuplicateAiComment[],
+  currentUserId: number | undefined
+): { own: DuplicateAiComment[]; others: DuplicateAiComment[] } {
+  const own: DuplicateAiComment[] = [];
+  const others: DuplicateAiComment[] = [];
+  for (const dup of duplicates) {
+    if (currentUserId != null && dup.authorUserId === currentUserId) {
+      own.push(dup);
+    } else {
+      others.push(dup);
+    }
+  }
+  return { own, others };
 }

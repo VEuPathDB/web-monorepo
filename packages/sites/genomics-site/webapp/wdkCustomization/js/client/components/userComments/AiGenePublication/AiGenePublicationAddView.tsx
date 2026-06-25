@@ -61,9 +61,17 @@ export interface AiGenePublicationAddViewProps {
     externalTitle: string;
     onExternalTitleChange: (value: string) => void;
     // Duplicate-publication warning: existing AI comments on this gene that match
-    // the currently-entered publication. When non-empty, the user must tick the
-    // acknowledgement before `canSubmit` becomes true (the controller enforces this).
-    duplicates: {
+    // the currently-entered publication, split by ownership. When either list is
+    // non-empty, the user must tick the acknowledgement before `canSubmit`
+    // becomes true (the controller enforces this). `ownDuplicates` carry an edit
+    // link (the viewer authored them); `otherDuplicates` carry a view link.
+    ownDuplicates: {
+      id: number;
+      headline?: string;
+      content: string;
+      href: string;
+    }[];
+    otherDuplicates: {
       id: number;
       headline?: string;
       content: string;
@@ -324,17 +332,48 @@ function SubmittedSummaryDisplay({
   );
 }
 
+function DuplicateCommentDetails({
+  comment,
+  linkText,
+}: {
+  comment: AiGenePublicationAddViewProps['form']['ownDuplicates'][number];
+  linkText: string;
+}) {
+  return (
+    <details style={{ marginBottom: '6px' }}>
+      <summary style={{ cursor: 'pointer', fontWeight: 500 }}>
+        {comment.headline || `Comment ${comment.id}`}
+      </summary>
+      <div
+        style={{
+          whiteSpace: 'pre-wrap',
+          maxWidth: '80ch',
+          margin: '6px 0',
+          color: '#333',
+        }}
+      >
+        {comment.content}
+      </div>
+      <a href={comment.href} target="_blank" rel="noopener noreferrer">
+        {linkText}
+      </a>
+    </details>
+  );
+}
+
 function DuplicatePublicationWarning({
-  duplicates,
+  ownDuplicates,
+  otherDuplicates,
   acknowledged,
   onAcknowledgedChange,
 }: {
-  duplicates: AiGenePublicationAddViewProps['form']['duplicates'];
+  ownDuplicates: AiGenePublicationAddViewProps['form']['ownDuplicates'];
+  otherDuplicates: AiGenePublicationAddViewProps['form']['otherDuplicates'];
   acknowledged: boolean;
   onAcknowledgedChange: (acknowledged: boolean) => void;
 }) {
-  if (duplicates.length === 0) return null;
-  const count = duplicates.length;
+  if (ownDuplicates.length === 0 && otherDuplicates.length === 0) return null;
+  const otherCount = otherDuplicates.length;
 
   return (
     <Banner
@@ -347,36 +386,66 @@ function DuplicatePublicationWarning({
         fontSize: '14px',
         message: (
           <>
-            <div style={{ fontWeight: 600, marginBottom: '6px' }}>
-              {count === 1
-                ? 'An AI-assisted comment for this gene from this publication has already been published.'
-                : `${count} AI-assisted comments for this gene from this publication have already been published.`}
-            </div>
+            {ownDuplicates.length > 0 && (
+              <div style={{ marginBottom: '10px' }}>
+                <div style={{ fontWeight: 600, marginBottom: '6px' }}>
+                  {ownDuplicates.length === 1
+                    ? 'You’ve already published a comment for this gene from this publication. You can edit it instead of generating a new one.'
+                    : 'You’ve already published comments for this gene from this publication. You can edit them instead of generating a new one.'}
+                </div>
+                <div
+                  style={{
+                    marginBottom: '6px',
+                    color: '#555',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {ownDuplicates.length === 1
+                    ? 'Click to expand the comment below.'
+                    : 'Click to expand any comment below.'}
+                </div>
+                {ownDuplicates.map((dup) => (
+                  <DuplicateCommentDetails
+                    key={dup.id}
+                    comment={dup}
+                    linkText="Edit your comment"
+                  />
+                ))}
+              </div>
+            )}
+
+            {otherCount > 0 && (
+              <div style={{ marginBottom: '10px' }}>
+                <div style={{ fontWeight: 600, marginBottom: '6px' }}>
+                  {otherCount === 1
+                    ? 'An AI-assisted comment for this gene from this publication has already been published.'
+                    : `${otherCount} AI-assisted comments for this gene from this publication have already been published.`}
+                </div>
+                <div
+                  style={{
+                    marginBottom: '6px',
+                    color: '#555',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  {otherCount === 1
+                    ? 'Click to expand the comment below.'
+                    : 'Click to expand any comment below.'}
+                </div>
+                {otherDuplicates.map((dup) => (
+                  <DuplicateCommentDetails
+                    key={dup.id}
+                    comment={dup}
+                    linkText="View on comments page"
+                  />
+                ))}
+              </div>
+            )}
+
             <div style={{ marginBottom: '10px' }}>
               You can still generate another, but please check it won&apos;t
               duplicate existing content.
             </div>
-
-            {duplicates.map((dup) => (
-              <details key={dup.id} style={{ marginBottom: '6px' }}>
-                <summary style={{ cursor: 'pointer', fontWeight: 500 }}>
-                  {dup.headline || `Comment ${dup.id}`}
-                </summary>
-                <div
-                  style={{
-                    whiteSpace: 'pre-wrap',
-                    maxWidth: '80ch',
-                    margin: '6px 0',
-                    color: '#333',
-                  }}
-                >
-                  {dup.content}
-                </div>
-                <a href={dup.href} target="_blank" rel="noopener noreferrer">
-                  View on comments page
-                </a>
-              </details>
-            ))}
 
             <div
               style={{
@@ -634,7 +703,8 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
 
             {/* Duplicate-publication warning (above the submit button) */}
             <DuplicatePublicationWarning
-              duplicates={form.duplicates}
+              ownDuplicates={form.ownDuplicates}
+              otherDuplicates={form.otherDuplicates}
               acknowledged={form.acknowledged}
               onAcknowledgedChange={form.onAcknowledgedChange}
             />

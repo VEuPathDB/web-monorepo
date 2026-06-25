@@ -24,7 +24,9 @@ import {
 } from '../types/userCommentTypes';
 import {
   findDuplicateAiComments,
+  partitionDuplicatesByOwner,
   AiSourceKey,
+  DuplicateAiComment,
 } from '../components/userComments/AiGenePublication/findDuplicateAiComments';
 import {
   AiGenePublicationAddView,
@@ -127,6 +129,12 @@ function AiGenePublicationAddController({
   const [geneAiComments, setGeneAiComments] = useState<
     UserCommentGetResponse[]
   >([]);
+  // The current user's id, used to recognise which duplicates the viewer owns
+  // (and can therefore edit). Undefined for guests or until loaded — treated as
+  // owning nothing. Fetched fail-open alongside the comments below.
+  const [currentUserId, setCurrentUserId] = useState<number | undefined>(
+    undefined
+  );
   // The user's explicit "generate anyway" acknowledgement, required to submit
   // when a duplicate is detected. Reset whenever the candidate publication
   // changes (see the source-key effect below).
@@ -365,6 +373,26 @@ function AiGenePublicationAddController({
       cancelled = true;
     };
   }, [stableId, service]);
+
+  // ---- fetch the current user once (to flag the viewer's own duplicates) ----
+  // Fail open: if this errors or the user is a guest, currentUserId stays
+  // undefined and every duplicate is treated as someone else's.
+  useEffect(() => {
+    let cancelled = false;
+    service.getCurrentUser().then(
+      (user) => {
+        if (!cancelled && !user.isGuest) {
+          setCurrentUserId(user.id);
+        }
+      },
+      () => {
+        /* fail open — viewer owns nothing */
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [service]);
 
   // The identifier for the publication currently entered in the form, or
   // undefined when nothing identifiable is selected yet (no valid PMID / no
@@ -642,18 +670,36 @@ function AiGenePublicationAddController({
       ? /^\d+$/.test(pubmedId.trim())
       : extraction.status === 'ready') && !hasUnacknowledgedDuplicate;
 
-  const duplicateComments = duplicates.map((dup) => ({
+  // Split the matched duplicates by ownership: the viewer's own comment is
+  // offered for editing, everyone else's is linked for viewing.
+  const { own: ownDuplicates, others: otherDuplicates } =
+    partitionDuplicatesByOwner(duplicates, currentUserId);
+
+  // createHref prepends the SPA router basename (rootUrl, e.g. /a/app) so the
+  // raw <a target="_blank"> links in the view are valid absolute URLs.
+  const toViewEntry = (dup: DuplicateAiComment) => ({
     id: dup.id,
     headline: dup.headline,
     content: dup.content,
-    // createHref prepends the SPA router basename (rootUrl, e.g. /a/app) so the
-    // raw <a target="_blank"> link in the view is a valid absolute URL.
     href: history.createHref({
       pathname: '/user-comments/show',
       search: `?stableId=${encodeURIComponent(stableId)}&commentTargetId=gene`,
       hash: `#${dup.id}`,
     }),
-  }));
+  });
+
+  const toEditEntry = (dup: DuplicateAiComment) => ({
+    id: dup.id,
+    headline: dup.headline,
+    content: dup.content,
+    href: history.createHref({
+      pathname: '/user-comments/edit',
+      search: `?commentId=${dup.id}`,
+    }),
+  });
+
+  const ownDuplicateComments = ownDuplicates.map(toEditEntry);
+  const otherDuplicateComments = otherDuplicates.map(toViewEntry);
 
   const formProps: AiGenePublicationAddViewProps['form'] = {
     source,
@@ -668,7 +714,8 @@ function AiGenePublicationAddController({
     onExternalUrlChange: setExternalUrl,
     externalTitle,
     onExternalTitleChange: setExternalTitle,
-    duplicates: duplicateComments,
+    ownDuplicates: ownDuplicateComments,
+    otherDuplicates: otherDuplicateComments,
     acknowledged: dupAcknowledged,
     onAcknowledgedChange: setDupAcknowledged,
     canSubmit,

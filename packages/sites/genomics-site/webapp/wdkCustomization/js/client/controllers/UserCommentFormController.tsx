@@ -754,7 +754,9 @@ const mergeProps = (
             content: aiProvenance.originalContent,
           },
           onSubmit: () =>
-            dispatchProps.requestSubmitComment(stateProps.submission),
+            dispatchProps.requestSubmitComment(
+              omit(stateProps.submission, ['aiProvenance'])
+            ),
           submitting: stateProps.submitting,
           completed: stateProps.completed,
           backendValidationErrors: stateProps.backendValidationErrors,
