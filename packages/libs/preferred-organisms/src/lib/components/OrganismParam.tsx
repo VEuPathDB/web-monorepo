@@ -305,6 +305,8 @@ function TreeBoxOrganismEnumParam(
   let applyButtonText =
     organismValuePreset == null || organismValuePreset.length === 0
       ? 'Apply my preset organisms'
+      : organismValuePreset.length === 1
+      ? 'Apply my 1 preset organism'
       : 'Apply my ' + organismValuePreset.length + ' preset organisms';
   let buttonStyle = {
     margin: '5px',
@@ -330,6 +332,7 @@ function TreeBoxOrganismEnumParam(
           display: 'inline-block',
           borderRadius: '5px',
           border: '1px solid gray',
+          whiteSpace: 'nowrap',
         }}
       >
         <span style={{ fontWeight: 'bold', margin: '9px' }}>
