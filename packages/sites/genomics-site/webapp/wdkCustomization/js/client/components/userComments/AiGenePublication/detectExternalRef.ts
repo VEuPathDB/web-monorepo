@@ -7,6 +7,7 @@
 //   'PMID: 12345678'                    -> { ref: '12345678', kind: 'pubmed' }
 //   '10.1234/abc.def'                   -> { ref: '10.1234/abc.def', kind: 'doi' }
 //   'https://doi.org/10.1234/abc.def'   -> { ref: '10.1234/abc.def', kind: 'doi' }
+//   'https://dx.doi.org/10.1234/abc.def' -> { ref: '10.1234/abc.def', kind: 'doi' }
 //   'abc' / '' / '   '                  -> undefined
 const PMID = /^\d{1,9}$/;
 const DOI = /^10\.\d{4,9}\/\S+$/;
