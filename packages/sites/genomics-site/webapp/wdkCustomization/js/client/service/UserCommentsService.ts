@@ -40,6 +40,8 @@ function toAiProvenanceSource(s: any): AiProvenanceSource {
         pdfContentSha256: s.pdf_content_sha256,
         externalUrl: s.external_url,
         externalTitle: s.external_title,
+        externalRef: s.external_ref,
+        externalRefKind: s.external_ref_kind,
       };
 }
 
@@ -256,6 +258,10 @@ export default (base: ServiceBase) => {
       body.pdf_content_sha256 = request.pdfContentSha256;
       if (request.externalUrl) body.external_url = request.externalUrl;
       if (request.externalTitle) body.external_title = request.externalTitle;
+      if (request.externalRef) {
+        body.external_ref = request.externalRef;
+        body.external_ref_kind = request.externalRefKind;
+      }
     }
     return fetch(`${base.serviceUrl}/user-comments/ai-gene-publication`, {
       method: 'POST',
