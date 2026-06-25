@@ -306,15 +306,19 @@ function TreeBoxOrganismEnumParam(
     organismValuePreset == null || organismValuePreset.length === 0
       ? 'Apply my preset organisms'
       : 'Apply my ' + organismValuePreset.length + ' preset organisms';
-  let buttonStyle = { margin: '5px', borderRadius: '6px' };
+  let buttonStyle = {
+    margin: '5px',
+    borderRadius: '6px',
+    whiteSpace: 'nowrap' as const,
+  };
   let saveButtonText = (function (size: number) {
     switch (size) {
       case 0:
         return 'Save organisms as my preset';
       case 1:
-        return 'Save this organism as my preset';
+        return 'Save selected organism as my preset';
       default:
-        return 'Save these ' + size + ' organisms as my preset';
+        return 'Save ' + size + ' selected organisms as my preset';
     }
   })(currentSelection.length);
   let PresetButtons = (
