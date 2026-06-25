@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { detectExternalRef } from './detectExternalRef';
+import { LazyPubmedPreview } from '../UserCommentShow/LazyPubmedPreview';
 import {
   TextBox,
   RadioList,
@@ -60,6 +62,8 @@ export interface AiGenePublicationAddViewProps {
     onExternalUrlChange: (value: string) => void;
     externalTitle: string;
     onExternalTitleChange: (value: string) => void;
+    externalRef: string;
+    onExternalRefChange: (value: string) => void;
     // Duplicate-publication warning: existing AI comments on this gene that match
     // the currently-entered publication, split by ownership. When either list is
     // non-empty, the user must tick the acknowledgement before `canSubmit`
@@ -266,6 +270,52 @@ function ExtractionStatus({
       >
         Clear
       </button>
+    </div>
+  );
+}
+
+function ExternalRefHint({ value }: { value: string }): JSX.Element | null {
+  const [detected, setDetected] = useState<
+    { ref: string; kind: 'pubmed' | 'doi' } | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const handle = setTimeout(() => setDetected(detectExternalRef(value)), 400);
+    return () => clearTimeout(handle);
+  }, [value]);
+
+  if (!detected) return null;
+
+  return (
+    <div style={{ marginTop: '6px' }}>
+      <span
+        style={{
+          display: 'inline-block',
+          padding: '1px 8px',
+          borderRadius: '8px',
+          backgroundColor: '#0a7c8a',
+          color: '#fff',
+          fontSize: '12px',
+          fontWeight: 500,
+        }}
+      >
+        {detected.kind === 'pubmed' ? 'PubMed ID' : 'DOI'} detected
+      </span>
+      {detected.kind === 'pubmed' ? (
+        <div style={{ marginTop: '8px' }}>
+          <LazyPubmedPreview pubmedId={detected.ref} />
+        </div>
+      ) : (
+        <div style={{ marginTop: '6px', fontSize: '14px' }}>
+          <a
+            href={`https://doi.org/${detected.ref}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://doi.org/{detected.ref}
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -697,6 +747,27 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     placeholder="e.g. Smith et al. 2024 (preprint)"
                     style={{ width: '400px' }}
                   />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <label
+                    htmlFor="ai-external-ref-input"
+                    style={{
+                      display: 'block',
+                      fontWeight: 500,
+                      marginBottom: '4px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    PubMed ID or DOI (optional)
+                  </label>
+                  <TextBox
+                    id="ai-external-ref-input"
+                    value={form.externalRef}
+                    onChange={form.onExternalRefChange}
+                    placeholder="e.g. 12345678 or 10.1234/abc"
+                    style={{ width: '400px' }}
+                  />
+                  <ExternalRefHint value={form.externalRef} />
                 </div>
               </div>
             )}

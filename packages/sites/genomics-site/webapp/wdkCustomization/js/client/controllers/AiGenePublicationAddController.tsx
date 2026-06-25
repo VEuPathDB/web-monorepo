@@ -44,6 +44,7 @@ import {
   RejectJobStatus,
 } from '../components/userComments/AiGenePublication/AiCommentRejectView';
 import { extractPdfText } from '../components/userComments/AiGenePublication/extractPdfText';
+import { detectExternalRef } from '../components/userComments/AiGenePublication/detectExternalRef';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const POLL_INTERVAL_MS = 1000;
@@ -122,6 +123,7 @@ function AiGenePublicationAddController({
   });
   const [externalUrl, setExternalUrl] = useState('');
   const [externalTitle, setExternalTitle] = useState('');
+  const [externalRef, setExternalRef] = useState('');
 
   // ---- duplicate-publication detection (pre-submit warning) ----
   // The gene's existing AI comments, fetched once; we match the current form's
@@ -477,6 +479,9 @@ function AiGenePublicationAddController({
     const trimmedUrl = externalUrl.trim();
     const trimmedTitle = externalTitle.trim();
 
+    const detectedRef =
+      source === 'upload' ? detectExternalRef(externalRef) : undefined;
+
     const request: AiGenePublicationRequest =
       source === 'pubmed'
         ? {
@@ -498,6 +503,8 @@ function AiGenePublicationAddController({
                 : undefined,
             externalUrl: trimmedUrl || undefined,
             externalTitle: trimmedTitle || undefined,
+            externalRef: detectedRef?.ref,
+            externalRefKind: detectedRef?.kind,
             options: {},
           };
 
@@ -714,6 +721,8 @@ function AiGenePublicationAddController({
     onExternalUrlChange: setExternalUrl,
     externalTitle,
     onExternalTitleChange: setExternalTitle,
+    externalRef,
+    onExternalRefChange: setExternalRef,
     ownDuplicates: ownDuplicateComments,
     otherDuplicates: otherDuplicateComments,
     acknowledged: dupAcknowledged,
