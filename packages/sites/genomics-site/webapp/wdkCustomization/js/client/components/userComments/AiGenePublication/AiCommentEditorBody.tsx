@@ -5,6 +5,7 @@ import {
   PubmedPreviewEntry,
 } from '../../../types/userCommentTypes';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
+import { LazyPubmedPreview } from '../UserCommentShow/LazyPubmedPreview';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export interface AiCommentEditorBodyProps {
@@ -90,6 +91,26 @@ function ProvenancePanel({
       <div style={{ color: GREY, fontSize: '13px', fontStyle: 'italic' }}>
         (uploaded PDF, processed in your browser — file not stored)
       </div>
+      {source.externalRef &&
+        (source.externalRefKind === 'pubmed' ? (
+          <div style={{ marginTop: SECTION_GAP }}>
+            <div style={headerStyle}>PubMed Article(s)</div>
+            <LazyPubmedPreview pubmedId={source.externalRef} />
+          </div>
+        ) : (
+          <div style={{ marginTop: SECTION_GAP }}>
+            <div style={headerStyle}>DOI</div>
+            <div style={{ fontSize: '14px' }}>
+              <a
+                href={`https://doi.org/${source.externalRef}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                https://doi.org/{source.externalRef}
+              </a>
+            </div>
+          </div>
+        ))}
     </div>
   );
 }

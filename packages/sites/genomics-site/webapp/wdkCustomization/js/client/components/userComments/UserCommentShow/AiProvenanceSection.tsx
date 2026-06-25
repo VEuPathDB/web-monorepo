@@ -50,24 +50,43 @@ export function AiProvenanceSection({ aiProvenance }: Props): JSX.Element {
           <LazyPubmedPreview pubmedId={source.pubmedId} />
         </Row>
       ) : (
-        <Row label="Source publication">
-          {source.externalUrl ? (
-            <div>
-              <a
-                href={source.externalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {source.externalTitle || source.externalUrl}
-              </a>
+        <>
+          <Row label="Source publication">
+            {source.externalUrl ? (
+              <div>
+                <a
+                  href={source.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {source.externalTitle || source.externalUrl}
+                </a>
+              </div>
+            ) : (
+              <div>User-uploaded PDF — not publicly available</div>
+            )}
+            <div style={{ color: GREY, fontStyle: 'italic', fontSize: '13px' }}>
+              (uploaded PDF, processed in the author's browser — file not
+              stored)
             </div>
-          ) : (
-            <div>User-uploaded PDF — not publicly available</div>
-          )}
-          <div style={{ color: GREY, fontStyle: 'italic', fontSize: '13px' }}>
-            (uploaded PDF, processed in the author's browser — file not stored)
-          </div>
-        </Row>
+          </Row>
+          {source.externalRef &&
+            (source.externalRefKind === 'pubmed' ? (
+              <Row label="PubMed Article(s)">
+                <LazyPubmedPreview pubmedId={source.externalRef} />
+              </Row>
+            ) : (
+              <Row label="DOI">
+                <a
+                  href={`https://doi.org/${source.externalRef}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  https://doi.org/{source.externalRef}
+                </a>
+              </Row>
+            ))}
+        </>
       )}
     </>
   );
