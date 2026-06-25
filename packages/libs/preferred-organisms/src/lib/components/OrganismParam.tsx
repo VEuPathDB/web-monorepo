@@ -375,7 +375,10 @@ function TreeBoxOrganismEnumParam(
         </button>
         {showApplyButtonCheckmark && (
           <>
-            <Icon style={{ margin: '2px', fontSize: '1.2em' }} fa="check" />{' '}
+            <Icon
+              style={{ margin: '2px', fontSize: '1.2em', color: 'green' }}
+              fa="check"
+            />{' '}
           </>
         )}
       </div>
