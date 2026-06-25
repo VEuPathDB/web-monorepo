@@ -27,10 +27,6 @@ export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
         <p>
           <i>
             Select the data type that corresponds to the data you are uploading.
-            If your data do not fit one of the supported upload types, please{' '}
-            <a href={url + '/app/contact-us'}>Contact Us</a> for assistance. For
-            exploration and sharing of general tab-delimited datasets, please
-            use <a href={dataExplorerUrl}>dataExplorer</a>.
           </i>
         </p>
       )}
@@ -43,6 +39,15 @@ export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
           />
         ))}
       </menu>
+      {isGenomicsProject(projectId) && (
+        <p>
+          <i>
+            For exploration and sharing of general tab-delimited datasets, please use <a href={dataExplorerUrl}>dataExplorer.org</a>.
+            If your data do not fit one of the supported upload types, please <Link to="/contact-us">Contact Us</Link> for assistance. 
+          </i>
+        </p>
+      )}
+
     </div>
   );
 }

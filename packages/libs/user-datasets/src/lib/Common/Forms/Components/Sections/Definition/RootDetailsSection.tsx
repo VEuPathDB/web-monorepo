@@ -88,9 +88,9 @@ export function RootDetailsSection(
     : null;
 
   return (
-    <section>
-      <h3>
-        <GlobeIcon /> Define Dataset:
+    <section id="define-dataset">
+      <h3> 
+        <GlobeIcon /> Define Dataset
       </h3>
 
       <div className="field-grid">

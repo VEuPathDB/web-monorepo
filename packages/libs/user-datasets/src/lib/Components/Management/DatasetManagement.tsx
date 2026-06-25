@@ -275,28 +275,34 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
                   {questions.map((q) => {
                     // User dataset searches typically offer changing the dataset through a dropdown
                     // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
-                    // Hence the regex: /dataset/
+                    // 'geneListUserDataset' for genelists,  hence the regex: /ataset/
                     const ps = q.paramNames.filter((paramName) =>
-                      paramName.match(/dataset/)
+                      paramName.match(/ataset/)
                     );
+
                     const urlPath = [
                       '',
                       'search',
                       q.outputRecordClassName,
                       q.urlSegment,
                     ].join('/');
+
                     const url =
                       urlPath +
                       (ps.length === 1
-                        ? '?param.' +
-                          ps[0] +
-                          '=' +
+                        ? '?param.' + ps[0] + '=' +
                           (userDataset.type.name === 'phenotype'
-                            ? diyUserDatasetIdToWdkRecordId(
-                                userDataset.datasetId
-                              )
-                            : userDataset.datasetId)
-                        : '');
+                            ? diyUserDatasetIdToWdkRecordId(userDataset.datasetId)
+                            : userDataset.datasetId
+                          ) +
+                          (userDataset.type.name === 'genelist'
+                            ? '&autoRun'
+                            : ''
+                          )
+
+                        : ''
+                      );
+
                     return (
                       <li key={q.fullName}>
                         <Link to={url}>{q.displayName}</Link>

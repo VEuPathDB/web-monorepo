@@ -46,6 +46,7 @@ export type TreeBoxProps = {
   selectedValues: string[];
   onChange: (newValue: string[]) => void;
   uiState: State;
+  postSelectionElement?: JSX.Element;
   context: Context<TreeBoxEnumParam>;
   dispatch: DispatchAction;
   wrapCheckboxTreeProps?: (
@@ -191,6 +192,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         {...selectionCounts}
         alwaysShowCount
       />
+      {props.postSelectionElement}
       <CheckboxTree {...wrappedCheckboxTreeProps} />
     </div>
   );

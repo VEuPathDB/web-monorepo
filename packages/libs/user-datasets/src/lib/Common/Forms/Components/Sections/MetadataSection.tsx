@@ -37,7 +37,7 @@ export function MetadataSection({
 
   return (
     <section className="relative-root">
-      <h2>Provide Dataset Metadata:</h2>
+      <h2>Provide Dataset Metadata</h2>
 
       <CoreDatasetInformation
         formProps={formProps}

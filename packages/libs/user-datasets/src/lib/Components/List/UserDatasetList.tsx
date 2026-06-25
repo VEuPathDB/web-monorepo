@@ -234,8 +234,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'name',
         sortable: true,
-        name: 'Name / ID',
-        helpText: '',
+        name: 'Dataset name',
+        helpText:
+          'Click a dataset name to open the dataset record and editing interface.',
         renderCell: (cellProps: MesaDataCellProps) => {
           const dataset = cellProps.row;
           const saveName = this.onMetaAttributeSaveFactory(dataset, 'name');
@@ -285,7 +286,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'type',
-        name: 'Type',
+        name: 'Data type',
+        helpText:
+          'The data type classifies the dataset according to the biological characteristics and structure of the data it contains.',
         sortable: true,
         renderCell: textCell('type', (datasetType: DatasetTypeOutput) => {
           const { category, version } = datasetType;
@@ -299,7 +302,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'projects',
         sortable: true,
-        name: 'VEuPathDB Websites',
+        name: 'VEuPathDB project',
         renderCell(cellProps: MesaDataCellProps) {
           const newInstallTargets = cellProps.row.installTargets.map((val) =>
             val === 'UniDB'
@@ -315,6 +318,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         key: 'status',
         className: 'StatusColumn',
         name: 'Status',
+        helpText:
+          'Indicates the current status of dataset import and installation.',
         style: { textAlign: 'center' },
         renderCell: this.renderStatusCell,
       },
@@ -327,6 +332,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'sharedWith',
         name: 'Shared with',
+        helpText:
+          'Names of collaborators the owner has explicitly invited to discover, explore, and download this dataset.',
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
@@ -334,7 +341,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         ? [
             {
               key: 'visibility',
-              name: 'Public',
+              name: 'Visibility',
               sortable: true,
               helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
               style: { textAlign: 'center' },
@@ -345,6 +352,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'created',
         name: 'Created',
+        helpText: 'Date the dataset was first uploaded to VEuPathDB.',
         sortable: true,
         renderCell: textCell('created', (created: string) => (
           <DateTime datetime={created} />
@@ -353,11 +361,14 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'fileCount',
         name: 'File count',
+        helpText: 'The number of data files uploaded as part of this dataset.',
         renderCell: textCell('fileCount', (count: number) => count),
       },
       {
         key: 'size',
         name: 'Size',
+        helpText:
+          'The dataset size. Users can store up to 10 GB of data in their “My Datasets” workspace.',
         sortable: true,
         renderCell: textCell('fileSizeTotal', (size: number) =>
           formatFileSize(size)
