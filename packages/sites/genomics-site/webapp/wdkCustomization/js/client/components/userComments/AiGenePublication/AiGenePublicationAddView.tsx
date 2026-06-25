@@ -274,31 +274,54 @@ function ExtractionStatus({
   );
 }
 
+const refHintPillStyle: React.CSSProperties = {
+  display: 'inline-block',
+  padding: '1px 8px',
+  borderRadius: '8px',
+  color: '#fff',
+  fontSize: '12px',
+  fontWeight: 500,
+};
+
 function ExternalRefHint({ value }: { value: string }): JSX.Element | null {
-  const [detected, setDetected] = useState<
-    { ref: string; kind: 'pubmed' | 'doi' } | undefined
-  >(undefined);
+  // Capture both the evaluated (debounced) input and its detection result, so
+  // we can tell "nothing typed" apart from "typed something unparseable".
+  const [evaluated, setEvaluated] = useState<{
+    input: string;
+    detected: { ref: string; kind: 'pubmed' | 'doi' } | undefined;
+  }>({ input: '', detected: undefined });
 
   useEffect(() => {
-    const handle = setTimeout(() => setDetected(detectExternalRef(value)), 400);
+    const handle = setTimeout(
+      () =>
+        setEvaluated({
+          input: value.trim(),
+          detected: detectExternalRef(value),
+        }),
+      400
+    );
     return () => clearTimeout(handle);
   }, [value]);
 
-  if (!detected) return null;
+  const { input, detected } = evaluated;
+
+  // Nothing typed yet — no hint.
+  if (input === '') return null;
+
+  // Typed something the parser couldn't recognise — it won't be stored.
+  if (!detected) {
+    return (
+      <div style={{ marginTop: '6px' }}>
+        <span style={{ ...refHintPillStyle, backgroundColor: '#9a6700' }}>
+          Not a valid PubMed ID or DOI — will be ignored
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ marginTop: '6px' }}>
-      <span
-        style={{
-          display: 'inline-block',
-          padding: '1px 8px',
-          borderRadius: '8px',
-          backgroundColor: '#0a7c8a',
-          color: '#fff',
-          fontSize: '12px',
-          fontWeight: 500,
-        }}
-      >
+      <span style={{ ...refHintPillStyle, backgroundColor: '#0a7c8a' }}>
         {detected.kind === 'pubmed' ? 'PubMed ID' : 'DOI'} detected
       </span>
       {detected.kind === 'pubmed' ? (
@@ -547,6 +570,13 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
       ? { backgroundColor: '#f0f0f0', color: GREY, cursor: 'not-allowed' }
       : {}),
   };
+  // Subordinate to the "Provenance (optional)" section heading.
+  const provenanceLabelStyle: React.CSSProperties = {
+    display: 'block',
+    fontWeight: 400,
+    marginBottom: '4px',
+    fontSize: '13px',
+  };
 
   return (
     <div style={{ maxWidth: '720px', fontFamily: 'inherit' }}>
@@ -715,11 +745,27 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     spacing: { margin: '0 0 12px', padding: '8px 12px' },
                     fontSize: '13px',
                     message:
-                      'Your PDF is processed entirely in your browser — only the extracted text is sent to our servers, never the file itself. For provenance, optionally add a public link to the publication below.',
+                      'Your PDF is processed entirely in your browser — only the extracted text is sent to our servers, never the file itself.',
                   }}
                 />
 
                 {/* Optional provenance fields */}
+                <div style={{ marginBottom: '10px' }}>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    Provenance (optional)
+                  </div>
+                  <div style={{ fontSize: '12px', color: GREY }}>
+                    Linking to the source publication helps other users see
+                    where this AI summary came from. All three fields below are
+                    optional.
+                  </div>
+                </div>
                 {alreadyPublished && (
                   <div
                     style={{
@@ -736,12 +782,7 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 <div style={{ marginBottom: '8px' }}>
                   <label
                     htmlFor="ai-external-url-input"
-                    style={{
-                      display: 'block',
-                      fontWeight: 500,
-                      marginBottom: '4px',
-                      fontSize: '14px',
-                    }}
+                    style={provenanceLabelStyle}
                   >
                     Publication URL
                   </label>
@@ -757,12 +798,7 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 <div style={{ marginBottom: '8px' }}>
                   <label
                     htmlFor="ai-external-title-input"
-                    style={{
-                      display: 'block',
-                      fontWeight: 500,
-                      marginBottom: '4px',
-                      fontSize: '14px',
-                    }}
+                    style={provenanceLabelStyle}
                   >
                     Link text
                   </label>
@@ -778,14 +814,9 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 <div style={{ marginBottom: '8px' }}>
                   <label
                     htmlFor="ai-external-ref-input"
-                    style={{
-                      display: 'block',
-                      fontWeight: 500,
-                      marginBottom: '4px',
-                      fontSize: '14px',
-                    }}
+                    style={provenanceLabelStyle}
                   >
-                    PubMed ID or DOI (optional)
+                    PubMed ID or DOI
                   </label>
                   <TextBox
                     id="ai-external-ref-input"
