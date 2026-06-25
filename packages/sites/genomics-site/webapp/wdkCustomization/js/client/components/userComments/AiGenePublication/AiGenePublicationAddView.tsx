@@ -536,6 +536,18 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
 
   const submitEnabled = form.canSubmit && !form.submitting;
 
+  // When an AI summary already exists for this gene+publication, the provenance
+  // fields are moot: the backend keys de-duplication on the PDF content digest
+  // and never persists these fields for a duplicate, so we disable them.
+  const alreadyPublished =
+    form.ownDuplicates.length > 0 || form.otherDuplicates.length > 0;
+  const provenanceFieldStyle: React.CSSProperties = {
+    width: '400px',
+    ...(alreadyPublished
+      ? { backgroundColor: '#f0f0f0', color: GREY, cursor: 'not-allowed' }
+      : {}),
+  };
+
   return (
     <div style={{ maxWidth: '720px', fontFamily: 'inherit' }}>
       <AiGenePublicationBreadcrumb activeStep={activeStep} />
@@ -708,6 +720,19 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 />
 
                 {/* Optional provenance fields */}
+                {alreadyPublished && (
+                  <div
+                    style={{
+                      marginBottom: '8px',
+                      fontSize: '12px',
+                      color: GREY,
+                    }}
+                  >
+                    An AI summary already exists for this gene from this
+                    publication, so these provenance fields are disabled — they
+                    won’t change the existing summary.
+                  </div>
+                )}
                 <div style={{ marginBottom: '8px' }}>
                   <label
                     htmlFor="ai-external-url-input"
@@ -725,7 +750,8 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     value={form.externalUrl}
                     onChange={form.onExternalUrlChange}
                     placeholder="https://…"
-                    style={{ width: '400px' }}
+                    disabled={alreadyPublished}
+                    style={provenanceFieldStyle}
                   />
                 </div>
                 <div style={{ marginBottom: '8px' }}>
@@ -745,7 +771,8 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     value={form.externalTitle}
                     onChange={form.onExternalTitleChange}
                     placeholder="e.g. Smith et al. 2024 (preprint)"
-                    style={{ width: '400px' }}
+                    disabled={alreadyPublished}
+                    style={provenanceFieldStyle}
                   />
                 </div>
                 <div style={{ marginBottom: '8px' }}>
@@ -765,9 +792,12 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     value={form.externalRef}
                     onChange={form.onExternalRefChange}
                     placeholder="e.g. 12345678 or 10.1234/abc"
-                    style={{ width: '400px' }}
+                    disabled={alreadyPublished}
+                    style={provenanceFieldStyle}
                   />
-                  <ExternalRefHint value={form.externalRef} />
+                  {!alreadyPublished && (
+                    <ExternalRefHint value={form.externalRef} />
+                  )}
                 </div>
               </div>
             )}
