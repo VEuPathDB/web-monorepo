@@ -216,6 +216,7 @@ function TreeBoxOrganismEnumParam(
   const sortedSelection = _.sortBy(currentSelection);
   const showApplyButtonCheckmark =
     organismValuePreset != null &&
+    organismValuePreset.length > 0 &&
     _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
   const disableApplyButton =
     organismValuePreset == null || organismValuePreset.length === 0;
@@ -374,7 +375,7 @@ function TreeBoxOrganismEnumParam(
         </button>
         {showApplyButtonCheckmark && (
           <>
-            <Icon style={{ margin: '5px' }} fa="check" />{' '}
+            <Icon style={{ margin: '2px', fontSize: '1.2em' }} fa="check" />{' '}
           </>
         )}
       </div>
