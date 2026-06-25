@@ -217,7 +217,8 @@ function TreeBoxOrganismEnumParam(
   const showApplyButtonCheckmark =
     organismValuePreset != null &&
     _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
-  const disableApplyButton = organismValuePreset == null;
+  const disableApplyButton =
+    organismValuePreset == null || organismValuePreset.length === 0;
   const showSaveButtonCheckmark =
     organismValuePreset != null &&
     _.isEqual(sortedSelection, _.sortBy(organismValuePreset));
@@ -301,7 +302,7 @@ function TreeBoxOrganismEnumParam(
 
   // preset buttons componenet to be passed to the tree
   let applyButtonText =
-    organismValuePreset == null
+    organismValuePreset == null || organismValuePreset.length === 0
       ? 'Apply my preset organisms'
       : 'Apply my ' + organismValuePreset.length + ' preset organisms';
   let buttonStyle = { margin: '5px', borderRadius: '6px' };
