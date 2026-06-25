@@ -303,7 +303,7 @@ function ExternalRefHint({ value }: { value: string }): JSX.Element | null {
       </span>
       {detected.kind === 'pubmed' ? (
         <div style={{ marginTop: '8px' }}>
-          <LazyPubmedPreview pubmedId={detected.ref} />
+          <LazyPubmedPreview key={detected.ref} pubmedId={detected.ref} />
         </div>
       ) : (
         <div style={{ marginTop: '6px', fontSize: '14px' }}>
