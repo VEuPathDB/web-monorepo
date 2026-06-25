@@ -211,14 +211,13 @@ function TreeBoxOrganismEnumParam(
    * - If none selected, disable save button
    * - If no preset set, disable apply button
    * - If preset set and selection exactly matches preset, show save checkmark and disable save button
-   * - If preset set and all applicable presets equals selection, show apply checkmark and disable apply button
+   * - If preset set and all applicable presets equals selection, show apply checkmark
    */
   const sortedSelection = _.sortBy(currentSelection);
   const showApplyButtonCheckmark =
     organismValuePreset != null &&
     _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
-  const disableApplyButton =
-    organismValuePreset == null || showApplyButtonCheckmark;
+  const disableApplyButton = organismValuePreset == null;
   const showSaveButtonCheckmark =
     organismValuePreset != null &&
     _.isEqual(sortedSelection, _.sortBy(organismValuePreset));
