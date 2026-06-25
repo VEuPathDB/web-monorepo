@@ -82,6 +82,8 @@ export interface AiGenePublicationRequest {
   pdfContentSha256?: string; // iff source === 'upload', hex SHA-256 over the PDF bytes
   externalUrl?: string;
   externalTitle?: string;
+  externalRef?: string; // normalised PMID or DOI (upload path only)
+  externalRefKind?: 'pubmed' | 'doi'; // kind of externalRef
   options: {
     // generateProductDescription is wire-supported but ignored by the BE in v1;
     // not exposed in the v1 UI.

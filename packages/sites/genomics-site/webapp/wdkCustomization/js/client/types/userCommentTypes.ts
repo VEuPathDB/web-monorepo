@@ -30,6 +30,9 @@ export type AiProvenanceSource =
       // PDF content digest; lets the client match an uploaded PDF to an existing
       // published comment, the upload-path analogue of matching by PMID.
       pdfContentSha256?: string;
+      // Optional PMID/DOI the user asserts for the uploaded PDF (display-only).
+      externalRef?: string;
+      externalRefKind?: 'pubmed' | 'doi';
     };
 
 export interface AiProvenance {
