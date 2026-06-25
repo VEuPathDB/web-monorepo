@@ -40,10 +40,13 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
   const dispatch = useDispatch();
   const formState = useDatasetFormState();
 
-  useEffect(() => {
-    if (vdi && props.datasetId)
-      (async () => setDataset(await vdi.getDatasetDetails(props.datasetId)))();
-  }, [ vdi, props.datasetId ]);
+  useEffect(
+    () => {
+      if (vdi && props.datasetId)
+        (async () => setDataset(await vdi.getDatasetDetails(props.datasetId)))();
+    },
+    [ vdi, props.datasetId ],
+  );
 
   useEffect(
     () => {
