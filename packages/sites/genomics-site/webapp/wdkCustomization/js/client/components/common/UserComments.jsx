@@ -40,28 +40,22 @@ export function addCommentLink(getLink, getAiLink) {
     let link = getLink(props);
 
     if (getAiLink) {
-      if (!allowAiAssistedCommentCreation) {
-        // Feature off: render no add-comment button. The vanilla "Add a comment"
-        // button remains commented out (beta-demo state); see the legacy branch.
-        return (
-          <div>
-            <props.DefaultComponent {...props} />
-          </div>
-        );
-      }
-      let aiLink = getAiLink(props);
       return (
         <div>
           <div style={buttonRowStyle}>
             {/* Vanilla "Add a comment" button hidden for the AI-comments beta
-                demo. Restore for production:
+                demo. Restore for production (renders regardless of the
+                allowAiAssistedCommentCreation flag):
             <a href={link} style={buttonStyle}>
               Add a comment <i className="fa fa-comment" />
             </a>
             */}
-            <Link to={aiLink} style={buttonStyle}>
-              Add AI-assisted comment <span style={betaPillStyle}>Beta</span>
-            </Link>
+            {/* AI button is gated: shown only when the feature is enabled. */}
+            {allowAiAssistedCommentCreation && (
+              <Link to={getAiLink(props)} style={buttonStyle}>
+                Add AI-assisted comment <span style={betaPillStyle}>Beta</span>
+              </Link>
+            )}
           </div>
           <props.DefaultComponent {...props} />
         </div>
