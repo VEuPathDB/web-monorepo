@@ -1,7 +1,5 @@
 # AI-Assisted Comment Feature Flag Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Add a single feature flag, `allowAiAssistedCommentCreation`, that gates AI-assisted comment _creation_ on both the frontend (button + form route) and backend (submit + publish endpoints), sourced from one conifer modelprop.
 
 **Architecture:** One conifer modelprop `ALLOW_AI_ASSISTED_COMMENT_CREATION` is the single source of truth. Conifer feeds it to the frontend via `appBase.html.j2` → `window.__SITE_CONFIG__` → `web-common/config.ts`, and to the backend via `getWdkModel().getProperties()`. The frontend hides the button and guards the form route; the backend returns 403 from the two creation endpoints. Display of existing AI comments is untouched.
