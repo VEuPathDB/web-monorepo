@@ -57,7 +57,7 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
   },
   {
     ...implementedUploadTypes.isasimple,
-    description: `Integrate your study data in ${projectId}.`,
+    description: `Integrate your data table in ${projectId}.`,
   },
   {
     ...implementedUploadTypes.phenotype,
@@ -123,7 +123,8 @@ const wranglerDataHelp = (
   <div>
     <p>
       Column names must be unique, cannot contain newlines, but can contain
-      spaces.{' '}We will consider a column:</p>
+      spaces. We will consider a column:
+    </p>
     <ul>
       <li>a date, if their values follow the pattern YYYY-MM-DD;</li>
       <li>
@@ -142,7 +143,7 @@ const wranglerDataHelp = (
 );
 const wranglerVarAttrHelp = (
   <div>
-    <p style={{marginTop: 0}}>
+    <p style={{ marginTop: 0 }}>
       (Optional) Upload a variable attributes file describing the variables in
       the data file:
     </p>
@@ -273,24 +274,27 @@ function genelistFormConfigurator(
           <summary>
             Instructions to upload your {dataType.vdiConfig.category} dataset
           </summary>
-        <div className="formInfo">
-          <p>
-            Upload a file containing gene IDs. Gene IDs need to be valid and be
-            separated by valid delimiters. {' '}Valid gene IDs should:</p>
-          <ul>
-            <li>include only these characters [a-zA-Z0-9().:_-],</li>
-            <li>have at least one alphabetical character, and</li>
-            <li>be at most 80 characters.</li>
-          </ul>
-          <p>Invalid IDs and duplicated IDs will be discarded.
-          {' '}Valid delimiters are:</p>
-          <ul>
-            <li>white space (newline, space, tab),</li>
-            <li>comma, and </li>
-            <li>semi-colon.</li>
-          </ul>
-          {textFilesHelp}
-        </div>
+          <div className="formInfo">
+            <p>
+              Upload a file containing gene IDs. Gene IDs need to be valid and
+              be separated by valid delimiters. Valid gene IDs should:
+            </p>
+            <ul>
+              <li>include only these characters [a-zA-Z0-9().:_-],</li>
+              <li>have at least one alphabetical character, and</li>
+              <li>be at most 80 characters.</li>
+            </ul>
+            <p>
+              Invalid IDs and duplicated IDs will be discarded. Valid delimiters
+              are:
+            </p>
+            <ul>
+              <li>white space (newline, space, tab),</li>
+              <li>comma, and </li>
+              <li>semi-colon.</li>
+            </ul>
+            {textFilesHelp}
+          </div>
         </details>
       ),
     },
@@ -315,9 +319,10 @@ function isasimpleFormConfigurator(
       },
     },
     datasetCharacteristics: {
-      enable: true,
+      enable: projectId === 'ClinEpiDB',
       studyDesignVocab: StudyDesignVocab,
     },
+    enableExperimentalOrganism: true,
     dataInputConfig: {
       file: { enabled: true },
       helpText: () => (
@@ -325,18 +330,18 @@ function isasimpleFormConfigurator(
           <summary>
             Instructions to upload your {dataType.vdiConfig.category} dataset
           </summary>
-        <div className="formInfo">
-          <p>
-            Upload a single data file in .csv, .tsv, or tab-delimited .txt
-            format. Compressed (.zip) files are also supported.
-          </p>
-          <ul>
-            <li>Have variables as columns, records as rows.</li>
-            <li>The first row must be column names (= variable names).</li>
-          </ul>
-          {wranglerDataHelp}
-          {textFilesHelp}
-        </div>
+          <div className="formInfo">
+            <p>
+              Upload a single data file in .csv, .tsv, or tab-delimited .txt
+              format. Compressed (.zip) files are also supported.
+            </p>
+            <ul>
+              <li>Have variables as columns, records as rows.</li>
+              <li>The first row must be column names (= variable names).</li>
+            </ul>
+            {wranglerDataHelp}
+            {textFilesHelp}
+          </div>
         </details>
       ),
     },
@@ -368,22 +373,24 @@ function phenotypeFormConfigurator(
           <summary>
             Instructions to upload your {dataType.vdiConfig.category} dataset
           </summary>
-        <div className="formInfo">
-          <p>Upload a tab-delimited .txt file. The file should contain:</p>
-          <ul>
-            <li>a gene ID column with header "geneID", and</li>
-            <li>at least one numeric column.</li>
-          </ul>
-          <p>The file will be rejected if there are duplicated IDs.
-          {' '}Invalid IDs will be discarded. Valid gene IDs:</p>
-          <ul>
-            <li>include only these characters [a-zA-Z0-9().:_-],</li>
-            <li>have at least one alphabetical character, and</li>
-            <li>are at most 80 characters.</li>
-          </ul>
-          {wranglerDataHelp}
-          {textFilesHelp}
-        </div>
+          <div className="formInfo">
+            <p>Upload a tab-delimited .txt file. The file should contain:</p>
+            <ul>
+              <li>a gene ID column with header "geneID", and</li>
+              <li>at least one numeric column.</li>
+            </ul>
+            <p>
+              The file will be rejected if there are duplicated IDs. Invalid IDs
+              will be discarded. Valid gene IDs:
+            </p>
+            <ul>
+              <li>include only these characters [a-zA-Z0-9().:_-],</li>
+              <li>have at least one alphabetical character, and</li>
+              <li>are at most 80 characters.</li>
+            </ul>
+            {wranglerDataHelp}
+            {textFilesHelp}
+          </div>
         </details>
       ),
     },
@@ -410,74 +417,74 @@ function rnaseqFormConfigurator(
           <summary>
             Instructions to upload your {dataType.vdiConfig.category} dataset
           </summary>
-            <div className="formInfo">
-              <p>Prepare your data for upload:</p>
-              <ul>
-                <li>
-                  Compress the files into a .tar.gz, .tgz or .zip archive file.
-                </li>
-                <li>
-                  Add files directly to the archive (do not add any folders).
-                </li>
-                <li>Ensure all files are non-empty.</li>
-              </ul>
-              <p>Include the following files in your archive:</p>
-              <ol>
-                <li>
-                  <b>Counts files</b> <i>(required)</i>
-                  <ul>
-                    <li>Provide one tab-delimited per sample (any or no extension).</li>
-                    <li>
-                      Each file must provide exactly two columns, labeled:
-                      <ul>
-                        <li>'Gene ID' (or similar) and</li>
-                        <li>'FPKM' or 'TPM' (lower case also accepted).</li>
-                      </ul>
-                    </li>
-                    <li>
-                      Gene IDs must be valid VEuPathDB IDs or valid aliases; transcript IDs
-                      are also allowed, but not a mix of genes IDs and transcript IDs.
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <b>Manifest file</b> <i>(required)</i>
-                  <ul>
-                    <li>Provide a tab-delimited file named 'manifest.txt'.</li>
-                    <li>
-                      Include three or four unlabeled columns in this order:
-                      <ul>
-                        <li>sample name,</li>
-                        <li>counts file name (must match exactly),</li>
-                        <li>
-                          strandedness ('unstranded' or 'stranded'),{' '}
-                          <i>(only 'unstranded' is currently supported.)</i>,
-                          and
-                        </li>
-                        <li>
-                          bigwig file name (optional, must match exactly if
-                          provided).
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <b>bigWig files</b> <i>(optional)</i> for genome browser
-                  visualization.
-                  <ul>
-                    <li>
-                      Optionally provide one .bw (bigWig) file per sample.
-                    </li>
-                    <li>
-                      If included, ensure each file is listed in the 4th column
-                      of the manifest.
-                    </li>
-                  </ul>
-                </li>
-              </ol>
-              {textFilesHelp}
-            </div>
+          <div className="formInfo">
+            <p>Prepare your data for upload:</p>
+            <ul>
+              <li>
+                Compress the files into a .tar.gz, .tgz or .zip archive file.
+              </li>
+              <li>
+                Add files directly to the archive (do not add any folders).
+              </li>
+              <li>Ensure all files are non-empty.</li>
+            </ul>
+            <p>Include the following files in your archive:</p>
+            <ol>
+              <li>
+                <b>Counts files</b> <i>(required)</i>
+                <ul>
+                  <li>
+                    Provide one tab-delimited per sample (any or no extension).
+                  </li>
+                  <li>
+                    Each file must provide exactly two columns, labeled:
+                    <ul>
+                      <li>'Gene ID' (or similar) and</li>
+                      <li>'FPKM' or 'TPM' (lower case also accepted).</li>
+                    </ul>
+                  </li>
+                  <li>
+                    Gene IDs must be valid VEuPathDB IDs or valid aliases;
+                    transcript IDs are also allowed, but not a mix of genes IDs
+                    and transcript IDs.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <b>Manifest file</b> <i>(required)</i>
+                <ul>
+                  <li>Provide a tab-delimited file named 'manifest.txt'.</li>
+                  <li>
+                    Include three or four unlabeled columns in this order:
+                    <ul>
+                      <li>sample name,</li>
+                      <li>counts file name (must match exactly),</li>
+                      <li>
+                        strandedness ('unstranded' or 'stranded'),{' '}
+                        <i>(only 'unstranded' is currently supported.)</i>, and
+                      </li>
+                      <li>
+                        bigwig file name (optional, must match exactly if
+                        provided).
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <b>bigWig files</b> <i>(optional)</i> for genome browser
+                visualization.
+                <ul>
+                  <li>Optionally provide one .bw (bigWig) file per sample.</li>
+                  <li>
+                    If included, ensure each file is listed in the 4th column of
+                    the manifest.
+                  </li>
+                </ul>
+              </li>
+            </ol>
+            {textFilesHelp}
+          </div>
         </details>
       ),
     },
