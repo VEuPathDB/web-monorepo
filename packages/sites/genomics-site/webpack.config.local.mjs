@@ -66,6 +66,7 @@ export default configure({
         showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
 	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
 	showSubscriptionProds: process.env.SHOW_SUBSCRIPTION_PRODS === 'true',
+	allowAiAssistedCommentCreation: process.env.ALLOW_AI_ASSISTED_COMMENT_CREATION === 'true',
 })
     }),
     new HtmlWebpackPlugin({
