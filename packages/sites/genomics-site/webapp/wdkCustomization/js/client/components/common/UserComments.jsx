@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { allowAiAssistedCommentCreation } from '@veupathdb/web-common/lib/config';
 
 const buttonStyle = {
   display: 'inline-flex',
@@ -39,6 +40,15 @@ export function addCommentLink(getLink, getAiLink) {
     let link = getLink(props);
 
     if (getAiLink) {
+      if (!allowAiAssistedCommentCreation) {
+        // Feature off: render no add-comment button. The vanilla "Add a comment"
+        // button remains commented out (beta-demo state); see the legacy branch.
+        return (
+          <div>
+            <props.DefaultComponent {...props} />
+          </div>
+        );
+      }
       let aiLink = getAiLink(props);
       return (
         <div>
