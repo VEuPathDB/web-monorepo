@@ -22,6 +22,34 @@
 
 ---
 
+## Prerequisites (read first on a cold start)
+
+This plan spans three git repos. A fresh Claude Code session starts with only
+`web-monorepo` as a working directory — **add the other two before starting**,
+or Tasks 1 and 2 can't edit/commit their files:
+
+```
+/add-dir /home/maccallr/work/ai-wdk/project_home/EbrcWebsiteCommon
+/add-dir /home/maccallr/work/ai-wdk/project_home/ApiCommonWebsite
+```
+
+- **Branches:** `web-monorepo` is on `feature-ai-user-comments` (spec + plan are
+  committed there). Before committing in `EbrcWebsiteCommon` (Task 2) and
+  `ApiCommonWebsite` (Task 1), run `git status`/`git branch` in each and confirm
+  you're on the intended feature branch — create/switch first if needed. Don't
+  commit to `main`.
+- **Yarn version:** if `yarn --version` reports 1.22.x, use `~/.volta/bin/yarn`
+  (should be 4.12.0) — see project `CLAUDE.md`. Normal `yarn nx …` commands
+  usually bootstrap the right version automatically.
+- **No frontend unit tests:** genomics-site has no jest; `web-common`'s `test`
+  script is a no-op. Frontend verification is `compile:check` + a manual
+  dev-server toggle (see each task). Backend verification is module compilation.
+- **Java build command is a best guess** (`mvn -pl Service -am compile`); use the
+  team's normal build wrapper for `ApiCommonWebsite/Service` if different. Success
+  criterion is the same: the module compiles.
+
+---
+
 ### Task 1: Backend gate — 403 on submit & publish when disabled
 
 **Files:**
