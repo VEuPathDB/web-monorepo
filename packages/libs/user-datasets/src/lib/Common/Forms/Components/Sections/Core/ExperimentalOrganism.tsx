@@ -5,6 +5,8 @@ import { changeHandler, Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
+import { isNonBlankString } from '../../../../../Utils/value-tests';
+import { projectId } from '../../../../../config';
 
 export const ExpOrganismToggleID = 'exp-organism-toggle';
 
@@ -16,7 +18,6 @@ export interface ExperimentalOrganismProps {
   readonly jsonPath: JsonPathBuilder;
 }
 
-//export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
 export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
   const { hasExperimentalOrganism } = props.clientSideState;
 
@@ -38,6 +39,15 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
     }),
   );
 
+  const required = projectId === 'ClinEpiDB'
+    ? hasExperimentalOrganism
+    : isNonBlankString(safeExperimentalOrganism.species)
+      || isNonBlankString(safeExperimentalOrganism.strain);
+
+  const disabled = projectId === 'ClinEpiDB'
+    ? !hasExperimentalOrganism
+    : undefined;
+
   return (
     <>
       <InputBlock header="Experimental Organism" isCommunityRelated={true}>
@@ -50,8 +60,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
 
         <div className={'field-grid' + disabledClass}>
           {
-            props.datasetDetails.installTargets !== undefined
-            && props.datasetDetails.installTargets[0] === 'ClinEpiDB'
+            projectId === 'ClinEpiDB'
               ? (
                 <>
                   <label className="not-disabled" id={ExpOrganismToggleID}>
@@ -79,8 +88,8 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
             fieldName={props.jsonPath.appendToString<PartialOrganism>('species')}
             value={props.datasetDetails.experimentalOrganism?.species}
             onChange={onChange('species')}
-            required={hasExperimentalOrganism}
-            disabled={!hasExperimentalOrganism}
+            required={required}
+            disabled={disabled}
             minLength={3}
             maxLength={128}
           />
@@ -94,8 +103,8 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
             type="text"
             fieldName={props.jsonPath.appendToString<PartialOrganism>('strain')}
             value={props.datasetDetails.experimentalOrganism?.strain}
-            required={hasExperimentalOrganism}
-            disabled={!hasExperimentalOrganism}
+            required={required}
+            disabled={disabled}
             onChange={onChange('strain')}
             minLength={3}
             maxLength={128}
