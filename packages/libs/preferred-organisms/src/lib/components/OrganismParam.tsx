@@ -216,8 +216,10 @@ function TreeBoxOrganismEnumParam(
   const sortedSelection = _.sortBy(currentSelection);
   const showApplyButtonCheckmark =
     organismValuePreset != null &&
+    organismValuePreset.length > 0 &&
     _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
-  const disableApplyButton = organismValuePreset == null;
+  const disableApplyButton =
+    organismValuePreset == null || organismValuePreset.length === 0;
   const showSaveButtonCheckmark =
     organismValuePreset != null &&
     _.isEqual(sortedSelection, _.sortBy(organismValuePreset));
@@ -301,18 +303,24 @@ function TreeBoxOrganismEnumParam(
 
   // preset buttons componenet to be passed to the tree
   let applyButtonText =
-    organismValuePreset == null
+    organismValuePreset == null || organismValuePreset.length === 0
       ? 'Apply my preset organisms'
+      : organismValuePreset.length === 1
+      ? 'Apply my 1 preset organism'
       : 'Apply my ' + organismValuePreset.length + ' preset organisms';
-  let buttonStyle = { margin: '5px', borderRadius: '6px' };
+  let buttonStyle = {
+    margin: '5px',
+    borderRadius: '6px',
+    whiteSpace: 'nowrap' as const,
+  };
   let saveButtonText = (function (size: number) {
     switch (size) {
       case 0:
         return 'Save organisms as my preset';
       case 1:
-        return 'Save this organism as my preset';
+        return 'Save selected organism as my preset';
       default:
-        return 'Save these ' + size + ' organisms as my preset';
+        return 'Save ' + size + ' selected organisms as my preset';
     }
   })(currentSelection.length);
   let PresetButtons = (
@@ -324,6 +332,7 @@ function TreeBoxOrganismEnumParam(
           display: 'inline-block',
           borderRadius: '5px',
           border: '1px solid gray',
+          whiteSpace: 'nowrap',
         }}
       >
         <span style={{ fontWeight: 'bold', margin: '9px' }}>
@@ -373,7 +382,10 @@ function TreeBoxOrganismEnumParam(
         </button>
         {showApplyButtonCheckmark && (
           <>
-            <Icon style={{ margin: '5px' }} fa="check" />{' '}
+            <Icon
+              style={{ margin: '2px', fontSize: '1.2em', color: 'green' }}
+              fa="check"
+            />{' '}
           </>
         )}
       </div>
