@@ -30,8 +30,21 @@ feeds modelprops to **both** consumers:
 
 Naming: `ALLOW_AI_ASSISTED_COMMENT_CREATION` (UPPER_SNAKE modelprop) on the
 backend/conifer; `allowAiAssistedCommentCreation` (camelCase) on the wire and in
-frontend config. Defaults **off** everywhere; enabled only where explicitly
-configured.
+frontend config.
+
+**Defaulting:** the conifer base (`default.yml`) sets the flag **on** (`'true'`),
+so deployments get the feature by default and a site opts _out_ by overriding to
+`'false'`. Every downstream fallback, however, fails **safe to off** — the Jinja
+`|default('false')`, the `config.ts` `= false` default, and the dev webpack
+`=== 'true'` all yield off when the value is absent/misconfigured. So the feature
+is on when explicitly `'true'` and off otherwise.
+
+**Critical — string equality:** both gates compare against the literal string
+`"true"` (Jinja `"true" === "…"`; Java `"true".equals(…)`). The conifer value
+**must be the quoted string `'true'`**, matching `eda.enabled: "true"`. A bare
+YAML boolean (`true`/`yes`/`on`) renders through Jinja as `True`/`False`
+(capitalized), and `'1'` is not `'true'` — any of these would silently leave the
+feature **off**.
 
 ### Decisions (locked)
 
@@ -49,13 +62,19 @@ configured.
 
 **File:** `EbrcWebsiteCommon/Model/lib/conifer/roles/conifer/vars/default.yml`
 
-Add to the existing `modelprop:` block, defaulting off:
+Add to the existing `modelprop:` block, **on by default** — it is flipped to
+`'false'` only in special circumstances (specific environments/sites/incidents):
 
 ```yaml
 modelprop:
   ...
-  ALLOW_AI_ASSISTED_COMMENT_CREATION: 'false'
+  ALLOW_AI_ASSISTED_COMMENT_CREATION: 'true'
 ```
+
+The value **must be the quoted string `'true'`** (not bare `true`/`yes`/`on`/`1`):
+both the Jinja template and the Java check do a strict equality against `"true"`,
+and a YAML boolean renders through Jinja as `True`/`False`, which would silently
+disable the feature. This mirrors the existing `eda.enabled: "true"`.
 
 ### 2. Backend gate — `AiGenePublicationCommentService.java`
 
@@ -179,7 +198,7 @@ import { allowAiAssistedCommentCreation } from '@veupathdb/web-common/lib/config
 ## Data flow
 
 ```
-conifer default.yml  ALLOW_AI_ASSISTED_COMMENT_CREATION ('false')
+conifer default.yml  ALLOW_AI_ASSISTED_COMMENT_CREATION ('true' by default; 'false' to disable)
         │
         ├── appBase.html.j2 ──> window.__SITE_CONFIG__.allowAiAssistedCommentCreation (boolean)
         │        └── config.ts ──> UserComments.jsx (button)  +  userCommentRoutes.tsx (route guard)
@@ -208,5 +227,6 @@ conifer default.yml  ALLOW_AI_ASSISTED_COMMENT_CREATION ('false')
 - No backend response-body shaping beyond the default `ForbiddenException`
   message; the frontend gates ahead of it, so the 403 body isn't surfaced in
   normal use.
-- The conifer default is `'false'`; enabling the feature is an explicit per-site
-  override (initially genomics-site, beta).
+- The conifer default is `'true'` (feature on); it is flipped to `'false'` only
+  in special circumstances (specific environments/sites/incidents). Every
+  downstream fallback nonetheless fails safe to off.
