@@ -60,7 +60,7 @@ or Tasks 1 and 2 can't edit/commit their files:
 - Consumes: `getWdkModel().getProperties()` (inherited `Map<String,String>` from `AbstractWdkService`).
 - Produces: private method `void requireAiCommentCreationEnabled()` — throws `javax.ws.rs.ForbiddenException` (→ HTTP 403) when the modelprop is not exactly `"true"`. Called by `submit()` and `publish()`.
 
-- [ ] **Step 1: Add the `ForbiddenException` import**
+- [x] **Step 1: Add the `ForbiddenException` import**
 
 In the `javax.ws.rs.*` import block (the imports already include `BadRequestException`, `Consumes`, `DELETE`, …), add:
 
@@ -70,7 +70,7 @@ import javax.ws.rs.ForbiddenException;
 
 Keep imports alphabetically ordered (place it after `DELETE` / before `GET`, matching the existing ordering).
 
-- [ ] **Step 2: Add the private gate helper**
+- [x] **Step 2: Add the private gate helper**
 
 Add this method alongside the other private helpers (e.g. directly above the existing `private static boolean isBlank(String s)` near line 183):
 
@@ -88,7 +88,7 @@ Add this method alongside the other private helpers (e.g. directly above the exi
   }
 ```
 
-- [ ] **Step 3: Call the gate first in `submit`**
+- [x] **Step 3: Call the gate first in `submit`**
 
 In `public Response submit(AiGenePublicationRequest body)`, add the gate as the first statement (before `fetchUser()`):
 
@@ -100,7 +100,7 @@ In `public Response submit(AiGenePublicationRequest body)`, add the gate as the 
     // ...unchanged...
 ```
 
-- [ ] **Step 4: Call the gate first in `publish`**
+- [x] **Step 4: Call the gate first in `publish`**
 
 In `public Response publish(@PathParam(JOB_ID_PARAM) String jobId, PublishRequest body)`, add the gate as the first statement (before `fetchUser()`):
 
@@ -114,7 +114,7 @@ In `public Response publish(@PathParam(JOB_ID_PARAM) String jobId, PublishReques
 
 Do **not** modify `getStatus` or `cancel`.
 
-- [ ] **Step 5: Compile the Service module**
+- [x] **Step 5: Compile the Service module**
 
 Run the project's standard Java build for the Service module and confirm it compiles cleanly. Use the team's normal wrapper if there is one; otherwise:
 
@@ -123,7 +123,7 @@ Expected: BUILD SUCCESS, no compilation errors referencing `AiGenePublicationCom
 
 (If the team uses a `bld`/GUS build wrapper instead of bare maven, run that against `ApiCommonWebsite/Service`. The success criterion is the same: the module compiles.)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /home/maccallr/work/ai-wdk/project_home/ApiCommonWebsite
@@ -149,7 +149,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 
 - Produces: modelprop `ALLOW_AI_ASSISTED_COMMENT_CREATION` (string `'true'`) — read by Task 1 (backend) and rendered into `window.__SITE_CONFIG__.allowAiAssistedCommentCreation` (boolean) consumed by Tasks 3-5 (frontend).
 
-- [ ] **Step 1: Add the modelprop to conifer defaults**
+- [x] **Step 1: Add the modelprop to conifer defaults**
 
 In `default.yml`, inside the `modelprop:` block, add the flag. Place it next to the other AI/OpenAI props — e.g. immediately after the `OPENAI_API_KEY:` line:
 
@@ -160,7 +160,7 @@ ALLOW_AI_ASSISTED_COMMENT_CREATION: 'true'
 
 The value **must** be the quoted string `'true'` (not bare `true`). This mirrors `eda.enabled: "true"`.
 
-- [ ] **Step 2: Render it into `window.__SITE_CONFIG__`**
+- [x] **Step 2: Render it into `window.__SITE_CONFIG__`**
 
 In `appBase.html.j2`, inside the `{% block siteConfig %}` … `{% endblock %}` block, add a line directly after the existing `aiExpressionQualtricsId:` line (~line 63):
 
@@ -171,14 +171,14 @@ In `appBase.html.j2`, inside the `{% block siteConfig %}` … `{% endblock %}` b
 
 The `|default('false')` keeps absence fail-safe to off; the strict `"true" === "…"` yields a real JS boolean.
 
-- [ ] **Step 3: Sanity-check the template renders to a boolean**
+- [x] **Step 3: Sanity-check the template renders to a boolean**
 
 This is a visual/manual check (no conifer render harness here). Confirm the added line, when the modelprop is `'true'`, produces `allowAiAssistedCommentCreation: "true" === "true",` (→ `true`), and when `'false'` produces `"true" === "false",` (→ `false`). Confirm the value is quoted `'true'` in `default.yml` (so Jinja emits `true`, not `True`).
 
 Run: `cd /home/maccallr/work/ai-wdk/project_home/EbrcWebsiteCommon && grep -n "ALLOW_AI_ASSISTED_COMMENT_CREATION" Model/lib/conifer/roles/conifer/vars/default.yml Model/lib/conifer/roles/conifer/templates/EbrcWebsiteCommon/appBase.html.j2`
 Expected: two matches — `default.yml` showing `'true'` (quoted), and the j2 showing the `"true" === "{{ modelprop.ALLOW_AI_ASSISTED_COMMENT_CREATION|default('false') }}"` line.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd /home/maccallr/work/ai-wdk/project_home/EbrcWebsiteCommon
@@ -209,7 +209,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 - Consumes: `window.__SITE_CONFIG__.allowAiAssistedCommentCreation` (from Task 2, boolean at runtime).
 - Produces: named export `allowAiAssistedCommentCreation: boolean` from `@veupathdb/web-common/lib/config` — consumed by Tasks 4 and 5.
 
-- [ ] **Step 1: Add the export to `config.ts`**
+- [x] **Step 1: Add the export to `config.ts`**
 
 In `packages/libs/web-common/src/config.ts`, add `allowAiAssistedCommentCreation` to the destructured export, after `showSubscriptionProds = false,`:
 
@@ -219,7 +219,7 @@ In `packages/libs/web-common/src/config.ts`, add `allowAiAssistedCommentCreation
 } = window.__SITE_CONFIG__;
 ```
 
-- [ ] **Step 2: Add the dev-server var to `webpack.config.local.mjs`**
+- [x] **Step 2: Add the dev-server var to `webpack.config.local.mjs`**
 
 In `packages/sites/genomics-site/webpack.config.local.mjs`, in the `webpack.DefinePlugin` `'window.__SITE_CONFIG__'` object, add a line after `showSubscriptionProds:`:
 
@@ -228,7 +228,7 @@ In `packages/sites/genomics-site/webpack.config.local.mjs`, in the `webpack.Defi
         allowAiAssistedCommentCreation: process.env.ALLOW_AI_ASSISTED_COMMENT_CREATION === 'true',
 ```
 
-- [ ] **Step 3: Document the var in `.env.sample`**
+- [x] **Step 3: Document the var in `.env.sample`**
 
 In `packages/sites/genomics-site/.env.sample`, add after the `SHOW_SUBSCRIPTION_PRODS=true` line:
 
@@ -240,7 +240,7 @@ SHOW_SUBSCRIPTION_PRODS=true
 ALLOW_AI_ASSISTED_COMMENT_CREATION=true
 ```
 
-- [ ] **Step 4: Rebuild web-common so the new export is in `lib/`**
+- [x] **Step 4: Rebuild web-common so the new export is in `lib/`**
 
 genomics-site imports the built lib, so rebuild it.
 
@@ -250,12 +250,12 @@ Expected: build succeeds; `packages/libs/web-common/lib/config.d.ts` now declare
 Verify: `grep -n allowAiAssistedCommentCreation packages/libs/web-common/lib/config.d.ts`
 Expected: one match showing the new export.
 
-- [ ] **Step 5: Type-check genomics-site (baseline — picks up the new export)**
+- [x] **Step 5: Type-check genomics-site (baseline — picks up the new export)**
 
 Run: `cd /home/maccallr/Desktop/EDA/web-monorepo && yarn nx compile:check @veupathdb/genomics-site`
 Expected: passes (no errors). This confirms the export resolves before Tasks 4-5 consume it.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /home/maccallr/Desktop/EDA/web-monorepo
@@ -285,7 +285,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 - Consumes: `allowAiAssistedCommentCreation` from `@veupathdb/web-common/lib/config` (Task 3).
 - Produces: no new export; `addCommentLink(getLink, getAiLink)` keeps the same signature and call sites.
 
-- [ ] **Step 1: Import the flag**
+- [x] **Step 1: Import the flag**
 
 At the top of `UserComments.jsx`, after the existing imports (`react`, `react-router-dom`), add:
 
@@ -295,7 +295,7 @@ import { Link } from 'react-router-dom';
 import { allowAiAssistedCommentCreation } from '@veupathdb/web-common/lib/config';
 ```
 
-- [ ] **Step 2: Gate the AI button in `addCommentLink`**
+- [x] **Step 2: Gate the AI button in `addCommentLink`**
 
 Replace the body of the `if (getAiLink) { … }` branch so that the AI button renders only when the flag is on; when off, render only the default component (no add-comment button — the vanilla button stays commented out). The full updated function:
 
@@ -347,12 +347,12 @@ export function addCommentLink(getLink, getAiLink) {
 }
 ```
 
-- [ ] **Step 3: Type-check genomics-site**
+- [x] **Step 3: Type-check genomics-site**
 
 Run: `cd /home/maccallr/Desktop/EDA/web-monorepo && yarn nx compile:check @veupathdb/genomics-site`
 Expected: passes.
 
-- [ ] **Step 4: Manual behavior check (dev server)**
+- [x] **Step 4: Manual behavior check (dev server)** — _deferred: full dev-server run not practical in this environment; relying on compile:check + branch-logic review (off-state early-returns to no button)._
 
 Start the dev server twice, toggling the env var, and view a gene record's "User Comments" section.
 
@@ -361,7 +361,7 @@ Start the dev server twice, toggling the env var, and view a gene record's "User
 
 (If a full dev-server run isn't practical in the execution environment, note that and rely on the compile:check gate plus code review of the branch logic.)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/maccallr/Desktop/EDA/web-monorepo
@@ -384,7 +384,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 - Consumes: `allowAiAssistedCommentCreation` from `@veupathdb/web-common/lib/config` (Task 3).
 - Produces: no new export; `userCommentRoutes` keeps the same shape.
 
-- [ ] **Step 1: Import the flag**
+- [x] **Step 1: Import the flag**
 
 Add to the imports in `userCommentRoutes.tsx` (alongside the existing `@veupathdb/wdk-client` import):
 
@@ -396,7 +396,7 @@ import {
 import { allowAiAssistedCommentCreation } from '@veupathdb/web-common/lib/config';
 ```
 
-- [ ] **Step 2: Guard the route component**
+- [x] **Step 2: Guard the route component**
 
 Replace the `/user-comments/ai-gene-publication/add` route entry's `component` so it renders a notice when the flag is off:
 
@@ -422,18 +422,18 @@ Replace the `/user-comments/ai-gene-publication/add` route entry's `component` s
 
 Leave the other routes (`/user-comments/add`, `/edit`, `/show`) unchanged.
 
-- [ ] **Step 3: Type-check genomics-site**
+- [x] **Step 3: Type-check genomics-site**
 
 Run: `cd /home/maccallr/Desktop/EDA/web-monorepo && yarn nx compile:check @veupathdb/genomics-site`
 Expected: passes.
 
-- [ ] **Step 4: Manual behavior check (dev server)**
+- [x] **Step 4: Manual behavior check (dev server)** — _deferred: full dev-server run not practical in this environment; relying on compile:check + branch-logic review (off-state renders the notice before the controller)._
 
 With `ALLOW_AI_ASSISTED_COMMENT_CREATION=false`, navigate directly to `/a/app/user-comments/ai-gene-publication/add?stableId=PF3D7_0100100` (a deep link). Expected: the "AI-assisted comments are not currently enabled on this site." notice, not the form. With the var `=true`, the form (controller) loads as before.
 
 (If a full dev-server run isn't practical, note that and rely on compile:check + code review.)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /home/maccallr/Desktop/EDA/web-monorepo
@@ -447,7 +447,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 
 ## Final verification (after all tasks)
 
-- [ ] **Frontend type-check passes:** `cd /home/maccallr/Desktop/EDA/web-monorepo && yarn nx compile:check @veupathdb/genomics-site` → no errors.
-- [ ] **Backend compiles:** Service module builds cleanly (Task 1, Step 5).
-- [ ] **End-to-end manual toggle (optional but recommended):** With the dev server and `ALLOW_AI_ASSISTED_COMMENT_CREATION=false`: no button, deep-link shows notice, and a direct `POST /user-comments/ai-gene-publication` returns 403. With `=true`: button visible, form loads, submit/publish work as before.
-- [ ] **Existing AI comments still display** in both states (the gate is creation-only).
+- [x] **Frontend type-check passes:** `cd /home/maccallr/Desktop/EDA/web-monorepo && yarn nx compile:check @veupathdb/genomics-site` → no errors.
+- [x] **Backend compiles:** Service module builds cleanly (Task 1, Step 5).
+- [ ] **End-to-end manual toggle (optional but recommended):** _deferred — requires a running dev server + backend not available in this environment._ With the dev server and `ALLOW_AI_ASSISTED_COMMENT_CREATION=false`: no button, deep-link shows notice, and a direct `POST /user-comments/ai-gene-publication` returns 403. With `=true`: button visible, form loads, submit/publish work as before.
+- [x] **Existing AI comments still display** in both states (the gate is creation-only) — _confirmed by code review: the gate touches only `submit`/`publish` (backend), the add button, and the `/add` route; no display/GET path was modified._
