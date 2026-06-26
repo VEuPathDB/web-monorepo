@@ -31,10 +31,11 @@ export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly vdiConfig: VdiServiceMetadata;
   readonly isPromotingToPublic: boolean;
   readonly closeModal: Runnable;
+  readonly afterSubmit: Runnable;
 }
 
 export function UpdateFormController(props: UpdateFormControllerProps): ReactElement {
-  const vdi = useVdiService<VdiService>(identity);
+  const vdi = useVdiService();
   const [ dataset, setDataset ] = useState<DatasetGetResponseBody>();
 
   const dispatch = useDispatch();

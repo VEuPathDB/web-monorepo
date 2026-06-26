@@ -29,7 +29,7 @@ export interface ClientSideUploadFormState {
   readonly isStudy: boolean | undefined;
   readonly hasExternalSources: boolean | undefined;
   readonly hasDisclaimer: boolean | undefined;
-  readonly hasExpOrg: boolean | undefined;
+  readonly hasExperimentalOrganism: boolean | undefined;
 }
 
 function defaultClientOnlyFormState(): ClientSideUploadFormState {
@@ -37,7 +37,7 @@ function defaultClientOnlyFormState(): ClientSideUploadFormState {
     isStudy: undefined,
     hasExternalSources: undefined,
     hasDisclaimer: undefined,
-    hasExpOrg: undefined,
+    hasExperimentalOrganism: undefined,
   };
 }
 

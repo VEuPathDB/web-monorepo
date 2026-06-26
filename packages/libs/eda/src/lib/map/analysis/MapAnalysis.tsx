@@ -729,6 +729,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 enablePublicUserDatasets={enablePublicUserDatasets}
                 includeAllLink={false}
                 includeNameHeader={false}
+                history={history}
               />
             ) : (
               <RecordController

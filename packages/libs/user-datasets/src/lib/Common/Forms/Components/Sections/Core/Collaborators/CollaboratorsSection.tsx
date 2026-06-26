@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement } from 'react';
 
 import { AddRowButton, InputBlock } from '../../../index';
 import { Consumer, JsonPathBuilder } from '../../../../../../Utils';
@@ -22,7 +22,7 @@ export function CollaboratorsSection(
   const hasPrimary = safeContacts.some(it => it.isPrimary);
 
   const setContacts = (contacts: Array<DatasetContact>) =>
-    props.setDatasetMeta({ ...props.datasetMeta, contacts: contacts });
+    props.setDatasetMeta({ ...props.datasetMeta, contacts });
 
   const onUpdateContact = (contact: DatasetContact, index: number) => {
     if (

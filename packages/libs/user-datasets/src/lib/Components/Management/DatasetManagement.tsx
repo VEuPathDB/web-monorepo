@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { Redirect, withRouter } from 'react-router-dom';
+
 import { Public } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
@@ -50,10 +52,11 @@ import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 import { UpdateFormController } from '../Update/UpdateFormController';
 import { DatasetFormConfigurators, DatasetTypeConfig, findDatasetTypeConfig } from '../../Common/Configuration';
 import { isEmpty } from 'lodash';
+import { History } from 'history';
 
 const classify = makeClassifier('DatasetManagement');
 
-export interface DetailViewProps {
+export interface DatasetManagementProps {
   baseUrl: string;
   includeAllLink: boolean;
   includeNameHeader: boolean;
@@ -61,7 +64,6 @@ export interface DetailViewProps {
   user: User;
   config: ServiceConfig;
   isOwner: boolean;
-  location: Location;
   updateError?: FetchClientError;
   removeUserDataset: typeof removeUserDataset;
   userDatasetUpdating: boolean;
@@ -101,6 +103,18 @@ export interface DetailViewProps {
    * be present to enable the dataset update form.
    */
   readonly datasetTypes?: readonly DatasetTypeConfig[];
+
+  /**
+   * Whether the dataset update form modal should be rendered.
+   */
+  readonly editModal?: DatasetEditModalProps;
+
+  readonly history: History;
+}
+
+export interface DatasetEditModalProps {
+  readonly showModal: boolean;
+  readonly updateToPublic: boolean;
 }
 
 export interface DatasetAttribute {
@@ -109,19 +123,29 @@ export interface DatasetAttribute {
   value: React.ReactNode;
 }
 
+enum DatasetUpdateAction {
+  None,
+  OpeningDefault,
+  OpeningForPromotion,
+  Submitting,
+  Closing,
+}
+
 export interface DatasetManagementState {
-  readonly isUpdating: boolean;
+  readonly datasetUpdateAction: DatasetUpdateAction;
+  readonly isCommunityModalOpen: boolean;
 }
 
 class DatasetManagement<S extends DatasetManagementState = DatasetManagementState>
-  extends React.Component<DetailViewProps, S>
+  extends React.Component<DatasetManagementProps, S>
 {
-  constructor(props: DetailViewProps) {
+  constructor(props: DatasetManagementProps) {
     super(props);
 
     this.state = {
       ...this.state,
-      isUpdating: false
+      datasetUpdateAction: DatasetUpdateAction.None,
+      isCommunityModalOpen: props.communityModalOpen,
     };
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -236,13 +260,13 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
               className: classify('Name'),
               value: <>
                 {userDataset.name}
-                {editable && (
+                {editable && isOwner && (
                   <button
                     type="button"
                     title="Edit Dataset"
                     onClick={() => setState((s) => ({
                       ...s,
-                      isUpdating: true
+                      datasetUpdateAction: DatasetUpdateAction.OpeningDefault
                     }))}
                   >
                     <Icon fa="pencil edit"/>
@@ -486,7 +510,10 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
   renderFileSection() {
     const { userDataset } = this.props;
 
-    return <UserDatasetFiles datasetId={userDataset.datasetId} />;
+    return <UserDatasetFiles
+      datasetId={userDataset.datasetId}
+      dataset={userDataset}
+    />;
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -537,58 +564,97 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
         </NotFound>
       );
 
+    const modal: ReactNode = (function(self: DatasetManagement) {
+      if (!isOwner)
+        return null;
+
+      if (sharingModalOpen)
+        return <SharingModal
+          user={user}
+          dataset={userDataset}
+          onClose={self.closeSharingModal}
+          shareUserDatasets={shareUserDatasets}
+          context="datasetDetails"
+          unshareUserDataset={unshareUserDatasets}
+          dataNoun={dataNoun}
+          sharingDatasetPending={sharingDatasetPending}
+          shareSuccessful={shareSuccessful}
+          shareError={shareError}
+          updateUserDatasetDetail={updateUserDatasetDetail}
+        />;
+
+      if (self.state.isCommunityModalOpen && enablePublicUserDatasets)
+        return <CommunityModal
+          user={user}
+          datasets={[userDataset]}
+          context="datasetDetails"
+          onClose={() => updateCommunityModalVisibility(false)}
+          dataNoun={dataNoun}
+          updateDatasetCommunityVisibility={
+            (datasetIds, isVisibleToCommunity, context) => {
+              self.setState((s) => ({
+                ...s,
+                datasetUpdateAction: DatasetUpdateAction.OpeningDefault,
+                isCommunityModalOpen: false,
+              }));
+
+              return updateDatasetCommunityVisibility(
+                datasetIds,
+                isVisibleToCommunity,
+                context,
+              );
+            }
+          }
+          updatePending={updateDatasetCommunityVisibilityPending}
+          updateSuccessful={updateDatasetCommunityVisibilitySuccess}
+          updateError={updateDatasetCommunityVisibilityError}
+        />;
+
+      const updatePath = `${self.props.baseUrl}/${userDataset.datasetId}/edit`;
+      switch (self.state.datasetUpdateAction) {
+        case DatasetUpdateAction.OpeningForPromotion:
+          self.props.history.replace({
+            pathname: updatePath,
+            search: "?updateToPublic",
+          });
+          break;
+
+        case DatasetUpdateAction.OpeningDefault:
+          self.props.history.replace({ pathname: updatePath });
+          break;
+
+        case DatasetUpdateAction.Closing:
+          self.props.history.replace(`${self.props.baseUrl}/${userDataset.datasetId}`)
+          break;
+      }
+
+      if (self.props.editModal?.showModal)
+        return <UpdateFormController
+          datasetId={userDataset.datasetId}
+          closeModal={() => self.setState(s => ({
+            ...s,
+            datasetUpdateAction: DatasetUpdateAction.Closing,
+          }))}
+          baseUrl={self.props.baseUrl}
+          vdiConfig={self.props.vdiConfig}
+          isPromotingToPublic={self.props.editModal.updateToPublic}
+          formConfigs={self.props.formConfigs!}
+          datasetTypes={self.props.datasetTypes!}
+          afterSubmit={() => self.setState(s => ({
+            ...s,
+            datasetUpdateAction: DatasetUpdateAction.Closing,
+          }))}
+        />;
+
+      return null;
+    })(this);
+
     return (
       <div className={classify()}>
         {this.getPageSections().map((Section, key) => (
           <Section key={key} />
         ))}
-        {!isOwner || !sharingModalOpen ? null : (
-          <SharingModal
-            user={user}
-            dataset={userDataset}
-            onClose={this.closeSharingModal}
-            shareUserDatasets={shareUserDatasets}
-            context="datasetDetails"
-            unshareUserDataset={unshareUserDatasets}
-            dataNoun={dataNoun}
-            sharingDatasetPending={sharingDatasetPending}
-            shareSuccessful={shareSuccessful}
-            shareError={shareError}
-            updateUserDatasetDetail={updateUserDatasetDetail}
-          />
-        )}
-        {this.props.communityModalOpen && enablePublicUserDatasets ? (
-          <CommunityModal
-            user={user}
-            datasets={[userDataset]}
-            context="datasetDetails"
-            onClose={() => updateCommunityModalVisibility(false)}
-            dataNoun={dataNoun}
-            updateDatasetCommunityVisibility={
-              (datasetIds, isVisibleToCommunity, context) => {
-                this.setState((s) => ({ ...s, isUpdating: true }))
-                return updateDatasetCommunityVisibility(
-                  datasetIds,
-                  isVisibleToCommunity,
-                  context,
-                );
-              }
-            }
-            updatePending={updateDatasetCommunityVisibilityPending}
-            updateSuccessful={updateDatasetCommunityVisibilitySuccess}
-            updateError={updateDatasetCommunityVisibilityError}
-          />
-        ) : null}
-        {isOwner && this.state.isUpdating && (
-          <UpdateFormController
-            datasetId={userDataset.datasetId}
-            closeModal={() => this.setState(s => ({ ...s, isUpdating: false }))}
-            baseUrl={this.props.baseUrl}
-            vdiConfig={this.props.vdiConfig}
-            isPromotingToPublic={this.state.isUpdating}
-            formConfigs={this.props.formConfigs!}
-            datasetTypes={this.props.datasetTypes!} />
-        )}
+        {modal}
       </div>
     );
   }

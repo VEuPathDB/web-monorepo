@@ -25,7 +25,8 @@ import {
 import BigwigDatasetDetail from './BigwigDatasetManagement';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
 import DatasetManagement, {
-  DetailViewProps,
+  DatasetEditModalProps,
+  DatasetManagementProps
 } from './DatasetManagement';
 import EmptyState from '../EmptyState';
 
@@ -33,6 +34,7 @@ import { StateSlice } from '../../StoreModules/types';
 import { DataNoun } from '../../Utils/types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetFormConfigurators, DatasetTypeConfig } from '../../Common/Configuration';
+import { History } from 'history';
 
 const ActionCreators = {
   showLoginForm,
@@ -56,21 +58,24 @@ type OwnProps = {
   detailsPageTitle: string;
   workspaceTitle: string;
   id: string;
-  detailComponentsByTypeName?: Record<string, ComponentType<DetailViewProps>>;
+  detailComponentsByTypeName?: Record<string, ComponentType<DatasetManagementProps>>;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
   includeAllLink: boolean;
   includeNameHeader: boolean;
 
+  readonly history: History;
+
   readonly formConfigs?: DatasetFormConfigurators;
   readonly datasetTypes?: readonly DatasetTypeConfig[];
+  readonly editModal?: DatasetEditModalProps;
 };
 
-type MergedProps = {
-  ownProps: OwnProps;
-  dispatchProps: DispatchProps;
-  stateProps: StateProps;
-};
+interface MergedProps {
+  readonly ownProps: OwnProps;
+  readonly dispatchProps: DispatchProps;
+  readonly stateProps: StateProps;
+}
 
 /**
  * View Controller for a userDataset record.
@@ -99,15 +104,29 @@ class DatasetManagementController extends PageController<MergedProps> {
     return ActionCreators;
   }
 
-  loadData(prevProps?: this['props']) {
-    const idChanged =
-      prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
+  loadData(prevProps?: MergedProps) {
+    const { ownProps, stateProps } = this.props;
 
-    if (idChanged) {
-      this.props.dispatchProps.loadUserDatasetDetail(this.props.ownProps.id);
+    console.log(ownProps, stateProps, prevProps);
+
+    if (stateProps.serviceMetadata == null) {
+      console.log("loading vdi metadata")
+      this.props.dispatchProps.loadVdiServiceMetadata();
     }
 
-    if (prevProps == null) this.props.dispatchProps.loadVdiServiceMetadata();
+    if (prevProps == null) {
+      if (
+        stateProps.userDatasetDetails?.resource?.datasetId === ownProps.id
+        && ownProps.editModal?.showModal
+      ) {
+        return;
+      }
+    }
+
+    if (prevProps?.ownProps?.id !== ownProps.id) {
+      console.log("loading dataset")
+      this.props.dispatchProps.loadUserDatasetDetail(ownProps.id);
+    }
   }
 
   isRenderDataLoadError() {
@@ -139,13 +158,13 @@ class DatasetManagementController extends PageController<MergedProps> {
       questions,
       config,
     } = this.props.stateProps;
+
     if (user && user.isGuest) return true;
-    return entry?.isLoading === false && user && questions && config
-      ? true
-      : false;
+
+    return !!(entry?.isLoading === false && user && questions && config);
   }
 
-  getDetailView(type: any): ComponentType<DetailViewProps> {
+  getDetailView(type: any) {
     const name: string = type && typeof type === 'object' ? type.name : null;
 
     if (this.props.ownProps.detailComponentsByTypeName?.[name] != null) {
@@ -229,14 +248,13 @@ class DatasetManagementController extends PageController<MergedProps> {
         ?.map((file) => file.fileSize)
         ?.reduce(add, 0) ?? 0;
 
-    const props: DetailViewProps = {
+    const props: DatasetManagementProps = {
       baseUrl,
       includeAllLink,
       includeNameHeader,
       user: user!,
       config: config!,
       isOwner,
-      location: window.location,
       updateError,
       removeUserDataset,
       userDatasetUpdating,
@@ -268,6 +286,9 @@ class DatasetManagementController extends PageController<MergedProps> {
 
       formConfigs: this.props.ownProps.formConfigs,
       datasetTypes: this.props.ownProps.datasetTypes,
+      editModal: this.props.ownProps.editModal,
+
+      history: this.props.ownProps.history,
     };
 
     const DetailView = this.getDetailView(entry.resource.type);

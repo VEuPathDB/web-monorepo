@@ -51,7 +51,7 @@ export function UserDatasetsWorkspace(
     enablePublicUserDatasets,
   } = props;
 
-  const vdi = useVdiService<VdiService>(identity);
+  const vdi = useVdiService();
 
   const [plugins, setPlugins] = useState<readonly VdiPluginConfig[]>();
   const [features, setFeatures] = useState<VdiServiceMetadata>();

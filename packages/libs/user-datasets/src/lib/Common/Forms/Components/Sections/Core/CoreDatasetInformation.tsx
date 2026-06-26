@@ -5,7 +5,7 @@ import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
-import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { GlobeIcon } from '../../index';
 import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';

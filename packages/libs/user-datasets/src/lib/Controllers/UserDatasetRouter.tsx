@@ -1,11 +1,6 @@
 import React, { ComponentType, ReactNode, useEffect, useMemo, useState } from 'react';
 
-import {
-  RouteComponentProps,
-  Switch,
-  useParams,
-  useRouteMatch,
-} from 'react-router-dom';
+import { RouteComponentProps, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
@@ -14,7 +9,7 @@ import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 import { DataNoun } from '../Utils/types';
 
 import DatasetManagementController from '../Components/Management/DatasetManagementController';
-import { DetailViewProps } from '../Components/Management/DatasetManagement';
+import { DatasetManagementProps } from '../Components/Management/DatasetManagement';
 import {
   ClientDatasetTypeConfig,
   DatasetFormConfigurators,
@@ -33,14 +28,15 @@ interface Props {
   helpRoute: string;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
-  detailComponentsByTypeName?: Record<string, ComponentType<DetailViewProps>>;
+  detailComponentsByTypeName?: Record<string, ComponentType<DatasetManagementProps>>;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
 }
 
 export const UserDatasetRoutes = {
-  NewDatasetSuffix: '/new/:type?',
-  EditDatasetSuffix: '/:datasetId/edit',
+  NewDataset: '/new/:type?',
+  ManageDataset: '/:id',
+  EditDataset: '/:id/edit',
 } as const;
 
 export function UserDatasetRouter({
@@ -89,7 +85,7 @@ export function UserDatasetRouter({
         }}
       />
       <WdkRoute
-        path={path + UserDatasetRoutes.NewDatasetSuffix}
+        path={path + UserDatasetRoutes.NewDataset}
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
@@ -149,43 +145,16 @@ export function UserDatasetRouter({
         }}
       />
       <WdkRoute
-        path={`${path}${UserDatasetRoutes.EditDatasetSuffix}`}
+        path={[
+          path + UserDatasetRoutes.ManageDataset,
+          path + UserDatasetRoutes.EditDataset,
+        ]}
         exact={true}
         requiresLogin={true}
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps
-        ) {
-          const urlParams = useMemo(() => {
-            const searchParamEntries = new URLSearchParams(
-              props.location.search
-            ).entries();
-
-            return Object.fromEntries(searchParamEntries);
-          }, [props.location.search]);
-
-          const { datasetId } = useParams<{ datasetId: string }>();
-
-          return (
-            <UserDatasetsWorkspace
-              baseUrl={url}
-              helpRoute={helpRoute}
-              formConfigs={uploadFormConfigurators}
-              urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
-              helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
-              enablePublicUserDatasets={enablePublicUserDatasets}
-              datasetTypes={datasetTypeConfigs}
-              datasetId={datasetId}
-            />
-          );
-        }}
-      />
-      <WdkRoute
-        path={`${path}/:id`}
-        requiresLogin
         component={function Component(props: RouteComponentProps<{ id: string }>) {
-          const vdi = useVdiService<VdiService>(identity);
+          const vdi = useVdiService();
+
+          const history = useHistory();
 
           const [plugins, setPlugins] = useState<readonly VdiPluginConfig[]>();
           const [features, setFeatures] = useState<VdiServiceMetadata>();
@@ -195,11 +164,19 @@ export function UserDatasetRouter({
             vdi?.getServiceMetadata()?.then(setFeatures);
           }, [vdi]);
 
-          if (!Array.isArray(plugins) || !features) return <Loading />;
+          if (!Array.isArray(plugins) || !features)
+            return <Loading />;
 
           const datasetTypes = filterAvailableDataTypes(datasetTypeConfigs, plugins)
             .map((cdt) => promoteTypeConfig(cdt, plugins))
             .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
+
+          const editModalProps = props.location.pathname.endsWith("/edit")
+            ? {
+              showModal: true,
+              updateToPublic: props.location.search.indexOf("updateToPublic") > -1
+            }
+            : undefined;
 
           return (
             <DatasetManagementController
@@ -213,6 +190,8 @@ export function UserDatasetRouter({
               formConfigs={uploadFormConfigurators}
               includeAllLink
               includeNameHeader
+              editModal={editModalProps}
+              history={history}
               {...props.match.params}
             />
           );

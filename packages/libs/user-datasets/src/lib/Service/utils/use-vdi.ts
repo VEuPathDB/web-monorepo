@@ -6,12 +6,11 @@ import { vdiServiceUrl } from '../../config';
 import { VdiService } from '../VdiService';
 import { wrapWdkService } from './compatibility';
 
-export function useVdiService<T>(
-  fn: (vdi: VdiService) => Promise<T>,
+export function useVdiService(
   deps: any[] = [],
   vdiUrl: string = vdiServiceUrl,
-): T | undefined {
-  const [value, setValue] = useState<T>();
+): VdiService | undefined {
+  const [value, setValue] = useState<VdiService>();
 
   useWdkService(
     async (wdk) => {
@@ -19,7 +18,7 @@ export function useVdiService<T>(
       if (!wrapped)
         throw new Error('illegal state: could not wrap wdk service with vdi');
 
-      setValue(await fn(wrapped.vdi));
+      setValue(wrapped.vdi);
     },
     [...deps, vdiUrl]
   );

@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock, YesNoToggle } from '../../index';
-import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { ClientSideUploadFormState } from '../../../../../StoreModules';
 
 export const DatasetUsageToggleID = 'dataset-usage-toggle';
 

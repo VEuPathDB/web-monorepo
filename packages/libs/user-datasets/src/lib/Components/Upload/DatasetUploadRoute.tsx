@@ -24,7 +24,7 @@ export function DatasetUploadRoute(props: DatasetFormRouteProps): ReactElement {
     <WdkRoute
       requiresLogin
       exact
-      path={`${props.baseUrl}${UserDatasetRoutes.NewDatasetSuffix}`}
+      path={`${props.baseUrl}${UserDatasetRoutes.NewDataset}`}
       component={(childProps: RouteComponentProps<{ type?: string }>) => (
         <DatasetUploadController
           {...props}

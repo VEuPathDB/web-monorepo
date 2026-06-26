@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa';
 
 import { makeClassifier } from '../UserDatasetUtils';
-import DatasetManagement, { DatasetManagementState, DetailViewProps } from './DatasetManagement';
+import DatasetManagement, { DatasetManagementState, DatasetManagementProps } from './DatasetManagement';
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
@@ -30,7 +30,7 @@ interface BigwigManagementState extends DatasetManagementState {
 }
 
 class BigwigDatasetManagement extends DatasetManagement<BigwigManagementState> {
-  constructor(props: DetailViewProps) {
+  constructor(props: DatasetManagementProps) {
     super(props);
     this.renderTracksSection = this.renderTracksSection.bind(this);
     this.getTracksTableColumns = this.getTracksTableColumns.bind(this);

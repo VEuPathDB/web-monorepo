@@ -25,11 +25,10 @@ export interface DatasetSourcesProps {
 export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   const { hasExternalSources: enabled } = props.clientState;
 
-  const setEnabled = (v: boolean) =>
-    props.setClientState({
-      ...props.clientState,
-      hasExternalSources: v,
-    });
+  const setEnabled = (v: boolean) => props.setClientState({
+    ...props.clientState,
+    hasExternalSources: v,
+  });
 
   const safeSources = isEmpty(props.datasetMeta.datasetSources)
     ? [{}]

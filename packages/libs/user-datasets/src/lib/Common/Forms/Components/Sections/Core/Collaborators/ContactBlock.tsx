@@ -1,4 +1,4 @@
-import { changeHandler, Consumer, JsonPathBuilder } from '../../../../../../Utils';
+import { changeHandler, JsonPathBuilder } from '../../../../../../Utils';
 import { DatasetContact } from '../../../../../../Service';
 import { partialRight } from 'lodash';
 import React, { ReactElement } from 'react';

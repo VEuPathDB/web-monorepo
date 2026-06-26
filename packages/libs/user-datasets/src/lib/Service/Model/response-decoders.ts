@@ -168,6 +168,7 @@ const datasetZipDetails = io.type({
   zipSize: io.number,
   contents: io.array(datasetFileDetails),
 });
+export type DatasetZipDetails = io.TypeOf<typeof datasetZipDetails>;
 
 export const datasetFileListing = io.partial({
   upload: datasetZipDetails,

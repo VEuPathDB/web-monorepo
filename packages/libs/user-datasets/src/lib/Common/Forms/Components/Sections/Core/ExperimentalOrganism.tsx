@@ -4,8 +4,7 @@ import { partialRight } from 'lodash';
 import { changeHandler, Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
-import { isNonBlankString } from '../../../../../Utils/value-tests';
-import { ClientSideUploadFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { ClientSideUploadFormState } from '../../../../../StoreModules';
 
 export const ExpOrganismToggleID = 'exp-organism-toggle';
 
@@ -18,32 +17,26 @@ export interface ExperimentalOrganismProps {
 }
 
 //export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
-export function ExperimentalOrganism({
-  clientSideState,
-  setClientSideState,
-  jsonPath,
-  datasetDetails,
-  setDatasetDetails,
-}: ExperimentalOrganismProps): ReactElement {
-  const fieldName = jsonPath.appendToString<DatasetPostDetails>(
-    'experimentalOrganism'
-  );
-  const { hasExpOrg } = clientSideState;
-  const disabledClass = hasExpOrg ? '' : ' disabled-fields';
-  const setEnabled = (enabled: boolean) =>
-    setClientSideState({ ...clientSideState, hasExpOrg: enabled });
+export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
+  const { hasExperimentalOrganism } = props.clientSideState;
 
-  const safeExperimentalOrganism = datasetDetails.experimentalOrganism ?? {};
+  const disabledClass = hasExperimentalOrganism ? '' : ' disabled-fields';
+
+  const setEnabled = (enabled: boolean) => props.setClientSideState({
+    ...props.clientSideState,
+    hasExperimentalOrganism: enabled,
+  });
+
+  const safeExperimentalOrganism = props.datasetDetails.experimentalOrganism ?? {};
 
   const onChange = partialRight(
     changeHandler<PartialOrganism>,
     safeExperimentalOrganism,
-    (org) => setDatasetDetails({ ...datasetDetails, experimentalOrganism: org })
+    org => props.setDatasetDetails({
+      ...props.datasetDetails,
+      experimentalOrganism: org,
+    }),
   );
-
-  const required = isNonBlankString(safeExperimentalOrganism.species)
-    || isNonBlankString(safeExperimentalOrganism.strain)
-    || props.datasetDetails.visibility === 'public';
 
   return (
     <>
@@ -56,34 +49,38 @@ export function ExperimentalOrganism({
         </p>
 
         <div className={'field-grid' + disabledClass}>
-          {datasetDetails.installTargets !== undefined &&
-          datasetDetails.installTargets[0] === 'ClinEpiDB' ? (
-            <>
-              <label className="not-disabled" id={ExpOrganismToggleID}>
-                Available Experimental Organism?
-              </label>
-              <YesNoToggle
-                value={hasExpOrg}
-                setValue={setEnabled}
-                fieldName="enable-exp-organism"
-                className="not-disabled"
-                helpText={
-                  'Whether this dataset includes laboratory data from specific organisms(s)' +
-                  ', including organisms collected from study participants' +
-                  ', animals, vectors, or environmental samples.'
-                }
-              />
-            </>
-          ) : null}
+          {
+            props.datasetDetails.installTargets !== undefined
+            && props.datasetDetails.installTargets[0] === 'ClinEpiDB'
+              ? (
+                <>
+                  <label className="not-disabled" id={ExpOrganismToggleID}>
+                    Available Experimental Organism?
+                  </label>
+                  <YesNoToggle
+                    value={hasExperimentalOrganism}
+                    setValue={setEnabled}
+                    fieldName="enable-exp-organism"
+                    className="not-disabled"
+                    helpText={
+                      'Whether this dataset includes laboratory data from specific organisms(s)' +
+                      ', including organisms collected from study participants' +
+                      ', animals, vectors, or environmental samples.'
+                    }
+                  />
+                </>
+              )
+              : null
+          }
 
           <InputPair
             label="Species"
             type="text"
-            fieldName={jsonPath.appendToString<PartialOrganism>('species')}
-            value={datasetDetails.experimentalOrganism?.species}
+            fieldName={props.jsonPath.appendToString<PartialOrganism>('species')}
+            value={props.datasetDetails.experimentalOrganism?.species}
             onChange={onChange('species')}
-            required={hasExpOrg}
-            disabled={!hasExpOrg}
+            required={hasExperimentalOrganism}
+            disabled={!hasExperimentalOrganism}
             minLength={3}
             maxLength={128}
           />
@@ -95,10 +92,10 @@ export function ExperimentalOrganism({
           <InputPair
             label="Strain"
             type="text"
-            fieldName={jsonPath.appendToString<PartialOrganism>('strain')}
-            value={datasetDetails.experimentalOrganism?.strain}
-            required={hasExpOrg}
-            disabled={!hasExpOrg}
+            fieldName={props.jsonPath.appendToString<PartialOrganism>('strain')}
+            value={props.datasetDetails.experimentalOrganism?.strain}
+            required={hasExperimentalOrganism}
+            disabled={!hasExperimentalOrganism}
             onChange={onChange('strain')}
             minLength={3}
             maxLength={128}

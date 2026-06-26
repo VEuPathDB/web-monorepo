@@ -66,12 +66,12 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
       <header>
         <UploadErrorBanner errors={props.badUploadState} />
 
-        <h2>{props.verbiage.formTitle}</h2>
+        <h2>{props.formConfig.verbiage.formTitle}</h2>
         <p className="section-description-h2">
           <i>Build a home for your dataset and start exploring.</i>
         </p>
 
-        { props.dataType.name === 'genelist' ?
+        { props.formConfig.dataType.name === 'genelist' ?
           ( <p>
               <i>
               (Gene lists user datasets can also be generated from a search strategy results

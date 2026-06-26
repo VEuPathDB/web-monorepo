@@ -14,9 +14,9 @@ export function DatasetDependencies(props: DatasetDependenciesProps): ReactEleme
     props.setDatasetDetails({ ...props.datasetDetails, dependencies: deps })
 
   return <>
-    <label
-      className={props.config.required ? 'required' : ''}
-    >Reference Genome</label>
+    <label className={props.config.required ? 'required' : ''}>
+      Reference Genome
+    </label>
     {props.config.renderInput({
       dependencies: props.datasetDetails.dependencies ?? [],
       setDependencies,

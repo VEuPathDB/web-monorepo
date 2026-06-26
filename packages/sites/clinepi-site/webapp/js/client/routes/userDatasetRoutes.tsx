@@ -23,7 +23,7 @@ import {
   uploadFormConfigurators,
   userDatasetTypeConfigs,
 } from '@veupathdb/web-common/lib/user-dataset-upload-config';
-import { DetailViewProps } from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagement';
+import { DatasetManagementProps } from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagement';
 
 const EdaDatasetDetail = React.lazy(
   () =>
@@ -56,7 +56,7 @@ export const userDatasetRoutes: RouteEntry[] = [
 
       const detailComponentsByTypeName = useMemo(
         () => ({
-          isasimple: function ClinEpiEdaDatasetDetail(props: DetailViewProps) {
+          isasimple: function ClinEpiEdaDatasetDetail(props: DatasetManagementProps) {
             const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
               props.userDataset.datasetId
             );

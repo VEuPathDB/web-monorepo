@@ -33,8 +33,8 @@ export interface CharacteristicsSectionProps {
 }
 
 export function CharacteristicsSection({
-  datasetMeta: metadata,
-  setDatasetMeta: setMetadata,
+  datasetMeta,
+  setDatasetMeta,
   clientSideState,
   setClientSideState,
   pathBuilder: jsonPath,
@@ -47,27 +47,27 @@ export function CharacteristicsSection({
 
   useEffect(
     () => {
-      if (enabled === undefined && metadata.datasetCharacteristics !== undefined)
+      if (enabled === undefined && datasetMeta.datasetCharacteristics !== undefined)
         setEnabled(true);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ enabled, metadata.datasetCharacteristics ],
+    [ enabled, datasetMeta.datasetCharacteristics ],
   );
 
-  const safeCharacteristics = metadata.datasetCharacteristics ?? {
+  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {
     studyDesign: formProps.studyDesignVocab[0][0],
     studyType: formProps.studyDesignVocab[0][1],
   };
 
   const requireAll = useMemo(
-    () => enabled === true && metadata.visibility === 'public',
-    [enabled, metadata.visibility]
+    () => enabled === true && datasetMeta.visibility === 'public',
+    [enabled, datasetMeta.visibility]
   );
 
   const setRootField = partialRight(
     changeHandler<PartialCharacteristics>,
     safeCharacteristics,
-    (v) => setMetadata({ ...metadata, datasetCharacteristics: v })
+    (v) => setDatasetMeta({ ...datasetMeta, datasetCharacteristics: v })
   );
 
   const disabledClass = enabled ? '' : ' disabled-fields';
@@ -98,8 +98,8 @@ export function CharacteristicsSection({
           enabled={enabled === true}
           required={requireAll}
           onChange={(d, t) => {
-            setMetadata({
-              ...metadata,
+            setDatasetMeta({
+              ...datasetMeta,
               datasetCharacteristics: {
                 ...safeCharacteristics,
                 studyDesign: d,

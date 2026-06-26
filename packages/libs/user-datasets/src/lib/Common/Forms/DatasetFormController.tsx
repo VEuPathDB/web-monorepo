@@ -50,24 +50,24 @@ export function DatasetFormController<
     };
   }, []);
 
+  const formProps = props.propFactory({
+    baseUrl: props.baseUrl,
+    formConfig: props.formConfig,
+    vdiConfig: props.vdiConfig,
+    isSubmitting: submitting,
+    uploadProgress: uploadProgress ?? null,
+    actions: {
+      submit: () => {
+        throw new Error('form submission not implemented');
+      },
+      clearUploadError: clearBadUpload,
+      setSubmitting,
+    },
+  });
+
   return (
     <div className="stack">
-      <Form
-        {...props.propFactory({
-          baseUrl: props.baseUrl,
-          formConfig: props.formConfig,
-          vdiConfig: props.vdiConfig,
-          isSubmitting: submitting,
-          uploadProgress: uploadProgress ?? null,
-          actions: {
-            submit: () => {
-              throw new Error('form submission not implemented');
-            },
-            clearUploadError: clearBadUpload,
-            setSubmitting,
-          },
-        })}
-      />
+      <Form {...formProps} />
     </div>
   );
 }

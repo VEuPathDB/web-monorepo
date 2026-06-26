@@ -24,10 +24,9 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
         name={props.fieldName}
         required={props.required}
         maxSizeBytes={props.dataType.vdiConfig.maxFileSize}
-        onChange={(file) =>
-          file
-            ? props.setFile(sanitizeFileName(file))
-            : props.setFile(undefined)
+        onChange={(file) => file
+          ? props.setFile(sanitizeFileName(file))
+          : props.setFile(undefined)
         }
       />
     </>
