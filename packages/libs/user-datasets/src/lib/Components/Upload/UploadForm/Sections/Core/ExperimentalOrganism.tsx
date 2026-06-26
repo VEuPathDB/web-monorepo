@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { projectId } from '../../../../../config';
 import {
   FieldHelpText,
   InputBlock,
@@ -46,8 +47,8 @@ export function ExperimentalOrganism({
     (org) => setDatasetDetails({ ...datasetDetails, experimentalOrganism: org })
   );
 
-  //  const required = isNonBlankString(safeExperimentalOrganism.species)
-  //    || isNonBlankString(safeExperimentalOrganism.strain);
+  const required = isNonBlankString(safeExperimentalOrganism.species)
+    || isNonBlankString(safeExperimentalOrganism.strain);
 
   return (
     <>
@@ -60,8 +61,7 @@ export function ExperimentalOrganism({
         </p>
 
         <div className={'field-grid' + disabledClass}>
-          {datasetDetails.installTargets !== undefined &&
-          datasetDetails.installTargets[0] === 'ClinEpiDB' ? (
+          { projectId === 'ClinEpiDB' ? (
             <>
               <label className="not-disabled" id={ExpOrganismToggleID}>
                 Available Experimental Organism?
@@ -85,8 +85,8 @@ export function ExperimentalOrganism({
             type="text"
             fieldName={jsonPath.appendToString<PostOrganism>('species')}
             value={datasetDetails.experimentalOrganism?.species}
-            required={hasExpOrg}
-            disabled={!hasExpOrg}
+            required={projectId === 'ClinEpiDB' ? hasExpOrg : required}
+            disabled={projectId === 'ClinEpiDB' ? !hasExpOrg : undefined}
             onChange={onChange('species')}
             minLength={3}
             maxLength={128}
@@ -101,8 +101,8 @@ export function ExperimentalOrganism({
             type="text"
             fieldName={jsonPath.appendToString<PostOrganism>('strain')}
             value={datasetDetails.experimentalOrganism?.strain}
-            required={hasExpOrg}
-            disabled={!hasExpOrg}
+            required={projectId === 'ClinEpiDB' ? hasExpOrg : required}
+            disabled={projectId === 'ClinEpiDB' ? !hasExpOrg :undefined}
             onChange={onChange('strain')}
             minLength={3}
             maxLength={128}
