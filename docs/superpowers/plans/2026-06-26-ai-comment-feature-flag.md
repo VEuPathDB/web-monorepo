@@ -33,11 +33,10 @@ or Tasks 1 and 2 can't edit/commit their files:
 /add-dir /home/maccallr/work/ai-wdk/project_home/ApiCommonWebsite
 ```
 
-- **Branches:** `web-monorepo` is on `feature-ai-user-comments` (spec + plan are
-  committed there). Before committing in `EbrcWebsiteCommon` (Task 2) and
-  `ApiCommonWebsite` (Task 1), run `git status`/`git branch` in each and confirm
-  you're on the intended feature branch — create/switch first if needed. Don't
-  commit to `main`.
+- **Branches:** all three repos are on `feature-ai-user-comments` (spec + plan
+  are committed in web-monorepo). Commit each task's changes to that branch in
+  its own repo; a quick `git branch` check before committing doesn't hurt, but no
+  branch creation/switching should be needed. Don't commit to `main`.
 - **Yarn version:** if `yarn --version` reports 1.22.x, use `~/.volta/bin/yarn`
   (should be 4.12.0) — see project `CLAUDE.md`. Normal `yarn nx …` commands
   usually bootstrap the right version automatically.
