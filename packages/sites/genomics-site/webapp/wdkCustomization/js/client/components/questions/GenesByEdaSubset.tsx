@@ -26,7 +26,9 @@ export function GenesByEdaSubset(props: Props) {
         question: {
           ...props.state.question,
           displayName:
-            datasetRecord?.displayName ?? props.state.question.displayName,
+            datasetRecord?.recordClassName === 'UserDatasetRecordClasses.UserDatasetRecordClass'
+            ? props.state.question.displayName
+            : datasetRecord?.displayName ?? props.state.question.displayName,
         },
       },
     };
