@@ -72,20 +72,27 @@ export function CharacteristicsSection({
 
   const disabledClass = enabled ? '' : ' disabled-fields';
 
+  const isPublic = datasetMeta.visibility === 'public';
+
   return (
     <InputBlock
       header="Field Study or Clinical Trial Characteristics"
       isCommunityRelated={true}
     >
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled" id={FieldStudyToggleID}>
+        <label
+          className={'not-disabled' + (isPublic ? ' required' : '')}
+          id={FieldStudyToggleID}
+        >
           Field Study or Clinical Trial?
         </label>
         <YesNoToggle
           value={enabled}
+          required={isPublic}
           setValue={setEnabled}
           fieldName="enable-characteristics"
           className="not-disabled"
+          disableRequiredStyling={true}
           helpText={
             'Whether the dataset or underlying samples originated from a' +
             ' human, vector, animal, or plant population study; an' +

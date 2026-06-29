@@ -14,7 +14,7 @@ export interface ExperimentalOrganismProps {
   readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
-  readonly datasetDetails: PartialDatasetDetails;
+  readonly datasetMeta: PartialDatasetDetails;
   readonly jsonPath: JsonPathBuilder;
 }
 
@@ -28,13 +28,13 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
     hasExperimentalOrganism: enabled,
   });
 
-  const safeExperimentalOrganism = props.datasetDetails.experimentalOrganism ?? {};
+  const safeExperimentalOrganism = props.datasetMeta.experimentalOrganism ?? {};
 
   const onChange = partialRight(
     changeHandler<PartialOrganism>,
     safeExperimentalOrganism,
     org => props.setDatasetDetails({
-      ...props.datasetDetails,
+      ...props.datasetMeta,
       experimentalOrganism: org,
     }),
   );
@@ -47,6 +47,8 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
   const disabled = projectId === 'ClinEpiDB'
     ? !hasExperimentalOrganism
     : undefined;
+
+  const isPublic = props.datasetMeta.visibility === 'public';
 
   return (
     <>
@@ -63,7 +65,10 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
             projectId === 'ClinEpiDB'
               ? (
                 <>
-                  <label className="not-disabled" id={ExpOrganismToggleID}>
+                  <label
+                    className={'not-disabled' + (isPublic ? ' required' : '')}
+                    id={ExpOrganismToggleID}
+                  >
                     Available Experimental Organism?
                   </label>
                   <YesNoToggle
@@ -71,6 +76,8 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
                     setValue={setEnabled}
                     fieldName="enable-exp-organism"
                     className="not-disabled"
+                    required={isPublic}
+                    disableRequiredStyling={true}
                     helpText={
                       'Whether this dataset includes laboratory data from specific organisms(s)' +
                       ', including organisms collected from study participants' +
@@ -86,7 +93,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
             label="Species"
             type="text"
             fieldName={props.jsonPath.appendToString<PartialOrganism>('species')}
-            value={props.datasetDetails.experimentalOrganism?.species}
+            value={props.datasetMeta.experimentalOrganism?.species}
             onChange={onChange('species')}
             required={required}
             disabled={disabled}
@@ -102,7 +109,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
             label="Strain"
             type="text"
             fieldName={props.jsonPath.appendToString<PartialOrganism>('strain')}
-            value={props.datasetDetails.experimentalOrganism?.strain}
+            value={props.datasetMeta.experimentalOrganism?.strain}
             required={required}
             disabled={disabled}
             onChange={onChange('strain')}

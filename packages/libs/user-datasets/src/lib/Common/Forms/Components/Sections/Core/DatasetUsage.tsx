@@ -3,6 +3,7 @@ import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock, YesNoToggle } from '../../index';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
+import { DatasetSourcesToggleID } from './DatasetSources';
 
 export const DatasetUsageToggleID = 'dataset-usage-toggle';
 
@@ -31,10 +32,15 @@ export function DatasetUsage({
   const setEnabled = (enabled: boolean) =>
     setClientSideState({ ...clientSideState, hasDisclaimer: enabled });
 
+  const isPublic = datasetMeta.visibility === 'public';
+
   return (
     <InputBlock header="Dataset Usage" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled" id={DatasetUsageToggleID}>
+        <label
+          className={'not-disabled' + (isPublic ? ' required' : '')}
+          id={DatasetUsageToggleID}
+        >
           Any Reuse Considerations?
         </label>
         <YesNoToggle
@@ -42,6 +48,8 @@ export function DatasetUsage({
           setValue={setEnabled}
           fieldName="enable-disclaimer"
           className="not-disabled"
+          required={isPublic}
+          disableRequiredStyling={true}
           helpText={
             'Whether this dataset includes important notes, caveats, or' +
             ' limitations that users should review before interpreting or' +

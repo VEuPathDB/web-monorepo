@@ -11,6 +11,7 @@ import {
 import { AddRowButton } from '../../index';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { isEmpty } from 'lodash';
+import { FieldStudyToggleID } from './CharacteristicsSection';
 
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
@@ -59,10 +60,15 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
     );
   });
 
+  const isPublic = props.datasetMeta.visibility === 'public';
+
   return (
     <InputBlock header="Dataset Source" isCommunityRelated={true}>
       <div className={'field-grid' + disabledClass}>
-        <label className="not-disabled" id={DatasetSourcesToggleID}>
+        <label
+          className={'not-disabled' + (isPublic ? ' required' : '')}
+          id={DatasetSourcesToggleID}
+        >
           Available from External Source?
         </label>
         <YesNoToggle
@@ -70,6 +76,8 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
           setValue={setEnabled}
           fieldName="enable-dataset-srouces"
           className="not-disabled"
+          required={isPublic}
+          disableRequiredStyling={true}
           helpText={
             'Whether this dataset is also available from an external source' +
             ' (e.g., a public repository, journal-hosted supplementary' +

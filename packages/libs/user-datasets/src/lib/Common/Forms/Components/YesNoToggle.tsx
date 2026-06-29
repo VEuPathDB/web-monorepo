@@ -9,7 +9,17 @@ export interface YesNoToggleProps {
   readonly fieldName: string;
   readonly helpText?: ReactNode;
   readonly className?: string;
+
+  /**
+   * Whether the yes/no toggle elements should be marked as required.
+   */
   readonly required?: boolean;
+
+  /**
+   * Whether the yes/no toggle labels should be styled as normal for required
+   * inputs.
+   */
+  readonly disableRequiredStyling?: boolean;
 }
 
 export function YesNoToggle(props: YesNoToggleProps): ReactElement {
@@ -20,8 +30,12 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
     <FieldHelpText>{props.helpText}</FieldHelpText>
   ) : undefined;
 
-  const className =
-    'section-toggle' + (props.className ? ' ' + props.className : '');
+  const className = 'section-toggle'
+    + (props.className ? ' ' + props.className : '');
+
+  const labelClass = props.required && props.disableRequiredStyling
+    ? 'hide-required'
+    : undefined;
 
   return (
     <>
@@ -34,6 +48,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
           fieldName={props.fieldName}
           checked={props.value === true}
           required={props.required}
+          labelClass={labelClass}
           flipped={true}
           onChange={(e) => props.setValue(e.currentTarget.checked)}
         />
@@ -45,6 +60,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
           fieldName={props.fieldName}
           checked={props.value === false}
           required={props.required}
+          labelClass={labelClass}
           flipped={true}
           onChange={(e) => props.setValue(!e.currentTarget.checked)}
         />
