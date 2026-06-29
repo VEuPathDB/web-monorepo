@@ -613,18 +613,18 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
       const updatePath = `${self.props.baseUrl}/${userDataset.datasetId}/edit`;
       switch (self.state.datasetUpdateAction) {
         case DatasetUpdateAction.OpeningForPromotion:
-          self.props.history.replace({
+          self.props.history.push({
             pathname: updatePath,
             search: "?updateToPublic",
           });
           break;
 
         case DatasetUpdateAction.OpeningDefault:
-          self.props.history.replace({ pathname: updatePath });
+          self.props.history.push({ pathname: updatePath });
           break;
 
         case DatasetUpdateAction.Closing:
-          self.props.history.replace(`${self.props.baseUrl}/${userDataset.datasetId}`)
+          self.props.history.goBack();
           break;
       }
 

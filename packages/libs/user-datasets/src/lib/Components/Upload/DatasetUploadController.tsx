@@ -1,30 +1,36 @@
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { UploadTypeMenu } from '../UploadTypeMenu';
-import { VdiService, VdiServiceMetadata } from '../../Service';
+import { useVdiService, VdiService, VdiServiceMetadata } from '../../Service';
 import { parseDataTypeString } from '../../Common/Configuration/data-types';
 import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormControllerConfig';
 import { configureFormProps, findDatasetTypeConfig } from '../../Common/Configuration';
 import { UploadFormController } from './UploadFormController';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 export interface DatasetUploadControllerProps
   extends DatasetFormControllerConfig {
   readonly baseUrl: string;
-  readonly vdi: VdiService;
   readonly vdiConfig: VdiServiceMetadata;
   readonly type?: string;
   readonly urlParams: Record<string, string>;
 }
 
 export function DatasetUploadController({
-  vdi,
   formConfigs,
   datasetTypes,
   type,
   ...props
 }: DatasetUploadControllerProps) {
-  if (!type && datasetTypes.length !== 1)
+  const vdi = useVdiService();
+
+  if (!vdi) {
+    return <Loading />;
+  }
+
+  if (!type && datasetTypes.length !== 1) {
     return <UploadTypeMenu availableDataTypes={datasetTypes} />;
+  }
 
   const datasetType = type
     ? findDatasetTypeConfig(parseDataTypeString(type), datasetTypes)

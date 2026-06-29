@@ -1,9 +1,8 @@
-import { VdiPluginConfig, VdiService, VdiServiceMetadata } from '../../Service';
+import { VdiPluginConfig, VdiServiceMetadata } from '../../Service';
 import { DatasetTypeConfig, DatasetFormConfigurators } from '../Configuration';
 import { ReactNode } from 'react';
 
 export interface DatasetFormRouteProps {
-  readonly vdi: VdiService;
   readonly vdiConfig: VdiServiceMetadata;
   readonly baseUrl: string;
   readonly urlParams: Record<string, string>;

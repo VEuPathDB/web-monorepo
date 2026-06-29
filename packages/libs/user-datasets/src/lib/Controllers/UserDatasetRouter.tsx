@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { ComponentType, ReactNode, useMemo } from 'react';
 
 import { RouteComponentProps, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 
@@ -13,13 +13,12 @@ import { DatasetManagementProps } from '../Components/Management/DatasetManageme
 import {
   ClientDatasetTypeConfig,
   DatasetFormConfigurators,
-  DatasetTypeConfig, filterAvailableDataTypes,
+  DatasetTypeConfig,
+  filterAvailableDataTypes,
   promoteTypeConfig
 } from '../Common/Configuration';
-import { useVdiService, VdiPluginConfig, VdiService, VdiServiceMetadata } from '../Service';
-import { identity } from 'lodash';
-import { projectId } from '../config';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useVdiMetadata } from '../Service/utils/use-vdi';
 
 interface Props {
   readonly datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
@@ -52,6 +51,11 @@ export function UserDatasetRouter({
 }: Props) {
   const { path, url } = useRouteMatch();
 
+  const vdiMetadata = useVdiMetadata();
+
+  if (!vdiMetadata)
+    return <Loading />;
+
   return (
     <Switch>
       <WdkRoute
@@ -80,6 +84,7 @@ export function UserDatasetRouter({
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
               datasetTypes={datasetTypeConfigs}
+              vdiMetadata={vdiMetadata}
             />
           );
         }}
@@ -110,6 +115,7 @@ export function UserDatasetRouter({
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
               datasetTypes={datasetTypeConfigs}
+              vdiMetadata={vdiMetadata}
             />
           );
         }}
@@ -140,6 +146,7 @@ export function UserDatasetRouter({
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
               datasetTypes={datasetTypeConfigs}
+              vdiMetadata={vdiMetadata}
             />
           );
         }}
@@ -152,23 +159,10 @@ export function UserDatasetRouter({
         exact={true}
         requiresLogin={true}
         component={function Component(props: RouteComponentProps<{ id: string }>) {
-          const vdi = useVdiService();
-
           const history = useHistory();
 
-          const [plugins, setPlugins] = useState<readonly VdiPluginConfig[]>();
-          const [features, setFeatures] = useState<VdiServiceMetadata>();
-
-          useEffect(() => {
-            vdi?.getPluginList(projectId)?.then(setPlugins);
-            vdi?.getServiceMetadata()?.then(setFeatures);
-          }, [vdi]);
-
-          if (!Array.isArray(plugins) || !features)
-            return <Loading />;
-
-          const datasetTypes = filterAvailableDataTypes(datasetTypeConfigs, plugins)
-            .map((cdt) => promoteTypeConfig(cdt, plugins))
+          const datasetTypes = filterAvailableDataTypes(datasetTypeConfigs, vdiMetadata.plugins)
+            .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
             .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 
           const editModalProps = props.location.pathname.endsWith("/edit")

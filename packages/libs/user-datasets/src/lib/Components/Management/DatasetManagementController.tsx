@@ -2,7 +2,7 @@ import React, { ComponentType } from 'react';
 
 import { connect } from 'react-redux';
 
-import { add, keyBy } from 'lodash';
+import { add, keyBy, size } from 'lodash';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
@@ -19,7 +19,8 @@ import {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
-  loadVdiServiceMetadata,
+  loadVdiServiceMetadata, updateDatasetCommunityVisibilityError, updateDatasetCommunityVisibilityPending,
+  updateDatasetCommunityVisibilitySuccess
 } from '../../Actions/UserDatasetsActions';
 
 import BigwigDatasetDetail from './BigwigDatasetManagement';
