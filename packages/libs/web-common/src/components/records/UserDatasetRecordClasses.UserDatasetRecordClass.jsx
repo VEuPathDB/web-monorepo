@@ -3,14 +3,25 @@ import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '../../config';
-import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
-import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import RecordAttribute from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttribute';
 import { DataFilesSection } from './DataFilesSection';
+
+// REVIEW NOTE:
+// THIS FILE GOT COPIED FROM the DatasetRecordClass counterpart and might need cleanup
+// As for this formatLink(), we use now a componnet <Link>  with target="blank"
+
+// The exports are needed (as in all component slike this one for different record classes) 
+// Used by dynamic wrapper system:  How it works: (claude)
+//  1. RecordPage.jsx uses require.context to load components from components/records directory (line 64)
+//  2. At runtime, it looks for a file matching the record class name: UserDatasetRecordClasses.UserDatasetRecordClass.js
+//  3. It then looks for exported components like RecordHeading, RecordTable, etc. from that file
+//  4. These override the default WDK components
+
+// The questionable export is formaLink, 
+// Plus we use now a componnet <Link>  with target="blank" when needed.
+
+
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -29,30 +40,12 @@ export function formatLink(link, opts) {
   );
 }
 
-function renderPrimaryPublication(publication) {
-  return formatLink(publication.publication_link, { newWindow: true });
-}
-
-function renderPrimaryContact(contact, institution, email, record) {
-  return record.id[0].value == 'DS_010e5612b8' ||
-    record.id[0].value == 'DS_c56b76b581' ? (
-    <span>
-      {contact}, <a href={'mailto:' + email}>{email}</a>, {institution}
-    </span>
-  ) : (
-    contact + ', ' + institution
-  );
-}
-
 export function RecordHeading(props) {
   let { record, questions, recordClasses } = props;
   let { attributes, tables } = record;
   let {
     primary_publication,
-    primary_affiliation,
     primary_contact_name,
-    primary_country,
-    primary_email,
     name,
     creation_date,
     summary,
@@ -136,67 +129,6 @@ export function RecordHeading(props) {
   );
 }
 
-function References(props) {
-  let { questions, recordClasses } = props;
-  if (questions == null || recordClasses == null) {
-    return null;
-  }
-  let value = props.value
-    .filter(
-      (row) =>
-        row.target_type === 'question' || row.link_type === 'genomicsInternal'
-    )
-    .map((row, index) => {
-      if (row.link_type === 'question') {
-        let name = row.target_name;
-        let question = questions.find((q) => q.fullName === name);
-
-        if (question == null) {
-          if (projectId === 'EuPathDB') {
-            console.warn(
-              'Ignoring dataset reference `',
-              name,
-              '`. Unable to resolve with model.'
-            );
-            return null;
-          }
-          throw new Error('cannot find question with name:' + name);
-          // There are too many cases that are difficult to address right now, so we opt to ignore
-        }
-
-        let recordClass = recordClasses.find(
-          (r) => r.urlSegment === question.outputRecordClassName
-        );
-        let searchName = `Identify ${recordClass.displayNamePlural} based on ${question.displayName}`;
-        return (
-          <li key={name}>
-            <Link
-              to={`/search/${recordClass.urlSegment}/${question.urlSegment}`}
-            >
-              {searchName}
-            </Link>
-          </li>
-        );
-      } else {
-        return (
-          <li key={index}>
-            <a target="_blank" href={row.url}>
-              {row.text}
-            </a>
-          </li>
-        );
-      }
-    });
-  return value.length === 0 ? <em>No data available</em> : <ul>{value}</ul>;
-}
-
-const ConnectedReferences = connect(
-  (state) => ({
-    questions: state.globalData.questions,
-    recordClasses: state.globalData.recordClasses,
-  }),
-  null
-)(References);
 
 // Wrapper to add fixed-width labels for aligned values in UserDataset records
 function UserDatasetInlineAttribute(props) {
