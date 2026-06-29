@@ -2,7 +2,7 @@ import React, { ComponentType } from 'react';
 
 import { connect } from 'react-redux';
 
-import { add, keyBy, size } from 'lodash';
+import { add, keyBy } from 'lodash';
 
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
@@ -19,23 +19,20 @@ import {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
-  loadVdiServiceMetadata, updateDatasetCommunityVisibilityError, updateDatasetCommunityVisibilityPending,
-  updateDatasetCommunityVisibilitySuccess
+  loadVdiServiceMetadata,
 } from '../../Actions/UserDatasetsActions';
 
-import EdaDatasetDetail from '../Components/Detail/EdaDatasetDetail';
-import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
-import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
-import UserDatasetDetail, {
-  DetailViewProps,
-} from '../Components/Detail/UserDatasetDetail';
-import EmptyState from '../Components/EmptyState';
 
 import { StateSlice } from '../../StoreModules/types';
 import { DataNoun } from '../../Utils/types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetFormConfigurators, DatasetTypeConfig } from '../../Common/Configuration';
 import { History } from 'history';
+import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
+import BigwigDatasetManagement from './BigwigDatasetManagement';
+import EdaDatasetManagement from './EdaDatasetManagement';
+import DatasetManagement, { DatasetEditModalProps, DatasetManagementProps } from './DatasetManagement';
+import EmptyState from '../EmptyState';
 
 const ActionCreators = {
   showLoginForm,
@@ -175,11 +172,11 @@ class DatasetManagementController extends PageController<MergedProps> {
     switch (name) {
       case 'bigwigs':
       case 'bigwigfiles':
-        return BigwigDatasetDetail;
+        return BigwigDatasetManagement;
       case 'rnaseq':
         return RnaSeqDatasetManagement;
       case 'isasimple':
-        return EdaDatasetDetail;
+        return EdaDatasetManagement;
       default:
         return DatasetManagement;
     }
