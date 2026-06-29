@@ -23,13 +23,13 @@ import {
   updateDatasetCommunityVisibilitySuccess
 } from '../../Actions/UserDatasetsActions';
 
-import BigwigDatasetDetail from './BigwigDatasetManagement';
-import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
-import DatasetManagement, {
-  DatasetEditModalProps,
-  DatasetManagementProps
-} from './DatasetManagement';
-import EmptyState from '../EmptyState';
+import EdaDatasetDetail from '../Components/Detail/EdaDatasetDetail';
+import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
+import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
+import UserDatasetDetail, {
+  DetailViewProps,
+} from '../Components/Detail/UserDatasetDetail';
+import EmptyState from '../Components/EmptyState';
 
 import { StateSlice } from '../../StoreModules/types';
 import { DataNoun } from '../../Utils/types';
@@ -178,6 +178,8 @@ class DatasetManagementController extends PageController<MergedProps> {
         return BigwigDatasetDetail;
       case 'rnaseq':
         return RnaSeqDatasetManagement;
+      case 'isasimple':
+        return EdaDatasetDetail;
       default:
         return DatasetManagement;
     }
