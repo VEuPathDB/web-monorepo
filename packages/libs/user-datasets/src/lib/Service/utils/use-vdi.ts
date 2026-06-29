@@ -35,19 +35,42 @@ export interface VdiMetadata {
 }
 
 export function useVdiMetadata(): VdiMetadata | undefined {
+  enum State {
+    None,
+    Loading,
+    Loaded,
+  }
+
+  const [state, setState] = useState(State.None);
   const [value, setValue] = useState<VdiMetadata>();
 
   const vdi = useVdiService();
 
-  useEffect(() => {
-    if (vdi && !value) {
-      Promise.all([
-        vdi.getPluginList(projectId),
-        vdi.getServiceMetadata()
-      ])
-        .then(([plugins, serviceInfo])=> setValue({ plugins, serviceInfo }));
-    }
-  }, [ vdi, value ]);
+  useEffect(
+    () => {
+      const load = async (vdi: VdiService) => {
+        setValue({
+          plugins: await vdi.getPluginList(projectId),
+          serviceInfo: await vdi.getServiceMetadata(),
+        });
+
+        setState(State.Loaded);
+      };
+
+      if (vdi && !value && state === State.None) {
+        console.log("loading vdi metadata")
+        setState(State.Loading);
+
+        load(vdi)
+          .catch(e => {
+            console.error("failed to load vdi metadata", e);
+            setState(State.None)
+          });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ !!vdi, value, state ],
+  );
 
   return value;
 }
