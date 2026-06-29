@@ -274,7 +274,8 @@ export class VdiService extends FetchClientWithCredentials {
     await this.uploadFile(
       VdiRoutes.datasetDocumentFileUri(id, file.name),
       file,
-      dispatchResponse
+      'application/octet-stream',
+      dispatchResponse,
     );
   }
 
@@ -302,6 +303,7 @@ export class VdiService extends FetchClientWithCredentials {
     await this.uploadFile(
       VdiRoutes.datasetPropertiesFileUri(id, file.name),
       file,
+      'text/tab-separated-values',
       dispatchResponse
     );
   }
@@ -471,6 +473,7 @@ export class VdiService extends FetchClientWithCredentials {
   private async uploadFile(
     path: string,
     file: File,
+    contentType: string,
     dispatchResponse?: (status: number, message?: string) => void
   ) {
     const req = new XMLHttpRequest();
@@ -502,9 +505,12 @@ export class VdiService extends FetchClientWithCredentials {
     const stream = new FileReader();
     stream.onload = (e) => req.send(e.target?.result);
 
-    req.open('POST', this.baseUrl + path);
-    req.overrideMimeType('application/octet-stream');
-    for (const key of Object.keys(auth)) req.setRequestHeader(key, auth[key]);
+    req.open('PUT', this.baseUrl + path);
+    req.setRequestHeader('Content-Type', contentType);
+
+    for (const key of Object.keys(auth)) {
+      req.setRequestHeader(key, auth[key]);
+    }
 
     stream.readAsBinaryString(file);
   }
