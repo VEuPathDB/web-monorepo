@@ -22,7 +22,6 @@ import { DataFilesSection } from './DataFilesSection';
 // Plus we use now a componnet <Link>  with target="blank" when needed.
 
 
-
 // Use Element.innerText to strip XML
 function stripXML(str) {
   let div = document.createElement('div');
@@ -76,7 +75,7 @@ export function RecordHeading(props) {
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
-          {veupathdb_project !== 'ClinEpiDB' ? (
+          {veupathdb_project !== 'dataExplorer' ? (
             <>
               <dt>Data type:</dt>
               <dd>{category}</dd>
@@ -115,7 +114,7 @@ export function RecordHeading(props) {
               </div>
             )}
           </dd>
-          {veupathdb_project !== 'ClinEpiDB' ? (
+          {veupathdb_project !== 'dataExplorer' ? (
             <>
               <dt>Explore:</dt>
               <dd>
@@ -130,7 +129,8 @@ export function RecordHeading(props) {
 }
 
 
-// Wrapper to add fixed-width labels for aligned values in UserDataset records
+// Style: Wrapper to add fixed-width labels for aligned values in UserDataset records
+
 function UserDatasetInlineAttribute(props) {
   const { attribute, record, recordClass } = props;
   const { displayName, help, name } = attribute;
@@ -183,6 +183,10 @@ export function RecordAttributeSection(props) {
   }
 }
 
+
+// used in packages/libs/web-common/src/component-wrappers/RecordPage.jsx (dynamic wrapping)
+// to handle the empty Fields Characteristics section in dataExplorer
+
 export function RecordMainCategorySection(props) {
   const { category, record, children } = props;
 
@@ -206,18 +210,16 @@ export function RecordMainCategorySection(props) {
       return <props.DefaultComponent {...props} children={customChildren} />;
     }
   }
-
   // Render default category section
   return <props.DefaultComponent {...props} />;
 }
 
+
+// used in packages/libs/web-common/src/component-wrappers/RecordPage.jsx (dynamic wrapping)
+// to handle the empty Fields Characteristics section in dataExplorer
+
 export function RecordTable(props) {
   const { table, record, ontologyProperties } = props;
-
-  // Handle References table with custom component
-  if (table.name === 'References') {
-    return <ConnectedReferences {...props} />;
-  }
 
   // Check if this table is in the characteristics category
   const isCharacteristicsCategory =
@@ -234,6 +236,10 @@ export function RecordTable(props) {
 
   return <props.DefaultComponent {...props} />;
 }
+
+
+// used in packages/libs/web-common/src/component-wrappers/RecordPage.jsx (dynamic wrapping)
+// to handle the empty Fields Characteristics section in dataExplorer
 
 export function RecordNavigationSection(props) {
   const { record, categoryTree } = props;
