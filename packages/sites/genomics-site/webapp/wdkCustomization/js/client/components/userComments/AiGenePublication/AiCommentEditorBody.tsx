@@ -7,6 +7,7 @@ import {
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
 import { LazyPubmedPreview } from '../UserCommentShow/LazyPubmedPreview';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { OutlinedButton } from '@veupathdb/coreui/lib/components/buttons';
 
 export interface AiCommentEditorBodyProps {
   heading: React.ReactNode;
@@ -24,7 +25,6 @@ export interface AiCommentEditorBodyProps {
 }
 
 const GREY = '#888';
-const BLUE = '#336f99';
 const SECTION_GAP = '16px';
 
 function ProvenancePanel({
@@ -233,24 +233,14 @@ export function AiCommentEditorBody(
 
       {original != null && (
         <div style={{ marginBottom: SECTION_GAP }}>
-          <button
-            type="button"
+          <OutlinedButton
+            text="Restore original"
+            onPress={handleRestore}
             disabled={!isDirty}
-            onClick={handleRestore}
-            aria-label="Restore original AI-generated text"
-            style={{
-              padding: '6px 14px',
-              fontSize: '13px',
-              backgroundColor: 'transparent',
-              color: isDirty ? BLUE : GREY,
-              border: `1px solid ${isDirty ? BLUE : '#ccc'}`,
-              borderRadius: '4px',
-              cursor: isDirty ? 'pointer' : 'not-allowed',
-              opacity: isDirty ? 1 : 0.6,
-            }}
-          >
-            Restore original
-          </button>
+            themeRole="primary"
+            size="small"
+            ariaLabel="Restore original AI-generated text"
+          />
         </div>
       )}
 

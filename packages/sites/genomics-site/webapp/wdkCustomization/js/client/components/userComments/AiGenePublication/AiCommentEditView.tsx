@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { FilledButton } from '@veupathdb/coreui/lib/components/buttons';
 import { AiProvenanceSource } from '../../../types/userCommentTypes';
 import { AiCommentEditorBody } from './AiCommentEditorBody';
 
@@ -87,23 +88,12 @@ export function AiCommentEditView(props: AiCommentEditViewProps): JSX.Element {
           marginBottom: '12px',
         }}
       >
-        <button
-          type="button"
-          onClick={onSubmit}
+        <FilledButton
+          text={submitting ? 'Saving…' : 'Save changes'}
+          onPress={onSubmit}
           disabled={!canSubmit}
-          style={{
-            padding: '8px 18px',
-            fontSize: '14px',
-            fontWeight: 600,
-            backgroundColor: canSubmit ? BLUE : '#aaa',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: canSubmit ? 'pointer' : 'not-allowed',
-          }}
-        >
-          {submitting ? 'Saving…' : 'Save changes'}
-        </button>
+          themeRole="primary"
+        />
       </div>
 
       {completed && (

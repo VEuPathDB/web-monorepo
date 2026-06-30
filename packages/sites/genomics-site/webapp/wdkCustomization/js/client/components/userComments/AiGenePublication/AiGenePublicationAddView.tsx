@@ -10,6 +10,10 @@ import {
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 
 import './AiGenePublicationAddView.scss';
 import { PubmedPreviewEntry } from '../../../types/userCommentTypes';
@@ -255,22 +259,14 @@ function ExtractionStatus({
       }}
     >
       <span>{extraction.failure.message}</span>
-      <button
-        type="button"
-        onClick={onClear}
-        style={{
-          background: 'transparent',
-          border: '1px solid #e8a0a0',
-          borderRadius: '3px',
-          cursor: 'pointer',
-          color: '#8b1a1a',
-          fontSize: '12px',
-          padding: '2px 8px',
-          flexShrink: 0,
-        }}
-      >
-        Clear
-      </button>
+      <div style={{ flexShrink: 0 }}>
+        <OutlinedButton
+          text="Clear"
+          onPress={onClear}
+          themeRole="error"
+          size="small"
+        />
+      </div>
     </div>
   );
 }
@@ -852,26 +848,12 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 flexWrap: 'wrap',
               }}
             >
-              <button
-                type="button"
-                onClick={form.onSubmit}
+              <FilledButton
+                text={form.submitting ? 'Submitting…' : 'Generate AI comment'}
+                onPress={form.onSubmit}
                 disabled={!submitEnabled}
-                style={{
-                  padding: '8px 18px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  backgroundColor: submitEnabled ? '#336f99' : '#aaa',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: submitEnabled ? 'pointer' : 'not-allowed',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                {form.submitting ? 'Submitting…' : 'Generate AI comment'}
-              </button>
+                themeRole="primary"
+              />
               <span style={{ fontSize: '13px', color: GREY }}>
                 No comment is created until you review and publish.
               </span>
@@ -942,22 +924,12 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                         pinned right so the timer's width changes don't shift it */}
                     <div className="ai-progress-footer">
                       <ElapsedTimer startedAt={job.startedAt} />
-                      <button
-                        type="button"
-                        onClick={job.onCancel}
+                      <OutlinedButton
+                        text={job.cancelling ? 'Cancelling…' : 'Cancel'}
+                        onPress={job.onCancel}
                         disabled={job.cancelling}
-                        style={{
-                          padding: '6px 14px',
-                          fontSize: '13px',
-                          backgroundColor: 'transparent',
-                          border: '1px solid #aaa',
-                          borderRadius: '4px',
-                          cursor: job.cancelling ? 'not-allowed' : 'pointer',
-                          color: job.cancelling ? GREY : '#333',
-                        }}
-                      >
-                        {job.cancelling ? 'Cancelling…' : 'Cancel'}
-                      </button>
+                        themeRole="primary"
+                      />
                     </div>
                   </div>
                 );
@@ -1060,51 +1032,25 @@ function TerminalRecoveryButtons({
   onUploadPdfInstead?: () => void;
   onBackToGenePage: () => void;
 }) {
-  const primaryButtonStyle: React.CSSProperties = {
-    padding: '8px 16px',
-    fontSize: '14px',
-    fontWeight: 600,
-    backgroundColor: '#336f99',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  };
-  const secondaryButtonStyle: React.CSSProperties = {
-    padding: '8px 16px',
-    fontSize: '14px',
-    backgroundColor: 'transparent',
-    color: '#336f99',
-    border: '1px solid #336f99',
-    borderRadius: '4px',
-    cursor: 'pointer',
-  };
-
   return (
     <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-      <button
-        type="button"
-        onClick={onTryDifferentPublication}
-        style={primaryButtonStyle}
-      >
-        Try a different publication
-      </button>
+      <FilledButton
+        text="Try a different publication"
+        onPress={onTryDifferentPublication}
+        themeRole="primary"
+      />
       {onUploadPdfInstead && (
-        <button
-          type="button"
-          onClick={onUploadPdfInstead}
-          style={secondaryButtonStyle}
-        >
-          Upload a PDF
-        </button>
+        <OutlinedButton
+          text="Upload a PDF"
+          onPress={onUploadPdfInstead}
+          themeRole="primary"
+        />
       )}
-      <button
-        type="button"
-        onClick={onBackToGenePage}
-        style={secondaryButtonStyle}
-      >
-        Back to gene page
-      </button>
+      <OutlinedButton
+        text="Back to gene page"
+        onPress={onBackToGenePage}
+        themeRole="primary"
+      />
     </div>
   );
 }

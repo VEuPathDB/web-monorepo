@@ -3,6 +3,10 @@ import { AiGenePublicationJobStatus } from '../../../types/aiGenePublicationType
 import { AiProvenanceSource } from '../../../types/userCommentTypes';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 
 // The two terminal statuses where the AI ran but produced nothing publishable.
 // They never reach the editor: publishing a from-scratch comment here would be
@@ -19,8 +23,6 @@ export interface AiCommentRejectViewProps {
   onTryDifferentPublication: () => void;
   onBackToGenePage: () => void;
 }
-
-const BLUE = '#336f99';
 
 export function AiCommentRejectView(
   props: AiCommentRejectViewProps
@@ -92,37 +94,16 @@ export function AiCommentRejectView(
       </p>
 
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-        <button
-          type="button"
-          onClick={onTryDifferentPublication}
-          style={{
-            padding: '8px 16px',
-            fontSize: '14px',
-            fontWeight: 600,
-            backgroundColor: BLUE,
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Try a different publication
-        </button>
-        <button
-          type="button"
-          onClick={onBackToGenePage}
-          style={{
-            padding: '8px 16px',
-            fontSize: '14px',
-            backgroundColor: 'transparent',
-            color: BLUE,
-            border: `1px solid ${BLUE}`,
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Back to gene page
-        </button>
+        <FilledButton
+          text="Try a different publication"
+          onPress={onTryDifferentPublication}
+          themeRole="primary"
+        />
+        <OutlinedButton
+          text="Back to gene page"
+          onPress={onBackToGenePage}
+          themeRole="primary"
+        />
       </div>
     </div>
   );

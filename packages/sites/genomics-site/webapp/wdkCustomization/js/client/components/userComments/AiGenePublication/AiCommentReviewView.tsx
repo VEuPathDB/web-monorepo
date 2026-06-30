@@ -8,6 +8,10 @@ import {
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { AiCommentEditorBody } from './AiCommentEditorBody';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 
 // Only `success` reaches this view — it's the one terminal status that carries
 // AI-generated content to review and publish. The "produced nothing" statuses
@@ -30,8 +34,6 @@ export interface AiCommentReviewViewProps {
   onTryDifferentPublication: () => void;
   onBackToGenePage: () => void;
 }
-
-const BLUE = '#336f99';
 
 export function AiCommentReviewView(
   props: AiCommentReviewViewProps
@@ -112,57 +114,26 @@ export function AiCommentReviewView(
           marginBottom: '12px',
         }}
       >
-        <button
-          type="button"
-          onClick={() => onPublish(headline, content)}
+        <FilledButton
+          text={publishing ? 'Publishing…' : 'Publish comment'}
+          onPress={() => onPublish(headline, content)}
           disabled={!canPublish}
-          style={{
-            padding: '8px 18px',
-            fontSize: '14px',
-            fontWeight: 600,
-            backgroundColor: canPublish ? BLUE : '#aaa',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: canPublish ? 'pointer' : 'not-allowed',
-          }}
-        >
-          {publishing ? 'Publishing…' : 'Publish comment'}
-        </button>
+          themeRole="primary"
+        />
 
-        <button
-          type="button"
-          onClick={onTryDifferentPublication}
-          style={{
-            padding: '8px 16px',
-            fontSize: '14px',
-            backgroundColor: 'transparent',
-            color: BLUE,
-            border: `1px solid ${BLUE}`,
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Try a different publication
-        </button>
+        <OutlinedButton
+          text="Try a different publication"
+          onPress={onTryDifferentPublication}
+          themeRole="primary"
+        />
       </div>
 
       <div>
-        <button
-          type="button"
-          onClick={onBackToGenePage}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            fontSize: '13px',
-            color: BLUE,
-            cursor: 'pointer',
-            textDecoration: 'underline',
-          }}
-        >
-          Back to gene page
-        </button>
+        <OutlinedButton
+          text="Back to gene page"
+          onPress={onBackToGenePage}
+          themeRole="primary"
+        />
       </div>
     </div>
   );
