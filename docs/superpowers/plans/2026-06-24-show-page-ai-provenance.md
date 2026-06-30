@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Modernise `/user-comments/show` into a card-based, filterable list that clearly marks AI-assisted comments and surfaces their provenance (source, edited/as-is status, original AI text), fetching PMID previews only when a card scrolls into view.
+**Goal:** Modernise `/user-comments/show` into a card-based, filterable list that clearly marks AI-assisted comments and surfaces their provenance (source, edited/unedited status, original AI text), fetching PMID previews only when a card scrolls into view.
 
 **Architecture:** Replace the generic `FormBody`-driven row renderer with a small component tree: the controller passes raw comment objects to a rewritten `UserCommentShowView`, which holds client-side filter state and renders one `UserCommentCard` per comment. AI cards add an `AiProvenanceBanner` (built on CoreUI `Banner`) whose PubMed source is rendered by a viewport-gated `LazyPubmedPreview`.
 
@@ -26,7 +26,7 @@
 | ------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | create  | `components/userComments/UserCommentShow/useIntersectionObserver.ts` | Native IO hook: fire once when an element first enters the viewport                                                                                       |
 | create  | `components/userComments/UserCommentShow/LazyPubmedPreview.tsx`      | Render a bare `pubmedId` as a full citation, fetching the preview only when scrolled into view                                                            |
-| create  | `components/userComments/UserCommentShow/AiProvenanceBanner.tsx`     | Provenance banner: disclosure, edited/as-is, source, collapsible original AI text                                                                         |
+| create  | `components/userComments/UserCommentShow/AiProvenanceBanner.tsx`     | Provenance banner: disclosure, edited/unedited, source, collapsible original AI text                                                                      |
 | create  | `components/userComments/UserCommentShow/CommentReferences.tsx`      | Render a comment's reference fields (PMIDs, DOIs, GenBank, related genes, categories, location, attachments, external DB, status), each only when present |
 | create  | `components/userComments/UserCommentShow/CommentFilterChips.tsx`     | All / User-generated / AI-assisted filter chips with counts                                                                                               |
 | create  | `components/userComments/UserCommentShow/UserCommentCard.tsx`        | One comment as a card; header + AI pill + banner + content + references + meta                                                                            |
@@ -215,7 +215,7 @@ git commit -m "feat(user-comments): viewport-gated PubMed preview for AI comment
 - Consumes: CoreUI `Banner`; `AiProvenance` type; `LazyPubmedPreview` (Task 2).
 - Produces: `AiProvenanceBanner({ aiProvenance: AiProvenance }): JSX.Element`.
 
-Notes: the original AI text is passed via Banner's `additionalMessage` (not `CollapsibleContent`) so the banner keeps its 7px radius; `additionalMessage` only renders the "Show more" control when present, so as-is comments get no toggle. No `onClose`/`pinned` is passed, so there is no close button.
+Notes: the original AI text is passed via Banner's `additionalMessage` (not `CollapsibleContent`) so the banner keeps its 7px radius; `additionalMessage` only renders the "Show more" control when present, so unedited comments get no toggle. No `onClose`/`pinned` is passed, so there is no close button.
 
 - [ ] **Step 1: Create the component**
 
@@ -898,7 +898,7 @@ Log in, then for a gene with comments visit `/user-comments/show?stableId=<gene>
 - **AI-pubmed comment**: "AI-assisted" pill in the header; info banner renders; the PMID resolves to a full citation (title/author/journal) via the fetched preview, degrading to a bare `pubmed.ncbi.nlm.nih.gov/<id>` link if the fetch fails.
 - **Viewport-gating** (DevTools → Network, filter `pmid2json`): with an AI-pubmed comment below the fold, **no** `pmid2json` request fires on load; scrolling the card into view fires exactly one; scrolling away and back does not refetch.
 - **Edited AI comment** (`isEdited: true`): banner shows "Edited by the author." and a "Show original AI-generated text" toggle that reveals `originalHeadline`/`originalContent`.
-- **As-is AI comment** (`isEdited: false`): banner shows "Published as generated." and **no** toggle.
+- **Unedited AI comment** (`isEdited: false`): banner shows "Published as generated." and **no** toggle.
 - **Upload AI comment**: with `externalUrl` → a link (titled `externalTitle` if present); without → "User-uploaded PDF — not publicly available"; the "file not stored" note appears; no SHA shown.
 - **Filter chips**: counts correct; All / User-generated / AI-assisted filter the list; per-filter empty states render.
 - **Scroll-to-comment**: a URL with `#<commentId>` scrolls that card into view.
@@ -919,7 +919,7 @@ git commit -m "feat(user-comments): card-based show page with AI provenance and 
 
 - Unified list + filter chips → Task 5 + Task 7. ✓
 - Card layout (header / banner / content / references / meta) → Task 6. ✓
-- AI pill / disclosure / edited-as-is / collapsible original → Task 3 + Task 6. ✓
+- AI pill / disclosure / edited-unedited / collapsible original → Task 3 + Task 6. ✓
 - Source rendering (PMID via preview; upload link + fallback; file-not-stored) → Task 2 + Task 3. ✓
 - Viewport-gated PMID fetch + `react-cool-inview` comment + bare-link fallback → Task 1 + Task 2. ✓
 - `pdfContentSha256` never surfaced → not rendered anywhere (Task 3 `Source` ignores it). ✓

@@ -477,7 +477,7 @@ Create under `packages/sites/genomics-site/webapp/wdkCustomization/js/client/com
    Rendering rules:
 
    - If `reviewed + edited === 0`, render nothing (no one else has _published_ this combination yet).
-   - Otherwise render a CoreUI info-banner with a message like: "This gene + publication has already been published by {total} other user(s) ({reviewed} as-is, {edited} edited). You can still review and publish under your name."
+   - Otherwise render a CoreUI info-banner with a message like: "This gene + publication has already been published by {total} other user(s) ({reviewed} unedited, {edited} edited). You can still review and publish under your name."
    - Optional `latestAt` rendered as a relative timestamp ("most recent: 3 days ago").
    - The banner is dismissable for the current page lifetime; no persistence.
 

@@ -165,7 +165,7 @@ Built on CoreUI `Banner`, `type: 'info'`, not intense:
 
 - **message**: disclosure + status.
   - Disclosure: "AI-assisted summary, generated from the source below."
-  - Edited/as-is indicator from `aiProvenance.isEdited`: "Published as generated"
+  - Edited/unedited indicator from `aiProvenance.isEdited`: "Published as generated"
     (`false`) or "Edited by the author" (`true`).
 - **source** (from `aiProvenance.source`):
   - `kind: 'pubmed'` → `<LazyPubmedPreview pubmedId={...} />` (viewport-gated; bare
@@ -217,7 +217,7 @@ defaulting to **All**. Filtering is client-side over the already-loaded comments
    - **Edited AI comment** (`isEdited === true`): banner shows "Edited by the author"
      and the collapsible "Show original AI-generated text" reveals
      `originalHeadline`/`originalContent`.
-   - **As-is AI comment** (`isEdited === false`): banner shows "Published as
+   - **Unedited AI comment** (`isEdited === false`): banner shows "Published as
      generated"; no collapsible.
    - **Upload AI comment** with and without `externalUrl`: link vs. fallback copy; the
      "file not stored" note appears; no SHA shown.
