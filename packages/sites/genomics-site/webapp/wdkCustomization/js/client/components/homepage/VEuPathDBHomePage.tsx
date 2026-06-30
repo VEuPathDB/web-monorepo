@@ -573,6 +573,17 @@ const useHeaderMenuItems = (
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
         },
         {
+          key: 'plasmofast',
+          display: 'plasmoFAST',
+          tooltip:
+            'Detect P. falciparum lab strains from FASTQ sequencing files, entirely in your browser',
+          type: 'reactRoute',
+          url: '/plasmoFAST',
+          metadata: {
+            include: [PlasmoDB],
+          },
+        },
+        {
           key: 'plasmoap',
           display: 'PlasmoAP',
           type: 'reactRoute',
@@ -660,7 +671,7 @@ const useHeaderMenuItems = (
                 test: () => Boolean(useUserDatasetsWorkspace),
               },
             },
-          ]
+          ],
         },
         {
           key: 'favorites',

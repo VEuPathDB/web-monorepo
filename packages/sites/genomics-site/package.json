@@ -102,6 +102,7 @@
     "dist"
   ],
   "dependencies": {
-    "mupdf": "^1.27.0"
+    "mupdf": "^1.27.0",
+    "@veupathdb/plasmofast": "0.2.2"
   }
 }
