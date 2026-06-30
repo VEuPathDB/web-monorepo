@@ -8905,7 +8905,7 @@ __metadata:
     "@veupathdb/eslint-config": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
     "@veupathdb/multi-blast": "workspace:^"
-    "@veupathdb/plasmofast": "npm:0.2.0"
+    "@veupathdb/plasmofast": "npm:0.2.2"
     "@veupathdb/preferred-organisms": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/site-babel-config": "workspace:^"
@@ -9199,10 +9199,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@veupathdb/plasmofast@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@veupathdb/plasmofast@npm:0.2.0"
-  checksum: 10/37a8a0d84a4a9b994c58094ac7b5aacd983672f68363fdeafa3fe1efac772cecfe919307f0ed664dda4776767cdecebc86e2f61946ce642aea6a6ee3c8c8d44c
+"@veupathdb/plasmofast@npm:0.2.2":
+  version: 0.2.2
+  resolution: "@veupathdb/plasmofast@npm:0.2.2"
+  checksum: 10/8d536c7865afd79a93da92909d0787308618fefcb9863a94a603ebfd48c3a74c95ec77008a692a04fb6f66f5d80e48b5481235c756ac05311156eb1ddd4b1cce
   languageName: node
   linkType: hard
 

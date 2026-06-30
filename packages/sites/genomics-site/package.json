@@ -102,6 +102,6 @@
     "dist"
   ],
   "dependencies": {
-    "@veupathdb/plasmofast": "0.2.0"
+    "@veupathdb/plasmofast": "0.2.2"
   }
 }

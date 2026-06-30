@@ -92,7 +92,7 @@ export function PlasmoFast() {
       const totalSecs = ((Date.now() - startTime) / 1000).toFixed(1);
       setElapsed(`Completed in ${totalSecs}s`);
       setResult(finalResult);
-      setProgress({ pct: 100, reads: progress?.reads ?? 0 });
+      setProgress((prev) => ({ pct: 100, reads: prev?.reads ?? 0 }));
     } catch (err) {
       clearInterval(timer);
       setElapsed(undefined);
@@ -106,9 +106,6 @@ export function PlasmoFast() {
       setIsRunning(false);
       controllerRef.current = null;
     }
-    // `progress` intentionally excluded — it changes every tick and we only
-    // read it once at completion to preserve the final reads count.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
