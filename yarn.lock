@@ -8905,6 +8905,7 @@ __metadata:
     "@veupathdb/eslint-config": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
     "@veupathdb/multi-blast": "workspace:^"
+    "@veupathdb/plasmofast": "npm:0.2.0"
     "@veupathdb/preferred-organisms": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/site-babel-config": "workspace:^"
@@ -9197,6 +9198,13 @@ __metadata:
     webpack-dev-server: "npm:^4.15.0"
   languageName: unknown
   linkType: soft
+
+"@veupathdb/plasmofast@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@veupathdb/plasmofast@npm:0.2.0"
+  checksum: 10/37a8a0d84a4a9b994c58094ac7b5aacd983672f68363fdeafa3fe1efac772cecfe919307f0ed664dda4776767cdecebc86e2f61946ce642aea6a6ee3c8c8d44c
+  languageName: node
+  linkType: hard
 
 "@veupathdb/preferred-organisms@workspace:^, @veupathdb/preferred-organisms@workspace:packages/libs/preferred-organisms":
   version: 0.0.0-use.local

@@ -100,5 +100,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@veupathdb/plasmofast": "0.2.0"
+  }
 }
