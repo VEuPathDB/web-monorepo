@@ -97,6 +97,7 @@ export interface AiGenePublicationAddViewProps {
     cancelling: boolean; // Cancel clicked, awaiting poll confirmation
     onCancel: () => void;
     onTryDifferentPublication: () => void;
+    onUploadPdfInstead: () => void;
     onBackToGenePage: () => void;
   };
 
@@ -1006,6 +1007,9 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     <TerminalRecoveryButtons
                       onTryDifferentPublication={job.onTryDifferentPublication}
                       onBackToGenePage={job.onBackToGenePage}
+                      {...(status.type === 'text-unavailable'
+                        ? { onUploadPdfInstead: job.onUploadPdfInstead }
+                        : {})}
                     />
                   </div>
                 );
@@ -1047,41 +1051,57 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
 
 function TerminalRecoveryButtons({
   onTryDifferentPublication,
+  onUploadPdfInstead,
   onBackToGenePage,
 }: {
   onTryDifferentPublication: () => void;
+  // Only supplied for the text-unavailable case, where uploading the PDF is a
+  // viable alternative to the failed PubMed full-text fetch.
+  onUploadPdfInstead?: () => void;
   onBackToGenePage: () => void;
 }) {
+  const primaryButtonStyle: React.CSSProperties = {
+    padding: '8px 16px',
+    fontSize: '14px',
+    fontWeight: 600,
+    backgroundColor: '#336f99',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  };
+  const secondaryButtonStyle: React.CSSProperties = {
+    padding: '8px 16px',
+    fontSize: '14px',
+    backgroundColor: 'transparent',
+    color: '#336f99',
+    border: '1px solid #336f99',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  };
+
   return (
     <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
       <button
         type="button"
         onClick={onTryDifferentPublication}
-        style={{
-          padding: '8px 16px',
-          fontSize: '14px',
-          fontWeight: 600,
-          backgroundColor: '#336f99',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
+        style={primaryButtonStyle}
       >
         Try a different publication
       </button>
+      {onUploadPdfInstead && (
+        <button
+          type="button"
+          onClick={onUploadPdfInstead}
+          style={secondaryButtonStyle}
+        >
+          Upload a PDF
+        </button>
+      )}
       <button
         type="button"
         onClick={onBackToGenePage}
-        style={{
-          padding: '8px 16px',
-          fontSize: '14px',
-          backgroundColor: 'transparent',
-          color: '#336f99',
-          border: '1px solid #336f99',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
+        style={secondaryButtonStyle}
       >
         Back to gene page
       </button>

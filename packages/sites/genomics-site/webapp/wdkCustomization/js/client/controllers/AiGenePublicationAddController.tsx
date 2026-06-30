@@ -656,13 +656,20 @@ function AiGenePublicationAddController({
   };
 
   // ---- recovery actions ----
-  const handleTryDifferentPublication = () => {
+  // Reset back to the input form, preselecting the given publication source.
+  const restartForm = (nextSource: PublicationSource) => {
     liftGuard();
     clearJobIdFromUrl();
     setExpiredNotice(false);
     setSubmitErrors(undefined);
+    setSource(nextSource);
     setState({ kind: 'idle' });
   };
+
+  // Two partially-applied variants: "try a different publication" returns to the
+  // PubMed lookup path; "upload a PDF instead" preselects the upload radio.
+  const handleTryDifferentPublication = () => restartForm('pubmed');
+  const handleUploadPdfInstead = () => restartForm('upload');
 
   const handleBackToGenePage = () => {
     liftGuard();
@@ -741,6 +748,7 @@ function AiGenePublicationAddController({
       cancelling: state.kind === 'polling' ? state.cancelling : false,
       onCancel: handleCancel,
       onTryDifferentPublication: handleTryDifferentPublication,
+      onUploadPdfInstead: handleUploadPdfInstead,
       onBackToGenePage: handleBackToGenePage,
     };
   }
