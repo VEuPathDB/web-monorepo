@@ -1,9 +1,6 @@
-export type ProgressHandler = (bytesLoaded: number, totalBytes: number) => void;
-export type ResponseHandler<T> = (
-  code: number,
-  responseType: XMLHttpRequestResponseType,
-  response: unknown
-) => Promise<T>;
+import { asyncXHR, XHRConfig, XHRMethod, XHRResponse } from './async-xhr';
+
+export type ResponseHandler<T> = (res: XHRResponse) => Promise<T>;
 
 export type MultipartField = {
   readonly fieldName: string;
@@ -23,71 +20,45 @@ export type MultipartField = {
     }
 );
 
-export interface MultipartConfig<T> {
-  readonly url: string | URL;
-
-  readonly method?: 'PATCH' | 'POST' | 'PUT' | string;
-
-  readonly headers?: Record<string, string>;
+export interface MultipartConfig<T> extends Omit<XHRConfig, 'method' | 'body'>{
+  readonly method?: XHRMethod;
 
   readonly fields: MultipartField[];
 
   readonly onResponse: ResponseHandler<T>;
-  readonly onProgress?: ProgressHandler;
 }
 
 export function sendMultipartRequest<T>(
   config: MultipartConfig<T>
 ): Promise<T> {
-  return new Promise<T>((good, bad) => {
-    const xhr = new XMLHttpRequest();
+  const formData = new FormData();
 
-    xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState !== XMLHttpRequest.DONE) return;
+  for (const field of config.fields) {
+    let content: Blob;
+    let fileName: string | undefined;
 
-      good(config.onResponse(xhr.status, xhr.responseType, xhr.response));
-    });
-
-    xhr.addEventListener('error', bad);
-    xhr.addEventListener('abort', bad);
-
-    if (config.onProgress) {
-      xhr.upload.addEventListener('progress', (e) => {
-        config.onProgress!(e.loaded, e.total);
-      });
+    switch (field.type) {
+      case 'json':
+        content = new Blob([JSON.stringify(field.content)], {
+          type: 'application/json',
+        });
+        break;
+      case 'url':
+        content = new Blob([field.content], { type: 'text/plain' });
+        break;
+      case 'file':
+        content = field.content;
+        fileName = field.fileName;
+        break;
     }
 
-    const formData = new FormData();
+    formData.append(field.fieldName, content, fileName);
+  }
 
-    for (const field of config.fields) {
-      let content: Blob;
-      let fileName: string | undefined;
-
-      switch (field.type) {
-        case 'json':
-          content = new Blob([JSON.stringify(field.content)], {
-            type: 'application/json',
-          });
-          break;
-        case 'url':
-          content = new Blob([field.content], { type: 'text/plain' });
-          break;
-        case 'file':
-          content = field.content;
-          fileName = field.fileName;
-          break;
-      }
-
-      formData.append(field.fieldName, content, fileName);
-    }
-
-    xhr.open(config.method ?? 'POST', config.url);
-
-    if (config.headers) {
-      for (const [name, value] of Object.entries(config.headers))
-        xhr.setRequestHeader(name, value);
-    }
-
-    xhr.send(formData);
-  });
+  return asyncXHR({
+    url: config.url,
+    method: config.method ?? 'POST',
+    headers: config.headers,
+    body: formData,
+  }).then(config.onResponse);
 }

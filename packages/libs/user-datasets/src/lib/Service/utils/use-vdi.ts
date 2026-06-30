@@ -19,8 +19,6 @@ export function useVdiService(): VdiService | undefined {
       if (!wrapped)
         throw new Error('illegal state: could not wrap wdk service with vdi');
 
-      console.log("making a new VDI")
-
       setValue(wrapped.vdi);
     },
     [ value ]
@@ -58,7 +56,6 @@ export function useVdiMetadata(): VdiMetadata | undefined {
       };
 
       if (vdi && !value && state === State.None) {
-        console.log("loading vdi metadata")
         setState(State.Loading);
 
         load(vdi)

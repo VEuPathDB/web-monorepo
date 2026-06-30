@@ -568,7 +568,7 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
       if (!isOwner)
         return null;
 
-      if (sharingModalOpen)
+      if (sharingModalOpen) {
         return <SharingModal
           user={user}
           dataset={userDataset}
@@ -582,11 +582,12 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
           shareError={shareError}
           updateUserDatasetDetail={updateUserDatasetDetail}
         />;
+      }
 
-      if (self.state.isCommunityModalOpen && enablePublicUserDatasets)
+      if (self.state.isCommunityModalOpen && enablePublicUserDatasets) {
         return <CommunityModal
           user={user}
-          datasets={[userDataset]}
+          datasets={[ userDataset ]}
           context="datasetDetails"
           onClose={() => updateCommunityModalVisibility(false)}
           dataNoun={dataNoun}
@@ -595,13 +596,13 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
               self.setState((s) => ({
                 ...s,
                 datasetUpdateAction: DatasetUpdateAction.OpeningDefault,
-                isCommunityModalOpen: false,
+                isCommunityModalOpen: false
               }));
 
               return updateDatasetCommunityVisibility(
                 datasetIds,
                 isVisibleToCommunity,
-                context,
+                context
               );
             }
           }
@@ -609,8 +610,10 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
           updateSuccessful={updateDatasetCommunityVisibilitySuccess}
           updateError={updateDatasetCommunityVisibilityError}
         />;
+      }
 
       const updatePath = `${self.props.baseUrl}/${userDataset.datasetId}/edit`;
+
       switch (self.state.datasetUpdateAction) {
         case DatasetUpdateAction.OpeningForPromotion:
           self.props.history.push({
@@ -628,23 +631,20 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
           break;
       }
 
-      if (self.props.editModal?.showModal)
+      if (self.props.editModal?.showModal) {
         return <UpdateFormController
           datasetId={userDataset.datasetId}
           closeModal={() => self.setState(s => ({
             ...s,
-            datasetUpdateAction: DatasetUpdateAction.Closing,
+            datasetUpdateAction: DatasetUpdateAction.Closing
           }))}
           baseUrl={self.props.baseUrl}
           vdiConfig={self.props.vdiConfig}
           isPromotingToPublic={self.props.editModal.updateToPublic}
           formConfigs={self.props.formConfigs!}
           datasetTypes={self.props.datasetTypes!}
-          afterSubmit={() => self.setState(s => ({
-            ...s,
-            datasetUpdateAction: DatasetUpdateAction.Closing,
-          }))}
         />;
+      }
 
       return null;
     })(this);

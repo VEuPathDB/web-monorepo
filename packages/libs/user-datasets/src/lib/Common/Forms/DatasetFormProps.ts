@@ -11,7 +11,7 @@ export interface DatasetFormProps {
   readonly isSubmitting: boolean;
   readonly uploadProgress: number | null;
 
-  readonly badUploadState?: BadUpload;
+  readonly badUploadState?: BadUpload[];
 
   readonly actions: DatasetFormActions;
 }

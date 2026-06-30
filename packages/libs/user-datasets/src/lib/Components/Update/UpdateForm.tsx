@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import { JsonPathBuilder } from '../../Utils';
-import { SubmissionModal, UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
+import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
 import { MetadataSection, RootDetailsSection } from '../../Common/Forms/Components/Sections';
 import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
@@ -29,11 +29,6 @@ export function UpdateForm(props: DatasetFormProps): ReactElement {
     [ formIsValid, props.isSubmitting ]
   );
 
-  const onSubmit = () => {
-    props.actions.submit();
-    window.scrollTo(0, 0);
-  };
-
   const { datasetDetails, fileUploads } = useDatasetFormState();
 
   const updateSection = useRef<HTMLElement>(null);
@@ -44,20 +39,23 @@ export function UpdateForm(props: DatasetFormProps): ReactElement {
     );
   }, [ datasetDetails, fileUploads, props ]);
 
+  const onSubmit = () => {
+    props.actions.submit();
+    updateSection.current!.parentElement!.scrollTo(0, 0);
+  };
+
   return (
     <section id="dataset-update" ref={updateSection}>
-      {props.badUploadState && (
-        <header>
-          <UploadErrorBanner errors={props.badUploadState} />
-        </header>
-      )}
+      <header>
+        <UploadErrorBanner errors={props.badUploadState} />
+      </header>
 
       <form>
         <RootDetailsSection
           formProps={props}
           detailsJsonPath={metaPath}
           contentJsonPath={JsonPathBuilder.Root}
-          onSubmit={props.actions.submit}
+          onSubmit={onSubmit}
           submittable={uploadSubmittable}
           showVisibilities={true}
           showDataInputs={false}
@@ -70,11 +68,6 @@ export function UpdateForm(props: DatasetFormProps): ReactElement {
           onClick={onSubmit}
           submittable={uploadSubmittable}
           buttonText="Update Dataset"
-        />
-
-        <SubmissionModal
-          submitting={props.isSubmitting}
-          uploadProgress={props.uploadProgress ?? 0}
         />
       </form>
     </section>

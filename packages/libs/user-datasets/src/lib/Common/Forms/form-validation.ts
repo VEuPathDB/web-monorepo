@@ -17,7 +17,5 @@ export function isDatasetFormValid(
   const missingDependencies =
     config.dependencies?.required === true && isEmpty(metadata.dependencies);
 
-  console.log(allInputsValid, noCustomErrors, missingDependencies);
-
   return allInputsValid && noCustomErrors && !missingDependencies;
 }

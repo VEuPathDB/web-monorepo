@@ -8,6 +8,7 @@ import {
   trackUploadProgress,
 } from '../../Actions/UserDatasetUploadActions';
 import { DatasetFormProps } from './DatasetFormProps';
+import { SubmissionModal } from './Components';
 
 export interface DatasetFormControllerProps<
   P extends DatasetFormProps = DatasetFormProps,
@@ -29,7 +30,7 @@ export function DatasetFormController<
   const dispatch = useDispatch();
 
   const badUploadState = useSelector(
-    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessage
+    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessages
   );
 
   const uploadProgress = useSelector(
@@ -56,10 +57,9 @@ export function DatasetFormController<
     vdiConfig: props.vdiConfig,
     isSubmitting: submitting,
     uploadProgress: uploadProgress ?? null,
+    badUploadState: badUploadState,
     actions: {
-      submit: () => {
-        throw new Error('form submission not implemented');
-      },
+      submit: notImplemented,
       clearUploadError: clearBadUpload,
       setSubmitting,
     },
@@ -68,6 +68,15 @@ export function DatasetFormController<
   return (
     <div className="stack">
       <Form {...formProps} />
+
+      <SubmissionModal
+        submitting={submitting}
+        uploadProgress={uploadProgress ?? 0.001}
+      />
     </div>
   );
+}
+
+function notImplemented() {
+  throw new Error('form submission not implemented');
 }

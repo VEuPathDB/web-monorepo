@@ -9,12 +9,7 @@ import { Link } from 'react-router-dom';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
-import {
-  GlobeIcon,
-  SubmissionModal,
-  UploadButton,
-  UploadErrorBanner,
-} from '../../Common/Forms/Components';
+import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
 import { MetadataSection, RootDetailsSection } from '../../Common/Forms/Components/Sections';
 import { JsonPathBuilder } from '../../Utils';
 
@@ -116,22 +111,6 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
             ),
           }}
         />
-        <Banner
-          banner={{
-            type: 'warning',
-            message: (
-              <>
-                <span className="important-info-bold">
-                  If you plan to make this a Public Dataset, all sections marked
-                  with a <GlobeIcon />
-                  must be completed before upload.{' '}
-                </span>{' '}
-                Otherwise, the dataset will remain private and accessible only
-                to you and collaborators you explicitly invite.
-              </>
-            ),
-          }}
-        />
       </header>
 
       <form>
@@ -148,11 +127,6 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
         <MetadataSection formProps={props} jsonPath={metaPath} />
 
         <UploadButton onClick={onSubmit} submittable={uploadSubmittable} />
-
-        <SubmissionModal
-          submitting={props.isSubmitting}
-          uploadProgress={props.uploadProgress ?? 0}
-        />
       </form>
     </section>
   );

@@ -1,8 +1,11 @@
 export type {
+  DatasetCharacteristicsPatch,
   DatasetPatchRequest,
-  PartialDatasetDetails,
   DatasetPutDetails,
+  ExternalIdentifiersPatch,
+  OptionalValuePatch,
   PartialCharacteristics,
+  PartialDatasetDetails,
   PostDatasetSource,
 } from './request-types';
 
@@ -25,9 +28,12 @@ export type {
   DatasetVisibility,
   PluginDataType,
   SampleYearRange,
+  ServerErrorBody,
   ShareOfferAction,
   ShareOfferListEntry,
+  SimpleServiceErrorBody,
   ValidationErrors,
+  ValidationErrorBody,
   VdiPluginConfig,
   VdiReconcilerConfig,
   VdiServiceConfig,

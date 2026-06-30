@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import {
   BadUpload,
   DatasetFormState,
-  DefaultUploadFormState,
+  DefaultDatasetFormState,
   useDatasetFormState,
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { Dispatch } from 'redux';
@@ -80,10 +80,10 @@ function submitAction(
 
     if (!isEmpty(validationErrors)) {
       dispatch(
-        receiveBadUpload({
+        receiveBadUpload([{
           type: 422,
           errors: createValidationError(validationErrors),
-        })
+        }])
       );
 
       return;
@@ -109,18 +109,18 @@ function submitAction(
           dispatch(trackUploadProgress(progress)),
         onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
           setSubmitting(false);
-          dispatch(updateFormState(DefaultUploadFormState));
+          dispatch(updateFormState(DefaultDatasetFormState));
           transitioner.transitionToInternalPage(`${baseUrl}/${datasetId}`);
         },
-        onError: (error: BadUpload) => dispatch(receiveBadUpload(error)),
+        onError: (error: BadUpload) => dispatch(receiveBadUpload([error])),
       });
 
       return requestUploadMessages();
     } catch (err) {
-      return receiveBadUpload({
+      return receiveBadUpload([{
         type: 500,
         message: String(err) ?? 'Failed to upload dataset',
-      });
+      }]);
     }
   });
 }

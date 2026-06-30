@@ -32,45 +32,34 @@ export interface ClientSideUploadFormState {
   readonly hasExperimentalOrganism: boolean | undefined;
 }
 
-function defaultClientOnlyFormState(): ClientSideUploadFormState {
-  return {
-    isStudy: undefined,
-    hasExternalSources: undefined,
-    hasDisclaimer: undefined,
-    hasExperimentalOrganism: undefined,
-  };
-}
-
 export interface DatasetFormState {
   readonly datasetDetails: PartialDatasetDetails;
   readonly fileUploads: DatasetUploads;
   readonly formMetaState: ClientSideUploadFormState;
 }
 
-export const DefaultUploadFormState: DatasetFormState = {
+export const DefaultDatasetFormState: DatasetFormState = {
   datasetDetails: defaultDatasetDetails(),
   fileUploads: {},
-  formMetaState: defaultClientOnlyFormState(),
+  formMetaState: {
+    isStudy: undefined,
+    hasExternalSources: undefined,
+    hasDisclaimer: undefined,
+    hasExperimentalOrganism: undefined,
+  },
 };
 
 export function useDatasetFormState(): DatasetFormState {
   return useSelector(
     (state: StateSlice) => state.userDatasetUpload.formState,
     isEqual,
-  ) ?? DefaultUploadFormState;
-}
-
-export function useDatasetFormMetadata(): PartialDatasetDetails {
-  return useSelector(
-    (state: StateSlice) => state.userDatasetUpload.formState?.datasetDetails,
-    isEqual,
-  ) ?? DefaultUploadFormState.datasetDetails;
+  ) ?? DefaultDatasetFormState;
 }
 
 export interface State {
   readonly formState?: DatasetFormState;
   readonly uploads?: Array<UserDatasetUpload>;
-  readonly badUploadMessage?: BadUpload;
+  readonly badUploadMessages?: BadUpload[];
   readonly badAllUploadsActionMessage?: { message: string; timestamp: number };
   readonly uploadProgress?: { progress: number | null };
 }
@@ -83,9 +72,9 @@ export type BadUpload =
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
     case receiveBadUpload.type:
-      return { ...state, badUploadMessage: action.payload };
+      return { ...state, badUploadMessages: action.payload };
     case clearBadUpload.type:
-      return { ...state, badUploadMessage: undefined };
+      return { ...state, badUploadMessages: undefined };
     case trackUploadProgress.type:
       return { ...state, uploadProgress: action.payload };
     case receiveBadUploadHistoryAction.type:

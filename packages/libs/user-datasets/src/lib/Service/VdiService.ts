@@ -12,7 +12,7 @@ import * as io from 'io-ts';
 
 import { VdiRoutes } from './VdiRoutes';
 import { makeQueryString, QueryParams } from './utils/api-utils';
-import { Consumer, Runnable } from '../Utils';
+import { BiConsumer, Consumer, Runnable } from '../Utils';
 import { MultipartField, sendMultipartRequest } from './utils/xhr';
 import { BadUpload } from '../StoreModules';
 
@@ -57,6 +57,7 @@ import {
 } from './Model/response-decoders';
 
 import { RootDatasetFile } from './Model/utility-types';
+import { asyncXHR, XHRError, XHRErrorType, XHRResponse, XHRResponseType } from './utils/async-xhr';
 
 export type DatasetUploadFileType =
   | 'dataFile'
@@ -158,6 +159,7 @@ export class VdiService extends FetchClientWithCredentials {
     }
 
     const response = await window.fetch(request);
+    console.log(response);
 
     if (response.ok) {
       onSuccess?.();
@@ -269,20 +271,22 @@ export class VdiService extends FetchClientWithCredentials {
   async putDatasetDocumentFile(
     id: DatasetId,
     file: File,
-    dispatchResponse?: (status: number, message?: string) => void
+    onResponse?: (status: number, message?: string) => void,
+    onProgress?: Consumer<number>,
   ): Promise<void> {
     await this.uploadFile(
       VdiRoutes.datasetDocumentFileUri(id, file.name),
       file,
       'application/octet-stream',
-      dispatchResponse,
+      onResponse,
+      onProgress,
     );
   }
 
   async getDatasetVarPropsFile(
     id: DatasetId,
     file: string,
-    download: boolean = true
+    download: boolean = true,
   ): Promise<void> {
     const queryParams = download ? '' : '?download=false';
     submitAsForm({
@@ -298,13 +302,17 @@ export class VdiService extends FetchClientWithCredentials {
   async putDatasetVarPropsFile(
     id: DatasetId,
     file: File,
-    dispatchResponse?: (status: number, message?: string) => void
+    onResponse?: BiConsumer<number, string | undefined>,
+    onProgress?: Consumer<number>,
+    onFailure?: (error: Error) => void,
   ): Promise<void> {
     await this.uploadFile(
       VdiRoutes.datasetPropertiesFileUri(id, file.name),
       file,
       'text/tab-separated-values',
-      dispatchResponse
+      onResponse,
+      onProgress,
+      onFailure,
     );
   }
 
@@ -395,7 +403,7 @@ export class VdiService extends FetchClientWithCredentials {
 
   private async uploadDataset<T>(
     path: string,
-    method: string,
+    method: 'POST' | 'PUT',
     details: object,
     uploads: DatasetUpload[],
     decoder: (value: unknown) => Promise<T>,
@@ -426,27 +434,27 @@ export class VdiService extends FetchClientWithCredentials {
               };
         }),
       ],
-      onResponse: async (code, type, response) => {
-        if (type !== 'json' && type !== '') {
-          console.error('unexpected server response: ', response);
-          throw new Error(`unexpected server response with code ${code}`);
+      onResponse: async (res: XHRResponse) => {
+        if (res.responseType !== XHRResponseType.JSON && res.responseType !== XHRResponseType.Text) {
+          console.error('unexpected server response: ', res.response);
+          throw new Error(`unexpected server response with code ${res.responseCode}`);
         }
 
         const body = await decoder(
-          type === '' && typeof response === 'string'
-            ? JSON.parse(response)
-            : response
+          res.responseType === XHRResponseType.Text
+            ? JSON.parse(res.responseBody)
+            : res.responseBody
         );
 
-        if (code >= 500) {
+        if (res.responseCode >= 500) {
           throw new Error(
             (body as ServerErrorBody).message ?? 'unhandled server exception'
           );
         }
 
-        if (code >= 200 && code < 300) return body as T;
+        if (res.responseCode >= 200 && res.responseCode < 300) return body as T;
 
-        switch (code) {
+        switch (res.responseCode) {
           case 400:
             return {
               type: 400,
@@ -460,8 +468,8 @@ export class VdiService extends FetchClientWithCredentials {
               errors: (body as ValidationErrorBody).errors,
             };
           default:
-            console.error('unexpected server response: ', response);
-            throw new Error(`unexpected server response with code ${code}`);
+            console.error('unexpected server response: ', res.responseBody);
+            throw new Error(`unexpected server response with code ${res.responseCode}`);
         }
       },
       onProgress: onProgress
@@ -474,53 +482,62 @@ export class VdiService extends FetchClientWithCredentials {
     path: string,
     file: File,
     contentType: string,
-    dispatchResponse?: (status: number, message?: string) => void
+    onResponse?: (status: number, message?: string) => void,
+    onProgress?: Consumer<number>,
+    onFailure?: (error: Error) => void,
   ) {
-    const req = new XMLHttpRequest();
+    try {
+      const auth = await this.findAuthorizationHeaders();
 
-    req.addEventListener('readystatechange', () => {
-      if (req.readyState !== XMLHttpRequest.DONE) return;
+      const result = await asyncXHR({
+        contentType,
+        url: this.baseUrl + path,
+        method: 'PUT',
+        body: file,
+        headers: auth,
+        onProgress: onProgress
+          ? (sent, total) => onProgress(Math.floor(sent/total) * 100)
+          : undefined,
+      });
 
-      switch (req.status) {
-        case 204:
-          dispatchResponse?.(204);
+      let message: string | undefined = undefined;
+
+      switch (result.responseType) {
+        case XHRResponseType.Text:
+          message = result.responseBody;
           break;
-        case 400:
-          if (req.getResponseHeader('Content-Type') === 'application/json') {
-            const body = JSON.parse(req.responseText);
-            dispatchResponse?.(400, body['message']);
-            break;
-          }
-
-          dispatchResponse?.(400);
-          break;
-        default:
-          dispatchResponse?.(req.status);
+        case XHRResponseType.JSON:
+          message = result.responseBody['message'];
           break;
       }
-    });
 
-    const auth = await this.findAuthorizationHeaders();
+      onResponse?.(result.responseCode, message);
+    } catch (e: any) {
+      let error: Error;
 
-    const stream = new FileReader();
-    stream.onload = (e) => req.send(e.target?.result);
+      if (!Object.hasOwn(e, 'url')) {
+        switch ((e as XHRError).type) {
+          case XHRErrorType.Abort:
+            error = new Error('file upload aborted unexpectedly', { cause: e });
+            break;
+          case XHRErrorType.Timeout:
+            error = new Error('file upload request timed out', { cause: e });
+            break;
+          case XHRErrorType.Error:
+          default:
+            error = new Error('unknown error', { cause: e });
+            break;
+        }
+      } else {
+        error = new Error('unknown error', { cause: e });
+      }
 
-    req.open('PUT', this.baseUrl + path);
-    req.setRequestHeader('Content-Type', contentType);
-
-    for (const key of Object.keys(auth)) {
-      req.setRequestHeader(key, auth[key]);
+      console.error(error);
+      onFailure?.(error);
     }
-
-    stream.readAsBinaryString(file);
   }
 
   // region Oddball Request Transformers
-
-  private static async unknownBody(body?: unknown): Promise<void | unknown> {
-    if (body) return body;
-    else return;
-  }
 
   private static async voidResponse(_: unknown) {}
 

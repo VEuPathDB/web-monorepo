@@ -11,7 +11,7 @@ export interface SubmissionModalProps {
 export function SubmissionModal(props: SubmissionModalProps): ReactElement {
   return (
     <Modal
-      visible={props.submitting && Boolean(props.uploadProgress)}
+      visible={props.submitting && props.uploadProgress > 0}
       toggleVisible={() => null}
       styleOverrides={{
         content: {

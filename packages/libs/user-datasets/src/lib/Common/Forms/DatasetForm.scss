@@ -340,9 +340,12 @@
   }
 }
 
-#dataset-update {
-  // Override padding to give a little buffer in the modal scroll.
-  padding-bottom: 3em !important;
+section#dataset-update {
+  padding-bottom: 3em;
+
+  header > div {
+    margin-left: 0;
+  }
 
   .upload-button {
     &:not([disabled]) {

@@ -12,7 +12,7 @@ export const trackUploadProgress = makeActionCreator(
 
 export const receiveBadUpload = makeActionCreator(
   'user-dataset-upload/receive-bad-upload',
-  (response: BadUpload) => response
+  (response: BadUpload[]) => response
 );
 
 export const clearBadUpload = makeActionCreator(

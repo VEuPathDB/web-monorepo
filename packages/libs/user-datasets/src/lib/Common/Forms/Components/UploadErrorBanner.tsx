@@ -4,20 +4,24 @@ import { ValidationErrors } from '../../../Service';
 import { BadUpload } from '../../../StoreModules';
 
 export interface UploadErrorBannerProps {
-  readonly errors: BadUpload | undefined;
+  readonly errors: BadUpload[] | undefined;
 }
 
 export function UploadErrorBanner(props: UploadErrorBannerProps): ReactElement {
   if (!props.errors) return <></>;
 
-  const message = (
-    <div style={{ lineHeight: 1.5 }}>
-      <span>Could not upload dataset:&nbsp;</span>
-      {makeMessage(props.errors)}
-    </div>
-  );
+  const makeBanner = (error: BadUpload) => {
+    const message = (
+      <div style={{ lineHeight: 1.5 }}>
+        <span>Could not upload dataset:&nbsp;</span>
+        {makeMessage(error)}
+      </div>
+    );
 
-  return <Banner banner={{ type: 'error', message }} />;
+    return <Banner banner={{ type: 'error', message }} />;
+  };
+
+  return <>{props.errors.map(makeBanner)}</>;
 }
 
 function makeMessage(errors: BadUpload): ReactElement {
