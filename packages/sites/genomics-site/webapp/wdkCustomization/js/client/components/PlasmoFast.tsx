@@ -39,6 +39,9 @@ export function PlasmoFast() {
   const [result, setResult] = useState<AnalysisResult>();
   const [error, setError] = useState<string>();
   const [elapsed, setElapsed] = useState<string>();
+  // Bumping this remounts the FileInput, which is the only way to clear an
+  // uncontrolled <input type="file"> (its value can't be driven from state).
+  const [fileInputKey, setFileInputKey] = useState(0);
 
   const controllerRef = useRef<AbortController | null>(null);
 
@@ -49,6 +52,16 @@ export function PlasmoFast() {
 
   const onCancel = useCallback(() => {
     controllerRef.current?.abort();
+  }, []);
+
+  // Clear the selected file and reset the run state so the user can start fresh.
+  const clearFile = useCallback(() => {
+    setFileName(undefined);
+    setResult(undefined);
+    setProgress(undefined);
+    setError(undefined);
+    setElapsed(undefined);
+    setFileInputKey((k) => k + 1);
   }, []);
 
   const onFileSelected = useCallback(async (file: File | null) => {
@@ -121,16 +134,25 @@ export function PlasmoFast() {
         <label className={cx('--FileLabel')}>
           <span>FASTQ file</span>
           <FileInput
+            key={fileInputKey}
             accept=".fastq,.fastq.gz,.fq,.fq.gz"
             onChange={onFileSelected}
             disabled={isRunning}
           />
         </label>
         {fileName && <span className={cx('--FileName')}>{fileName}</span>}
+        {!isRunning && fileName && (
+          <OutlinedButton text="Clear" size="small" onPress={clearFile} />
+        )}
 
         {isRunning && (
           <div className={cx('--Controls')}>
-            <OutlinedButton text="Stop" themeRole="error" onPress={onCancel} />
+            <OutlinedButton
+              text="Stop"
+              size="small"
+              themeRole="error"
+              onPress={onCancel}
+            />
           </div>
         )}
       </div>
