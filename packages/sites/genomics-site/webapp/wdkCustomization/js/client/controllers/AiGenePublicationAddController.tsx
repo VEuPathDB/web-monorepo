@@ -18,10 +18,7 @@ import {
   AiGenePublicationSubmitOutcome,
   AiGenePublicationPublishOutcome,
 } from '../types/aiGenePublicationTypes';
-import {
-  PubmedPreviewEntry,
-  UserCommentGetResponse,
-} from '../types/userCommentTypes';
+import { UserCommentGetResponse } from '../types/userCommentTypes';
 import {
   findDuplicateAiComments,
   partitionDuplicatesByOwner,
@@ -46,6 +43,8 @@ import {
 import { extractPdfText } from '../components/userComments/AiGenePublication/extractPdfText';
 import { detectExternalRef } from '../components/userComments/AiGenePublication/detectExternalRef';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
+import { useDebounce } from '@veupathdb/eda/lib/core/hooks/debouncing';
 
 const POLL_INTERVAL_MS = 1000;
 const PUBMED_PREVIEW_DEBOUNCE_MS = 400;
@@ -114,9 +113,6 @@ function AiGenePublicationAddController({
   // ---- form-field state (independent of phase, preserved across submits) ----
   const [source, setSource] = useState<PublicationSource>('pubmed');
   const [pubmedId, setPubmedId] = useState('');
-  const [pubmedPreview, setPubmedPreview] = useState<
-    PubmedPreviewEntry | undefined
-  >(undefined);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [extraction, setExtraction] = useState<UploadExtractionState>({
     status: 'idle',
@@ -331,30 +327,25 @@ function AiGenePublicationAddController({
   }, [state, source, pubmedId]);
 
   // ---- optional PubMed metadata preview chip ----
-  useEffect(() => {
-    if (activePubmedId == null || !/^\d+$/.test(activePubmedId)) {
-      setPubmedPreview(undefined);
-      return;
-    }
-    let cancelled = false;
-    const handle = setTimeout(async () => {
-      try {
-        const preview = await service.getPubmedPreview([
-          Number(activePubmedId),
-        ]);
-        if (cancelled) return;
-        setPubmedPreview(
-          preview && preview.length > 0 ? preview[0] : undefined
-        );
-      } catch {
-        if (!cancelled) setPubmedPreview(undefined);
-      }
-    }, PUBMED_PREVIEW_DEBOUNCE_MS);
-    return () => {
-      cancelled = true;
-      clearTimeout(handle);
-    };
-  }, [activePubmedId, service]);
+  // Debounce the id feeding the query key so we don't hit the service on every
+  // keystroke (react-query refetches whenever the key changes, with no built-in
+  // debounce). A null key disables the query, so the preview clears for blank or
+  // non-numeric input. The task returns the raw array; we map to the first entry
+  // when assembling form props, and treat any fetch error as "no preview".
+  const debouncedPubmedId = useDebounce(
+    activePubmedId,
+    PUBMED_PREVIEW_DEBOUNCE_MS
+  );
+  const previewQueryId =
+    debouncedPubmedId != null && /^\d+$/.test(debouncedPubmedId)
+      ? debouncedPubmedId
+      : null;
+  const pubmedPreviewState = useCachedPromise(
+    () => service.getPubmedPreview([Number(previewQueryId)]),
+    [previewQueryId]
+  );
+  const pubmedPreview = pubmedPreviewState.value?.[0];
+  const pubmedPreviewPending = pubmedPreviewState.pending;
 
   // ---- fetch the gene's existing AI comments once (for duplicate detection) ----
   // Fail open: a comments-fetch failure must never block generation, so on error
@@ -721,6 +712,7 @@ function AiGenePublicationAddController({
     pubmedId,
     onPubmedIdChange: setPubmedId,
     pubmedPreview,
+    pubmedPreviewPending,
     onFileSelected: handleFileSelected,
     selectedFileName: selectedFile?.name,
     extraction,

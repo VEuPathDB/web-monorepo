@@ -58,6 +58,7 @@ export interface AiGenePublicationAddViewProps {
     pubmedId: string;
     onPubmedIdChange: (value: string) => void;
     pubmedPreview?: PubmedPreviewEntry; // optional metadata chip (controller fetches it)
+    pubmedPreviewPending: boolean; // true while the preview lookup is in flight
     // Upload path
     onFileSelected: (file: File | null) => void;
     selectedFileName?: string;
@@ -684,16 +685,29 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                 >
                   Enter a PubMed ID to look up the publication
                 </div>
-                {form.pubmedPreview && (
-                  <div style={{ marginTop: '10px' }}>
-                    <PubmedIdEntry
-                      id={form.pubmedPreview.id}
-                      title={form.pubmedPreview.title}
-                      author={form.pubmedPreview.author}
-                      journal={form.pubmedPreview.journal}
-                      url={form.pubmedPreview.url}
-                    />
+                {form.pubmedPreviewPending ? (
+                  <div
+                    style={{
+                      marginTop: '8px',
+                      fontSize: '13px',
+                      fontStyle: 'italic',
+                      color: GREY,
+                    }}
+                  >
+                    Loading PubMed preview…
                   </div>
+                ) : (
+                  form.pubmedPreview && (
+                    <div style={{ marginTop: '10px' }}>
+                      <PubmedIdEntry
+                        id={form.pubmedPreview.id}
+                        title={form.pubmedPreview.title}
+                        author={form.pubmedPreview.author}
+                        journal={form.pubmedPreview.journal}
+                        url={form.pubmedPreview.url}
+                      />
+                    </div>
+                  )
                 )}
               </div>
             )}
