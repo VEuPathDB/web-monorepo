@@ -8,6 +8,7 @@ import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
 import { LazyPubmedPreview } from '../UserCommentShow/LazyPubmedPreview';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { OutlinedButton } from '@veupathdb/coreui/lib/components/buttons';
+import { parseAiCommentSections } from './parseAiCommentSections';
 
 export interface AiCommentEditorBodyProps {
   heading: React.ReactNode;
@@ -137,6 +138,19 @@ export function AiCommentEditorBody(
     original != null &&
     (headline !== original.headline || content !== original.content);
 
+  // Warn if the user edits the "Executive summary:"/"Details:" headings out of
+  // content that originally had them — doing so disables the collapsible
+  // formatting on the published comment. The warning is advisory only (they may
+  // still publish) and, once dismissed, stays dismissed for this edit session.
+  const [headingWarningDismissed, setHeadingWarningDismissed] =
+    React.useState(false);
+  const originalHadSections =
+    original != null && parseAiCommentSections(original.content) != null;
+  const showHeadingWarning =
+    originalHadSections &&
+    parseAiCommentSections(content) == null &&
+    !headingWarningDismissed;
+
   function handleRestore() {
     if (original == null) return;
     onHeadlineChange(original.headline);
@@ -217,6 +231,26 @@ export function AiCommentEditorBody(
           }}
         />
       </div>
+
+      {showHeadingWarning && (
+        <Banner
+          onClose={() => setHeadingWarningDismissed(true)}
+          banner={{
+            type: 'warning',
+            role: 'note',
+            spacing: { margin: `0 0 ${SECTION_GAP}`, padding: '10px 12px' },
+            fontSize: '13px',
+            message: (
+              <>
+                Changing the <strong>“Executive summary:”</strong> or{' '}
+                <strong>“Details:”</strong> headings will turn off the
+                collapsible formatting on the published comment. You can still
+                save your edits.
+              </>
+            ),
+          }}
+        />
+      )}
 
       {encouragement && (
         <div

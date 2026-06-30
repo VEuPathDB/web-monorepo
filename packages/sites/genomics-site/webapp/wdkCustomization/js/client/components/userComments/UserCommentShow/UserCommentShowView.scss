@@ -32,5 +32,46 @@
     .wdk-UserCommentUploadedFiles {
       width: 100%;
     }
+
+    // AI-comment executive-summary disclosure. We keep the native
+    // <details>/<summary> behavior but drop the default disclosure triangle
+    // (which hangs and indents multi-line summary text) in favor of an explicit
+    // "Show more"/"Show less" link that sits below the summary paragraph. The
+    // label flips purely on the native [open] state — no JS.
+    .UserCommentCard-aiSummary {
+      > summary {
+        display: block; // removes the marker box (and its hanging indent)
+        list-style: none; // Firefox / standards
+        &::-webkit-details-marker {
+          display: none; // Safari / older Chrome
+        }
+      }
+
+      .UserCommentCard-aiSummary-toggle {
+        display: inline-block;
+        margin-top: 6px;
+        color: #336f99;
+        font-size: 85%;
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        .less {
+          display: none;
+        }
+      }
+
+      &[open] .UserCommentCard-aiSummary-toggle {
+        .more {
+          display: none;
+        }
+        .less {
+          display: inline;
+        }
+      }
+    }
   }
 }

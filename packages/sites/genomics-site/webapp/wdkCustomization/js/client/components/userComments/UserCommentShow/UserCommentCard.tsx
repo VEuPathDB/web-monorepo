@@ -4,6 +4,7 @@ import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { UserCommentGetResponse } from '../../../types/userCommentTypes';
 import { AiProvenanceSection } from './AiProvenanceSection';
 import { CommentReferences } from './CommentReferences';
+import { parseAiCommentSections } from '../AiGenePublication/parseAiCommentSections';
 
 interface Props {
   comment: UserCommentGetResponse;
@@ -22,6 +23,7 @@ export function UserCommentCard({
 }: Props): JSX.Element {
   const isOwn = userId === comment.author.userId;
   const date = new Date(comment.commentDate).toLocaleDateString();
+  const sections = parseAiCommentSections(comment.content);
 
   return (
     <div
@@ -97,9 +99,27 @@ export function UserCommentCard({
         )}
       </div>
 
-      <div style={{ whiteSpace: 'pre-wrap', marginTop: '12px' }}>
-        {comment.content}
-      </div>
+      {sections ? (
+        <details
+          className="UserCommentCard-aiSummary"
+          style={{ marginTop: '12px' }}
+        >
+          <summary>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{sections.summary}</div>
+            <span className="UserCommentCard-aiSummary-toggle">
+              <span className="more">Show more</span>
+              <span className="less">Show less</span>
+            </span>
+          </summary>
+          <div style={{ whiteSpace: 'pre-wrap', marginTop: '8px' }}>
+            {sections.details}
+          </div>
+        </details>
+      ) : (
+        <div style={{ whiteSpace: 'pre-wrap', marginTop: '12px' }}>
+          {comment.content}
+        </div>
+      )}
 
       <div style={{ marginTop: '12px' }}>
         {comment.aiProvenance != null && (
