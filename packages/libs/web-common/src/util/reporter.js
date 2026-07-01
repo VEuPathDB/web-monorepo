@@ -18,6 +18,7 @@ import {
   SequenceGenomicSequenceReporterForm,
   BedGenomicSequenceReporterForm,
 } from '../components/reporters/BedAndSequenceGenomicSequenceReporterForms';
+import SequenceSequenceReporterForm from '../components/reporters/SequenceSequenceReporterForm';
 import FastaGenomicSequenceReporterForm from '../components/reporters/FastaGenomicSequenceReporterForm';
 import FastaOrthoSequenceReporterForm from '../components/reporters/FastaOrthoSequenceReporterForm';
 import TableReporterForm from '../components/reporters/TableReporterForm';
@@ -25,7 +26,7 @@ import TranscriptTableReporterForm from '../components/reporters/TranscriptTable
 import TranscriptAttributesReporterForm from '../components/reporters/TranscriptAttributesReporterForm';
 import ZippedFilesReporterForm from '../components/reporters/ZippedFilesReporterForm';
 
-let EmptyReporter = (_) => null;
+let EmptyReporter = (props) => null;
 
 EmptyReporter.getInitialState = () => ({ formState: null, formUiState: null });
 
