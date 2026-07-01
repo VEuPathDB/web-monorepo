@@ -24,7 +24,7 @@ export interface UpdateSubmission {
   readonly datasetId: DatasetId;
   readonly original:  PartialDatasetDetails;
   readonly updated:   PartialDatasetDetails;
-  readonly newFiles:     DatasetUploads;
+  readonly newFiles:  DatasetUploads;
   readonly oldFiles:  DatasetFileDetails[] | undefined;
   readonly dispatch:  Dispatch<any, EpicDependencies>;
 }
@@ -86,18 +86,8 @@ async function submitPut({
   datasetId,
   newFiles,
   dispatch,
-  oldFiles,
 }: UpdateSubmission):Promise<PutResult> {
   const promises: Promise<[string, number, string?]>[] = [];
-
-  for (const file of oldFiles ?? []) {
-    promises.push(
-      vdi.deleteDatasetVarPropsFile(datasetId, file.fileName)
-        .then(it => it
-          ? [ file.fileName, 500, it.message ]
-          : [ file.fileName, 204, undefined ])
-    );
-  }
 
   for (const file of newFiles.dataPropertiesFiles!) {
     promises.push(new Promise<[string, number, string?]>(
@@ -124,11 +114,9 @@ async function submitPut({
   try {
     results = await Promise.all(promises);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return { status: 'process-error', error: String(e) }
   }
-
-  console.log(results);
 
   const errors = results.filter(([_, code]) => code > 300);
 
@@ -284,7 +272,7 @@ export type DeleteResult =
   }
   | {
     readonly status: 'error';
-    readonly errors: readonly string[];
+    readonly errors: readonly [string, string][];
   };
 
 async function deleteDatasetPropertiesFiles({
@@ -293,13 +281,14 @@ async function deleteDatasetPropertiesFiles({
   oldFiles,
   newFiles: { dataPropertiesFiles: newFiles },
 }: UpdateSubmission): Promise<DeleteResult> {
-  const errors: string[] = [];
+  const errors: [string, string][] = [];
 
   if (!oldFiles)
     return { status: 'success' };
 
   for (const { fileName } of oldFiles) {
     if (fileListContains(newFiles!, fileName)) {
+      console.log("continue");
       continue;
     }
 
@@ -311,11 +300,11 @@ async function deleteDatasetPropertiesFiles({
       );
 
       if (code !== 204) {
-        errors.push(message ?? 'unknown error');
+        errors.push([ fileName, message ?? 'unknown error' ]);
       }
     } catch (e: any) {
       console.error(`error thrown while deleting dataset properties file ${fileName}`, e);
-      errors.push('unknown error')
+      errors.push([ fileName, 'unknown error' ])
     }
   }
 
@@ -338,6 +327,7 @@ async function deleteDatasetPropertiesFile(
 
 function fileListContains(list: FileList, fileName: string): boolean {
   for (const { name } of list) {
+    console.log(name, fileName, name === fileName)
     if (name === fileName) {
       return true;
     }
