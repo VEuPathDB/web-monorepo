@@ -10,12 +10,12 @@ import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 
 export interface CoreDatasetInformationProps {
-  readonly datasetMeta:        PartialDatasetDetails;
-  readonly setDatasetMeta:     Consumer<PartialDatasetDetails>;
-  readonly clientSideState:    ClientSideUploadFormState;
+  readonly datasetMeta: PartialDatasetDetails;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
+  readonly clientSideState: ClientSideUploadFormState;
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
-  readonly jsonPath:           JsonPathBuilder;
-  readonly formProps:          DatasetFormProps;
+  readonly jsonPath: JsonPathBuilder;
+  readonly formProps: DatasetFormProps;
 }
 
 export function CoreDatasetInformation({
