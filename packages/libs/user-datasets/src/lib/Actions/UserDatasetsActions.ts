@@ -11,12 +11,10 @@ import {
 import {
   ActionThunk,
   EmptyAction,
-  emptyAction
+  emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import {
-  Action as CreatedAction
-} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import { Action as CreatedAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
 import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 
@@ -28,13 +26,12 @@ import {
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { DatasetPatchRequest } from '../Service/Model';
+import { DatasetPatchRequest, ValidationErrorBody } from '../Service/Model';
 import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
 import {
   CommunityPromotionError,
   CommunityPromotionValidationError,
 } from '../Components/Sharing/CommunityPromotionError';
-import { ValidationErrorBody } from '../Service/Model/response-decoders';
 import { Consumer } from '../Utils';
 import { VdiCompatibleEpicDependencies } from '../Service/utils/compatibility';
 
@@ -534,18 +531,23 @@ export function updateDatasetCommunityVisibility(
   datasetIds: string[],
   isVisibleToCommunity: boolean,
   context: 'datasetDetails' | 'datasetsList',
-  onError?: Consumer<ValidationErrorBody>,
+  onError?: Consumer<ValidationErrorBody>
 ): (
-  CreatedAction<"user-datasets/update-community-visibility-pending", undefined>
-  | ActionThunk<UpdateCommunityVisibilityThunkAction, VdiCompatibleEpicDependencies>
+  | CreatedAction<
+      'user-datasets/update-community-visibility-pending',
+      undefined
+    >
+  | ActionThunk<
+      UpdateCommunityVisibilityThunkAction,
+      VdiCompatibleEpicDependencies
+    >
 )[] {
   return [
     updateDatasetCommunityVisibilityPending(),
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
       async ({ wdkService }) => {
         try {
-          const validationErrors: CommunityPromotionValidationError[] =
-            [];
+          const validationErrors: CommunityPromotionValidationError[] = [];
           const serviceErrors: string[] = [];
 
           await Promise.all(
@@ -561,8 +563,7 @@ export function updateDatasetCommunityVisibility(
                 undefined,
                 // on validation error
                 (response) => {
-                  if (onError)
-                    onError(response);
+                  if (onError) onError(response);
                   else
                     validationErrors.push({
                       datasetId,
