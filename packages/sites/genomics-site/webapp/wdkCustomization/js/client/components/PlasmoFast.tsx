@@ -239,7 +239,7 @@ export function PlasmoFast() {
       </p>
 
       <p>
-        plasmoFAST was originally developed by Katie Ko (David Sere Lab,
+        plasmoFAST was originally developed by Katie Ko (David Serre Lab,
         University of Maryland). Source code available at{' '}
         <a href="https://github.com/VEuPathDB/plasmoFAST">GitHub</a>.
       </p>
