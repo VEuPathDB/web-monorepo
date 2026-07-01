@@ -19,7 +19,8 @@ import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormContr
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
-import { convertDetailsToMeta, submitUpdate } from '../../Service/process/update-dataset';
+import { submitUpdate } from '../../Service/process/update-dataset';
+import { convertDetailsToMeta } from '../../Service/utils/conversions';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -103,7 +104,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
         datasetId:  props.datasetId,
         original:   convertDetailsToMeta(dataset!),
         updated:    formState.datasetDetails,
-        files:      formState.fileUploads,
+        newFiles:      formState.fileUploads,
         oldFiles:   dataset!.files.datasetProperties,
       })
         .then(res => {

@@ -13,7 +13,7 @@ import * as io from 'io-ts';
 import { VdiRoutes } from './VdiRoutes';
 import { makeQueryString, QueryParams } from './utils/api-utils';
 import { BiConsumer, Consumer, Runnable } from '../Utils';
-import { MultipartField, sendMultipartRequest } from './utils/xhr';
+import { MultipartField, sendMultipartRequest } from './utils/multipart-xhr';
 import { BadUpload } from '../StoreModules';
 
 import {

@@ -34,6 +34,7 @@ export type {
   SimpleServiceErrorBody,
   ValidationErrors,
   ValidationErrorBody,
+  VdiErrorCode,
   VdiPluginConfig,
   VdiReconcilerConfig,
   VdiServiceConfig,

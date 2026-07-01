@@ -1,6 +1,5 @@
 import {
   DatasetFileDetails,
-  DatasetGetResponseBody,
   DatasetId,
   DatasetUploads,
   PartialDatasetDetails,
@@ -18,34 +17,46 @@ import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { receiveBadUpload, trackUploadProgress } from '../../Actions/UserDatasetUploadActions';
 import { DatasetPatchResponse } from '../Model/response-decoders';
+import { statusStringToCode } from '../utils/conversions';
 
 export interface UpdateSubmission {
   readonly vdi:       VdiService;
   readonly datasetId: DatasetId;
   readonly original:  PartialDatasetDetails;
   readonly updated:   PartialDatasetDetails;
-  readonly files:     DatasetUploads;
+  readonly newFiles:     DatasetUploads;
   readonly oldFiles:  DatasetFileDetails[] | undefined;
   readonly dispatch:  Dispatch<any, EpicDependencies>;
 }
 
 export interface UpdateResult {
   readonly patchResult: PatchResult;
+  readonly deleteResult: DeleteResult;
   readonly putResult: PutResult;
 }
 
 export async function submitUpdate(submission: UpdateSubmission): Promise<UpdateResult> {
   const { vdi, datasetId } = submission;
 
-  const patchBody = convertMetaToPatch(submission.original, submission.updated);
+  const patchResult: PatchResult = await (async () => {
+    const patchBody = convertMetaToPatch(submission.original, submission.updated);
+    return patchBody == null
+      ? { status: 'success' }
+      : await submitPatch(vdi, datasetId, patchBody);
+  })();
+
+  const deleteResult: DeleteResult = submission.newFiles.dataPropertiesFiles
+    ? await deleteDatasetPropertiesFiles(submission)
+    : { status: 'success' };
+
+  const putResult: PutResult = submission.newFiles.dataPropertiesFiles
+    ? await submitPut(submission)
+    : { status: 'success' }
 
   return {
-    patchResult: patchBody == null
-      ? { status: 'success' }
-      : await submitPatch(vdi, datasetId, patchBody),
-    putResult: submission.files.dataPropertiesFiles
-      ? await submitPut(submission)
-      : { status: 'success' }
+    patchResult,
+    deleteResult,
+    putResult,
   };
 }
 
@@ -73,7 +84,7 @@ type PutResult =
 async function submitPut({
   vdi,
   datasetId,
-  files,
+  newFiles,
   dispatch,
   oldFiles,
 }: UpdateSubmission):Promise<PutResult> {
@@ -88,7 +99,7 @@ async function submitPut({
     );
   }
 
-  for (const file of files.dataPropertiesFiles!) {
+  for (const file of newFiles.dataPropertiesFiles!) {
     promises.push(new Promise<[string, number, string?]>(
       (good, bad) => {
         try {
@@ -265,30 +276,74 @@ function typedKeys<T extends object>(obj: T): readonly (keyof T)[] {
 
 // endregion PATCH
 
-/**
- * "Convert" the response object to by pruning out derived fields returned by
- * VDI that are not parts of the dataset's metadata.
- */
-export function convertDetailsToMeta(meta: DatasetGetResponseBody): PartialDatasetDetails {
-  // deep copy
-  return JSON.parse(JSON.stringify({
-    name: meta.name,
-    summary: meta.summary,
-    dependencies: meta.dependencies,
-    description: meta.description,
-    publications: meta.publications,
-    contacts: meta.contacts,
-    projectName: meta.projectName,
-    programName: meta.programName,
-    linkedDatasets: meta.linkedDatasets,
-    experimentalOrganism: meta.experimentalOrganism,
-    hostOrganism: meta.hostOrganism,
-    datasetCharacteristics: meta.datasetCharacteristics,
-    externalIdentifiers: meta.externalIdentifiers,
-    funding: meta.funding,
-    shortAttribution: meta.shortAttribution,
-    daysForApproval: meta.daysForApproval,
-    dataDisclaimer: meta.dataDisclaimer,
-    datasetSources: meta.datasetSources,
-  }));
+// region DELETE
+
+export type DeleteResult =
+  | {
+    readonly status: 'success';
+  }
+  | {
+    readonly status: 'error';
+    readonly errors: readonly string[];
+  };
+
+async function deleteDatasetPropertiesFiles({
+  vdi,
+  datasetId,
+  oldFiles,
+  newFiles: { dataPropertiesFiles: newFiles },
+}: UpdateSubmission): Promise<DeleteResult> {
+  const errors: string[] = [];
+
+  if (!oldFiles)
+    return { status: 'success' };
+
+  for (const { fileName } of oldFiles) {
+    if (fileListContains(newFiles!, fileName)) {
+      continue;
+    }
+
+    try {
+      const [ code, message ] = await deleteDatasetPropertiesFile(
+        vdi,
+        datasetId,
+        fileName,
+      );
+
+      if (code !== 204) {
+        errors.push(message ?? 'unknown error');
+      }
+    } catch (e: any) {
+      console.error(`error thrown while deleting dataset properties file ${fileName}`, e);
+      errors.push('unknown error')
+    }
+  }
+
+  return errors.length === 0
+    ? { status: 'success' }
+    : { status: 'error', errors };
 }
+
+async function deleteDatasetPropertiesFile(
+  vdi: VdiService,
+  datasetId: DatasetId,
+  fileName: string,
+): Promise<readonly [number, string?]> {
+  return vdi.deleteDatasetVarPropsFile(datasetId, fileName)
+    .then(it => it == null
+      ? [204, undefined]
+      : [statusStringToCode(it.status) ?? 500, it.message]
+    );
+}
+
+function fileListContains(list: FileList, fileName: string): boolean {
+  for (const { name } of list) {
+    if (name === fileName) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// endregion DELETE

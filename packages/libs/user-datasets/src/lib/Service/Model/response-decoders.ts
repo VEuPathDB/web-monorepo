@@ -430,6 +430,8 @@ const simpleContainerCoreErrorCode = io.union([
   // io.literal('server-error'), -- request id should be provided
 ]);
 
+const serverErrorCode = io.literal('server-error');
+
 const simpleContainerCoreErrorBody = io.intersection([
   io.type({ status: simpleContainerCoreErrorCode }),
   io.partial({ message: io.string }),
@@ -440,7 +442,7 @@ export type SimpleServiceErrorBody = io.TypeOf<
 
 const ccServerErrorBody = io.intersection([
   io.type({
-    status: io.literal('server-error'),
+    status: serverErrorCode,
     requestId: io.string,
   }),
   io.partial({ message: io.string }),
@@ -453,9 +455,11 @@ const ccValidationErrors = io.type({
 });
 export type ValidationErrors = io.TypeOf<typeof ccValidationErrors>;
 
+const validationErrorCode = io.literal('invalid-input');
+
 export const ccValidationErrorBody = io.intersection([
   io.type({
-    status: io.literal('invalid-input'),
+    status: validationErrorCode,
     errors: ccValidationErrors,
   }),
   io.partial({ message: io.string }),
@@ -468,6 +472,11 @@ export const ccErrorBodyUnion = io.union([
   ccServerErrorBody,
 ]);
 export type ServiceError = io.TypeOf<typeof ccErrorBodyUnion>;
+
+export type VdiErrorCode = io.TypeOf<typeof simpleContainerCoreErrorCode>
+  | io.TypeOf<typeof serverErrorCode>
+  | io.TypeOf<typeof validationErrorCode>;
+
 
 // endregion Service Errors
 
