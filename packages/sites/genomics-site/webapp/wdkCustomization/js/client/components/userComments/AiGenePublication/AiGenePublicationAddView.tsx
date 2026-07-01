@@ -1054,8 +1054,8 @@ function TerminalRecoveryButtons({
         themeRole="primary"
       />
       {onUploadPdfInstead && (
-        <OutlinedButton
-          text="Upload a PDF"
+        <FilledButton
+          text="Upload a PDF instead"
           onPress={onUploadPdfInstead}
           themeRole="primary"
         />
