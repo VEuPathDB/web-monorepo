@@ -11,16 +11,15 @@ import {
 import { AddRowButton } from '../../index';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { isEmpty } from 'lodash';
-import { FieldStudyToggleID } from './CharacteristicsSection';
 
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
 export interface DatasetSourcesProps {
-  readonly datasetMeta:    PartialDatasetDetails;
+  readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly clientState:    ClientSideUploadFormState;
+  readonly clientState: ClientSideUploadFormState;
   readonly setClientState: Consumer<ClientSideUploadFormState>;
-  readonly jsonPath:       JsonPathBuilder;
+  readonly jsonPath: JsonPathBuilder;
 }
 
 export function DatasetSources(props: DatasetSourcesProps): ReactElement {
