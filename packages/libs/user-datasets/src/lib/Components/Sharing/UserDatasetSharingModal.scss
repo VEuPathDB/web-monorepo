@@ -192,12 +192,18 @@
   button {
     margin-top: 2em;
 
+    &.edit {
+      color: white;
+      background-color: var(--coreui-mutedBlue-600);
+      border-bottom-color: var(--coreui-mutedBlue-700);
+    }
+
     &:not(:last-child) {
       margin-right: 1em;
     }
   }
   .wdk-Icon {
-    font-size: 50px;
+    font-size: 2em;
   }
 }
 

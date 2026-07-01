@@ -52,6 +52,8 @@ import { DatasetFormConfigurators, DatasetTypeConfig, findDatasetTypeConfig } fr
 import { isEmpty } from 'lodash';
 import { History } from 'history';
 import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
+import { ThemedUpdateButton } from '../ThemedUpdateButton';
+import { isEditable } from '@testing-library/user-event/dist/utils';
 
 const classify = makeClassifier('DatasetManagement');
 
@@ -244,12 +246,7 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
         q.properties.userDatasetType.includes(userDataset.type.name)
     );
 
-    const setState = this.setState.bind(this);
-
     const shares = this.getGrantedShares();
-
-    const editable = !isEmpty(this.props.datasetTypes)
-      && !isEmpty(findDatasetTypeConfig(userDataset.type,  this.props.datasetTypes!));
 
     return (
       [
@@ -257,21 +254,7 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
           ? {
               attribute: this.props.detailsPageTitle,
               className: classify('Name'),
-              value: <>
-                {userDataset.name}
-                {editable && isOwner && (
-                  <button
-                    type="button"
-                    title="Edit Dataset"
-                    onClick={() => setState((s) => ({
-                      ...s,
-                      datasetUpdateAction: DatasetUpdateAction.OpeningDefault
-                    }))}
-                  >
-                    <Icon fa="pencil edit"/>
-                  </button>
-                )}
-              </>,
+              value: userDataset.name,
             }
           : null,
         {
@@ -458,6 +441,10 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
       ? undefined
       : 'Datasets that have not been installed cannot be made public.';
 
+    const editable = isOwner
+      && !isEmpty(this.props.datasetTypes)
+      && !isEmpty(findDatasetTypeConfig(this.props.userDataset.type,  this.props.datasetTypes!));
+
     return (
       <div className={classify('Actions')}>
         {!isOwner ? null : (
@@ -479,6 +466,12 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
             disableCommunityReason={notInstalledMessage}
             communityDatasetsEnabled={this.props.enablePublicUserDatasets}
           />
+        )}
+        {editable && (
+          <ThemedUpdateButton buttonText="Update" onPress={() => this.setState((s) => ({
+            ...s,
+            datasetUpdateAction: DatasetUpdateAction.OpeningDefault
+          }))} />
         )}
         {isOwner ? (
           <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />

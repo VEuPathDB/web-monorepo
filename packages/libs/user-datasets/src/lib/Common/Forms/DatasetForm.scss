@@ -349,8 +349,8 @@ section#dataset-update {
 
   .upload-button {
     &:not([disabled]) {
-      background-color: var(--coreui-blue-600);
-      box-shadow: 4px 5px var(--coreui-blue-700);
+      background-color: var(--coreui-mutedBlue-600);
+      box-shadow: 4px 5px var(--coreui-mutedBlue-700);
     }
   }
 }

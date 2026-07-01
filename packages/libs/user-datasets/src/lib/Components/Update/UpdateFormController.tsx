@@ -169,6 +169,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
       visible={true}
       toggleVisible={onClose}
       includeCloseButton={true}
+      themeRole="primary"
       title={document.title}
       titleSize="medium"
     >

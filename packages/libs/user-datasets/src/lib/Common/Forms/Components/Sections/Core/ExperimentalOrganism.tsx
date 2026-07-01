@@ -7,6 +7,7 @@ import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { isNonBlankString } from '../../../../../Utils/value-tests';
 import { projectId } from '../../../../../config';
+import { isGenomicsProject } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export const ExpOrganismToggleID = 'exp-organism-toggle';
 
@@ -21,7 +22,6 @@ export interface ExperimentalOrganismProps {
 export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
   const { hasExperimentalOrganism } = props.clientSideState;
 
-  const disabledClass = hasExperimentalOrganism ? '' : ' disabled-fields';
 
   const setEnabled = (enabled: boolean) => props.setClientSideState({
     ...props.clientSideState,
@@ -39,14 +39,19 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
     }),
   );
 
-  const required = projectId === 'ClinEpiDB'
+  const isGenomics = isGenomicsProject(projectId);
+
+  const required = !isGenomics
     ? hasExperimentalOrganism
-    : isNonBlankString(safeExperimentalOrganism.species)
+    : props.datasetMeta.visibility === 'public'
+      || isNonBlankString(safeExperimentalOrganism.species)
       || isNonBlankString(safeExperimentalOrganism.strain);
 
-  const disabled = projectId === 'ClinEpiDB'
-    ? !hasExperimentalOrganism
-    : undefined;
+  const disabled = isGenomics
+    ? undefined
+    : !hasExperimentalOrganism;
+
+  const disabledClass = disabled ? ' disabled-fields' : '';
 
   const isPublic = props.datasetMeta.visibility === 'public';
 
@@ -62,7 +67,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
 
         <div className={'field-grid' + disabledClass}>
           {
-            projectId === 'ClinEpiDB'
+            !isGenomics
               ? (
                 <>
                   <label

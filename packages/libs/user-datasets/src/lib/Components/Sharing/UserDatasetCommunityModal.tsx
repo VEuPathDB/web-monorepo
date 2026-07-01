@@ -61,7 +61,7 @@ export default function UserDatasetCommunityModal(
 
   const CloseButton = () => (
     <button className="btn" type="button" onClick={() => onClose()}>
-      Close this window.
+      Close this window
     </button>
   );
 

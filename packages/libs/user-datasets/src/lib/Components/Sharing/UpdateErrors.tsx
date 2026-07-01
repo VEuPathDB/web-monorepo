@@ -25,8 +25,8 @@ export function UpdateErrors({
 
   const updateButton = inList || !errors.validationErrors
     ? null
-    : (<button type="button" className="btn" onClick={onFixErrors}>
-      Add Missing Information
+    : (<button type="button" className="btn edit" onClick={onFixErrors}>
+      Add missing information
     </button>)
 
   if (errors.validationErrors) {
