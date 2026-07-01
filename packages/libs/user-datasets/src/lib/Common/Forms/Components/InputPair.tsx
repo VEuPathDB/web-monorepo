@@ -9,7 +9,7 @@ interface BaseInputProps<T extends object = object> {
   readonly nameOverride?: string;
   readonly idOverride?: string;
 
-  readonly className?:  string;
+  readonly className?: string;
   readonly inputClass?: string;
   readonly labelClass?: string;
 
