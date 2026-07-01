@@ -3,22 +3,18 @@ import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { projectId } from '../../config';
-import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
-import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import RecordAttribute from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttribute';
 import { DataFilesSection } from './DataFilesSection';
+import { BWFilesSection } from './BWFilesSection';
 
-// Use Element.innerText to strip XML
+// formatLink(): we use now <Link> that takes target="blank"
+//
 function stripXML(str) {
   let div = document.createElement('div');
   div.innerHTML = str;
   return div.textContent;
 }
-
 export function formatLink(link, opts) {
   opts = opts || {};
   let newWindow = !!opts.newWindow;
@@ -29,37 +25,25 @@ export function formatLink(link, opts) {
   );
 }
 
-function renderPrimaryPublication(publication) {
-  return formatLink(publication.publication_link, { newWindow: true });
-}
-
-function renderPrimaryContact(contact, institution, email, record) {
-  return record.id[0].value == 'DS_010e5612b8' ||
-    record.id[0].value == 'DS_c56b76b581' ? (
-    <span>
-      {contact}, <a href={'mailto:' + email}>{email}</a>, {institution}
-    </span>
-  ) : (
-    contact + ', ' + institution
-  );
-}
-
+// The exports below are used in packages/libs/web-common/src/component-wrappers/RecordPage.jsx (dynamic wrapping)
+//  1. RecordPage.jsx uses require.context to load components from components/records directory
+//  2. At runtime, it looks for a file matching the record class name: UserDatasetRecordClasses.UserDatasetRecordClass.js
+//  3. It then looks for exported components like RecordHeading, RecordTable, etc. from that file
+//  4. These override the default WDK components
+//
 export function RecordHeading(props) {
   let { record, questions, recordClasses } = props;
   let { attributes, tables } = record;
   let {
     primary_publication,
-    primary_affiliation,
     primary_contact_name,
-    primary_country,
-    primary_email,
-    name,
     creation_date,
     summary,
     is_public,
     accessibility,
     owner_name,
     category,
+    type_name,
     search_link,
     veupathdb_id,
     veupathdb_project,
@@ -83,7 +67,7 @@ export function RecordHeading(props) {
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
-          {veupathdb_project !== 'ClinEpiDB' ? (
+          {veupathdb_project !== 'dataExplorer' ? (
             <>
               <dt>Data type:</dt>
               <dd>{category}</dd>
@@ -122,7 +106,8 @@ export function RecordHeading(props) {
               </div>
             )}
           </dd>
-          {veupathdb_project !== 'ClinEpiDB' ? (
+          {type_name !== 'bigwigfiles' &&
+          veupathdb_project !== 'dataExplorer' ? (
             <>
               <dt>Explore:</dt>
               <dd>
@@ -136,69 +121,33 @@ export function RecordHeading(props) {
   );
 }
 
-function References(props) {
-  let { questions, recordClasses } = props;
-  if (questions == null || recordClasses == null) {
-    return null;
+export function RecordAttributeSection(props) {
+  const { DefaultComponent, ...restProps } = props;
+  switch (restProps.attribute.name) {
+    case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'exp_organism':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'ref_organism':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'disclaimer':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'dataFiles':
+      return <DataFilesSection {...restProps} />;
+    case 'bwFiles':
+      if (
+        props.record.attributes.type_name === 'bigwigfiles' ||
+        props.record.attributes.type_name === 'rnaseq'
+      )
+        return <BWFilesSection {...restProps} />;
+      else return null; // hides attribute in right side?
+    default:
+      return <UserDatasetInlineAttribute {...restProps} />;
   }
-  let value = props.value
-    .filter(
-      (row) =>
-        row.target_type === 'question' || row.link_type === 'genomicsInternal'
-    )
-    .map((row, index) => {
-      if (row.link_type === 'question') {
-        let name = row.target_name;
-        let question = questions.find((q) => q.fullName === name);
-
-        if (question == null) {
-          if (projectId === 'EuPathDB') {
-            console.warn(
-              'Ignoring dataset reference `',
-              name,
-              '`. Unable to resolve with model.'
-            );
-            return null;
-          }
-          throw new Error('cannot find question with name:' + name);
-          // There are too many cases that are difficult to address right now, so we opt to ignore
-        }
-
-        let recordClass = recordClasses.find(
-          (r) => r.urlSegment === question.outputRecordClassName
-        );
-        let searchName = `Identify ${recordClass.displayNamePlural} based on ${question.displayName}`;
-        return (
-          <li key={name}>
-            <Link
-              to={`/search/${recordClass.urlSegment}/${question.urlSegment}`}
-            >
-              {searchName}
-            </Link>
-          </li>
-        );
-      } else {
-        return (
-          <li key={index}>
-            <a target="_blank" href={row.url}>
-              {row.text}
-            </a>
-          </li>
-        );
-      }
-    });
-  return value.length === 0 ? <em>No data available</em> : <ul>{value}</ul>;
 }
 
-const ConnectedReferences = connect(
-  (state) => ({
-    questions: state.globalData.questions,
-    recordClasses: state.globalData.recordClasses,
-  }),
-  null
-)(References);
-
-// Wrapper to add fixed-width labels for aligned values in UserDataset records
+// Style for attributes: Wrapper to add fixed-width labels for aligned values in UserDataset records
+//
 function UserDatasetInlineAttribute(props) {
   const { attribute, record, recordClass } = props;
   const { displayName, help, name } = attribute;
@@ -233,24 +182,33 @@ function UserDatasetInlineAttribute(props) {
   );
 }
 
-export function RecordAttributeSection(props) {
-  const { DefaultComponent, ...restProps } = props;
-  switch (restProps.attribute.name) {
-    case 'description':
-      return <BlockRecordAttributeSection {...restProps} />;
-    case 'exp_organism':
-      return <BlockRecordAttributeSection {...restProps} />;
-    case 'ref_organism':
-      return <BlockRecordAttributeSection {...restProps} />;
-    case 'disclaimer':
-      return <BlockRecordAttributeSection {...restProps} />;
-    case 'dataFiles':
-      return <DataFilesSection {...restProps} />;
-    default:
-      return <UserDatasetInlineAttribute {...restProps} />;
+// Hide certain tables for certain data types
+//   (this does not hide the heading :(
+//
+export function RecordTable(props) {
+  const { table, record, ontologyProperties } = props;
+  const type_name = record.attributes.type_name;
+
+  if (
+    ((table.name === 'ExploreWebsiteEDA' || table.name === 'Variables') &&
+      (type_name === 'genelist' ||
+        type_name === 'bigwigfiles' ||
+        type_name === 'rnaseq')) ||
+    (table.name === 'ExploreWebsiteSearches' &&
+      (type_name === 'isasimple' || type_name === 'bigwigfiles'))
+  ) {
+    return null; //could we remove heading?
   }
+
+  return <props.DefaultComponent {...props} />;
 }
 
+// RecordMainCategorySection
+// - dataexplorer : adhoc verbiage for category "characteristics" Field Study or Clinical Trial Characteristics
+//    when the dataset is public and there are no data provided in attr and tables in this category
+//   (is_clinical_field = 'No'). (not sure if is_clinical_field is ever false)
+// - genomics: hide table headings for certain data types
+//
 export function RecordMainCategorySection(props) {
   const { category, record, children } = props;
 
@@ -275,36 +233,35 @@ export function RecordMainCategorySection(props) {
     }
   }
 
+  const type_name = record.attributes.type_name;
+  const table_name = category?.properties?.name?.[0];
+  if (
+    ((table_name === 'ExploreWebsiteEDA' || table_name === 'Variables') &&
+      (type_name === 'genelist' ||
+        type_name === 'bigwigfiles' ||
+        type_name === 'rnaseq')) ||
+    (table_name === 'ExploreWebsiteSearches' &&
+      (type_name === 'isasimple' || type_name === 'bigwigfiles'))
+  ) {
+    return null; //could we remove heading?
+  }
+
   // Render default category section
   return <props.DefaultComponent {...props} />;
 }
 
-export function RecordTable(props) {
-  const { table, record, ontologyProperties } = props;
-
-  // Handle References table with custom component
-  if (table.name === 'References') {
-    return <ConnectedReferences {...props} />;
-  }
-
-  // Check if this table is in the characteristics category
-  const isCharacteristicsCategory =
-    ontologyProperties?.name?.[0] === 'characteristics';
-
-  if (isCharacteristicsCategory) {
-    const isClinicalField = record.attributes['is_clinical_field'];
-
-    // Hide tables if not a clinical field
-    if (isClinicalField === 'No' || isClinicalField === false) {
-      return null;
-    }
-  }
-
-  return <props.DefaultComponent {...props} />;
-}
-
+// RecordNavigationSection (record page left pane)
+//
+// dataExplorer: we hide the category 'characteristics' when the dataset is public
+//   and there are no data provided in attr and tables in this category
+//   (is_clinical_field = 'No'). (not sure if is_clinical_field is ever false)
+//
+// genomics: hide children of category 'Link Outs' (has no name assigned)
+//   when they dont apply to certain data types
+//
 export function RecordNavigationSection(props) {
   const { record, categoryTree } = props;
+  const type_name = record.attributes.type_name;
 
   // Check if this is a clinical field
   const isClinicalField = record?.attributes?.['is_clinical_field'];
@@ -313,13 +270,66 @@ export function RecordNavigationSection(props) {
 
   // If we need to hide the entire characteristics section, filter it from the tree
   let filteredCategoryTree = categoryTree;
-  if (shouldHideCharacteristics && categoryTree?.children) {
-    filteredCategoryTree = {
-      ...categoryTree,
-      children: categoryTree.children.filter(
-        (node) => node.properties?.name?.[0] !== 'characteristics'
-      ),
-    };
+
+  if (categoryTree?.children) {
+    const nodesToHide = new Set();
+
+    if (shouldHideCharacteristics) nodesToHide.add('characteristics');
+
+    if (
+      type_name === 'genelist' ||
+      type_name === 'bigwigfiles' ||
+      type_name === 'rnaseq'
+    ) {
+      nodesToHide.add('ExploreWebsiteEDA');
+      nodesToHide.add('Variables');
+    }
+
+    if (type_name === 'isasimple' || type_name === 'bigwigfiles') {
+      nodesToHide.add('ExploreWebsiteSearches');
+    }
+
+    if (
+      type_name === 'isasimple' ||
+      type_name === 'phenotype' ||
+      type_name === 'genelist'
+    ) {
+      nodesToHide.add('bwFiles');
+    }
+
+    if (nodesToHide.size > 0) {
+      console.log('[RecordNavigationSection] nodesToHide:', [...nodesToHide]);
+      filteredCategoryTree = {
+        ...categoryTree,
+        children: categoryTree.children
+          .filter((node) => {
+            const categoryName = node.properties?.name?.[0];
+            const shouldHide = nodesToHide.has(categoryName);
+            console.log('[RecordNavigationSection] top-level category:', {
+              categoryName,
+              shouldHide,
+            });
+            return !shouldHide;
+          })
+          .map((node) => {
+            if (!node.children?.length) return node;
+            const filteredChildren = node.children.filter((child) => {
+              const wdkName = child.wdkReference?.name;
+              const childCategoryName = child.properties?.name?.[0];
+              const childName = wdkName ?? childCategoryName;
+              const shouldHide = nodesToHide.has(childName);
+              console.log('[RecordNavigationSection] child node:', {
+                wdkName,
+                childCategoryName,
+                childName,
+                shouldHide,
+              });
+              return !shouldHide;
+            });
+            return { ...node, children: filteredChildren };
+          }),
+      };
+    }
   }
 
   return (

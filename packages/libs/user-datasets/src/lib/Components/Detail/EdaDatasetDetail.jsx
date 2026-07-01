@@ -1,5 +1,10 @@
 import { Link } from 'react-router-dom';
 
+import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
+import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
+import { useConfiguredSubsettingClient } from '@veupathdb/eda/lib/core/hooks/client';
+import { useStudyMetadata } from '@veupathdb/eda/lib/core/hooks/study';
+
 import UserDatasetDetail from './UserDatasetDetail';
 
 class EdaDatasetDetail extends UserDatasetDetail {
@@ -10,11 +15,18 @@ class EdaDatasetDetail extends UserDatasetDetail {
 
   renderEdaLinkout() {
     const {
-      config: { displayName, projectId },
       userDataset: { status },
-      edaWorkspaceUrl,
-      edaMapUrl,
     } = this.props;
+    const { config } = this.props;
+
+    const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
+      this.props.userDataset.datasetId
+    );
+    const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
+    const edaWorkspaceUrl = `${makeEdaRoute(wdkDatasetId)}/new`;
+    const edaMapUrl = edaStudyMetadata?.hasMap
+      ? `${makeMapRoute(wdkDatasetId)}/new`
+      : undefined;
 
     if (edaWorkspaceUrl == null && edaMapUrl == null) return null;
 
@@ -23,7 +35,8 @@ class EdaDatasetDetail extends UserDatasetDetail {
         {!edaWorkspaceUrl ? null : (
           <li>
             <Link to={edaWorkspaceUrl}>
-              <i className="ebrc-icon-edaIcon"></i> Explore in {displayName}
+              <i className="ebrc-icon-edaIcon"></i> Explore in{' '}
+              {config.displayName}
             </Link>
           </li>
         )}
@@ -53,6 +66,16 @@ class EdaDatasetDetail extends UserDatasetDetail {
       edaLinks,
       ...attributes.slice(spliceIndex),
     ];
+  }
+}
+
+function useEdaStudyMetadata(wdkDatasetId) {
+  try {
+    const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+    return useStudyMetadata(wdkDatasetId, subsettingClient).value;
+  } catch (error) {
+    console.error(error);
+    return undefined;
   }
 }
 
