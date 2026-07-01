@@ -12,14 +12,14 @@ import {
   useDatasetFormState
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { useDispatch } from 'react-redux';
-import { receiveBadUpload, updateFormState } from '../../Actions/UserDatasetUploadActions';
+import { clearBadUpload, receiveBadUpload, updateFormState } from '../../Actions/UserDatasetUploadActions';
 import { UpdateForm } from './UpdateForm';
 import { configureFormProps, findDatasetTypeConfig } from '../../Common/Configuration';
 import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormControllerConfig';
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
-import { convertDetailsToMeta, submitUpdate, UpdateResult } from './update-process';
+import { convertDetailsToMeta, submitUpdate } from '../../Service/process/update-dataset';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -39,6 +39,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
   const onClose = () => {
     props.closeModal();
     dispatch(updateFormState(DefaultDatasetFormState));
+    dispatch(clearBadUpload());
   };
 
   useEffect(
@@ -103,6 +104,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
         original:   convertDetailsToMeta(dataset!),
         updated:    formState.datasetDetails,
         files:      formState.fileUploads,
+        oldFiles:   dataset!.files.datasetProperties,
       })
         .then(res => {
           setSubmitting(false);

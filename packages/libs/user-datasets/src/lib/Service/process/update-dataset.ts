@@ -1,22 +1,23 @@
 import {
+  DatasetFileDetails,
   DatasetGetResponseBody,
   DatasetId,
   DatasetUploads,
   PartialDatasetDetails,
   ValidationErrors,
   VdiService
-} from '../../Service';
+} from '../index';
 import {
   DatasetCharacteristicsPatch,
   DatasetPatchRequest,
   ExternalIdentifiersPatch,
   OptionalValuePatch,
-} from '../../Service/Model';
+} from '../Model';
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { receiveBadUpload, trackUploadProgress } from '../../Actions/UserDatasetUploadActions';
-import { DatasetPatchResponse } from '../../Service/Model/response-decoders';
+import { DatasetPatchResponse } from '../Model/response-decoders';
 
 export interface UpdateSubmission {
   readonly vdi:       VdiService;
@@ -24,6 +25,7 @@ export interface UpdateSubmission {
   readonly original:  PartialDatasetDetails;
   readonly updated:   PartialDatasetDetails;
   readonly files:     DatasetUploads;
+  readonly oldFiles:  DatasetFileDetails[] | undefined;
   readonly dispatch:  Dispatch<any, EpicDependencies>;
 }
 
@@ -73,8 +75,18 @@ async function submitPut({
   datasetId,
   files,
   dispatch,
-}: UpdateSubmission): Promise<PutResult> {
+  oldFiles,
+}: UpdateSubmission):Promise<PutResult> {
   const promises: Promise<[string, number, string?]>[] = [];
+
+  for (const file of oldFiles ?? []) {
+    promises.push(
+      vdi.deleteDatasetVarPropsFile(datasetId, file.fileName)
+        .then(it => it
+          ? [ file.fileName, 500, it.message ]
+          : [ file.fileName, 204, undefined ])
+    );
+  }
 
   for (const file of files.dataPropertiesFiles!) {
     promises.push(new Promise<[string, number, string?]>(

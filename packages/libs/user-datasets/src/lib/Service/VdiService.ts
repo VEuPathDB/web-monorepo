@@ -46,14 +46,14 @@ import {
   datasetPatchResponse,
   DatasetPatchResponse,
   datasetPostResponse,
-  DatasetPostResponse,
+  DatasetPostResponse, DatasetPropertiesDeleteResponse,
   pluginListItem,
   ServerErrorBody,
   serviceMetadata,
   shareOfferListEntry,
   SimpleServiceErrorBody,
   userMetadata,
-  ValidationErrorBody,
+  ValidationErrorBody
 } from './Model/response-decoders';
 
 import { RootDatasetFile } from './Model/utility-types';
@@ -314,6 +314,37 @@ export class VdiService extends FetchClientWithCredentials {
       onProgress,
       onFailure,
     );
+  }
+
+  async deleteDatasetVarPropsFile(
+    id: DatasetId,
+    fileName: string,
+  ): Promise<DatasetPropertiesDeleteResponse> {
+    const auth = await this.findAuthorizationHeaders();
+
+    const response = await window.fetch(
+      this.baseUrl + VdiRoutes.datasetPropertiesFileUri(id, fileName),
+      {
+        method: 'DELETE',
+        headers: new Headers(auth),
+      },
+    );
+
+    if (response.ok || response.status === 404) {
+      return undefined;
+    }
+
+    const jsonBody = response.headers.get('Content-Type') === 'application/json'
+      ? await response.json()
+      : null;
+
+    return jsonBody
+      ? jsonBody
+      : {
+        status: 'server-error',
+        requestId: '',
+        message: 'unknown service or connection error'
+      } as ServerErrorBody;
   }
 
   async putDatasetShareOffer(

@@ -41,7 +41,7 @@ export function UpdateForm(props: DatasetFormProps): ReactElement {
 
   const onSubmit = () => {
     props.actions.submit();
-    updateSection.current!.parentElement!.scrollTo(0, 0);
+    findScrollable(updateSection.current)?.scrollTo(0, 0);
   };
 
   return (
@@ -74,5 +74,9 @@ export function UpdateForm(props: DatasetFormProps): ReactElement {
   );
 }
 
-export class UpdateFormProps {
+function findScrollable(node: HTMLElement | null): HTMLElement | null {
+  while (node && node.scrollHeight <= node.clientHeight)
+    node = node.parentElement;
+
+  return node;
 }

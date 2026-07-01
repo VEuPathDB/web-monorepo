@@ -518,6 +518,13 @@ export const datasetPatchResponse = io.union([
 ]);
 export type DatasetPatchResponse = io.TypeOf<typeof datasetPatchResponse>;
 
+export const deleteResponse = io.union([
+  io.undefined,
+  simpleContainerCoreErrorBody,
+  ccServerErrorBody,
+]);
+export type DatasetPropertiesDeleteResponse = io.TypeOf<typeof deleteResponse>;
+
 // endregion Service Responses
 
 // endregion Responses
