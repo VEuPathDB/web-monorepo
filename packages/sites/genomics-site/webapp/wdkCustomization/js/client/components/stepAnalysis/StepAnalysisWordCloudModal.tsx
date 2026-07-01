@@ -26,10 +26,7 @@ export const WordCloudModal: React.FunctionComponent<WordCloudModalProps> = ({
     className="word-cloud-modal"
   >
     <img src={imgUrl} />
-    <p>
-      This word cloud was created using the P-values and the full terms from the
-      Enrichment analysis via a program called GOSummaries
-    </p>
+    <p>Top 40 most significant GO terms</p>
     <p>
       If you would like to download this image please{' '}
       <a href={imgUrl}>Click Here</a>
