@@ -6,7 +6,7 @@ import {
   RootDataInput,
 } from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
-import { GlobeIcon, InputPair, UploadButton } from '../../index';
+import { InputPair, UploadButton } from '../../index';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { PartialDatasetDetails, DatasetUploads } from '../../../../../Service';
 import { isEmpty } from 'lodash';
@@ -89,9 +89,7 @@ export function RootDetailsSection(
 
   return (
     <section id="define-dataset">
-      <h3> 
-        <GlobeIcon /> Define Dataset
-      </h3>
+      <h3>Define Dataset</h3>
 
       <div className="field-grid">
         <InputPair

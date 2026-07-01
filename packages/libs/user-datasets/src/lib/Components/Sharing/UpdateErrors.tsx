@@ -37,10 +37,6 @@ export function UpdateErrors({
           enough information to be discoverable through <CommunityAccess />
           .
         </p>
-        <p>
-          Re-upload your {targetNounLower} and complete all sections on the
-          upload form marked with a globe icon to enable <CommunityAccess />.
-        </p>
         {inList
           ? undefined
           : detailedValidationContent(errors)}

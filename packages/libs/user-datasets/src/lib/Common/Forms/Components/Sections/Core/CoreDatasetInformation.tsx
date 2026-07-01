@@ -6,7 +6,6 @@ import { DatasetSources } from './DatasetSources';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
-import { GlobeIcon } from '../../index';
 import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 
@@ -29,9 +28,7 @@ export function CoreDatasetInformation({
 }: CoreDatasetInformationProps): ReactElement {
   return (
     <>
-      <h3>
-        <GlobeIcon /> Core Dataset Information
-      </h3>
+      <h3>Core Dataset Information</h3>
       <p className="section-description">
         This Core Dataset Information must be completed before you can make this
         dataset public. If you choose to not provide it, you will still be able

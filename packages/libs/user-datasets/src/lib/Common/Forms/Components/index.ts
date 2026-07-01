@@ -1,6 +1,5 @@
 export { AddRowButton } from './AddRowButton';
 export { FieldHelpText } from './FieldHelpText';
-export { GlobeIcon } from './GlobeIcon';
 export { GrowableStringList } from './GrowableStringList';
 export { InputBlock } from './InputBlock';
 export { InputPair } from './InputPair';
