@@ -9,6 +9,7 @@ export { default as FilledButton } from './components/buttons/FilledButton';
 export { default as FloatingButton } from './components/buttons/FloatingButton';
 export { default as MesaButton } from './components/buttons/MesaButton';
 export { default as OutlinedButton } from './components/buttons/OutlinedButton';
+export { default as PlainLinkButton } from './components/buttons/PlainLinkButton';
 
 // Widgets
 export { Checkbox, Chip } from './components/widgets';

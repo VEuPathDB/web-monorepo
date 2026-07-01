@@ -5,7 +5,7 @@ import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   FilledButton,
-  OutlinedButton,
+  PlainLinkButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 
 // The two terminal statuses where the AI ran but produced nothing publishable.
@@ -99,7 +99,7 @@ export function AiCommentRejectView(
           onPress={onTryDifferentPublication}
           themeRole="primary"
         />
-        <OutlinedButton
+        <PlainLinkButton
           text="Back to gene page"
           onPress={onBackToGenePage}
           themeRole="primary"
