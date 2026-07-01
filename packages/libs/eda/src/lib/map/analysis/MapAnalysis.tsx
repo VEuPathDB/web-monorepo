@@ -86,7 +86,7 @@ import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 import { getGeoConfig } from '../../core/utils/geoVariables';
-import DatasetManagementController from '@veupathdb/user-datasets/src/lib/Components/Management/DatasetManagementController';
+import DatasetManagementController from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagementController';
 import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 enum MapSideNavItemLabels {
