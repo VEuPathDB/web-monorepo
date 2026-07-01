@@ -61,11 +61,11 @@ export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
   },
   {
     ...implementedUploadTypes.phenotype,
-    description: `Integrate your Phenotype data in ${projectId}.`,
+    description: `Integrate your phenotype data in ${projectId}.`,
   },
   {
     ...implementedUploadTypes.rnaseq,
-    description: `Integrate your Normalized RNA-Seq data in ${projectId}.`,
+    description: `Integrate your normalized RNA-Seq data in ${projectId}.`,
   },
 ];
 

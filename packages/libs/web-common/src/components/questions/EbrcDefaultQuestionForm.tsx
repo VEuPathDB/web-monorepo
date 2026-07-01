@@ -5,11 +5,13 @@ import DefaultQuestionForm, {
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 import { useEbrcDescription } from '../../components/questions/EbrcDescription';
+import { useUDEbrcDescription } from '../../components/questions/UDEbrcDescription';
 
 export function EbrcDefaultQuestionForm(props: Props) {
   const { DescriptionComponent, DatasetsComponent, shouldLoadDatasetRecords } =
-    useEbrcDescription(props.state.question);
-
+    props.state.question.queryName?.includes('UserDataset')
+      ? useUDEbrcDescription(props.state.question)
+      : useEbrcDescription(props.state.question);
   return (
     <DefaultQuestionForm
       {...props}

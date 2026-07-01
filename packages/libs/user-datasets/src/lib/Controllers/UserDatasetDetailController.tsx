@@ -22,6 +22,7 @@ import {
   loadVdiServiceMetadata,
 } from '../Actions/UserDatasetsActions';
 
+import EdaDatasetDetail from '../Components/Detail/EdaDatasetDetail';
 import BigwigDatasetDetail from '../Components/Detail/BigwigDatasetDetail';
 import RnaSeqDatasetDetail from '../Components/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail, {
@@ -153,6 +154,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
         return BigwigDatasetDetail;
       case 'rnaseq':
         return RnaSeqDatasetDetail;
+      case 'isasimple':
+        return EdaDatasetDetail;
       default:
         return UserDatasetDetail;
     }
