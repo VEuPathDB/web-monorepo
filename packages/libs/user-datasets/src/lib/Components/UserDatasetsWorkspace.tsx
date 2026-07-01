@@ -17,6 +17,7 @@ import {
   promoteTypeConfig
 } from '../Common/Configuration';
 import { VdiMetadata } from '../Service/utils/use-vdi';
+import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
 export interface UserDatasetWorkspaceProps {
   baseUrl: string;
@@ -28,8 +29,7 @@ export interface UserDatasetWorkspaceProps {
   enablePublicUserDatasets: boolean;
 
   readonly vdiMetadata: VdiMetadata;
-  readonly datasetTypes: readonly ClientDatasetTypeConfig[];
-  readonly formConfigs: DatasetFormConfigurators;
+  readonly workspaceConfig: DatasetWorkspaceConfig;
   readonly datasetId?: string;
 }
 
@@ -44,9 +44,10 @@ export function UserDatasetsWorkspace(
     dataNoun,
     enablePublicUserDatasets,
     vdiMetadata,
+    workspaceConfig: config,
   } = props;
 
-  const datasetTypes = props.datasetTypes
+  const datasetTypes = config.baseDatasetTypeConfigs
     .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
     .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 
@@ -114,6 +115,7 @@ export function UserDatasetsWorkspace(
             vdiConfig={vdiMetadata.serviceInfo}
             plugins={vdiMetadata.plugins}
             datasetTypes={datasetTypes}
+            formConfigs={config.uploadFormConfigurators}
           />
         )}
         <Redirect to={baseUrl} />

@@ -11,18 +11,15 @@ import { DataNoun } from '../Utils/types';
 import DatasetManagementController from '../Components/Management/DatasetManagementController';
 import { DatasetManagementProps } from '../Components/Management/DatasetManagement';
 import {
-  ClientDatasetTypeConfig,
-  DatasetFormConfigurators,
   DatasetTypeConfig,
   filterAvailableDataTypes,
   promoteTypeConfig
 } from '../Common/Configuration';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useVdiMetadata } from '../Service/utils/use-vdi';
+import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
 interface Props {
-  readonly datasetTypeConfigs: readonly ClientDatasetTypeConfig[];
-  uploadFormConfigurators: DatasetFormConfigurators;
   detailsPageTitle: string;
   helpRoute: string;
   workspaceTitle: string;
@@ -30,6 +27,8 @@ interface Props {
   detailComponentsByTypeName?: Record<string, ComponentType<DatasetManagementProps>>;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
+
+  readonly workspaceConfig: DatasetWorkspaceConfig;
 }
 
 export const UserDatasetRoutes = {
@@ -39,8 +38,7 @@ export const UserDatasetRoutes = {
 } as const;
 
 export function UserDatasetRouter({
-  datasetTypeConfigs,
-  uploadFormConfigurators,
+  workspaceConfig,
   detailsPageTitle,
   helpRoute,
   workspaceTitle,
@@ -77,13 +75,12 @@ export function UserDatasetRouter({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              formConfigs={uploadFormConfigurators}
+              workspaceConfig={workspaceConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              datasetTypes={datasetTypeConfigs}
               vdiMetadata={vdiMetadata}
             />
           );
@@ -108,13 +105,12 @@ export function UserDatasetRouter({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              formConfigs={uploadFormConfigurators}
+              workspaceConfig={workspaceConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              datasetTypes={datasetTypeConfigs}
               vdiMetadata={vdiMetadata}
             />
           );
@@ -139,13 +135,12 @@ export function UserDatasetRouter({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              formConfigs={uploadFormConfigurators}
+              workspaceConfig={workspaceConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              datasetTypes={datasetTypeConfigs}
               vdiMetadata={vdiMetadata}
             />
           );
@@ -161,7 +156,7 @@ export function UserDatasetRouter({
         component={function Component(props: RouteComponentProps<{ id: string }>) {
           const history = useHistory();
 
-          const datasetTypes = filterAvailableDataTypes(datasetTypeConfigs, vdiMetadata.plugins)
+          const datasetTypes = filterAvailableDataTypes(workspaceConfig.baseDatasetTypeConfigs, vdiMetadata.plugins)
             .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
             .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 
@@ -181,7 +176,8 @@ export function UserDatasetRouter({
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
               datasetTypes={datasetTypes}
-              formConfigs={uploadFormConfigurators}
+              formConfigs={workspaceConfig.uploadFormConfigurators}
+              fetchEdaStudyLinks={workspaceConfig.fetchEdaStudyMetadata}
               includeAllLink
               includeNameHeader
               editModal={editModalProps}

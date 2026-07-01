@@ -133,7 +133,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
         key: 'fileSize',
         name: 'File Size',
         renderCell({ row }) {
-          return zipFileType ? formatFileSize(row.fileSize) : '';
+          return formatFileSize(row.fileSize);
         },
       },
       {

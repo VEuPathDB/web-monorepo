@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { Redirect, withRouter } from 'react-router-dom';
 
 import { Public } from '@material-ui/icons';
 
@@ -53,6 +52,7 @@ import { UpdateFormController } from '../Update/UpdateFormController';
 import { DatasetFormConfigurators, DatasetTypeConfig, findDatasetTypeConfig } from '../../Common/Configuration';
 import { isEmpty } from 'lodash';
 import { History } from 'history';
+import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 
 const classify = makeClassifier('DatasetManagement');
 
@@ -110,6 +110,8 @@ export interface DatasetManagementProps {
   readonly editModal?: DatasetEditModalProps;
 
   readonly history: History;
+
+  readonly fetchEdaStudyLinks: (wdkDatasetId: string) => EdaStudyLinks;
 }
 
 export interface DatasetEditModalProps {
@@ -127,7 +129,6 @@ enum DatasetUpdateAction {
   None,
   OpeningDefault,
   OpeningForPromotion,
-  Submitting,
   Closing,
 }
 

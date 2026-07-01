@@ -7,11 +7,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { isEmpty, partial } from 'lodash';
 import reportWebVitals from './reportWebVitals';
 
-import {
-  userDatasetTypeConfigs,
-  uploadFormConfigurators,
-} from '@veupathdb/web-common/src/user-dataset-upload-config';
-
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';

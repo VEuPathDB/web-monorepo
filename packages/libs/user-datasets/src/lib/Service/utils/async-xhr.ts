@@ -1,4 +1,4 @@
-import { BiConsumer, Consumer, Runnable } from '../../Utils';
+import { BiConsumer, Consumer } from '../../Utils';
 
 export type XHRMethod = 'POST' | 'PUT' | 'PATCH';
 
@@ -124,17 +124,23 @@ export async function asyncXHR(config: XHRConfig): Promise<XHRResponse> {
       return;
     }
 
-    let contentType = 'application/octet-stream';
+    let contentType: string | null;
 
     if (config.contentType) {
-      contentType = config.contentType;
+      contentType = config.contentType === 'multipart/form-data'
+        ? null
+        : config.contentType;
     } else if (typeof config.body === 'string') {
       contentType = 'text/plain';
     } else if (resemblesFile(config.body)) {
       contentType = config.body.type;
+    } else {
+      contentType = 'application/octet-stream'
     }
 
-    headers['Content-Type'] = contentType;
+    if (contentType) {
+      headers['Content-Type'] = contentType;
+    }
 
     applyHeaders(xhr, headers);
     xhr.send(config.body);

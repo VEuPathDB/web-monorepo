@@ -19,7 +19,7 @@ import {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
-  loadVdiServiceMetadata,
+  loadVdiServiceMetadata
 } from '../../Actions/UserDatasetsActions';
 
 
@@ -30,9 +30,10 @@ import { DatasetFormConfigurators, DatasetTypeConfig } from '../../Common/Config
 import { History } from 'history';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
 import BigwigDatasetManagement from './BigwigDatasetManagement';
-import EdaDatasetManagement from './EdaDatasetManagement';
 import DatasetManagement, { DatasetEditModalProps, DatasetManagementProps } from './DatasetManagement';
 import EmptyState from '../EmptyState';
+import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
+import EdaDatasetManagement from './EdaDatasetManagement';
 
 const ActionCreators = {
   showLoginForm,
@@ -46,7 +47,7 @@ const ActionCreators = {
   sharingSuccess,
   updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
-  loadVdiServiceMetadata,
+  loadVdiServiceMetadata
 };
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
@@ -67,6 +68,8 @@ type OwnProps = {
   readonly formConfigs?: DatasetFormConfigurators;
   readonly datasetTypes?: readonly DatasetTypeConfig[];
   readonly editModal?: DatasetEditModalProps;
+
+  readonly fetchEdaStudyLinks: (wdkDatasetId: string) => EdaStudyLinks;
 };
 
 interface MergedProps {
@@ -106,7 +109,7 @@ class DatasetManagementController extends PageController<MergedProps> {
     const { ownProps, stateProps } = this.props;
 
     if (stateProps.serviceMetadata == null) {
-      console.log("loading vdi metadata")
+      console.log('loading vdi metadata');
       this.props.dispatchProps.loadVdiServiceMetadata();
     }
 
@@ -120,7 +123,7 @@ class DatasetManagementController extends PageController<MergedProps> {
     }
 
     if (prevProps?.ownProps?.id !== ownProps.id) {
-      console.log("loading dataset")
+      console.log('loading dataset');
       this.props.dispatchProps.loadUserDatasetDetail(ownProps.id);
     }
   }
@@ -152,7 +155,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       userDatasetDetails: entry,
       user,
       questions,
-      config,
+      config
     } = this.props.stateProps;
 
     if (user && user.isGuest) return true;
@@ -204,7 +207,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       dataNoun,
       enablePublicUserDatasets,
       includeAllLink,
-      includeNameHeader,
+      includeNameHeader
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -215,7 +218,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       sharingSuccess,
       sharingError,
       updateCommunityModalVisibility,
-      updateDatasetCommunityVisibility,
+      updateDatasetCommunityVisibility
     } = this.props.dispatchProps;
     const {
       userDatasetDetails: entry,
@@ -232,7 +235,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
-      serviceMetadata,
+      serviceMetadata
     } = this.props.stateProps;
 
     if (!entry?.resource || !serviceMetadata) return <Loading />;
@@ -287,6 +290,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       editModal: this.props.ownProps.editModal,
 
       history: this.props.ownProps.history,
+      fetchEdaStudyLinks: this.props.ownProps.fetchEdaStudyLinks,
     };
 
     const DetailView = this.getDetailView(entry.resource.type);
@@ -307,13 +311,13 @@ const enhance = connect<
 >(
   (state) => ({
     ...state.globalData,
-    ...state.userDatasetDetail,
+    ...state.userDatasetDetail
   }),
   ActionCreators,
   (stateProps, dispatchProps, ownProps) => ({
     stateProps,
     dispatchProps,
-    ownProps,
+    ownProps
   })
 );
 

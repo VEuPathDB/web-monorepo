@@ -22,21 +22,24 @@ import {
   DatasetId,
   DatasetListEntry,
   DatasetPatchRequest,
+  DatasetPatchResponse,
   PartialDatasetDetails,
+  DatasetPostResponse,
   DatasetPostResponseBody,
+  DatasetPropertiesDeleteResponse,
   DatasetPutDetails,
   DatasetPutResponseBody,
+  GetDatasetsQueryParamEnum,
+  ServerErrorBody,
   ShareOfferAction,
   ShareOfferListEntry,
+  ShareReceiptAction,
+  SimpleServiceErrorBody,
+  ValidationErrorBody,
   VdiPluginConfig,
   VdiServiceMetadata,
   VdiUserMetadata,
 } from './Model';
-
-import {
-  GetDatasetsQueryParamEnum,
-  ShareReceiptAction,
-} from './Model/request-types';
 
 import {
   ccValidationErrorBody,
@@ -44,20 +47,15 @@ import {
   datasetGetResponseBody,
   datasetListEntry,
   datasetPatchResponse,
-  DatasetPatchResponse,
   datasetPostResponse,
-  DatasetPostResponse, DatasetPropertiesDeleteResponse,
   pluginListItem,
-  ServerErrorBody,
   serviceMetadata,
   shareOfferListEntry,
-  SimpleServiceErrorBody,
   userMetadata,
-  ValidationErrorBody
 } from './Model/response-decoders';
 
 import { RootDatasetFile } from './Model/utility-types';
-import { asyncXHR, XHRError, XHRErrorType, XHRResponse, XHRResponseType } from './utils/async-xhr';
+import { asyncXHR, XHRError, XHRErrorType, XHRResponseType } from './utils/async-xhr';
 
 export type DatasetUploadFileType =
   | 'dataFile'
@@ -440,7 +438,7 @@ export class VdiService extends FetchClientWithCredentials {
     decoder: (value: unknown) => Promise<T>,
     onProgress?: (progress: number) => void
   ): Promise<T | BadUpload> {
-    return await sendMultipartRequest<T | BadUpload>({
+    return await sendMultipartRequest({
       url: `${this.baseUrl}${path}`,
       method: method,
       headers: await this.findAuthorizationHeaders(),
@@ -465,47 +463,51 @@ export class VdiService extends FetchClientWithCredentials {
               };
         }),
       ],
-      onResponse: async (res: XHRResponse) => {
-        if (res.responseType !== XHRResponseType.JSON && res.responseType !== XHRResponseType.Text) {
-          console.error('unexpected server response: ', res.response);
-          throw new Error(`unexpected server response with code ${res.responseCode}`);
-        }
-
-        const body = await decoder(
-          res.responseType === XHRResponseType.Text
-            ? JSON.parse(res.responseBody)
-            : res.responseBody
-        );
-
-        if (res.responseCode >= 500) {
-          throw new Error(
-            (body as ServerErrorBody).message ?? 'unhandled server exception'
-          );
-        }
-
-        if (res.responseCode >= 200 && res.responseCode < 300) return body as T;
-
-        switch (res.responseCode) {
-          case 400:
-            return {
-              type: 400,
-              message:
-                (body as SimpleServiceErrorBody).message ??
-                'file upload failed',
-            };
-          case 422:
-            return {
-              type: 422,
-              errors: (body as ValidationErrorBody).errors,
-            };
-          default:
-            console.error('unexpected server response: ', res.responseBody);
-            throw new Error(`unexpected server response with code ${res.responseCode}`);
-        }
-      },
       onProgress: onProgress
         ? (loaded, total) => onProgress(Math.floor((loaded / total) * 100))
         : undefined,
+    }).then(async (res) => {
+      let body: T;
+
+      switch (res.responseType) {
+        case XHRResponseType.JSON:
+          body = await decoder(res.responseBody);
+          break;
+        case XHRResponseType.Text:
+          body = await decoder(JSON.parse(res.responseBody));
+          break;
+        default:
+          console.error('unexpected server response: ', res.response);
+          throw new Error(`unexpected server response with code ${res.responseCode}`);
+      }
+
+      if (res.responseCode >= 500) {
+        throw new Error(
+          (body as ServerErrorBody).message ?? 'unhandled server exception'
+        );
+      }
+
+      if (res.responseCode >= 200 && res.responseCode < 300) {
+        return body;
+      }
+
+      switch (res.responseCode) {
+        case 400:
+          return {
+            type: 400,
+            message:
+              (body as SimpleServiceErrorBody).message ??
+              'file upload failed',
+          };
+        case 422:
+          return {
+            type: 422,
+            errors: (body as ValidationErrorBody).errors,
+          };
+        default:
+          console.error('unexpected server response: ', res.responseBody);
+          throw new Error(`unexpected server response with code ${res.responseCode}`);
+      }
     });
   }
 

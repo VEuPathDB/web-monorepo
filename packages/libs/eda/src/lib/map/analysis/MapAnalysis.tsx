@@ -712,7 +712,7 @@ function MapAnalysisImpl(props: ImplProps) {
               // TODO Make both cases below configurable via the root component.
               // This will need to be done if we want EDA to stand on its own.
 
-              // Note that we are not inluding the custom detail page.
+              // Note that we are not including the custom detail page.
               // As of this writing, details pages only add a link to
               // EDA. Since we are in EDA, we don't want to add it here.
               <DatasetManagementController
@@ -730,6 +730,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 includeAllLink={false}
                 includeNameHeader={false}
                 history={history}
+                fetchEdaStudyLinks={_ => ({})}
               />
             ) : (
               <RecordController

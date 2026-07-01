@@ -5,30 +5,14 @@ import { useLocation } from 'react-router-dom';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-import { makeEdaRoute, makeMapRoute } from '@veupathdb/web-common/lib/routes';
-import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
-
-
 import {
   communityDatasetsEnabled,
   communitySite,
-  edaServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-import { useConfiguredSubsettingClient } from '@veupathdb/eda/lib/core/hooks/client';
-import { useStudyMetadata } from '@veupathdb/eda/lib/core/hooks/study';
-import {
-  uploadFormConfigurators,
-  userDatasetTypeConfigs,
-} from '@veupathdb/web-common/lib/user-dataset-upload-config';
-import { DatasetManagementProps } from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagement';
-
-const EdaDatasetDetail = React.lazy(
-  () =>
-    import('@veupathdb/user-datasets/lib/Components/Management/EdaDatasetManagement')
-);
+import { UserDatasetWorkspaceConfig } from '@veupathdb/web-common/src/user-dataset-upload-config';
 
 const UserDatasetRouter = React.lazy(
   () => import('../controllers/UserDatasetRouter')
@@ -54,38 +38,13 @@ export const userDatasetRoutes: RouteEntry[] = [
         [location.search, location.hash]
       );
 
-      const detailComponentsByTypeName = useMemo(
-        () => ({
-          isasimple: function ClinEpiEdaDatasetDetail(props: DatasetManagementProps) {
-            const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
-              props.userDataset.datasetId
-            );
-            const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
-            return (
-              <EdaDatasetDetail
-                {...props}
-                edaWorkspaceUrl={`${makeEdaRoute(wdkDatasetId)}/new`}
-                edaMapUrl={
-                  edaStudyMetadata?.hasMap
-                    ? `${makeMapRoute(wdkDatasetId)}/new`
-                    : undefined
-                }
-              />
-            );
-          },
-        }),
-        []
-      );
-
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
-            uploadFormConfigurators={uploadFormConfigurators}
+            workspaceConfig={UserDatasetWorkspaceConfig}
             detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
-            datasetTypeConfigs={userDatasetTypeConfigs}
-            detailComponentsByTypeName={detailComponentsByTypeName}
             helpTabContents={
               <ExternalContentController url={helpTabContentUrl} />
             }
@@ -97,13 +56,3 @@ export const userDatasetRoutes: RouteEntry[] = [
     },
   },
 ];
-
-function useEdaStudyMetadata(wdkDatasetId: string) {
-  try {
-    const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
-    return useStudyMetadata(wdkDatasetId, subsettingClient).value;
-  } catch (error) {
-    console.error(error);
-    return undefined;
-  }
-}

@@ -1,24 +1,25 @@
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
 import React, { ReactElement, useCallback, useState } from 'react';
-import { projectId } from './config';
+import { edaServiceUrl, projectId } from './config';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
-  ClientDatasetTypeConfig,
   DatasetDependency,
   DependencyInputProps,
-  DatasetFormConfigurators,
 } from '@veupathdb/user-datasets/lib';
-import { useRouteMatch } from 'react-router-dom';
-import { formatFileSize } from '@veupathdb/user-datasets/lib/Utils/formatting';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
 import {
   ButtonStateStyleSpec,
 } from '@veupathdb/coreui/lib/components/buttons';
 import { DatasetFormConfig, DatasetTypeConfig } from '@veupathdb/user-datasets/lib/Common/Configuration';
+import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
+import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
+import { DatasetWorkspaceConfig } from '@veupathdb/user-datasets/lib/Common/Configuration/DatasetWorkspaceConfig';
+import { EdaStudyLinks } from '@veupathdb/user-datasets/src/lib/Common/Configuration/DatasetWorkspaceConfig';
+import { makeEdaRoute, makeMapRoute } from './routes';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -32,68 +33,57 @@ const implementedUploadTypes = {
   phenotype: { name: 'phenotype', version: '1.0' },
 };
 
-/**
- * Basic dataset type configurations.
- *
- * Primarily used for rendering the data type selection menu before the upload
- * form for projects that allow for multiple dataset types.
- */
-export const userDatasetTypeConfigs: readonly ClientDatasetTypeConfig[] = [
-  {
-    ...implementedUploadTypes.bigwigfiles,
-    description: `Integrate your bigWig data in ${projectId}.`,
-  },
-  {
-    ...implementedUploadTypes.biom,
-    description: `Integrate your BIOM study data in ${projectId}.`,
-  },
-  {
-    ...implementedUploadTypes.genelist,
-    description: `Integrate your gene list in ${projectId}.`,
-  },
-  {
-    ...implementedUploadTypes.isasimple,
-    description: `Integrate your data table in ${projectId}.`,
-  },
-  {
-    ...implementedUploadTypes.phenotype,
-    description: `Integrate your phenotype data in ${projectId}.`,
-  },
-  {
-    ...implementedUploadTypes.rnaseq,
-    description: `Integrate your normalized RNA-Seq data in ${projectId}.`,
-  },
-];
+export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
-/**
- * Dataset type specific upload form configuration constructors.
- *
- * Each entry in the following array should be a tuple of dataset type
- * identifier and type-specific form config constructor.
- *
- * One should exist for every dataset type that users can upload on any site,
- * the entries will be filtered by site at a later point based on the VDI
- * service configuration.
- */
-export const uploadFormConfigurators: DatasetFormConfigurators = [
-  // bigwig
-  [implementedUploadTypes.bigwigfiles, bigwigFormConfigurator],
+  baseDatasetTypeConfigs: [
+    {
+      ...implementedUploadTypes.bigwigfiles,
+      description: `Integrate your bigWig data in ${projectId}.`,
+    },
+    {
+      ...implementedUploadTypes.biom,
+      description: `Integrate your BIOM study data in ${projectId}.`,
+    },
+    {
+      ...implementedUploadTypes.genelist,
+      description: `Integrate your gene list in ${projectId}.`,
+    },
+    {
+      ...implementedUploadTypes.isasimple,
+      description: `Integrate your data table in ${projectId}.`,
+    },
+    {
+      ...implementedUploadTypes.phenotype,
+      description: `Integrate your phenotype data in ${projectId}.`,
+    },
+    {
+      ...implementedUploadTypes.rnaseq,
+      description: `Integrate your normalized RNA-Seq data in ${projectId}.`,
+    },
+  ],
 
-  // biom
-  [implementedUploadTypes.biom, biomFormConfigurator],
+  uploadFormConfigurators: [
+    // bigwig
+    [implementedUploadTypes.bigwigfiles, bigwigFormConfigurator],
 
-  // genelist
-  [implementedUploadTypes.genelist, genelistFormConfigurator],
+    // biom
+    [implementedUploadTypes.biom, biomFormConfigurator],
 
-  // isasimple
-  [implementedUploadTypes.isasimple, isasimpleFormConfigurator],
+    // genelist
+    [implementedUploadTypes.genelist, genelistFormConfigurator],
 
-  // phenotype
-  [implementedUploadTypes.phenotype, phenotypeFormConfigurator],
+    // isasimple
+    [implementedUploadTypes.isasimple, isasimpleFormConfigurator],
 
-  // rnaseq
-  [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
-];
+    // phenotype
+    [implementedUploadTypes.phenotype, phenotypeFormConfigurator],
+
+    // rnaseq
+    [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
+  ],
+
+  fetchEdaStudyMetadata: useStudyMeta,
+};
 
 const DefaultFormTitle = 'Upload Dataset';
 
@@ -612,4 +602,20 @@ function getNodeChildren(node: Node<TreeBoxVocabNode>) {
 }
 function searchPredicate(node: Node<TreeBoxVocabNode>, terms: string[]) {
   return areTermsInString(terms, node.data.display);
+}
+
+/**
+ * Ugly hack to allow the use of a hook in the dataset management page class
+ * components.
+ */
+function useStudyMeta(wdkDatasetId: string): EdaStudyLinks {
+  const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
+  const edaStudyMetadata = useStudyMetadata(wdkDatasetId, edaClient).value;
+
+  return {
+    workspaceUrl: `${makeEdaRoute(wdkDatasetId)}/new`,
+    mapUrl: edaStudyMetadata?.hasMap
+      ? `${makeMapRoute(wdkDatasetId)}/new`
+      : undefined,
+  };
 }

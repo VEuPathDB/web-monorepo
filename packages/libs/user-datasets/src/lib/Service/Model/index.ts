@@ -3,10 +3,12 @@ export type {
   DatasetPatchRequest,
   DatasetPutDetails,
   ExternalIdentifiersPatch,
+  GetDatasetsQueryParamEnum,
   OptionalValuePatch,
   PartialCharacteristics,
   PartialDatasetDetails,
   PostDatasetSource,
+  ShareReceiptAction,
 } from './request-types';
 
 export type {
@@ -18,7 +20,10 @@ export type {
   DatasetId,
   DatasetListEntry,
   DatasetListShareUser,
+  DatasetPatchResponse,
+  DatasetPostResponse,
   DatasetPostResponseBody,
+  DatasetPropertiesDeleteResponse,
   DatasetPutResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,

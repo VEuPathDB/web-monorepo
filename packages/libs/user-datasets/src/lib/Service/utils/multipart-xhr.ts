@@ -20,17 +20,15 @@ export type MultipartField = {
     }
 );
 
-export interface MultipartConfig<T> extends Omit<XHRConfig, 'method' | 'body'>{
+export interface MultipartConfig extends Omit<XHRConfig, 'method' | 'body'>{
   readonly method?: XHRMethod;
 
   readonly fields: MultipartField[];
-
-  readonly onResponse: ResponseHandler<T>;
 }
 
-export function sendMultipartRequest<T>(
-  config: MultipartConfig<T>
-): Promise<T> {
+export function sendMultipartRequest(
+  config: MultipartConfig
+): Promise<XHRResponse> {
   const formData = new FormData();
 
   for (const field of config.fields) {
@@ -60,5 +58,6 @@ export function sendMultipartRequest<T>(
     method: config.method ?? 'POST',
     headers: config.headers,
     body: formData,
-  }).then(config.onResponse);
+    contentType: 'multipart/form-data'
+  });
 }
