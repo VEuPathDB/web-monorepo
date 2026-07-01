@@ -11,6 +11,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   FilledButton,
   OutlinedButton,
+  PlainLinkButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 
 // Only `success` reaches this view — it's the one terminal status that carries
@@ -129,7 +130,7 @@ export function AiCommentReviewView(
       </div>
 
       <div>
-        <OutlinedButton
+        <PlainLinkButton
           text="Back to gene page"
           onPress={onBackToGenePage}
           themeRole="primary"

@@ -13,6 +13,7 @@ import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import {
   FilledButton,
   OutlinedButton,
+  PlainLinkButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 
 import './AiGenePublicationAddView.scss';
@@ -1062,7 +1063,7 @@ function TerminalRecoveryButtons({
           themeRole="primary"
         />
       )}
-      <OutlinedButton
+      <PlainLinkButton
         text="Back to gene page"
         onPress={onBackToGenePage}
         themeRole="primary"
