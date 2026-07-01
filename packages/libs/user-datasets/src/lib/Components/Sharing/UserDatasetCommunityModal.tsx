@@ -26,7 +26,7 @@ export interface CommunityModalProps {
 
 export default function UserDatasetCommunityModal(
   props: CommunityModalProps
-): ReactElement {
+): React.ReactElement {
   const {
     datasets,
     onClose,
@@ -67,9 +67,8 @@ export default function UserDatasetCommunityModal(
 
   let content: ReactElement;
 
-  if (updatePending) {
-    content = <Loading />;
-  } else if (updateError) {
+  if (updatePending) content = <Loading />;
+  else if (updateError)
     content = (
       <UpdateErrors
         errors={updateError}
@@ -79,7 +78,7 @@ export default function UserDatasetCommunityModal(
         context={context}
       />
     );
-  } else if (updateSuccessful) {
+  else if (updateSuccessful)
     content = (
       <div className="UserDataset-SharingModal-StatusView">
         <Icon fa="check-circle success" />
@@ -87,7 +86,7 @@ export default function UserDatasetCommunityModal(
         <CloseButton />
       </div>
     );
-  } else {
+  else
     content = (
       <div className="UserDataset-SharingModal-FormView">
         <div className="UserDataset-SharingModal-VisibilitySection">
@@ -103,8 +102,8 @@ export default function UserDatasetCommunityModal(
               {isAre(totalCommunityDatasets)} already Public {dataNoun.plural}{' '}
               {totalNotOwnedDatasets > 0
                 ? `; ${totalNotOwnedDatasets} ${isAre(
-                  totalNotOwnedDatasets
-                )} owned by someone else`
+                    totalNotOwnedDatasets
+                  )} owned by someone else`
                 : ''}
               ).
             </p>
@@ -120,8 +119,8 @@ export default function UserDatasetCommunityModal(
               themeRole="primary"
               styleOverrides={{
                 container: {
-                  margin: '1em 0'
-                }
+                  margin: '1em 0',
+                },
               }}
               text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
               onPress={() =>
@@ -137,8 +136,8 @@ export default function UserDatasetCommunityModal(
               themeRole="primary"
               styleOverrides={{
                 container: {
-                  margin: '1em 0'
-                }
+                  margin: '1em 0',
+                },
               }}
               text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
               onPress={() =>
@@ -153,7 +152,6 @@ export default function UserDatasetCommunityModal(
         </div>
       </div>
     );
-  }
 
   return (
     <Modal
