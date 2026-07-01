@@ -8,9 +8,9 @@
     "removeComments": false,
     "preserveConstEnums": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "sourceMap": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": true,
     "alwaysStrict": true,
     "lib": [

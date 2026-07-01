@@ -61,7 +61,13 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
 
       if (dataset) {
         document.title = `Edit My Dataset: ${dataset?.name}`;
-        dispatch(updateFormState({ ...formState, datasetDetails: convertDetailsToMeta(dataset) }))
+        const datasetMeta = convertDetailsToMeta(dataset);
+        dispatch(updateFormState({
+          ...formState,
+          datasetDetails: props.isPromotingToPublic
+            ? { ...datasetMeta, visibility: 'public' }
+            : datasetMeta,
+        }));
       }
 
       return () => { document.title = title; }
@@ -104,7 +110,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
         datasetId:  props.datasetId,
         original:   convertDetailsToMeta(dataset!),
         updated:    formState.datasetDetails,
-        newFiles:      formState.fileUploads,
+        newFiles:   formState.fileUploads,
         oldFiles:   dataset!.files.datasetProperties,
       })
         .then(res => {

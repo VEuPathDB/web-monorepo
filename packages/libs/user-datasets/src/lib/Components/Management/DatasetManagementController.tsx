@@ -17,7 +17,6 @@ import {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
   loadVdiServiceMetadata
 } from '../../Actions/UserDatasetsActions';
@@ -45,7 +44,6 @@ const ActionCreators = {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
   loadVdiServiceMetadata
 };
@@ -217,7 +215,6 @@ class DatasetManagementController extends PageController<MergedProps> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility
     } = this.props.dispatchProps;
     const {
@@ -231,7 +228,6 @@ class DatasetManagementController extends PageController<MergedProps> {
       sharingDatasetPending,
       shareError,
       shareSuccessful,
-      communityModalOpen,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
@@ -276,9 +272,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       detailsPageTitle,
       dataNoun,
       enablePublicUserDatasets,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
-      communityModalOpen,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,

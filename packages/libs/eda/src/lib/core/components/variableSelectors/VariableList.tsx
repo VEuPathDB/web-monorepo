@@ -11,6 +11,9 @@ import React, {
 } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
+// noinspection ES6UnusedImports -- hack for .d.ts issues with react
+import type {} from '@emotion/react/types/css-prop';
+
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {

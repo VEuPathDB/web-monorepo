@@ -2,29 +2,32 @@ import React, { ReactElement, ReactNode } from 'react';
 import { CommunityAccess } from '../Misc/CommunityAccess';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { CommunityPromotionError } from './CommunityPromotionError';
+import { Runnable } from '../../Utils';
 
 interface UpdateErrorsProps {
   readonly errors: CommunityPromotionError;
   readonly targetNounLower: string;
   readonly CloseButton: () => ReactElement;
   readonly context: 'datasetDetails' | 'datasetsList';
+  readonly onFixErrors: Runnable;
 }
 
 export function UpdateErrors({
   errors,
   targetNounLower,
   CloseButton,
-  context
+  context,
+  onFixErrors,
 }: UpdateErrorsProps): ReactElement {
   let content: ReactNode;
 
   const inList = context === 'datasetsList';
 
-  const showUpdateModal = () => {};
-
-  const updateButton = inList
+  const updateButton = inList || !errors.validationErrors
     ? null
-    : <button type="button">Add Missing Information</button>
+    : (<button type="button" className="btn" onClick={onFixErrors}>
+      Add Missing Information
+    </button>)
 
   if (errors.validationErrors) {
     content = (
@@ -57,7 +60,10 @@ export function UpdateErrors({
       <Icon fa="times-circle danger" />
       <h2>Unable to Grant Public Access</h2>
       {content}
-      <CloseButton />
+      <div>
+        {updateButton}
+        <CloseButton />
+      </div>
     </div>
   );
 }

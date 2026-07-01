@@ -31,7 +31,6 @@ import {
   sharingError,
   sharingSuccess,
   unshareUserDataset,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
   updateSharingModalState,
   updateUserDatasetDetail,
@@ -83,10 +82,8 @@ export interface DatasetManagementProps {
   detailsPageTitle: string;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
-  updateCommunityModalVisibility: typeof updateCommunityModalVisibility;
   updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
   updateSharingModalState: typeof updateSharingModalState;
-  communityModalOpen: boolean;
   updateDatasetCommunityVisibilityError?: CommunityPromotionError;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
@@ -146,7 +143,7 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
     this.state = {
       ...this.state,
       datasetUpdateAction: DatasetUpdateAction.None,
-      isCommunityModalOpen: props.communityModalOpen,
+      isCommunityModalOpen: false,
     };
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -216,18 +213,19 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
     );
   }
 
-  isInstalled() {
-    const { config } = this.props;
+  isInstalled(): boolean {
+    const { config: { projectId } } = this.props;
     const { status } = this.props.userDataset;
-    return (
-      status?.import?.status === 'complete' &&
-      status?.install?.some(
-        (d) =>
-          d.installTarget === config.projectId &&
-          d.data?.status === 'complete' &&
-          (d.meta == null || d.meta.status === 'complete')
-      )
-    );
+
+    if (!status || !status.import || !status.install)
+      return false;
+
+    return status.import.status === 'complete'
+      && status.install.some(
+        it => it.installTarget === projectId
+          && it.data?.status === 'complete'
+          && (it.meta == null || it.meta.status === 'complete')
+      );
   }
 
   getGrantedShares(): DatasetShareOffer[] {
@@ -458,7 +456,7 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
 
     const notInstalledMessage = this.isInstalled()
       ? undefined
-      : 'Datasets that have not been installed cannot be made public.'
+      : 'Datasets that have not been installed cannot be made public.';
 
     return (
       <div className={classify('Actions')}>
@@ -468,7 +466,7 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
-                  this.props.updateCommunityModalVisibility(true);
+                  this.setState(s => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':
                   this.openSharingModal();
@@ -550,7 +548,6 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
       updateUserDatasetDetail,
       enablePublicUserDatasets,
       updateDatasetCommunityVisibility,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
@@ -590,16 +587,15 @@ class DatasetManagement<S extends DatasetManagementState = DatasetManagementStat
           user={user}
           datasets={[ userDataset ]}
           context="datasetDetails"
-          onClose={() => updateCommunityModalVisibility(false)}
+          onClose={() => self.setState(s => ({ ...s, isCommunityModalOpen: false }))}
+          onFixErrors={() => self.setState(s => ({
+            ...s,
+            datasetUpdateAction: DatasetUpdateAction.OpeningForPromotion,
+            isCommunityModalOpen: false
+          }))}
           dataNoun={dataNoun}
           updateDatasetCommunityVisibility={
             (datasetIds, isVisibleToCommunity, context) => {
-              self.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.OpeningDefault,
-                isCommunityModalOpen: false
-              }));
-
               return updateDatasetCommunityVisibility(
                 datasetIds,
                 isVisibleToCommunity,

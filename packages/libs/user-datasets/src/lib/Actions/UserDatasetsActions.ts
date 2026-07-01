@@ -9,9 +9,14 @@ import {
   PreferenceUpdateAction,
 } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 import {
+  ActionThunk,
   EmptyAction,
-  emptyAction,
+  emptyAction
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+
+import {
+  Action as CreatedAction
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
 import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 
@@ -31,6 +36,7 @@ import {
 } from '../Components/Sharing/CommunityPromotionError';
 import { ValidationErrorBody } from '../Service/Model/response-decoders';
 import { Consumer } from '../Utils';
+import { VdiCompatibleEpicDependencies } from '../Service/utils/compatibility';
 
 export type Action =
   | DetailErrorAction
@@ -500,11 +506,6 @@ export function serviceMetaReceived(
 // Community sharing actions. Note, these are using the `makeActionCreator` utility
 // which reduces boilerplate dramatically.
 
-export const updateCommunityModalVisibility = makeActionCreator(
-  'user-datasets/update-community-modal-visibility',
-  (isVisible: boolean) => ({ isVisible })
-);
-
 export const updateDatasetCommunityVisibilityPending = makeActionCreator(
   'user-datasets/update-community-visibility-pending'
 );
@@ -525,7 +526,6 @@ type UpdateCommunityVisibilityThunkAction =
   | ListAction;
 
 type CommunityAction =
-  | InferAction<typeof updateCommunityModalVisibility>
   | InferAction<typeof updateDatasetCommunityVisibilityPending>
   | InferAction<typeof updateDatasetCommunityVisibilitySuccess>
   | InferAction<typeof updateDatasetCommunityVisibilityError>;
@@ -535,7 +535,10 @@ export function updateDatasetCommunityVisibility(
   isVisibleToCommunity: boolean,
   context: 'datasetDetails' | 'datasetsList',
   onError?: Consumer<ValidationErrorBody>,
-) {
+): (
+  CreatedAction<"user-datasets/update-community-visibility-pending", undefined>
+  | ActionThunk<UpdateCommunityVisibilityThunkAction, VdiCompatibleEpicDependencies>
+)[] {
   return [
     updateDatasetCommunityVisibilityPending(),
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(

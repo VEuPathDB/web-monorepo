@@ -14,7 +14,6 @@ import {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
@@ -43,7 +42,6 @@ const ActionCreators = {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
 };
 
@@ -70,8 +68,10 @@ type Props = {
 class UserDatasetListController extends PageController<Props> {
   constructor(props: Props) {
     super(props);
+
     this.needsUploadMessages = this.needsUploadMessages.bind(this);
   }
+
   getTitle() {
     return this.props.ownProps.workspaceTitle;
   }
@@ -79,6 +79,7 @@ class UserDatasetListController extends PageController<Props> {
   getActionCreators() {
     return ActionCreators;
   }
+
   needsUploadMessages() {
     const { config } = this.props.stateProps.globalData;
     const { hasDirectUpload } = this.props.ownProps;
@@ -151,7 +152,6 @@ class UserDatasetListController extends PageController<Props> {
         sharingModalOpen,
         shareError,
         shareSuccessful,
-        communityModalOpen,
         updateDatasetCommunityVisibilityError,
         updateDatasetCommunityVisibilityPending,
         updateDatasetCommunityVisibilitySuccess,
@@ -172,7 +172,6 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
 
@@ -200,9 +199,7 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
-      communityModalOpen,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,

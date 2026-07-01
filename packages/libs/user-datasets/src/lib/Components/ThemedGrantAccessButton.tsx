@@ -78,7 +78,7 @@ export function ThemedGrantAccessButton({
             ? <span title={disableCommunityReason}><Share fill="black" /> Public access</span>
             : <><Share fill="black" /> Public access</>,
           value: 'community',
-          disabled: true
+          disabled: !!disableCommunityReason
         },
         {
           display: (

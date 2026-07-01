@@ -8,7 +8,7 @@ import { DatasetGetResponseBody, DatasetListEntry } from '../../Service';
 import { updateDatasetCommunityVisibility } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
 import { CommunityPromotionError } from './CommunityPromotionError';
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { UpdateErrors } from './UpdateErrors';
 
 export interface CommunityModalProps {
@@ -16,6 +16,7 @@ export interface CommunityModalProps {
   readonly datasets: Array<DatasetListEntry | DatasetGetResponseBody>;
   readonly dataNoun: DataNoun;
   readonly onClose: () => void;
+  readonly onFixErrors: () => void;
   readonly updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
   readonly updatePending: boolean;
   readonly updateSuccessful: boolean;
@@ -23,7 +24,7 @@ export interface CommunityModalProps {
   readonly user: User;
 }
 
-export default function UserDatasetSharingModal(
+export default function UserDatasetCommunityModal(
   props: CommunityModalProps
 ): ReactElement {
   const {
@@ -59,24 +60,26 @@ export default function UserDatasetSharingModal(
     (totalSelectedDatasets === 1 ? 'this ' : 'these ') + targetNounLower;
 
   const CloseButton = () => (
-    <button className="btn" onClick={() => onClose()}>
+    <button className="btn" type="button" onClick={() => onClose()}>
       Close this window.
     </button>
   );
 
   let content: ReactElement;
 
-  if (updatePending) content = <Loading />;
-  else if (updateError)
+  if (updatePending) {
+    content = <Loading />;
+  } else if (updateError) {
     content = (
       <UpdateErrors
         errors={updateError}
         targetNounLower={targetNounLower}
         CloseButton={CloseButton}
+        onFixErrors={props.onFixErrors}
         context={context}
       />
     );
-  else if (updateSuccessful)
+  } else if (updateSuccessful) {
     content = (
       <div className="UserDataset-SharingModal-StatusView">
         <Icon fa="check-circle success" />
@@ -84,7 +87,7 @@ export default function UserDatasetSharingModal(
         <CloseButton />
       </div>
     );
-  else
+  } else {
     content = (
       <div className="UserDataset-SharingModal-FormView">
         <div className="UserDataset-SharingModal-VisibilitySection">
@@ -100,8 +103,8 @@ export default function UserDatasetSharingModal(
               {isAre(totalCommunityDatasets)} already Public {dataNoun.plural}{' '}
               {totalNotOwnedDatasets > 0
                 ? `; ${totalNotOwnedDatasets} ${isAre(
-                    totalNotOwnedDatasets
-                  )} owned by someone else`
+                  totalNotOwnedDatasets
+                )} owned by someone else`
                 : ''}
               ).
             </p>
@@ -117,8 +120,8 @@ export default function UserDatasetSharingModal(
               themeRole="primary"
               styleOverrides={{
                 container: {
-                  margin: '1em 0',
-                },
+                  margin: '1em 0'
+                }
               }}
               text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
               onPress={() =>
@@ -134,8 +137,8 @@ export default function UserDatasetSharingModal(
               themeRole="primary"
               styleOverrides={{
                 container: {
-                  margin: '1em 0',
-                },
+                  margin: '1em 0'
+                }
               }}
               text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
               onPress={() =>
@@ -150,6 +153,7 @@ export default function UserDatasetSharingModal(
         </div>
       </div>
     );
+  }
 
   return (
     <Modal

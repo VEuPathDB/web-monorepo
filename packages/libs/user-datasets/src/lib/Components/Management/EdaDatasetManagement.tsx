@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import React from 'react';
 
 import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
 import DatasetManagement, { DatasetManagementProps } from './DatasetManagement';
