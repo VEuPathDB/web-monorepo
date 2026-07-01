@@ -1,68 +1,75 @@
 .wdk-UserComments-Show {
   .wdk-UserComments-Show-Body {
-    > div:first-child {
-      display: grid;
-      grid-template-columns: 1fr;
-      margin-top: 1em;
+    // Cap the card list at a readable width so cards don't sprawl on wide
+    // monitors; this also bounds the content and the uploaded-files table.
+    max-width: 60rem;
+    margin-top: 1em;
+    // Larger, more comfortable body text than the small site default.
+    font-size: 15px;
+    line-height: 1.55;
 
-      // TODO: Once (if?) we drop IE11 support, we can use
-      // "row-gap" instead of applying "margin-bottom"
-      // to the direct descendants
+    // These render inside the cards now (CommentReferences, LazyPubmedPreview,
+    // AiProvenanceSection), so their styling lives at the body level rather than
+    // scoped to the old per-comment group markup that the rewrite removed.
+    .wdk-PubmedIdEntry {
+      // padding-bottom: 0.5em;
+      // border-bottom: 1px rgb(128, 128, 128) solid;
+      margin-bottom: 1em;
+
+      display: grid;
+      grid-template-columns: 10ch 1fr;
+
       > * {
-        margin-bottom: 1em;
+        padding: 0.5em;
       }
 
-      .wdk-UserComments-Show-Group {
-        .wdk-UserComments-Show-Group-Header {
-          display: grid;
-          grid-template-columns: 30em 60em 1fr;
-          font-weight: bold;
-          padding: 0.5em 1em;
-          border-top: 2px black solid;
-          border-bottom: 2px black solid;
+      > *:nth-child(1),
+      > *:nth-child(2) {
+        background-color: lightgrey;
+      }
+    }
+
+    .wdk-UserCommentUploadedFiles {
+      width: 100%;
+    }
+
+    // AI-comment executive-summary disclosure. We keep the native
+    // <details>/<summary> behavior but drop the default disclosure triangle
+    // (which hangs and indents multi-line summary text) in favor of an explicit
+    // "Show more"/"Show less" link that sits below the summary paragraph. The
+    // label flips purely on the native [open] state — no JS.
+    .UserCommentCard-aiSummary {
+      > summary {
+        display: block; // removes the marker box (and its hanging indent)
+        list-style: none; // Firefox / standards
+        &::-webkit-details-marker {
+          display: none; // Safari / older Chrome
+        }
+      }
+
+      .UserCommentCard-aiSummary-toggle {
+        display: inline-block;
+        margin-top: 6px;
+        color: #336f99;
+        font-size: 85%;
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+          text-decoration: underline;
         }
 
-        .wdk-UserComments-Show-Group-Body {
-          display: grid;
-          grid-template-columns: 30em 1fr;
-          margin-top: 0.5em;
+        .less {
+          display: none;
+        }
+      }
 
-          // TODO: Once (if?) we drop IE11 support, we can use
-          // "row-gap" instead of applying "margin-bottom"
-          // to the direct descendants
-          > * {
-            margin-bottom: 0.5em;
-          }
-
-          > label {
-            margin-left: 1em;
-          }
-
-          > div {
-            margin-left: 1em;
-
-            .wdk-PubmedIdEntry {
-              padding-bottom: 0.5em;
-              border-bottom: 1px rgb(128, 128, 128) solid;
-              margin-bottom: 1em;
-
-              display: grid;
-              grid-template-columns: 10ch 1fr;
-
-              > * {
-                padding: 0.5em;
-              }
-
-              > *:nth-child(1),
-              > *:nth-child(2) {
-                background-color: lightgrey;
-              }
-            }
-
-            .wdk-UserCommentUploadedFiles {
-              width: 100%;
-            }
-          }
+      &[open] .UserCommentCard-aiSummary-toggle {
+        .more {
+          display: none;
+        }
+        .less {
+          display: inline;
         }
       }
     }

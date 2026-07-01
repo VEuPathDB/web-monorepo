@@ -18,8 +18,6 @@ import {
 } from '../components/userComments/UserCommentShow/UserCommentShowView';
 import { GlobalData } from '@veupathdb/wdk-client/lib/StoreModules/GlobalData';
 import { get, capitalize } from 'lodash';
-import { PubmedIdEntry } from '../components/userComments/UserCommentForm/PubmedIdEntry';
-import { UserCommentUploadedFiles } from '../components/userComments/UserCommentShow/UserCommentUploadedFiles';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 type StateProps = {
@@ -46,7 +44,6 @@ type MergedProps = UserCommentShowViewProps & {
   documentTitle: string;
   loading: boolean;
   loadUserComments: (targetType: string, targetId: string) => void;
-  deleteUserComment: (commentId: number) => void;
   targetType: string;
   targetId: string;
 };
@@ -170,262 +167,22 @@ const mergeProps = (
   }: StateProps,
   { loadUserComments, deleteUserComment }: DispatchProps,
   { targetId, targetType, initialCommentId }: OwnProps
-) => {
-  const formGroupFields = userComments.reduce((memo, comment) => {
-    const topFields = [
-      {
-        key: 'id',
-        label: 'Comment Id:',
-        field: comment.id,
-      },
-      {
-        key: 'target',
-        label: 'Comment Target:',
-        field: `${comment.target.type} ${comment.target.id}`,
-      },
-      {
-        key: 'author',
-        label: 'Author:',
-        field: `${comment.author.firstName} ${comment.author.lastName}, ${comment.author.organization}`,
-      },
-    ];
-
-    const additionalAuthorsField =
-      comment.additionalAuthors.length === 0
-        ? []
-        : [
-            {
-              key: 'additionalAuthors',
-              label: 'Other Author(s)',
-              field: (
-                <>
-                  {comment.additionalAuthors.map((author) => (
-                    <div key={author}>author</div>
-                  ))}
-                </>
-              ),
-            },
-          ];
-
-    const remainingFields = [
-      {
-        key: 'project',
-        label: 'Project:',
-        field: `${comment.project.name}, version ${comment.project.version}`,
-      },
-      {
-        key: 'organism',
-        label: 'Organism:',
-        field: comment.organism,
-      },
-      {
-        key: 'date',
-        label: 'Date:',
-        field: new Date(comment.commentDate).toISOString(),
-      },
-      {
-        key: 'comment',
-        label: 'Content:',
-        field: comment.content,
-      },
-      {
-        key: 'genBankAccessions',
-        label: 'GenBank Accessions:',
-        field: (
-          <>
-            {comment.genBankAccessions.map((accession) => (
-              <a
-                key={accession}
-                href={`http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=&term=${accession}`}
-                target="_blank"
-              >
-                {accession}{' '}
-              </a>
-            ))}
-          </>
-        ),
-      },
-      {
-        key: 'relatedStableIds',
-        label: 'Other Related Genes:',
-        field: (
-          <>
-            {comment.relatedStableIds.map((stableId) =>
-              comment.target.type === 'gene' ? (
-                <Link key={stableId} to={`/record/gene/${stableId}`}>
-                  {stableId}{' '}
-                </Link>
-              ) : comment.target.type === 'isolate' ? (
-                <Link key={stableId} to={`/record/popsetSequence/${stableId}`}>
-                  {stableId}{' '}
-                </Link>
-              ) : null
-            )}
-          </>
-        ),
-      },
-      {
-        key: 'categories',
-        label: 'Category:',
-        field: (
-          <>
-            {comment.categories.map((category, i) => (
-              <div key={category}>
-                {i + 1}) {category}
-              </div>
-            ))}
-          </>
-        ),
-      },
-      {
-        key: 'location',
-        label: 'Location:',
-        field: (
-          <>
-            {comment.location && comment.location.ranges.length > 0 ? (
-              <>
-                {comment.location.coordinateType}:{' '}
-                {comment.location.ranges
-                  .map(({ start, end }) => `${start}-${end}`)
-                  .join(', ')}
-                {comment.location.reverse && ` (reversed)`}
-              </>
-            ) : null}
-          </>
-        ),
-      },
-      {
-        key: 'digitalObjectIds',
-        label: 'Digital Object Identifier(DOI) Name(s):',
-        field: (
-          <>
-            {comment.digitalObjectIds.map((digitalObjectId) => (
-              <a
-                key={digitalObjectId}
-                href={`http://dx.doi.org/${digitalObjectId}`}
-                target="_blank"
-              >
-                {digitalObjectId}{' '}
-              </a>
-            ))}
-          </>
-        ),
-      },
-      {
-        key: 'pubMedRefs',
-        label: 'PMID(s):',
-        field: (
-          <>
-            {comment.pubMedRefs.map((pubMedRef) => (
-              <PubmedIdEntry key={pubMedRef.id} {...pubMedRef} />
-            ))}
-          </>
-        ),
-      },
-      {
-        key: 'attachments',
-        label: 'Uploaded Files:',
-        field: (
-          <UserCommentUploadedFiles
-            uploadedFiles={comment.attachments.map((attachmentMetadata) => ({
-              ...attachmentMetadata,
-              url: `${webAppUrl}/service/user-comments/${comment.id}/attachments/${attachmentMetadata.id}`,
-            }))}
-          />
-        ),
-      },
-      {
-        key: 'externalDb',
-        label: 'External Database:',
-        field: comment.externalDatabase
-          ? `${comment.externalDatabase.name} ${comment.externalDatabase.version}`
-          : '',
-      },
-      {
-        key: 'reviewStatus',
-        label: 'Status:',
-        field:
-          comment.reviewStatus === 'accepted' ? (
-            <>
-              Status:{' '}
-              <em>included in the Annotation Center's official annotation</em>
-            </>
-          ) : null,
-      },
-    ];
-
-    return {
-      ...memo,
-      [comment.id]: [
-        ...topFields,
-        ...additionalAuthorsField,
-        ...remainingFields,
-      ],
-    };
-  }, {});
-
-  const formGroupHeaders = userComments.reduce(
-    (memo, comment) => ({
-      ...memo,
-      [comment.id]: (
-        <>
-          <div>Headline:</div>
-          <a id={`${comment.id}`}>{comment.headline}</a>
-          <div className="wdk-UserComments-Show-EditControls">
-            {userId === comment.author.userId && (
-              <div>
-                <Link
-                  to={`/user-comments/edit?commentId=${comment.id}`}
-                  target="_blank"
-                >
-                  [edit comment]
-                </Link>{' '}
-                <Link
-                  to={`/user-comments/delete?commentId=${comment.id}`}
-                  onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
-                    event.preventDefault();
-                    if (
-                      confirm(
-                        `Are you sure you wish to delete comment ${comment.id}?`
-                      )
-                    ) {
-                      deleteUserComment(comment.id);
-                    }
-                  }}
-                >
-                  [delete comment]
-                </Link>
-              </div>
-            )}
-          </div>
-        </>
-      ),
-    }),
-    {}
-  );
-
-  const formGroupOrder = userComments.map(({ id }) => `${id}`);
-
-  return {
-    className: 'wdk-UserComments wdk-UserComments-Show',
-    headerClassName: 'wdk-UserComments-Show-Header',
-    bodyClassName: 'wdk-UserComments-Show-Body',
-    documentTitle,
-    title,
-    formGroupFields,
-    formGroupHeaders,
-    formGroupOrder,
-    formGroupClassName: 'wdk-UserComments-Show-Group',
-    formGroupHeaderClassName: 'wdk-UserComments-Show-Group-Header',
-    formGroupBodyClassName: 'wdk-UserComments-Show-Group-Body',
-    loading,
-    loadUserComments,
-    deleteUserComment,
-    targetType,
-    targetId,
-    initialCommentId,
-  };
-};
+) => ({
+  className: 'wdk-UserComments wdk-UserComments-Show',
+  headerClassName: 'wdk-UserComments-Show-Header',
+  bodyClassName: 'wdk-UserComments-Show-Body',
+  documentTitle,
+  title,
+  userComments,
+  userId,
+  webAppUrl,
+  initialCommentId,
+  loading,
+  loadUserComments,
+  deleteUserComment,
+  targetType,
+  targetId,
+});
 
 class UserCommentShowController extends PageController<Props> {
   loadData(prevProps?: Props) {
@@ -451,7 +208,6 @@ class UserCommentShowController extends PageController<Props> {
       documentTitle,
       loading,
       loadUserComments,
-      deleteUserComment,
       targetType,
       targetId,
       ...viewProps

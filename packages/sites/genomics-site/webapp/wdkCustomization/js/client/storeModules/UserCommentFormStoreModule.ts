@@ -120,6 +120,7 @@ const getResponseToPostRequest = (
   pubMedIds: userCommentGetResponse.pubMedRefs.map(({ id }) => id),
   relatedStableIds: userCommentGetResponse.relatedStableIds,
   target: userCommentGetResponse.target,
+  aiProvenance: userCommentGetResponse.aiProvenance,
 });
 
 const getResponseToRawFormFields = (

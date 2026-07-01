@@ -17,17 +17,16 @@ class EdaDatasetDetail extends UserDatasetDetail {
     const {
       userDataset: { status },
     } = this.props;
-  const { config } = this.props;
+    const { config } = this.props;
 
-  const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
-    this.props.userDataset.datasetId
-  );
-  const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
-  const edaWorkspaceUrl = `${makeEdaRoute(wdkDatasetId)}/new`;
-  const edaMapUrl = (edaStudyMetadata?.hasMap
-                      ? `${makeMapRoute(wdkDatasetId)}/new`
-                      : undefined
-		    );
+    const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
+      this.props.userDataset.datasetId
+    );
+    const edaStudyMetadata = useEdaStudyMetadata(wdkDatasetId);
+    const edaWorkspaceUrl = `${makeEdaRoute(wdkDatasetId)}/new`;
+    const edaMapUrl = edaStudyMetadata?.hasMap
+      ? `${makeMapRoute(wdkDatasetId)}/new`
+      : undefined;
 
     if (edaWorkspaceUrl == null && edaMapUrl == null) return null;
 
@@ -36,7 +35,8 @@ class EdaDatasetDetail extends UserDatasetDetail {
         {!edaWorkspaceUrl ? null : (
           <li>
             <Link to={edaWorkspaceUrl}>
-              <i className="ebrc-icon-edaIcon"></i> Explore in {config.displayName} 
+              <i className="ebrc-icon-edaIcon"></i> Explore in{' '}
+              {config.displayName}
             </Link>
           </li>
         )}

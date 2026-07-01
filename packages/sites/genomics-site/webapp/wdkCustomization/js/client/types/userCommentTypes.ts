@@ -16,6 +16,32 @@ export interface PubmedPreviewEntry {
   url: string;
 }
 
+// AI provenance, present only on AI-assisted comments. Absence = human-written.
+// This supersedes the simpler { reviewLevel } shape from the state-management
+// plan (an "unreviewed" AI comment is no longer a record that exists — comments
+// are created only on Publish). externalUrl/externalTitle live inside the
+// `upload` variant; PubMed-sourced comments rely on the PMID alone.
+export type AiProvenanceSource =
+  | { kind: 'pubmed'; pubmedId: string }
+  | {
+      kind: 'upload';
+      externalUrl?: string;
+      externalTitle?: string;
+      // PDF content digest; lets the client match an uploaded PDF to an existing
+      // published comment, the upload-path analogue of matching by PMID.
+      pdfContentSha256?: string;
+      // Optional PMID/DOI the user asserts for the uploaded PDF (display-only).
+      externalRef?: string;
+      externalRefKind?: 'pubmed' | 'doi';
+    };
+
+export interface AiProvenance {
+  isEdited: boolean; // true iff the published text differs from the AI original
+  source: AiProvenanceSource;
+  originalHeadline: string; // AI-generated headline; used by the Restore button
+  originalContent: string; // AI-generated content; used by the Restore button
+}
+
 export interface UserCommentAttachedFileSpec {
   file: File | null;
   description: string;
@@ -60,6 +86,7 @@ export interface UserCommentFormFields {
   relatedStableIds?: string[];
   additionalAuthors?: string[];
   location?: UserCommentLocation;
+  aiProvenance?: AiProvenance;
 }
 
 // raw field content for multivalued textboxes
@@ -119,6 +146,7 @@ export interface UserCommentGetResponse {
   reviewStatus: ReviewStatus;
   sequence?: string;
   target: { type: string; id: string };
+  aiProvenance?: AiProvenance;
 }
 
 export interface UserCommentPostResponse {

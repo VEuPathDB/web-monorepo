@@ -26,7 +26,9 @@ export const useUDEbrcDescription = (
   // Get the dataset ID from the first parameter's initialDisplayValue
   const datasetId = useMemo(() => {
     if (question.parameters[0].initialDisplayValue !== undefined) {
-      return diyUserDatasetIdToWdkRecordId(question.parameters[0].initialDisplayValue);
+      return diyUserDatasetIdToWdkRecordId(
+        question.parameters[0].initialDisplayValue
+      );
     }
     return undefined;
   }, [question.parameters]);
@@ -47,7 +49,7 @@ export const useUDEbrcDescription = (
               [{ name: 'dataset_id', value: datasetId }],
               {
                 attributes: ['summary'],
-             //   tables: ['Publications'],  ADD WHEN WE ENABLE THE TABLE IN THE UD RECORD
+                //   tables: ['Publications'],  ADD WHEN WE ENABLE THE TABLE IN THE UD RECORD
               }
             );
             if (active) {

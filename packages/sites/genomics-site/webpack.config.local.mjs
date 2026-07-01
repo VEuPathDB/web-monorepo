@@ -32,6 +32,11 @@ export default configure({
     legacyWebAppUrl: process.env.LEGACY_WEB_APP_URL,
   }),
   plugins: [
+    // Re-include plugins from additionalConfig (e.g. the mupdf `node:`-prefix
+    // strip plugin). The `...additionalConfig` spread above carries `experiments`
+    // and `resolve`, but this explicit `plugins` key would otherwise replace
+    // additionalConfig.plugins before webpack-merge ever sees them.
+    ...(additionalConfig.plugins ?? []),
     new webpack.DefinePlugin({
       'window.__SITE_CONFIG__': JSON.stringify({
         requireLogin: process.env.REQUIRE_LOGIN === 'true',
@@ -61,6 +66,7 @@ export default configure({
         showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
 	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
 	showSubscriptionProds: process.env.SHOW_SUBSCRIPTION_PRODS === 'true',
+	allowAiAssistedCommentCreation: process.env.ALLOW_AI_ASSISTED_COMMENT_CREATION === 'true',
 })
     }),
     new HtmlWebpackPlugin({
