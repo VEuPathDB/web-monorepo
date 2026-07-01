@@ -68,10 +68,8 @@ type Props = {
 class UserDatasetListController extends PageController<Props> {
   constructor(props: Props) {
     super(props);
-
     this.needsUploadMessages = this.needsUploadMessages.bind(this);
   }
-
   getTitle() {
     return this.props.ownProps.workspaceTitle;
   }
@@ -79,7 +77,6 @@ class UserDatasetListController extends PageController<Props> {
   getActionCreators() {
     return ActionCreators;
   }
-
   needsUploadMessages() {
     const { config } = this.props.stateProps.globalData;
     const { hasDirectUpload } = this.props.ownProps;
