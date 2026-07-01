@@ -53,7 +53,6 @@ import { isEmpty } from 'lodash';
 import { History } from 'history';
 import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 import { ThemedUpdateButton } from '../ThemedUpdateButton';
-import { isEditable } from '@testing-library/user-event/dist/utils';
 
 const classify = makeClassifier('DatasetManagement');
 
