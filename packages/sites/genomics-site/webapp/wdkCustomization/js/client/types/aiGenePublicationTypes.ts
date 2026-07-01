@@ -14,6 +14,7 @@ export type AiGenePublicationJobStage =
   | 'fetching-article'
   | 'scanning-gene-mentions'
   | 'generating-summary'
+  | 'generating-pds'
   | 'persisting';
 
 export interface JobProgress {

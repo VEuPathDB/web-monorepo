@@ -113,11 +113,12 @@ export interface AiGenePublicationAddViewProps {
   serverBusy?: { retryAfterSeconds?: number; onDismiss: () => void };
 }
 
-// The four known pipeline stages in their fixed execution order.
+// The five known pipeline stages in their fixed execution order.
 const KNOWN_STAGE_ORDER = [
   'fetching-article',
   'scanning-gene-mentions',
   'generating-summary',
+  'generating-pds',
   'persisting',
 ] as const;
 
@@ -127,6 +128,7 @@ const STAGE_LABELS: Record<KnownStage, string> = {
   'fetching-article': 'Fetching article',
   'scanning-gene-mentions': 'Scanning gene mentions',
   'generating-summary': 'Generating summary',
+  'generating-pds': 'Suggesting product descriptions',
   persisting: 'Persisting',
 };
 
@@ -1054,8 +1056,8 @@ function TerminalRecoveryButtons({
         themeRole="primary"
       />
       {onUploadPdfInstead && (
-        <OutlinedButton
-          text="Upload a PDF"
+        <FilledButton
+          text="Upload a PDF instead"
           onPress={onUploadPdfInstead}
           themeRole="primary"
         />
