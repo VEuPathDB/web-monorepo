@@ -7,7 +7,7 @@ import {
   DatasetOrganism,
   DatasetPublication,
   DatasetSource as ApiSource,
-  DatasetVisibility, ExternalIdentifiers,
+  DatasetVisibility,
   LinkedDataset,
   SampleYearRange
 } from './response-decoders';
@@ -74,13 +74,6 @@ export interface ValuePatch<T> {
 export interface OptionalValuePatch<T> {
   readonly value?: T;
 }
-
-export type PatchableDatasetDetails = Omit<
-  PartialDatasetDetails,
-  'installTargets'
-  | 'origin'
-  | 'dependencies'
->;
 
 export interface DatasetPatchRequest {
   readonly type?: ValuePatch<DatasetTypeSelection>;

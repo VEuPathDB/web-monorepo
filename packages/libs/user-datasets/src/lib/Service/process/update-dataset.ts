@@ -9,6 +9,7 @@ import {
 import {
   DatasetCharacteristicsPatch,
   DatasetPatchRequest,
+  DatasetPatchResponse,
   ExternalIdentifiersPatch,
   OptionalValuePatch,
 } from '../Model';
@@ -16,7 +17,6 @@ import { isEmpty, isEqual } from 'lodash';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { receiveBadUpload, trackUploadProgress } from '../../Actions/UserDatasetUploadActions';
-import { DatasetPatchResponse } from '../Model/response-decoders';
 import { statusStringToCode } from '../utils/conversions';
 
 export interface UpdateSubmission {

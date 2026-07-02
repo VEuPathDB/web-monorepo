@@ -1,7 +1,5 @@
 import { asyncXHR, XHRConfig, XHRMethod, XHRResponse } from './async-xhr';
 
-export type ResponseHandler<T> = (res: XHRResponse) => Promise<T>;
-
 export type MultipartField = {
   readonly fieldName: string;
 } & (

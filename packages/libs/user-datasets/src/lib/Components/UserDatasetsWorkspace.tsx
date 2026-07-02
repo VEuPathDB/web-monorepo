@@ -10,8 +10,6 @@ import { DatasetUploadRoute } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import { DataNoun } from '../Utils/types';
 import {
-  ClientDatasetTypeConfig,
-  DatasetFormConfigurators,
   DatasetTypeConfig,
   filterAvailableDataTypes,
   promoteTypeConfig

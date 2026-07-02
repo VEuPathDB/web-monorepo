@@ -1,7 +1,5 @@
-import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-import { colors, MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
-import { PartialButtonStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
-import React, { useMemo } from 'react';
+import { MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
+import React from 'react';
 import { useButtonTheme } from '../Utils/theming';
 
 interface Props {
