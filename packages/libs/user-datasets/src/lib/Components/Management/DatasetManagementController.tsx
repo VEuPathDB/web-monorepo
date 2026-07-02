@@ -107,7 +107,6 @@ class DatasetManagementController extends PageController<MergedProps> {
     const { ownProps, stateProps } = this.props;
 
     if (stateProps.serviceMetadata == null) {
-      console.log('loading vdi metadata');
       this.props.dispatchProps.loadVdiServiceMetadata();
     }
 
@@ -121,7 +120,6 @@ class DatasetManagementController extends PageController<MergedProps> {
     }
 
     if (prevProps?.ownProps?.id !== ownProps.id) {
-      console.log('loading dataset');
       this.props.dispatchProps.loadUserDatasetDetail(ownProps.id);
     }
   }

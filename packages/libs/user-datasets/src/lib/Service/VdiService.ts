@@ -157,7 +157,6 @@ export class VdiService extends FetchClientWithCredentials {
     }
 
     const response = await window.fetch(request);
-    console.log(response);
 
     if (response.ok) {
       onSuccess?.();

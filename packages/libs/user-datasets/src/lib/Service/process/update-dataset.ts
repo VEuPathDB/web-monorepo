@@ -288,7 +288,6 @@ async function deleteDatasetPropertiesFiles({
 
   for (const { fileName } of oldFiles) {
     if (fileListContains(newFiles!, fileName)) {
-      console.log("continue");
       continue;
     }
 
@@ -327,7 +326,6 @@ async function deleteDatasetPropertiesFile(
 
 function fileListContains(list: FileList, fileName: string): boolean {
   for (const { name } of list) {
-    console.log(name, fileName, name === fileName)
     if (name === fileName) {
       return true;
     }
