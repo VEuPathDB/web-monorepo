@@ -132,6 +132,15 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
             }
           }
 
+          if (res.deleteResult.status === 'error') {
+            for (const [ file, message ] of res.deleteResult.errors) {
+              errors.push({
+                type: 500,
+                message: `deletion of file ${file} failed: ${message}`,
+              });
+            }
+          }
+
           if (res.patchResult.status === 'error') {
             errors.push({
               type: 500,
