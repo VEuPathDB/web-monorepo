@@ -13,7 +13,7 @@ import { Link, useHistory } from 'react-router-dom';
 
 // Hack for .d.ts issues with react and the `css` property.  The imported file
 // modifies a type in the react module to allow for th
-// noinspection ES6UnusedImports -- hack for .d.ts issues with react
+// noinspection ES6UnusedImports
 import type {} from '@emotion/react/types/css-prop';
 
 //correct paths as this is a copy of FieldList component at @veupathdb/
