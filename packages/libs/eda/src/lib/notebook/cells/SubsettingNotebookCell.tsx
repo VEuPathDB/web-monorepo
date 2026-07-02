@@ -97,6 +97,18 @@ export function SubsettingNotebookCell(
                   )
                 );
               }}
+              removeFilters={(removedFilters) => {
+                analysisState.setFilters((filters) =>
+                  filters.filter(
+                    (f) =>
+                      !removedFilters.some(
+                        (removed) =>
+                          f.entityId === removed.entityId &&
+                          f.variableId === removed.variableId
+                      )
+                  )
+                );
+              }}
               variableLinkConfig={variableLinkConfig}
             />
           </div>
