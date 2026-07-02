@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 

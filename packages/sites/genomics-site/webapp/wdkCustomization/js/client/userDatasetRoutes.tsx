@@ -11,10 +11,7 @@ import {
 } from '@veupathdb/web-common/lib/config';
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-import {
-  uploadFormConfigurators,
-  userDatasetTypeConfigs,
-} from '@veupathdb/web-common/lib/user-dataset-upload-config';
+import { UserDatasetWorkspaceConfig } from '@veupathdb/web-common/src/user-dataset-upload-config';
 
 const UserDatasetRouter = React.lazy(
   () => import('./controllers/UserDatasetRouter')
@@ -43,8 +40,8 @@ export const userDatasetRoutes: RouteEntry[] = [
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
+            workspaceConfig={UserDatasetWorkspaceConfig}
             enablePublicUserDatasets={!!communityDatasetsEnabled}
-            datasetTypeConfigs={userDatasetTypeConfigs}
             detailsPageTitle="My Dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
@@ -52,7 +49,6 @@ export const userDatasetRoutes: RouteEntry[] = [
               <ExternalContentController url={helpTabContentUrl} />
             }
             dataNoun={{ singular: 'Dataset', plural: 'Datasets' }}
-            uploadFormConfigurators={uploadFormConfigurators}
           />
         </Suspense>
       );

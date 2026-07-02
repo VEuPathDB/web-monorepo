@@ -9,9 +9,12 @@ import {
   PreferenceUpdateAction,
 } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 import {
+  ActionThunk,
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+
+import { Action as CreatedAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
 import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 
@@ -23,12 +26,14 @@ import {
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { DatasetPatchRequest } from '../Service/Model';
+import { DatasetPatchRequest, ValidationErrorBody } from '../Service/Model';
 import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
 import {
   CommunityPromotionError,
   CommunityPromotionValidationError,
 } from '../Components/Sharing/CommunityPromotionError';
+import { Consumer } from '../Utils';
+import { VdiCompatibleEpicDependencies } from '../Service/utils/compatibility';
 
 export type Action =
   | DetailErrorAction
@@ -498,11 +503,6 @@ export function serviceMetaReceived(
 // Community sharing actions. Note, these are using the `makeActionCreator` utility
 // which reduces boilerplate dramatically.
 
-export const updateCommunityModalVisibility = makeActionCreator(
-  'user-datasets/update-community-modal-visibility',
-  (isVisible: boolean) => ({ isVisible })
-);
-
 export const updateDatasetCommunityVisibilityPending = makeActionCreator(
   'user-datasets/update-community-visibility-pending'
 );
@@ -523,7 +523,6 @@ type UpdateCommunityVisibilityThunkAction =
   | ListAction;
 
 type CommunityAction =
-  | InferAction<typeof updateCommunityModalVisibility>
   | InferAction<typeof updateDatasetCommunityVisibilityPending>
   | InferAction<typeof updateDatasetCommunityVisibilitySuccess>
   | InferAction<typeof updateDatasetCommunityVisibilityError>;
@@ -531,15 +530,24 @@ type CommunityAction =
 export function updateDatasetCommunityVisibility(
   datasetIds: string[],
   isVisibleToCommunity: boolean,
-  context: 'datasetDetails' | 'datasetsList'
-) {
+  context: 'datasetDetails' | 'datasetsList',
+  onError?: Consumer<ValidationErrorBody>
+): (
+  | CreatedAction<
+      'user-datasets/update-community-visibility-pending',
+      undefined
+    >
+  | ActionThunk<
+      UpdateCommunityVisibilityThunkAction,
+      VdiCompatibleEpicDependencies
+    >
+)[] {
   return [
     updateDatasetCommunityVisibilityPending(),
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
       async ({ wdkService }) => {
         try {
-          const validationErrors: CommunityPromotionValidationError[] =
-            [];
+          const validationErrors: CommunityPromotionValidationError[] = [];
           const serviceErrors: string[] = [];
 
           await Promise.all(
@@ -554,12 +562,14 @@ export function updateDatasetCommunityVisibility(
                 // on success
                 undefined,
                 // on validation error
-                ({ errors: msgs }) => {
-                  validationErrors.push({
-                    datasetId,
-                    general: msgs.general,
-                    byField: msgs.byKey,
-                  });
+                (response) => {
+                  if (onError) onError(response);
+                  else
+                    validationErrors.push({
+                      datasetId,
+                      general: response.errors.general,
+                      byField: response.errors.byKey,
+                    });
                 },
                 // on misc error
                 ({ message }) => {
