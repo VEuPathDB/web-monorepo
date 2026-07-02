@@ -365,6 +365,14 @@ function MapAnalysisImpl(props: ImplProps) {
                 )
               )
             }
+            removeFilters={(filters) =>
+              analysisState.analysis &&
+              analysisState.setFilters(
+                analysisState.analysis.descriptor.subset.descriptor.filter(
+                  (f) => !filters.includes(f)
+                )
+              )
+            }
             variableLinkConfig={filterChipConfig}
             entities={studyEntities}
             selectedEntityId={subsetVariableAndEntity.entityId}

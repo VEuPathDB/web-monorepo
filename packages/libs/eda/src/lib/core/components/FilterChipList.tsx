@@ -7,6 +7,7 @@ import { formatFilterValue } from '../utils/filter-display';
 import { ReactNode } from 'react';
 import { VariableLink, VariableLinkConfig } from './VariableLink';
 import { colors, Warning } from '@veupathdb/coreui';
+import { isLatitudeVariable, isLongitudeVariable } from './filter/guards';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +27,12 @@ interface Props {
   selectedEntityId?: string;
   selectedVariableId?: string;
   removeFilter: (filter: Filter) => void;
+  /**
+   * Remove several filters in one action. When provided, paired
+   * latitude+longitude filters (as created by the GeoCoordFilter) are
+   * shown as a single chip that removes both filters with one click.
+   */
+  removeFilters?: (filters: Filter[]) => void;
   variableLinkConfig: VariableLinkConfig;
 }
 
@@ -38,12 +45,20 @@ export default function FilterChipList(props: Props) {
   const {
     filters,
     removeFilter,
+    removeFilters,
     selectedEntityId,
     selectedVariableId,
     variableLinkConfig,
   } = props;
 
   if (filters) {
+    // Pair up latitude and longitude filters on the same entity, so they
+    // can be displayed as one combined, one-click-dismissable chip.
+    // Only do so when a multi-filter removal callback is available;
+    // otherwise fall back to one chip per filter.
+    const geoPairs =
+      removeFilters != null ? findGeoFilterPairs(filters, props.entities) : [];
+
     return (
       <div className={classes.chips}>
         {filters.map((filter) => {
@@ -51,6 +66,59 @@ export default function FilterChipList(props: Props) {
             findEntityAndVariable(props.entities, filter) ?? {};
 
           if (entity && variable) {
+            const pair = geoPairs.find(
+              (p) => p.latFilter === filter || p.lngFilter === filter
+            );
+
+            if (pair != null) {
+              // render the combined chip in place of the latitude filter's
+              // chip and skip the longitude filter's chip
+              if (pair.lngFilter === filter) return null;
+
+              const { latFilter, lngFilter, latVariable } = pair;
+              const tooltipText = (
+                <>
+                  <div
+                    style={{
+                      fontSize: '1.05em',
+                      fontWeight: 700,
+                      marginBottom: '.75em',
+                    }}
+                  >
+                    {entity.displayName}: Geographic area
+                  </div>
+                  <div>
+                    Latitude {formatFilterValue(latFilter, props.entities)}
+                    <br />
+                    Longitude {formatFilterValue(lngFilter, props.entities)}
+                  </div>
+                </>
+              );
+
+              return (
+                <FilterChip
+                  tooltipText={tooltipText}
+                  isActive={
+                    entity.id === selectedEntityId &&
+                    (latFilter.variableId === selectedVariableId ||
+                      lngFilter.variableId === selectedVariableId)
+                  }
+                  // Remove both geo filters on click of X button
+                  onDelete={() => removeFilters?.([latFilter, lngFilter])}
+                  key={`filter-chip-geo-${entity.id}`}
+                >
+                  <VariableLink
+                    entityId={entity.id}
+                    variableId={latVariable.id}
+                    replace={true}
+                    linkConfig={variableLinkConfig}
+                  >
+                    Geographic area
+                  </VariableLink>
+                </FilterChip>
+              );
+            }
+
             const filterValueDisplay: ReactNode = formatFilterValue(
               filter,
               props.entities
@@ -112,4 +180,40 @@ export default function FilterChipList(props: Props) {
   } else {
     return <></>;
   }
+}
+
+interface GeoFilterPair {
+  latFilter: Filter;
+  lngFilter: Filter;
+  latVariable: { id: string };
+}
+
+/**
+ * Find pairs of filters that together describe a geographic area:
+ * a numberRange filter on a latitude variable and a longitudeRange filter
+ * on a longitude variable of the same entity.
+ */
+function findGeoFilterPairs(
+  filters: Filter[],
+  entities: StudyEntity[]
+): GeoFilterPair[] {
+  const latFilters = filters.filter((filter) => {
+    if (filter.type !== 'numberRange') return false;
+    const variable = findEntityAndVariable(entities, filter)?.variable;
+    return variable != null && isLatitudeVariable(variable);
+  });
+  const lngFilters = filters.filter((filter) => {
+    if (filter.type !== 'longitudeRange') return false;
+    const variable = findEntityAndVariable(entities, filter)?.variable;
+    return variable != null && isLongitudeVariable(variable);
+  });
+
+  return latFilters.flatMap((latFilter) => {
+    const lngFilter = lngFilters.find(
+      (lngFilter) => lngFilter.entityId === latFilter.entityId
+    );
+    return lngFilter != null
+      ? [{ latFilter, lngFilter, latVariable: { id: latFilter.variableId } }]
+      : [];
+  });
 }
