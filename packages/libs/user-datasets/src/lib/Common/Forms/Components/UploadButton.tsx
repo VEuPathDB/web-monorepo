@@ -1,5 +1,6 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { CSSProperties, ReactElement, ReactNode } from 'react';
 import { isNonEmptyString } from '../../../Utils';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 export enum SubmittableState {
   Invalid,
@@ -15,6 +16,14 @@ export interface UploadButtonProps {
 }
 
 export function UploadButton(props: UploadButtonProps): ReactElement {
+  const theme = useUITheme()?.palette?.primary;
+  const style: CSSProperties | undefined = theme
+    ? {
+      backgroundColor: theme.hue['600'],
+      boxShadow: "4px 5px " + theme.hue['700'],
+    }
+    : undefined;
+
   let disabled = false;
 
   let className = 'upload-button';
@@ -55,6 +64,7 @@ export function UploadButton(props: UploadButtonProps): ReactElement {
         className={className}
         onClick={disabled ? undefined : props.onClick}
         disabled={disabled}
+        style={style}
       >
         {props.buttonText ?? 'Upload Dataset'}
       </button>

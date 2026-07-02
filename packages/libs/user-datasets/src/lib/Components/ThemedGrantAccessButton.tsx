@@ -2,6 +2,7 @@ import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { colors, MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
 import { PartialButtonStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import React, { useMemo } from 'react';
+import { useButtonTheme } from '../Utils/theming';
 
 interface Props {
   readonly disableCommunityReason?: string;
@@ -16,45 +17,7 @@ export function ThemedGrantAccessButton({
   communityDatasetsEnabled,
   disableCommunityReason,
 }: Props) {
-  const theme = useUITheme();
-  const bgHue = theme?.palette.primary.hue;
-  const bgLevel = theme?.palette.primary.level;
-
-  const styleOverrides = useMemo(
-    (): PartialButtonStyleSpec =>
-      bgHue && bgLevel
-        ? {
-            default: {
-              color: bgHue[bgLevel],
-              textColor: colors.white,
-              border: {
-                color: bgHue[bgLevel + 100],
-                style: 'solid',
-                width: 1,
-              },
-            },
-            hover: {
-              color: bgHue[bgLevel + 100],
-              textColor: colors.white,
-              border: {
-                color: bgHue[bgLevel + 200],
-                style: 'solid',
-                width: 1,
-              },
-            },
-            pressed: {
-              color: bgHue[bgLevel + 100],
-              textColor: colors.white,
-              border: {
-                color: bgHue[bgLevel + 200],
-                style: 'solid',
-                width: 1,
-              },
-            },
-          }
-        : {},
-    [bgHue, bgLevel]
-  );
+  const buttonTheme = useButtonTheme();
 
   if (!communityDatasetsEnabled) {
     return (
@@ -64,14 +27,14 @@ export function ThemedGrantAccessButton({
         onPress={() => onPress('individual')}
         themeRole="primary"
         icon={Share}
-        styleOverrides={styleOverrides}
+        styleOverrides={buttonTheme}
       />
     );
   }
 
   return (
     <SingleSelect<'community' | 'individual' | undefined>
-      styleOverrides={styleOverrides}
+      styleOverrides={buttonTheme}
       items={[
         {
           display: disableCommunityReason
