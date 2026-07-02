@@ -19,6 +19,7 @@
       "esnext"
     ],
     "moduleResolution": "node",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "skipLibCheck": true
   }
 }
