@@ -242,7 +242,12 @@ export function GeoCoordFilter(props: Props) {
 
   const handleAreaSelected = useCallback(
     (bounds: Bounds | undefined) => {
-      if (bounds != null) updateFilters(bounds);
+      // Defer the filter update out of the Leaflet event dispatch: setting
+      // filters can trigger a route transition (e.g. a brand-new analysis is
+      // created and redirected to on its first filter), and tearing the map
+      // down while Leaflet is still dispatching the 'areaselected' event
+      // corrupts its teardown.
+      if (bounds != null) setTimeout(() => updateFilters(bounds), 0);
     },
     [updateFilters]
   );
@@ -280,10 +285,9 @@ export function GeoCoordFilter(props: Props) {
         <div style={{ flex: 1 }}>
           {selectedBounds != null && latFilter != null && lngFilter != null ? (
             <div>
-              <b>Selected area:</b> latitude from{' '}
-              {formatCoord(latFilter.min)} to {formatCoord(latFilter.max)},
-              longitude from {formatCoord(lngFilter.left)} to{' '}
-              {formatCoord(lngFilter.right)}
+              <b>Selected area:</b> latitude from {formatCoord(latFilter.min)}{' '}
+              to {formatCoord(latFilter.max)}, longitude from{' '}
+              {formatCoord(lngFilter.left)} to {formatCoord(lngFilter.right)}
               {lngFilter.right < lngFilter.left
                 ? ' (crossing the antimeridian)'
                 : ''}
@@ -350,7 +354,10 @@ export function GeoCoordFilter(props: Props) {
             flyToMarkersDelay={500}
             onAreaSelected={handleAreaSelected}
           />
-          {selectedBounds != null && (
+          {/* boundsZoomLevel is only set once the map is fully created, so
+              gating on it keeps the Rectangle's mount out of the same commit
+              as the map's initialization (react-leaflet v3 races) */}
+          {selectedBounds != null && boundsZoomLevel != null && (
             <Rectangle
               bounds={[
                 [selectedBounds.southWest.lat, selectedBounds.southWest.lng],
