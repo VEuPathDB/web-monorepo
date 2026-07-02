@@ -22,7 +22,10 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useStudyEntities, useStudyMetadata } from '../../../hooks/workspace';
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useConfigChangeHandlerFactory,
+  useVizConfig,
+} from '../../../hooks/visualizations';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import PluginError from '../PluginError';
@@ -146,15 +149,8 @@ function MapViz(props: VisualizationProps<Options>) {
       [updateVizConfig]
     );
 
-  // prettier-ignore
-  const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof MapConfig) => (newValue?: ValueType) => {
-      updateVizConfig({
-	      [key] : newValue,
-      });
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<MapConfig>(updateVizConfig);
 
   const onMarkerTypeChange = onChangeHandlerFactory('markerType');
 

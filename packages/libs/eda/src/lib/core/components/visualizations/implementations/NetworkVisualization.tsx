@@ -41,6 +41,7 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
+import { plotContainerStyles as defaultPlotContainerStyles } from '../plotStyles';
 import { FacetedPlotLayout } from '../../layouts/FacetedPlotLayout';
 import { H6 } from '@veupathdb/coreui';
 import { CorrelationConfig } from '../../../types/apps';
@@ -62,11 +63,9 @@ const MAX_STROKE_WIDTH = 6; // Maximum stroke width for links in the network. Wi
 const DEFAULT_NUMBER_OF_LINE_LEGEND_ITEMS = 4;
 
 const plotContainerStyles = {
+  ...defaultPlotContainerStyles,
   width: 900,
   height: 800,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
 };
 
 export const networkVisualization = createVisualizationPlugin({

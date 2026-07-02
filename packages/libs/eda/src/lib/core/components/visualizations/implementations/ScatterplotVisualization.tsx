@@ -88,6 +88,7 @@ import {
   getVariableLabel,
   assertValidInputVariables,
   substituteUnselectedToken,
+  requiredInputsAreSelected,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -120,15 +121,21 @@ import { NumberOrDateRange } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Notification from '@veupathdb/components/lib/components/widgets/Notification';
+import TruncationNotification from '../TruncationNotification';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import {
+  useAxisTruncationWarningEffect,
+  useConfigChangeHandlerFactory,
   useNeutralPaletteProps,
   useVizConfig,
 } from '../../../hooks/visualizations';
+import {
+  modalPlotContainerStyles,
+  usePlotContainerStyles,
+} from '../plotStyles';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
 import {
   ScatterplotRequestParams,
@@ -165,21 +172,7 @@ const CI95SUFFIX = `, ${CI95TEXT}`;
 const BESTFITTEXT = 'Best fit';
 const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
 
-const plotContainerStyles = {
-  width: 750,
-  height: 450,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
-
 const plotSpacingOptions = {};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
-};
 
 // slider settings
 const markerBodyOpacityContainerStyles = {
@@ -361,12 +354,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     computation.descriptor.configuration,
   ]);
 
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -590,98 +579,64 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
-  // prettier-ignore
-  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
-  const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig,
-      resetCheckedLegendItems?: boolean,
-      resetAxisLogScale?: boolean,
-      resetValueSpecConfig?: boolean,
-      resetIndependentAxisRanges?: boolean,
-      resetDependentAxisRanges?: boolean,
-      ) => (newValue?: ValueType) => {
-      const newPartialConfig = {
-        [key]: newValue,
-        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-        ...(resetAxisLogScale ? { independentAxisLogScale: false, dependentAxisLogScale: false } : {}),
-        ...(resetValueSpecConfig ? { valueSpecConfig: 'Raw' } : {}),
-        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
-        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
-      };
-      updateVizConfig(newPartialConfig);
-      if (resetIndependentAxisRanges) {
-        setTruncatedIndependentAxisWarning('');
-      }
-      if (resetDependentAxisRanges) {
-        setTruncatedDependentAxisWarning('');
-      }
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<ScatterplotConfig>(updateVizConfig);
 
-  // set checkedLegendItems: undefined for the change of both plot options and showMissingness
+  // reset checkedLegendItems and axis ranges for the change of plot mode
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
-    true,
-    false, // reset both axisLogScale to false if true
-    false,
-    true,
-    true
+    {
+      checkedLegendItems: undefined,
+      independentAxisRange: undefined,
+      dependentAxisRange: undefined,
+    },
+    () => {
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
+    }
   );
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
-    false,
-    false,
-    false,
-    true,
-    false
+    { independentAxisRange: undefined },
+    () => setTruncatedIndependentAxisWarning('')
   );
 
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
-    false,
-    false,
-    false,
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
-    true,
-    true,
-    false,
-    true,
-    true
+    {
+      checkedLegendItems: undefined,
+      independentAxisLogScale: false,
+      dependentAxisLogScale: false,
+      independentAxisRange: undefined,
+      dependentAxisRange: undefined,
+    },
+    () => {
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
+    }
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
-    true,
-    false,
-    false, // reset valueSpec to Raw if true
-    true,
-    false
+    { checkedLegendItems: undefined, independentAxisRange: undefined },
+    () => setTruncatedIndependentAxisWarning('')
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
-    true,
-    false,
-    false, // reset valueSpec to Raw if true
-    false,
-    true
+    { checkedLegendItems: undefined, dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
-  const onMarkerBodyOpacityChange = onChangeHandlerFactory<number>(
-    'markerBodyOpacity',
-    false,
-    false,
-    false, // reset valueSpec to Raw if true
-    false,
-    false
-  );
+  const onMarkerBodyOpacityChange =
+    onChangeHandlerFactory<number>('markerBodyOpacity');
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useOutputEntity(
@@ -1396,38 +1351,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [xMinMaxDataRange, yMinMaxDataRange, vizConfig]
   );
 
-  // set useEffect for changing truncation warning message
-  useEffect(() => {
-    if (
-      truncationConfigIndependentAxisMin ||
-      truncationConfigIndependentAxisMax
-    ) {
-      setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigIndependentAxisMin,
     truncationConfigIndependentAxisMax,
-    setTruncatedIndependentAxisWarning,
-  ]);
+    setTruncatedIndependentAxisWarning
+  );
 
-  useEffect(() => {
-    if (
-      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      // !scatterplotProps.showSpinner
-      truncationConfigDependentAxisMin ||
-      truncationConfigDependentAxisMax
-    ) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-    setTruncatedDependentAxisWarning,
-  ]);
+    setTruncatedDependentAxisWarning
+  );
 
   const markerBodyOpacity =
     vizConfig.markerBodyOpacity ?? options?.defaultMarkerOpacity ?? 0.5;
@@ -1883,24 +1817,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 }
               />
               {/* truncation notification */}
-              {truncatedIndependentAxisWarning &&
-              !independentAllNegative &&
-              data.value != null ? (
-                <Notification
-                  title={''}
-                  text={truncatedIndependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedIndependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  containerStyles={{
-                    maxWidth:
-                      scatterplotProps.independentValueType === 'date'
-                        ? '350px'
-                        : '350px',
-                  }}
+              {!independentAllNegative && data.value != null ? (
+                <TruncationNotification
+                  warning={truncatedIndependentAxisWarning}
+                  onAcknowledge={() => setTruncatedIndependentAxisWarning('')}
                 />
               ) : null}
             </LabelledGroup>
@@ -2021,22 +1941,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 }
               />
               {/* truncation notification */}
-              {truncatedDependentAxisWarning && !dependentAllNegative ? (
-                <Notification
-                  title={''}
-                  text={truncatedDependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedDependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  containerStyles={{
-                    maxWidth:
-                      scatterplotProps.independentValueType === 'date'
-                        ? '350px'
-                        : '350px',
-                  }}
+              {!dependentAllNegative ? (
+                <TruncationNotification
+                  warning={truncatedDependentAxisWarning}
+                  onAcknowledge={() => setTruncatedDependentAxisWarning('')}
                 />
               ) : null}
             </LabelledGroup>
@@ -2175,12 +2083,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? options?.getPlotSubtitle?.(computation.descriptor.configuration)
       : undefined;
 
-  const areRequiredInputsSelected = useMemo(() => {
-    if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!vizConfig[reqdVar[0] as keyof ScatterplotConfig]);
-  }, [dataElementConstraints, vizConfig]);
+  const areRequiredInputsSelected = useMemo(
+    () => requiredInputsAreSelected(dataElementConstraints, vizConfig),
+    [dataElementConstraints, vizConfig]
+  );
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 

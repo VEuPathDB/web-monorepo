@@ -3,7 +3,7 @@ import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
 import FacetedBoxplot from '@veupathdb/components/lib/plots/facetedPlots/FacetedBoxplot';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 // need to set for Boxplot
 import DataClient, { BoxplotResponse } from '../../../api/DataClient';
@@ -61,6 +61,7 @@ import {
   getVariableLabel,
   assertValidInputVariables,
   substituteUnselectedToken,
+  requiredInputsAreSelected,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -75,9 +76,15 @@ import {
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import {
+  useAxisTruncationWarningEffect,
+  useConfigChangeHandlerFactory,
   useNeutralPaletteProps,
   useVizConfig,
 } from '../../../hooks/visualizations';
+import {
+  modalPlotContainerStyles,
+  usePlotContainerStyles,
+} from '../plotStyles';
 
 // concerning axis range control
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -85,8 +92,7 @@ import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import TruncationNotification from '../TruncationNotification';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import {
@@ -123,21 +129,7 @@ export type BoxplotDataWithCoverage = (BoxplotData | FacetedData<BoxplotData>) &
   CoverageStatistics &
   BoxplotComputedVariableMetadata;
 
-const plotContainerStyles = {
-  height: 450,
-  width: 750,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
-
 const plotSpacingOptions = {};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
-};
 
 interface Options
   extends LayoutOptions,
@@ -205,12 +197,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -346,33 +334,20 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
   ]);
 
-  // prettier-ignore
-  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
-  const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BoxplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = {
-        [key]: newValue,
-        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-      	...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
-      };
-      updateVizConfig(newPartialConfig);
-      if (resetAxisRanges)
-	      setTruncatedDependentAxisWarning('');
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<BoxplotConfig>(updateVizConfig);
 
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
-  // set checkedLegendItems: undefined for the change of showMissingness
+  // also reset checkedLegendItems for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
-    true,
-    true
+    { checkedLegendItems: undefined, dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -846,9 +821,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   const areRequiredInputsSelected =
     !dataElementConstraints ||
-    Object.entries(dataElementConstraints[0])
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    requiredInputsAreSelected(dataElementConstraints, vizConfig);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
@@ -983,17 +956,11 @@ function Plot({
     truncationConfigDependentAxisMax,
   } = truncationConfig({ dependentAxisRange: dependentAxisMinMax }, vizConfig);
 
-  useEffect(() => {
-    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-    setTruncatedDependentAxisWarning,
-  ]);
+    setTruncatedDependentAxisWarning
+  );
 
   // send boxplotComponentProps with axisTruncationConfig
   const boxplotFacetProps = {
@@ -1167,21 +1134,10 @@ function Controls({
                   vizConfig.dependentAxisValueSpec === 'Auto-zoom'
                 }
               />
-              {/* truncation notification */}
-              {truncatedDependentAxisWarning ? (
-                <Notification
-                  title={''}
-                  text={truncatedDependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedDependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  // change maxWidth
-                  containerStyles={{ maxWidth: '350px' }}
-                />
-              ) : null}
+              <TruncationNotification
+                warning={truncatedDependentAxisWarning}
+                onAcknowledge={() => setTruncatedDependentAxisWarning('')}
+              />
             </LabelledGroup>
           </LabelledGroup>
         </div>
