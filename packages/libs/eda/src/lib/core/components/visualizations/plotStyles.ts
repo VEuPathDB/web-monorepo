@@ -24,9 +24,11 @@ export const modalPlotContainerStyles = {
  * Merges the standard plot container styles with any overrides provided
  * via the `plotContainerStyleOverrides` visualization prop.
  */
-export function usePlotContainerStyles(
+export function usePlotContainerStyles<
+  BaseStyles extends PlotContainerStyleOverrides = typeof plotContainerStyles
+>(
   plotContainerStyleOverrides?: PlotContainerStyleOverrides,
-  baseStyles: PlotContainerStyleOverrides = plotContainerStyles
+  baseStyles: BaseStyles = plotContainerStyles as BaseStyles
 ) {
   return useMemo(
     () => ({

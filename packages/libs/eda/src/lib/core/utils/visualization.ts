@@ -323,7 +323,7 @@ export function requiredInputsAreSelected<ConfigType>(
 ): boolean {
   if (!dataElementConstraints) return false;
   return Object.entries(dataElementConstraints[0])
-    .filter(([, constraint]) => constraint.isRequired)
+    .filter(([, constraint]) => constraint?.isRequired)
     .every(([inputName]) => !!vizConfig[inputName as keyof ConfigType]);
 }
 

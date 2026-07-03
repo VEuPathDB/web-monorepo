@@ -83,6 +83,7 @@ import {
 } from '../../../hooks/visualizations';
 import {
   modalPlotContainerStyles,
+  plotContainerStyles,
   usePlotContainerStyles,
 } from '../plotStyles';
 
