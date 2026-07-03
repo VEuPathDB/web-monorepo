@@ -25,7 +25,7 @@ longitude), so studies without geohash annotations are unaffected.
 `GeoCoordFilter` renders the same semantic-zooming marker map used elsewhere
 in EDA (`MapVEuMap` + `SemanticMarkers` + donut markers via the
 `useMapMarkers` hook, requested through the `pass` app's `map-markers`
-plugin). Marker requests use the analysis' filters *minus* the two filters
+plugin). Marker requests use the analysis' filters _minus_ the two filters
 managed by the component, mirroring how `HistogramFilter` shows the
 distribution with its own filter excluded and the selection drawn on top.
 
@@ -47,7 +47,7 @@ under a key shared by both variables.
 
 `FilterChipList` detects a latitude `numberRange` + longitude
 `longitudeRange` pair on the same entity and renders them as a single
-**"Geographic area"** chip whose ✕ removes *both* filters in one click (via
+**"Geographic area"** chip whose ✕ removes _both_ filters in one click (via
 the new optional `removeFilters` prop, wired in `AnalysisPanel`,
 `MapAnalysis`, `SubsettingNotebookCell` and `GlobalFiltersDialog`). Where
 `removeFilters` is not supplied, the two filters fall back to individual
@@ -63,7 +63,7 @@ space already used for marker aggregation (`geoaggregator` variables,
 
 ### Option A — single-level geohash stringSet (works against today's service)
 
-If the user draws a lasso around markers, each marker *is* a geohash cell at
+If the user draws a lasso around markers, each marker _is_ a geohash cell at
 the aggregation level for the current zoom (`geoConfig.
 zoomLevelToAggregationLevel(zoom)`). Collect the `geoAggregateValue` of the
 markers inside the polygon (point-in-polygon on marker centers, e.g. with
@@ -71,14 +71,18 @@ markers inside the polygon (point-in-polygon on marker centers, e.g. with
 that single geo-aggregator variable:
 
 ```json
-{ "type": "stringSet", "entityId": "...", "variableId": "geohash_4",
-  "stringSet": ["dr5r", "dr5x", "dr72", "..."] }
+{
+  "type": "stringSet",
+  "entityId": "...",
+  "variableId": "geohash_4",
+  "stringSet": ["dr5r", "dr5x", "dr72", "..."]
+}
 ```
 
-*Pros:* no service change; exact w.r.t. what the user sees (markers are
+_Pros:_ no service change; exact w.r.t. what the user sees (markers are
 selected, not raw points); the set size equals the number of selected
 markers, which is small by construction.
-*Cons:* tied to one zoom level — the filter is only as precise as the
+_Cons:_ tied to one zoom level — the filter is only as precise as the
 current aggregation level; zooming in after filtering shows the staircase
 boundary of the selected cells (arguably a feature, since it makes the
 filter semantics visible).
@@ -90,22 +94,32 @@ a lasso mode toggle on the `GeoCoordFilter` map (e.g.
 logic in `FilterChipList` extends naturally (a stringSet filter on a
 `geoaggregator`-displayType variable is recognizable from study metadata).
 
+No geometry-to-geohash library is needed for this option: the markers are
+already geohash-aggregated by the `map-markers` plugin, so membership is just
+a point-in-polygon test against each marker's centroid (e.g.
+`@turf/boolean-point-in-polygon`, already a transitive dependency via
+`shape2geohash`, see below).
+
 ### Option B — multi-scale geohash prefixes (recommended service upgrade; groundwork implemented)
 
 A shape covering a large area at a fine geohash level explodes into many
 cells (32× per extra level). The standard compression is a **multi-scale**
 cover: coarse hashes for the interior, finer hashes along the boundary.
-Because a geohash is a *prefix* of every finer geohash it contains, a
-multi-scale cover is exactly a **prefix set** over the *finest* geohash
+Because a geohash is a _prefix_ of every finer geohash it contains, a
+multi-scale cover is exactly a **prefix set** over the _finest_ geohash
 variable:
 
 ```json
-{ "type": "stringPrefixSet", "entityId": "...", "variableId": "geohash_6",
-  "prefixSet": ["dr5", "dr72", "dr70j", "..."] }
+{
+  "type": "stringPrefixSet",
+  "entityId": "...",
+  "variableId": "geohash_6",
+  "prefixSet": ["dr5", "dr72", "dr70j", "..."]
+}
 ```
 
 `value LIKE 'dr5%' OR value LIKE 'dr72%' OR ...` — a union expressed within
-a *single* filter on a *single* variable, sidestepping both missing
+a _single_ filter on a _single_ variable, sidestepping both missing
 capabilities (OR of continuous filters; union across different geohash-level
 variables). This is strictly more general than the `multiFilter` union,
 which is restricted to sub-variables of a `multifilter` display-type parent.
@@ -123,11 +137,29 @@ The groundwork is implemented behind this document:
   union in `src/lib/core/types/filter.ts`.
 
 Client-side, the cover can be computed from the lasso polygon with a
-plane-sweep over geohash cells (recursive: start at level 1; a cell fully
-inside the polygon is emitted; a cell partially inside recurses to the next
-level, down to the current marker aggregation level or a fixed budget,
-e.g. ≤ 256 prefixes). Libraries such as `polygon-to-geohashes` /
-`geohash-poly` do this off the shelf.
+recursive descent over geohash cells, down to the current marker aggregation
+level (or a fixed budget, e.g. ≤ 256 prefixes), followed by a **collapse**
+pass: whenever all 32 children of a coarser prefix are present in the cover,
+replace them with that single coarser prefix (repeated bottom-up until no
+more collapses apply). This keeps the interior coarse and the boundary fine
+without having to special-case "inside" vs. "boundary" cells up front.
+
+[`shape2geohash`](https://www.npmjs.com/package/shape2geohash) (Turf +
+`ngeohash` under the hood) already does the per-level geometry work needed
+for the descent — it computes the geohashes at a given precision that are
+`insideOnly`, `border`-intersecting, or fully `intersect`ing an arbitrary
+GeoJSON polygon. It's already a dependency of this monorepo
+(`packages/libs/components`, used by `CustomGridLayer` for the map's debug
+grid overlay), including the webpack polyfills it needs for its Node
+`stream`/`process` usage (see `config-overrides.js`), so there's no new
+integration cost. It doesn't do the multi-scale collapse itself — that top
+level (recurse into `border` cells, collapse full sets of 32 back up) would
+still need to be written — but it replaces the lower-level polygon/geohash
+plumbing.
+
+(Earlier drafts of this doc suggested `polygon-to-geohashes` / `geohash-poly`
+for this; neither turned out to be real, verifiable packages — `shape2geohash`
+is the real, already-integrated equivalent and is preferred.)
 
 ### Option C — relax `multiFilter` union validation (alternative service upgrade)
 
@@ -151,7 +183,7 @@ support, but it is substantially more work). Geohash prefixes (Option B)
 give practically the same result with far better performance
 characteristics; the only loss is boundary precision, which is bounded by
 the finest geohash level (~±0.6 km at level 6) and by the fact that users
-draw lassos around *markers*, which are themselves geohash aggregates.
+draw lassos around _markers_, which are themselves geohash aggregates.
 
 ## Known limitations / follow-ups
 
