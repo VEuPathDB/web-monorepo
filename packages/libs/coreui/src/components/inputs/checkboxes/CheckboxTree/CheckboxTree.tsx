@@ -259,6 +259,7 @@ type TreeLinksProps = {
   removeVisible: TreeLinkHandler;
   selectOnlyVisible: TreeLinkHandler;
   expandAll: TreeLinkHandler;
+  expandSelected: TreeLinkHandler;
   expandNone: TreeLinkHandler;
   selectCurrentList: TreeLinkHandler;
   selectDefaultList: TreeLinkHandler;
@@ -278,6 +279,7 @@ function TreeLinks({
   selectAll,
   selectNone,
   expandAll,
+  expandSelected,
   expandNone,
   selectCurrentList,
   selectDefaultList,
@@ -334,6 +336,10 @@ function TreeLinks({
             {showSelectionLinks && <Bar />}
             <button css={linkStyles} type="button" onClick={expandAll}>
               expand all
+            </button>
+            <Bar />
+            <button css={linkStyles} type="button" onClick={expandSelected}>
+              show selected
             </button>
             <Bar />
             <button css={linkStyles} type="button" onClick={expandNone}>
@@ -771,7 +777,47 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
   const expandAll = createExpander(() =>
     getBranches(tree, getNodeChildren).map((node) => getNodeId(node))
   );
+
   const expandNone = createExpander(() => []);
+
+  type SelectedBranchStatus = {
+    nodesToExpand: string[];
+    includeParent: boolean;
+  };
+  const expandSelected = createExpander(() => {
+    let obj: SelectedBranchStatus = mapStructure(
+      (node, mappedChildren) => {
+        if (mappedChildren.length == 0) {
+          // leaf node
+          return {
+            nodesToExpand: [],
+            includeParent: selectedList.includes(getNodeId(node)),
+          };
+        } else {
+          // branch node
+          let result = mappedChildren.reduce(
+            (prev, nextChild) => {
+              return {
+                nodesToExpand: prev.nodesToExpand.concat(
+                  nextChild.nodesToExpand
+                ),
+                includeParent: prev.includeParent || nextChild.includeParent,
+              };
+            },
+            { nodesToExpand: [], includeParent: false }
+          );
+          if (result.includeParent)
+            result.nodesToExpand = result.nodesToExpand.concat([
+              getNodeId(node),
+            ]);
+          return result;
+        }
+      },
+      getNodeChildren,
+      tree
+    );
+    return obj.nodesToExpand;
+  });
 
   // define event handlers related to selection
 
@@ -942,6 +988,7 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
       selectOnlyVisible={selectOnlyVisible}
       removeVisible={removeVisible}
       expandAll={expandAll}
+      expandSelected={expandSelected}
       expandNone={expandNone}
       selectCurrentList={selectCurrentList}
       selectDefaultList={selectDefaultList}
