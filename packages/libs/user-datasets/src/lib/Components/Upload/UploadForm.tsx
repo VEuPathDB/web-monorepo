@@ -1,6 +1,5 @@
 import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
@@ -13,19 +12,14 @@ import { JsonPathBuilder } from '../../Utils';
 
 import '../../Common/Forms/DatasetForm.scss';
 import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
-import {
-  useDatasetFormState,
-  DefaultDatasetFormState,
-} from '../../StoreModules/UserDatasetUploadStoreModule';
+import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
-import { updateFormState } from '../../Actions/UserDatasetUploadActions';
 
 export function UploadForm(props: DatasetFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
   const [formIsValid, setFormIsValid] = useState<boolean>(true);
-  const dispatch = useDispatch();
 
   // Determine if the upload form should be submittable, and if not, why not.
   // !! This is intentionally not nested ternaries!  The automated code
@@ -45,9 +39,7 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
   };
 
   const onReset = () => {
-    dispatch(updateFormState(DefaultDatasetFormState));
-    props.actions.clearUploadError();
-    window.scrollTo(0, 0);
+    window.location.reload();
   };
 
   const { datasetDetails, fileUploads } = useDatasetFormState();
