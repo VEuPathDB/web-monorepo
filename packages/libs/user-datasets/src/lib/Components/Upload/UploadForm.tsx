@@ -64,7 +64,7 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
           </button>
         </div>
         <p className="section-description-h2">
-          <i>Build a home for your dataset and start exploring.</i>
+          <i>Provide a home for your dataset and start exploring.</i>
         </p>
 
         {props.formConfig.dataType.name === 'genelist' ? (
