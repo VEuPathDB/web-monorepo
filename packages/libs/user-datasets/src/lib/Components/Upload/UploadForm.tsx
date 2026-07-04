@@ -85,7 +85,7 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
             type: 'info',
             message: (
               <>
-                Before uploading your dataset, please ensure your{' '}
+                Before uploading your dataset, please be sure your{' '}
                 <span style={{ fontWeight: 'bold' }}>files are formatted </span>{' '}
                 according to the instructions listed in the{' '}
                 <Link
