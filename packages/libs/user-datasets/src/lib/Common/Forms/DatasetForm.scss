@@ -30,6 +30,21 @@
     margin-left: 32px;
   }
 
+  .title-with-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0 !important;
+
+    h2 {
+      margin: 0;
+    }
+
+    button {
+      margin: 0;
+    }
+  }
+
   p.description {
     margin: 0 0 1em 0;
   }
@@ -43,11 +58,19 @@
     }
   }
 
-  .important-info      { color: red; }
-  .important-info-bold { font-weight: bold; }
+  .important-info {
+    color: red;
+  }
+  .important-info-bold {
+    font-weight: bold;
+  }
 
-  .left  { text-align: left !important; }
-  .right { text-align: right !important; }
+  .left {
+    text-align: left !important;
+  }
+  .right {
+    text-align: right !important;
+  }
 
   .section-description {
     font-style: italic;
@@ -100,11 +123,11 @@
   }
 
   form .description {
-      color: var(--coreui-gray-900);
-      font-style: italic;
-      padding-bottom: 0.5em;
-      position: relative;
-      margin-top: -1em;
+    color: var(--coreui-gray-900);
+    font-style: italic;
+    padding-bottom: 0.5em;
+    position: relative;
+    margin-top: -1em;
   }
 
   input,

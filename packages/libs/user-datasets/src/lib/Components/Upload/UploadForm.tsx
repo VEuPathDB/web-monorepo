@@ -1,48 +1,52 @@
-import {
-  ReactElement,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
-import { MetadataSection, RootDetailsSection } from '../../Common/Forms/Components/Sections';
+import {
+  MetadataSection,
+  RootDetailsSection,
+} from '../../Common/Forms/Components/Sections';
 import { JsonPathBuilder } from '../../Utils';
 
 import '../../Common/Forms/DatasetForm.scss';
 import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
-import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
+import {
+  useDatasetFormState,
+  DefaultDatasetFormState,
+} from '../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
+import { updateFormState } from '../../Actions/UserDatasetUploadActions';
 
 export function UploadForm(props: DatasetFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
   const [formIsValid, setFormIsValid] = useState<boolean>(true);
+  const dispatch = useDispatch();
 
   // Determine if the upload form should be submittable, and if not, why not.
   // !! This is intentionally not nested ternaries!  The automated code
   // !! formatting in use by some committers makes nested ternaries
   // !! nearly incomprehensible.
-  const uploadSubmittable = useMemo(
-    () => {
-      if (!formIsValid)
-        return SubmittableState.Invalid;
+  const uploadSubmittable = useMemo(() => {
+    if (!formIsValid) return SubmittableState.Invalid;
 
-      if (props.isSubmitting)
-        return SubmittableState.InProgress;
+    if (props.isSubmitting) return SubmittableState.InProgress;
 
-      return SubmittableState.Submittable;
-    },
-    [formIsValid, props.isSubmitting]
-  );
+    return SubmittableState.Submittable;
+  }, [formIsValid, props.isSubmitting]);
 
   const onSubmit = () => {
     props.actions.submit();
+    window.scrollTo(0, 0);
+  };
+
+  const onReset = () => {
+    dispatch(updateFormState(DefaultDatasetFormState));
+    props.actions.clearUploadError();
     window.scrollTo(0, 0);
   };
 
@@ -61,22 +65,28 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
       <header>
         <UploadErrorBanner errors={props.badUploadState} />
 
-        <h2>{props.formConfig.verbiage.formTitle}</h2>
+        <div className="title-with-button">
+          <h2>{props.formConfig.verbiage.formTitle}</h2>
+          <button className="btn btn-info" onClick={onReset} type="button">
+            Reset
+          </button>
+        </div>
         <p className="section-description-h2">
           <i>Build a home for your dataset and start exploring.</i>
         </p>
 
-        { props.formConfig.dataType.name === 'genelist' ?
-          ( <p>
-              <i>
-              (Gene lists user datasets can also be generated from a search strategy results
-              section: click on the "Send to" menu near the "Download" button,
-              and choose the "My Datasets" option to install the gene list in My
-              Datasets.)
-              </i><br/><br/>
-            </p>
-          ) : null
-        }
+        {props.formConfig.dataType.name === 'genelist' ? (
+          <p>
+            <i>
+              (Gene lists user datasets can also be generated from a search
+              strategy results section: click on the "Send to" menu near the
+              "Download" button, and choose the "My Datasets" option to install
+              the gene list in My Datasets.)
+            </i>
+            <br />
+            <br />
+          </p>
+        ) : null}
 
         <Banner
           banner={{
@@ -93,20 +103,6 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
                   "My datasets help"
                 </Link>{' '}
                 tab.
-              </>
-            ),
-          }}
-        />
-        <Banner
-          banner={{
-            type: 'info',
-            message: (
-              <>
-                Click the browser reload button to{' '}
-                <span style={{ fontWeight: 'bold' }}>
-                  reset the upload form
-                </span>
-                .
               </>
             ),
           }}
