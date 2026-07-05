@@ -176,10 +176,10 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       );
   }
 
-  sharedWithValue(dataset: DatasetListEntry): string | null {
+  sharedWithValue(dataset: DatasetListEntry): string {
     if (!this.isMyDataset(dataset)) return 'Me';
     return !dataset.shares || !dataset.shares.length
-      ? null
+      ? ''
       : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
   }
 
@@ -620,8 +620,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         return (data: DatasetListEntry): string =>
           datasetUserFullName(data.owner).toLowerCase();
       case 'sharedWith':
-        return (data: DatasetListEntry): string | null =>
-          this.sharedWithValue(data)?.toLowerCase() ?? '\uFFFF';
+        return (data: DatasetListEntry): string => {
+          const value = this.sharedWithValue(data);
+          // Use highest Unicode character to sort empty values to the end
+          return value ? value.toLowerCase() : '\uFFFF';
+        };
       case 'size':
         return (data: DatasetListEntry): number => data.fileSizeTotal ?? 0;
       default:
