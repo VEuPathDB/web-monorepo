@@ -190,14 +190,16 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   renderCommunityCell(cellProps: MesaDataCellProps) {
     const dataset = cellProps.row;
     const isPublic = dataset.visibility === 'public';
-    if (!isPublic) return null;
-    return (
-      <Tooltip
-        title={`This ${this.props.dataNoun.singular} is visible to the community.`}
-      >
-        <Public className="Community-visible" />
-      </Tooltip>
-    );
+    if (isPublic) {
+      return (
+        <Tooltip
+          title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+        >
+          <Public className="Community-visible" />
+        </Tooltip>
+      );
+    }
+    return 'private';
   }
 
   renderStatusCell(cellProps: MesaDataCellProps) {
@@ -458,7 +460,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
-                  this.setState(s => ({ ...s, isCommunityModalOpen: true }));
+                  this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':
                   this.openSharingModal();
@@ -742,12 +744,19 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                     user={user}
                     datasets={selectedDatasets}
                     context="datasetsList"
-                    onClose={() => this.setState(s => ({...s, isCommunityModalOpen: false }))}
+                    onClose={() =>
+                      this.setState((s) => ({
+                        ...s,
+                        isCommunityModalOpen: false,
+                      }))
+                    }
                     dataNoun={dataNoun}
                     updateDatasetCommunityVisibility={
                       updateDatasetCommunityVisibility
                     }
-                    onFixErrors={() => { /* n/a */ }}
+                    onFixErrors={() => {
+                      /* n/a */
+                    }}
                     updatePending={updateDatasetCommunityVisibilityPending}
                     updateSuccessful={updateDatasetCommunityVisibilitySuccess}
                     updateError={updateDatasetCommunityVisibilityError}
