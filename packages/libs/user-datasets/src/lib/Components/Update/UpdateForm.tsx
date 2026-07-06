@@ -1,35 +1,55 @@
-import React, { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { JsonPathBuilder } from '../../Utils';
 import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
-import { MetadataSection, RootDetailsSection } from '../../Common/Forms/Components/Sections';
+import {
+  MetadataSection,
+  RootDetailsSection,
+} from '../../Common/Forms/Components/Sections';
 import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
+import { isEqual } from 'lodash';
+import { PartialDatasetDetails } from '../../Service';
+import { hasUploads } from '../../Service/Model/utility-types';
 
-export function UpdateForm(props: DatasetFormProps): ReactElement {
+export interface UpdateFormProps extends DatasetFormProps {
+  readonly originalDetails: PartialDatasetDetails;
+}
+
+export function UpdateForm(props: UpdateFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root;
 
-  const [ formIsValid, setFormIsValid ] = useState<boolean>(true);
+  const { datasetDetails, fileUploads } = useDatasetFormState();
+
+  const [formIsValid, setFormIsValid] = useState<boolean>(true);
+
+  const userHasChangedSomething = useMemo(
+    () =>
+      hasUploads(fileUploads) ||
+      !isEqual(datasetDetails, props.originalDetails),
+    [fileUploads, datasetDetails, props.originalDetails]
+  );
 
   // Determine if the upload form should be submittable, and if not, why not.
   // !! This is intentionally not nested ternaries!  The automated code
   // !! formatting in use by some committers makes nested ternaries
   // !! nearly incomprehensible.
-  const uploadSubmittable = useMemo(
-    () => {
-      if (!formIsValid)
-        return SubmittableState.Invalid;
+  const uploadSubmittable = useMemo(() => {
+    if (!formIsValid) return SubmittableState.Invalid;
 
-      if (props.isSubmitting)
-        return SubmittableState.InProgress;
+    if (props.isSubmitting) return SubmittableState.InProgress;
 
-      return SubmittableState.Submittable;
-    },
-    [ formIsValid, props.isSubmitting ]
-  );
+    if (!userHasChangedSomething) return SubmittableState.NothingToDo;
 
-  const { datasetDetails, fileUploads } = useDatasetFormState();
+    return SubmittableState.Submittable;
+  }, [formIsValid, props.isSubmitting, userHasChangedSomething]);
 
   const updateSection = useRef<HTMLElement>(null);
 
@@ -37,11 +57,12 @@ export function UpdateForm(props: DatasetFormProps): ReactElement {
     setFormIsValid(
       isDatasetFormValid(datasetDetails, props.formConfig, updateSection)
     );
-  }, [ datasetDetails, fileUploads, props ]);
+  }, [datasetDetails, fileUploads, props]);
 
   const onSubmit = () => {
     props.actions.submit();
-    findScrollable(updateSection.current)?.scrollTo(0, 0);
+    updateSection.current!.scrollIntoView();
+    // findScrollable(updateSection.current)?.scrollTo(0, 0);
   };
 
   return (

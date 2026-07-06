@@ -2,19 +2,26 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import {
   DatasetGetResponseBody,
   VdiServiceMetadata,
-  useVdiService
+  useVdiService,
 } from '../../Service';
 import { DatasetFormController } from '../../Common/Forms/DatasetFormController';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   BadUpload,
   DefaultDatasetFormState,
-  useDatasetFormState
+  useDatasetFormState,
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { useDispatch } from 'react-redux';
-import { clearBadUpload, receiveBadUpload, updateFormState } from '../../Actions/UserDatasetUploadActions';
+import {
+  clearBadUpload,
+  receiveBadUpload,
+  updateFormState,
+} from '../../Actions/UserDatasetUploadActions';
 import { UpdateForm } from './UpdateForm';
-import { configureFormProps, findDatasetTypeConfig } from '../../Common/Configuration';
+import {
+  configureFormProps,
+  findDatasetTypeConfig,
+} from '../../Common/Configuration';
 import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormControllerConfig';
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../Utils';
@@ -30,9 +37,11 @@ export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly closeModal: Runnable;
 }
 
-export function UpdateFormController(props: UpdateFormControllerProps): ReactElement {
+export function UpdateFormController(
+  props: UpdateFormControllerProps
+): ReactElement {
   const vdi = useVdiService();
-  const [ dataset, setDataset ] = useState<DatasetGetResponseBody>();
+  const [dataset, setDataset] = useState<DatasetGetResponseBody>();
 
   const dispatch = useDispatch();
   const formState = useDatasetFormState();
@@ -43,13 +52,10 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
     dispatch(clearBadUpload());
   };
 
-  useEffect(
-    () => {
-      if (vdi && props.datasetId)
-        (async () => setDataset(await vdi.getDatasetDetails(props.datasetId)))();
-    },
-    [ vdi, props.datasetId ],
-  );
+  useEffect(() => {
+    if (vdi && props.datasetId)
+      (async () => setDataset(await vdi.getDatasetDetails(props.datasetId)))();
+  }, [vdi, props.datasetId]);
 
   useEffect(
     () => {
@@ -62,32 +68,34 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
       if (dataset) {
         document.title = `Edit My Dataset: ${dataset?.name}`;
         const datasetMeta = convertDetailsToMeta(dataset);
-        dispatch(updateFormState({
-          ...formState,
-          datasetDetails: props.isPromotingToPublic
-            ? { ...datasetMeta, visibility: 'public' }
-            : datasetMeta,
-        }));
+        dispatch(
+          updateFormState({
+            ...formState,
+            datasetDetails: props.isPromotingToPublic
+              ? { ...datasetMeta, visibility: 'public' }
+              : datasetMeta,
+          })
+        );
       }
 
-      return () => { document.title = title; }
+      return () => {
+        document.title = title;
+      };
     },
 
     // This should only be triggered when the vdi dataset result changes.
     //
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ dataset ]
+    [dataset]
   );
 
   const formConfig = useMemo(
     () => {
-      if (!dataset?.type || !vdi)
-        return null;
+      if (!dataset?.type || !vdi) return null;
 
       const type = findDatasetTypeConfig(dataset.type, props.datasetTypes);
 
-      if (!type)
-        return null;
+      if (!type) return null;
 
       return {
         ...configureFormProps(type, props.formConfigs, vdi),
@@ -98,22 +106,23 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
 
     // Excluded values are constant deep trees.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ dataset, vdi ]
+    [dataset, vdi]
   );
 
-  const submitForm = ({ actions: { setSubmitting } }: DatasetFormProps) =>
+  const submitForm =
+    ({ actions: { setSubmitting } }: DatasetFormProps) =>
     () => {
-      setSubmitting(true)
+      setSubmitting(true);
       submitUpdate({
-        vdi:        vdi!,
-        dispatch:   dispatch,
-        datasetId:  props.datasetId,
-        original:   convertDetailsToMeta(dataset!),
-        updated:    formState.datasetDetails,
-        newFiles:   formState.fileUploads,
-        oldFiles:   dataset!.files.datasetProperties,
+        vdi: vdi!,
+        dispatch: dispatch,
+        datasetId: props.datasetId,
+        original: convertDetailsToMeta(dataset!),
+        updated: formState.datasetDetails,
+        newFiles: formState.fileUploads,
+        oldFiles: dataset!.files.datasetProperties,
       })
-        .then(res => {
+        .then((res) => {
           setSubmitting(false);
 
           const errors: BadUpload[] = [];
@@ -133,7 +142,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
           }
 
           if (res.deleteResult.status === 'error') {
-            for (const [ file, message ] of res.deleteResult.errors) {
+            for (const [file, message] of res.deleteResult.errors) {
               errors.push({
                 type: 500,
                 message: `deletion of file ${file} failed: ${message}`,
@@ -150,7 +159,7 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
             errors.push({
               type: 422,
               errors: res.patchResult.errors,
-            })
+            });
           }
 
           if (errors.length === 0) {
@@ -160,37 +169,46 @@ export function UpdateFormController(props: UpdateFormControllerProps): ReactEle
 
           dispatch(receiveBadUpload(errors));
         })
-        .catch(_ => {
+        .catch((_) => {
           setSubmitting(false);
 
-          dispatch(receiveBadUpload([{
-            type: 500,
-            message: 'error encountered while updating dataset'
-          }]));
+          dispatch(
+            receiveBadUpload([
+              {
+                type: 500,
+                message: 'error encountered while updating dataset',
+              },
+            ])
+          );
         });
     };
 
-  if (!dataset || !formConfig)
-    return <Loading />;
+  if (!dataset || !formConfig) return <Loading />;
 
-  return<>
-    <Modal
-      visible={true}
-      toggleVisible={onClose}
-      includeCloseButton={true}
-      themeRole="primary"
-      title={document.title}
-      titleSize="medium"
-    >
-      <DatasetFormController
-        {...props}
-        propFactory={p => ({ ...p, actions: {
-          ...p.actions,
-          submit: submitForm(p),
-        }})}
-        form={UpdateForm}
-        formConfig={formConfig}
-      />
-    </Modal>
-  </>;
+  return (
+    <>
+      <Modal
+        visible={true}
+        toggleVisible={onClose}
+        includeCloseButton={true}
+        themeRole="primary"
+        title={document.title}
+        titleSize="medium"
+      >
+        <DatasetFormController
+          {...props}
+          propFactory={(p) => ({
+            ...p,
+            originalDetails: convertDetailsToMeta(dataset),
+            actions: {
+              ...p.actions,
+              submit: submitForm(p),
+            },
+          })}
+          form={UpdateForm}
+          formConfig={formConfig}
+        />
+      </Modal>
+    </>
+  );
 }

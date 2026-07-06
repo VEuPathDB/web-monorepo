@@ -7,10 +7,7 @@ import {
   FileUploadConfig,
   UrlUploadConfig,
 } from '../../../../Configuration/UploadFormConfig';
-import {
-  Consumer,
-  JsonPathBuilder,
-} from '../../../../../Utils';
+import { Consumer, JsonPathBuilder, Nullable } from '../../../../../Utils';
 import { RadioList } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { formatFileSize } from '../../../../../Utils/formatting';
@@ -136,8 +133,8 @@ interface UploadFieldProps {
 // region File Input Sub-Component
 
 interface FileUploadState {
-  readonly file: File | undefined;
-  readonly setFile: Consumer<File | undefined>;
+  readonly files: Nullable<FileList>;
+  readonly setFiles: Consumer<Nullable<FileList>>;
   readonly vdiConfig: VdiServiceMetadata;
 }
 
@@ -160,8 +157,8 @@ function fileInput(props: FileUploadProps): ReactElement {
     <DataFileInput
       fieldName={fieldName}
       dataType={props.dataType}
-      required={props.required && !props.file}
-      setFile={props.setFile}
+      required={props.required && !props.files}
+      setFile={props.setFiles}
       vdiFeatures={props.vdiConfig.features}
     />
   );

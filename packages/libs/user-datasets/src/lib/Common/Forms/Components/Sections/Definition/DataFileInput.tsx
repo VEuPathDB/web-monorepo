@@ -1,21 +1,21 @@
 import React, { ReactElement } from 'react';
-import { FileInput } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
-import { Consumer } from '../../../../../Utils';
+import { Consumer, Nullable } from '../../../../../Utils';
 
 export interface DataFileInputProps {
   readonly fieldName: string;
   readonly dataType: DatasetTypeConfig;
   readonly vdiFeatures: VdiServiceFeatures;
   readonly required: boolean;
-  readonly setFile: Consumer<File | undefined>;
+  readonly setFile: Consumer<Nullable<FileList>>;
 }
 
 export function DataFileInput(props: DataFileInputProps): ReactElement {
   return (
     <>
-      <FileInput
+      <input
+        type="file"
         accept={buildFileExtensionList(
           props.vdiFeatures.supportedArchiveTypes,
           props.dataType.vdiConfig.allowedFileExtensions
@@ -23,18 +23,10 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
         id={props.fieldName}
         name={props.fieldName}
         required={props.required}
-        maxSizeBytes={props.dataType.vdiConfig.maxFileSize}
-        onChange={(file) => file
-          ? props.setFile(sanitizeFileName(file))
-          : props.setFile(undefined)
-        }
+        onChange={(e) => props.setFile(e.target.files)}
       />
     </>
   );
-}
-
-function sanitizeFileName(file: File): File {
-  return new File([file], file.name.replace(/\s+/g, '_'), file);
 }
 
 function buildFileExtensionList(

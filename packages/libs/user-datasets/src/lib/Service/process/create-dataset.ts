@@ -6,9 +6,11 @@ import {
 } from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
 import { BadUpload } from '../../StoreModules';
-import { Consumer } from '../../Utils';
+import { Consumer, Function } from '../../Utils';
 import { isEmpty } from 'lodash';
 import { ExternalIdentifiers } from '../Model/response-decoders';
+import { sanitizeFileName } from '../utils/sanitization';
+import { isNonBlankString } from '../../Utils/value-tests';
 
 export interface NewDatasetSubmission {
   readonly service: VdiService;
@@ -27,21 +29,20 @@ export async function submitNewDataset({
   uploads,
   ...req
 }: NewDatasetSubmission) {
-  const dataFiles = uploads.dataFiles?.map(convertDataFile) ?? [];
+  const combinedUploads: DatasetUpload[] = [];
 
-  const combinedUploads = uploads.url
-    ? [convertUrl(uploads.url), ...dataFiles]
-    : dataFiles;
-
-  if (uploads.documentFiles) {
-    uploads.documentFiles.forEach(it => combinedUploads.push(convertDocumentFile(it)));
+  if (isNonBlankString(uploads.url)) {
+    combinedUploads.push(convertUrl(uploads.url));
+  } else {
+    appendFiles(uploads.dataFiles, convertDataFile, combinedUploads);
   }
 
-  if (uploads.dataPropertiesFiles) {
-    for (const file of uploads.dataPropertiesFiles) {
-      combinedUploads.push(convertPropertiesFile(file));
-    }
-  }
+  appendFiles(uploads.documentFiles, convertDocumentFile, combinedUploads);
+  appendFiles(
+    uploads.dataPropertiesFiles,
+    convertPropertiesFile,
+    combinedUploads
+  );
 
   const scrubbedDetails = scrubDetails(details);
 
@@ -52,6 +53,20 @@ export async function submitNewDataset({
     req.onSuccess,
     req.onError
   );
+}
+
+function appendFiles(
+  fileList: FileList | undefined,
+  converter: Function<File, DatasetUpload>,
+  combinedUploads: DatasetUpload[]
+) {
+  if (fileList == null) {
+    return;
+  }
+
+  for (const file of fileList) {
+    combinedUploads.push(converter(sanitizeFileName(file)));
+  }
 }
 
 /**
@@ -89,14 +104,12 @@ function scrubDetails(details: PartialDatasetDetails): PartialDatasetDetails {
 function pruneSimpleRecords<T extends object>(
   records: readonly T[] | undefined
 ): T[] | undefined {
-  if (!records)
-    return undefined;
+  if (!records) return undefined;
 
   const out: T[] = [];
 
   for (const record of records) {
-    if (record && !isEmptyObject(record))
-      out.push(record);
+    if (record && !isEmptyObject(record)) out.push(record);
   }
 
   return out.length > 0 ? out : undefined;
@@ -114,25 +127,22 @@ function scrubExternalIdentifiers(
   };
 }
 
-
 type SimpleObject = Record<string, string | number | undefined>;
 function scrubSimpleObject(
   obj: SimpleObject | undefined
 ): SimpleObject | undefined {
-  if (!obj)
-    return undefined;
+  if (!obj) return undefined;
 
   const out: SimpleObject = {};
 
-  for (const [ key, value ] of Object.entries(obj)) {
+  for (const [key, value] of Object.entries(obj)) {
     switch (typeof value) {
-      case "string":
-        if (value.length > 0)
-          out[key] = value
+      case 'string':
+        if (value.length > 0) out[key] = value;
         break;
 
-      case "number":
-        out[key] = value
+      case 'number':
+        out[key] = value;
         break;
     }
   }
@@ -159,9 +169,7 @@ function scrubDatasetCharacteristics(
  * Tests if a given object contains truthy values.
  */
 function isEmptyObject(obj: Record<string, any>): boolean {
-  for (const key of Object.keys(obj))
-    if (obj[key])
-      return false;
+  for (const key of Object.keys(obj)) if (obj[key]) return false;
 
   return true;
 }
@@ -179,7 +187,7 @@ function removeEmpties<T>(values: readonly T[] | undefined): T[] | undefined {
 }
 
 function convertDocumentFile(file: File): DatasetUpload {
-  return { type: 'docFile', file }
+  return { type: 'docFile', file };
 }
 
 function convertPropertiesFile(file: File): DatasetUpload {

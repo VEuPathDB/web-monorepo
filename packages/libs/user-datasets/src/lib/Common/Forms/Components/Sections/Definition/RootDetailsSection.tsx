@@ -57,7 +57,10 @@ export interface RootDetailsSectionProps {
 export function RootDetailsSection(
   props: RootDetailsSectionProps
 ): ReactElement {
-  const { detailsJsonPath: jsonPath, formProps: { formConfig, ...formProps } } = props;
+  const {
+    detailsJsonPath: jsonPath,
+    formProps: { formConfig, ...formProps },
+  } = props;
 
   const dispatch = useDispatch();
   const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
@@ -80,12 +83,13 @@ export function RootDetailsSection(
   const fileUpload = buildFileProps(props.formProps, fileUploads, setUploads);
   const urlUpload = buildUrlProps(props.formProps, fileUploads, setUploads);
 
-  const referenceGenome = formConfig.dependencies
-    ?  <DatasetDependencies
+  const referenceGenome = formConfig.dependencies ? (
+    <DatasetDependencies
       config={formConfig.dependencies}
       datasetDetails={datasetDetails}
-      setDatasetDetails={setMetadata} />
-    : null;
+      setDatasetDetails={setMetadata}
+    />
+  ) : null;
 
   return (
     <section id="define-dataset">
@@ -118,7 +122,8 @@ export function RootDetailsSection(
           <VisibilityOptions
             datasetMeta={datasetDetails}
             setDatasetMeta={setMetadata}
-            jsonPath={jsonPath} />
+            jsonPath={jsonPath}
+          />
         )}
 
         {props.showDataInputs && (
@@ -173,17 +178,21 @@ function buildFileProps(
     ...dataInputConfig.file,
     vdiConfig,
     // TODO: add support multiple data files in a single upload.
-    file: isEmpty(uploads.dataFiles) ? undefined : uploads.dataFiles![0],
-    setFile: (value) =>
+    files: isEmpty(uploads.dataFiles) ? null : uploads.dataFiles!,
+    setFiles: (value) =>
       setUploads({
         ...uploads,
-        dataFiles: value ? [value] : [],
+        dataFiles: value ?? undefined,
       }),
   };
 }
 
 function buildUrlProps(
-  { formConfig: { dataInputConfig: { url } } }: DatasetFormProps,
+  {
+    formConfig: {
+      dataInputConfig: { url },
+    },
+  }: DatasetFormProps,
   uploads: DatasetUploads,
   setUploads: Consumer<DatasetUploads>
 ): OptionalUrlUploadProps {

@@ -1,6 +1,9 @@
-export type Runnable = () => void;
-export type Consumer<T> = (value: T) => void;
 export type BiConsumer<T1, T2> = (value1: T1, value2: T2) => void;
+export type Consumer<T> = (value: T) => void;
+export type Function<T, R> = (value: T) => R;
+export type Runnable = () => void;
+
+export type Nullable<T> = T | null;
 
 export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
 

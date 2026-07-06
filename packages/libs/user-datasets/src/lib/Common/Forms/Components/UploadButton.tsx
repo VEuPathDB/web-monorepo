@@ -6,6 +6,7 @@ export enum SubmittableState {
   Invalid,
   InProgress,
   Submittable,
+  NothingToDo,
 }
 
 export interface UploadButtonProps {
@@ -17,12 +18,6 @@ export interface UploadButtonProps {
 
 export function UploadButton(props: UploadButtonProps): ReactElement {
   const theme = useUITheme()?.palette?.primary;
-  const style: CSSProperties | undefined = theme
-    ? {
-      backgroundColor: theme.hue['600'],
-      boxShadow: "4px 5px " + theme.hue['700'],
-    }
-    : undefined;
 
   let disabled = false;
 
@@ -30,11 +25,11 @@ export function UploadButton(props: UploadButtonProps): ReactElement {
 
   let invalidFormHelp: ReactNode;
 
-  if (isNonEmptyString(props.className))
-    className += ' ' + props.className;
+  if (isNonEmptyString(props.className)) className += ' ' + props.className;
 
   switch (props.submittable) {
     case SubmittableState.InProgress:
+    case SubmittableState.NothingToDo:
       disabled = true;
       break;
 
@@ -54,8 +49,15 @@ export function UploadButton(props: UploadButtonProps): ReactElement {
       );
   }
 
-  if (disabled)
-    className += ' disabled';
+  const style: CSSProperties | undefined =
+    !disabled && theme
+      ? {
+          backgroundColor: theme.hue['600'],
+          boxShadow: '4px 5px ' + theme.hue['700'],
+        }
+      : undefined;
+
+  if (disabled) className += ' disabled';
 
   return (
     <>
