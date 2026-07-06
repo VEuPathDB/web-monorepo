@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock, YesNoToggle } from '../../index';
@@ -31,6 +31,10 @@ export function DatasetUsage({
 
   const setEnabled = (enabled: boolean) =>
     setClientSideState({ ...clientSideState, hasDisclaimer: enabled });
+
+  if (typeof hasDisclaimer === 'undefined' && datasetMeta.dataDisclaimer) {
+    setEnabled(true);
+  }
 
   const isPublic = datasetMeta.visibility === 'public';
 

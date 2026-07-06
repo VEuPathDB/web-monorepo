@@ -1,5 +1,6 @@
 import React, {
   ReactElement,
+  RefObject,
   useEffect,
   useMemo,
   useRef,
@@ -21,6 +22,7 @@ import { hasUploads } from '../../Service/Model/utility-types';
 
 export interface UpdateFormProps extends DatasetFormProps {
   readonly originalDetails: PartialDatasetDetails;
+  readonly scrollContainerRef: RefObject<HTMLElement>;
 }
 
 export function UpdateForm(props: UpdateFormProps): ReactElement {
@@ -61,8 +63,7 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
 
   const onSubmit = () => {
     props.actions.submit();
-    updateSection.current!.scrollIntoView();
-    // findScrollable(updateSection.current)?.scrollTo(0, 0);
+    props.scrollContainerRef.current?.scroll(0, 0);
   };
 
   return (
@@ -93,11 +94,4 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
       </form>
     </section>
   );
-}
-
-function findScrollable(node: HTMLElement | null): HTMLElement | null {
-  while (node && node.scrollHeight <= node.clientHeight)
-    node = node.parentElement;
-
-  return node;
 }

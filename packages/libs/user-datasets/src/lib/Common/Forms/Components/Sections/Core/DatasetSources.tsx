@@ -1,7 +1,10 @@
 import React, { ReactElement } from 'react';
 
 import { InputBlock, InputPair, YesNoToggle } from '../../index';
-import { PartialDatasetDetails, PostDatasetSource } from '../../../../../Service';
+import {
+  PartialDatasetDetails,
+  PostDatasetSource,
+} from '../../../../../Service';
 import {
   BiConsumer,
   Consumer,
@@ -25,10 +28,18 @@ export interface DatasetSourcesProps {
 export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   const { hasExternalSources: enabled } = props.clientState;
 
-  const setEnabled = (v: boolean) => props.setClientState({
-    ...props.clientState,
-    hasExternalSources: v,
-  });
+  const setEnabled = (v: boolean) =>
+    props.setClientState({
+      ...props.clientState,
+      hasExternalSources: v,
+    });
+
+  if (
+    typeof enabled === 'undefined' &&
+    !isEmpty(props.datasetMeta.datasetSources)
+  ) {
+    setEnabled(true);
+  }
 
   const safeSources = isEmpty(props.datasetMeta.datasetSources)
     ? [{}]
@@ -119,11 +130,9 @@ function DataSource({
 }: DataSourceProps): ReactElement {
   // Fields are required for the first entry, and for any other entries that
   // contain any truthy values
-  const required = enabled
-    && (
-      index === 0
-      || !(isEmpty(source.url) && isEmpty(source.version))
-    )
+  const required =
+    enabled &&
+    (index === 0 || !(isEmpty(source.url) && isEmpty(source.version)));
 
   return (
     <li className="field-grid">

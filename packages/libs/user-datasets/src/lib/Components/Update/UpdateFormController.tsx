@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   DatasetGetResponseBody,
   VdiServiceMetadata,
@@ -183,7 +189,11 @@ export function UpdateFormController(
         });
     };
 
-  if (!dataset || !formConfig) return <Loading />;
+  const modalScroll = useRef<HTMLDivElement>(null);
+
+  if (!dataset || !formConfig) {
+    return <Loading />;
+  }
 
   return (
     <>
@@ -194,11 +204,13 @@ export function UpdateFormController(
         themeRole="primary"
         title={document.title}
         titleSize="medium"
+        scrollContainerRef={modalScroll}
       >
         <DatasetFormController
           {...props}
           propFactory={(p) => ({
             ...p,
+            scrollContainerRef: modalScroll,
             originalDetails: convertDetailsToMeta(dataset),
             actions: {
               ...p.actions,
