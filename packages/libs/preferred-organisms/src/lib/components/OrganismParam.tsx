@@ -65,7 +65,7 @@ import {
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { useWdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import _ from 'lodash';
+import { intersection, sortBy, isEqual } from 'lodash';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 type FlatEnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam;
@@ -185,7 +185,7 @@ function TreeBoxOrganismEnumParam(
     leafTerms
   );
 
-  const trimmedPresets = _.intersection(
+  const trimmedPresets = intersection(
     organismValuePreset,
     Array.from(leafTerms)
   );
@@ -202,7 +202,7 @@ function TreeBoxOrganismEnumParam(
   };
 
   // current selection should reflect only leaf nodes
-  const currentSelection = _.intersection(
+  const currentSelection = intersection(
     decodeOrElse(arrayOf(string), [], props.value),
     Array.from(leafTerms)
   );
@@ -213,16 +213,16 @@ function TreeBoxOrganismEnumParam(
    * - If preset set and selection exactly matches preset, show save checkmark and disable save button
    * - If preset set and all applicable presets equals selection, show apply checkmark
    */
-  const sortedSelection = _.sortBy(currentSelection);
+  const sortedSelection = sortBy(currentSelection);
   const showApplyButtonCheckmark =
     organismValuePreset != null &&
     organismValuePreset.length > 0 &&
-    _.isEqual(sortedSelection, _.sortBy(trimmedPresets));
+    isEqual(sortedSelection, sortBy(trimmedPresets));
   const disableApplyButton =
     organismValuePreset == null || organismValuePreset.length === 0;
   const showSaveButtonCheckmark =
     organismValuePreset != null &&
-    _.isEqual(sortedSelection, _.sortBy(organismValuePreset));
+    isEqual(sortedSelection, sortBy(organismValuePreset));
   const disableSaveButton =
     currentSelection.length == 0 || showSaveButtonCheckmark;
 

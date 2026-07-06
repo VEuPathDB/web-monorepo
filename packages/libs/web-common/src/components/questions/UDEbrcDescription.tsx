@@ -24,9 +24,12 @@ export const useUDEbrcDescription = (
   const shouldLoadDatasetRecords = true;
 
   // Get the dataset ID from the first parameter's initialDisplayValue
-  const datasetId = useMemo(() => {
+ const datasetId = useMemo(() => {
     if (question.parameters[0].initialDisplayValue !== undefined) {
-      return diyUserDatasetIdToWdkRecordId(question.parameters[0].initialDisplayValue);
+      return (question.parameters[0].initialDisplayValue.includes('EDAUD_')
+              ? question.parameters[0].initialDisplayValue
+              : diyUserDatasetIdToWdkRecordId(question.parameters[0].initialDisplayValue)
+             );
     }
     return undefined;
   }, [question.parameters]);
@@ -38,7 +41,7 @@ export const useUDEbrcDescription = (
   // Fetch the dataset record if we have a dataset ID
   useWdkEffect(
     (wdkService) => {
-      if (datasetId) {
+      if (datasetId !== undefined) {
         let active = true;
         (async () => {
           try {

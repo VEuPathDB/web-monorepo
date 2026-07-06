@@ -16,6 +16,8 @@ type Progress = {
   reads: number;
 };
 
+const VALID_FILENAME_PATTERN = /\.(fastq|fq)(\.gz)?$/i;
+
 /**
  * Determine the most likely strain: the one with the highest `specific` count.
  * Returns null if no strain has any specific hits (no confident call).
@@ -66,6 +68,14 @@ export function PlasmoFast() {
 
   const onFileSelected = useCallback(async (file: File | null) => {
     if (file == null) return;
+
+    if (!VALID_FILENAME_PATTERN.test(file.name)) {
+      setFileName(file.name);
+      setError(
+        'Please select a FASTQ file (.fastq, .fq, .fastq.gz, or .fq.gz).'
+      );
+      return;
+    }
 
     // Reset state for a new run
     setFileName(file.name);
@@ -123,11 +133,13 @@ export function PlasmoFast() {
 
   return (
     <div className={cx('')}>
-      <h1>plasmoFAST &mdash; detect P. falciparum lab strains</h1>
+      <h1>
+        plasmoFAST &mdash; detect <i>P. falciparum</i> lab strains
+      </h1>
 
       <p>
         Select a FASTQ file and plasmoFAST will detect which{' '}
-        <em>Plasmodium falciparum</em> lab strain it most closely matches.
+        <i>Plasmodium falciparum</i> lab strain it most closely matches.
       </p>
 
       <div className={cx('--FormContainer')}>
@@ -135,7 +147,7 @@ export function PlasmoFast() {
           <span>FASTQ file</span>
           <FileInput
             key={fileInputKey}
-            accept=".fastq,.fastq.gz,.fq,.fq.gz"
+            accept=".fastq,.fastq.gz,.fq,.fq.gz,.gz,application/gzip,application/x-gzip"
             onChange={onFileSelected}
             disabled={isRunning}
           />
@@ -227,8 +239,9 @@ export function PlasmoFast() {
       </p>
 
       <p>
-        plasmoFAST was originally developed by Katie Ko (Kissinger Lab,
-        University of Georgia).
+        plasmoFAST was originally developed by Katie Ko (David Serre Lab,
+        University of Maryland). Source code available at{' '}
+        <a href="https://github.com/VEuPathDB/plasmoFAST">GitHub</a>.
       </p>
     </div>
   );
