@@ -24,7 +24,15 @@ export const useUDEbrcDescription = (
   const shouldLoadDatasetRecords = true;
 
   // Get the dataset ID from the first parameter's initialDisplayValue
-  const datasetId = question.parameters[0].initialDisplayValue;
+ const datasetId = useMemo(() => {
+    if (question.parameters[0].initialDisplayValue !== undefined) {
+      return (question.parameters[0].initialDisplayValue.includes('EDAUD_')
+              ? question.parameters[0].initialDisplayValue
+              : diyUserDatasetIdToWdkRecordId(question.parameters[0].initialDisplayValue)
+             );
+    }
+    return undefined;
+  }, [question.parameters]);
 
   const [datasetRecord, setDatasetRecord] = React.useState<
     RecordInstance | undefined
