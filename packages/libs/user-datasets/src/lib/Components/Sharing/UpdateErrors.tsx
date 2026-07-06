@@ -23,23 +23,20 @@ export function UpdateErrors({
 
   const inList = context === 'datasetsList';
 
-  const updateButton = inList || !errors.validationErrors
-    ? null
-    : (<button type="button" className="btn edit" onClick={onFixErrors}>
-      Add missing information
-    </button>)
+  const updateButton =
+    inList || !errors.validationErrors ? null : (
+      <button type="button" className="btn edit" onClick={onFixErrors}>
+        Add missing information
+      </button>
+    );
 
   if (errors.validationErrors) {
     content = (
       <>
         <p>
           {inList ? 'One or more datasets do' : 'Your dataset does'} not contain
-          enough information to be discoverable through <CommunityAccess />
-          .
+          enough information to be discoverable through <CommunityAccess />.
         </p>
-        {inList
-          ? undefined
-          : detailedValidationContent(errors)}
       </>
     );
   } else {
@@ -54,7 +51,7 @@ export function UpdateErrors({
   return (
     <div className="UserDataset-SharingModal-StatusView">
       <Icon fa="times-circle danger" />
-      <h2>Unable to Grant Public Access</h2>
+      <h2>More Information Needed</h2>
       {content}
       <div>
         {updateButton}
@@ -64,14 +61,20 @@ export function UpdateErrors({
   );
 }
 
-function detailedValidationContent(errors: CommunityPromotionError): ReactElement {
+function detailedValidationContent(
+  errors: CommunityPromotionError
+): ReactElement {
   const rows: ReactElement[] = [];
 
   let hasDatasetCharacteristicsErrors = false;
 
   for (const errorSet of errors.validationErrors!) {
     for (const message of errorSet.general)
-      rows.push(<tr><td colSpan={2}>{message}</td></tr>);
+      rows.push(
+        <tr>
+          <td colSpan={2}>{message}</td>
+        </tr>
+      );
 
     for (const field of Object.keys(errorSet.byField).sort()) {
       // multi-word fields
@@ -79,11 +82,12 @@ function detailedValidationContent(errors: CommunityPromotionError): ReactElemen
 
       // Special case, datasetCharacteristics
       if (field.indexOf('datasetCharacteristics') > -1) {
-
         if (!hasDatasetCharacteristicsErrors) {
           rows.push(
             <tr>
-              <th scope="row">Field Study or Clinical Trial Characteristics:</th>
+              <th scope="row">
+                Field Study or Clinical Trial Characteristics:
+              </th>
               <td>all fields required</td>
             </tr>
           );
@@ -94,9 +98,9 @@ function detailedValidationContent(errors: CommunityPromotionError): ReactElemen
         continue;
       }
 
-      let header: ReactNode = <th rowSpan={errorSet.byField[field].length}>
-        {parseKey(field)}:
-      </th>;
+      let header: ReactNode = (
+        <th rowSpan={errorSet.byField[field].length}>{parseKey(field)}:</th>
+      );
 
       for (const message of errorSet.byField[field]) {
         rows.push(
@@ -109,15 +113,16 @@ function detailedValidationContent(errors: CommunityPromotionError): ReactElemen
     }
   }
 
-  return <details>
-    <summary>Validation Details</summary>
-    <table id="community-error-list">{rows}</table>
-  </details>;
+  return (
+    <details>
+      <summary>Validation Details</summary>
+      <table id="community-error-list">{rows}</table>
+    </details>
+  );
 }
 
 function parseKey(key: string): string {
-  if (key.startsWith("$."))
-    key = key.substring(2);
+  if (key.startsWith('$.')) key = key.substring(2);
 
   const split = key.split(/\.|\[|].?/);
   const output = [];
@@ -126,11 +131,10 @@ function parseKey(key: string): string {
     const maybeIndex = parseInt(split[i]);
 
     if (isNaN(maybeIndex)) {
-      if (i > 0)
-        break;
+      if (i > 0) break;
 
       output.push(capFirst(split[i]));
-      continue
+      continue;
     }
 
     if (i > 0) {
