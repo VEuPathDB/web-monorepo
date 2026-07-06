@@ -60,8 +60,17 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
 
         <div className="title-with-button">
           <h2>{props.formConfig.verbiage.formTitle}</h2>
-          <button className="btn btn-info" onClick={onReset} type="button">
-            <Refresh style={{ marginRight: '0.5ch' }} />
+          <button
+            className="btn btn-info"
+            onClick={onReset}
+            type="button"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5ch',
+            }}
+          >
+            <Refresh style={{ fontSize: '1.2em' }} />
             Reset
           </button>
         </div>
