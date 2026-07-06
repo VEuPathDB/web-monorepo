@@ -9,7 +9,6 @@ import {
   SHARING_MODAL_OPEN,
   SHARING_DATASET_PENDING,
   SHARING_ERROR,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
@@ -26,7 +25,6 @@ type SharingModalState = {
   sharingDatasetPending: boolean;
   shareError: Error | undefined;
   shareSuccessful: boolean | undefined;
-  communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
   updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
@@ -69,7 +67,6 @@ const initialState: State = {
   sharingDatasetPending: false,
   shareError: undefined,
   shareSuccessful: undefined,
-  communityModalOpen: false,
   updateDatasetCommunityVisibilityPending: false,
   updateDatasetCommunityVisibilitySuccess: false,
   updateDatasetCommunityVisibilityError: undefined,
@@ -163,19 +160,6 @@ export function reduce(state: State = initialState, action: Action): State {
       return state;
     }
 
-    case updateCommunityModalVisibility.type:
-      return {
-        ...state,
-        communityModalOpen: action.payload.isVisible,
-        // clear related states when closed
-        ...(action.payload.isVisible
-          ? {}
-          : {
-              updateDatasetCommunityVisibilityError: undefined,
-              updateDatasetCommunityVisibilityPending: false,
-              updateDatasetCommunityVisibilitySuccess: false,
-            }),
-      };
     case updateDatasetCommunityVisibilityError.type:
       return {
         ...state,

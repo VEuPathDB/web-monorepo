@@ -1,16 +1,11 @@
 import './globals';
 import { vdiServiceUrl } from './constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { RouteComponentProps } from 'react-router-dom';
 
 import { isEmpty, partial } from 'lodash';
 import reportWebVitals from './reportWebVitals';
-
-import {
-  userDatasetTypeConfigs,
-  uploadFormConfigurators,
-} from '@veupathdb/web-common/src/user-dataset-upload-config';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
@@ -69,7 +64,13 @@ initialize({
         const [vdiConf, setVdiConf] = useState<VdiApiConfig>();
         const [allowsUploads, setAllowsUploads] = useState<boolean>();
 
-        useVdiService(async (vdi) => {
+        const vdi = useVdiService();
+
+        useEffect(() => {
+          if (!vdi) {
+            return;
+          }
+
           vdi
             .getServiceMetadata()
             .then((it) => it.configuration.api)
@@ -78,7 +79,7 @@ initialize({
             .getPluginList(projectId)
             .then((it) => it.some((conf) => !isEmpty(conf.dataTypes)))
             .then(setAllowsUploads);
-        });
+        }, [vdi])
 
         return !projectName || !vdiConf || allowsUploads === undefined ? (
           <Loading />

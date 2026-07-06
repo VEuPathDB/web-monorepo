@@ -25,7 +25,7 @@ export function useDiyDatasets() {
         install_target: projectId,
       });
       // potentially refactor the following filter as a utility function
-      // other similar uses: UserDatasetDetail.tsx and BigwigDatasetDetail.tsx
+      // other similar uses: DatasetManagement.tsx and BigwigDatasetDetail.tsx
       const validUserDatasets = userDatasets.filter(
         ({
           status: {

@@ -14,7 +14,6 @@ import {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
@@ -43,7 +42,6 @@ const ActionCreators = {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
 };
 
@@ -151,7 +149,6 @@ class UserDatasetListController extends PageController<Props> {
         sharingModalOpen,
         shareError,
         shareSuccessful,
-        communityModalOpen,
         updateDatasetCommunityVisibilityError,
         updateDatasetCommunityVisibilityPending,
         updateDatasetCommunityVisibilitySuccess,
@@ -172,7 +169,6 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
     } = this.props.dispatchProps;
 
@@ -200,9 +196,7 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
-      communityModalOpen,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
