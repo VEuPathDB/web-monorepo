@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Refresh } from '@material-ui/icons';
 
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
@@ -60,6 +61,7 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
         <div className="title-with-button">
           <h2>{props.formConfig.verbiage.formTitle}</h2>
           <button className="btn btn-info" onClick={onReset} type="button">
+            <Refresh style={{ marginRight: '0.5ch' }} />
             Reset
           </button>
         </div>
