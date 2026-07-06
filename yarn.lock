@@ -8446,7 +8446,7 @@ __metadata:
     script-loader: ^0.7.2
     source-map-loader: ^1.1.2
     ts-loader: ^5.4.5
-    typescript: 3.7
+    typescript: ">=4"
     url-loader: ^1.1.2
     webpack: ^5.84.1
     webpack-merge: ^5.7.3
@@ -9313,7 +9313,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@veupathdb/site-tsconfig@workspace:packages/configs/site-tsconfig"
   peerDependencies:
-    typescript: 3.7
+    typescript: ">=4"
   languageName: unknown
   linkType: soft
 
