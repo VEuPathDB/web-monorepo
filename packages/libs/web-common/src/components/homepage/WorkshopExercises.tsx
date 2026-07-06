@@ -87,7 +87,9 @@ function useCardMetadata(): Result<CardMetadata> | undefined {
             setWorkshopExercisesResponseError(response.statusText);
           }
         } catch (error) {
-          setWorkshopExercisesResponseError(error.message);
+          setWorkshopExercisesResponseError(
+            error instanceof Error ? error.message : String(error)
+          );
         }
       })();
     }

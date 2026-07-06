@@ -77,7 +77,9 @@ function useFeaturedToolMetadata(): Result<FeaturedToolMetadata> | undefined {
             setFeaturedToolError(response.statusText);
           }
         } catch (error) {
-          setFeaturedToolError(error.message);
+          setFeaturedToolError(
+            error instanceof Error ? error.message : String(error)
+          );
         }
       })();
     }
