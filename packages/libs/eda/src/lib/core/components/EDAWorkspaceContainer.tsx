@@ -56,8 +56,8 @@ export function EDAWorkspaceContainer(props: Props) {
           message: (studyId.includes('EDAUD_')
             ?
             <>
-              This is a user dataset; either it is not available to you
-              or there are none available to you. Would you like to <Link to="/workspace/datasets/new">upload</Link> one?
+              This is a user dataset; either it is not available 
+              or there are none available to this user. Would you like to <Link to="/workspace/datasets/new">upload</Link> one?
             </>
             :
             <>
