@@ -229,7 +229,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   }
 
   getColumns(): any[] {
-    const { baseUrl, user } = this.props;
+    const { baseUrl, user, vdiConfig } = this.props;
     function isOwner(ownerId: number): boolean {
       return user.id === ownerId;
     }
@@ -371,7 +371,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         key: 'size',
         name: 'Size',
         helpText:
-          'The dataset size. Users can store up to 10 GB of data in their “My Datasets” workspace.',
+          `The dataset size. Users can store up to ${formatFileSize(vdiConfig.api.userMaxStorageSize)} of data in their “My Datasets” workspace.`,
         sortable: true,
         renderCell: textCell('fileSizeTotal', (size: number) =>
           formatFileSize(size)
