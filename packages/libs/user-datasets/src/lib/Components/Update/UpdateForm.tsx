@@ -62,7 +62,8 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
       && props.formConfig.dataType.vdiConfig.usesDataProperties
       && isEmpty(fileUploads.dataPropertiesFiles)
       && isEmpty(props.originalDataset.files.datasetProperties),
-    [ datasetDetails, props, fileUploads ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ datasetDetails, fileUploads ]
   );
 
   useEffect(() => {
@@ -105,15 +106,5 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
         />
       </form>
     </section>
-  );
-}
-
-function isMissingDatasetProperties(
-  type: DatasetTypeConfig,
-  files: DatasetUploads
-): boolean {
-  return (
-
-    type.vdiConfig.usesDataProperties && isEmpty(files.dataPropertiesFiles)
   );
 }
