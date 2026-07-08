@@ -127,6 +127,7 @@ export function UpdateFormController(
         updated: formState.datasetDetails,
         newFiles: formState.fileUploads,
         oldFiles: dataset!.files.datasetProperties,
+        formState: formState.formMetaState,
       })
         .then((res) => {
           setSubmitting(false);
@@ -212,6 +213,7 @@ export function UpdateFormController(
             ...p,
             scrollContainerRef: modalScroll,
             originalDetails: convertDetailsToMeta(dataset),
+            originalDataset: dataset,
             actions: {
               ...p.actions,
               submit: submitForm(p),
