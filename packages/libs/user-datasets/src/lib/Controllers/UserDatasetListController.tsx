@@ -174,8 +174,8 @@ class UserDatasetListController extends PageController<Props> {
       sharingSuccess,
       sharingError,
       updateDatasetCommunityVisibility,
-      updateDatasetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilitySuccess: resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityError: resetCommunityVisibilityError,
     } = this.props.dispatchProps;
 
     const listProps: DatasetListProps = {
@@ -207,9 +207,8 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
       updateDatasetCommunityVisibilitySuccessReset:
-        updateDatasetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilityErrorReset:
-        updateDatasetCommunityVisibilityError,
+        resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityErrorReset: resetCommunityVisibilityError,
     };
 
     const noDatasetsForThisProject =

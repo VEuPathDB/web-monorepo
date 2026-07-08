@@ -226,8 +226,8 @@ class DatasetManagementController extends PageController<MergedProps> {
       sharingSuccess,
       sharingError,
       updateDatasetCommunityVisibility,
-      updateDatasetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilitySuccess: resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityError: resetCommunityVisibilityError,
     } = this.props.dispatchProps;
     const {
       userDatasetDetails: entry,
@@ -289,9 +289,8 @@ class DatasetManagementController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
       updateDatasetCommunityVisibilitySuccessReset:
-        updateDatasetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilityErrorReset:
-        updateDatasetCommunityVisibilityError,
+        resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityErrorReset: resetCommunityVisibilityError,
       datasetSize: size,
       vdiConfig: serviceMetadata,
 
