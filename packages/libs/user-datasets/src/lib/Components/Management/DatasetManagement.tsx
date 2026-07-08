@@ -141,6 +141,13 @@ export interface DatasetManagementState {
   readonly isCommunityModalOpen: boolean;
 }
 
+enum CommunityPromotability {
+  CanPromote,
+  NotInstalled,
+  MissingDatasetProperties,
+  UnknownError,
+}
+
 class DatasetManagement<
   S extends DatasetManagementState = DatasetManagementState
 > extends React.Component<DatasetManagementProps, S> {
@@ -165,6 +172,30 @@ class DatasetManagement<
     this.closeSharingModal = this.closeSharingModal.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
     this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
+  }
+
+  private hasDatasetPropertiesFile(): boolean {
+    return !isEmpty(this.props.userDataset?.files?.datasetProperties);
+  }
+
+  private testCommunityPromotability(): CommunityPromotability {
+    if (!this.isInstalled()) return CommunityPromotability.NotInstalled;
+
+    const { userDataset, datasetTypes } = this.props;
+
+    const type = findDatasetTypeConfig(userDataset.type, datasetTypes!);
+
+    if (!type) {
+      return CommunityPromotability.UnknownError;
+    }
+
+    if (type.vdiConfig.usesDataProperties) {
+      return this.hasDatasetPropertiesFile()
+        ? CommunityPromotability.CanPromote
+        : CommunityPromotability.MissingDatasetProperties;
+    }
+
+    return CommunityPromotability.CanPromote;
   }
 
   openSharingModal() {
@@ -455,9 +486,18 @@ class DatasetManagement<
   renderDatasetActions() {
     const { isOwner } = this.props;
 
-    const notInstalledMessage = this.isInstalled()
-      ? undefined
-      : 'Datasets that have not been installed cannot be made public.';
+    const unpromotableMessage = (() => {
+      switch (this.testCommunityPromotability()) {
+        case CommunityPromotability.CanPromote:
+          return undefined;
+        case CommunityPromotability.NotInstalled:
+          return 'Datasets that have not been installed cannot be made public.';
+        case CommunityPromotability.MissingDatasetProperties:
+          return 'A variable annotations file is required to make this dataset public.';
+        default:
+          return 'Dataset cannot be made public at this time due to a site error.';
+      }
+    })();
 
     const editable =
       isOwner &&
@@ -493,7 +533,7 @@ class DatasetManagement<
                   break;
               }
             }}
-            disableCommunityReason={notInstalledMessage}
+            disableCommunityReason={unpromotableMessage}
             communityDatasetsEnabled={this.props.enablePublicUserDatasets}
           />
         )}
