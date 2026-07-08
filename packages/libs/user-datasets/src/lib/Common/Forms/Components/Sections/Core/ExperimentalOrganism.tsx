@@ -57,7 +57,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
 
   return (
     <>
-      <InputBlock header="Experimental Organism" isCommunityRelated={true}>
+      <InputBlock header="Experimental Organism">
         <p className="section-description">
           Indicate the species and strain of the organism that was used to
           generate data. The Experimental Organism may differ from the Reference

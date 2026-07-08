@@ -56,10 +56,7 @@ export function CollaboratorsSection(
   });
 
   return (
-    <InputBlock
-      header="Principal Investigators and Collaborators"
-      isCommunityRelated={true}
-    >
+    <InputBlock header="Principal Investigators and Collaborators">
       <ol className="multi-input contact-block">{contactBlocks}</ol>
 
       <div className="field-grid">

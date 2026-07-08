@@ -7,6 +7,7 @@ export type {
   OptionalValuePatch,
   PartialCharacteristics,
   PartialDatasetDetails,
+  PartialDatasetPublication,
   PostDatasetSource,
   ShareReceiptAction,
 } from './request-types';
@@ -24,6 +25,7 @@ export type {
   DatasetPostResponse,
   DatasetPostResponseBody,
   DatasetPropertiesDeleteResponse,
+  DatasetPublication,
   DatasetPutResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,

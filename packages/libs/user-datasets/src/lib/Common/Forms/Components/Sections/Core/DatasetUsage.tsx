@@ -39,7 +39,7 @@ export function DatasetUsage({
   const isPublic = datasetMeta.visibility === 'public';
 
   return (
-    <InputBlock header="Dataset Usage" isCommunityRelated={true}>
+    <InputBlock header="Dataset Usage">
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}
