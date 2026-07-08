@@ -74,7 +74,7 @@ function appendFiles(
  *
  * @param details
  */
-function scrubDetails(details: PartialDatasetDetails): PartialDatasetDetails {
+export function scrubDetails(details: PartialDatasetDetails): PartialDatasetDetails {
   return {
     ...details,
 

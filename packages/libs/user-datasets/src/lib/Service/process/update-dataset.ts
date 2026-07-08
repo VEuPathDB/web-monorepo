@@ -18,6 +18,9 @@ import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { receiveBadUpload, trackUploadProgress } from '../../Actions/UserDatasetUploadActions';
 import { statusStringToCode } from '../utils/conversions';
+import { scrubDetails } from './create-dataset';
+import { ClientSideUploadFormState } from '../../StoreModules';
+import { Mutable } from '../../Utils/types';
 
 export interface UpdateSubmission {
   readonly vdi:       VdiService;
@@ -27,6 +30,7 @@ export interface UpdateSubmission {
   readonly newFiles:  DatasetUploads;
   readonly oldFiles:  DatasetFileDetails[] | undefined;
   readonly dispatch:  Dispatch<any, EpicDependencies>;
+  readonly formState: ClientSideUploadFormState;
 }
 
 export interface UpdateResult {
@@ -38,8 +42,30 @@ export interface UpdateResult {
 export async function submitUpdate(submission: UpdateSubmission): Promise<UpdateResult> {
   const { vdi, datasetId } = submission;
 
+  const mutableSubmission: Mutable<PartialDatasetDetails> = { ...submission.updated };
+
+  if (!submission.formState.hasExternalSources) {
+    mutableSubmission.datasetSources = undefined;
+  }
+
+  if (!submission.formState.hasDisclaimer) {
+    mutableSubmission.dataDisclaimer = undefined;
+  }
+
+  if (!submission.formState.hasExperimentalOrganism) {
+    mutableSubmission.experimentalOrganism = undefined;
+  }
+
+  if (!submission.formState.isStudy) {
+    mutableSubmission.datasetCharacteristics = undefined;
+  }
+
   const patchResult: PatchResult = await (async () => {
-    const patchBody = convertMetaToPatch(submission.original, submission.updated);
+    const patchBody = convertMetaToPatch(
+      scrubDetails(submission.original),
+      scrubDetails(mutableSubmission),
+    );
+
     return patchBody == null
       ? { status: 'success' }
       : await submitPatch(vdi, datasetId, patchBody);
