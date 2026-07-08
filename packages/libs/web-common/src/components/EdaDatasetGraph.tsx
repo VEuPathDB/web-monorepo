@@ -89,6 +89,8 @@ export function EdaDatasetGraph(props: Props) {
       ? plotConfigs.filter((_, index) => selectedPlotsIndex.includes(index))
       : [];
 
+  console.log({ plotConfigs });
+
   return (
     <div>
       {showGraph && plotConfigs && (
@@ -152,6 +154,7 @@ export function EdaDatasetGraph(props: Props) {
 
               return (
                 <div
+                  key={plotConfig.plotName}
                   style={{ width: plotConfig.plotType === 'bar' ? 800 : 500 }}
                 >
                   <PlotComponent
