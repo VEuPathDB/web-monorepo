@@ -12,6 +12,7 @@ export function convertDetailsToMeta(meta: DatasetGetResponseBody): PartialDatas
     dependencies: meta.dependencies,
     description: meta.description,
     publications: meta.publications,
+    visibility: meta.visibility,
     contacts: meta.contacts,
     projectName: meta.projectName,
     programName: meta.programName,
