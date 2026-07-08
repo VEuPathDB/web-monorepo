@@ -4,7 +4,6 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useStudyMetadata,
-  useSubsettingClient,
 } from '@veupathdb/eda/lib/core';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
 import { barplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/BarplotVisualization';
@@ -53,7 +52,6 @@ function BarPlotAdapter(props: AdapterProps) {
   const { xAxisVariable, yAxisVariable, geneDisplaySpec, plotTitle } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
-  const subsettingClient = useSubsettingClient();
   const findEntityAndVariable = useFindEntityAndVariable();
   const data = useCachedPromise(
     async function getData() {
@@ -118,12 +116,29 @@ function BarPlotAdapter(props: AdapterProps) {
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
   const yAxisEntityAndVariable = findEntityAndVariable(yAxisVariable);
 
-  if (isFaceted(data.value)) {
-    throw new Error('Received unexpected faceted data.');
-  }
-
   if (data.error) {
     return <div>Error: {String(data.error)}</div>;
+  }
+
+  // A no-data response from the backend serialises as { facets: [] } (see
+  // barplotResponseToData). isFaceted() treats an empty facets array as faceted
+  // via a vacuous [].every(), so detect emptiness explicitly before the throw.
+  const noData =
+    data.value != null &&
+    (isFaceted(data.value)
+      ? data.value.facets.length === 0
+      : data.value.series.length === 0);
+
+  if (noData) {
+    return (
+      <div>
+        {plotTitle ? `${plotTitle}: no data available` : 'No data available'}
+      </div>
+    );
+  }
+
+  if (isFaceted(data.value)) {
+    throw new Error('Received unexpected faceted data.');
   }
 
   return (
