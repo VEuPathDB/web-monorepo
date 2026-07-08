@@ -327,7 +327,7 @@ class DatasetManagement<
                 </ul>
               ),
             },
-        config.projectId === 'ClinEpiDB' || !isInstalled
+        userDataset.type.name === 'isasimple' || !isInstalled
           ? null
           : {
               attribute: 'View',
