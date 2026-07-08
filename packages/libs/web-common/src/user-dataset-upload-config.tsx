@@ -38,27 +38,27 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
   baseDatasetTypeConfigs: [
     {
       ...implementedUploadTypes.bigwigfiles,
-      description: `Integrate your bigWig data in ${projectId}.`,
+      description: `Integrate your bigWig data into ${projectId}.`,
     },
     {
       ...implementedUploadTypes.biom,
-      description: `Integrate your BIOM study data in ${projectId}.`,
+      description: `Integrate your BIOM study data into ${projectId}.`,
     },
     {
       ...implementedUploadTypes.genelist,
-      description: `Integrate your gene list in ${projectId}.`,
+      description: `Integrate your gene list into ${projectId}.`,
     },
     {
       ...implementedUploadTypes.isasimple,
-      description: `Integrate your data table in ${projectId}.`,
+      description: `Explore and visualize your data table in ${projectId}`,
     },
     {
       ...implementedUploadTypes.phenotype,
-      description: `Integrate your phenotype data in ${projectId}.`,
+      description: `Integrate your phenotype data into ${projectId}.`,
     },
     {
       ...implementedUploadTypes.rnaseq,
-      description: `Integrate your normalized RNA-Seq data in ${projectId}.`,
+      description: `Integrate your normalized RNA-Seq data into ${projectId}.`,
     },
   ],
 
