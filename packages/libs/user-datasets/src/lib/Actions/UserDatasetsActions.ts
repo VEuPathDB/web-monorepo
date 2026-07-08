@@ -425,6 +425,52 @@ export function sharingError(
 
 //==============================================================================
 
+export const COMMUNITY_VISIBILITY_SUCCESS_RESET =
+  'user-datasets/community-visibility-success-reset';
+
+export type CommunityVisibilitySuccessResetAction = {
+  type: typeof COMMUNITY_VISIBILITY_SUCCESS_RESET;
+  payload: {
+    updateDatasetCommunityVisibilitySuccess: boolean | undefined;
+  };
+};
+
+export function communityVisibilitySuccessReset(
+  updateDatasetCommunityVisibilitySuccess: boolean | undefined
+): CommunityVisibilitySuccessResetAction {
+  return {
+    type: COMMUNITY_VISIBILITY_SUCCESS_RESET,
+    payload: {
+      updateDatasetCommunityVisibilitySuccess,
+    },
+  };
+}
+
+//==============================================================================
+
+export const COMMUNITY_VISIBILITY_ERROR_RESET =
+  'user-datasets/community-visibility-error-reset';
+
+export type CommunityVisibilityErrorResetAction = {
+  type: typeof COMMUNITY_VISIBILITY_ERROR_RESET;
+  payload: {
+    updateDatasetCommunityVisibilityError: CommunityPromotionError | undefined;
+  };
+};
+
+export function communityVisibilityErrorReset(
+  updateDatasetCommunityVisibilityError: CommunityPromotionError | undefined
+): CommunityVisibilityErrorResetAction {
+  return {
+    type: COMMUNITY_VISIBILITY_ERROR_RESET,
+    payload: {
+      updateDatasetCommunityVisibilityError,
+    },
+  };
+}
+
+//==============================================================================
+
 export const SHARING_MODAL_OPEN = 'user-datasets/sharing-modal-open-state';
 
 export type SharingModalOpenAction = {

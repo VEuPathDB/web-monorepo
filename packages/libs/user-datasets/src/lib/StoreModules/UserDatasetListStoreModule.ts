@@ -13,6 +13,8 @@ import {
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
   LIST_ITEM_UPDATE_SUCCESS,
+  COMMUNITY_VISIBILITY_SUCCESS_RESET,
+  COMMUNITY_VISIBILITY_ERROR_RESET,
 } from '../Actions/UserDatasetsActions';
 
 import { DatasetListEntry } from '../Service';
@@ -176,6 +178,18 @@ export function reduce(state: State = initialState, action: Action): State {
         ...state,
         updateDatasetCommunityVisibilityPending: false,
         updateDatasetCommunityVisibilitySuccess: true,
+      };
+    case COMMUNITY_VISIBILITY_SUCCESS_RESET:
+      return {
+        ...state,
+        updateDatasetCommunityVisibilitySuccess:
+          action.payload.updateDatasetCommunityVisibilitySuccess ?? false,
+      };
+    case COMMUNITY_VISIBILITY_ERROR_RESET:
+      return {
+        ...state,
+        updateDatasetCommunityVisibilityError:
+          action.payload.updateDatasetCommunityVisibilityError,
       };
 
     default:

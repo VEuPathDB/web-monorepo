@@ -15,6 +15,8 @@ import {
   sharingError,
   sharingSuccess,
   updateDatasetCommunityVisibility,
+  communityVisibilitySuccessReset,
+  communityVisibilityErrorReset,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
@@ -43,6 +45,8 @@ const ActionCreators = {
   sharingError,
   sharingSuccess,
   updateDatasetCommunityVisibility,
+  communityVisibilitySuccessReset,
+  communityVisibilityErrorReset,
 };
 
 type StateProps = Pick<
