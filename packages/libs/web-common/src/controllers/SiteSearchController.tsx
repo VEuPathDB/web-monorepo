@@ -36,6 +36,7 @@ import {
   ORGANISM_PARAM,
   FILTERS_PARAM,
 } from '../components/SiteSearch/SiteSearchConstants';
+import { getTypedError } from '@veupathdb/wdk-client/lib/Utils/Errors';
 
 interface Props {
   offerOrganismFilter?: boolean;
@@ -452,7 +453,7 @@ function useSiteSearchResponse(
         effectiveFilter,
       };
     } catch (error) {
-      return { type: 'error', error };
+      return { type: 'error', error: getTypedError(error)  };
     }
   }, [
     searchString,

@@ -712,7 +712,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'community-userdatasets',
-          display: 'User Datasets (public)',
+          display: 'User Datasets (my own and public)',
           type: 'reactRoute',
           url: '/search/userdataset/AllUserDatasets/result',
           metadata: {
