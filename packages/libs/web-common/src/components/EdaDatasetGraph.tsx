@@ -152,6 +152,7 @@ export function EdaDatasetGraph(props: Props) {
 
               return (
                 <div
+                  key={plotConfig.plotName}
                   style={{ width: plotConfig.plotType === 'bar' ? 800 : 500 }}
                 >
                   <PlotComponent
