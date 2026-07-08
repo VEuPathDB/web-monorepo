@@ -18,18 +18,25 @@ import {
   sharingError,
   sharingSuccess,
   updateDatasetCommunityVisibility,
-  loadVdiServiceMetadata
+  loadVdiServiceMetadata,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../../Actions/UserDatasetsActions';
-
 
 import { StateSlice } from '../../StoreModules/types';
 import { DataNoun } from '../../Utils/types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { DatasetFormConfigurators, DatasetTypeConfig } from '../../Common/Configuration';
+import {
+  DatasetFormConfigurators,
+  DatasetTypeConfig,
+} from '../../Common/Configuration';
 import { History } from 'history';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
 import BigwigDatasetManagement from './BigwigDatasetManagement';
-import DatasetManagement, { DatasetEditModalProps, DatasetManagementProps } from './DatasetManagement';
+import DatasetManagement, {
+  DatasetEditModalProps,
+  DatasetManagementProps,
+} from './DatasetManagement';
 import EmptyState from '../EmptyState';
 import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 import EdaDatasetManagement from './EdaDatasetManagement';
@@ -45,7 +52,9 @@ const ActionCreators = {
   sharingError,
   sharingSuccess,
   updateDatasetCommunityVisibility,
-  loadVdiServiceMetadata
+  loadVdiServiceMetadata,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 };
 
 type StateProps = StateSlice['userDatasetDetail'] & StateSlice['globalData'];
@@ -55,7 +64,10 @@ type OwnProps = {
   detailsPageTitle: string;
   workspaceTitle: string;
   id: string;
-  detailComponentsByTypeName?: Record<string, ComponentType<DatasetManagementProps>>;
+  detailComponentsByTypeName?: Record<
+    string,
+    ComponentType<DatasetManagementProps>
+  >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
   includeAllLink: boolean;
@@ -112,8 +124,8 @@ class DatasetManagementController extends PageController<MergedProps> {
 
     if (prevProps == null) {
       if (
-        stateProps.userDatasetDetails?.resource?.datasetId === ownProps.id
-        && ownProps.editModal?.showModal
+        stateProps.userDatasetDetails?.resource?.datasetId === ownProps.id &&
+        ownProps.editModal?.showModal
       ) {
         return;
       }
@@ -151,7 +163,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       userDatasetDetails: entry,
       user,
       questions,
-      config
+      config,
     } = this.props.stateProps;
 
     if (user && user.isGuest) return true;
@@ -203,7 +215,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       dataNoun,
       enablePublicUserDatasets,
       includeAllLink,
-      includeNameHeader
+      includeNameHeader,
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
@@ -213,7 +225,9 @@ class DatasetManagementController extends PageController<MergedProps> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateDatasetCommunityVisibility
+      updateDatasetCommunityVisibility,
+      updateDatasetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityError,
     } = this.props.dispatchProps;
     const {
       userDatasetDetails: entry,
@@ -229,7 +243,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
-      serviceMetadata
+      serviceMetadata,
     } = this.props.stateProps;
 
     if (!entry?.resource || !serviceMetadata) return <Loading />;
@@ -274,6 +288,10 @@ class DatasetManagementController extends PageController<MergedProps> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilitySuccessReset:
+        updateDatasetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityErrorReset:
+        updateDatasetCommunityVisibilityError,
       datasetSize: size,
       vdiConfig: serviceMetadata,
 
@@ -303,13 +321,13 @@ const enhance = connect<
 >(
   (state) => ({
     ...state.globalData,
-    ...state.userDatasetDetail
+    ...state.userDatasetDetail,
   }),
   ActionCreators,
   (stateProps, dispatchProps, ownProps) => ({
     stateProps,
     dispatchProps,
-    ownProps
+    ownProps,
   })
 );
 

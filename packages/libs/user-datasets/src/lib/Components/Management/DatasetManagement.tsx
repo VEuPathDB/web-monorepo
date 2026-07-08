@@ -32,6 +32,8 @@ import {
   updateDatasetCommunityVisibility,
   updateSharingModalState,
   updateUserDatasetDetail,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
 import {
@@ -90,6 +92,8 @@ export interface DatasetManagementProps {
   updateDatasetCommunityVisibilityError?: CommunityPromotionError;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilitySuccessReset: typeof updateDatasetCommunityVisibilitySuccess;
+  updateDatasetCommunityVisibilityErrorReset: typeof updateDatasetCommunityVisibilityError;
   datasetSize: number;
 
   /**
@@ -474,6 +478,12 @@ class DatasetManagement<
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
+                  this.props.updateDatasetCommunityVisibilitySuccessReset(
+                    false
+                  );
+                  this.props.updateDatasetCommunityVisibilityErrorReset(
+                    undefined
+                  );
                   this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':

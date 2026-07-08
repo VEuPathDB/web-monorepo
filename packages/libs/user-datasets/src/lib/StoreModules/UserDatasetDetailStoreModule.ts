@@ -19,8 +19,6 @@ import {
   updateDatasetCommunityVisibilitySuccess,
   METADATA_LOADING,
   METADATA_RECEIVED,
-  COMMUNITY_VISIBILITY_SUCCESS_RESET,
-  COMMUNITY_VISIBILITY_ERROR_RESET,
 } from '../Actions/UserDatasetsActions';
 
 import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service';
@@ -196,19 +194,7 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         updateDatasetCommunityVisibilityPending: false,
-        updateDatasetCommunityVisibilitySuccess: true,
-      };
-    case COMMUNITY_VISIBILITY_SUCCESS_RESET:
-      return {
-        ...state,
-        updateDatasetCommunityVisibilitySuccess:
-          action.payload.updateDatasetCommunityVisibilitySuccess ?? false,
-      };
-    case COMMUNITY_VISIBILITY_ERROR_RESET:
-      return {
-        ...state,
-        updateDatasetCommunityVisibilityError:
-          action.payload.updateDatasetCommunityVisibilityError,
+        updateDatasetCommunityVisibilitySuccess: action.payload.success ?? true,
       };
 
     default:
