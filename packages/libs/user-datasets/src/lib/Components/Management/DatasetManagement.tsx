@@ -323,7 +323,7 @@ class DatasetManagement<
                 </ul>
               ),
             },
-        config.projectId === 'ClinEpiDB'
+        config.projectId === 'ClinEpiDB' || !isInstalled
           ? null
           : {
               attribute: 'View',
