@@ -149,6 +149,7 @@ export function RootDetailsSection(
                   dataPropertiesFiles: files ?? undefined,
                 })
               }
+              required={datasetDetails.visibility === 'public'}
               helpText={
                 formConfig.verbiage.formInputs.datasetProperties.helpText
               }

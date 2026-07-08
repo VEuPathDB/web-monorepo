@@ -16,9 +16,10 @@ import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
-import { isEqual } from 'lodash';
-import { PartialDatasetDetails } from '../../Service';
+import { isEmpty, isEqual } from 'lodash';
+import { DatasetUploads, PartialDatasetDetails } from '../../Service';
 import { hasUploads } from '../../Service/Model/utility-types';
+import { DatasetTypeConfig } from '../../Common/Configuration';
 
 export interface UpdateFormProps extends DatasetFormProps {
   readonly originalDetails: PartialDatasetDetails;
@@ -57,7 +58,8 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
 
   useEffect(() => {
     setFormIsValid(
-      isDatasetFormValid(datasetDetails, props.formConfig, updateSection)
+      isDatasetFormValid(datasetDetails, props.formConfig, updateSection) &&
+        !isMissingDatasetProperties(props.formConfig.dataType, fileUploads)
     );
   }, [datasetDetails, fileUploads, props]);
 
@@ -93,5 +95,14 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
         />
       </form>
     </section>
+  );
+}
+
+function isMissingDatasetProperties(
+  type: DatasetTypeConfig,
+  files: DatasetUploads
+): boolean {
+  return (
+    type.vdiConfig.usesDataProperties && isEmpty(files.dataPropertiesFiles)
   );
 }
