@@ -32,6 +32,8 @@ import {
   updateDatasetCommunityVisibility,
   updateSharingModalState,
   updateUserDatasetDetail,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
 import {
@@ -90,6 +92,8 @@ export interface DatasetManagementProps {
   updateDatasetCommunityVisibilityError?: CommunityPromotionError;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilitySuccessReset: typeof updateDatasetCommunityVisibilitySuccess;
+  updateDatasetCommunityVisibilityErrorReset: typeof updateDatasetCommunityVisibilityError;
   datasetSize: number;
 
   /**
@@ -343,14 +347,13 @@ class DatasetManagement<
             userDataset.visibility === 'public' ? (
               <>
                 {' '}
-                <Public className="Community-visible" /> This is a "Public{' '}
-                {dataNoun.singular}" made accessible to the public by user{' '}
-                {datasetUserFullName(userDataset.owner)}.
+                <Public className="Community-visible" /> Public - accessible to
+                the public for use and download.
               </>
             ) : (
               <>
-                This {dataNoun.singular.toLowerCase()} is only visible to the
-                owner and those they have shared it with.
+                Private - only visible to the owner and other users it has been
+                shared it with.
               </>
             ),
         },
@@ -358,8 +361,8 @@ class DatasetManagement<
           attribute: 'Site search status',
           value:
             userDataset.visibility === 'public'
-              ? 'enabled for public datasets'
-              : 'disabled for private datasets',
+              ? 'Enabled for public datasets'
+              : 'Disabled for private datasets',
         },
         !isOwner || !shares.length
           ? null
@@ -474,6 +477,12 @@ class DatasetManagement<
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
+                  this.props.updateDatasetCommunityVisibilitySuccessReset(
+                    false
+                  );
+                  this.props.updateDatasetCommunityVisibilityErrorReset(
+                    undefined
+                  );
                   this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':

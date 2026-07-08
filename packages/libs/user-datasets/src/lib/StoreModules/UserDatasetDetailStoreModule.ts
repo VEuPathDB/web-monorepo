@@ -194,7 +194,7 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         updateDatasetCommunityVisibilityPending: false,
-        updateDatasetCommunityVisibilitySuccess: true,
+        updateDatasetCommunityVisibilitySuccess: action.payload.success ?? true,
       };
 
     default:

@@ -89,6 +89,10 @@ export interface DatasetListProps {
   updateDatasetCommunityVisibilityError: CommunityPromotionError | undefined;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilitySuccessReset: (success?: boolean) => any;
+  updateDatasetCommunityVisibilityErrorReset: (
+    error?: CommunityPromotionError
+  ) => any;
 }
 
 interface State {
@@ -370,8 +374,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'size',
         name: 'Size',
-        helpText:
-          `The dataset size. Users can store up to ${formatFileSize(vdiConfig.api.userMaxStorageSize)} of data in their “My Datasets” workspace.`,
+        helpText: `The dataset size. Users can store up to ${formatFileSize(
+          vdiConfig.api.userMaxStorageSize
+        )} of data in their “My Datasets” workspace.`,
         sortable: true,
         renderCell: textCell('fileSizeTotal', (size: number) =>
           formatFileSize(size)
@@ -460,6 +465,12 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
+                  this.props.updateDatasetCommunityVisibilitySuccessReset(
+                    false
+                  );
+                  this.props.updateDatasetCommunityVisibilityErrorReset(
+                    undefined
+                  );
                   this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':
