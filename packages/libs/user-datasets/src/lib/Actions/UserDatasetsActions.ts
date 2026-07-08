@@ -584,11 +584,11 @@ export function updateDatasetCommunityVisibility(
             return context === 'datasetDetails'
               ? [
                   loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
-                  updateDatasetCommunityVisibilitySuccess,
+                  updateDatasetCommunityVisibilitySuccess(),
                 ]
               : [
                   loadUserDatasetListWithoutLoadingIndicator(),
-                  updateDatasetCommunityVisibilitySuccess,
+                  updateDatasetCommunityVisibilitySuccess(),
                 ];
           }
 
