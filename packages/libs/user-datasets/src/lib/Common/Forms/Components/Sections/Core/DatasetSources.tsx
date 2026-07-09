@@ -138,6 +138,7 @@ function DataSource({
     <li className="field-grid">
       <InputPair
         label="Source URL"
+        type="url"
         fieldName={jsonPath.appendToString<PostDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
