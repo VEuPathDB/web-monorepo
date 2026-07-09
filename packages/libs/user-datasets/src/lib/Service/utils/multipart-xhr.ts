@@ -56,6 +56,7 @@ export function sendMultipartRequest(
     method: config.method ?? 'POST',
     headers: config.headers,
     body: formData,
-    contentType: 'multipart/form-data'
+    contentType: 'multipart/form-data',
+    onProgress: config.onProgress,
   });
 }
