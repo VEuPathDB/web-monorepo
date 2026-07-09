@@ -26,6 +26,7 @@ import { fixURLSlashHash } from '../../bootstrap.js';
 
 import './FeaturedTools.scss';
 import { ContentError } from './ContentError';
+import { getTypedError } from '@veupathdb/wdk-client/lib/Utils/Errors';
 
 const cx = makeClassNameHelper('vpdb-FeaturedTools');
 const bgDarkCx = makeClassNameHelper('vpdb-BgDark');
@@ -77,9 +78,7 @@ function useFeaturedToolMetadata(): Result<FeaturedToolMetadata> | undefined {
             setFeaturedToolError(response.statusText);
           }
         } catch (error) {
-          setFeaturedToolError(
-            error instanceof Error ? error.message : String(error)
-          );
+          setFeaturedToolError(getTypedError(error).message);
         }
       })();
     }

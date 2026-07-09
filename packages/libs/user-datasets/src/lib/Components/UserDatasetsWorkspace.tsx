@@ -1,40 +1,34 @@
-import { ReactElement, ReactNode, useEffect, useState } from 'react';
-import { identity, isEmpty } from 'lodash';
+import React, { ReactElement, ReactNode } from 'react';
+import { isEmpty } from 'lodash';
 import { Switch, Redirect } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { WorkspaceNavigationItem } from '@veupathdb/wdk-client/src/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
-import { projectId } from '../config';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-import {
-  ClientDatasetTypeConfig,
-  DatasetTypeConfig,
-  UploadFormConfigurators,
-  DatasetUploadRoute,
-  filterAvailableDataTypes,
-  promoteTypeConfig,
-} from './Upload';
+import { DatasetUploadRoute } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import { DataNoun } from '../Utils/types';
 import {
-  VdiPluginConfig,
-  VdiServiceMetadata,
-  VdiService,
-  useVdiService,
-} from '../Service';
+  DatasetTypeConfig,
+  filterAvailableDataTypes,
+  promoteTypeConfig,
+} from '../Common/Configuration';
+import { VdiMetadata } from '../Service/utils/use-vdi';
+import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
 export interface UserDatasetWorkspaceProps {
   baseUrl: string;
   helpRoute: string;
   urlParams: Record<string, string>;
-  readonly datasetTypes: readonly ClientDatasetTypeConfig[];
-  readonly formConfigs: UploadFormConfigurators;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+
+  readonly vdiMetadata: VdiMetadata;
+  readonly workspaceConfig: DatasetWorkspaceConfig;
+  readonly datasetId?: string;
 }
 
 export function UserDatasetsWorkspace(
@@ -47,25 +41,18 @@ export function UserDatasetsWorkspace(
     helpTabContents,
     dataNoun,
     enablePublicUserDatasets,
+    vdiMetadata,
+    workspaceConfig: config,
   } = props;
 
-  const vdi = useVdiService<VdiService>(identity);
-
-  const [plugins, setPlugins] = useState<readonly VdiPluginConfig[]>();
-  const [features, setFeatures] = useState<VdiServiceMetadata>();
-
-  useEffect(() => {
-    vdi?.getPluginList(projectId)?.then(setPlugins);
-    vdi?.getServiceMetadata()?.then(setFeatures);
-  }, [vdi]);
-
-  if (!Array.isArray(plugins) || !features) return <Loading />;
-
-  const datasetTypes = props.datasetTypes
-    .map((cdt) => promoteTypeConfig(cdt, plugins))
+  const datasetTypes = config.baseDatasetTypeConfigs
+    .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
     .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 
-  const availableDataTypes = filterAvailableDataTypes(datasetTypes, plugins);
+  const availableDataTypes = filterAvailableDataTypes(
+    datasetTypes,
+    vdiMetadata.plugins
+  );
   const allowsUploads = !isEmpty(availableDataTypes);
 
   const routes: WorkspaceNavigationItem[] = [
@@ -110,7 +97,7 @@ export function UserDatasetsWorkspace(
               workspaceTitle={workspaceTitle}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              vdiConfig={features!.configuration}
+              vdiConfig={vdiMetadata.serviceInfo.configuration}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
@@ -126,11 +113,10 @@ export function UserDatasetsWorkspace(
         {allowsUploads && (
           <DatasetUploadRoute
             {...props}
-            vdi={vdi!}
-            vdiConfig={features}
-            plugins={plugins}
-            formConfigs={props.formConfigs}
+            vdiConfig={vdiMetadata.serviceInfo}
+            plugins={vdiMetadata.plugins}
             datasetTypes={datasetTypes}
+            formConfigs={config.uploadFormConfigurators}
           />
         )}
         <Redirect to={baseUrl} />

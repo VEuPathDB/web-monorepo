@@ -1,60 +1,23 @@
-import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
-import { colors, MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
-import { PartialButtonStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
-import { useMemo } from 'react';
+import { MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
+import React from 'react';
+import { useButtonTheme } from '../Utils/theming';
 
 interface Props {
-  enablePublicUserDatasets: boolean;
-  buttonText: string;
-  onPress: (grantType: 'community' | 'individual') => void;
+  readonly disableCommunityReason?: string;
+  readonly communityDatasetsEnabled: boolean;
+  readonly buttonText: string;
+  readonly onPress: (grantType: 'community' | 'individual') => void;
 }
 
 export function ThemedGrantAccessButton({
   buttonText,
   onPress,
-  enablePublicUserDatasets,
+  communityDatasetsEnabled,
+  disableCommunityReason,
 }: Props) {
-  const theme = useUITheme();
-  const bgHue = theme?.palette.primary.hue;
-  const bgLevel = theme?.palette.primary.level;
+  const buttonTheme = useButtonTheme();
 
-  const styleOverrides = useMemo(
-    (): PartialButtonStyleSpec =>
-      bgHue && bgLevel
-        ? {
-            default: {
-              color: bgHue[bgLevel],
-              textColor: colors.white,
-              border: {
-                color: bgHue[bgLevel + 100],
-                style: 'solid',
-                width: 1,
-              },
-            },
-            hover: {
-              color: bgHue[bgLevel + 100],
-              textColor: colors.white,
-              border: {
-                color: bgHue[bgLevel + 200],
-                style: 'solid',
-                width: 1,
-              },
-            },
-            pressed: {
-              color: bgHue[bgLevel + 100],
-              textColor: colors.white,
-              border: {
-                color: bgHue[bgLevel + 200],
-                style: 'solid',
-                width: 1,
-              },
-            },
-          }
-        : {},
-    [bgHue, bgLevel]
-  );
-
-  if (!enablePublicUserDatasets) {
+  if (!communityDatasetsEnabled) {
     return (
       <MesaButton
         text={buttonText}
@@ -62,22 +25,27 @@ export function ThemedGrantAccessButton({
         onPress={() => onPress('individual')}
         themeRole="primary"
         icon={Share}
-        styleOverrides={styleOverrides}
+        styleOverrides={buttonTheme}
       />
     );
   }
 
   return (
     <SingleSelect<'community' | 'individual' | undefined>
-      styleOverrides={styleOverrides}
+      styleOverrides={buttonTheme}
       items={[
         {
-          display: (
+          display: disableCommunityReason ? (
+            <span title={disableCommunityReason}>
+              <Share fill="black" /> Public access
+            </span>
+          ) : (
             <>
               <Share fill="black" /> Public access
             </>
           ),
           value: 'community',
+          disabled: !!disableCommunityReason,
         },
         {
           display: (

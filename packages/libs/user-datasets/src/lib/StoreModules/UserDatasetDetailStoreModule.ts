@@ -14,7 +14,6 @@ import {
   SHARING_MODAL_OPEN,
   SHARING_DATASET_PENDING,
   SHARING_ERROR,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
@@ -48,7 +47,6 @@ export interface State {
   removalError?: FetchClientError;
   shareError: Error | undefined;
   shareSuccessful: boolean | undefined;
-  communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
   updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
@@ -63,7 +61,6 @@ const initialState: State = {
   sharingDatasetPending: false,
   shareError: undefined,
   shareSuccessful: undefined,
-  communityModalOpen: false,
   updateDatasetCommunityVisibilityError: undefined,
   updateDatasetCommunityVisibilityPending: false,
   updateDatasetCommunityVisibilitySuccess: false,
@@ -180,20 +177,6 @@ export function reduce(state: State = initialState, action: Action): State {
         serviceMetadata: action.payload,
       };
 
-    case updateCommunityModalVisibility.type:
-      return {
-        ...state,
-        communityModalOpen: action.payload.isVisible,
-        // clear related states when closed
-        ...(action.payload.isVisible
-          ? {}
-          : {
-              updateDatasetCommunityVisibilityError: undefined,
-              updateDatasetCommunityVisibilityPending: false,
-              updateDatasetCommunityVisibilitySuccess: false,
-            }),
-      };
-
     case updateDatasetCommunityVisibilityError.type:
       return {
         ...state,
@@ -211,7 +194,7 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         updateDatasetCommunityVisibilityPending: false,
-        updateDatasetCommunityVisibilitySuccess: true,
+        updateDatasetCommunityVisibilitySuccess: action.payload.success ?? true,
       };
 
     default:

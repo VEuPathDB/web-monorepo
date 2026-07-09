@@ -12,8 +12,8 @@ import * as io from 'io-ts';
 
 import { VdiRoutes } from './VdiRoutes';
 import { makeQueryString, QueryParams } from './utils/api-utils';
-import { Consumer, Runnable } from '../Utils';
-import { MultipartField, sendMultipartRequest } from './utils/xhr';
+import { BiConsumer, Consumer, Runnable } from '../Utils';
+import { MultipartField, sendMultipartRequest } from './utils/multipart-xhr';
 import { BadUpload } from '../StoreModules';
 
 import {
@@ -22,21 +22,24 @@ import {
   DatasetId,
   DatasetListEntry,
   DatasetPatchRequest,
-  DatasetPostDetails,
+  DatasetPatchResponse,
+  PartialDatasetDetails,
+  DatasetPostResponse,
   DatasetPostResponseBody,
+  DatasetPropertiesDeleteResponse,
   DatasetPutDetails,
   DatasetPutResponseBody,
+  GetDatasetsQueryParamEnum,
+  ServerErrorBody,
   ShareOfferAction,
   ShareOfferListEntry,
+  ShareReceiptAction,
+  SimpleServiceErrorBody,
+  ValidationErrorBody,
   VdiPluginConfig,
   VdiServiceMetadata,
   VdiUserMetadata,
 } from './Model';
-
-import {
-  GetDatasetsQueryParamEnum,
-  ShareReceiptAction,
-} from './Model/request-types';
 
 import {
   ccValidationErrorBody,
@@ -44,19 +47,20 @@ import {
   datasetGetResponseBody,
   datasetListEntry,
   datasetPatchResponse,
-  DatasetPatchResponse,
   datasetPostResponse,
-  DatasetPostResponse,
   pluginListItem,
-  ServerErrorBody,
   serviceMetadata,
   shareOfferListEntry,
-  SimpleServiceErrorBody,
   userMetadata,
-  ValidationErrorBody,
 } from './Model/response-decoders';
 
 import { RootDatasetFile } from './Model/utility-types';
+import {
+  asyncXHR,
+  XHRError,
+  XHRErrorType,
+  XHRResponseType,
+} from './utils/async-xhr';
 
 export type DatasetUploadFileType =
   | 'dataFile'
@@ -94,7 +98,7 @@ export class VdiService extends FetchClientWithCredentials {
   }
 
   async postDataset(
-    details: DatasetPostDetails,
+    details: PartialDatasetDetails,
     uploads: DatasetUpload[],
     dispatchUploadProgress?: Consumer<number>,
     dispatchPageRedirect?: Consumer<DatasetPostResponseBody>,
@@ -183,6 +187,8 @@ export class VdiService extends FetchClientWithCredentials {
     // unless someone changed the decoders, there can be no other possible valid
     // response types.
     onError?.(responseBody as SimpleServiceErrorBody | ServerErrorBody);
+
+    return responseBody;
   }
 
   /**
@@ -267,12 +273,15 @@ export class VdiService extends FetchClientWithCredentials {
   async putDatasetDocumentFile(
     id: DatasetId,
     file: File,
-    dispatchResponse?: (status: number, message?: string) => void
+    onResponse?: (status: number, message?: string) => void,
+    onProgress?: Consumer<number>
   ): Promise<void> {
     await this.uploadFile(
       VdiRoutes.datasetDocumentFileUri(id, file.name),
       file,
-      dispatchResponse
+      'application/octet-stream',
+      onResponse,
+      onProgress
     );
   }
 
@@ -295,13 +304,50 @@ export class VdiService extends FetchClientWithCredentials {
   async putDatasetVarPropsFile(
     id: DatasetId,
     file: File,
-    dispatchResponse?: (status: number, message?: string) => void
+    onResponse?: BiConsumer<number, string | undefined>,
+    onProgress?: Consumer<number>,
+    onFailure?: (error: Error) => void
   ): Promise<void> {
     await this.uploadFile(
       VdiRoutes.datasetPropertiesFileUri(id, file.name),
       file,
-      dispatchResponse
+      'text/tab-separated-values',
+      onResponse,
+      onProgress,
+      onFailure
     );
+  }
+
+  async deleteDatasetVarPropsFile(
+    id: DatasetId,
+    fileName: string
+  ): Promise<DatasetPropertiesDeleteResponse> {
+    const auth = await this.findAuthorizationHeaders();
+
+    const response = await window.fetch(
+      this.baseUrl + VdiRoutes.datasetPropertiesFileUri(id, fileName),
+      {
+        method: 'DELETE',
+        headers: new Headers(auth),
+      }
+    );
+
+    if (response.ok || response.status === 404) {
+      return undefined;
+    }
+
+    const jsonBody =
+      response.headers.get('Content-Type') === 'application/json'
+        ? await response.json()
+        : null;
+
+    return jsonBody
+      ? jsonBody
+      : ({
+          status: 'server-error',
+          requestId: '',
+          message: 'unknown service or connection error',
+        } as ServerErrorBody);
   }
 
   async putDatasetShareOffer(
@@ -391,13 +437,13 @@ export class VdiService extends FetchClientWithCredentials {
 
   private async uploadDataset<T>(
     path: string,
-    method: string,
+    method: 'POST' | 'PUT',
     details: object,
     uploads: DatasetUpload[],
     decoder: (value: unknown) => Promise<T>,
     onProgress?: (progress: number) => void
   ): Promise<T | BadUpload> {
-    return await sendMultipartRequest<T | BadUpload>({
+    return await sendMultipartRequest({
       url: `${this.baseUrl}${path}`,
       method: method,
       headers: await this.findAuthorizationHeaders(),
@@ -422,97 +468,117 @@ export class VdiService extends FetchClientWithCredentials {
               };
         }),
       ],
-      onResponse: async (code, type, response) => {
-        if (type !== 'json' && type !== '') {
-          console.error('unexpected server response: ', response);
-          throw new Error(`unexpected server response with code ${code}`);
-        }
-
-        const body = await decoder(
-          type === '' && typeof response === 'string'
-            ? JSON.parse(response)
-            : response
-        );
-
-        if (code >= 500) {
-          throw new Error(
-            (body as ServerErrorBody).message ?? 'unhandled server exception'
-          );
-        }
-
-        if (code >= 200 && code < 300) return body as T;
-
-        switch (code) {
-          case 400:
-            return {
-              type: 400,
-              message:
-                (body as SimpleServiceErrorBody).message ??
-                'file upload failed',
-            };
-          case 422:
-            return {
-              type: 422,
-              errors: (body as ValidationErrorBody).errors,
-            };
-          default:
-            console.error('unexpected server response: ', response);
-            throw new Error(`unexpected server response with code ${code}`);
-        }
-      },
       onProgress: onProgress
         ? (loaded, total) => onProgress(Math.floor((loaded / total) * 100))
         : undefined,
+    }).then(async (res) => {
+      let body: T;
+
+      switch (res.responseType) {
+        case XHRResponseType.JSON:
+          body = await decoder(res.responseBody);
+          break;
+        case XHRResponseType.Text:
+          body = await decoder(JSON.parse(res.responseBody));
+          break;
+        default:
+          console.error('unexpected server response: ', res.response);
+          throw new Error(
+            `unexpected server response with code ${res.responseCode}`
+          );
+      }
+
+      if (res.responseCode >= 500) {
+        throw new Error(
+          (body as ServerErrorBody).message ?? 'unhandled server exception'
+        );
+      }
+
+      if (res.responseCode >= 200 && res.responseCode < 300) {
+        return body;
+      }
+
+      switch (res.responseCode) {
+        case 400:
+          return {
+            type: 400,
+            message:
+              (body as SimpleServiceErrorBody).message ?? 'file upload failed',
+          };
+        case 422:
+          return {
+            type: 422,
+            errors: (body as ValidationErrorBody).errors,
+          };
+        default:
+          console.error('unexpected server response: ', res.responseBody);
+          throw new Error(
+            `unexpected server response with code ${res.responseCode}`
+          );
+      }
     });
   }
 
   private async uploadFile(
     path: string,
     file: File,
-    dispatchResponse?: (status: number, message?: string) => void
+    contentType: string,
+    onResponse?: (status: number, message?: string) => void,
+    onProgress?: Consumer<number>,
+    onFailure?: (error: Error) => void
   ) {
-    const req = new XMLHttpRequest();
+    try {
+      const auth = await this.findAuthorizationHeaders();
 
-    req.addEventListener('readystatechange', () => {
-      if (req.readyState !== XMLHttpRequest.DONE) return;
+      const result = await asyncXHR({
+        contentType,
+        url: this.baseUrl + path,
+        method: 'PUT',
+        body: file,
+        headers: auth,
+        onProgress: onProgress
+          ? (sent, total) => onProgress(Math.floor(sent / total) * 100)
+          : undefined,
+      });
 
-      switch (req.status) {
-        case 204:
-          dispatchResponse?.(204);
+      let message: string | undefined = undefined;
+
+      switch (result.responseType) {
+        case XHRResponseType.Text:
+          message = result.responseBody;
           break;
-        case 400:
-          if (req.getResponseHeader('Content-Type') === 'application/json') {
-            const body = JSON.parse(req.responseText);
-            dispatchResponse?.(400, body['message']);
-            break;
-          }
-
-          dispatchResponse?.(400);
-          break;
-        default:
-          dispatchResponse?.(req.status);
+        case XHRResponseType.JSON:
+          message = result.responseBody['message'];
           break;
       }
-    });
 
-    const auth = await this.findAuthorizationHeaders();
+      onResponse?.(result.responseCode, message);
+    } catch (e: any) {
+      let error: Error;
 
-    const stream = new FileReader();
-    stream.onload = (e) => req.send(e.target?.result);
+      if (!Object.hasOwn(e, 'url')) {
+        switch ((e as XHRError).type) {
+          case XHRErrorType.Abort:
+            error = new Error('file upload aborted unexpectedly', { cause: e });
+            break;
+          case XHRErrorType.Timeout:
+            error = new Error('file upload request timed out', { cause: e });
+            break;
+          case XHRErrorType.Error:
+          default:
+            error = new Error('unknown error', { cause: e });
+            break;
+        }
+      } else {
+        error = new Error('unknown error', { cause: e });
+      }
 
-    req.open('POST', this.baseUrl + path);
-    req.overrideMimeType('application/octet-stream');
-    for (const key of Object.keys(auth)) req.setRequestHeader(key, auth[key]);
-
-    stream.readAsBinaryString(file);
+      console.error(error);
+      onFailure?.(error);
+    }
   }
 
   // region Oddball Request Transformers
-
-  private static async unknownBody(body?: unknown): Promise<void | unknown> {
-    if (body) return body;
-    else return;
-  }
 
   private static async voidResponse(_: unknown) {}
 

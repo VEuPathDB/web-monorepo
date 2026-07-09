@@ -15,6 +15,7 @@ import {
 import { ContentError } from './ContentError';
 
 import './WorkshopExercises.scss';
+import { getTypedError } from '@veupathdb/wdk-client/lib/Utils/Errors';
 
 const cx = makeClassNameHelper('vpdb-WorkshopExercises');
 const cardListCx = makeClassNameHelper('vpdb-CardList');
@@ -87,9 +88,7 @@ function useCardMetadata(): Result<CardMetadata> | undefined {
             setWorkshopExercisesResponseError(response.statusText);
           }
         } catch (error) {
-          setWorkshopExercisesResponseError(
-            error instanceof Error ? error.message : String(error)
-          );
+          setWorkshopExercisesResponseError(getTypedError(error).message);
         }
       })();
     }
