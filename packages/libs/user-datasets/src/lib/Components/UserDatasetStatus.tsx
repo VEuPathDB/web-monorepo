@@ -273,7 +273,7 @@ function renderErrorMessages(messages: string[]): React.ReactNode {
 
   // Always render as bulleted list with newlines as <br>
   return (
-    <ul style={{ margin: '0.5em 0', paddingLeft: '1.5em', listStyle: 'disc' }}>
+    <ul className="status-messages">
       {messages.map((message, index) => (
         <li key={index}>
           {message.split('\n').map((line, i, arr) => (
