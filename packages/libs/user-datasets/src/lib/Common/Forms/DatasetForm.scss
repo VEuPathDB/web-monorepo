@@ -161,7 +161,6 @@
   textarea {
     &:not(:focus) {
       &.invalid,
-      &:invalid,
       &:user-invalid {
         border-color: var(--coreui-red-900);
         background-color: var(--coreui-mutedRed-300);
