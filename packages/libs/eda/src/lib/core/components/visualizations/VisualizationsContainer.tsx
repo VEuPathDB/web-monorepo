@@ -107,7 +107,7 @@ export function VisualizationsContainer(props: Props) {
           banner={{
             type: 'warning',
             message:
-              'Visualizations might take up to a minute to load because this study has a large amount of data.',
+              'Visualizations might take up to a minute to load because this dataset has a large amount of data.',
             pinned: false,
             intense: false,
           }}
@@ -404,7 +404,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                   </div>
                   {vizPlugin == null && <i>(Coming soon!)</i>}
                   {vizPlugin != null && disabled && (
-                    <i>(Not applicable to this study)</i>
+                    <i>(Not applicable to this dataset)</i>
                   )}
                 </div>
               </div>

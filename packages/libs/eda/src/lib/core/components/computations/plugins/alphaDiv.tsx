@@ -67,7 +67,7 @@ export const plugin: ComputationPlugin = {
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
-    'These visualizations are only available for studies with compatible assay data.',
+    'These visualizations are only available for datasets with compatible assay data.',
 };
 
 function AlphaDivConfigDescriptionComponent({

@@ -99,7 +99,7 @@ export const plugin: ComputationPlugin = {
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
-    'These visualizations are only available for studies with metagenomic data.',
+    'These visualizations are only available for datasets with metagenomic data.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -384,7 +384,7 @@ export function CorrelationAssayAssayConfiguration(
 }
 
 // The correlation assay x assay app should only be available
-// for studies with metagenomic data.
+// for datasets with metagenomic data.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {
