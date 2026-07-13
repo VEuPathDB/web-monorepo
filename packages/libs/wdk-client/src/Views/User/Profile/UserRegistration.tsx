@@ -49,8 +49,8 @@ const IntroText: React.FC = () => {
               <i>
                 {formatList(
                   ALL_VEUPATHDB_PROJECTS.filter(
-                    (project) => project !== projectId
-                  ),
+                    (it) => it.projectId !== projectId
+                  ).map((it) => it.displayName),
                   'or'
                 )}
               </i>
@@ -85,7 +85,11 @@ const WhyRegister: React.FC = () => (
               <li>
                 <strong>Gain access</strong> to searches, tools and gene pages
                 on all of our genomics sites (
-                {formatList([...GENOMICS_PROJECTS], 'and')})
+                {formatList(
+                  GENOMICS_PROJECTS.map((it) => it.displayName),
+                  'and'
+                )}
+                )
               </li>
               <li>
                 <strong>Save your search strategies</strong> for easy reuse
