@@ -19,38 +19,36 @@ export interface ExperimentalOrganismProps {
   readonly jsonPath: JsonPathBuilder;
 }
 
-export function ExperimentalOrganism(
-  props: ExperimentalOrganismProps
-): ReactElement {
+export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
   const { hasExperimentalOrganism } = props.clientSideState;
 
-  const setEnabled = (enabled: boolean) =>
-    props.setClientSideState({
-      ...props.clientSideState,
-      hasExperimentalOrganism: enabled,
-    });
+  const setEnabled = (enabled: boolean) => props.setClientSideState({
+    ...props.clientSideState,
+    hasExperimentalOrganism: enabled,
+  });
 
   const safeExperimentalOrganism = props.datasetMeta.experimentalOrganism ?? {};
 
   const onChange = partialRight(
     changeHandler<PartialOrganism>,
     safeExperimentalOrganism,
-    (org) =>
-      props.setDatasetDetails({
-        ...props.datasetMeta,
-        experimentalOrganism: org,
-      })
+    org => props.setDatasetDetails({
+      ...props.datasetMeta,
+      experimentalOrganism: org,
+    }),
   );
 
   const isGenomics = isGenomicsProjectId(projectId);
 
   const required = !isGenomics
     ? hasExperimentalOrganism
-    : props.datasetMeta.visibility === 'public' ||
-      isNonBlankString(safeExperimentalOrganism.species) ||
-      isNonBlankString(safeExperimentalOrganism.strain);
+    : props.datasetMeta.visibility === 'public'
+      || isNonBlankString(safeExperimentalOrganism.species)
+      || isNonBlankString(safeExperimentalOrganism.strain);
 
-  const disabled = isGenomics ? undefined : !hasExperimentalOrganism;
+  const disabled = isGenomics
+    ? undefined
+    : !hasExperimentalOrganism;
 
   const disabledClass = disabled ? ' disabled-fields' : '';
 
@@ -67,36 +65,38 @@ export function ExperimentalOrganism(
         </p>
 
         <div className={'field-grid' + disabledClass}>
-          {!isGenomics ? (
-            <>
-              <label
-                className={'not-disabled' + (isPublic ? ' required' : '')}
-                id={ExpOrganismToggleID}
-              >
-                Available Experimental Organism?
-              </label>
-              <YesNoToggle
-                value={hasExperimentalOrganism}
-                setValue={setEnabled}
-                fieldName="enable-exp-organism"
-                className="not-disabled"
-                required={isPublic}
-                disableRequiredStyling={true}
-                helpText={
-                  'Whether this dataset includes laboratory data from specific organisms(s)' +
-                  ', including organisms collected from study participants' +
-                  ', animals, vectors, or environmental samples.'
-                }
-              />
-            </>
-          ) : null}
+          {
+            !isGenomics
+              ? (
+                <>
+                  <label
+                    className={'not-disabled' + (isPublic ? ' required' : '')}
+                    id={ExpOrganismToggleID}
+                  >
+                    Available Experimental Organism?
+                  </label>
+                  <YesNoToggle
+                    value={hasExperimentalOrganism}
+                    setValue={setEnabled}
+                    fieldName="enable-exp-organism"
+                    className="not-disabled"
+                    required={isPublic}
+                    disableRequiredStyling={true}
+                    helpText={
+                      'Whether this dataset includes laboratory data from specific organisms(s)' +
+                      ', including organisms collected from study participants' +
+                      ', animals, vectors, or environmental samples.'
+                    }
+                  />
+                </>
+              )
+              : null
+          }
 
           <InputPair
             label="Species"
             type="text"
-            fieldName={props.jsonPath.appendToString<PartialOrganism>(
-              'species'
-            )}
+            fieldName={props.jsonPath.appendToString<PartialOrganism>('species')}
             value={props.datasetMeta.experimentalOrganism?.species}
             onChange={onChange('species')}
             required={required}
