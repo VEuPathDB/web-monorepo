@@ -4,7 +4,9 @@ export interface ProjectConstants {
   readonly siteUrl: string;
 }
 
+// WARNING!!! The site footer depends on the order of this array!
 export const GENOMICS_PROJECTS: readonly ProjectConstants[] = [
+  newProjectConstants('UniDB', 'VEuPathDB'),
   newProjectConstants('AmoebaDB'),
   newProjectConstants('CryptoDB'),
   newProjectConstants('FungiDB'),
@@ -17,7 +19,6 @@ export const GENOMICS_PROJECTS: readonly ProjectConstants[] = [
   newProjectConstants('TrichDB'),
   newProjectConstants('TriTrypDB'),
   newProjectConstants('VectorBase'),
-  newProjectConstants('UniDB', 'VEuPathDB'),
 ] as const;
 
 export const OTHER_PROJECTS = [

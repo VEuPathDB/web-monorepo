@@ -3,11 +3,7 @@
     content: url('~@veupathdb/web-common/images/VEuPathDB/icons-footer/amoebaDB.png');
   }
 
-  .ClinEpiDB {
-    content: url('~@veupathdb/web-common/images/VEuPathDB/icons-footer/clinepidb.png');
-  }
-
-  .dataExplorer {
+  .ClinEpiDB, .dataExplorer {
     content: url('~@veupathdb/web-common/images/VEuPathDB/icons-footer/clinepidb.png');
   }
 
@@ -63,7 +59,7 @@
     content: url('~@veupathdb/web-common/images/VEuPathDB/icons-footer/vectorbase.png');
   }
 
-  .VEuPathDB {
+  .VEuPathDB, .UniDB {
     content: url('~@veupathdb/web-common/images/VEuPathDB/icons-footer/VEuPathDB.png');
   }
 }
