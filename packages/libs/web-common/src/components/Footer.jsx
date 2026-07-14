@@ -11,8 +11,6 @@ import '../components/homepage/ProjectLink.scss';
 
 const projectLinkCx = makeClassNameHelper('ebrc-ProjectLink');
 
-const projects = [...ALL_VEUPATHDB_PROJECTS];
-
 const enhance = connect((state) => state.globalData, null);
 /** Application footer */
 export default enhance(function Footer(props) {
@@ -40,15 +38,12 @@ export default enhance(function Footer(props) {
 
       <div>
         <ul className="site-icons">
-          {projects.map((project) => (
-            <React.Fragment key={project}>
-              <Tooltip title={`${project}.org`}>
+          {ALL_VEUPATHDB_PROJECTS.map((project) => (
+            <React.Fragment key={project.projectId}>
+              <Tooltip title={`${project.displayName}.org`}>
                 <li className={projectLinkCx()}>
-                  <a
-                    href={`https://${project.toLowerCase()}.org`}
-                    className={project}
-                  >
-                    https://{project.toLowerCase()}.org
+                  <a href={project.siteUrl} className={project.projectId}>
+                    {project.siteUrl}
                   </a>
                 </li>
               </Tooltip>
