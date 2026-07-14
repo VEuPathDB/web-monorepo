@@ -21,7 +21,7 @@ import { statusStringToCode } from '../utils/conversions';
 import { scrubDetails } from './create-dataset';
 import { ClientSideUploadFormState } from '../../StoreModules';
 import { Mutable } from '../../Utils/types';
-import { isGenomicsProject } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
 
 export interface UpdateSubmission {
@@ -54,7 +54,7 @@ export async function submitUpdate(submission: UpdateSubmission): Promise<Update
     mutableSubmission.dataDisclaimer = undefined;
   }
 
-  if (!submission.formState.hasExperimentalOrganism && !isGenomicsProject(projectId)) {
+  if (!submission.formState.hasExperimentalOrganism && !isGenomicsProjectId(projectId)) {
     mutableSubmission.experimentalOrganism = undefined;
   }
 

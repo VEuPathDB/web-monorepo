@@ -5,7 +5,7 @@ import './UploadFormMenu.scss';
 import { DatasetTypeConfig } from '../../Common/Configuration';
 import { stringifyDataType } from '../../Common/Configuration/data-types';
 import { projectId } from '../../config';
-import { isGenomicsProject } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export interface UploadTypeMenuProps {
   readonly availableDataTypes: readonly DatasetTypeConfig[];
@@ -23,7 +23,7 @@ export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
 
   return (
     <div id="dataset-type-selection">
-      {isGenomicsProject(projectId) && (
+      {isGenomicsProjectId(projectId) && (
         <p>
           <i>
             Select the data type that corresponds to the data you are uploading.
@@ -39,15 +39,16 @@ export function UploadTypeMenu(props: UploadTypeMenuProps): ReactElement {
           />
         ))}
       </menu>
-      {isGenomicsProject(projectId) && (
+      {isGenomicsProjectId(projectId) && (
         <p>
           <i>
-            For exploration and sharing of general tab-delimited datasets, please use <a href={dataExplorerUrl}>dataExplorer.org</a>.
-            If your data do not fit one of the supported upload types, please <Link to="/contact-us">Contact Us</Link> for assistance. 
+            For exploration and sharing of general tab-delimited datasets,
+            please use <a href={dataExplorerUrl}>dataExplorer.org</a>. If your
+            data do not fit one of the supported upload types, please{' '}
+            <Link to="/contact-us">Contact Us</Link> for assistance.
           </i>
         </p>
       )}
-
     </div>
   );
 }

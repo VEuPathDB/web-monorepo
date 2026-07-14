@@ -7,7 +7,7 @@ import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { isNonBlankString } from '../../../../../Utils/value-tests';
 import { projectId } from '../../../../../config';
-import { isGenomicsProject } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export const ExpOrganismToggleID = 'exp-organism-toggle';
 
@@ -21,7 +21,6 @@ export interface ExperimentalOrganismProps {
 
 export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactElement {
   const { hasExperimentalOrganism } = props.clientSideState;
-
 
   const setEnabled = (enabled: boolean) => props.setClientSideState({
     ...props.clientSideState,
@@ -39,7 +38,7 @@ export function ExperimentalOrganism(props: ExperimentalOrganismProps): ReactEle
     }),
   );
 
-  const isGenomics = isGenomicsProject(projectId);
+  const isGenomics = isGenomicsProjectId(projectId);
 
   const required = !isGenomics
     ? hasExperimentalOrganism
