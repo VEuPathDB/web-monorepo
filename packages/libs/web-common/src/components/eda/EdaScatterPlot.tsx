@@ -143,12 +143,30 @@ function ScatterPlotAdapter(props: AdapterProps) {
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
   const yAxisEntityAndVariable = findEntityAndVariable(yAxisVariable);
 
-  if (isFaceted(data.value)) {
-    throw new Error('Received unexpected faceted data.');
-  }
-
   if (data.error) {
     return <div>Error: {String(data.error)}</div>;
+  }
+
+  // A no-data response from the backend serialises as { facets: [] } (see
+  // scatterplotResponseToData). isFaceted() treats an empty facets array as
+  // faceted via a vacuous [].every(), so detect emptiness explicitly before
+  // the throw.
+  const noData =
+    data.value != null &&
+    (isFaceted(data.value)
+      ? data.value.facets.length === 0
+      : data.value.series.length === 0);
+
+  if (noData) {
+    return (
+      <div>
+        {plotTitle ? `${plotTitle}: no data available` : 'No data available'}
+      </div>
+    );
+  }
+
+  if (isFaceted(data.value)) {
+    throw new Error('Received unexpected faceted data.');
   }
 
   return (

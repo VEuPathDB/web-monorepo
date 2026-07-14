@@ -52,6 +52,8 @@ export interface RootDetailsSectionProps {
    * Optional label override for the upload button.
    */
   readonly uploadButtonText?: string;
+
+  readonly requireDatasetPropertiesFile?: boolean;
 }
 
 export function RootDetailsSection(
@@ -149,6 +151,7 @@ export function RootDetailsSection(
                   dataPropertiesFiles: files ?? undefined,
                 })
               }
+              required={props.requireDatasetPropertiesFile}
               helpText={
                 formConfig.verbiage.formInputs.datasetProperties.helpText
               }

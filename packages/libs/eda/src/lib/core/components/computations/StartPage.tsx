@@ -59,6 +59,17 @@ export function StartPage(props: Props) {
           {/* orderBy renders available apps ahead of those in development */}
           {apps
             .filter((app) => plugins[app.name] != null)
+            .sort((a, b) => {
+              const aDisabled = Boolean(
+                plugins[a.name]?.isEnabledInPicker &&
+                  !plugins[a.name]?.isEnabledInPicker!({ studyMetadata })
+              );
+              const bDisabled = Boolean(
+                plugins[b.name]?.isEnabledInPicker &&
+                  !plugins[b.name]?.isEnabledInPicker!({ studyMetadata })
+              );
+              return Number(aDisabled) - Number(bDisabled);
+            })
             .map((app) => {
               const plugin = plugins[app.name];
               const isAppDisabled =
@@ -108,7 +119,7 @@ export function StartPage(props: Props) {
                           <br />
                           <br />
                           <br />
-                          Not available for this study. <br />
+                          Not available for this dataset. <br />
                           {plugin.studyRequirements}
                         </span>
                       )}

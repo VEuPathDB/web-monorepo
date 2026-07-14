@@ -32,6 +32,8 @@ import {
   updateDatasetCommunityVisibility,
   updateSharingModalState,
   updateUserDatasetDetail,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
 import {
@@ -90,6 +92,8 @@ export interface DatasetManagementProps {
   updateDatasetCommunityVisibilityError?: CommunityPromotionError;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilitySuccessReset: typeof updateDatasetCommunityVisibilitySuccess;
+  updateDatasetCommunityVisibilityErrorReset: typeof updateDatasetCommunityVisibilityError;
   datasetSize: number;
 
   /**
@@ -137,6 +141,13 @@ export interface DatasetManagementState {
   readonly isCommunityModalOpen: boolean;
 }
 
+enum CommunityPromotability {
+  CanPromote,
+  NotInstalled,
+  MissingDatasetProperties,
+  UnknownError,
+}
+
 class DatasetManagement<
   S extends DatasetManagementState = DatasetManagementState
 > extends React.Component<DatasetManagementProps, S> {
@@ -161,6 +172,30 @@ class DatasetManagement<
     this.closeSharingModal = this.closeSharingModal.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
     this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
+  }
+
+  private hasDatasetPropertiesFile(): boolean {
+    return !isEmpty(this.props.userDataset?.files?.datasetProperties);
+  }
+
+  private testCommunityPromotability(): CommunityPromotability {
+    if (!this.isInstalled()) return CommunityPromotability.NotInstalled;
+
+    const { userDataset, datasetTypes } = this.props;
+
+    const type = findDatasetTypeConfig(userDataset.type, datasetTypes!);
+
+    if (!type) {
+      return CommunityPromotability.UnknownError;
+    }
+
+    if (type.vdiConfig.usesDataProperties) {
+      return this.hasDatasetPropertiesFile()
+        ? CommunityPromotability.CanPromote
+        : CommunityPromotability.MissingDatasetProperties;
+    }
+
+    return CommunityPromotability.CanPromote;
   }
 
   openSharingModal() {
@@ -323,7 +358,7 @@ class DatasetManagement<
                 </ul>
               ),
             },
-        config.projectId === 'ClinEpiDB'
+        userDataset.type.name === 'isasimple' || !isInstalled
           ? null
           : {
               attribute: 'View',
@@ -343,14 +378,13 @@ class DatasetManagement<
             userDataset.visibility === 'public' ? (
               <>
                 {' '}
-                <Public className="Community-visible" /> This is a "Public{' '}
-                {dataNoun.singular}" made accessible to the public by user{' '}
-                {datasetUserFullName(userDataset.owner)}.
+                <Public className="Community-visible" /> Public - accessible to
+                the public for use and download.
               </>
             ) : (
               <>
-                This {dataNoun.singular.toLowerCase()} is only visible to the
-                owner and those they have shared it with.
+                Private - only visible to the owner and other users it has been
+                shared it with.
               </>
             ),
         },
@@ -358,8 +392,8 @@ class DatasetManagement<
           attribute: 'Site search status',
           value:
             userDataset.visibility === 'public'
-              ? 'enabled for public datasets'
-              : 'disabled for private datasets',
+              ? 'Enabled for public datasets'
+              : 'Disabled for private datasets',
         },
         !isOwner || !shares.length
           ? null
@@ -378,11 +412,21 @@ class DatasetManagement<
             },
         {
           attribute: 'Summary',
-          value: userDataset.summary,
+          value: userDataset.summary?.split('\n').map((line, i, arr) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < arr.length - 1 && <br />}
+            </React.Fragment>
+          )),
         },
         {
           attribute: 'Description',
-          value: userDataset.description ?? '',
+          value: userDataset.description?.split('\n').map((line, i, arr) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < arr.length - 1 && <br />}
+            </React.Fragment>
+          )),
         },
         {
           attribute: 'Created',
@@ -452,9 +496,18 @@ class DatasetManagement<
   renderDatasetActions() {
     const { isOwner } = this.props;
 
-    const notInstalledMessage = this.isInstalled()
-      ? undefined
-      : 'Datasets that have not been installed cannot be made public.';
+    const unpromotableMessage = (() => {
+      switch (this.testCommunityPromotability()) {
+        case CommunityPromotability.CanPromote:
+          return undefined;
+        case CommunityPromotability.NotInstalled:
+          return 'Datasets that have not been installed cannot be made public.';
+        case CommunityPromotability.MissingDatasetProperties:
+          return 'A variable annotations file is required to make this dataset public.';
+        default:
+          return 'Dataset cannot be made public at this time due to a site error.';
+      }
+    })();
 
     const editable =
       isOwner &&
@@ -474,6 +527,12 @@ class DatasetManagement<
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
+                  this.props.updateDatasetCommunityVisibilitySuccessReset(
+                    false
+                  );
+                  this.props.updateDatasetCommunityVisibilityErrorReset(
+                    undefined
+                  );
                   this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':
@@ -484,7 +543,7 @@ class DatasetManagement<
                   break;
               }
             }}
-            disableCommunityReason={notInstalledMessage}
+            disableCommunityReason={unpromotableMessage}
             communityDatasetsEnabled={this.props.enablePublicUserDatasets}
           />
         )}

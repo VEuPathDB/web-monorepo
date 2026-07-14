@@ -20,9 +20,13 @@ class EdaDatasetManagement extends DatasetManagement {
       <ul className="eda-linkout">
         {!workspaceUrl ? null : (
           <li>
-            <Link to={workspaceUrl}>
-              <i className="ebrc-icon-edaIcon"></i> Explore in {config.displayName}
-            </Link>
+            <Link to={workspaceUrl}>Browse and visualize</Link>
+            <br />
+          </li>
+        )}
+        {!workspaceUrl ? null : (
+          <li>
+            <Link to={`${workspaceUrl}/details`}>User dataset details</Link>
           </li>
         )}
         {!mapUrl ? null : (

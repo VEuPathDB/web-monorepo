@@ -154,12 +154,18 @@
     margin-top: $inputPadding;
   }
 
-  input[type='text']:not(:focus).invalid,
-  input[type='text']:user-invalid,
-  textarea:not(:focus).invalid,
-  textarea:user-invalid {
-    border-color: var(--coreui-red-900);
-    background-color: var(--coreui-mutedRed-300);
+  input[type='email'],
+  input[type='number'],
+  input[type='url'],
+  input[type='text'],
+  textarea {
+    &:not(:focus) {
+      &.invalid,
+      &:user-invalid {
+        border-color: var(--coreui-red-900);
+        background-color: var(--coreui-mutedRed-300);
+      }
+    }
   }
 
   label {

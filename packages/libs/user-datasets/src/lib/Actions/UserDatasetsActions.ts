@@ -508,12 +508,13 @@ export const updateDatasetCommunityVisibilityPending = makeActionCreator(
 );
 
 export const updateDatasetCommunityVisibilitySuccess = makeActionCreator(
-  'user-datasets/update-community-visibility-success'
+  'user-datasets/update-community-visibility-success',
+  (success?: boolean) => ({ success })
 );
 
 export const updateDatasetCommunityVisibilityError = makeActionCreator(
   'user-datasets/update-community-visibility-error',
-  (errorMessage: CommunityPromotionError) => ({ errorMessage })
+  (errorMessage?: CommunityPromotionError) => ({ errorMessage })
 );
 
 type UpdateCommunityVisibilityThunkAction =
@@ -583,11 +584,11 @@ export function updateDatasetCommunityVisibility(
             return context === 'datasetDetails'
               ? [
                   loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
-                  updateDatasetCommunityVisibilitySuccess,
+                  updateDatasetCommunityVisibilitySuccess(),
                 ]
               : [
                   loadUserDatasetListWithoutLoadingIndicator(),
-                  updateDatasetCommunityVisibilitySuccess,
+                  updateDatasetCommunityVisibilitySuccess(),
                 ];
           }
 

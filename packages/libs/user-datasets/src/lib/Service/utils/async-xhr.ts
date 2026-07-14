@@ -108,7 +108,7 @@ export async function asyncXHR(config: XHRConfig): Promise<XHRResponse> {
     xhr.addEventListener('load', buildSuccessHandler(xhr, good));
 
     if (config.onProgress) {
-      xhr.addEventListener(
+      xhr.upload.addEventListener(
         'progress',
         e => config.onProgress!(e.loaded, e.total),
       );

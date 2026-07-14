@@ -16,11 +16,13 @@ import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
-import { isEqual } from 'lodash';
-import { PartialDatasetDetails } from '../../Service';
+import { isEmpty, isEqual } from 'lodash';
+import { DatasetGetResponseBody, DatasetUploads, PartialDatasetDetails } from '../../Service';
 import { hasUploads } from '../../Service/Model/utility-types';
+import { DatasetTypeConfig } from '../../Common/Configuration';
 
 export interface UpdateFormProps extends DatasetFormProps {
+  readonly originalDataset: DatasetGetResponseBody;
   readonly originalDetails: PartialDatasetDetails;
   readonly scrollContainerRef: RefObject<HTMLElement>;
 }
@@ -55,11 +57,21 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
 
   const updateSection = useRef<HTMLElement>(null);
 
+  const isMissingDatasetProperties = useMemo(
+    () => datasetDetails.visibility === 'public'
+      && props.formConfig.dataType.vdiConfig.usesDataProperties
+      && isEmpty(fileUploads.dataPropertiesFiles)
+      && isEmpty(props.originalDataset.files.datasetProperties),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [ datasetDetails, fileUploads ]
+  );
+
   useEffect(() => {
     setFormIsValid(
       isDatasetFormValid(datasetDetails, props.formConfig, updateSection)
+        && !isMissingDatasetProperties
     );
-  }, [datasetDetails, fileUploads, props]);
+  }, [datasetDetails, fileUploads, props, isMissingDatasetProperties]);
 
   const onSubmit = () => {
     props.actions.submit();
@@ -82,6 +94,7 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
           showVisibilities={true}
           showDataInputs={false}
           uploadButtonText="Update Dataset"
+          requireDatasetPropertiesFile={isMissingDatasetProperties}
         />
 
         <MetadataSection formProps={props} jsonPath={metaPath} />

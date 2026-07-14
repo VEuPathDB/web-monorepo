@@ -15,6 +15,8 @@ import {
   sharingError,
   sharingSuccess,
   updateDatasetCommunityVisibility,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
@@ -43,6 +45,8 @@ const ActionCreators = {
   sharingError,
   sharingSuccess,
   updateDatasetCommunityVisibility,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 };
 
 type StateProps = Pick<
@@ -170,6 +174,8 @@ class UserDatasetListController extends PageController<Props> {
       sharingSuccess,
       sharingError,
       updateDatasetCommunityVisibility,
+      updateDatasetCommunityVisibilitySuccess: resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityError: resetCommunityVisibilityError,
     } = this.props.dispatchProps;
 
     const listProps: DatasetListProps = {
@@ -200,6 +206,9 @@ class UserDatasetListController extends PageController<Props> {
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilitySuccessReset:
+        resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityErrorReset: resetCommunityVisibilityError,
     };
 
     const noDatasetsForThisProject =

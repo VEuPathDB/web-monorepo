@@ -7,6 +7,10 @@ export type Nullable<T> = T | null;
 
 export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
 
+export type Mutable<T extends object> = {
+  -readonly [K in keyof T]: T[K];
+}
+
 export type DatasetFileType =
   | 'upload'
   | 'install'

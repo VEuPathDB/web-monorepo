@@ -39,25 +39,11 @@ export default function UserDatasetCommunityModal(
     user,
   } = props;
 
-  const totalSelectedDatasets = datasets.length;
-
-  const totalOwnedDatasets = datasets.filter(
-    (dataset) =>
-      dataset && dataset.owner.userId && dataset.owner.userId === user.id
-  ).length;
-
-  const totalCommunityDatasets = datasets.filter(
-    (dataset) => dataset.visibility === 'public'
-  ).length;
-
-  const totalNotOwnedDatasets = totalSelectedDatasets - totalOwnedDatasets;
-
-  const targetNoun =
-    totalSelectedDatasets === 1 ? dataNoun.singular : dataNoun.plural;
-  const targetNounLower = targetNoun.toLowerCase();
-
-  const datasetNoun =
-    (totalSelectedDatasets === 1 ? 'this ' : 'these ') + targetNounLower;
+  const dataset = datasets[0];
+  const isPublic = dataset.visibility === 'public';
+  const isOwned = dataset.owner.userId === user.id;
+  const targetNounLower = dataNoun.singular.toLowerCase();
+  const datasetNoun = 'this ' + targetNounLower;
 
   const CloseButton = () => (
     <button className="btn" type="button" onClick={() => onClose()}>
@@ -97,57 +83,43 @@ export default function UserDatasetCommunityModal(
             </em>
           </p>
           <div>
-            <p>
-              {totalSelectedDatasets} selected ({totalCommunityDatasets}{' '}
-              {isAre(totalCommunityDatasets)} already Public {dataNoun.plural}{' '}
-              {totalNotOwnedDatasets > 0
-                ? `; ${totalNotOwnedDatasets} ${isAre(
-                    totalNotOwnedDatasets
-                  )} owned by someone else`
-                : ''}
-              ).
-            </p>
-            <p>
-              <strong>
-                {totalOwnedDatasets > 0
-                  ? `Change Public access for ${totalOwnedDatasets} selected ${targetNounLower} that you own:`
-                  : `You do not own any of the selected datasets.`}
-              </strong>
-            </p>
-            <FilledButton
-              disabled={totalOwnedDatasets === 0}
-              themeRole="primary"
-              styleOverrides={{
-                container: {
-                  margin: '1em 0',
-                },
-              }}
-              text={`Grant access to ${totalOwnedDatasets} ${targetNounLower}`}
-              onPress={() =>
-                updateDatasetCommunityVisibility(
-                  datasets.map((d) => d.datasetId),
-                  true,
-                  context
-                )
-              }
-            />
-            <FilledButton
-              disabled={totalOwnedDatasets === 0}
-              themeRole="primary"
-              styleOverrides={{
-                container: {
-                  margin: '1em 0',
-                },
-              }}
-              text={`Revoke access to ${totalOwnedDatasets} ${targetNounLower}`}
-              onPress={() =>
-                updateDatasetCommunityVisibility(
-                  datasets.map((d) => d.datasetId),
-                  false,
-                  context
-                )
-              }
-            />
+            {isPublic ? (
+              <FilledButton
+                disabled={!isOwned}
+                themeRole="primary"
+                styleOverrides={{
+                  container: {
+                    margin: '1em 0',
+                  },
+                }}
+                text="Revoke public access"
+                onPress={() =>
+                  updateDatasetCommunityVisibility(
+                    [dataset.datasetId],
+                    false,
+                    context
+                  )
+                }
+              />
+            ) : (
+              <FilledButton
+                disabled={!isOwned}
+                themeRole="primary"
+                styleOverrides={{
+                  container: {
+                    margin: '1em 0',
+                  },
+                }}
+                text="Grant public access"
+                onPress={() =>
+                  updateDatasetCommunityVisibility(
+                    [dataset.datasetId],
+                    true,
+                    context
+                  )
+                }
+              />
+            )}
           </div>
         </div>
       </div>
@@ -165,8 +137,4 @@ export default function UserDatasetCommunityModal(
       <div className="UserDataset-SharingModal">{content}</div>
     </Modal>
   );
-}
-
-function isAre(total: number) {
-  return total === 1 ? 'is' : 'are';
 }

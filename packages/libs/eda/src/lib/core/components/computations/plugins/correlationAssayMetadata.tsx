@@ -84,7 +84,7 @@ export const plugin: ComputationPlugin = {
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
-    'These visualizations are only available for studies with compatible metadata.',
+    'These visualizations are only available for datasets with compatible metadata.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -350,12 +350,12 @@ export function CorrelationAssayMetadataConfiguration(
   );
 }
 
-// The correlation assay x metadata app is only available for studies
+// The correlation assay x metadata app is only available for datasets
 // with appropriate metadata. Specifically, the study
 // must have at least one continuous metadata variable that is on a one-to-one path
 // from the assay entity.
 // We made some assumptions to simplify logic.
-// 1. Curated studies have one parent for all assay entities.
+// 1. Curated datasets have one parent for all assay entities.
 // 2. All assay entities are one-to-one with their parent
 // 3. Studies with at least 2 entities are curated, so we can check for assay entities using our assay ids.
 // 4. Assay entities have no relevant metadata within their own entity.
