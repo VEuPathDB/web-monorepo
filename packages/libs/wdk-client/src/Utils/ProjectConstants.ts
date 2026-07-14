@@ -5,7 +5,6 @@
  */
 
 export const GENOMICS_PROJECTS = [
-  'EuPathDB',
   'VEuPathDB',
   'AmoebaDB',
   'CryptoDB',
