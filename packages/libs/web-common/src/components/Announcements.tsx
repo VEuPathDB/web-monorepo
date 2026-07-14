@@ -526,6 +526,55 @@ const siteAnnouncements: SiteAnnouncement[] = [
   },
 */
 
+  //VectorBase, Stomoxys calcitrans idStoCalc2.1 tRNA prediction went wild, June 2026 B70 release
+  {
+    id: 'scalidStoCalc2',
+    renderDisplay: (props: AnnouncementRenderProps) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf(
+          '/record/dataset/TMPTX_scalidStoCalc2.1'
+        ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_b52ac0e365') >
+            -1 ||
+          props.location.pathname.indexOf(
+            '/record/gene/scalidStoCalc2.1_tRNA_'
+          ) > -1)
+      ) {
+        return (
+          <div>
+            We over-predicted tRNA genes for this genome. This will be fixed in
+            the next release.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, Amblyomma americanum F_SG_1 tRNA prediction went wild, June 2026 B70 release
+  {
+    id: 'aameF_SG_1_tRNA',
+    renderDisplay: (props: AnnouncementRenderProps) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_aameF_SG_1') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_94d968c4fc') >
+            -1 ||
+          props.location.pathname.indexOf('/record/gene/aameF_SG_1_tRNA_') > -1)
+      ) {
+        return (
+          <div>
+            We over-predicted tRNA genes for this genome. This will be fixed in
+            the next release.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
   //VectorBase, fuscipes: https://redmine.apidb.org/issues/53163 b68  1 year (April 2024 to April 2025):
   {
     id: 'fuscipes',

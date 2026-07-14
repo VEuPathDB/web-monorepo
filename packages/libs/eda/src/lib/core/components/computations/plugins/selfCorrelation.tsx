@@ -61,7 +61,7 @@ export const plugin: ComputationPlugin = {
   },
   isEnabledInPicker: isEnabledInPicker,
   studyRequirements:
-    'These visualizations are only available for studies with compatible collections.',
+    'These visualizations are only available for datasets with compatible collections.',
 };
 
 // Renders on the thumbnail page to give a summary of the app instance
@@ -304,7 +304,7 @@ export function SelfCorrelationConfiguration(props: ComputationConfigProps) {
   );
 }
 
-// The self-correlation app is only available for studies that have at least one collection.
+// The self-correlation app is only available for datasets that have at least one collection.
 function isEnabledInPicker({
   studyMetadata,
 }: IsEnabledInPickerParams): boolean {

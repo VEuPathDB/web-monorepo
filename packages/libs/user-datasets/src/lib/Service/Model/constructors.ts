@@ -1,9 +1,9 @@
 import { projectId } from '../../config';
 
-import { DatasetPostDetails } from './request-types';
+import { PartialDatasetDetails } from './request-types';
 import { ValidationErrors } from './response-decoders';
 
-export function defaultDatasetDetails(): DatasetPostDetails {
+export function defaultDatasetDetails(): PartialDatasetDetails {
   return {
     origin: 'direct-upload',
     visibility: 'private',

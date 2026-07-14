@@ -17,6 +17,7 @@ import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCre
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
 import { useScrollUpOnRouteChange } from '@veupathdb/wdk-client/lib/Hooks/Page';
+import { SiteSearchInput } from './components/site-search/SiteSearchInput';
 import { getSingleRecordAnswerSpec } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { BinaryOperationsContext } from '@veupathdb/wdk-client/lib/Utils/Operations';
@@ -249,8 +250,11 @@ export function RecordTableDescription(DefaultComponent) {
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
-          !(record.recordClassName == 'UserDatasetRecordClasses.UserDatasetRecordClass')
-          ontologyProperties.scope.includes('download');
+          !(
+            record.recordClassName ==
+            'UserDatasetRecordClasses.UserDatasetRecordClass'
+          );
+        ontologyProperties.scope.includes('download');
 
         let hideDatasetLinkFromProperty =
           record.tables[table.name] &&
@@ -259,7 +263,10 @@ export function RecordTableDescription(DefaultComponent) {
 
         let showDatasetsLink =
           record.tables[table.name] &&
-          !(record.recordClassName == 'UserDatasetRecordClasses.UserDatasetRecordClass') &&
+          !(
+            record.recordClassName ==
+            'UserDatasetRecordClasses.UserDatasetRecordClass'
+          ) &&
           !table.name.startsWith('UserDataset') &&
           !hideDatasetLinkFromProperty;
 
@@ -291,8 +298,8 @@ export function RecordTableDescription(DefaultComponent) {
                 </button>
               </span>
             )}
-           {/* UNTIL THESE LINKS GET FIXED in GENE PAGE
-	   {hasTaxonId == 0 && showDatasetsLink && (
+            {/* hide dataset links UNTIL FIXED in GENE PAGE */}
+            {hasTaxonId == 0 && showDatasetsLink && (
               <Link
                 style={{
                   fontSize: '.8em',
@@ -330,7 +337,8 @@ export function RecordTableDescription(DefaultComponent) {
               >
                 <i className="fa fa-database" /> Datasets
               </Link>
-            )} */}
+            )}{' '}
+            {/* end of:  hide dataset links UNTIL FIXED in GENE PAGE */}
           </div>
         );
 
@@ -541,5 +549,7 @@ export function Page() {
 }
 
 export { AnswerController } from './component-wrappers/AnswerController';
+
+export { SiteSearchInput };
 
 // export { QuestionController } from './component-wrappers/QuestionController';

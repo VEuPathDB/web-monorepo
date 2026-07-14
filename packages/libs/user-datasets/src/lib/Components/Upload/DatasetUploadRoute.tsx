@@ -1,26 +1,13 @@
 import { isEmpty } from 'lodash';
-import { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
-
-import { VdiService, VdiServiceMetadata, VdiPluginConfig } from '../../Service';
-import { DatasetTypeConfig, UploadFormConfigurators } from './Configuration';
 import { DatasetUploadController } from './DatasetUploadController';
+import { DatasetFormRouteProps } from '../../Common/Forms/DatasetFormRouteProps';
+import { UserDatasetRoutes } from '../../Controllers/UserDatasetRouter';
 
-export interface UploadRouteProps {
-  readonly vdi: VdiService;
-  readonly vdiConfig: VdiServiceMetadata;
-  readonly baseUrl: string;
-  readonly urlParams: Record<string, string>;
-  readonly datasetTypes: readonly DatasetTypeConfig[];
-  readonly plugins: readonly VdiPluginConfig[];
-  readonly datasetTypeMenuHeader?: ReactNode;
-
-  readonly formConfigs: UploadFormConfigurators;
-}
-
-export function DatasetUploadRoute(props: UploadRouteProps): ReactElement {
+export function DatasetUploadRoute(props: DatasetFormRouteProps): ReactElement {
   const disclaimerContent = isEmpty(props.urlParams) ? undefined : (
     <div style={{ width: '100%', paddingBottom: 20 }}>
       <div style={{ paddingBottom: 5, textAlign: 'center' }}>
@@ -37,7 +24,7 @@ export function DatasetUploadRoute(props: UploadRouteProps): ReactElement {
     <WdkRoute
       requiresLogin
       exact
-      path={`${props.baseUrl}/new/:type?`}
+      path={`${props.baseUrl}${UserDatasetRoutes.NewDataset}`}
       component={(childProps: RouteComponentProps<{ type?: string }>) => (
         <DatasetUploadController
           {...props}

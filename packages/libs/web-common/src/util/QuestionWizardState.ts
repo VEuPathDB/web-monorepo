@@ -1,20 +1,15 @@
 // Wizard state utility functions
 
-import { some, every, fromPairs } from 'lodash';
+import { every } from 'lodash';
 
 import {
-  Parameter,
-  ParameterGroup,
   QuestionWithParameters,
-  RecordClass,
   ParameterValues,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { ParameterGroupUI, WizardState } from './WizardTypes';
 
 import { GroupState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-
-import { State as FilterParamState } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/State';
 
 export function constructParameterGroupUIs(
   question: QuestionWithParameters,
