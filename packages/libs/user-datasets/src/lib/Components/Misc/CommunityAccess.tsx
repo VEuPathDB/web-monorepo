@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 
 /**
  * Quarantine for the ever-changing preferred styling of the words "Community

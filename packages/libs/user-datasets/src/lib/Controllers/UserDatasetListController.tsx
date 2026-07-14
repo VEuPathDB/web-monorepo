@@ -14,8 +14,9 @@ import {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
@@ -43,8 +44,9 @@ const ActionCreators = {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 };
 
 type StateProps = Pick<
@@ -151,7 +153,6 @@ class UserDatasetListController extends PageController<Props> {
         sharingModalOpen,
         shareError,
         shareSuccessful,
-        communityModalOpen,
         updateDatasetCommunityVisibilityError,
         updateDatasetCommunityVisibilityPending,
         updateDatasetCommunityVisibilitySuccess,
@@ -172,8 +173,9 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
+      updateDatasetCommunityVisibilitySuccess: resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityError: resetCommunityVisibilityError,
     } = this.props.dispatchProps;
 
     const listProps: DatasetListProps = {
@@ -200,12 +202,13 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
-      communityModalOpen,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilitySuccessReset:
+        resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityErrorReset: resetCommunityVisibilityError,
     };
 
     const noDatasetsForThisProject =

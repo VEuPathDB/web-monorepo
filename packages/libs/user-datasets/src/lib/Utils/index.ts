@@ -1,5 +1,12 @@
 export { JsonPathBuilder } from './JsonPathBuilder';
-export type { Runnable, Consumer, BiConsumer } from './types';
+
+export type {
+  BiConsumer,
+  Consumer,
+  Function,
+  Nullable,
+  Runnable,
+} from './types';
 
 export {
   changeHandler,

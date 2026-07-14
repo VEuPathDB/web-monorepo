@@ -29,7 +29,6 @@ import { useGeoConfig } from '../core/hooks/geoConfig';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
-import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram } from '../core';
 import { ComputationRoute } from './ComputationRoute';

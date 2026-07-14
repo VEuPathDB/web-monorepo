@@ -1,4 +1,5 @@
 import { ReactNode, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -51,8 +52,20 @@ export function EDAWorkspaceContainer(props: Props) {
       <Banner
         banner={{
           type: 'warning',
-          message:
-            'The dataset you requested could not be found. Please check the URL and try again.',
+          fontSize: '120%',
+          message: (studyId.includes('EDAUD_')
+            ?
+            <>
+              This is a user dataset; either it is not available 
+              or there are none available to this user. Would you like to <Link to="/workspace/datasets/new">upload</Link> one?
+            </>
+            :
+            <>
+              The dataset you requested either does not exist or 
+              is not available to your user. 
+              Please <Link to="/contact-us">contact us</Link> if you consider it should.
+            </>
+          ),
         }}
       />
     );
