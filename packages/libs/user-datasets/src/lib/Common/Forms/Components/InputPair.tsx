@@ -38,6 +38,7 @@ interface TextProps<T extends object = object> extends BaseInputProps<T> {
   readonly value?: string;
   readonly minLength?: number;
   readonly maxLength?: number;
+  readonly placeholder?: string;
 }
 
 interface CheckboxProps<T extends object = object> extends BaseInputProps<T> {
@@ -169,6 +170,7 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
       value={props.value ?? ''}
       minLength={props.minLength}
       maxLength={props.maxLength}
+      placeholder={props.placeholder}
     />
   );
 }

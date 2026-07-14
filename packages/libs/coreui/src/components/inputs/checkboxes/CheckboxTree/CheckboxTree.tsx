@@ -264,6 +264,7 @@ type TreeLinksProps = {
   selectCurrentList: TreeLinkHandler;
   selectDefaultList: TreeLinkHandler;
   isFiltered: boolean;
+  isParentTreeSelectable: boolean;
   additionalActions?: React.ReactNode[];
   treeLinksStyleSpec: TreeLinksStyleSpec;
 };
@@ -289,6 +290,7 @@ function TreeLinks({
   isFiltered,
   additionalActions,
   treeLinksStyleSpec,
+  isParentTreeSelectable,
 }: TreeLinksProps) {
   const linkStyles = {
     ...treeLinksStyleSpec.links,
@@ -338,10 +340,14 @@ function TreeLinks({
               expand all
             </button>
             <Bar />
-            <button css={linkStyles} type="button" onClick={expandSelected}>
-              show selected
-            </button>
-            <Bar />
+            {isParentTreeSelectable && (
+              <>
+                <button css={linkStyles} type="button" onClick={expandSelected}>
+                  show selected
+                </button>
+                <Bar />
+              </>
+            )}
             <button css={linkStyles} type="button" onClick={expandNone}>
               collapse all
             </button>
@@ -1000,6 +1006,7 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
       }
       additionalActions={additionalActions}
       treeLinksStyleSpec={styleSpec.treeLinks ?? defaultTreeLinksStyleSpec}
+      isParentTreeSelectable={isSelectable || false}
     />
   );
 

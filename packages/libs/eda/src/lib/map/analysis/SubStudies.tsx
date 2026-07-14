@@ -109,7 +109,7 @@ export function SubStudies(props: Props) {
         ) : (
           <div>
             {result.data.length - 1 === 0 ? (
-              <p>There are no studies to show here.</p>
+              <p>There are no datasets to show here.</p>
             ) : (
               <p>
                 There {studyCountPhrase(result.data.length)} for the{' '}

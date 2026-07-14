@@ -158,10 +158,10 @@ function getPostUploadStatus(
     case 'invalid':
       return {
         content: (
-          <div style={{ display: 'inline-block', verticalAlign: 'top' }}>
+          <>
             This {dataNoun} was rejected as invalid during the import phase:
             {renderErrorMessages(status.import!.messages || [])}
-          </div>
+          </>
         ),
         icon: 'exclamation-circle',
       };
@@ -214,10 +214,10 @@ function getPostUploadStatus(
       case 'failed-validation':
         return {
           content: (
-            <div style={{ display: 'inline-block', verticalAlign: 'top' }}>
+            <>
               This {dataNoun} was rejected as invalid during the install phase:
               {renderErrorMessages([...metaMessages, ...dataMessages])}
-            </div>
+            </>
           ),
           icon: 'exclamation-circle',
         };
@@ -248,10 +248,10 @@ function getPostUploadStatus(
       case 'missing-dependency':
         return {
           content: (
-            <div style={{ display: 'inline-block', verticalAlign: 'top' }}>
+            <>
               This {dataNoun} is incompatible:
               {renderErrorMessages([...metaMessages, ...dataMessages])}
-            </div>
+            </>
           ),
           icon: 'exclamation-circle',
         };
@@ -273,7 +273,7 @@ function renderErrorMessages(messages: string[]): React.ReactNode {
 
   // Always render as bulleted list with newlines as <br>
   return (
-    <ul style={{ margin: '0.5em 0', paddingLeft: '1.5em', listStyle: 'disc' }}>
+    <ul className="status-messages">
       {messages.map((message, index) => (
         <li key={index}>
           {message.split('\n').map((line, i, arr) => (

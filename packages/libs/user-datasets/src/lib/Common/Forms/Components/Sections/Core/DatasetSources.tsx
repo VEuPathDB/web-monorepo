@@ -138,12 +138,17 @@ function DataSource({
     <li className="field-grid">
       <InputPair
         label="Source URL"
+        type="url"
         fieldName={jsonPath.appendToString<PostDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
         disabled={!enabled}
         required={required}
-        helpText="The URL where the dataset is hosted or was obtained."
+        placeholder="https://data.source.org/path"
+        helpText={
+          'The full URL where the dataset is hosted or was obtained. URLs must' +
+          ' include a protocol prefix such as "https://", "ftp://", etc..'
+        }
       />
 
       <InputPair
