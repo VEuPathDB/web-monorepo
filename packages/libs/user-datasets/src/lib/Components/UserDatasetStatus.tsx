@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
@@ -93,8 +93,14 @@ function getUploadStatus(
       return {
         content: (
           <>
-            This {dataNoun} was rejected during initial upload processing:{' '}
-            {details.message}
+            This {dataNoun} was rejected during initial upload processing:
+            <br />
+            {details.message?.split('\n').map((line, i, arr) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < arr.length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </>
         ),
         icon: 'exclamation-circle',
@@ -153,8 +159,8 @@ function getPostUploadStatus(
       return {
         content: (
           <>
-            This {dataNoun} was rejected as invalid during the import phase:{' '}
-            {status.import!.messages?.join(', ')}
+            This {dataNoun} was rejected as invalid during the import phase:
+            {renderErrorMessages(status.import!.messages || [])}
           </>
         ),
         icon: 'exclamation-circle',
@@ -185,9 +191,9 @@ function getPostUploadStatus(
       (d) => d.installTarget === projectId
     );
     const metaStatus = installData?.meta.status;
-    const metaMessage = installData?.meta.messages?.join(', ') ?? '';
+    const metaMessages = installData?.meta.messages || [];
     const dataStatus = installData?.data?.status;
-    const dataMessage = installData?.data?.messages?.join(', ') ?? '';
+    const dataMessages = installData?.data?.messages || [];
 
     // Returns the "least" status between metaStatus and dataStatus
     const combinedStatus = orderedStatuses.find(
@@ -209,10 +215,8 @@ function getPostUploadStatus(
         return {
           content: (
             <>
-              This {dataNoun} was rejected as invalid during the install phase:{' '}
-              {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
+              This {dataNoun} was rejected as invalid during the install phase:
+              {renderErrorMessages([...metaMessages, ...dataMessages])}
             </>
           ),
           icon: 'exclamation-circle',
@@ -245,9 +249,8 @@ function getPostUploadStatus(
         return {
           content: (
             <>
-              This {dataNoun} is incompatible: {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
+              This {dataNoun} is incompatible:
+              {renderErrorMessages([...metaMessages, ...dataMessages])}
             </>
           ),
           icon: 'exclamation-circle',
@@ -259,6 +262,30 @@ function getPostUploadStatus(
         };
     }
   }
+}
+
+/**
+ * Helper function to render error messages as a bulleted list.
+ * Replaces newlines with <br> tags in each message.
+ */
+function renderErrorMessages(messages: string[]): React.ReactNode {
+  if (!messages || messages.length === 0) return null;
+
+  // Always render as bulleted list with newlines as <br>
+  return (
+    <ul className="status-messages">
+      {messages.map((message, index) => (
+        <li key={index}>
+          {message.split('\n').map((line, i, arr) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < arr.length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 export default function UserDatasetStatus(props: Props) {

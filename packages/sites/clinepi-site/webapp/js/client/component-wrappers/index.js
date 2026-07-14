@@ -21,6 +21,7 @@ import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restrictio
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
+import { SiteSearchInput } from '../components/site-search/SiteSearchInput';
 
 import QuestionWizardController from '../controllers/QuestionWizardController';
 
@@ -41,6 +42,7 @@ export default {
   AnswerController,
   IndexController,
   SiteHeader,
+  SiteSearchInput,
 
   ServerSideAttributeFilter: () =>
     ServerSideAttributeFilter.withOptions({

@@ -198,6 +198,15 @@ yarn workspace @veupathdb/eda build-npm-modules
 
 Once this command completed, the running dev server will see the updated build artifacts, recompile the website, and reload the webpage. There are some cases where this might not work as expected, such as if the recompile step fails. In those cases, you may need to restart the local dev server. You can monitor the progress of the recompilation step in the terminal where you started the dev server.
 
+🆕 In that terminal window you can now run
+[source, shell]
+```
+yarn workspace @veupathdb/eda build-forever
+```
+
+**If the first build is successful**, the script will then watch for changes to the files and rebuild as necessary. The webpack dev server will automatically pick up the rebuilt dependencies and reload the page for you. Not as smooth as `gemomics-site` edits, but better than nothing!
+
+
 === View workspace dependency graph
 
 From the root `package.json`:

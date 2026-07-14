@@ -4,7 +4,7 @@ import * as userDatasetUpload from './UserDatasetUploadStoreModule';
 
 export type {
   BadUpload,
-  UploadFormState,
+  DatasetFormState,
 } from './UserDatasetUploadStoreModule';
 
 type WdkStoreModules =
@@ -18,3 +18,7 @@ export function wrapStoreModules(storeModules: WdkStoreModules) {
     userDatasetUpload,
   };
 }
+
+export {
+  type ClientSideUploadFormState
+} from './UserDatasetUploadStoreModule';

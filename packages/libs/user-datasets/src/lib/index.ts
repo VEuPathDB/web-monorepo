@@ -2,7 +2,7 @@ export type {
   ClientDatasetTypeConfig,
   DependencyInputProps,
   UploadFormPropConstructor,
-  UploadFormConfigurators,
-} from './Components/Upload/Configuration';
+  DatasetFormConfigurators,
+} from './Common/Configuration';
 
 export type { DatasetDependency } from './Service';
