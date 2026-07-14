@@ -2,7 +2,10 @@ import React, { ReactElement } from 'react';
 
 import { AddRowButton, InputBlock } from '../../../index';
 import { Consumer, JsonPathBuilder } from '../../../../../../Utils';
-import { DatasetContact, PartialDatasetDetails } from '../../../../../../Service';
+import {
+  DatasetContact,
+  PartialDatasetDetails,
+} from '../../../../../../Service';
 import { ContactBlock } from './ContactBlock';
 import { isEmpty } from 'lodash';
 
@@ -16,10 +19,10 @@ export function CollaboratorsSection(
   props: CollaboratorsSectionProps
 ): ReactElement {
   const safeContacts = isEmpty(props.datasetMeta.contacts)
-    ? [ {} ]
+    ? [{}]
     : props.datasetMeta.contacts!;
 
-  const hasPrimary = safeContacts.some(it => it.isPrimary);
+  const hasPrimary = safeContacts.some((it) => it.isPrimary);
 
   const setContacts = (contacts: Array<DatasetContact>) =>
     props.setDatasetMeta({ ...props.datasetMeta, contacts });
@@ -29,7 +32,10 @@ export function CollaboratorsSection(
       Array.isArray(props.datasetMeta.contacts) &&
       props.datasetMeta.contacts.length > 0
     ) {
-      const newContacts = scrubContactPrimaries(props.datasetMeta.contacts, contact.isPrimary === true);
+      const newContacts = scrubContactPrimaries(
+        props.datasetMeta.contacts,
+        contact.isPrimary === true
+      );
       newContacts[index] = scrubContactPrimary(contact);
       setContacts(newContacts);
     } else {
@@ -77,15 +83,17 @@ export function CollaboratorsSection(
   );
 }
 
-function scrubContactPrimaries(contacts: readonly DatasetContact[], unsetAll: boolean = false): DatasetContact[] {
+function scrubContactPrimaries(
+  contacts: readonly DatasetContact[],
+  unsetAll: boolean = false
+): DatasetContact[] {
   return unsetAll
     ? contacts.map(({ isPrimary: _, ...contact }) => contact)
     : contacts.map(scrubContactPrimary);
 }
 
 function scrubContactPrimary(contact: DatasetContact): DatasetContact {
-  if (contact.isPrimary === true)
-    return contact;
+  if (contact.isPrimary === true) return contact;
 
   const { isPrimary: _, ...prunedContact } = contact;
 

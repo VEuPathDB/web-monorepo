@@ -11,7 +11,6 @@ import { ParameterGroupUI, WizardState } from './WizardTypes';
 
 import { GroupState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 
-
 export function constructParameterGroupUIs(
   question: QuestionWithParameters,
   paramValues: ParameterValues,

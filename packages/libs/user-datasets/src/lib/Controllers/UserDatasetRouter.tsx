@@ -1,6 +1,11 @@
 import React, { ComponentType, ReactNode, useMemo } from 'react';
 
-import { RouteComponentProps, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  RouteComponentProps,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
@@ -13,7 +18,7 @@ import { DatasetManagementProps } from '../Components/Management/DatasetManageme
 import {
   DatasetTypeConfig,
   filterAvailableDataTypes,
-  promoteTypeConfig
+  promoteTypeConfig,
 } from '../Common/Configuration';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useVdiMetadata } from '../Service/utils/use-vdi';
@@ -24,7 +29,10 @@ interface Props {
   helpRoute: string;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
-  detailComponentsByTypeName?: Record<string, ComponentType<DatasetManagementProps>>;
+  detailComponentsByTypeName?: Record<
+    string,
+    ComponentType<DatasetManagementProps>
+  >;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
 
@@ -51,8 +59,7 @@ export function UserDatasetRouter({
 
   const vdiMetadata = useVdiMetadata();
 
-  if (!vdiMetadata)
-    return <Loading />;
+  if (!vdiMetadata) return <Loading />;
 
   return (
     <Switch>
@@ -153,18 +160,24 @@ export function UserDatasetRouter({
         ]}
         exact={true}
         requiresLogin={true}
-        component={function Component(props: RouteComponentProps<{ id: string }>) {
+        component={function Component(
+          props: RouteComponentProps<{ id: string }>
+        ) {
           const history = useHistory();
 
-          const datasetTypes = filterAvailableDataTypes(workspaceConfig.baseDatasetTypeConfigs, vdiMetadata.plugins)
+          const datasetTypes = filterAvailableDataTypes(
+            workspaceConfig.baseDatasetTypeConfigs,
+            vdiMetadata.plugins
+          )
             .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
             .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 
-          const editModalProps = props.location.pathname.endsWith("/edit")
+          const editModalProps = props.location.pathname.endsWith('/edit')
             ? {
-              showModal: true,
-              updateToPublic: props.location.search.indexOf("updateToPublic") > -1
-            }
+                showModal: true,
+                updateToPublic:
+                  props.location.search.indexOf('updateToPublic') > -1,
+              }
             : undefined;
 
           return (

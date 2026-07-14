@@ -17,7 +17,11 @@ import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreMo
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isEmpty, isEqual } from 'lodash';
-import { DatasetGetResponseBody, DatasetUploads, PartialDatasetDetails } from '../../Service';
+import {
+  DatasetGetResponseBody,
+  DatasetUploads,
+  PartialDatasetDetails,
+} from '../../Service';
 import { hasUploads } from '../../Service/Model/utility-types';
 import { DatasetTypeConfig } from '../../Common/Configuration';
 
@@ -58,18 +62,19 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
   const updateSection = useRef<HTMLElement>(null);
 
   const isMissingDatasetProperties = useMemo(
-    () => datasetDetails.visibility === 'public'
-      && props.formConfig.dataType.vdiConfig.usesDataProperties
-      && isEmpty(fileUploads.dataPropertiesFiles)
-      && isEmpty(props.originalDataset.files.datasetProperties),
+    () =>
+      datasetDetails.visibility === 'public' &&
+      props.formConfig.dataType.vdiConfig.usesDataProperties &&
+      isEmpty(fileUploads.dataPropertiesFiles) &&
+      isEmpty(props.originalDataset.files.datasetProperties),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ datasetDetails, fileUploads ]
+    [datasetDetails, fileUploads]
   );
 
   useEffect(() => {
     setFormIsValid(
-      isDatasetFormValid(datasetDetails, props.formConfig, updateSection)
-        && !isMissingDatasetProperties
+      isDatasetFormValid(datasetDetails, props.formConfig, updateSection) &&
+        !isMissingDatasetProperties
     );
   }, [datasetDetails, fileUploads, props, isMissingDatasetProperties]);
 

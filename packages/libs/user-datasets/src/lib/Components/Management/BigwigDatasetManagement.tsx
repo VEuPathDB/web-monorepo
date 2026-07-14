@@ -8,7 +8,10 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa';
 
 import { makeClassifier } from '../UserDatasetUtils';
-import DatasetManagement, { DatasetManagementState, DatasetManagementProps } from './DatasetManagement';
+import DatasetManagement, {
+  DatasetManagementState,
+  DatasetManagementProps,
+} from './DatasetManagement';
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';

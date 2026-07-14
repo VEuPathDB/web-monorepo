@@ -11,10 +11,11 @@ import {
   DependencyInputProps,
 } from '@veupathdb/user-datasets/lib';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
+import { ButtonStateStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import {
-  ButtonStateStyleSpec,
-} from '@veupathdb/coreui/lib/components/buttons';
-import { DatasetFormConfig, DatasetTypeConfig } from '@veupathdb/user-datasets/lib/Common/Configuration';
+  DatasetFormConfig,
+  DatasetTypeConfig,
+} from '@veupathdb/user-datasets/lib/Common/Configuration';
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
 import { DatasetWorkspaceConfig } from '@veupathdb/user-datasets/lib/Common/Configuration/DatasetWorkspaceConfig';
@@ -34,7 +35,6 @@ const implementedUploadTypes = {
 };
 
 export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
-
   baseDatasetTypeConfigs: [
     {
       ...implementedUploadTypes.bigwigfiles,
@@ -198,9 +198,7 @@ function bigwigFormConfigurator(
   };
 }
 
-function biomFormConfigurator(
-  dataType: DatasetTypeConfig
-): DatasetFormConfig {
+function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
   return {
     dataType,
     verbiage: {

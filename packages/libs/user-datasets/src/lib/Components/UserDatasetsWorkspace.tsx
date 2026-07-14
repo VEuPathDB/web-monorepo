@@ -12,7 +12,7 @@ import { DataNoun } from '../Utils/types';
 import {
   DatasetTypeConfig,
   filterAvailableDataTypes,
-  promoteTypeConfig
+  promoteTypeConfig,
 } from '../Common/Configuration';
 import { VdiMetadata } from '../Service/utils/use-vdi';
 import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
@@ -49,7 +49,10 @@ export function UserDatasetsWorkspace(
     .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
     .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
 
-  const availableDataTypes = filterAvailableDataTypes(datasetTypes, vdiMetadata.plugins);
+  const availableDataTypes = filterAvailableDataTypes(
+    datasetTypes,
+    vdiMetadata.plugins
+  );
   const allowsUploads = !isEmpty(availableDataTypes);
 
   const routes: WorkspaceNavigationItem[] = [

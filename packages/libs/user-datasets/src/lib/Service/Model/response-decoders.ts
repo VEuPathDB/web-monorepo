@@ -472,10 +472,10 @@ export const ccErrorBodyUnion = io.union([
 ]);
 export type ServiceError = io.TypeOf<typeof ccErrorBodyUnion>;
 
-export type VdiErrorCode = io.TypeOf<typeof simpleContainerCoreErrorCode>
+export type VdiErrorCode =
+  | io.TypeOf<typeof simpleContainerCoreErrorCode>
   | io.TypeOf<typeof serverErrorCode>
   | io.TypeOf<typeof validationErrorCode>;
-
 
 // endregion Service Errors
 
