@@ -7,7 +7,7 @@ import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { isNonBlankString } from '../../../../../Utils/value-tests';
 import { projectId } from '../../../../../config';
-import { isGenomicsProject } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export const ExpOrganismToggleID = 'exp-organism-toggle';
 
@@ -42,7 +42,7 @@ export function ExperimentalOrganism(
       })
   );
 
-  const isGenomics = isGenomicsProject(projectId);
+  const isGenomics = isGenomicsProjectId(projectId);
 
   const required = !isGenomics
     ? hasExperimentalOrganism

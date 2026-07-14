@@ -36,7 +36,11 @@ export function BWFilesSection(props: Props) {
       onCollapsedChange={onCollapsedChange}
     >
       <ErrorBoundary>
-        <UserDatasetBWFiles record={record} datasetId={vdiDatasetId} showHeader={false} />
+        <UserDatasetBWFiles
+          record={record}
+          datasetId={vdiDatasetId}
+          showHeader={false}
+        />
       </ErrorBoundary>
     </CollapsibleSection>
   );

@@ -13,10 +13,7 @@ import {
 export const differentialExpressionNotebook: PresetNotebook = {
   name: 'differentialexpression',
   displayName: 'Differential Expression Notebook',
-  projects: [
-    ...GENOMICS_PROJECTS,
-    'UniDB' /* 'MicrobiomeDB' probably inappropriate */,
-  ],
+  projects: GENOMICS_PROJECTS.map((it) => it.projectId),
   cells: withResolvedSharedInputNames([
     {
       id: 'de_subset',

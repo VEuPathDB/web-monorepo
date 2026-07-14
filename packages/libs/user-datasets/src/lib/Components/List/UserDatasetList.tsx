@@ -49,6 +49,7 @@ import {
 } from '../../Actions/UserDatasetsActions';
 import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
 import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
 
 export interface DatasetListProps {
   baseUrl: string;
@@ -311,12 +312,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         sortable: true,
         name: 'VEuPathDB project',
         renderCell(cellProps: MesaDataCellProps) {
-          const newInstallTargets = cellProps.row.installTargets.map((val) =>
-            val === 'UniDB'
-              ? 'VEuPathDB'
-              : val === 'ClinEpiDB'
-              ? 'dataExplorer'
-              : val
+          const newInstallTargets = cellProps.row.installTargets.map(
+            projectIdToDisplayName
           );
           return newInstallTargets.join(', ');
         },
