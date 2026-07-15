@@ -12,6 +12,7 @@
     "sourceMap": true,
     "jsx": "react-jsx",
     "strict": true,
+    "skipLibCheck": true,
     "alwaysStrict": true,
     "lib": [
       "dom",

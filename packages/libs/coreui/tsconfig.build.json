@@ -1,11 +1,13 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": [
-    "src/stories/**/*"
-  ],
+  "include": ["src"],
+  "exclude": ["src/stories"],
   "compilerOptions": {
+    "target": "es2015",
     "noEmit": false,
-    "emitDeclarationOnly": false,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
     "outDir": "lib"
   }
 }

@@ -522,7 +522,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
           }
         }
       } catch (error) {
-        dispatch({ type: 'errors/add', payload: error });
+        dispatch({
+          type: 'errors/add',
+          payload: error instanceof Error ? error : new Error(String(error)),
+        });
       } finally {
         dispatch({ type: 'setSelectedUnit', payload: newUnit });
       }

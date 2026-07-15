@@ -86,7 +86,7 @@
     "shelljs": "^0.8.4",
     "ts-jest": "^23.1.2",
     "tspath": "^1.3.7",
-    "typescript": "~4.3.5"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "notistack": "^1.0.10",
