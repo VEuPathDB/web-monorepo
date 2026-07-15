@@ -21,7 +21,7 @@ export const StringSetFilter = t.intersection([
  * multi-scale geohash filtering of arbitrary (e.g. lasso-selected)
  * geographic shapes, applied to an entity's finest-grained geohash
  * variable. NOTE: requires EDA subsetting service with
- * lib eda-subsetting >= 7.1.0.
+ * lib eda-subsetting >= 7.2.0.
  */
 export type StringPrefixSetFilter = t.TypeOf<typeof StringPrefixSetFilter>;
 export const StringPrefixSetFilter = t.intersection([

@@ -126,7 +126,7 @@ which is restricted to sub-variables of a `multifilter` display-type parent.
 
 The groundwork is implemented behind this document:
 
-- **lib-eda-subsetting ≥ 7.1.0**: `StringPrefixSetFilter` — SQL `LIKE`
+- **lib-eda-subsetting ≥ 7.2.0**: `StringPrefixSetFilter` — SQL `LIKE`
   prefix union (with wildcard escaping) plus the equivalent predicate for
   the binary-file streaming path.
 - **service-eda**: new `stringPrefixSet` API filter type

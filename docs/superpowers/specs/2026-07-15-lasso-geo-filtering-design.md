@@ -14,7 +14,7 @@ prefix cover, Option B of the background doc). Users can draw multiple
 lassos (union semantics), and edit, drag or delete drawn shapes.
 
 The subsetting service side is already deployed to the dev environment
-(lib-eda-subsetting ≥ 7.1.0 / service-eda `stringPrefixSet`), and the
+(lib-eda-subsetting ≥ 7.2.0 / service-eda `stringPrefixSet`), and the
 `StringPrefixSetFilter` io-ts type is already in this package's `Filter`
 union (`src/lib/core/types/filter.ts`).
 
@@ -84,8 +84,15 @@ Algorithm — all shapes of the entity converted together into one cover:
    `maxLevel` is reached. Remaining border cells are kept
    **inclusively** (partial overlap ⇒ included — err on not dropping
    data the user circled).
-3. Bottom-up **collapse**: whenever all 32 children of a prefix are
-   present, replace them with the parent (repeat until stable).
+3. **Local collapse guard** at the stop level only: if all 32 children
+   of a refined border cell survive (none entirely outside), emit the
+   parent prefix instead — semantically identical (a parent prefix
+   matches exactly the union of its 32 child prefixes) and saves 31
+   budget slots. A general bottom-up collapse pass is unnecessary with
+   top-down descent: fully-inside cells are kept at the level they are
+   discovered and never subdivided, so complete sibling sets cannot
+   arise anywhere else. (Multi-level cascade of the guard would require
+   a pathologically wiggly boundary; not handled.)
 
 Geometry tests via turf against `ngeohash.decode_bbox` cell rectangles,
 or shape2geohash's per-level `insideOnly`/`border` modes —
@@ -187,8 +194,9 @@ detail).
 ## Testing
 
 - Unit tests for `polygonsToGeohashPrefixes`: hand-checkable covers for
-  simple polygons; budget respected; collapse correctness (32 children
-  ⇒ parent); multi-shape union; dateline-straddling shape; tiny shape ⇒
+  simple polygons; budget respected; stop-level collapse guard (all 32
+  children of a border cell survive ⇒ parent emitted); multi-shape
+  union; dateline-straddling shape; tiny shape ⇒
   non-empty cover.
 - Unit test: `GeoCoordUIState` codec round-trip with and without
   `selectedShapes`.
