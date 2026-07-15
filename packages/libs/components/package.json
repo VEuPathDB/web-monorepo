@@ -9,6 +9,9 @@
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
+    "@turf/area": "^6.5.0",
+    "@turf/helpers": "^6.5.0",
+    "@turf/intersect": "^6.5.0",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
     "@veupathdb/coreui": "workspace:^",
