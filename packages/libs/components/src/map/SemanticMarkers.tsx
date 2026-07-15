@@ -285,7 +285,9 @@ export default function SemanticMarkers({
 
   return (
     <>
-      <AreaSelect onAreaSelected={onAreaSelected} />
+      {(onAreaSelectedProp != null || setSelectedMarkers != null) && (
+        <AreaSelect onAreaSelected={onAreaSelected} />
+      )}
       {refinedMarkers}
     </>
   );
