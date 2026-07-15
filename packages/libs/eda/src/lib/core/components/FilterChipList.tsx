@@ -1,7 +1,11 @@
 import FilterChip from './FilterChip';
 import { StudyEntity } from '..';
 import { makeStyles } from '@material-ui/core/styles';
-import { Filter } from '../types/filter';
+import {
+  Filter,
+  LongitudeRangeFilter,
+  NumberRangeFilter,
+} from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
 import { formatFilterValue } from '../utils/filter-display';
 import { ReactNode } from 'react';
@@ -88,9 +92,14 @@ export default function FilterChipList(props: Props) {
                     {entity.displayName}: Geographic area
                   </div>
                   <div>
-                    Latitude {formatFilterValue(latFilter, props.entities)}
+                    Latitude from {formatCoord(latFilter.min)} to{' '}
+                    {formatCoord(latFilter.max)}, inclusive
                     <br />
-                    Longitude {formatFilterValue(lngFilter, props.entities)}
+                    Longitude from {formatCoord(lngFilter.left)} to{' '}
+                    {formatCoord(lngFilter.right)}, inclusive
+                    {lngFilter.right < lngFilter.left
+                      ? ' (crossing the antimeridian)'
+                      : ''}
                   </div>
                 </>
               );
@@ -183,9 +192,19 @@ export default function FilterChipList(props: Props) {
 }
 
 interface GeoFilterPair {
-  latFilter: Filter;
-  lngFilter: Filter;
+  latFilter: NumberRangeFilter;
+  lngFilter: LongitudeRangeFilter;
   latVariable: { id: string };
+}
+
+/**
+ * Format a latitude/longitude value for display. The filter stores the full
+ * precision selected on the map; here we round to 4 decimal places (~11 m,
+ * matching the map filter's own display) so the chip tooltip doesn't show a
+ * distractingly long string of digits.
+ */
+function formatCoord(value: number): string {
+  return String(Number(value.toFixed(4)));
 }
 
 /**
@@ -197,16 +216,18 @@ function findGeoFilterPairs(
   filters: Filter[],
   entities: StudyEntity[]
 ): GeoFilterPair[] {
-  const latFilters = filters.filter((filter) => {
+  const latFilters = filters.filter((filter): filter is NumberRangeFilter => {
     if (filter.type !== 'numberRange') return false;
     const variable = findEntityAndVariable(entities, filter)?.variable;
     return variable != null && isLatitudeVariable(variable);
   });
-  const lngFilters = filters.filter((filter) => {
-    if (filter.type !== 'longitudeRange') return false;
-    const variable = findEntityAndVariable(entities, filter)?.variable;
-    return variable != null && isLongitudeVariable(variable);
-  });
+  const lngFilters = filters.filter(
+    (filter): filter is LongitudeRangeFilter => {
+      if (filter.type !== 'longitudeRange') return false;
+      const variable = findEntityAndVariable(entities, filter)?.variable;
+      return variable != null && isLongitudeVariable(variable);
+    }
+  );
 
   return latFilters.flatMap((latFilter) => {
     const lngFilter = lngFilters.find(
