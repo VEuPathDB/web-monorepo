@@ -35,7 +35,7 @@
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/tsconfig": "workspace:^",
     "react-scripts": "4.0.1",
-    "typescript": "^4.4.4"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@veupathdb/http-utils": "workspace:^",
