@@ -14,7 +14,7 @@ export function RecommendedInformation(
 ): ReactElement {
   return (
     <>
-      <h3 style={{ marginTop: '1em'}}>Recommended Information</h3>
+      <h3 style={{ marginTop: '1em' }}>Recommended Information</h3>
       <p className="section-description">
         <i>
           Providing this information is recommended, as it will helps others

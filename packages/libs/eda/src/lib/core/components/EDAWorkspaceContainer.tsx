@@ -53,24 +53,29 @@ export function EDAWorkspaceContainer(props: Props) {
         banner={{
           type: 'warning',
           fontSize: '120%',
-          message: (studyId.includes('EDAUD_')
-            ?
+          message: studyId.includes('EDAUD_') ? (
             <>
-              This is a user dataset; either it is not available 
-              or there are none available to this user. Would you like to <Link to="/workspace/datasets/new">upload</Link> one?
+              This is a user dataset; either it is not available or there are
+              none available to this user. Would you like to{' '}
+              <Link to="/workspace/datasets/new">upload</Link> one?
             </>
-            :
+          ) : (
             <>
-              The dataset you requested either does not exist or 
-              is not available to your user. 
-              Please <Link to="/contact-us">contact us</Link> if you consider it should.
+              The dataset you requested either does not exist or is not
+              available to your user. Please{' '}
+              <Link to="/contact-us">contact us</Link> if you consider it
+              should.
             </>
           ),
         }}
       />
     );
 
-  if (wdkStudyRecordState == null || studyMetadata.value == null || studyMetadata.pending)
+  if (
+    wdkStudyRecordState == null ||
+    studyMetadata.value == null ||
+    studyMetadata.pending
+  )
     return <Loading />;
 
   return (

@@ -12,8 +12,7 @@ export function useVdiService(): VdiService | undefined {
 
   useWdkService(
     async (wdk) => {
-      if (value)
-        return;
+      if (value) return;
 
       const wrapped = wrapWdkService({ vdiServiceUrl }, wdk);
       if (!wrapped)
@@ -21,7 +20,7 @@ export function useVdiService(): VdiService | undefined {
 
       setValue(wrapped.vdi);
     },
-    [ value ]
+    [value]
   );
 
   return value;
@@ -58,15 +57,14 @@ export function useVdiMetadata(): VdiMetadata | undefined {
       if (vdi && !value && state === State.None) {
         setState(State.Loading);
 
-        load(vdi)
-          .catch(e => {
-            console.error("failed to load vdi metadata", e);
-            setState(State.None)
-          });
+        load(vdi).catch((e) => {
+          console.error('failed to load vdi metadata', e);
+          setState(State.None);
+        });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ !!vdi, value, state ],
+    [!!vdi, value, state]
   );
 
   return value;

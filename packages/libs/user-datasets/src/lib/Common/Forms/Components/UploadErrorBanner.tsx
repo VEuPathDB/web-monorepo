@@ -62,9 +62,10 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
       // fine.
       const element = document.getElementById(jsonPath);
 
-      const link = element == null
-        ? formatJPath(jsonPath)
-        : (
+      const link =
+        element == null ? (
+          formatJPath(jsonPath)
+        ) : (
           <button
             className="error-link"
             type="button"
@@ -78,7 +79,13 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
         );
 
       for (const msg of errors.byKey[jsonPath]) {
-        elements.push(newLI(<>{link}: {msg}</>));
+        elements.push(
+          newLI(
+            <>
+              {link}: {msg}
+            </>
+          )
+        );
       }
     }
   }

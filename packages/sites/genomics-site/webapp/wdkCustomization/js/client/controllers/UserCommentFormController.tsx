@@ -15,6 +15,10 @@ import {
   HelpIcon,
 } from '@veupathdb/wdk-client/lib/Components';
 import {
+  AiCommentEditView,
+  AiCommentEditViewProps,
+} from '../components/userComments/AiGenePublication/AiCommentEditView';
+import {
   UserCommentFormView,
   UserCommentFormViewProps,
 } from '../components/userComments/UserCommentForm/UserCommentFormView';
@@ -139,6 +143,8 @@ type MergedProps = UserCommentFormViewProps & {
   openEditComment: (commentId: number) => void;
   closeUserCommentForm: () => void;
   queryParams: OwnProps;
+  isAiComment: boolean;
+  aiCommentEditViewProps?: AiCommentEditViewProps;
 };
 
 type Props = MergedProps;
@@ -730,6 +736,38 @@ const mergeProps = (
     backendValidationErrors: stateProps.backendValidationErrors,
     internalError: stateProps.internalError,
     showLoginForm: dispatchProps.showLoginForm,
+    isAiComment: stateProps.submission.aiProvenance != null,
+    aiCommentEditViewProps: (() => {
+      const aiProvenance = stateProps.submission.aiProvenance;
+      if (aiProvenance != null) {
+        const props: AiCommentEditViewProps = {
+          stableId: get(stateProps.submission, 'target.id', ''),
+          source: aiProvenance.source,
+          headline: stateProps.submission.headline || '',
+          content: stateProps.submission.content || '',
+          onHeadlineChange: (value: string) =>
+            dispatchProps.updateFormField('headline')(value),
+          onContentChange: (value: string) =>
+            dispatchProps.updateFormField('content')(value),
+          original: {
+            headline: aiProvenance.originalHeadline,
+            content: aiProvenance.originalContent,
+          },
+          onSubmit: () =>
+            dispatchProps.requestSubmitComment(
+              omit(stateProps.submission, ['aiProvenance'])
+            ),
+          submitting: stateProps.submitting,
+          completed: stateProps.completed,
+          backendValidationErrors: stateProps.backendValidationErrors,
+          internalError: stateProps.internalError,
+          returnUrl: stateProps.returnUrl,
+          returnLinkText: stateProps.returnLinkText,
+        };
+        return props;
+      }
+      return undefined;
+    })(),
   };
 };
 
@@ -789,6 +827,8 @@ class UserCommentFormController extends PageController<Props> {
       documentTitle,
       permissionDenied,
       showLoginForm,
+      isAiComment,
+      aiCommentEditViewProps,
       ...viewProps
     } = this.props;
 
@@ -809,6 +849,8 @@ class UserCommentFormController extends PageController<Props> {
           to continue.
         </p>
       </>
+    ) : isAiComment && aiCommentEditViewProps != null ? (
+      <AiCommentEditView {...aiCommentEditViewProps} />
     ) : (
       <UserCommentFormView {...viewProps} />
     );

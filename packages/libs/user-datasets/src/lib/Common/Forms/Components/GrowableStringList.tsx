@@ -1,4 +1,10 @@
-import React, { ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Consumer,
   JsonPathBuilder,
@@ -80,34 +86,36 @@ export function GrowableStringList({
 }
 
 interface InputListProps {
-  readonly values:    string[];
+  readonly values: string[];
   readonly setValues: Consumer<string[]>;
-  readonly jsonPath:  JsonPathBuilder;
-  readonly disabled:  boolean;
-  readonly required:  boolean;
+  readonly jsonPath: JsonPathBuilder;
+  readonly disabled: boolean;
+  readonly required: boolean;
 }
 
 function InputList(props: InputListProps): ReactElement {
-  return <>
-    {props.values.map((value, index) => {
-      const fieldName = props.jsonPath.appendToString(index);
+  return (
+    <>
+      {props.values.map((value, index) => {
+        const fieldName = props.jsonPath.appendToString(index);
 
-      return (
-        <li key={fieldName}>
-          <input
-            type="text"
-            name={fieldName}
-            id={fieldName}
-            onChange={textChange((v) => {
-              if (!props.disabled)
-                props.setValues(replaceElement(props.values, index, v ?? ''));
-            })}
-            value={value}
-            disabled={props.disabled}
-            required={props.required && index === 0}
-          />
-        </li>
-      );
-    })}
-  </>;
+        return (
+          <li key={fieldName}>
+            <input
+              type="text"
+              name={fieldName}
+              id={fieldName}
+              onChange={textChange((v) => {
+                if (!props.disabled)
+                  props.setValues(replaceElement(props.values, index, v ?? ''));
+              })}
+              value={value}
+              disabled={props.disabled}
+              required={props.required && index === 0}
+            />
+          </li>
+        );
+      })}
+    </>
+  );
 }

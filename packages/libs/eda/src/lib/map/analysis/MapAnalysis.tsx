@@ -738,7 +738,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 includeAllLink={false}
                 includeNameHeader={false}
                 history={history}
-                fetchEdaStudyLinks={_ => ({})}
+                fetchEdaStudyLinks={(_) => ({})}
               />
             ) : (
               <RecordController

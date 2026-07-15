@@ -1,4 +1,10 @@
-import React, { ReactElement, RefObject, useEffect, useMemo, useRef } from 'react';
+import React, {
+  ReactElement,
+  RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { partialRight } from 'lodash';
 
 import {
@@ -47,11 +53,14 @@ export function CharacteristicsSection({
 
   useEffect(
     () => {
-      if (enabled === undefined && datasetMeta.datasetCharacteristics !== undefined)
+      if (
+        enabled === undefined &&
+        datasetMeta.datasetCharacteristics !== undefined
+      )
         setEnabled(true);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ enabled, datasetMeta.datasetCharacteristics ],
+    [enabled, datasetMeta.datasetCharacteristics]
   );
 
   const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {
@@ -172,7 +181,9 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.associatedFactors}
           setValues={setRootField('associatedFactors')}
-          jsonPath={jsonPath.append<PartialCharacteristics>('associatedFactors')}
+          jsonPath={jsonPath.append<PartialCharacteristics>(
+            'associatedFactors'
+          )}
           disabled={enabled !== true}
           helpText={
             'Pathogen, exposure, or risk factor associated with the outcome' +
@@ -280,25 +291,22 @@ function YearsInputs({
   const setYear = disabled
     ? () => {}
     : (
-      k: keyof SampleYearRange,
-      v: string | undefined,
-      ref: RefObject<HTMLInputElement>,
-    ) => {
-      if (!v)
-        return;
+        k: keyof SampleYearRange,
+        v: string | undefined,
+        ref: RefObject<HTMLInputElement>
+      ) => {
+        if (!v) return;
 
-      const parsed = parseInt(v);
+        const parsed = parseInt(v);
 
-      if (isNaN(parsed))
-        return;
+        if (isNaN(parsed)) return;
 
-      if (parsed < 1500 || parsed > 9999)
-        ref.current?.classList?.add('invalid')
-      else
-        ref.current?.classList?.remove('invalid')
+        if (parsed < 1500 || parsed > 9999)
+          ref.current?.classList?.add('invalid');
+        else ref.current?.classList?.remove('invalid');
 
-      setYears({ ...safeYears, [k]: parsed });
-    };
+        setYears({ ...safeYears, [k]: parsed });
+      };
 
   return (
     <>

@@ -1,4 +1,9 @@
-import React, { JSXElementConstructor, ReactElement, useEffect, useState } from 'react';
+import React, {
+  JSXElementConstructor,
+  ReactElement,
+  useEffect,
+  useState,
+} from 'react';
 import { DatasetFormConfig } from '../Configuration';
 import { VdiServiceMetadata } from '../../Service';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +16,7 @@ import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
 
 export interface DatasetFormControllerProps<
-  P extends DatasetFormProps = DatasetFormProps,
+  P extends DatasetFormProps = DatasetFormProps
 > {
   readonly baseUrl: string;
   readonly form: JSXElementConstructor<P>;
@@ -21,11 +26,11 @@ export interface DatasetFormControllerProps<
 }
 
 export function DatasetFormController<
-  P extends DatasetFormProps = DatasetFormProps,
+  P extends DatasetFormProps = DatasetFormProps
 >(props: DatasetFormControllerProps<P>): ReactElement {
   const { form: Form } = props;
 
-  const [ submitting, setSubmitting ] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const dispatch = useDispatch();
 

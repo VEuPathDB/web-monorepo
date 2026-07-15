@@ -33,17 +33,20 @@ export interface UserDatasetFilesProps {
 export function UserDatasetFiles(props: UserDatasetFilesProps) {
   const { datasetId, showHeader = true } = props;
 
-  const [ datasetFiles, setDatasetFiles ] = useState(props.dataset?.files);
-  const [ error, setError ] = useState<string>();
+  const [datasetFiles, setDatasetFiles] = useState(props.dataset?.files);
+  const [error, setError] = useState<string>();
 
   const vdi = useVdiService();
 
   useEffect(() => {
     if (vdi != null && datasetFiles == null)
-      vdi.getDatasetFileList(datasetId)
+      vdi
+        .getDatasetFileList(datasetId)
         .then(setDatasetFiles)
-        .catch(_ => setError('Failed to load dataset files. Please try again later.'));
-  }, [ datasetId, vdi, datasetFiles ]);
+        .catch((_) =>
+          setError('Failed to load dataset files. Please try again later.')
+        );
+  }, [datasetId, vdi, datasetFiles]);
 
   // If VDI is not configured, render nothing
   if (!vdi) {
@@ -195,7 +198,7 @@ export function UserDatasetFiles(props: UserDatasetFilesProps) {
       })
     : null;
 
-  const hasDatasetProperties = !isEmpty(datasetFiles.datasetProperties)
+  const hasDatasetProperties = !isEmpty(datasetFiles.datasetProperties);
   const datasetPropertiesFileState = hasDatasetProperties
     ? MesaState.create({
         columns: getFileTableColumns('datasetProperties'),

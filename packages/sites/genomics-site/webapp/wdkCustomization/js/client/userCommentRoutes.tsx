@@ -1,6 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 
+import AiGenePublicationAddController from './controllers/AiGenePublicationAddController';
 import UserCommentFormController from './controllers/UserCommentFormController';
 import UserCommentShowController from './controllers/UserCommentShowController';
 
@@ -8,8 +9,27 @@ import {
   RouteEntry,
   parseQueryString,
 } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { allowAiAssistedCommentCreation } from '@veupathdb/web-common/lib/config';
 
 export const userCommentRoutes: RouteEntry[] = [
+  {
+    path: '/user-comments/ai-gene-publication/add',
+    requiresLogin: true,
+    component: (props: RouteComponentProps<{}>) => {
+      if (!allowAiAssistedCommentCreation) {
+        return (
+          <div style={{ padding: '2em' }}>
+            AI-assisted comments are not currently enabled on this site.
+          </div>
+        );
+      }
+      const { stableId = '', jobId } = parseQueryString(props);
+      return (
+        <AiGenePublicationAddController stableId={stableId} jobId={jobId} />
+      );
+    },
+  },
+
   {
     path: '/user-comments/add',
     requiresLogin: true,

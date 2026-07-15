@@ -9,10 +9,9 @@ import { useUDEbrcDescription } from '../../components/questions/UDEbrcDescripti
 
 export function EbrcDefaultQuestionForm(props: Props) {
   const { DescriptionComponent, DatasetsComponent, shouldLoadDatasetRecords } =
-    (props.state.question.queryName?.includes('UserDataset')
+    props.state.question.queryName?.includes('UserDataset')
       ? useUDEbrcDescription(props.state.question)
-      : useEbrcDescription(props.state.question)
-    );
+      : useEbrcDescription(props.state.question);
   return (
     <DefaultQuestionForm
       {...props}

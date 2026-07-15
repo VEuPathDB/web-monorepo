@@ -11,8 +11,6 @@ import './Footer.scss';
 
 const cx = makeClassNameHelper('ebrc-Footer');
 
-export const projects = [...ALL_VEUPATHDB_PROJECTS];
-
 type Props = {
   containerClassName?: string;
   children?: React.ReactNode;
@@ -45,10 +43,10 @@ export const Footer: FunctionComponent<Props> = ({
       </div>
       <div className="footer-center">
         <div className={cx('ProjectLinks')}>
-          {projects.map((projectId) => (
-            <React.Fragment key={projectId}>
-              <ProjectLink projectId={projectId} />
-              {projectId === 'VectorBase' && (
+          {ALL_VEUPATHDB_PROJECTS.map((project) => (
+            <React.Fragment key={project.projectId}>
+              <ProjectLink project={project} />
+              {project.projectId === 'VectorBase' && (
                 <div className={cx('Divider')}></div>
               )}
             </React.Fragment>

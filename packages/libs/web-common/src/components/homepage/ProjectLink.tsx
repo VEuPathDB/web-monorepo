@@ -4,22 +4,21 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { Tooltip } from '@veupathdb/coreui';
 
 import './ProjectLink.scss';
+import { ProjectConstants } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 const cx = makeClassNameHelper('ebrc-ProjectLink');
 
 type ProjectLinkProps = {
-  projectId: string;
+  project: ProjectConstants;
 };
 
-export const ProjectLink = ({ projectId }: ProjectLinkProps) => (
-  <Tooltip title={`${projectId}.org`}>
+export const ProjectLink = ({
+  project: { projectId, displayName, siteUrl },
+}: ProjectLinkProps) => (
+  <Tooltip title={`${displayName}.org`}>
     <div className={cx()}>
-      <a
-        target="_blank"
-        href={`https://${projectId.toLowerCase()}.org`}
-        className={projectId}
-      >
-        https://{projectId.toLowerCase()}.org
+      <a target="_blank" href={siteUrl} className={projectId}>
+        {siteUrl}
       </a>
     </div>
   </Tooltip>

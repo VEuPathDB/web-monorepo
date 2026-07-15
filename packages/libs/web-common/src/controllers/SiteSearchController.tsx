@@ -453,7 +453,7 @@ function useSiteSearchResponse(
         effectiveFilter,
       };
     } catch (error) {
-      return { type: 'error', error: getTypedError(error)  };
+      return { type: 'error', error: getTypedError(error) };
     }
   }, [
     searchString,

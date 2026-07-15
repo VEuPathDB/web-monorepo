@@ -59,7 +59,9 @@ export function CoreDatasetInformation({
         <ExperimentalOrganism
           setDatasetDetails={setDatasetMeta}
           datasetMeta={datasetMeta}
-          jsonPath={jsonPath.append<PartialDatasetDetails>('experimentalOrganism')}
+          jsonPath={jsonPath.append<PartialDatasetDetails>(
+            'experimentalOrganism'
+          )}
           clientSideState={clientSideState}
           setClientSideState={setClientSideState}
         />

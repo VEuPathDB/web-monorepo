@@ -4,7 +4,7 @@ import {
   DatasetUploads,
   PartialDatasetDetails,
   ValidationErrors,
-  VdiService
+  VdiService,
 } from '../index';
 import {
   DatasetCharacteristicsPatch,
@@ -16,22 +16,25 @@ import {
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { receiveBadUpload, trackUploadProgress } from '../../Actions/UserDatasetUploadActions';
+import {
+  receiveBadUpload,
+  trackUploadProgress,
+} from '../../Actions/UserDatasetUploadActions';
 import { statusStringToCode } from '../utils/conversions';
 import { scrubDetails } from './create-dataset';
 import { ClientSideUploadFormState } from '../../StoreModules';
 import { Mutable } from '../../Utils/types';
-import { isGenomicsProject } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
 
 export interface UpdateSubmission {
-  readonly vdi:       VdiService;
+  readonly vdi: VdiService;
   readonly datasetId: DatasetId;
-  readonly original:  PartialDatasetDetails;
-  readonly updated:   PartialDatasetDetails;
-  readonly newFiles:  DatasetUploads;
-  readonly oldFiles:  DatasetFileDetails[] | undefined;
-  readonly dispatch:  Dispatch<any, EpicDependencies>;
+  readonly original: PartialDatasetDetails;
+  readonly updated: PartialDatasetDetails;
+  readonly newFiles: DatasetUploads;
+  readonly oldFiles: DatasetFileDetails[] | undefined;
+  readonly dispatch: Dispatch<any, EpicDependencies>;
   readonly formState: ClientSideUploadFormState;
 }
 
@@ -41,10 +44,14 @@ export interface UpdateResult {
   readonly putResult: PutResult;
 }
 
-export async function submitUpdate(submission: UpdateSubmission): Promise<UpdateResult> {
+export async function submitUpdate(
+  submission: UpdateSubmission
+): Promise<UpdateResult> {
   const { vdi, datasetId } = submission;
 
-  const mutableSubmission: Mutable<PartialDatasetDetails> = { ...submission.updated };
+  const mutableSubmission: Mutable<PartialDatasetDetails> = {
+    ...submission.updated,
+  };
 
   if (!submission.formState.hasExternalSources) {
     mutableSubmission.datasetSources = undefined;
@@ -54,7 +61,10 @@ export async function submitUpdate(submission: UpdateSubmission): Promise<Update
     mutableSubmission.dataDisclaimer = undefined;
   }
 
-  if (!submission.formState.hasExperimentalOrganism && !isGenomicsProject(projectId)) {
+  if (
+    !submission.formState.hasExperimentalOrganism &&
+    !isGenomicsProjectId(projectId)
+  ) {
     mutableSubmission.experimentalOrganism = undefined;
   }
 
@@ -65,7 +75,7 @@ export async function submitUpdate(submission: UpdateSubmission): Promise<Update
   const patchResult: PatchResult = await (async () => {
     const patchBody = convertMetaToPatch(
       scrubDetails(submission.original),
-      scrubDetails(mutableSubmission),
+      scrubDetails(mutableSubmission)
     );
 
     return patchBody == null
@@ -79,7 +89,7 @@ export async function submitUpdate(submission: UpdateSubmission): Promise<Update
 
   const putResult: PutResult = submission.newFiles.dataPropertiesFiles
     ? await submitPut(submission)
-    : { status: 'success' }
+    : { status: 'success' };
 
   return {
     patchResult,
@@ -98,44 +108,49 @@ interface PutError {
 
 type PutResult =
   | {
-    readonly status: 'success';
-  }
+      readonly status: 'success';
+    }
   | {
-    readonly status: 'user-error';
-    readonly errors: readonly PutError[];
-  }
+      readonly status: 'user-error';
+      readonly errors: readonly PutError[];
+    }
   | {
-    readonly status: 'process-error';
-    readonly error: string;
-  }
+      readonly status: 'process-error';
+      readonly error: string;
+    };
 
 async function submitPut({
   vdi,
   datasetId,
   newFiles,
   dispatch,
-}: UpdateSubmission):Promise<PutResult> {
+}: UpdateSubmission): Promise<PutResult> {
   const promises: Promise<[string, number, string?]>[] = [];
 
   for (const file of newFiles.dataPropertiesFiles!) {
-    promises.push(new Promise<[string, number, string?]>(
-      (good, bad) => {
+    promises.push(
+      new Promise<[string, number, string?]>((good, bad) => {
         try {
           vdi.putDatasetVarPropsFile(
             datasetId,
             file,
-            (code, msg) => good([ file.name, code, msg ]),
-            percent => dispatch(trackUploadProgress(percent)),
-            error => dispatch(receiveBadUpload([{
-              type: 500,
-              message: error.message,
-            }])),
+            (code, msg) => good([file.name, code, msg]),
+            (percent) => dispatch(trackUploadProgress(percent)),
+            (error) =>
+              dispatch(
+                receiveBadUpload([
+                  {
+                    type: 500,
+                    message: error.message,
+                  },
+                ])
+              )
           );
         } catch (e) {
           bad(e);
         }
-      }
-    ));
+      })
+    );
   }
 
   let results: [string, number, string?][] | undefined;
@@ -143,7 +158,7 @@ async function submitPut({
     results = await Promise.all(promises);
   } catch (e) {
     console.error(e);
-    return { status: 'process-error', error: String(e) }
+    return { status: 'process-error', error: String(e) };
   }
 
   const errors = results.filter(([_, code]) => code > 300);
@@ -151,14 +166,13 @@ async function submitPut({
   if (errors.length > 0)
     return {
       status: 'user-error',
-      errors: errors.map(([ fileName, code, msg ]) => ({
+      errors: errors.map(([fileName, code, msg]) => ({
         code,
         fileName,
-        message: msg ?? 'unknown error'
+        message: msg ?? 'unknown error',
       })),
     };
-  else
-    return { status: 'success' };
+  else return { status: 'success' };
 }
 
 // endregion PUT
@@ -166,28 +180,25 @@ async function submitPut({
 // region PATCH
 
 export type PatchResult =
-  | { readonly status: 'success'; }
+  | { readonly status: 'success' }
   | {
-    readonly status: 'error';
-    readonly message: string;
-  }
+      readonly status: 'error';
+      readonly message: string;
+    }
   | {
-    readonly status: 'invalid';
-    readonly errors: ValidationErrors;
-  }
+      readonly status: 'invalid';
+      readonly errors: ValidationErrors;
+    };
 
 async function submitPatch(
   vdi: VdiService,
   datasetId: DatasetId,
-  patchBody: DatasetPatchRequest,
+  patchBody: DatasetPatchRequest
 ): Promise<PatchResult> {
   let response: DatasetPatchResponse;
 
   try {
-    response = await vdi.patchDatasetDetails(
-      datasetId,
-      patchBody,
-    );
+    response = await vdi.patchDatasetDetails(datasetId, patchBody);
   } catch (e) {
     return { status: 'error', message: String(e) };
   }
@@ -200,7 +211,7 @@ async function submitPatch(
     return {
       status: 'invalid',
       errors: response.errors,
-    }
+    };
 
   return { status: 'error', message: response.message ?? 'unknown error' };
 }
@@ -211,15 +222,18 @@ async function submitPatch(
  */
 const ImmutableProperties: readonly (keyof PartialDatasetDetails)[] = [
   'installTargets', // would require a data reinstall
-  'origin',         // the original source of the dataset doesn't change
-  'dependencies',   // would require a data reinstall
+  'origin', // the original source of the dataset doesn't change
+  'dependencies', // would require a data reinstall
 ];
 
 function convertMetaToPatch(
   original: PartialDatasetDetails,
-  updated:  PartialDatasetDetails,
+  updated: PartialDatasetDetails
 ): DatasetPatchRequest | null {
-  type PatchValue = OptionalValuePatch<any> | DatasetCharacteristicsPatch | ExternalIdentifiersPatch;
+  type PatchValue =
+    | OptionalValuePatch<any>
+    | DatasetCharacteristicsPatch
+    | ExternalIdentifiersPatch;
 
   const patchBody: Record<string, PatchValue> = {};
 
@@ -258,11 +272,9 @@ function convertMetaToPatch(
 
     // Don't try and patch immutable properties, in the off chance they make it
     // this far due to copying from api responses.
-    if (ImmutableProperties.includes(key))
-      continue;
+    if (ImmutableProperties.includes(key)) continue;
 
-    if (patch != null)
-      patchBody[key] = patch;
+    if (patch != null) patchBody[key] = patch;
   }
 
   return isEmpty(patchBody) ? null : patchBody;
@@ -270,7 +282,7 @@ function convertMetaToPatch(
 
 function objectPropertyDiff(
   oldVal?: object,
-  newVal?: object,
+  newVal?: object
 ): Record<string, OptionalValuePatch<any>> | null {
   const out: Record<string, OptionalValuePatch<any>> = {};
 
@@ -283,7 +295,7 @@ function objectPropertyDiff(
 }
 
 function diffKeys<T extends object>(a: T, b: T): Iterable<keyof T> {
-  return new Set([ ...typedKeys(a), ...typedKeys(b) ]);
+  return new Set([...typedKeys(a), ...typedKeys(b)]);
 }
 
 function typedKeys<T extends object>(obj: T): readonly (keyof T)[] {
@@ -296,12 +308,12 @@ function typedKeys<T extends object>(obj: T): readonly (keyof T)[] {
 
 export type DeleteResult =
   | {
-    readonly status: 'success';
-  }
+      readonly status: 'success';
+    }
   | {
-    readonly status: 'error';
-    readonly errors: readonly [string, string][];
-  };
+      readonly status: 'error';
+      readonly errors: readonly [string, string][];
+    };
 
 async function deleteDatasetPropertiesFiles({
   vdi,
@@ -311,8 +323,7 @@ async function deleteDatasetPropertiesFiles({
 }: UpdateSubmission): Promise<DeleteResult> {
   const errors: [string, string][] = [];
 
-  if (!oldFiles)
-    return { status: 'success' };
+  if (!oldFiles) return { status: 'success' };
 
   for (const { fileName } of oldFiles) {
     if (fileListContains(newFiles!, fileName)) {
@@ -320,18 +331,21 @@ async function deleteDatasetPropertiesFiles({
     }
 
     try {
-      const [ code, message ] = await deleteDatasetPropertiesFile(
+      const [code, message] = await deleteDatasetPropertiesFile(
         vdi,
         datasetId,
-        fileName,
+        fileName
       );
 
       if (code !== 204) {
-        errors.push([ fileName, message ?? 'unknown error' ]);
+        errors.push([fileName, message ?? 'unknown error']);
       }
     } catch (e: any) {
-      console.error(`error thrown while deleting dataset properties file ${fileName}`, e);
-      errors.push([ fileName, 'unknown error' ])
+      console.error(
+        `error thrown while deleting dataset properties file ${fileName}`,
+        e
+      );
+      errors.push([fileName, 'unknown error']);
     }
   }
 
@@ -343,12 +357,14 @@ async function deleteDatasetPropertiesFiles({
 async function deleteDatasetPropertiesFile(
   vdi: VdiService,
   datasetId: DatasetId,
-  fileName: string,
+  fileName: string
 ): Promise<readonly [number, string?]> {
-  return vdi.deleteDatasetVarPropsFile(datasetId, fileName)
-    .then(it => it == null
-      ? [204, undefined]
-      : [statusStringToCode(it.status) ?? 500, it.message]
+  return vdi
+    .deleteDatasetVarPropsFile(datasetId, fileName)
+    .then((it) =>
+      it == null
+        ? [204, undefined]
+        : [statusStringToCode(it.status) ?? 500, it.message]
     );
 }
 

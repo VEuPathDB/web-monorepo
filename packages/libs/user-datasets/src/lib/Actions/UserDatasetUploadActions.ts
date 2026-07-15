@@ -47,7 +47,7 @@ export const updateFormState = makeActionCreator(
 
 export const updateFormMetadata = makeActionCreator(
   'user-dataset-form/update-dataset-metadata',
-  (metadata: PartialDatasetDetails) => metadata,
+  (metadata: PartialDatasetDetails) => metadata
 );
 
 export type Action =
