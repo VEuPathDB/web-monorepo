@@ -25,6 +25,7 @@ import {
   NumberRangeFilter,
 } from '../../types/filter';
 import { useDeepValue } from '../../hooks/immutability';
+import { formatCoordinate } from '../../utils/format-coordinate';
 import { GeoCoordVariable } from './types';
 import { ResetButtonCoreUI } from '../ResetButton';
 
@@ -285,9 +286,11 @@ export function GeoCoordFilter(props: Props) {
         <div style={{ flex: 1 }}>
           {selectedBounds != null && latFilter != null && lngFilter != null ? (
             <div>
-              <b>Selected area:</b> latitude from {formatCoord(latFilter.min)}{' '}
-              to {formatCoord(latFilter.max)}, longitude from{' '}
-              {formatCoord(lngFilter.left)} to {formatCoord(lngFilter.right)}
+              <b>Selected area:</b> latitude from{' '}
+              {formatCoordinate(latFilter.min)} to{' '}
+              {formatCoordinate(latFilter.max)}, longitude from{' '}
+              {formatCoordinate(lngFilter.left)} to{' '}
+              {formatCoordinate(lngFilter.right)}
               {lngFilter.right < lngFilter.left
                 ? ' (crossing the antimeridian)'
                 : ''}
@@ -396,9 +399,4 @@ function constrainLongitude(lng: number): number {
   while (lng > 180) lng -= 360;
   while (lng < -180) lng += 360;
   return lng;
-}
-
-function formatCoord(value: number): string {
-  // 4 decimal places is ~11m resolution; plenty for a map-drawn filter
-  return String(Number(value.toFixed(4)));
 }

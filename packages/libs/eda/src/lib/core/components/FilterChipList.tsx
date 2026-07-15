@@ -8,6 +8,7 @@ import {
 } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
 import { formatFilterValue } from '../utils/filter-display';
+import { formatCoordinate } from '../utils/format-coordinate';
 import { ReactNode } from 'react';
 import { VariableLink, VariableLinkConfig } from './VariableLink';
 import { colors, Warning } from '@veupathdb/coreui';
@@ -92,11 +93,11 @@ export default function FilterChipList(props: Props) {
                     {entity.displayName}: Geographic area
                   </div>
                   <div>
-                    Latitude from {formatCoord(latFilter.min)} to{' '}
-                    {formatCoord(latFilter.max)}, inclusive
+                    Latitude from {formatCoordinate(latFilter.min)} to{' '}
+                    {formatCoordinate(latFilter.max)}, inclusive
                     <br />
-                    Longitude from {formatCoord(lngFilter.left)} to{' '}
-                    {formatCoord(lngFilter.right)}, inclusive
+                    Longitude from {formatCoordinate(lngFilter.left)} to{' '}
+                    {formatCoordinate(lngFilter.right)}, inclusive
                     {lngFilter.right < lngFilter.left
                       ? ' (crossing the antimeridian)'
                       : ''}
@@ -195,16 +196,6 @@ interface GeoFilterPair {
   latFilter: NumberRangeFilter;
   lngFilter: LongitudeRangeFilter;
   latVariable: { id: string };
-}
-
-/**
- * Format a latitude/longitude value for display. The filter stores the full
- * precision selected on the map; here we round to 4 decimal places (~11 m,
- * matching the map filter's own display) so the chip tooltip doesn't show a
- * distractingly long string of digits.
- */
-function formatCoord(value: number): string {
-  return String(Number(value.toFixed(4)));
 }
 
 /**
