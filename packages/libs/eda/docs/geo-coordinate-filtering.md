@@ -1,9 +1,17 @@
 # Geographic (latitude/longitude) filtering in the EDA subsetting UI
 
-This document describes the design of the `GeoCoordFilter` component and the
-roadmap towards lasso/arbitrary-shape geographic filtering.
+This document describes the design of the `GeoCoordFilter` component and
+its lasso/arbitrary-shape geographic filtering, together with the design
+alternatives that were considered along the way.
 
-## What is implemented today: rectangle selection
+## History: rectangle selection (mothballed)
+
+> **Status:** the rectangle interaction described below was replaced by
+> lasso selection (see the next section) before this branch was ever
+> released; the `numberRange` + `longitudeRange` pair approach and the
+> paired-chip machinery were removed again. It is documented here because
+> the routing/`GeoConfig` conditions and the marker-request design carry
+> over unchanged to the lasso implementation.
 
 When the user selects a **latitude** or **longitude** variable in the
 Browse-and-Subset variable tree, `FilterContainer` routes to
@@ -53,7 +61,41 @@ the new optional `removeFilters` prop, wired in `AnalysisPanel`,
 `removeFilters` is not supplied, the two filters fall back to individual
 chips.
 
-## Roadmap: lasso / arbitrary-shape filtering
+## Implemented: lasso filtering via multi-scale geohash prefixes (Option B)
+
+The lasso UX and Option B below are now implemented:
+
+- **Drawing** uses [`leaflet-lasso`](https://github.com/zakjan/leaflet-lasso)
+  (freehand, on-map toolbar button); **editing/dragging/deleting** drawn
+  shapes uses [`@geoman-io/leaflet-geoman-free`](https://github.com/geoman-io/leaflet-geoman)
+  in opt-in mode (`L.PM.setOptIn(true)`, so data markers are untouched),
+  with its draw buttons hidden. Both are wrapped by the controlled
+  `GeoShapeSelect` component (`packages/libs/components/src/map/`).
+  Freshly drawn lassos are simplified with `L.LineUtil.simplify`
+  (8 px tolerance).
+- **Multiple shapes union**; there are no donut/subtract semantics (a
+  lasso wholly inside another is a no-op by construction).
+- **Cover computation** (`polygonsToGeohashPrefixes`, same directory, cell
+  classification via `@turf/intersect`/`@turf/area` clipped-area ratio):
+  budget-driven top-down descent — cells fully inside any shape are kept at
+  the level where they are discovered, border cells are refined until a
+  **256-prefix budget** or the entity's finest geohash level is reached,
+  then kept inclusively; a stop-level collapse guard replaces complete
+  32-child blocks with their parent. Longitudes are normalized to ±180
+  (dateline-straddling shapes are split) before the descent; shapes are
+  stored as drawn.
+- **One filter**: a single `stringPrefixSet` filter on the entity's
+  finest geohash variable; deleting the last shape removes the filter.
+  The shapes themselves are persisted per geo entity in the analysis'
+  variable UI settings (`selectedShapes` in `GeoCoordUIState`), and are
+  cleared if the filter is removed elsewhere (chip ✕, filters list).
+- **Chip**: `FilterChipList` renders a `stringPrefixSet` filter on a
+  `geoaggregator`-displayType variable as a single "Geographic area"
+  chip, per entity.
+
+Design decisions (library choice, lasso-only UX, resolution limits) are
+recorded in `docs/superpowers/specs/2026-07-15-lasso-geo-filtering-design.md`
+at the repository root.
 
 The subsetting service combines filters with AND and offers no general OR
 of range filters, so an arbitrary shape cannot be decomposed into multiple
@@ -87,12 +129,11 @@ current aggregation level; zooming in after filtering shows the staircase
 boundary of the selected cells (arguably a feature, since it makes the
 filter semantics visible).
 
-This is the recommended first implementation of the lasso. UI sketch:
-a lasso mode toggle on the `GeoCoordFilter` map (e.g.
-[`leaflet-lasso`](https://github.com/zakjan/leaflet-lasso)), producing a
-`stringSet` filter plus a "Geographic area (lasso)" chip. The chip pairing
-logic in `FilterChipList` extends naturally (a stringSet filter on a
-`geoaggregator`-displayType variable is recognizable from study metadata).
+Option A was not pursued: the `stringPrefixSet` service support required by
+Option B landed first, so the lasso was implemented directly on Option B
+(see the implementation summary above). Option A remains documented as the
+fallback design for deployments whose subsetting service predates
+`stringPrefixSet`.
 
 No geometry-to-geohash library is needed for this option: the markers are
 already geohash-aggregated by the `map-markers` plugin, so membership is just
@@ -100,7 +141,7 @@ a point-in-polygon test against each marker's centroid (e.g.
 `@turf/boolean-point-in-polygon`, already a transitive dependency via
 `shape2geohash`, see below).
 
-### Option B — multi-scale geohash prefixes (recommended service upgrade; groundwork implemented)
+### Option B — multi-scale geohash prefixes (implemented)
 
 A shape covering a large area at a fine geohash level explodes into many
 cells (32× per extra level). The standard compression is a **multi-scale**
@@ -136,30 +177,29 @@ The groundwork is implemented behind this document:
 - **this package**: `StringPrefixSetFilter` added to the `Filter` io-ts
   union in `src/lib/core/types/filter.ts`.
 
-Client-side, the cover can be computed from the lasso polygon with a
-recursive descent over geohash cells, down to the current marker aggregation
-level (or a fixed budget, e.g. ≤ 256 prefixes), followed by a **collapse**
-pass: whenever all 32 children of a coarser prefix are present in the cover,
-replace them with that single coarser prefix (repeated bottom-up until no
-more collapses apply). This keeps the interior coarse and the boundary fine
-without having to special-case "inside" vs. "boundary" cells up front.
+Client-side, the cover is computed from the lasso polygons
+(`polygonsToGeohashPrefixes` in `packages/libs/components`) by a recursive
+descent over geohash cells: cells fully inside a shape are kept at the level
+where they are discovered, border cells are refined until a fixed budget of
+≤ 256 prefixes or the entity's finest geohash level is reached, then kept
+inclusively; a stop-level collapse guard replaces complete 32-child blocks
+with their parent prefix. This keeps the interior coarse and the boundary
+fine.
 
-[`shape2geohash`](https://www.npmjs.com/package/shape2geohash) (Turf +
-`ngeohash` under the hood) already does the per-level geometry work needed
-for the descent — it computes the geohashes at a given precision that are
-`insideOnly`, `border`-intersecting, or fully `intersect`ing an arbitrary
-GeoJSON polygon. It's already a dependency of this monorepo
-(`packages/libs/components`, used by `CustomGridLayer` for the map's debug
-grid overlay), including the webpack polyfills it needs for its Node
-`stream`/`process` usage (see `config-overrides.js`), so there's no new
-integration cost. It doesn't do the multi-scale collapse itself — that top
-level (recurse into `border` cells, collapse full sets of 32 back up) would
-still need to be written — but it replaces the lower-level polygon/geohash
-plumbing.
+[`shape2geohash`](https://www.npmjs.com/package/shape2geohash) was evaluated
+for the per-level geometry work (it is already a dependency, used by
+`CustomGridLayer` for the map's debug grid overlay), but its `intersect`
+hash mode is built on `turf.booleanOverlap`, which returns false when one
+geometry fully contains the other — so a lasso smaller than a geohash cell
+produced no cells at coarse levels, and cells fully inside a large lasso
+were dropped. The implementation instead classifies each candidate cell
+directly by clipped-area ratio using `@turf/intersect` + `@turf/area`
+(cell bounds from `latlon-geohash`); `shape2geohash` remains a dependency
+only of the debug grid overlay.
 
 (Earlier drafts of this doc suggested `polygon-to-geohashes` / `geohash-poly`
 for this; neither turned out to be real, verifiable packages — `shape2geohash`
-is the real, already-integrated equivalent and is preferred.)
+was the real, already-integrated equivalent evaluated above.)
 
 ### Option C — relax `multiFilter` union validation (alternative service upgrade)
 
@@ -187,16 +227,12 @@ draw lassos around _markers_, which are themselves geohash aggregates.
 
 ## Known limitations / follow-ups
 
-- The dashed selection rectangle is drawn once in the "main world"; if the
-  user pans several worlds east/west the rectangle is not re-centered the
-  way markers are (`SemanticMarkers` recentering). Filtering behaviour is
-  unaffected.
+- Drawn shapes are rendered once in the "main world"; if the user pans
+  several worlds east/west the shapes are not re-centered the way markers
+  are. Filtering behaviour is unaffected (longitudes are normalized for
+  the cover computation).
 - Marker counts on the `GeoCoordFilter` map exclude the geo filters
   themselves (by design, matching `HistogramFilter`); a toggle to preview
   the filtered result could be added.
 - If a study has multiple geo-enabled entities, each entity's coordinate
   pair gets its own combined chip; pairing is per-entity.
-- Latitude `numberRange` + longitude `longitudeRange` filters created by
-  the full-screen map's "little filters" (viewport filters) are transient
-  and not stored in the analysis, so they do not interact with the chip
-  pairing.
