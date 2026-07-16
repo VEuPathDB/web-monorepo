@@ -79,6 +79,17 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     });
     lassoControl.addTo(map);
 
+    // leaflet-lasso's control button is an <a href="javascript:void(0)">
+    // whose click handler does not preventDefault, and Leaflet's
+    // disableClickPropagation does not cover 'click' — so the click
+    // bubbles to page-level anchor handlers (e.g. web-common's
+    // externalLinkHandler, which treats the javascript: href's "null"
+    // origin as external and turns the button into a target="_blank"
+    // link). Prevent the anchor's default action ourselves.
+    const lassoButton = lassoControl.getContainer()?.querySelector('a');
+    if (lassoButton != null)
+      L.DomEvent.on(lassoButton, 'click', L.DomEvent.preventDefault);
+
     map.pm.addControls({
       position: 'topleft',
       drawControls: false,
