@@ -340,14 +340,6 @@ export function AnalysisPanel({
                     )
                   )
                 }
-                removeFilters={(filters) =>
-                  analysis &&
-                  setFilters(
-                    analysis.descriptor.subset.descriptor.filter(
-                      (f) => !filters.includes(f)
-                    )
-                  )
-                }
                 variableLinkConfig={variableLinkConfig}
                 entities={entities}
                 selectedEntityId={selectedEntityId}

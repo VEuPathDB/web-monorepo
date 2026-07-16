@@ -54,11 +54,6 @@ export default function GlobalFiltersDialog(props: Props) {
               filters={matchingFilters}
               entities={props.entities}
               removeFilter={props.removeFilter}
-              removeFilters={(removedFilters) =>
-                props.setFilters(
-                  props.filters.filter((f) => !removedFilters.includes(f))
-                )
-              }
               variableLinkConfig={props.variableLinkConfig}
             />
           </div>
