@@ -17,6 +17,7 @@ import L from 'leaflet';
 import 'leaflet-lasso';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+import './styles/geo-shape-select.css';
 import { LatLngShape } from './utils/polygonsToGeohashPrefixes';
 
 export interface GeoShapeSelectProps {

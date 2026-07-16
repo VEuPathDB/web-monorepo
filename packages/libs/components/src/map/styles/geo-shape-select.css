@@ -1,0 +1,17 @@
+/*
+ * Active-state highlight for the leaflet-lasso toolbar button.
+ *
+ * While a lasso is being drawn, leaflet-lasso adds the
+ * `leaflet-lasso-active` class to the map container; the lasso control
+ * button (`.leaflet-control-lasso`) lives inside that container, so this
+ * descendant rule turns it blue for the duration of the draw and reverts
+ * automatically when the lasso finishes or is cancelled.
+ */
+.leaflet-lasso-active .leaflet-control-lasso {
+  background-color: #1976d2;
+  color: #ffffff;
+}
+
+.leaflet-lasso-active .leaflet-control-lasso:hover {
+  background-color: #1565c0;
+}
