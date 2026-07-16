@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
-import { Rectangle } from 'react-leaflet';
+import { Pane, Rectangle } from 'react-leaflet';
 
 // map component related imports
 import MapVEuMap, {
@@ -377,25 +377,29 @@ export function GeoCoordFilter(props: Props) {
           )}
           {/* debugging overlay: shade the geohash cells the filter matches;
               finer (longer) prefixes are shaded slightly darker so the
-              multi-scale structure of the cover is visible */}
-          {showGeohashCells &&
-            geoFilter != null &&
-            boundsZoomLevel != null &&
-            geoFilter.prefixSet.map((prefix) => {
-              const bounds = geohashCellBounds(prefix);
-              return (
-                <Rectangle
-                  key={prefix}
-                  bounds={[bounds.southWest, bounds.northEast]}
-                  pathOptions={{
-                    color: '#e46f0e',
-                    weight: 1,
-                    fillOpacity: Math.min(0.12 + 0.04 * prefix.length, 0.4),
-                    interactive: false,
-                  }}
-                />
-              );
-            })}
+              multi-scale structure of the cover is visible. Rendered in a
+              dedicated pane below Leaflet's overlayPane (z-index 400) so
+              the cells sit underneath the drawn shapes and their editing
+              handles. */}
+          {showGeohashCells && geoFilter != null && boundsZoomLevel != null && (
+            <Pane name="geohash-cell-debug" style={{ zIndex: 350 }}>
+              {geoFilter.prefixSet.map((prefix) => {
+                const bounds = geohashCellBounds(prefix);
+                return (
+                  <Rectangle
+                    key={prefix}
+                    bounds={[bounds.southWest, bounds.northEast]}
+                    pathOptions={{
+                      color: '#e46f0e',
+                      weight: 1,
+                      fillOpacity: Math.min(0.12 + 0.04 * prefix.length, 0.4),
+                      interactive: false,
+                    }}
+                  />
+                );
+              })}
+            </Pane>
+          )}
         </MapVEuMap>
       </div>
     </div>
