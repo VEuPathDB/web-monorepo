@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
+import { Rectangle } from 'react-leaflet';
 
 // map component related imports
 import MapVEuMap, {
@@ -14,6 +15,7 @@ import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import {
   polygonsToGeohashPrefixes,
+  geohashCellBounds,
   LatLngShape,
 } from '@veupathdb/components/lib/map/utils/polygonsToGeohashPrefixes';
 
@@ -44,6 +46,12 @@ const defaultAnimation = {
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+// Debugging aid: when true, a checkbox lets the user shade the geohash
+// cells that make up the current stringPrefixSet filter, to visually
+// verify the lasso-to-prefix-cover conversion. Flip to false to hide the
+// checkbox; the rendering machinery below stays for future debugging.
+const ENABLE_GEOHASH_CELL_DEBUG = true;
 
 /**
  * A geographic filter for latitude/longitude variable pairs.
@@ -257,6 +265,9 @@ export function GeoCoordFilter(props: Props) {
     }
   }, [geoFilter, selectedShapes, updateUIState]);
 
+  // debugging aid — see ENABLE_GEOHASH_CELL_DEBUG above
+  const [showGeohashCells, setShowGeohashCells] = useState(false);
+
   const { latitude, longitude, zoomLevel } = uiState.mapCenterAndZoom;
   const [height, width] = [500, '100%'] as const;
 
@@ -292,6 +303,24 @@ export function GeoCoordFilter(props: Props) {
             </div>
           )}
         </div>
+        {ENABLE_GEOHASH_CELL_DEBUG && geoFilter != null && (
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3em',
+              whiteSpace: 'nowrap',
+            }}
+            title="Shade the geohash cells matched by the current filter"
+          >
+            <input
+              type="checkbox"
+              checked={showGeohashCells}
+              onChange={(event) => setShowGeohashCells(event.target.checked)}
+            />
+            Shade filter's geohash cells ({geoFilter.prefixSet.length})
+          </label>
+        )}
         {selectedShapes.length > 0 && (
           <ResetButtonCoreUI
             size={'medium'}
@@ -346,6 +375,27 @@ export function GeoCoordFilter(props: Props) {
               onShapesChanged={handleShapesChanged}
             />
           )}
+          {/* debugging overlay: shade the geohash cells the filter matches;
+              finer (longer) prefixes are shaded slightly darker so the
+              multi-scale structure of the cover is visible */}
+          {showGeohashCells &&
+            geoFilter != null &&
+            boundsZoomLevel != null &&
+            geoFilter.prefixSet.map((prefix) => {
+              const bounds = geohashCellBounds(prefix);
+              return (
+                <Rectangle
+                  key={prefix}
+                  bounds={[bounds.southWest, bounds.northEast]}
+                  pathOptions={{
+                    color: '#e46f0e',
+                    weight: 1,
+                    fillOpacity: Math.min(0.12 + 0.04 * prefix.length, 0.4),
+                    interactive: false,
+                  }}
+                />
+              );
+            })}
         </MapVEuMap>
       </div>
     </div>

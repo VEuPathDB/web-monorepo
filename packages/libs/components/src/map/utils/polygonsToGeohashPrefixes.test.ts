@@ -4,7 +4,19 @@ import {
   LatLngShape,
   polygonsToGeohashPrefixes,
   collapseCompleteBlocks,
+  geohashCellBounds,
 } from './polygonsToGeohashPrefixes';
+
+describe('geohashCellBounds', () => {
+  test('returns the cell box in [lat, lng] order', () => {
+    const bounds = geohashCellBounds('u336');
+    expect(bounds.southWest[0]).toBeLessThan(bounds.northEast[0]); // lat
+    expect(bounds.southWest[1]).toBeLessThan(bounds.northEast[1]); // lng
+    const centerLat = (bounds.southWest[0] + bounds.northEast[0]) / 2;
+    const centerLng = (bounds.southWest[1] + bounds.northEast[1]) / 2;
+    expect(Geohash.encode(centerLat, centerLng, 4)).toBe('u336');
+  });
+});
 
 describe('normalizeShapeLongitudes', () => {
   test('in-range shape converts to a single closed [lng, lat] ring', () => {

@@ -18,6 +18,21 @@ import {
 /** A drawn shape: [lat, lng] vertices, not necessarily closed. */
 export type LatLngShape = [number, number][];
 
+/**
+ * The [lat, lng] bounding box of a geohash cell, for map display
+ * (e.g. debugging overlays shading a prefix cover's cells).
+ */
+export function geohashCellBounds(hash: string): {
+  southWest: [number, number];
+  northEast: [number, number];
+} {
+  const bounds = Geohash.bounds(hash);
+  return {
+    southWest: [bounds.sw.lat, bounds.sw.lon],
+    northEast: [bounds.ne.lat, bounds.ne.lon],
+  };
+}
+
 /** A closed GeoJSON-order ring: [lng, lat] vertices, first === last. */
 type LngLatRing = [number, number][];
 
