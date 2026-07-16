@@ -117,13 +117,19 @@ export function GeoCoordFilter(props: Props) {
 
   const updateUIState = useCallback(
     (newUiState: Partial<GeoCoordUIState>) => {
-      analysisState.setVariableUISettings((currentState) => ({
-        ...currentState,
-        [uiStateKey]: {
-          ...uiState,
-          ...newUiState,
-        },
-      }));
+      analysisState.setVariableUISettings((currentState) => {
+        const liveEntry = currentState[uiStateKey];
+        return {
+          ...currentState,
+          [uiStateKey]: {
+            ...uiState,
+            ...(typeof liveEntry === 'object' && liveEntry != null
+              ? liveEntry
+              : {}),
+            ...newUiState,
+          },
+        };
+      });
     },
     [analysisState, uiStateKey, uiState]
   );

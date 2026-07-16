@@ -75,7 +75,7 @@ The lasso UX and Option B below are now implemented:
   (8 px tolerance).
 - **Multiple shapes union**; there are no donut/subtract semantics (a
   lasso wholly inside another is a no-op by construction).
-- **Cover computation** (`polygonsToGeohashPrefixes`, same directory, cell
+- **Cover computation** (`polygonsToGeohashPrefixes` in `packages/libs/components/src/map/utils/`, cell
   classification via `@turf/intersect`/`@turf/area` clipped-area ratio):
   budget-driven top-down descent — cells fully inside any shape are kept at
   the level where they are discovered, border cells are refined until a
@@ -165,7 +165,7 @@ capabilities (OR of continuous filters; union across different geohash-level
 variables). This is strictly more general than the `multiFilter` union,
 which is restricted to sub-variables of a `multifilter` display-type parent.
 
-The groundwork is implemented behind this document:
+The service-side pieces:
 
 - **lib-eda-subsetting ≥ 7.2.0**: `StringPrefixSetFilter` — SQL `LIKE`
   prefix union (with wildcard escaping) plus the equivalent predicate for
