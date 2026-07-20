@@ -285,6 +285,67 @@ export function WorkspaceRouter({
               />
             )}
           />
+          {/* Union-merge testbed: same as :studyId/new, but studyMetadata is
+              fetched as a merged union(...) study built from :studyId plus
+              the comma-separated dataset IDs in :extraDatasetIds. Must be
+              declared before the :studyId/:analysisId catch-all below, since
+              that route (no `exact`) would otherwise match its own prefix. */}
+          <Route
+            path={`${path}/:studyId/with/:extraDatasetIds/new`}
+            render={(
+              props: RouteComponentProps<{
+                studyId: string;
+                extraDatasetIds: string;
+              }>
+            ) => (
+              <WorkspaceContainer
+                {...props.match.params}
+                edaServiceUrl={edaServiceUrl}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
+                  hideSavedAnalysisButtons
+                  downloadClient={downloadClient}
+                  singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
+                  helpTabContents={helpTabContents}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+                />
+              </WorkspaceContainer>
+            )}
+          />
+          {/* Union-merge testbed: same as :studyId/:analysisId, but with an
+              extra unioned dataset segment. See note above. */}
+          <Route
+            path={`${path}/:studyId/with/:extraDatasetIds/:analysisId`}
+            render={(
+              props: RouteComponentProps<{
+                studyId: string;
+                extraDatasetIds: string;
+                analysisId: string;
+              }>
+            ) => (
+              <WorkspaceContainer
+                {...props.match.params}
+                edaServiceUrl={edaServiceUrl}
+                isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
+                  downloadClient={downloadClient}
+                  singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
+                  helpTabContents={helpTabContents}
+                  isStudyExplorerWorkspace={isStudyExplorerWorkspace}
+                />
+              </WorkspaceContainer>
+            )}
+          />
           <Route
             path={`${path}/:studyId/:analysisId`}
             render={(

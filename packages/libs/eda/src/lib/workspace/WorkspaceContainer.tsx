@@ -14,6 +14,7 @@ import {
 } from '../core';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
+import { UnionTestContainer } from './UnionTestContainer';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -35,6 +36,12 @@ interface Props {
   isStudyExplorerWorkspace?: boolean;
   // overrides default class names
   className?: string;
+  /**
+   * Comma-separated extra WDK dataset IDs to union in with `studyId`.
+   * Only set by the union-merge testbed routes -- when present,
+   * studyMetadata is fetched as a merged "union(...)" study instead of the
+   * single study identified by `studyId`. */
+  extraDatasetIds?: string;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
@@ -44,6 +51,7 @@ export function WorkspaceContainer({
   children,
   isStudyExplorerWorkspace = false,
   className,
+  extraDatasetIds,
 }: Props) {
   const { url } = useRouteMatch();
   const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
@@ -83,18 +91,34 @@ export function WorkspaceContainer({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <EDAWorkspaceContainer
-        studyId={studyId}
-        className={finalClassName}
-        analysisClient={analysisClient}
-        dataClient={dataClient}
-        subsettingClient={subsettingClient}
-        downloadClient={downloadClient}
-        computeClient={computeClient}
-        initializeMakeVariableLink={initializeMakeVariableLink}
-      >
-        {children}
-      </EDAWorkspaceContainer>
+      {extraDatasetIds ? (
+        <UnionTestContainer
+          studyId={studyId}
+          extraDatasetIds={extraDatasetIds}
+          className={finalClassName}
+          analysisClient={analysisClient}
+          dataClient={dataClient}
+          subsettingClient={subsettingClient}
+          downloadClient={downloadClient}
+          computeClient={computeClient}
+          initializeMakeVariableLink={initializeMakeVariableLink}
+        >
+          {children}
+        </UnionTestContainer>
+      ) : (
+        <EDAWorkspaceContainer
+          studyId={studyId}
+          className={finalClassName}
+          analysisClient={analysisClient}
+          dataClient={dataClient}
+          subsettingClient={subsettingClient}
+          downloadClient={downloadClient}
+          computeClient={computeClient}
+          initializeMakeVariableLink={initializeMakeVariableLink}
+        >
+          {children}
+        </EDAWorkspaceContainer>
+      )}
     </QueryClientProvider>
   );
 }
