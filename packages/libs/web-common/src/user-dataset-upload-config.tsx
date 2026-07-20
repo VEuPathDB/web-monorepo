@@ -109,7 +109,7 @@ const wranglerDataHelp = (
   <div>
     <p>
       Column names must be unique, cannot contain newlines, but can contain
-      spaces. We will consider a column:
+      spaces. Values are limited to 1000 characters. We will consider a column:
     </p>
     <ul>
       <li>a date, if their values follow the pattern YYYY-MM-DD;</li>
