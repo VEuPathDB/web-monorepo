@@ -266,24 +266,34 @@ Backend structure confirmed - ready for Phase 1 implementation
 
 ## UserDataset Backend Structure (CONFIRMED)
 
-### Required Attributes
+### Required Attributes (CONFIRMED)
 
 ```javascript
 "attributes": {
-  "dataset_id": "EDAUD_53f554ec6a",                           // Primary key (also used as dataset_name)
   "display_name": "My RNA Seq Experiment",                     // User-friendly display text
-  "organism_prefix": "<i>Plasmodium falciparum</i> 3D7",      // Formatted organism (HTML)
-  "organism": "Plasmodium falciparum 3D7",                    // Clean organism for preference matching
+  "ref_organism_formatted": "<i>Plasmodium falciparum</i> 3D7", // Formatted organism (HTML)
+  "dataset_id": "EDAUD_53f554ec6a",                           // Primary key (also used as dataset_name)
   "summary": "RNA sequencing analysis of...",                  // Description for tooltip
-  "short_attribution": "User et al 2024",                      // Appended to display_name
-  "is_public": true                                            // Public vs private indicator
+  "is_public": true,                                           // Public vs private indicator
+  "primary_contact_name": "User et al 2024",                   // Attribution/contact
+  "ref_organism": "Plasmodium falciparum 3D7"                 // Clean organism for preference matching
 }
 ```
+
+**Field Mapping (UserDataset → DataSource equivalent):**
+
+- `display_name` → `display_name` ✓ (same)
+- `ref_organism_formatted` → `organism_prefix` (HTML formatted display)
+- `dataset_id` → Both `dataset_id` and `dataset_name` (no separate name field)
+- `summary` → `summary` ✓ (same)
+- `is_public` → Used to determine public vs private icon
+- `primary_contact_name` → `short_attribution` (appended to display_name)
+- `ref_organism` → Used for organism preference matching (replaces Version table)
 
 **Notes:**
 
 - `dataset_id` is the **only primary key** - no separate `dataset_name` field
-- `organism` attribute **replaces Version table** for preference filtering
+- `ref_organism` attribute **replaces Version table** for preference filtering
 - `build_number_introduced` **not needed** for UserDatasets
 - `description` **not needed** (unused in current code)
 
@@ -488,15 +498,15 @@ const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
 ```typescript
 const USERDATASET_REPORT_CONFIG = {
   attributes: [
+    'name', // IMPORTANT: Request "name", response provides both displayName and attributes.name
+    'ref_organism_formatted',
     'dataset_id',
-    'display_name',
-    'organism_prefix',
-    'organism',
     'summary',
-    'short_attribution',
-    'is_public',
+    'is_public', // IMPORTANT: Will be STRING "Private" or "Public", not boolean
+    'primary_contact_name',
+    'ref_organism',
   ],
-  tables: ['ExploreWdkSearches'], // No Publications in Phase 1
+  tables: ['ExploreWebsiteSearches'], // IMPORTANT: "Website" not "Wdk"!
   pagination: { offset: 0, numRecords: -1 },
 };
 
@@ -631,15 +641,17 @@ type DatasourceRecord = {
 ```typescript
 function getCategorySearchUrl(
   questionName: string,
-  datasetId: string,
+  datasetId: string, // Will be "EDAUD_5BM5MtFs0l0YZ" from backend
   source: 'datasource' | 'userdataset',
   datasetIdParam: string | undefined, // Parameter name for UserDatasets
   internalSearchName: string
 ): string {
   const baseUrl = `${internalSearchName}#${questionName}`;
   if (source === 'userdataset' && datasetIdParam) {
-    // dataset_id already includes EDAUD_ prefix from backend
-    return `${baseUrl}?param.${datasetIdParam}=${datasetId}`;
+    // CRITICAL: Strip EDAUD_ prefix for question parameters
+    // Backend provides dataset_id with prefix, but param URL needs it without
+    const paramValue = datasetId.replace(/^EDAUD_/, '');
+    return `${baseUrl}?param.${datasetIdParam}=${paramValue}`;
   }
   return baseUrl;
 }
@@ -897,19 +909,54 @@ const recordUrl =
 
 ## Key Technical Details
 
-### WDK Questions
+### WDK Endpoints and Questions
 
-- **DataSources**: `"DatasourcesByCategory"`
-- **UserDatasets**: `"UserDatasetsByCategory"`
+**DataSources:**
+
+- Question: `"DatasourcesByCategory"`
+- Endpoint: (legacy format)
+
+**UserDatasets:**
+
+- Question: `"UserDatasetsByCategory"`
+- Endpoint: `POST /service/record-types/userdataset/searches/UserDatasetsByCategory/reports/standard`
 - Both use same `dataset_category` parameter
 
-### UserDataset ID Formats
+### UserDataset Backend Response Structure (CONFIRMED)
 
-- **VDI ID**: Plain UUID (e.g., `abc123def456`)
-- **WDK Record ID**: Prefixed with `EDAUD_` (e.g., `EDAUD_abc123def456`)
-- Use `EDAUD_` prefix for:
-  - Record page URLs: `/record/userdataset/EDAUD_{id}`
-  - Question parameters: `?param.dataset_id=EDAUD_{id}`
+**Request attribute name:** `"name"` (not `"display_name"`)
+**Response provides:** `displayName` property + `attributes.name`
+
+**Critical Response Details:**
+
+1. **`is_public`** is a **STRING**: `"Private"` or `"Public"` (NOT boolean!)
+
+   - Must convert to boolean: `record.attributes.is_public === 'Public'`
+
+2. **Table name**: `"ExploreWebsiteSearches"` (not "ExploreWdkSearches")
+
+3. **`question_name`**: NO namespace prefix in response
+
+   - Just `"GenesByRNASeqUserDataset"` (not `"GeneQuestions.GenesByRNASeqUserDataset"`)
+
+4. **`dataset_id`** in attributes: Has `EDAUD_` prefix (e.g., `"EDAUD_5BM5MtFs0l0YZ"`)
+
+5. **`dataset_id`** in ExploreWebsiteSearches: Also has `EDAUD_` prefix
+
+6. **Backend-provided URL** in ExploreWebsiteSearches: Uses UUID without prefix
+   - Example: `?param.rna_seq_dataset=5BM5MtFs0l0YZ` (NOT `EDAUD_5BM5MtFs0l0YZ`)
+
+### UserDataset ID Formats and Usage
+
+- **VDI ID**: Plain UUID (e.g., `5BM5MtFs0l0YZ`)
+- **WDK Record ID**: Prefixed with `EDAUD_` (e.g., `EDAUD_5BM5MtFs0l0YZ`)
+
+**Where to use which format:**
+
+- **Backend response**: Provides `EDAUD_` prefix in `dataset_id` fields
+- **Record page URLs**: Use full `EDAUD_` prefix → `/record/userdataset/EDAUD_5BM5MtFs0l0YZ`
+- **Question parameters**: Strip `EDAUD_` prefix → `?param.rna_seq_dataset=5BM5MtFs0l0YZ`
+  - Use `.replace(/^EDAUD_/, '')` to strip prefix for URL parameters
 
 ### Question URL Patterns
 
