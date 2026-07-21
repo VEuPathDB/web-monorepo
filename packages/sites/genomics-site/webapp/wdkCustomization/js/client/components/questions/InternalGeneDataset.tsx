@@ -60,7 +60,7 @@ import './InternalGeneDataset.scss';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import LockIcon from '@material-ui/icons/Lock';
 import PublicIcon from '@material-ui/icons/Public';
-import { projectId } from '@veupathdb/web-common/lib/config';
+import { projectId, webAppUrl } from '@veupathdb/web-common/lib/config';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
@@ -349,7 +349,7 @@ function InternalGeneDatasetContent(props: Props) {
             onChange={(e) => setShowDataSources(e.target.checked)}
           />
           <img
-            src={`/images/${projectId}/favicon.ico`}
+            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
             alt="VEuPathDB curated dataset"
             style={{ width: '20px', height: '20px', objectFit: 'contain' }}
           />
@@ -443,7 +443,7 @@ function InternalGeneDatasetContent(props: Props) {
               if (row.source === 'datasource') {
                 return (
                   <img
-                    src={`/images/${projectId}/favicon.ico`}
+                    src={`${webAppUrl}/images/${projectId}/favicon.ico`}
                     alt=""
                     title="VEuPathDB curated dataset"
                     style={{
