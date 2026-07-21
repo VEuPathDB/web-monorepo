@@ -48,6 +48,10 @@
     background-color: #f6f6f6;
     padding: 0.5rem;
 
+    > div > div {
+      margin-right: 0.5rem;
+    }
+
     span {
       padding: 0 0.25rem;
     }
@@ -145,8 +149,7 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
   }
 
-  .bttn-cyan.bttn-active,
-  .bttn-cyan.bttn-legend {
+  .bttn-cyan.bttn-active {
     background-color: #0d5a6e;
     background-image: none;
   }
