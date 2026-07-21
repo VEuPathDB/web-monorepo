@@ -60,6 +60,7 @@ import './InternalGeneDataset.scss';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import LockIcon from '@material-ui/icons/Lock';
 import PublicIcon from '@material-ui/icons/Public';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import { projectId, webAppUrl } from '@veupathdb/web-common/lib/config';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
@@ -519,7 +520,13 @@ function InternalGeneDatasetContent(props: Props) {
                       )}
                     </div>
                   </HelpIcon>{' '}
-                  <Link to={recordUrl}>{safeHtml(display_name)}</Link>
+                  {safeHtml(display_name)}
+                  <Link
+                    to={recordUrl}
+                    style={{ marginLeft: '0.5em', verticalAlign: 'middle' }}
+                  >
+                    <OpenInNewIcon style={{ fontSize: '16px' }} />
+                  </Link>
                   {build_number_introduced === buildNumber && (
                     <span className={cx('NewDataset')}></span>
                   )}
