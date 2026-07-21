@@ -349,7 +349,7 @@ function InternalGeneDatasetContent(props: Props) {
             onChange={(e) => setShowDataSources(e.target.checked)}
           />
           <img
-            src="/favicon.ico"
+            src={`/images/${projectId}/favicon.ico`}
             alt="VEuPathDB curated dataset"
             style={{ width: '20px', height: '20px', objectFit: 'contain' }}
           />
@@ -443,7 +443,7 @@ function InternalGeneDatasetContent(props: Props) {
               if (row.source === 'datasource') {
                 return (
                   <img
-                    src="/favicon.ico"
+                    src={`/images/${projectId}/favicon.ico`}
                     alt=""
                     title="VEuPathDB curated dataset"
                     style={{
