@@ -222,10 +222,10 @@ export default function SubsetDownloadModal({
             headerFormat: 'standard',
             trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
-            sorting: filteredSortBy?.map(({ id, desc }) => ({
-              key: id.split('/')[1],
-              direction: desc ? 'desc' : 'asc',
-            })),
+            //sorting: filteredSortBy?.map(({ id, desc }) => ({
+            //  key: id.split('/')[1],
+            //  direction: desc ? 'desc' : 'asc',
+            //})),
           },
         })
         .then((data) => {
