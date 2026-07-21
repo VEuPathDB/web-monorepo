@@ -230,6 +230,42 @@ function variableConstraintPredicate(
   );
 }
 
+/**
+ * Given a group of input names that share a `dataElementDependencyOrder`
+ * same-branch relationship, returns the set of entity ids that still have
+ * at least one enabled (non-disabled) variable for *every* input in the
+ * group. When this set has more than one member, the entity choice for the
+ * group is still ambiguous — auto-selecting a featured variable for one of
+ * the inputs would arbitrarily lock in one entity over another equally
+ * valid one.
+ */
+export function jointCandidateEntities(
+  inputNames: string[],
+  entities: StudyEntity[],
+  disabledVariablesByInputName: Record<string, VariableDescriptor[] | undefined>
+): Set<string> {
+  return inputNames.reduce<Set<string>>((candidateEntityIds, inputName, i) => {
+    const disabled = disabledVariablesByInputName[inputName] ?? [];
+    const enabledEntityIds = new Set(
+      entities
+        .filter((entity) =>
+          entity.variables.some(
+            (variable) =>
+              variable.type !== 'category' &&
+              !disabled.some(
+                (d) => d.entityId === entity.id && d.variableId === variable.id
+              )
+          )
+        )
+        .map((entity) => entity.id)
+    );
+    if (i === 0) return enabledEntityIds;
+    return new Set(
+      [...candidateEntityIds].filter((id) => enabledEntityIds.has(id))
+    );
+  }, new Set());
+}
+
 export type VariablesByInputName<T extends string = string> = Partial<
   Record<T, VariableDescriptor>
 >;
