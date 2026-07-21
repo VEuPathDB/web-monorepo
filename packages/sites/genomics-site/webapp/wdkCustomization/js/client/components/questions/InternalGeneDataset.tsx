@@ -342,39 +342,6 @@ function InternalGeneDatasetContent(props: Props) {
         headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
         isBeta={internalQuestion.isBeta}
       />
-      <div className={cx('SourceFilters')}>
-        <label>
-          <input
-            type="checkbox"
-            checked={showDataSources}
-            onChange={(e) => setShowDataSources(e.target.checked)}
-          />
-          <img
-            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB curated dataset"
-            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-          />
-          {' VEuPathDB curated datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPublicUserDatasets}
-            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
-          />
-          <PublicIcon style={{ width: '20px', height: '20px' }} />
-          {' Public User Datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPrivateUserDatasets}
-            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
-          />
-          <LockIcon style={{ width: '20px', height: '20px' }} />
-          {' Private User Datasets'}
-        </label>
-      </div>
       <div className={cx('Legend')}>
         <span style={{ fontWeight: 'bold', fontSize: '13px' }}>Legend:</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '1rem' }}>
@@ -421,6 +388,39 @@ function InternalGeneDatasetContent(props: Props) {
             </Tooltip>
           ))}
         </div>
+      </div>
+      <div className={cx('SourceFilters')}>
+        <label>
+          <input
+            type="checkbox"
+            checked={showDataSources}
+            onChange={(e) => setShowDataSources(e.target.checked)}
+          />
+          <img
+            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
+            alt="VEuPathDB curated dataset"
+            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+          />
+          {' VEuPathDB curated datasets'}
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showPublicUserDatasets}
+            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
+          />
+          <PublicIcon style={{ width: '20px', height: '20px' }} />
+          {' Public User Datasets'}
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showPrivateUserDatasets}
+            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
+          />
+          <LockIcon style={{ width: '20px', height: '20px' }} />
+          {' Private User Datasets'}
+        </label>
       </div>
       <InternalGeneDatasetTable
         searchBoxHeader="Filter Datasets:"
@@ -470,6 +470,56 @@ function InternalGeneDatasetContent(props: Props) {
                 );
               }
             },
+          },
+          {
+            key: 'searches',
+            name: 'Choose a Search',
+            sortable: false,
+            renderCell: (cellProps: any) => (
+              <>
+                {displayCategoryOrder.map((categoryName) => {
+                  const { dataset_name, dataset_id, source, dataset_id_param } =
+                    cellProps.row;
+                  const categorySearchName = getCategorySearchName(
+                    questionNamesByDatasetAndCategory,
+                    dataset_name,
+                    categoryName
+                  );
+
+                  return (
+                    <div key={categoryName}>
+                      {categorySearchName && (
+                        <Link
+                          className={
+                            categorySearchName === searchName
+                              ? 'bttn bttn-cyan bttn-active'
+                              : 'bttn bttn-cyan'
+                          }
+                          to={getCategorySearchUrl(
+                            categorySearchName,
+                            dataset_id,
+                            source,
+                            dataset_id_param,
+                            internalSearchName
+                          )}
+                          onClick={makeLinkClickHandler(
+                            submissionMetadata,
+                            categorySearchName,
+                            searchName,
+                            setSelectedSearch
+                          )}
+                        >
+                          {
+                            displayCategoriesByName[categoryName]
+                              .shortDisplayName
+                          }
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            ),
           },
           {
             key: 'organism_prefix',
@@ -533,56 +583,6 @@ function InternalGeneDatasetContent(props: Props) {
                 </div>
               );
             },
-          },
-          {
-            key: 'searches',
-            name: 'Choose a Search',
-            sortable: false,
-            renderCell: (cellProps: any) => (
-              <>
-                {displayCategoryOrder.map((categoryName) => {
-                  const { dataset_name, dataset_id, source, dataset_id_param } =
-                    cellProps.row;
-                  const categorySearchName = getCategorySearchName(
-                    questionNamesByDatasetAndCategory,
-                    dataset_name,
-                    categoryName
-                  );
-
-                  return (
-                    <div key={categoryName}>
-                      {categorySearchName && (
-                        <Link
-                          className={
-                            categorySearchName === searchName
-                              ? 'bttn bttn-cyan bttn-active'
-                              : 'bttn bttn-cyan'
-                          }
-                          to={getCategorySearchUrl(
-                            categorySearchName,
-                            dataset_id,
-                            source,
-                            dataset_id_param,
-                            internalSearchName
-                          )}
-                          onClick={makeLinkClickHandler(
-                            submissionMetadata,
-                            categorySearchName,
-                            searchName,
-                            setSelectedSearch
-                          )}
-                        >
-                          {
-                            displayCategoriesByName[categoryName]
-                              .shortDisplayName
-                          }
-                        </Link>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            ),
           },
         ]}
         initialSortColumnKey="organism_prefix"
