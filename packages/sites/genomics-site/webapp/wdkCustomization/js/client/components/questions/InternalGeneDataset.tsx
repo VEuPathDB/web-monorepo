@@ -58,6 +58,9 @@ import { PageLoading } from '../common/PageLoading';
 
 import './InternalGeneDataset.scss';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
+import LockIcon from '@material-ui/icons/Lock';
+import PublicIcon from '@material-ui/icons/Public';
+import { projectId } from '@veupathdb/web-common/lib/config';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
@@ -67,6 +70,36 @@ type InternalQuestionRecord = {
   target_type: string;
   dataset_name: string;
   record_type: string;
+};
+
+type UserDatasetQuestionRecord = {
+  question_name: string;
+  dataset_id_param: string;
+  dataset_id: string;
+  record_class: string;
+  dataset_name: string;
+};
+
+type UserDatasetRecord = {
+  displayName: string;
+  attributes: {
+    name: string;
+    ref_organism_formatted: string;
+    dataset_id: string;
+    summary: string;
+    is_public: string;
+    primary_contact_name: string;
+    owner_name: string;
+    ref_organism: string;
+  };
+  tables?: {
+    ExploreWebsiteSearches?: Array<{
+      question_name: string;
+      dataset_id_param: string;
+      dataset_id: string;
+      record_class: string;
+    }>;
+  };
 };
 
 type DatasourceRecord = {
@@ -79,6 +112,9 @@ type DatasourceRecord = {
   publications: LinkAttributeValue[];
   searches: string;
   isPreferred: boolean;
+  source: 'datasource' | 'userdataset';
+  is_public?: boolean;
+  dataset_id_param?: string;
 };
 
 type DisplayCategory = {
@@ -120,8 +156,9 @@ function InternalGeneDatasetContent(props: Props) {
 
   const { recordClass, shouldChangeDocumentTitle, submissionMetadata } = props;
 
-  const [selectedSearch, setSelectedSearch] =
-    useState<string | undefined>(searchNameAnchorTag);
+  const [selectedSearch, setSelectedSearch] = useState<string | undefined>(
+    searchNameAnchorTag
+  );
 
   useEffect(() => {
     setSelectedSearch(searchNameAnchorTag);
@@ -143,24 +180,56 @@ function InternalGeneDatasetContent(props: Props) {
         return undefined;
       }
 
-      const answer = await wdkService.getAnswerJson(
-        getAnswerSpec(datasetCategory),
-        REPORT_CONFIG
-      );
+      // Fetch both DataSources and UserDatasets in parallel
+      const [datasourceAnswer, userdatasetAnswer] = await Promise.all([
+        wdkService.getAnswerJson(getAnswerSpec(datasetCategory), REPORT_CONFIG),
+        wdkService.getAnswerJson(
+          getUserDatasetAnswerSpec(datasetCategory),
+          USERDATASET_REPORT_CONFIG
+        ),
+      ]);
 
+      // Process DataSources
       const internalQuestions = getInternalQuestions(
-        answer,
+        datasourceAnswer,
         outputRecordClass.fullName
       );
+
+      // Process UserDatasets
+      const userdatasetInternalQuestions =
+        getUserDatasetInternalQuestions(userdatasetAnswer);
+
+      // Merge questions from both sources
+      const allInternalQuestions = [
+        ...internalQuestions,
+        ...userdatasetInternalQuestions.map((udq) => ({
+          target_name: udq.question_name,
+          dataset_id: udq.dataset_id,
+          target_type: 'question',
+          dataset_name: udq.dataset_name,
+          record_type: udq.record_class,
+        })),
+      ];
+
       const displayCategoryMetadata = getDisplayCategoryMetadata(
         ontology,
-        internalQuestions
+        allInternalQuestions
       );
+
       const datasourceRecords = getDatasourceRecords(
-        answer,
+        datasourceAnswer,
         displayCategoryMetadata,
         preferredOrganisms
       );
+
+      const userdatasetRecords = getUserDatasetRecords(
+        userdatasetAnswer,
+        displayCategoryMetadata,
+        preferredOrganisms
+      );
+
+      // Merge all records
+      const allRecords = [...datasourceRecords, ...userdatasetRecords];
 
       return {
         questionNamesByDatasetAndCategory:
@@ -168,7 +237,7 @@ function InternalGeneDatasetContent(props: Props) {
         displayCategoriesByName:
           displayCategoryMetadata.displayCategoriesByName,
         displayCategoryOrder: displayCategoryMetadata.displayCategoryOrder,
-        datasourceRecords,
+        datasourceRecords: allRecords,
       };
     },
     [
@@ -191,6 +260,10 @@ function InternalGeneDatasetContent(props: Props) {
   const [showingOneRecord, updateShowingOneRecord] =
     useState(showingRecordToggle);
 
+  const [showDataSources, setShowDataSources] = useState(true);
+  const [showPublicUserDatasets, setShowPublicUserDatasets] = useState(true);
+  const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
+
   const selectedDataSetRecord = useMemo(
     () =>
       getSelectedDataSetRecord(
@@ -208,7 +281,10 @@ function InternalGeneDatasetContent(props: Props) {
         displayCategoriesByName,
         showingOneRecord,
         selectedDataSetRecord,
-        preferredOrganismsEnabled
+        preferredOrganismsEnabled,
+        showDataSources,
+        showPublicUserDatasets,
+        showPrivateUserDatasets
       ),
     [
       datasourceRecords,
@@ -216,6 +292,9 @@ function InternalGeneDatasetContent(props: Props) {
       showingOneRecord,
       selectedDataSetRecord,
       preferredOrganismsEnabled,
+      showDataSources,
+      showPublicUserDatasets,
+      showPrivateUserDatasets,
     ]
   );
 
@@ -262,6 +341,39 @@ function InternalGeneDatasetContent(props: Props) {
         headerText={`Identify ${outputRecordClass.displayNamePlural} based on ${internalQuestion.displayName}`}
         isBeta={internalQuestion.isBeta}
       />
+      <div className={cx('SourceFilters')}>
+        <label>
+          <input
+            type="checkbox"
+            checked={showDataSources}
+            onChange={(e) => setShowDataSources(e.target.checked)}
+          />
+          <img
+            src="/favicon.ico"
+            alt="VEuPathDB curated dataset"
+            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+          />
+          {' VEuPathDB curated datasets'}
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showPublicUserDatasets}
+            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
+          />
+          <PublicIcon style={{ width: '20px', height: '20px' }} />
+          {' Public User Datasets'}
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={showPrivateUserDatasets}
+            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
+          />
+          <LockIcon style={{ width: '20px', height: '20px' }} />
+          {' Private User Datasets'}
+        </label>
+      </div>
       <div className={cx('Legend')}>
         <span style={{ fontWeight: 'bold', fontSize: '13px' }}>Legend:</span>
         <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '1rem' }}>
@@ -320,12 +432,44 @@ function InternalGeneDatasetContent(props: Props) {
           ) as any
         }
         showCount={true}
-        rows={
-          showingOneRecord || preferredOrganismsEnabled
-            ? filteredDatasourceRecords
-            : datasourceRecords
-        }
+        rows={filteredDatasourceRecords}
         columns={[
+          {
+            key: 'source',
+            name: ' ',
+            width: '50px',
+            sortable: false,
+            renderCell: ({ row }: any) => {
+              if (row.source === 'datasource') {
+                return (
+                  <img
+                    src="/favicon.ico"
+                    alt=""
+                    title="VEuPathDB curated dataset"
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      objectFit: 'contain',
+                    }}
+                  />
+                );
+              } else if (row.is_public) {
+                return (
+                  <PublicIcon
+                    style={{ width: '20px', height: '20px' }}
+                    titleAccess="Public User Dataset"
+                  />
+                );
+              } else {
+                return (
+                  <LockIcon
+                    style={{ width: '20px', height: '20px' }}
+                    titleAccess="Private User Dataset"
+                  />
+                );
+              }
+            },
+          },
           {
             key: 'organism_prefix',
             name: 'Organism',
@@ -347,7 +491,13 @@ function InternalGeneDatasetContent(props: Props) {
                 summary,
                 publications,
                 build_number_introduced,
+                source,
               }: DatasourceRecord = cellProps.row;
+
+              const recordUrl =
+                source === 'datasource'
+                  ? `/record/dataset/${dataset_id}`
+                  : `/record/userdataset/${dataset_id}`;
 
               return (
                 <div>
@@ -369,9 +519,7 @@ function InternalGeneDatasetContent(props: Props) {
                       )}
                     </div>
                   </HelpIcon>{' '}
-                  <Link to={`/record/dataset/${dataset_id}`}>
-                    {safeHtml(display_name)}
-                  </Link>
+                  <Link to={recordUrl}>{safeHtml(display_name)}</Link>
                   {build_number_introduced === buildNumber && (
                     <span className={cx('NewDataset')}></span>
                   )}
@@ -386,10 +534,11 @@ function InternalGeneDatasetContent(props: Props) {
             renderCell: (cellProps: any) => (
               <>
                 {displayCategoryOrder.map((categoryName) => {
-                  const datasetName = cellProps.row.dataset_name;
+                  const { dataset_name, dataset_id, source, dataset_id_param } =
+                    cellProps.row;
                   const categorySearchName = getCategorySearchName(
                     questionNamesByDatasetAndCategory,
-                    datasetName,
+                    dataset_name,
                     categoryName
                   );
 
@@ -402,8 +551,13 @@ function InternalGeneDatasetContent(props: Props) {
                               ? 'bttn bttn-cyan bttn-active'
                               : 'bttn bttn-cyan'
                           }
-                          key={categoryName}
-                          to={`${internalSearchName}#${categorySearchName}`}
+                          to={getCategorySearchUrl(
+                            categorySearchName,
+                            dataset_id,
+                            source,
+                            dataset_id_param,
+                            internalSearchName
+                          )}
                           onClick={makeLinkClickHandler(
                             submissionMetadata,
                             categorySearchName,
@@ -556,15 +710,33 @@ function getFilteredDatasourceRecords(
     | undefined,
   showingOneRecord: boolean,
   selectedDataSetRecord: DatasourceRecord | undefined,
-  preferredOrganismsEnabled: boolean
+  preferredOrganismsEnabled: boolean,
+  showDataSources: boolean,
+  showPublicUserDatasets: boolean,
+  showPrivateUserDatasets: boolean
 ) {
-  return !datasourceRecords || !questionNamesByDatasetAndCategory
-    ? undefined
-    : !showingOneRecord
-    ? datasourceRecords.filter(
-        ({ isPreferred }) => !preferredOrganismsEnabled || isPreferred
-      )
-    : datasourceRecords.filter((record) => record === selectedDataSetRecord);
+  if (!datasourceRecords || !questionNamesByDatasetAndCategory) {
+    return undefined;
+  }
+
+  // First apply source type filtering (always)
+  const sourceFiltered = datasourceRecords.filter((record) => {
+    if (record.source === 'datasource') return showDataSources;
+    else if (record.is_public) return showPublicUserDatasets;
+    else return showPrivateUserDatasets;
+  });
+
+  // Then apply other filters
+  if (showingOneRecord) {
+    return sourceFiltered.filter((record) => record === selectedDataSetRecord);
+  }
+
+  // Apply organism preference filtering if enabled
+  if (preferredOrganismsEnabled) {
+    return sourceFiltered.filter(({ isPreferred }) => isPreferred);
+  }
+
+  return sourceFiltered;
 }
 
 function getAnswerSpec(datasetCategory: string) {
@@ -595,6 +767,35 @@ const REPORT_CONFIG = {
     numRecords: -1,
   },
 };
+
+const USERDATASET_REPORT_CONFIG = {
+  attributes: [
+    'name',
+    'ref_organism_formatted',
+    'dataset_id',
+    'summary',
+    'is_public',
+    'primary_contact_name',
+    'owner_name',
+    'ref_organism',
+  ],
+  tables: ['ExploreWebsiteSearches'],
+  pagination: {
+    offset: 0,
+    numRecords: -1,
+  },
+};
+
+function getUserDatasetAnswerSpec(datasetCategory: string) {
+  return {
+    searchName: 'UserDatasetsByCategory',
+    searchConfig: {
+      parameters: {
+        dataset_category: datasetCategory,
+      },
+    },
+  };
+}
 
 function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
   return answer.records
@@ -638,6 +839,26 @@ function getInternalQuestions(answer: Answer, outputRecordClassName: string) {
         record_type: reference.record_type,
       };
     });
+}
+
+function getUserDatasetInternalQuestions(
+  answer: Answer
+): UserDatasetQuestionRecord[] {
+  return answer.records.flatMap((record: any) => {
+    const exploreSearches = record.tables?.ExploreWebsiteSearches;
+    if (!Array.isArray(exploreSearches)) {
+      throw new Error(
+        `ExploreWebsiteSearches table missing for UserDataset ${record.attributes.dataset_id}`
+      );
+    }
+    return exploreSearches.map((search: any) => ({
+      question_name: search.question_name,
+      dataset_id_param: search.dataset_id_param,
+      dataset_id: search.dataset_id,
+      record_class: search.record_class,
+      dataset_name: record.attributes.dataset_id,
+    }));
+  });
 }
 
 function getDatasourceRecords(
@@ -717,6 +938,70 @@ function getDatasourceRecords(
           )
           .join(' '),
         isPreferred: isPreferredDataset(datasetRecord, preferredOrganismsSet),
+        source: 'datasource' as const,
+      };
+    });
+}
+
+function getUserDatasetRecords(
+  answer: Answer,
+  {
+    displayCategoriesByName,
+    displayCategoryOrder,
+    questionNamesByDatasetAndCategory,
+  }: ReturnType<typeof getDisplayCategoryMetadata>,
+  preferredOrganisms: string[]
+): DatasourceRecord[] {
+  const preferredOrganismsSet = new Set(preferredOrganisms);
+
+  return answer.records
+    .filter(
+      ({ attributes: { dataset_id } }: any) =>
+        Object.keys(questionNamesByDatasetAndCategory[`${dataset_id}`] || {})
+          .length > 0
+    )
+    .map((userDatasetRecord: any) => {
+      const attrs = userDatasetRecord.attributes;
+
+      // Check if organism is preferred (for UserDatasets, check ref_organism attribute)
+      const organism = attrs.ref_organism || 'Unspecified';
+      const organismFormatted = attrs.ref_organism_formatted || 'Unspecified';
+      const isPreferred =
+        organism === 'Multiple organisms' ||
+        organism === 'Unspecified' ||
+        preferredOrganismsSet.has(organism);
+
+      const contactName = attrs.primary_contact_name || attrs.owner_name;
+
+      return {
+        dataset_name: attrs.dataset_id,
+        display_name: `${userDatasetRecord.displayName}${
+          contactName ? ` (${contactName})` : ''
+        }`,
+        organism_prefix: organismFormatted,
+        dataset_id: attrs.dataset_id,
+        summary: attrs.summary,
+        build_number_introduced: '',
+        publications: [],
+        searches: displayCategoryOrder
+          .filter((categoryName) =>
+            getCategorySearchName(
+              questionNamesByDatasetAndCategory,
+              `${attrs.dataset_id}`,
+              categoryName
+            )
+          )
+          .map(
+            (categoryName) =>
+              displayCategoriesByName[categoryName].shortDisplayName
+          )
+          .join(' '),
+        isPreferred,
+        source: 'userdataset' as const,
+        is_public: attrs.is_public === 'Public',
+        dataset_id_param:
+          userDatasetRecord.tables?.ExploreWebsiteSearches?.[0]
+            ?.dataset_id_param,
       };
     });
 }
@@ -727,10 +1012,13 @@ function getDisplayCategoryMetadata(
 ) {
   const datasetNamesByQuestion = internalQuestions.reduce(
     (memo, { target_name, dataset_name }) => {
-      memo[target_name] = dataset_name;
+      if (!memo[target_name]) {
+        memo[target_name] = [];
+      }
+      memo[target_name].push(dataset_name);
       return memo;
     },
-    {} as Record<string, string>
+    {} as Record<string, string[]>
   );
 
   // Dataset Name => Category Name => Search URL Segment
@@ -753,27 +1041,34 @@ function getDisplayCategoryMetadata(
     if (
       scope.includes('webservice') &&
       targetType === 'search' &&
-      datasetNamesByQuestion[questionName] &&
       searchCategoryNode
     ) {
-      const datasetName = datasetNamesByQuestion[questionName];
-      const categoryName = getPropertyValue('name', searchCategoryNode) || '';
+      const questionNameWithoutPrefix = questionName.replace(/[^.]*\./, '');
+      const datasetNames = datasetNamesByQuestion[questionName] || [];
 
-      questionNamesByDatasetAndCategory[datasetName] = {
-        ...questionNamesByDatasetAndCategory[datasetName],
-        [categoryName]: questionName.replace(/[^.]*\./, ''),
-      };
+      if (datasetNames.length > 0) {
+        const categoryName = getPropertyValue('name', searchCategoryNode) || '';
 
-      displayCategoriesByName[categoryName] = displayCategoriesByName[
-        categoryName
-      ] || {
-        description: getPropertyValue('description', searchCategoryNode) || '',
-        displayName:
-          getPropertyValue('EuPathDB alternative term', searchCategoryNode) ||
-          '',
-        shortDisplayName:
-          getPropertyValue('shortDisplayName', searchCategoryNode) || '',
-      };
+        // Add this category to all datasets that use this question
+        datasetNames.forEach((datasetName) => {
+          questionNamesByDatasetAndCategory[datasetName] = {
+            ...questionNamesByDatasetAndCategory[datasetName],
+            [categoryName]: questionNameWithoutPrefix,
+          };
+        });
+
+        displayCategoriesByName[categoryName] = displayCategoriesByName[
+          categoryName
+        ] || {
+          description:
+            getPropertyValue('description', searchCategoryNode) || '',
+          displayName:
+            getPropertyValue('EuPathDB alternative term', searchCategoryNode) ||
+            '',
+          shortDisplayName:
+            getPropertyValue('shortDisplayName', searchCategoryNode) || '',
+        };
+      }
     }
 
     const nextSearchCategoryNode = searchCategoryNode
@@ -806,6 +1101,23 @@ function getCategorySearchName(
   categoryName: string
 ) {
   return questionNamesByDatasetAndCategory[datasetName][categoryName];
+}
+
+function getCategorySearchUrl(
+  questionName: string,
+  datasetId: string,
+  source: 'datasource' | 'userdataset',
+  datasetIdParam: string | undefined,
+  internalSearchName: string
+): string {
+  if (source === 'userdataset' && datasetIdParam) {
+    // Strip EDAUD_ prefix for question parameters
+    const paramValue = datasetId.replace(/^EDAUD_/, '');
+    // For UserDatasets with parameters, format as: catalogPage?params#questionName
+    return `${internalSearchName}?param.${datasetIdParam}=${paramValue}#${questionName}`;
+  }
+  // For DataSources, format as: catalogPage#questionName
+  return `${internalSearchName}#${questionName}`;
 }
 
 function makeLinkClickHandler(
