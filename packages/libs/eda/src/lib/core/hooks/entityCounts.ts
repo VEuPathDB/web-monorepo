@@ -11,10 +11,10 @@ import { useCachedPromise } from './cachedPromise';
 
 export type EntityCounts = Record<string, number>;
 
-// Shared by useEntityCounts and useRootEntityCount. Fetches a count per given
-// entity, in parallel; the returned promise is pending until all of them resolve,
-// so callers should only pass the entities they actually need counts for.
-function useEntityCountsForEntities(
+// Fetches a count per given entity, in parallel; the returned promise is
+// pending until all of them resolve, so callers should only pass the
+// entities they actually need counts for.
+export function useSpecificEntityCounts(
   filters: Filter[] | undefined,
   entities: StudyEntity[]
 ) {
@@ -52,7 +52,7 @@ function useEntityCountsForEntities(
 
 export function useEntityCounts(filters?: Filter[]) {
   const entities = useStudyEntities();
-  return useEntityCountsForEntities(filters, entities);
+  return useSpecificEntityCounts(filters, entities);
 }
 
 // Counts only the root entity, instead of fanning out a request per entity in
@@ -61,6 +61,6 @@ export function useEntityCounts(filters?: Filter[]) {
 // entity's count resolves, even if only one is ever read.
 export function useRootEntityCount(filters?: Filter[]) {
   const { rootEntity } = useStudyMetadata();
-  const result = useEntityCountsForEntities(filters, [rootEntity]);
+  const result = useSpecificEntityCounts(filters, [rootEntity]);
   return { ...result, value: result.value?.[rootEntity.id] };
 }
