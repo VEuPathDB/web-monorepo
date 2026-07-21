@@ -5,7 +5,7 @@ import {
   receiveBadUploadHistoryAction,
   clearBadUpload,
   updateFormState,
-  updateFormMetadata
+  updateFormMetadata,
 } from '../Actions/UserDatasetUploadActions';
 
 import { UserDatasetUpload } from '../Utils/types';
@@ -50,10 +50,12 @@ export const DefaultDatasetFormState: DatasetFormState = {
 };
 
 export function useDatasetFormState(): DatasetFormState {
-  return useSelector(
-    (state: StateSlice) => state.userDatasetUpload.formState,
-    isEqual,
-  ) ?? DefaultDatasetFormState;
+  return (
+    useSelector(
+      (state: StateSlice) => state.userDatasetUpload.formState,
+      isEqual
+    ) ?? DefaultDatasetFormState
+  );
 }
 
 export interface State {
@@ -80,10 +82,13 @@ export function reduce(state: State = {}, action: Action): State {
     case receiveBadUploadHistoryAction.type:
       return { ...state, badAllUploadsActionMessage: action.payload };
     case updateFormMetadata.type:
-      return { ...state, formState: {
-        ...state.formState!,
-        datasetDetails: action.payload,
-      } };
+      return {
+        ...state,
+        formState: {
+          ...state.formState!,
+          datasetDetails: action.payload,
+        },
+      };
     case updateFormState.type:
       return { ...state, formState: action.payload };
     default:

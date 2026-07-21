@@ -1,5 +1,5 @@
 import BigwigDatasetManagement from './BigwigDatasetManagement';
-import { DatasetManagementProps } from "./DatasetManagement";
+import { DatasetManagementProps } from './DatasetManagement';
 
 class RnaSeqDatasetManagement extends BigwigDatasetManagement {
   constructor(props: DatasetManagementProps) {

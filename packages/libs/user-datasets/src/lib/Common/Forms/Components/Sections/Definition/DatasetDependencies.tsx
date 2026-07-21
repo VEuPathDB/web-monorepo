@@ -1,5 +1,8 @@
 import React, { ReactElement } from 'react';
-import { DatasetDependency, PartialDatasetDetails } from '../../../../../Service';
+import {
+  DatasetDependency,
+  PartialDatasetDetails,
+} from '../../../../../Service';
 import { Consumer } from '../../../../../Utils';
 import { DependenciesConfig } from '../../../../Configuration';
 
@@ -9,17 +12,21 @@ export interface DatasetDependenciesProps {
   readonly config: DependenciesConfig;
 }
 
-export function DatasetDependencies(props: DatasetDependenciesProps): ReactElement {
+export function DatasetDependencies(
+  props: DatasetDependenciesProps
+): ReactElement {
   const setDependencies = (deps: DatasetDependency[]) =>
-    props.setDatasetDetails({ ...props.datasetDetails, dependencies: deps })
+    props.setDatasetDetails({ ...props.datasetDetails, dependencies: deps });
 
-  return <>
-    <label className={props.config.required ? 'required' : ''}>
-      Reference Genome
-    </label>
-    {props.config.renderInput({
-      dependencies: props.datasetDetails.dependencies ?? [],
-      setDependencies,
-    })}
-  </>;
+  return (
+    <>
+      <label className={props.config.required ? 'required' : ''}>
+        Reference Genome
+      </label>
+      {props.config.renderInput({
+        dependencies: props.datasetDetails.dependencies ?? [],
+        setDependencies,
+      })}
+    </>
+  );
 }

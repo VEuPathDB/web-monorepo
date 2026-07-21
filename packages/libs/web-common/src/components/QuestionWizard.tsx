@@ -178,7 +178,8 @@ function Navigation(props: QuestionWizardProps) {
         .filter((groupState) => groupState.filteredCountState !== 'initial')
         .map((groupState) => groupState.filteredCountState)
     )
-    .last();
+    // Seq always contains initialCount, so last() is never void here.
+    .last() as FilteredCountState;
 
   // XXX We should probably have a separate component for RecordClassIcon to encapsulate this logic
   const iconName =

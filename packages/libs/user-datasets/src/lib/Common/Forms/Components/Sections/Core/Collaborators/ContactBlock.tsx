@@ -154,7 +154,7 @@ export function ContactBlock(props: ContactBlockProps): ReactElement {
 
 function determineStrictness(
   props: ContactBlockProps,
-  contact: DatasetContact,
+  contact: DatasetContact
 ): Strictness {
   if (!props.isPublic)
     return isContactEmpty(contact) ? Strictness.Disabled : Strictness.Minimum;

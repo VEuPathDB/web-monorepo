@@ -50,25 +50,25 @@ export type XHRResponse = {
   readonly headers: Record<string, string>;
 } & (
   | {
-    readonly responseType: typeof XHRResponseType.Blob;
-    readonly response: Blob;
-  }
+      readonly responseType: typeof XHRResponseType.Blob;
+      readonly response: Blob;
+    }
   | {
-    readonly responseType: typeof XHRResponseType.Buffer;
-    readonly response: ArrayBuffer;
-  }
+      readonly responseType: typeof XHRResponseType.Buffer;
+      readonly response: ArrayBuffer;
+    }
   | {
-    readonly responseType: typeof XHRResponseType.Document;
-    readonly response: Document;
-  }
+      readonly responseType: typeof XHRResponseType.Document;
+      readonly response: Document;
+    }
   | {
-    readonly responseType: typeof XHRResponseType.JSON;
-    readonly responseBody: any;
-  }
+      readonly responseType: typeof XHRResponseType.JSON;
+      readonly responseBody: any;
+    }
   | {
-    readonly responseType: typeof XHRResponseType.Text;
-    readonly responseBody: string;
-  }
+      readonly responseType: typeof XHRResponseType.Text;
+      readonly responseBody: string;
+    }
 );
 
 export enum XHRErrorType {
@@ -102,15 +102,16 @@ export async function asyncXHR(config: XHRConfig): Promise<XHRResponse> {
   });
 
   return new Promise((good, bad) => {
-    xhr.addEventListener('abort', _ => bad(makeError(XHRErrorType.Abort)));
-    xhr.addEventListener('error', _ => bad(makeError(XHRErrorType.Error)));
-    xhr.addEventListener('timeout', _ => bad(makeError(XHRErrorType.Timeout)));
+    xhr.addEventListener('abort', (_) => bad(makeError(XHRErrorType.Abort)));
+    xhr.addEventListener('error', (_) => bad(makeError(XHRErrorType.Error)));
+    xhr.addEventListener('timeout', (_) =>
+      bad(makeError(XHRErrorType.Timeout))
+    );
     xhr.addEventListener('load', buildSuccessHandler(xhr, good));
 
     if (config.onProgress) {
-      xhr.upload.addEventListener(
-        'progress',
-        e => config.onProgress!(e.loaded, e.total),
+      xhr.upload.addEventListener('progress', (e) =>
+        config.onProgress!(e.loaded, e.total)
       );
     }
 
@@ -127,15 +128,16 @@ export async function asyncXHR(config: XHRConfig): Promise<XHRResponse> {
     let contentType: string | null;
 
     if (config.contentType) {
-      contentType = config.contentType === 'multipart/form-data'
-        ? null
-        : config.contentType;
+      contentType =
+        config.contentType === 'multipart/form-data'
+          ? null
+          : config.contentType;
     } else if (typeof config.body === 'string') {
       contentType = 'text/plain';
     } else if (resemblesFile(config.body)) {
       contentType = config.body.type;
     } else {
-      contentType = 'application/octet-stream'
+      contentType = 'application/octet-stream';
     }
 
     if (contentType) {
@@ -149,7 +151,7 @@ export async function asyncXHR(config: XHRConfig): Promise<XHRResponse> {
 
 function buildSuccessHandler(
   xhr: XMLHttpRequest,
-  cb: Consumer<XHRResponse>,
+  cb: Consumer<XHRResponse>
 ): Consumer<unknown> {
   const convertType = (type: string) => {
     switch (type) {
@@ -166,13 +168,16 @@ function buildSuccessHandler(
     }
   };
 
-  return _ => {
+  return (_) => {
     const headers: Record<string, string> = {};
 
-    xhr.getAllResponseHeaders()
-      .split("\r\n")
-      .map(v => v.split(":", 2))
-      .forEach(v => { headers[v[0]] = v.length < 2 ? "" : v[1] });
+    xhr
+      .getAllResponseHeaders()
+      .split('\r\n')
+      .map((v) => v.split(':', 2))
+      .forEach((v) => {
+        headers[v[0]] = v.length < 2 ? '' : v[1];
+      });
 
     cb({
       responseCode: xhr.status,
@@ -184,15 +189,17 @@ function buildSuccessHandler(
 }
 
 function applyHeaders(xhr: XMLHttpRequest, headers: Record<string, string>) {
-  for (const [ key, value ] of Object.entries(headers)) {
+  for (const [key, value] of Object.entries(headers)) {
     xhr.setRequestHeader(key, value);
   }
 }
 
 function resemblesFile(body: any): body is File {
-  return typeof body === 'object'
-    && Object.hasOwn(body, 'type')
-    && Object.hasOwn(body, 'name')
-    && Object.hasOwn(body, 'size')
-    && Object.hasOwn(body, 'lastModified');
+  return (
+    typeof body === 'object' &&
+    Object.hasOwn(body, 'type') &&
+    Object.hasOwn(body, 'name') &&
+    Object.hasOwn(body, 'size') &&
+    Object.hasOwn(body, 'lastModified')
+  );
 }

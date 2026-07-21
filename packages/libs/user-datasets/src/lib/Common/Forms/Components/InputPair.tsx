@@ -1,5 +1,12 @@
 import { Consumer } from '../../../Utils';
-import React, { ChangeEvent, InputHTMLAttributes, ReactElement, ReactNode, RefAttributes, RefObject } from 'react';
+import React, {
+  ChangeEvent,
+  InputHTMLAttributes,
+  ReactElement,
+  ReactNode,
+  RefAttributes,
+  RefObject,
+} from 'react';
 import { FieldHelpText } from './FieldHelpText';
 
 interface BaseInputProps<T extends object = object> {
@@ -62,7 +69,10 @@ export type InputPairProps<T extends object = object> =
   | NumberProps<T>
   | RadioProps<T>;
 
-enum ClassJoinType { Input, Label }
+enum ClassJoinType {
+  Input,
+  Label,
+}
 
 export function InputPair<T extends object = object>(
   props: InputPairProps<T>
@@ -93,7 +103,8 @@ export function InputPair<T extends object = object>(
       {props.flipped && input}
       <label
         htmlFor={props.idOverride ?? props.fieldName}
-        className={joinClasses(props, ClassJoinType.Label)}>
+        className={joinClasses(props, ClassJoinType.Label)}
+      >
         {props.label}
       </label>
       {!props.flipped && input}
@@ -164,32 +175,30 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   );
 }
 
-function baseInputProps(props: InputPairProps<any>): InputHTMLAttributes<any> & RefAttributes<HTMLInputElement> {
+function baseInputProps(
+  props: InputPairProps<any>
+): InputHTMLAttributes<any> & RefAttributes<HTMLInputElement> {
   return {
-    ref:      props.inputRef,
-    id:       props.idOverride ?? props.fieldName,
-    name:     props.nameOverride ?? props.fieldName,
+    ref: props.inputRef,
+    id: props.idOverride ?? props.fieldName,
+    name: props.nameOverride ?? props.fieldName,
     disabled: props.disabled,
     required: props.required,
   };
 }
 
 function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
-  let className = "";
+  let className = '';
 
-  if (props.className)
-    className += props.className;
+  if (props.className) className += props.className;
 
   switch (type) {
     case ClassJoinType.Input:
-      if (props.inputClass)
-        className += " " + props.inputClass;
+      if (props.inputClass) className += ' ' + props.inputClass;
       break;
     case ClassJoinType.Label:
-      if (props.labelClass)
-        className += " " + props.labelClass;
-      if (props.required)
-        className += " required";
+      if (props.labelClass) className += ' ' + props.labelClass;
+      if (props.required) className += ' required';
       break;
   }
 

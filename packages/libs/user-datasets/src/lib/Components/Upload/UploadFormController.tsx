@@ -42,25 +42,28 @@ export function UploadFormController(props: UploadFormControllerProps) {
   const dispatch = useDispatch();
   const formState = useDatasetFormState();
 
-  return <DatasetFormController
-    {...props}
-    form={UploadForm}
-    propFactory={p => {
-      return {
-        ...p,
-        actions: {
-          ...p.actions,
-          submit: () => submitAction(
-            dispatch,
-            formState,
-            p.formConfig,
-            p.actions.setSubmitting,
-            p.baseUrl
-          )
-        }
-      };
-    }}
-  />;
+  return (
+    <DatasetFormController
+      {...props}
+      form={UploadForm}
+      propFactory={(p) => {
+        return {
+          ...p,
+          actions: {
+            ...p.actions,
+            submit: () =>
+              submitAction(
+                dispatch,
+                formState,
+                p.formConfig,
+                p.actions.setSubmitting,
+                p.baseUrl
+              ),
+          },
+        };
+      }}
+    />
+  );
 }
 
 function submitAction(
@@ -80,10 +83,12 @@ function submitAction(
 
     if (!isEmpty(validationErrors)) {
       dispatch(
-        receiveBadUpload([{
-          type: 422,
-          errors: createValidationError(validationErrors),
-        }])
+        receiveBadUpload([
+          {
+            type: 422,
+            errors: createValidationError(validationErrors),
+          },
+        ])
       );
 
       return;
@@ -117,10 +122,12 @@ function submitAction(
 
       return requestUploadMessages();
     } catch (err) {
-      return receiveBadUpload([{
-        type: 500,
-        message: String(err) ?? 'Failed to upload dataset',
-      }]);
+      return receiveBadUpload([
+        {
+          type: 500,
+          message: String(err) ?? 'Failed to upload dataset',
+        },
+      ]);
     }
   });
 }

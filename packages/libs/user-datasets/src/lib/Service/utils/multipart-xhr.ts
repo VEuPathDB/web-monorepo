@@ -18,7 +18,7 @@ export type MultipartField = {
     }
 );
 
-export interface MultipartConfig extends Omit<XHRConfig, 'method' | 'body'>{
+export interface MultipartConfig extends Omit<XHRConfig, 'method' | 'body'> {
   readonly method?: XHRMethod;
 
   readonly fields: MultipartField[];

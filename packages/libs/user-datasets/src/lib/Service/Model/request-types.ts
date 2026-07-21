@@ -2,14 +2,15 @@ import * as vdi from './response-decoders';
 
 import {
   DatasetCharacteristics,
-  DatasetContact, DatasetFundingAward,
+  DatasetContact,
+  DatasetFundingAward,
   DatasetMetaBase,
   DatasetOrganism,
   DatasetPublication,
   DatasetSource as ApiSource,
   DatasetVisibility,
   LinkedDataset,
-  SampleYearRange
+  SampleYearRange,
 } from './response-decoders';
 
 import { DatasetTypeSelection } from '../../Common/Configuration';
@@ -19,17 +20,19 @@ export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
 // region Create Dataset
 
 export type PartialDatasetDetails = Readonly<
-  Partial<Omit<
-    DatasetMetaBase,
-    'datasetCharacteristics'
-    | 'datasetSources'
-    | 'experimentalOrganism'
-    | 'hostOrganism'
-    | 'publications'
-    | 'contacts'
-    | 'linkedDatasets'
-    | 'funding'
-  >>
+  Partial<
+    Omit<
+      DatasetMetaBase,
+      | 'datasetCharacteristics'
+      | 'datasetSources'
+      | 'experimentalOrganism'
+      | 'hostOrganism'
+      | 'publications'
+      | 'contacts'
+      | 'linkedDatasets'
+      | 'funding'
+    >
+  >
 > & {
   readonly type?: DatasetTypeSelection;
   readonly visibility?: DatasetVisibility;

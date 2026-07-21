@@ -256,11 +256,11 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
 
   const exportableProjectIds = useMemo(
     () =>
-      [...GENOMICS_PROJECTS].filter(
-        (id) =>
-          (projectId !== 'UniDB' && id === 'VEuPathDB') ||
-          (projectId === 'UniDB' && id !== 'VEuPathDB')
-      ),
+      GENOMICS_PROJECTS.filter(
+        (it) =>
+          (projectId !== 'UniDB' && it.projectId === 'UniDB') ||
+          (projectId === 'UniDB' && it.projectId !== 'UniDB')
+      ).map((it) => it.projectId),
     [projectId]
   );
 
