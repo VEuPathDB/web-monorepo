@@ -96,7 +96,7 @@ export function VisualizationNotebookCell(
   const vizOptions = useMemo(
     () => ({
       ...vizPlugin?.options,
-      ...getVizPluginOptions?.(wdkState, enqueueSnackbar, stepNumbers),
+      ...getVizPluginOptions?.({ wdkState, enqueueSnackbar, stepNumbers }),
     }),
     [
       wdkState,

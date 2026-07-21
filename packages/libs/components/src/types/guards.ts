@@ -99,6 +99,7 @@ export function isFaceted<T>(
 ): maybeFacetedData is FacetedData<T> {
   return (
     maybeFacetedData != null &&
+    typeof maybeFacetedData === 'object' &&
     'facets' in maybeFacetedData &&
     'every' in maybeFacetedData.facets &&
     maybeFacetedData.facets.every((d) => 'label' in d && 'data' in d)

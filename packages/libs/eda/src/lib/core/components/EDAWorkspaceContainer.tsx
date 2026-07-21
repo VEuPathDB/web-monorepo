@@ -1,4 +1,5 @@
-import React, { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -23,6 +24,7 @@ import { DownloadClient } from '../api/DownloadClient';
 import { entityTreeToArray } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
 import { useDeepValue } from '../hooks/immutability';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 export interface Props {
   studyId: string;
@@ -44,8 +46,38 @@ export function EDAWorkspaceContainer(props: Props) {
 
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
-  if (wdkStudyRecordState == null || studyMetadata.value == null)
+
+  if (studyMetadata.error)
+    return (
+      <Banner
+        banner={{
+          type: 'warning',
+          fontSize: '120%',
+          message: studyId.includes('EDAUD_') ? (
+            <>
+              This is a user dataset; either it is not available or there are
+              none available to this user. Would you like to{' '}
+              <Link to="/workspace/datasets/new">upload</Link> one?
+            </>
+          ) : (
+            <>
+              The dataset you requested either does not exist or is not
+              available to your user. Please{' '}
+              <Link to="/contact-us">contact us</Link> if you consider it
+              should.
+            </>
+          ),
+        }}
+      />
+    );
+
+  if (
+    wdkStudyRecordState == null ||
+    studyMetadata.value == null ||
+    studyMetadata.pending
+  )
     return <Loading />;
+
   return (
     <EDAWorkspaceContainerWithLoadedData
       {...props}

@@ -8,6 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { BipartiteNetworkOptions } from '../core/components/visualizations/implementations/BipartiteNetworkVisualization';
 import { VolcanoPlotOptions } from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
+import type { ScatterplotOptions } from '../core/components/visualizations/implementations/ScatterplotVisualization';
 import { CollectionVariableTreeNode } from '../core';
 import { InputSpec } from '../core/components/visualizations/InputVariables';
 import { DataElementConstraintRecord } from '../core/utils/data-element-constraints';
@@ -134,11 +135,15 @@ export interface VisualizationCellDescriptor
   visualizationId: string;
   // Custom function that allows us to override visualization Options from the notebook preset.
   // Useful for adding interactivity between the viz and other notebook cells.
-  getVizPluginOptions?: (
-    wdkState: WdkState,
-    enqueueSnackbar: EnqueueSnackbar,
-    stepNumbers?: Map<string, number>
-  ) => Partial<BipartiteNetworkOptions> | Partial<VolcanoPlotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
+  // All context fields are optional so callers that don't need WDK state can ignore them.
+  getVizPluginOptions?: (context: {
+    wdkState?: WdkState;
+    enqueueSnackbar?: EnqueueSnackbar;
+    stepNumbers?: Map<string, number>;
+  }) =>
+    | Partial<BipartiteNetworkOptions>
+    | Partial<VolcanoPlotOptions>
+    | Partial<ScatterplotOptions>; // We'll define this function custom for each notebook, so can expand output types as needed.
 }
 
 export interface ComputeCellDescriptor
@@ -149,8 +154,10 @@ export interface ComputeCellDescriptor
     projectId?: string
   ) => (variableCollection: CollectionVariableTreeNode) => boolean;
   hidden?: boolean; // Whether to hide this computation cell in the UI. Useful for computations where the entire configuration is already known.
+  configOverrides?: Record<string, unknown>; // Extra config values merged with plugin defaults (e.g. { normalize: true }).
   sharedInputNames?: string[]; // Input names managed by a SharedComputeInputsNotebookCell. Plugins render these as read-only.
   sharedInputsCellId?: string; // ID of the SharedComputeInputsCell that owns sharedInputNames. Used to auto-collapse this cell when shared inputs are not yet set.
+  readonlyInputNames?: string[]; // Additional input names that are pre-configured and should be rendered read-only, independent of sharedInputNames.
 }
 
 export interface TextCellContext {

@@ -28,7 +28,7 @@ export default function SiteHeaderWrapper() {
       useDiyDatasets();
 
     // for now, we default to each studies section being open
-    const [expandUserStudies, setExpandUserStudies] = useState(true);
+    const [expandUserStudies, setExpandUserStudies] = useState(false);
     const [expandCommunityStudies, setExpandCommunityStudies] = useState(true);
     const [expandCuratedStudies, setExpandCuratedStudies] = useState(true);
 
@@ -83,9 +83,10 @@ export default function SiteHeaderWrapper() {
           logoUrl={logoUrl}
           heroImageUrl={heroImageUrl}
           heroImagePosition="left 33%"
-          titleWithoutDB="ClinEpi"
-          subTitle="Clinical Epidemiology Resources"
-          tagline="Share, explore, and visualize clinical and epidemiological data"
+          titleFirstPart="data"
+          titleSecPart="Explorer"
+          subTitle="FAIR by design"
+          tagline="Share, access, discover, and visualize."
           getSiteData={getStaticSiteData}
           makeHeaderMenuItems={makeHeaderMenuItems}
           searchTerm={searchTerm}

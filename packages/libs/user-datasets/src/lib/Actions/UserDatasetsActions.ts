@@ -9,19 +9,31 @@ import {
   PreferenceUpdateAction,
 } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 import {
+  ActionThunk,
   EmptyAction,
   emptyAction,
 } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import { validateVdiCompatibleThunk } from '../Service';
+import { Action as CreatedAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+
+import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import { DatasetDetails, DatasetListEntry } from '../Utils/types';
+import { DatasetGetResponseBody, DatasetListEntry } from '../Service';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
   makeActionCreator,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+
+import { DatasetPatchRequest, ValidationErrorBody } from '../Service/Model';
+import { SharingModalContext } from '../Components/Sharing/UserDatasetSharingModal';
+import {
+  CommunityPromotionError,
+  CommunityPromotionValidationError,
+} from '../Components/Sharing/CommunityPromotionError';
+import { Consumer } from '../Utils';
+import { VdiCompatibleEpicDependencies } from '../Service/utils/compatibility';
 
 export type Action =
   | DetailErrorAction
@@ -44,7 +56,9 @@ export type Action =
   | SharingSuccessAction
   | SharingModalOpenAction
   | SharingErrorAction
-  | CommunityAction;
+  | CommunityAction
+  | ServiceMetaLoading
+  | ServiceMetaReceived;
 
 //==============================================================================
 
@@ -123,7 +137,8 @@ export function listItemUpdating(): ListItemUpdatingAction {
 
 //==============================================================================
 
-export const LIST_ITEM_UPDATE_SUCCESS = 'user-datasets/list-item-update-success';
+export const LIST_ITEM_UPDATE_SUCCESS =
+  'user-datasets/list-item-update-success';
 
 export type ListItemUpdateSuccessAction = {
   type: typeof LIST_ITEM_UPDATE_SUCCESS;
@@ -189,13 +204,13 @@ export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
   payload: {
     id: string;
-    userDataset?: DatasetDetails;
+    userDataset?: DatasetGetResponseBody;
   };
 };
 
 export function detailReceived(
   id: string,
-  userDataset?: DatasetDetails,
+  userDataset?: DatasetGetResponseBody
 ): DetailReceivedAction {
   return {
     type: DETAIL_RECEIVED,
@@ -247,12 +262,12 @@ export const DETAIL_UPDATE_SUCCESS = 'user-datasets/detail-update-success';
 export type DetailUpdateSuccessAction = {
   type: typeof DETAIL_UPDATE_SUCCESS;
   payload: {
-    userDataset: DatasetDetails;
+    userDataset: DatasetGetResponseBody;
   };
 };
 
 export function detailUpdateSuccess(
-  userDataset: DatasetDetails
+  userDataset: DatasetGetResponseBody
 ): DetailUpdateSuccessAction {
   return {
     type: DETAIL_UPDATE_SUCCESS,
@@ -310,7 +325,7 @@ export type DetailRemoveSuccessAction = {
 };
 
 export function detailRemoveSuccess(
-  datasetId: string,
+  datasetId: string
 ): DetailRemoveSuccessAction {
   return {
     type: DETAIL_REMOVE_SUCCESS,
@@ -453,25 +468,53 @@ export function projectFilter(filterByProject: boolean): ProjectFilterAction {
 
 //==============================================================================
 
+export const METADATA_LOADING = 'user-datasets/service-meta-loading';
+
+export interface ServiceMetaLoading {
+  type: typeof METADATA_LOADING;
+}
+
+export function serviceMetaLoading(): ServiceMetaLoading {
+  return {
+    type: METADATA_LOADING,
+  };
+}
+
+//==============================================================================
+
+export const METADATA_RECEIVED = 'user-datasets/service-meta-received';
+
+export interface ServiceMetaReceived {
+  type: typeof METADATA_RECEIVED;
+  payload: VdiServiceMetadata;
+}
+
+export function serviceMetaReceived(
+  meta: VdiServiceMetadata
+): ServiceMetaReceived {
+  return {
+    type: METADATA_RECEIVED,
+    payload: meta,
+  };
+}
+
+//==============================================================================
+
 // Community sharing actions. Note, these are using the `makeActionCreator` utility
 // which reduces boilerplate dramatically.
-
-export const updateCommunityModalVisibility = makeActionCreator(
-  'user-datasets/update-community-modal-visibility',
-  (isVisible: boolean) => ({ isVisible })
-);
 
 export const updateDatasetCommunityVisibilityPending = makeActionCreator(
   'user-datasets/update-community-visibility-pending'
 );
 
 export const updateDatasetCommunityVisibilitySuccess = makeActionCreator(
-  'user-datasets/update-community-visibility-success'
+  'user-datasets/update-community-visibility-success',
+  (success?: boolean) => ({ success })
 );
 
 export const updateDatasetCommunityVisibilityError = makeActionCreator(
-  'user-datastes/update-community-visibility-error',
-  (errorMessage: string) => ({ errorMessage })
+  'user-datasets/update-community-visibility-error',
+  (errorMessage?: CommunityPromotionError) => ({ errorMessage })
 );
 
 type UpdateCommunityVisibilityThunkAction =
@@ -481,7 +524,6 @@ type UpdateCommunityVisibilityThunkAction =
   | ListAction;
 
 type CommunityAction =
-  | InferAction<typeof updateCommunityModalVisibility>
   | InferAction<typeof updateDatasetCommunityVisibilityPending>
   | InferAction<typeof updateDatasetCommunityVisibilitySuccess>
   | InferAction<typeof updateDatasetCommunityVisibilityError>;
@@ -489,33 +531,75 @@ type CommunityAction =
 export function updateDatasetCommunityVisibility(
   datasetIds: string[],
   isVisibleToCommunity: boolean,
-  context: 'datasetDetails' | 'datasetsList'
-) {
+  context: 'datasetDetails' | 'datasetsList',
+  onError?: Consumer<ValidationErrorBody>
+): (
+  | CreatedAction<
+      'user-datasets/update-community-visibility-pending',
+      undefined
+    >
+  | ActionThunk<
+      UpdateCommunityVisibilityThunkAction,
+      VdiCompatibleEpicDependencies
+    >
+)[] {
   return [
     updateDatasetCommunityVisibilityPending(),
     validateVdiCompatibleThunk<UpdateCommunityVisibilityThunkAction>(
       async ({ wdkService }) => {
         try {
+          const validationErrors: CommunityPromotionValidationError[] = [];
+          const serviceErrors: string[] = [];
+
           await Promise.all(
             datasetIds.map((datasetId) =>
-              wdkService.updateUserDataset(datasetId, {
-                visibility: isVisibleToCommunity ? 'public' : 'private',
-              })
+              wdkService.vdi.patchDatasetDetails(
+                datasetId,
+                {
+                  visibility: {
+                    value: isVisibleToCommunity ? 'public' : 'private',
+                  },
+                },
+                // on success
+                undefined,
+                // on validation error
+                (response) => {
+                  if (onError) onError(response);
+                  else
+                    validationErrors.push({
+                      datasetId,
+                      general: response.errors.general,
+                      byField: response.errors.byKey,
+                    });
+                },
+                // on misc error
+                ({ message }) => {
+                  if (message) serviceErrors.push(message);
+                }
+              )
             )
           );
-          if (context === 'datasetDetails') {
-            return [
-              loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
-              updateDatasetCommunityVisibilitySuccess,
-            ];
-          } else {
-            return [
-              loadUserDatasetListWithoutLoadingIndicator(),
-              updateDatasetCommunityVisibilitySuccess,
-            ];
+
+          if (validationErrors.length === 0 && serviceErrors.length === 0) {
+            return context === 'datasetDetails'
+              ? [
+                  loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
+                  updateDatasetCommunityVisibilitySuccess(),
+                ]
+              : [
+                  loadUserDatasetListWithoutLoadingIndicator(),
+                  updateDatasetCommunityVisibilitySuccess(),
+                ];
           }
+
+          return updateDatasetCommunityVisibilityError({
+            serviceErrors,
+            validationErrors,
+          });
         } catch (error) {
-          return updateDatasetCommunityVisibilityError(String(error));
+          return updateDatasetCommunityVisibilityError({
+            clientError: String(error),
+          });
         }
       }
     ),
@@ -544,6 +628,7 @@ type RemovalAction =
   | DetailRemovingAction
   | DetailRemoveSuccessAction
   | DetailRemoveErrorAction;
+type ServiceMetaAction = ServiceMetaLoading | ServiceMetaReceived;
 
 export function loadUserDatasetListWithoutLoadingIndicator() {
   return validateVdiCompatibleThunk<ListAction>(({ wdkService }) =>
@@ -554,19 +639,36 @@ export function loadUserDatasetListWithoutLoadingIndicator() {
         // ignore error and default to false
         () => false
       ),
-      wdkService.getCurrentUserDatasets(),
-    ]).then(([filterByProject, userDatasets]) =>
-      listReceived(userDatasets, filterByProject), listErrorReceived));
+      wdkService.vdi.getDatasetList(),
+    ]).then(
+      ([filterByProject, userDatasets]) =>
+        listReceived(userDatasets, filterByProject),
+      listErrorReceived
+    )
+  );
 }
 
 export function loadUserDatasetList() {
   return [listLoading(), loadUserDatasetListWithoutLoadingIndicator()];
 }
 
+export function loadVdiServiceMetadataWithoutLoadingIndicator() {
+  return validateVdiCompatibleThunk<ServiceMetaAction>(({ wdkService }) =>
+    wdkService.vdi.getServiceMetadata().then(serviceMetaReceived)
+  );
+}
+
+export function loadVdiServiceMetadata() {
+  return [
+    serviceMetaLoading(),
+    loadVdiServiceMetadataWithoutLoadingIndicator(),
+  ];
+}
+
 export function loadUserDatasetDetailWithoutLoadingIndicator(id: string) {
   return validateVdiCompatibleThunk<DetailAction>(({ wdkService }) =>
-    wdkService.getUserDataset(id).then(
-      (ud: DatasetDetails) => detailReceived(id, ud),
+    wdkService.vdi.getDatasetDetails(id).then(
+      (ud: DatasetGetResponseBody) => detailReceived(id, ud),
       (error: FetchClientError) => detailError(error)
     )
   );
@@ -579,7 +681,7 @@ export function loadUserDatasetDetail(id: string) {
 export function shareUserDatasets(
   userDatasetIds: string[],
   recipientUserIds: number[],
-  context: 'datasetDetails' | 'datasetsList'
+  context: SharingModalContext
 ) {
   // here we're making an array of objects to help facilitate the sharing of multiple datasets with multiple users
   const requests: { datasetId: string; recipientId: number }[] = [];
@@ -598,10 +700,10 @@ export function shareUserDatasets(
     updateSharingDatasetPending(true),
     Promise.all(
       requests.map((req) =>
-        wdkService.editUserDatasetSharing(
-          'grant',
+        wdkService.vdi.putDatasetShareOffer(
           req.datasetId,
-          req.recipientId
+          req.recipientId,
+          'grant'
         )
       )
     ).then(() => {
@@ -621,17 +723,17 @@ export function shareUserDatasets(
   ]);
 }
 
-export function unshareUserDatasets(
+export function unshareUserDataset(
   userDatasetId: string,
   recipientUserId: number,
-  context: 'datasetDetails' | 'datasetsList'
+  context: SharingModalContext
 ) {
   return validateVdiCompatibleThunk<
     DetailAction | ListAction | SharingDatasetPendingAction | SharingErrorAction
   >(({ wdkService }) => [
     updateSharingDatasetPending(true),
-    wdkService
-      .editUserDatasetSharing('revoke', userDatasetId, recipientUserId)
+    wdkService.vdi
+      .putDatasetShareOffer(userDatasetId, recipientUserId, 'revoke')
       .then(() => {
         if (context === 'datasetDetails') {
           return loadUserDatasetDetailWithoutLoadingIndicator(userDatasetId);
@@ -644,44 +746,43 @@ export function unshareUserDatasets(
 }
 
 export function updateDatasetListItem(
-  dataset: DatasetListEntry,
-  patch: Partial<DatasetListEntry>,
+  original: DatasetListEntry,
+  updates: Partial<DatasetListEntry>,
+  patch: DatasetPatchRequest
 ) {
   return validateVdiCompatibleThunk<ListItemUpdateAction>(({ wdkService }) => [
     listItemUpdating(),
-    wdkService
-      .updateUserDataset(dataset.datasetId, patch)
+    wdkService.vdi
+      .patchDatasetDetails(original.datasetId, patch)
       .then(
-        () => listItemUpdateSuccess({ ...dataset, ...patch }),
-        listItemUpdateError,
-      )
+        () => listItemUpdateSuccess({ ...original, ...updates }),
+        listItemUpdateError
+      ),
   ]);
 }
 
 export function updateUserDatasetDetail(
-  userDataset: DatasetDetails,
-  patch: Partial<DatasetDetails>,
+  original: DatasetGetResponseBody,
+  updates: Partial<DatasetGetResponseBody>,
+  patch: DatasetPatchRequest
 ) {
   return validateVdiCompatibleThunk<DetailUpdateAction>(({ wdkService }) => [
     detailUpdating(),
-    wdkService
-      .updateUserDataset(userDataset.datasetId, patch)
+    wdkService.vdi
+      .patchDatasetDetails(original.datasetId, patch)
       .then(
-        () => detailUpdateSuccess({ ...userDataset, ...patch }),
+        () => detailUpdateSuccess({ ...original, ...updates }),
         detailUpdateError
       ),
   ]);
 }
 
-export function removeUserDataset(
-  datasetId: string,
-  redirectTo?: string
-) {
+export function removeUserDataset(datasetId: string, redirectTo?: string) {
   return validateVdiCompatibleThunk<RemovalAction | EmptyAction | RouteAction>(
     ({ wdkService }) => [
       detailRemoving(),
-      wdkService
-        .removeUserDataset(datasetId)
+      wdkService.vdi
+        .deleteDataset(datasetId)
         .then(
           () => [
             detailRemoveSuccess(datasetId),

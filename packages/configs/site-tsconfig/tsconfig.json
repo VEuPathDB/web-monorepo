@@ -8,10 +8,11 @@
     "removeComments": false,
     "preserveConstEnums": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "sourceMap": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": true,
+    "skipLibCheck": true,
     "alwaysStrict": true,
     "lib": [
       "dom",
@@ -19,6 +20,7 @@
       "esnext"
     ],
     "moduleResolution": "node",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "skipLibCheck": true
   }
 }

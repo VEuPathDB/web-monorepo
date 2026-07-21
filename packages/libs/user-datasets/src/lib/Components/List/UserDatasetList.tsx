@@ -18,16 +18,16 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
+import { DataNoun } from '../../Utils/types';
 import {
-  DataNoun,
   DatasetListEntry,
   DatasetListShareUser,
   DatasetTypeOutput,
-} from '../../Utils/types';
+  VdiServiceConfig,
+} from '../../Service';
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
@@ -47,10 +47,13 @@ import {
   removeUserDataset,
   updateDatasetListItem,
 } from '../../Actions/UserDatasetsActions';
-import { datasetUserFullName } from '../../Utils/formatting';
+import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
 
 export interface DatasetListProps {
   baseUrl: string;
+  readonly vdiConfig: VdiServiceConfig;
   user: User;
   location: any;
   projectId: string;
@@ -77,19 +80,20 @@ export interface DatasetListProps {
   removeUserDataset: typeof removeUserDataset;
   updateDatasetListItem: typeof updateDatasetListItem;
   updateProjectFilter: (filterByProject: boolean) => any;
-  quotaSize: number;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
-  communityModalOpen: boolean;
-  updateCommunityModalVisibility: (visibility: boolean) => any;
   updateDatasetCommunityVisibility: (
     datasetIds: string[],
     isVisibleToCommunity: boolean,
     context: 'datasetDetails' | 'datasetsList'
   ) => any;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: CommunityPromotionError | undefined;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilitySuccessReset: (success?: boolean) => any;
+  updateDatasetCommunityVisibilityErrorReset: (
+    error?: CommunityPromotionError
+  ) => any;
 }
 
 interface State {
@@ -97,6 +101,8 @@ interface State {
   uiState: { sort: MesaSortObject };
   searchTerm: string;
   editingCache: any;
+
+  readonly isCommunityModalOpen: boolean;
 }
 
 export interface MesaDataCellProps {
@@ -115,11 +121,12 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       uiState: {
         sort: {
           columnKey: 'created',
-          direction: 'asc',
+          direction: 'desc',
         },
       },
       editingCache: {},
       searchTerm: '',
+      isCommunityModalOpen: false,
     };
 
     this.onRowSelect = this.onRowSelect.bind(this);
@@ -139,6 +146,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
     this.renderOwnerCell = this.renderOwnerCell.bind(this);
     this.renderStatusCell = this.renderStatusCell.bind(this);
+    this.renderSharedWithCell = this.renderSharedWithCell.bind(this);
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.closeSharingModal = this.closeSharingModal.bind(this);
@@ -166,31 +174,41 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ) {
     const { updateDatasetListItem } = this.props;
     return (value: DatasetListEntry[K]) =>
-      updateDatasetListItem(dataset, { [attrKey]: value });
+      updateDatasetListItem(
+        dataset,
+        { [attrKey]: value },
+        { [attrKey]: { value } }
+      );
+  }
+
+  sharedWithValue(dataset: DatasetListEntry): string {
+    if (!this.isMyDataset(dataset)) return 'Me';
+    return !dataset.shares || !dataset.shares.length
+      ? ''
+      : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
   }
 
   renderSharedWithCell(cellProps: MesaDataCellProps) {
-    const dataset = cellProps.row;
-    return !dataset.shares || !dataset.shares.length
-      ? null
-      : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
+    return this.sharedWithValue(cellProps.row);
   }
 
   renderCommunityCell(cellProps: MesaDataCellProps) {
     const dataset = cellProps.row;
     const isPublic = dataset.visibility === 'public';
-    if (!isPublic) return null;
-    return (
-      <Tooltip
-        title={`This ${this.props.dataNoun.singular} is visible to the community.`}
-      >
-        <Public className="Community-visible" />
-      </Tooltip>
-    );
+    if (isPublic) {
+      return (
+        <Tooltip
+          title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+        >
+          <Public className="Community-visible" />
+        </Tooltip>
+      );
+    }
+    return 'private';
   }
 
   renderStatusCell(cellProps: MesaDataCellProps) {
-    const { baseUrl, projectId, projectName, dataNoun } = this.props;
+    const { baseUrl, projectId, projectName, dataNoun, vdiConfig } = this.props;
     return (
       <UserDatasetStatus
         baseUrl={baseUrl}
@@ -200,6 +218,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         projectId={projectId}
         displayName={projectName}
         dataNoun={dataNoun}
+        vdiConfig={vdiConfig}
       />
     );
   }
@@ -215,7 +234,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   }
 
   getColumns(): any[] {
-    const { baseUrl, user } = this.props;
+    const { baseUrl, user, vdiConfig } = this.props;
     function isOwner(ownerId: number): boolean {
       return user.id === ownerId;
     }
@@ -223,8 +242,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'name',
         sortable: true,
-        name: 'Name / ID',
-        helpText: '',
+        name: 'Dataset name',
+        helpText:
+          'Click a dataset name to open the dataset record and editing interface.',
         renderCell: (cellProps: MesaDataCellProps) => {
           const dataset = cellProps.row;
           const saveName = this.onMetaAttributeSaveFactory(dataset, 'name');
@@ -274,7 +294,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'type',
-        name: 'Type',
+        name: 'Data type',
+        helpText:
+          'The data type classifies the dataset according to the biological characteristics and structure of the data it contains.',
         sortable: true,
         renderCell: textCell('type', (datasetType: DatasetTypeOutput) => {
           const { category, version } = datasetType;
@@ -288,27 +310,34 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'projects',
         sortable: true,
-        name: 'VEuPathDB Websites',
+        name: 'VEuPathDB project',
         renderCell(cellProps: MesaDataCellProps) {
-          return cellProps.row.installTargets.join(', ');
+          const newInstallTargets = cellProps.row.installTargets.map(
+            projectIdToDisplayName
+          );
+          return newInstallTargets.join(', ');
         },
       },
       {
         key: 'status',
         className: 'StatusColumn',
         name: 'Status',
+        helpText:
+          'Indicates the current status of dataset import and installation.',
         style: { textAlign: 'center' },
         renderCell: this.renderStatusCell,
       },
       {
         key: 'owner',
-        name: 'Owner',
+        name: 'Uploaded by',
         sortable: true,
         renderCell: this.renderOwnerCell,
       },
       {
         key: 'sharedWith',
-        name: 'Shared With',
+        name: 'Shared with',
+        helpText:
+          'Names of collaborators the owner has explicitly invited to discover, explore, and download this dataset.',
         sortable: true,
         renderCell: this.renderSharedWithCell,
       },
@@ -316,7 +345,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         ? [
             {
               key: 'visibility',
-              name: 'Community',
+              name: 'Visibility',
               sortable: true,
               helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
               style: { textAlign: 'center' },
@@ -327,6 +356,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'created',
         name: 'Created',
+        helpText: 'Date the dataset was first uploaded to VEuPathDB.',
         sortable: true,
         renderCell: textCell('created', (created: string) => (
           <DateTime datetime={created} />
@@ -334,15 +364,19 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       },
       {
         key: 'fileCount',
-        name: 'File Count',
+        name: 'File count',
+        helpText: 'The number of data files uploaded as part of this dataset.',
         renderCell: textCell('fileCount', (count: number) => count),
       },
       {
         key: 'size',
         name: 'Size',
+        helpText: `The dataset size. Users can store up to ${formatFileSize(
+          vdiConfig.api.userMaxStorageSize
+        )} of data in their “My Datasets” workspace.`,
         sortable: true,
         renderCell: textCell('fileSizeTotal', (size: number) =>
-          bytesToHuman(size)
+          formatFileSize(size)
         ),
       },
       // {
@@ -418,25 +452,32 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset, dataNoun, enablePublicUserDatasets } =
-      this.props;
+    const { removeUserDataset, dataNoun } = this.props;
     return [
       {
-        callback: (rows: DatasetListEntry[]) => {},
+        callback: (_: DatasetListEntry[]) => {},
         element: (
           <ThemedGrantAccessButton
-            buttonText={`Grant Access to ${dataNoun.plural}`}
+            buttonText={'Manage individual access'}
             onPress={(grantType) => {
               switch (grantType) {
                 case 'community':
-                  this.props.updateCommunityModalVisibility(true);
+                  this.props.updateDatasetCommunityVisibilitySuccessReset(
+                    false
+                  );
+                  this.props.updateDatasetCommunityVisibilityErrorReset(
+                    undefined
+                  );
+                  this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
                   break;
                 case 'individual':
                   this.openSharingModal();
                   break;
               }
             }}
-            enablePublicUserDatasets={enablePublicUserDatasets}
+            // FIXME: 2026-06-08 16:38 - Disabled for now due to complexity of
+            //   public dataset sharing requirements.
+            communityDatasetsEnabled={false}
           />
         ),
         selectionRequired: true,
@@ -445,8 +486,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         callback: (userDatasets: DatasetListEntry[]) => {
           const [noun, pronoun] =
             userDatasets.length === 1
-              ? [`this ${this.props.dataNoun.singular.toLowerCase()}`, 'it']
-              : [`these ${this.props.dataNoun.plural.toLowerCase()}`, 'them'];
+              ? [`this ${dataNoun.singular.toLowerCase()}`, 'it']
+              : [`these ${dataNoun.plural.toLowerCase()}`, 'them'];
 
           const affectedUsers: DatasetListShareUser[] = userDatasets.reduce(
             (
@@ -503,7 +544,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     ) : filterByProject ? (
       <React.Fragment>
         <p>
-          You have no <b>{projectName}</b> data sets.
+          You have no <b>{projectName}</b> datasets.
         </p>
         <br />
         <button
@@ -541,7 +582,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
 
   filterAndSortRows(rows: DatasetListEntry[]): DatasetListEntry[] {
     const { searchTerm, uiState } = this.state;
-    const { projectName, filterByProject } = this.props;
+    const { projectId, filterByProject } = this.props;
     const sort: MesaSortObject = uiState.sort;
 
     let result = rows;
@@ -549,7 +590,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     // Apply project filter
     if (filterByProject) {
       result = result.filter((dataset) =>
-        dataset.installTargets.includes(projectName)
+        dataset.installTargets.includes(projectId)
       );
     }
 
@@ -577,19 +618,34 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     });
   }
 
+// The cases exist because the column's raw data needs some specifics before comparison.
+// The default covers columns where data[columnKey] is already a plain, directly-comparable string.
+
   getColumnSortValueMapper(columnKey: string | null) {
     if (columnKey === null) return (data: any) => data;
     switch (columnKey) {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
           data.type.category.toLowerCase();
-      case 'meta.name':
-        return (data: DatasetListEntry) => data.name.toLowerCase();
+      case 'projects':
+        return (data: DatasetListEntry, _: number): string =>
+          (projectIdToDisplayName(data.installTargets[0]) ?? data.installTargets[0]).toLowerCase();
+      case 'owner':
+        return (data: DatasetListEntry): string =>
+          datasetUserFullName(data.owner).toLowerCase();
+      case 'sharedWith':
+        return (data: DatasetListEntry): string => {
+          const value = this.sharedWithValue(data);
+          // Use highest Unicode character to sort empty values to the end
+          return value ? value.toLowerCase() : '\uFFFF';
+        };
+      case 'size':
+        return (data: DatasetListEntry): number => data.fileSizeTotal ?? 0;
       default:
-        return (data: any, index: number) => {
-          return typeof data[columnKey] !== 'undefined'
-            ? data[columnKey]
-            : null;
+        return (data: any, _: number) => {
+          const val =
+            typeof data[columnKey] !== 'undefined' ? data[columnKey] : null;
+          return typeof val === 'string' ? val.toLowerCase() : val;
         };
     }
   }
@@ -600,9 +656,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
   ): DatasetListEntry[] {
     const direction: string = sort.direction;
     const columnKey: string = sort.columnKey;
-    const mappedValue = this.getColumnSortValueMapper(columnKey);
-    const sorted = [...rows].sort(MesaUtils.sortFactory(mappedValue));
-    return direction === 'asc' ? sorted : sorted.reverse();
+    const valueMapper = this.getColumnSortValueMapper(columnKey);
+    const sorted = [...rows].sort(MesaUtils.sortFactory(valueMapper));
+    return direction === 'asc' ? sorted.reverse() : sorted;
   }
 
   closeSharingModal() {
@@ -625,10 +681,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       userDatasets,
       user,
       projectName,
+      projectId,
       shareUserDatasets,
       unshareUserDatasets,
       filterByProject,
-      quotaSize,
+      vdiConfig,
       dataNoun,
       sharingModalOpen,
       sharingDatasetPending,
@@ -637,7 +694,6 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       updateDatasetListItem,
       enablePublicUserDatasets,
       updateDatasetCommunityVisibility,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
@@ -671,10 +727,11 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       .map((ud) => ud.fileSizeTotal ?? 0)
       .reduce(add, 0);
 
+    const quotaSize = vdiConfig.api.userMaxStorageSize;
     const totalPercent = totalSize / quotaSize;
 
     const offerProjectToggle = userDatasets.some(({ installTargets }) =>
-      installTargets.some((project) => project !== projectName)
+      installTargets.some((project) => project !== projectId)
     );
 
     return (
@@ -690,25 +747,33 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                     deselectDataset={this.onRowDeselect}
                     shareUserDatasets={shareUserDatasets}
                     context="datasetsList"
-                    unshareUserDatasets={unshareUserDatasets}
+                    unshareUserDataset={unshareUserDatasets}
                     onClose={this.closeSharingModal}
                     dataNoun={dataNoun}
                     sharingDatasetPending={sharingDatasetPending}
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
-                    updateUserDatasetDetail={updateDatasetListItem}
+                    updateDatasetListItem={updateDatasetListItem}
                   />
                 ) : null}
-                {this.props.communityModalOpen && enablePublicUserDatasets ? (
+                {this.state.isCommunityModalOpen && enablePublicUserDatasets ? (
                   <CommunityModal
                     user={user}
                     datasets={selectedDatasets}
                     context="datasetsList"
-                    onClose={() => updateCommunityModalVisibility(false)}
+                    onClose={() =>
+                      this.setState((s) => ({
+                        ...s,
+                        isCommunityModalOpen: false,
+                      }))
+                    }
                     dataNoun={dataNoun}
                     updateDatasetCommunityVisibility={
                       updateDatasetCommunityVisibility
                     }
+                    onFixErrors={() => {
+                      /* n/a */
+                    }}
                     updatePending={updateDatasetCommunityVisibilityPending}
                     updateSuccessful={updateDatasetCommunityVisibilitySuccess}
                     updateError={updateDatasetCommunityVisibilityError}
@@ -744,9 +809,9 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                   </div>
                 )}
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
-                  <Icon fa="info-circle" /> {bytesToHuman(totalSize)} (
+                  <Icon fa="info-circle" /> {formatFileSize(totalSize)} (
                   {normalizePercentage(totalPercent)}%) of{' '}
-                  {bytesToHuman(quotaSize)} used
+                  {formatFileSize(quotaSize)} used
                 </div>
               </div>
             )}

@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 import { connect } from 'react-redux';
 import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { pure } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -51,7 +52,7 @@ function renderSourceVersion(version, newcategory) {
         <HelpIcon>
           {'The source versions for the assembly, ' +
             'structural annotation and functional annotation.  ' +
-            'See the Data Set Release History table for more details.'}
+            'See the Dataset Release History table for more details.'}
         </HelpIcon>
       </span>
     );
@@ -117,7 +118,11 @@ export function RecordHeading(props) {
           {organism_prefix ? (
             <>
               <dt>Organism (source or reference)</dt>
-              <dd dangerouslySetInnerHTML={{ __html: organism_prefix }} />
+              <dd
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(organism_prefix),
+                }}
+              />
             </>
           ) : null}
 
@@ -161,7 +166,7 @@ export function RecordHeading(props) {
           <dt>Summary</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
-            dangerouslySetInnerHTML={{ __html: summary }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
 
           {megabase_pairs ? (

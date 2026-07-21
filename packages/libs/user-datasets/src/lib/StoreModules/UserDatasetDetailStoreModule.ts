@@ -14,13 +14,15 @@ import {
   SHARING_MODAL_OPEN,
   SHARING_DATASET_PENDING,
   SHARING_ERROR,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
+  METADATA_LOADING,
+  METADATA_RECEIVED,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetDetails } from '../Utils/types';
+import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export const key = 'userDatasetDetail';
 
@@ -30,7 +32,7 @@ export const key = 'userDatasetDetail';
  */
 export type UserDatasetEntry = {
   isLoading: boolean;
-  resource?: DatasetDetails;
+  resource?: DatasetGetResponseBody;
 };
 
 export interface State {
@@ -45,10 +47,10 @@ export interface State {
   removalError?: FetchClientError;
   shareError: Error | undefined;
   shareSuccessful: boolean | undefined;
-  communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
+  serviceMetadata?: VdiServiceMetadata;
 }
 
 const initialState: State = {
@@ -59,10 +61,10 @@ const initialState: State = {
   sharingDatasetPending: false,
   shareError: undefined,
   shareSuccessful: undefined,
-  communityModalOpen: false,
   updateDatasetCommunityVisibilityError: undefined,
   updateDatasetCommunityVisibilityPending: false,
   updateDatasetCommunityVisibilitySuccess: false,
+  serviceMetadata: undefined,
 };
 
 /**
@@ -166,18 +168,13 @@ export function reduce(state: State = initialState, action: Action): State {
         shareError: action.payload.shareError,
       };
 
-    case updateCommunityModalVisibility.type:
+    case METADATA_LOADING:
+      return state;
+
+    case METADATA_RECEIVED:
       return {
         ...state,
-        communityModalOpen: action.payload.isVisible,
-        // clear related states when closed
-        ...(action.payload.isVisible
-          ? {}
-          : {
-              updateDatasetCommunityVisibilityError: undefined,
-              updateDatasetCommunityVisibilityPending: false,
-              updateDatasetCommunityVisibilitySuccess: false,
-            }),
+        serviceMetadata: action.payload,
       };
 
     case updateDatasetCommunityVisibilityError.type:
@@ -197,7 +194,7 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         updateDatasetCommunityVisibilityPending: false,
-        updateDatasetCommunityVisibilitySuccess: true,
+        updateDatasetCommunityVisibilitySuccess: action.payload.success ?? true,
       };
 
     default:

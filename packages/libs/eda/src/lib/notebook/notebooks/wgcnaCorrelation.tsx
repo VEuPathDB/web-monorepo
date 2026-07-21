@@ -1,6 +1,6 @@
 import { NodeData } from '@veupathdb/components/lib/types/plots/network';
 import { CollectionVariableTreeNode } from '../../core';
-import { EnqueueSnackbar, PresetNotebook, WdkState } from '../Types';
+import { PresetNotebook } from '../Types';
 
 export const wgcnaCorrelationNotebook: PresetNotebook = {
   name: 'wgcnacorrelation',
@@ -52,13 +52,10 @@ export const wgcnaCorrelationNotebook: PresetNotebook = {
               network. Click on nodes to highlight them in the network.
             </span>
           ),
-          getVizPluginOptions: (
-            wdkState: WdkState,
-            enqueueSnackbar: EnqueueSnackbar,
-            stepNumbers?: Map<string, number>
-          ) => {
+          getVizPluginOptions: ({ wdkState, enqueueSnackbar, stepNumbers }) => {
             return {
               additionalOnNodeClickAction: (node: NodeData) => {
+                if (!wdkState || !enqueueSnackbar) return;
                 const moduleName = String(node.label ?? '').toLowerCase();
 
                 // because this function is part of read-only "configuration" we can

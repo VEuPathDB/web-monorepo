@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { AttributeValue } from '../Utils/WdkModel';
 import { stripHTML } from './DomUtils';
 
@@ -187,15 +188,15 @@ interface InstrumentOptions {
  *
  * This should never be used in production code!
  */
-export function instrument<P>(
+export function instrument<P extends AnyObject>(
   Component: React.ComponentClass<P>,
   options: InstrumentOptions
 ): React.ComponentClass<P>;
-export function instrument<P>(
+export function instrument<P extends AnyObject>(
   Component: React.FC<P>,
   options: InstrumentOptions
 ): React.ComponentClass<P>;
-export function instrument<P>(
+export function instrument<P extends AnyObject>(
   Component: any,
   options: InstrumentOptions = {}
 ): React.ComponentClass<P> {
@@ -237,43 +238,53 @@ function logShallowComparison<P extends AnyObject>(
   console.groupEnd();
 }
 
+function isPlainText(str: string): boolean {
+  return str.indexOf('<') === -1 && !/(\&(.+?);)/.test(str);
+}
+
+/**
+ * DOMPurify sanitize config. Callers that embed non-default markup (e.g. a web
+ * component plus its custom attributes) can pass `ADD_TAGS`/`ADD_ATTR` here to
+ * *extend* the default allowlist for that one call, without weakening the
+ * default behavior for every other attribute value on the site.
+ */
+export type SafeHtmlSanitizeConfig = Parameters<typeof DOMPurify.sanitize>[1];
+
 /** Create a React Element using preformatted HTML */
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: React.ComponentClass<P>
+  Component?: React.ComponentClass<P>,
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element;
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: React.FC<P>
+  Component?: React.FC<P>,
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element;
 export function safeHtml<P>(
   str: string,
   props?: P,
-  Component?: string
+  Component?: string,
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element;
 export function safeHtml<P>(
   str: string | null,
   props?: P,
-  Component: any = 'span'
+  Component: any = 'span',
+  sanitizeConfig?: SafeHtmlSanitizeConfig
 ): JSX.Element {
   str = str ?? '';
-  /**
-   * To improve performance, let's skip the element creation and innerHTML magic
-   * when we detect neither HTML nor an HTML entity in the string
-   */
-  const isHtmlEntityFound = /(\&(.+?);)/.test(str);
-  if (str.indexOf('<') === -1 && !isHtmlEntityFound) {
+  if (isPlainText(str)) {
     return <Component {...props}>{str}</Component>;
   }
-  // Use innerHTML to auto close tags
-  let container = document.createElement('div');
-  container.innerHTML = str;
   return (
     <Component
       {...props}
-      dangerouslySetInnerHTML={{ __html: container.innerHTML }}
+      dangerouslySetInnerHTML={{
+        __html: DOMPurify.sanitize(str, sanitizeConfig),
+      }}
     />
   );
 }
@@ -313,9 +324,22 @@ export function formatAttributeValue(value?: AttributeValue): string {
 export function renderAttributeValue<P>(
   value: AttributeValue,
   props?: P,
+  Component = 'span',
+  autoBreak = false
+) {
+  let str = formatAttributeValue(value);
+  if (autoBreak && str && isPlainText(str)) {
+    str = str.replace(/\r?\n/g, '<br/>');
+  }
+  return safeHtml(str, props, Component);
+}
+
+export function renderAttributeValueAutoBreak<P>(
+  value: AttributeValue,
+  props?: P,
   Component = 'span'
 ) {
-  return safeHtml(formatAttributeValue(value), props, Component);
+  return renderAttributeValue(value, props, Component, true);
 }
 
 /**

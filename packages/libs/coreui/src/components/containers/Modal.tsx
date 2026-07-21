@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useMemo } from 'react';
+import { CSSProperties, ReactNode, RefObject, useMemo } from 'react';
 import { merge } from 'lodash';
 import useDimensions from 'react-cool-dimensions';
 import { Modal as ResponsiveModal } from 'react-responsive-modal';
@@ -84,6 +84,8 @@ export type ModalProps = {
   children: ReactNode;
   /** The classname to pass to the modal */
   className?: string;
+
+  scrollContainerRef?: RefObject<HTMLDivElement>;
 };
 
 export default function Modal({
@@ -100,6 +102,7 @@ export default function Modal({
   children,
   className,
   closeOnEsc = true,
+  ...props
 }: ModalProps) {
   const theme = useUITheme();
 
@@ -297,6 +300,7 @@ export default function Modal({
         />
       )}
       <div
+        ref={props.scrollContainerRef}
         css={{
           height: `calc(100% - ${headerHeight}px)`,
           overflowX: componentStyle.content.overflow.x,

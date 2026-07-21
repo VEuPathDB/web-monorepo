@@ -1,124 +1,97 @@
-// import {
-//   ActionsObservable,
-//   combineEpics,
-//   StateObservable,
-// } from 'redux-observable';
-// import { Observable } from 'rxjs';
-// import { filter, mergeMap } from 'rxjs/operators';
-
-// import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-
 import {
   Action,
   trackUploadProgress,
   receiveBadUpload,
-  // requestUploadMessages,
-  // receiveUploadMessages,
-  // cancelCurrentUpload,
-  // clearMessages,
   receiveBadUploadHistoryAction,
   clearBadUpload,
+  updateFormState,
+  updateFormMetadata,
 } from '../Actions/UserDatasetUploadActions';
 
-// import { assertIsVdiCompatibleWdkService } from '../Service';
-
-// import { StateSlice } from '../StoreModules/types';
-
 import { UserDatasetUpload } from '../Utils/types';
+import {
+  PartialDatasetDetails,
+  DatasetUploads,
+  ValidationErrors,
+} from '../Service';
+import { isEqual } from 'lodash';
+import { useSelector } from 'react-redux';
+import { StateSlice } from './types';
+import { defaultDatasetDetails } from '../Service/Model/constructors';
 
 export const key = 'userDatasetUpload';
 
-export type State = {
-  uploads?: Array<UserDatasetUpload>;
-  badUploadMessage?: { message: string; timestamp: number };
-  badAllUploadsActionMessage?: { message: string; timestamp: number };
-  uploadProgress?: { progress: number | null };
+/**
+ * Upload form fields and flags that are only relevant to the client application
+ * and are not used by any other user dataset features or functionality.
+ */
+export interface ClientSideUploadFormState {
+  readonly isStudy: boolean | undefined;
+  readonly hasExternalSources: boolean | undefined;
+  readonly hasDisclaimer: boolean | undefined;
+  readonly hasExperimentalOrganism: boolean | undefined;
+}
+
+export interface DatasetFormState {
+  readonly datasetDetails: PartialDatasetDetails;
+  readonly fileUploads: DatasetUploads;
+  readonly formMetaState: ClientSideUploadFormState;
+}
+
+export const DefaultDatasetFormState: DatasetFormState = {
+  datasetDetails: defaultDatasetDetails(),
+  fileUploads: {},
+  formMetaState: {
+    isStudy: undefined,
+    hasExternalSources: undefined,
+    hasDisclaimer: undefined,
+    hasExperimentalOrganism: undefined,
+  },
 };
+
+export function useDatasetFormState(): DatasetFormState {
+  return (
+    useSelector(
+      (state: StateSlice) => state.userDatasetUpload.formState,
+      isEqual
+    ) ?? DefaultDatasetFormState
+  );
+}
+
+export interface State {
+  readonly formState?: DatasetFormState;
+  readonly uploads?: Array<UserDatasetUpload>;
+  readonly badUploadMessages?: BadUpload[];
+  readonly badAllUploadsActionMessage?: { message: string; timestamp: number };
+  readonly uploadProgress?: { progress: number | null };
+}
+
+export type BadUpload =
+  | { type: 400; message: string }
+  | { type: 422; errors: ValidationErrors }
+  | { type: 500; message: string };
+
 export function reduce(state: State = {}, action: Action): State {
   switch (action.type) {
     case receiveBadUpload.type:
-      return { ...state, badUploadMessage: action.payload };
+      return { ...state, badUploadMessages: action.payload };
     case clearBadUpload.type:
-      return { ...state, badUploadMessage: undefined };
-    // case receiveUploadMessages.type:
-    //   return { ...state, uploads: action.payload.uploads };
+      return { ...state, badUploadMessages: undefined };
     case trackUploadProgress.type:
       return { ...state, uploadProgress: action.payload };
     case receiveBadUploadHistoryAction.type:
       return { ...state, badAllUploadsActionMessage: action.payload };
+    case updateFormMetadata.type:
+      return {
+        ...state,
+        formState: {
+          ...state.formState!,
+          datasetDetails: action.payload,
+        },
+      };
+    case updateFormState.type:
+      return { ...state, formState: action.payload };
     default:
       return state;
   }
 }
-
-// export const observe = combineEpics(
-//   // observeRequestUploadMessages,
-//   // observeCancelCurrentUpload,
-//   // observeClearMessages
-// );
-
-// function observeRequestUploadMessages(
-//   action$: ActionsObservable<Action>,
-//   state$: StateObservable<StateSlice>,
-//   dependencies: EpicDependencies
-// ): Observable<Action> {
-//   return action$.pipe(
-//     filter(requestUploadMessages.isOfType),
-//     mergeMap(async (action) => {
-//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
-
-//       try {
-//         const uploads = await dependencies.wdkService.listStatusDetails();
-//         return receiveUploadMessages(uploads);
-//       } catch (err) {
-//         return receiveBadUploadHistoryAction(
-//           'Could not retrieve upload history\n' + err
-//         );
-//       }
-//     })
-//   );
-// }
-
-// function observeCancelCurrentUpload(
-//   action$: ActionsObservable<Action>,
-//   state$: StateObservable<StateSlice>,
-//   dependencies: EpicDependencies
-// ): Observable<Action> {
-//   return action$.pipe(
-//     filter(cancelCurrentUpload.isOfType),
-//     mergeMap(async (action) => {
-//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
-
-//       try {
-//         await dependencies.wdkService.cancelOngoingUpload(action.payload.id);
-//         return requestUploadMessages();
-//       } catch (err) {
-//         return receiveBadUploadHistoryAction(
-//           'Could not cancel current upload\n' + err
-//         );
-//       }
-//     })
-//   );
-// }
-
-// function observeClearMessages(
-//   action$: ActionsObservable<Action>,
-//   state$: StateObservable<StateSlice>,
-//   dependencies: EpicDependencies
-// ): Observable<Action> {
-//   return action$.pipe(
-//     filter(clearMessages.isOfType),
-//     mergeMap(async (action) => {
-//       assertIsVdiCompatibleWdkService(dependencies.wdkService);
-
-//       try {
-//         await dependencies.wdkService.clearMessages(action.payload.ids);
-//         return requestUploadMessages();
-//       } catch (err) {
-//         return receiveBadUploadHistoryAction(
-//           'Could not clear messages\n' + err
-//         );
-//       }
-//     })
-//   );
-// }

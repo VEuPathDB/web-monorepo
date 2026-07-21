@@ -8,6 +8,7 @@ import {
 } from 'lodash';
 
 import { Seq } from '../Utils/IterableUtils';
+import { makeCommonErrorMessage } from './Errors';
 
 /**
  * Validate and parse JSON strings into TypeScript/JavaScript objects.
@@ -450,7 +451,9 @@ export function decode<T>(decoder: Decoder<T>, jsonString: string): T {
   try {
     t = JSON.parse(jsonString);
   } catch (error) {
-    throw new Error('Provided JSON is not valid: ' + error.message);
+    throw new Error(
+      'Provided JSON is not valid: ' + makeCommonErrorMessage(error)
+    );
   }
   const r = decoder(t);
   if (r.status === 'err') {

@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  IconAlt,
+  DelayedDisplay,
+} from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { combineClassNames } from '../../components/homepage/Utils';
@@ -11,6 +15,7 @@ import {
 import { ContentError } from './ContentError';
 
 import './WorkshopExercises.scss';
+import { getTypedError } from '@veupathdb/wdk-client/lib/Utils/Errors';
 
 const cx = makeClassNameHelper('vpdb-WorkshopExercises');
 const cardListCx = makeClassNameHelper('vpdb-CardList');
@@ -83,7 +88,7 @@ function useCardMetadata(): Result<CardMetadata> | undefined {
             setWorkshopExercisesResponseError(response.statusText);
           }
         } catch (error) {
-          setWorkshopExercisesResponseError(error.message);
+          setWorkshopExercisesResponseError(getTypedError(error).message);
         }
       })();
     }
@@ -151,7 +156,9 @@ export const WorkshopExercises = () => {
       {!cardMetadata ? (
         <Loading />
       ) : cardMetadata.status === 'error' ? (
-        <ContentError message={cardMetadata.message} />
+        <DelayedDisplay delayMs={2000}>
+          <ContentError message={cardMetadata.message} />
+        </DelayedDisplay>
       ) : (
         <CardList cardMetadata={cardMetadata.value} isExpanded={isExpanded} />
       )}

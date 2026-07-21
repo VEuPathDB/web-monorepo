@@ -46,7 +46,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - run: yarn
-      - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
+        # Use development mode for pre-release tags so dev-only UI (e.g. "Open all sections") is included
+      - run: |
+          git_tag="${GITHUB_REF_NAME#v}"
+          if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "bundle_target=bundle:npm" >> $GITHUB_ENV
+          else
+            echo "bundle_target=bundle:dev" >> $GITHUB_ENV
+          fi
+      - run: yarn nx ${{ env.bundle_target }} @veupathdb/${{matrix.dir}}
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF_NAME#v}

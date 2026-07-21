@@ -16,10 +16,9 @@ import {
   SaveButton,
   SaveButtonProps,
   OutlinedButton,
-  FilledButton,
 } from '@veupathdb/coreui/lib/components/buttons';
 import './Profile/UserProfile.scss';
-import { FormStatus } from '../../../../coreui/lib/components/buttons/SaveButton';
+import { FormStatus } from '@veupathdb/coreui/lib/components/buttons/SaveButton';
 import Loading from '../../Components/Loading';
 import './UserAccountForm.scss';
 import { UserProfileFormData } from '../../StoreModules/UserProfileStoreModule';
@@ -225,6 +224,7 @@ function UserAccountForm(props: UserAccountFormProps) {
             </div>
           );
         }
+
         return (
           <UserSubscriptionManagement
             user={user}
@@ -375,8 +375,11 @@ function UserAccountForm(props: UserAccountFormProps) {
             }}
           >
             Your account is shared across all VEuPathDB sites (
-            {formatList([...ALL_VEUPATHDB_PROJECTS], 'and')}). Deleting it will
-            remove your access from all of them.
+            {formatList(
+              ALL_VEUPATHDB_PROJECTS.map((it) => it.displayName),
+              'and'
+            )}
+            ). Deleting it will remove your access from all of them.
           </p>
           <p
             style={{

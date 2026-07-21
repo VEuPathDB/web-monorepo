@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 import {
   FilledButton,
@@ -11,6 +12,7 @@ export function useMaxRecommendedGate(
   onChange: (newValue: string[]) => void,
   maxRecommended: number | undefined,
   customMessage?: string,
+  leafTerms?: ReadonlySet<string>
 ): {
   wrappedOnChange: (newValue: string[]) => void;
   modalElement: JSX.Element | null;
@@ -47,7 +49,11 @@ export function useMaxRecommendedGate(
       }
 
       // Pass through if not exceeding limit
-      if (newValues.length <= maxRecommended) {
+      const countableCount =
+        leafTerms != null
+          ? newValues.filter((v) => leafTerms.has(v)).length
+          : newValues.length;
+      if (countableCount <= maxRecommended) {
         onChange(newValues);
         return;
       }
@@ -62,7 +68,7 @@ export function useMaxRecommendedGate(
       setPendingValues(newValues);
       setShowModal(true);
     },
-    [onChange, maxRecommended, hasAcknowledged],
+    [onChange, maxRecommended, hasAcknowledged, leafTerms]
   );
 
   const defaultMessage =
@@ -94,7 +100,11 @@ export function useMaxRecommendedGate(
       <div className="MaxRecommendedGate">
         <div className="MaxRecommendedGate--Message">
           {customMessage ? (
-            <div dangerouslySetInnerHTML={{ __html: customMessage }} />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(customMessage),
+              }}
+            />
           ) : (
             defaultMessage
           )}

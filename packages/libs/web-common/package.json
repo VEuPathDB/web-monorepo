@@ -37,6 +37,7 @@
     "@veupathdb/eda": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
     "custom-event-polyfill": "^1.0.7",
+    "dompurify": "^3.4.7",
     "md5": "^2.3.0",
     "pluralize": "^8.0.0",
     "whatwg-fetch": "^3.5.0"
@@ -76,6 +77,6 @@
     "react-router": "5",
     "react-router-dom": "5",
     "shelljs": "^0.8.4",
-    "typescript": "~4.3.5"
+    "typescript": "^4.9.5"
   }
 }

@@ -14,19 +14,13 @@ import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContai
 import { edaServiceUrl } from '../../config';
 import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
 import pluralize from 'pluralize';
-
-interface HighlightSpec {
-  ids: string[];
-  variableId: string;
-  entityId: string;
-  traceName?: string;
-}
+import { filtersFromGeneDisplaySpec, GeneDisplaySpec } from './geneDisplaySpec';
 
 interface Props {
   datasetId: string;
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
-  highlightSpec?: HighlightSpec;
+  geneDisplaySpec?: GeneDisplaySpec;
   plotTitle?: string;
 }
 
@@ -53,23 +47,25 @@ export function EdaScatterPlot(props: Props) {
 interface AdapterProps {
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
-  highlightSpec?: HighlightSpec;
+  geneDisplaySpec?: GeneDisplaySpec;
   plotTitle?: string;
 }
 
 function ScatterPlotAdapter(props: AdapterProps) {
-  const { xAxisVariable, yAxisVariable, highlightSpec, plotTitle } = props;
+  const { xAxisVariable, yAxisVariable, geneDisplaySpec, plotTitle } = props;
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
   const findEntityAndVariable = useFindEntityAndVariable();
   const data = useCachedPromise(
     async function getData() {
+      const filters = filtersFromGeneDisplaySpec(geneDisplaySpec);
+
       const scatterplotDataResponse$ = dataClient.getScatterplot(
         'xyrelationships',
         {
           studyId,
-          filters: [],
+          filters,
           config: {
             outputEntityId: xAxisVariable.entityId,
             valueSpec: 'raw',
@@ -80,33 +76,35 @@ function ScatterPlotAdapter(props: AdapterProps) {
         }
       );
 
-      const highlightDataResponse$ = highlightSpec
-        ? subsettingClient.getTabularData(studyId, highlightSpec.entityId, {
-            filters: [
-              {
-                type: 'stringSet',
-                entityId: highlightSpec.entityId,
-                variableId: highlightSpec.variableId,
-                stringSet: highlightSpec.ids,
-              },
-            ],
-            outputVariableIds: [highlightSpec.variableId],
-          })
-        : undefined;
+      // Get highlight data only if in highlight mode
+      const highlightDataResponse$ =
+        geneDisplaySpec?.mode === 'highlight' && geneDisplaySpec.ids.length > 0
+          ? subsettingClient.getTabularData(studyId, geneDisplaySpec.entityId, {
+              filters: [
+                {
+                  type: 'stringSet',
+                  entityId: geneDisplaySpec.entityId,
+                  variableId: geneDisplaySpec.variableId,
+                  stringSet: geneDisplaySpec.ids,
+                },
+              ],
+              outputVariableIds: [geneDisplaySpec.variableId],
+            })
+          : undefined;
 
       const [scatterplotDataResponse, highlightDataResponse] =
         await Promise.all([scatterplotDataResponse$, highlightDataResponse$]);
 
       const highlightVar = findEntityAndVariable({
-        variableId: highlightSpec?.variableId || '',
-        entityId: highlightSpec?.entityId || '',
+        variableId: geneDisplaySpec?.variableId || '',
+        entityId: geneDisplaySpec?.entityId || '',
       });
 
       const highlightIds = highlightDataResponse?.slice(1).map((row) => row[0]);
 
       const highlightedPointsDetails: HighlightedPointsDetails = {
         pointIds: highlightIds ?? [],
-        highlightTraceName: highlightSpec?.traceName,
+        highlightTraceName: geneDisplaySpec?.traceName,
         nonHighlightTraceName: highlightVar
           ? `All ${pluralize(
               highlightVar?.variable.displayName.toLowerCase(),
@@ -127,21 +125,48 @@ function ScatterPlotAdapter(props: AdapterProps) {
         'xyrelationships',
         undefined,
         undefined,
-        highlightIds && highlightedPointsDetails
+        // Pass highlight details only in highlight mode
+        geneDisplaySpec?.mode === 'highlight' && highlightIds
+          ? highlightedPointsDetails
+          : undefined
       ).dataSetProcess;
     },
-    ['ScatterPlotAdapter', studyId, xAxisVariable, yAxisVariable, highlightSpec]
+    [
+      'ScatterPlotAdapter',
+      studyId,
+      xAxisVariable,
+      yAxisVariable,
+      geneDisplaySpec,
+    ]
   );
 
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
   const yAxisEntityAndVariable = findEntityAndVariable(yAxisVariable);
 
-  if (isFaceted(data.value)) {
-    throw new Error('Received unexpected faceted data.');
-  }
-
   if (data.error) {
     return <div>Error: {String(data.error)}</div>;
+  }
+
+  // A no-data response from the backend serialises as { facets: [] } (see
+  // scatterplotResponseToData). isFaceted() treats an empty facets array as
+  // faceted via a vacuous [].every(), so detect emptiness explicitly before
+  // the throw.
+  const noData =
+    data.value != null &&
+    (isFaceted(data.value)
+      ? data.value.facets.length === 0
+      : data.value.series.length === 0);
+
+  if (noData) {
+    return (
+      <div>
+        {plotTitle ? `${plotTitle}: no data available` : 'No data available'}
+      </div>
+    );
+  }
+
+  if (isFaceted(data.value)) {
+    throw new Error('Received unexpected faceted data.');
   }
 
   return (

@@ -10,6 +10,7 @@ import { success, warning } from '@veupathdb/coreui/lib/definitions/colors';
 import { useSubscriptionGroups } from '../../Hooks/SubscriptionGroups';
 import {
   userIsSubscribed,
+  userWasSubscribed,
   userIsClassParticipant,
 } from '../../Utils/Subscriptions';
 import { SaveButtonProps } from '@veupathdb/coreui/lib/components/buttons';
@@ -168,6 +169,10 @@ function UserFormContainer(props: UserFormContainerProps) {
     props.globalData.user &&
     userIsSubscribed(props.globalData.user, subscriptionGroups);
 
+  const wasSubscribed =
+    props.globalData.user &&
+    userWasSubscribed(props.globalData.user, subscriptionGroups);
+
   const isClassParticipant =
     props.globalData.user && userIsClassParticipant(props.globalData.user);
 
@@ -212,6 +217,15 @@ function UserFormContainer(props: UserFormContainerProps) {
                       style={{ color: 'black', fontSize: '1.35em' }}
                     />
                     <h3>Class participant</h3>
+                  </>
+                ) : wasSubscribed ? (
+                  <>
+                    <Icon
+                      fa="exclamation-triangle"
+                      className="wdk-UserProfile-StatusIcon--warning"
+                      style={{ color: warning[600], fontSize: '1.5em' }}
+                    />
+                    <h3>Subscription expired</h3>
                   </>
                 ) : (
                   <>

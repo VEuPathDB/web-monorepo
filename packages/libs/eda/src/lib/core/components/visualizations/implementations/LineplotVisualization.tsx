@@ -830,7 +830,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       colorPaletteOverride,
       showMarginalHistogram
     );
-  }, [dataRequestDeps]);
+  }, [visualization.descriptor.type, dataRequestDeps]);
 
   const outputSize =
     overlayVariable != null && !vizConfig.showMissingness

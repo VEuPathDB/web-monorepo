@@ -1,13 +1,40 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  BlockRecordAttributeSection,
-  Props,
-} from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
+import { Props } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import { DefaultSectionTitle } from '@veupathdb/wdk-client/lib/Views/Records/SectionTitle';
 
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components/Display/CollapsibleSection';
+
+import ErrorBoundary from '@veupathdb/wdk-client/lib/Core/Controllers/ErrorBoundary';
+
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+/*
+ * DOMPurify allowlist for the <pdbe-molstar> web component embedded in the
+ * `alphafold_url` text attribute (defined in the record-class model XML).
+ *
+ * Neither the <pdbe-molstar> element nor its custom attributes are in
+ * DOMPurify's default allowlist, so they would otherwise be stripped during
+ * sanitization. We *extend* the defaults with ADD_TAGS/ADD_ATTR rather than
+ * *replacing* them with ALLOWED_TAGS/ALLOWED_ATTR — the latter would also strip
+ * the surrounding standard markup (span/div/b/pre/...) in the attribute value.
+ *
+ * This lives here (in the genomics site, next to the component that loads the
+ * pdbe-molstar viewer assets) on purpose: wdk-client's safeHtml stays generic
+ * and has no knowledge of pdbe-molstar. The allowlist is passed in per-call.
+ */
+const PDBE_MOLSTAR_SANITIZE_CONFIG = {
+  ADD_TAGS: ['pdbe-molstar'],
+  ADD_ATTR: [
+    'custom-data-url',
+    'custom-data-format',
+    'bg-color-r',
+    'bg-color-g',
+    'bg-color-b',
+    'alphafold-view',
+  ],
+};
 
 function AlphaFoldErrorWrapper({
   children,
@@ -42,8 +69,9 @@ function AlphaFoldErrorWrapper({
 
 export function AlphaFoldRecordSection(props: Props) {
   const areAssetsLoadingRef = useRef(false);
-  const [dataUrlStatus, setDataUrlStatus] =
-    useState<'loading' | 'valid' | 'invalid' | null>(null);
+  const [dataUrlStatus, setDataUrlStatus] = useState<
+    'loading' | 'valid' | 'invalid' | null
+  >(null);
 
   // Get the attribute value (HTML containing the pdbe-molstar element)
   const attributeName = props.attribute.name;
@@ -64,9 +92,12 @@ export function AlphaFoldRecordSection(props: Props) {
     if (!props.isCollapsed && hasDataUrl && dataUrlStatus === null) {
       setDataUrlStatus('loading');
 
-      // Make a HEAD request to check if the file exists
+      // Make a GET request with range header to check if the file exists (HEAD can cause CORS issues)
       if (dataUrl !== null) {
-        fetch(dataUrl, { method: 'HEAD' })
+        fetch(dataUrl, {
+          method: 'GET',
+          headers: { Range: 'bytes=0-0' },
+        })
           .then((response) => {
             if (response.ok) {
               setDataUrlStatus('valid');
@@ -180,10 +211,38 @@ export function AlphaFoldRecordSection(props: Props) {
     );
   }
 
-  // Render normally if data URL is valid
+  // Render normally if data URL is valid.
+  //
+  // This is an inlined copy of wdk-client's <BlockRecordAttributeSection>, with
+  // one change: the attribute value is rendered via safeHtml with
+  // PDBE_MOLSTAR_SANITIZE_CONFIG so the embedded <pdbe-molstar> element survives
+  // sanitization. We can't reuse BlockRecordAttributeSection directly because it
+  // renders through <RecordAttribute>, which calls safeHtml with no sanitize
+  // config. If that component ever gains a way to pass sanitize options through,
+  // prefer delegating to it again over maintaining this copy.
+  const { attribute, isCollapsed, onCollapsedChange, title } = props;
+  const { displayName, help, name } = attribute;
+
+  const headerContent = title ?? (
+    <DefaultSectionTitle displayName={displayName} help={help} />
+  );
+
   return (
-    <>
-      <BlockRecordAttributeSection {...props} />
-    </>
+    <CollapsibleSection
+      id={name}
+      className="wdk-RecordAttributeSectionItem"
+      headerContent={headerContent}
+      isCollapsed={isCollapsed}
+      onCollapsedChange={onCollapsedChange}
+    >
+      <ErrorBoundary>
+        {safeHtml(
+          attributeValue + '',
+          null,
+          'div',
+          PDBE_MOLSTAR_SANITIZE_CONFIG
+        )}
+      </ErrorBoundary>
+    </CollapsibleSection>
   );
 }

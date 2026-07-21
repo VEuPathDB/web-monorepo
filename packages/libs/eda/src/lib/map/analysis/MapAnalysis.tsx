@@ -86,7 +86,7 @@ import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
 import { getGeoConfig } from '../../core/utils/geoVariables';
-import UserDatasetDetailController from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
+import DatasetManagementController from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagementController';
 import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 enum MapSideNavItemLabels {
@@ -115,7 +115,6 @@ interface Props {
   siteInformationProps: SiteInformationProps;
   showLinkToEda?: boolean;
   enablePublicUserDatasets?: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
 }
 
 export function MapAnalysis(props: Props) {
@@ -228,7 +227,6 @@ function MapAnalysisImpl(props: ImplProps) {
     setTimeSliderConfig,
     showLinkToEda = false,
     enablePublicUserDatasets = false,
-    showExtraMetadata = false,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -714,10 +712,10 @@ function MapAnalysisImpl(props: ImplProps) {
               // TODO Make both cases below configurable via the root component.
               // This will need to be done if we want EDA to stand on its own.
 
-              // Note that we are not inluding the custom detail page.
+              // Note that we are not including the custom detail page.
               // As of this writing, details pages only add a link to
               // EDA. Since we are in EDA, we don't want to add it here.
-              <UserDatasetDetailController
+              <DatasetManagementController
                 baseUrl={url}
                 detailsPageTitle={'My Study'}
                 workspaceTitle={'My Studies'}
@@ -731,7 +729,8 @@ function MapAnalysisImpl(props: ImplProps) {
                 enablePublicUserDatasets={enablePublicUserDatasets}
                 includeAllLink={false}
                 includeNameHeader={false}
-                showExtraMetadata={showExtraMetadata}
+                history={history}
+                fetchEdaStudyLinks={(_) => ({})}
               />
             ) : (
               <RecordController

@@ -70,40 +70,58 @@ function Dialog(props: Props) {
   const [popupWidth, setPopupWidth] = useState<number>();
   const [popupHeight, setPopupHeight] = useState<number>();
   const [hasMoved, setHasMoved] = useState(false);
-  const [hasAutoCentered, setHasAutoCentered] = useState(false);
-  const didSkipInitialResize = useRef(false);
+  const observerRef = useRef<ResizeObserver | null>(null);
+  const popupNodeRef = useRef<HTMLElement | null>(null);
 
-  const handlePopupReady = useCallback(
-    (node: HTMLElement) => {
-      const rect = node.getBoundingClientRect();
-      setPopupWidth(rect.width);
-      setPopupHeight(rect.height);
-      // Only set position offsets (from center of window)
-      // if they haven't been set yet:
-      setX((x) => (x == null ? -rect.width / 2 : x));
-      setY((y) => (y == null ? -rect.height / 2 : y));
+  const handlePopupReady = useCallback((node: HTMLElement) => {
+    const rect = node.getBoundingClientRect();
+    setPopupWidth(rect.width);
+    setPopupHeight(rect.height);
+    popupNodeRef.current = node;
+    // Only set position offsets (from center of window)
+    // if they haven’t been set yet:
+    setX((x) => (x == null ? -rect.width / 2 : x));
+    setY((y) => (y == null ? -rect.height / 2 : y));
+  }, []);
 
-      // Only install our observer if the user hasn’t already
-      // moved the popup, and we haven’t yet auto-centered once:
-      if (!hasMoved && !hasAutoCentered) {
-        const observer = new ResizeObserver(([entry]) => {
-          if (!didSkipInitialResize.current) {
-            // This is the "initial" callback. Not really a resize. Ignore it.
-            didSkipInitialResize.current = true;
-            return;
-          }
-          const { width, height } = entry.contentRect;
-          setX(-width / 2);
-          setY(-height / 2);
-          setHasAutoCentered(true);
-          // stop observing after first resize
-          observer.disconnect();
-        });
-        observer.observe(node);
+  // Keep re-centering the dialog on every size increase until the user drags it.
+  // The observer is set up once when the popup node is available and
+  // cleaned up when the dialog closes or the user moves it.
+  useEffect(() => {
+    const node = popupNodeRef.current;
+    if (!node || hasMoved) {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+      return;
+    }
+    if (observerRef.current) return; // already observing
+
+    let didSkipInitial = false;
+    const observer = new ResizeObserver(([entry]) => {
+      if (!didSkipInitial) {
+        // The initial callback fires immediately when observe() is called.
+        // It reflects the current size, not a real resize. Skip it.
+        didSkipInitial = true;
+        return;
       }
-    },
-    [hasMoved, hasAutoCentered]
-  );
+      const { width, height } = entry.contentRect;
+      if (popupWidth == null || width > popupWidth) {
+        setPopupWidth(width);
+        setX(-width / 2);
+      }
+      if (popupHeight == null || height > popupHeight) {
+        setPopupHeight(height);
+        setY(-height / 2);
+      }
+    });
+    observerRef.current = observer;
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+      observerRef.current = null;
+    };
+  }, [hasMoved, popupWidth, popupHeight]);
 
   useEffect(() => {
     if (!isMoving) return;

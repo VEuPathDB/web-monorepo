@@ -8,14 +8,15 @@ import {
   loadUserDatasetList,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateProjectFilter,
   updateDatasetListItem,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
@@ -23,13 +24,13 @@ import UserDatasetList, {
   DatasetListProps,
 } from '../Components/List/UserDatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
-import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
 import { DataNoun } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
+import { VdiServiceConfig } from '../Service';
 
 const ActionCreators = {
   showLoginForm,
@@ -37,14 +38,15 @@ const ActionCreators = {
   updateDatasetListItem,
   removeUserDataset,
   shareUserDatasets,
-  unshareUserDatasets,
+  unshareUserDataset,
   updateProjectFilter,
   requestUploadMessages,
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibility,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
 };
 
 type StateProps = Pick<
@@ -52,13 +54,14 @@ type StateProps = Pick<
   'userDatasetList' | 'userDatasetUpload' | 'globalData'
 >;
 type DispatchProps = typeof ActionCreators;
-interface OwnProps extends RouteComponentProps<{}> {
+interface OwnProps extends RouteComponentProps {
   baseUrl: string;
   hasDirectUpload: boolean;
   helpRoute: string;
   workspaceTitle: string;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
+  readonly vdiConfig: VdiServiceConfig;
 }
 type Props = {
   ownProps: OwnProps;
@@ -150,7 +153,6 @@ class UserDatasetListController extends PageController<Props> {
         sharingModalOpen,
         shareError,
         shareSuccessful,
-        communityModalOpen,
         updateDatasetCommunityVisibilityError,
         updateDatasetCommunityVisibilityPending,
         updateDatasetCommunityVisibilitySuccess,
@@ -164,30 +166,32 @@ class UserDatasetListController extends PageController<Props> {
 
     const {
       shareUserDatasets,
-      unshareUserDatasets,
+      unshareUserDataset,
       removeUserDataset,
       updateDatasetListItem,
       updateProjectFilter,
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
+      updateDatasetCommunityVisibilitySuccess: resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityError: resetCommunityVisibilityError,
     } = this.props.dispatchProps;
 
     const listProps: DatasetListProps = {
+      vdiConfig: this.props.ownProps.vdiConfig,
+
       baseUrl,
       user,
       location,
       dataNoun,
       projectId,
       projectName,
-      quotaSize,
       enablePublicUserDatasets,
       userDatasets,
       filterByProject,
       shareUserDatasets,
-      unshareUserDatasets,
+      unshareUserDatasets: unshareUserDataset,
       removeUserDataset,
       updateDatasetListItem,
       updateProjectFilter,
@@ -198,17 +202,17 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateCommunityModalVisibility,
       updateDatasetCommunityVisibility,
-      communityModalOpen,
       updateDatasetCommunityVisibilityError,
       updateDatasetCommunityVisibilityPending,
       updateDatasetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilitySuccessReset:
+        resetCommunityVisibilitySuccess,
+      updateDatasetCommunityVisibilityErrorReset: resetCommunityVisibilityError,
     };
 
-    const noDatasetsForThisProject = userDatasets.findIndex(
-      it => it.installTargets.includes(projectId)
-    ) === -1;
+    const noDatasetsForThisProject =
+      userDatasets.findIndex((it) => it.installTargets) === -1;
 
     return (
       <div className="UserDatasetList-Controller">

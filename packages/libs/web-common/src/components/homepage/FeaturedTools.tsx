@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import React, {
   useCallback,
   useEffect,
@@ -8,7 +9,11 @@ import React, {
 } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { keyBy } from 'lodash';
-import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  IconAlt,
+  DelayedDisplay,
+} from '@veupathdb/wdk-client/lib/Components';
 
 import { combineClassNames } from '../../components/homepage/Utils';
 import { useCommunitySiteProjectUrl } from '../../hooks/staticData';
@@ -21,6 +26,7 @@ import { fixURLSlashHash } from '../../bootstrap.js';
 
 import './FeaturedTools.scss';
 import { ContentError } from './ContentError';
+import { getTypedError } from '@veupathdb/wdk-client/lib/Utils/Errors';
 
 const cx = makeClassNameHelper('vpdb-FeaturedTools');
 const bgDarkCx = makeClassNameHelper('vpdb-BgDark');
@@ -48,10 +54,12 @@ type Result<T> =
 
 function useFeaturedToolMetadata(): Result<FeaturedToolMetadata> | undefined {
   const communitySiteUrl = useCommunitySiteProjectUrl();
-  const [featuredToolResponseData, setFeaturedToolResponseData] =
-    useState<FeaturedToolResponseData | undefined>(undefined);
-  const [featuredToolError, setFeaturedToolError] =
-    useState<string | undefined>(undefined);
+  const [featuredToolResponseData, setFeaturedToolResponseData] = useState<
+    FeaturedToolResponseData | undefined
+  >(undefined);
+  const [featuredToolError, setFeaturedToolError] = useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     if (communitySiteUrl != null) {
@@ -70,7 +78,7 @@ function useFeaturedToolMetadata(): Result<FeaturedToolMetadata> | undefined {
             setFeaturedToolError(response.statusText);
           }
         } catch (error) {
-          setFeaturedToolError(error.message);
+          setFeaturedToolError(getTypedError(error).message);
         }
       })();
     }
@@ -136,7 +144,9 @@ export const FeaturedTools = () => {
       {!toolMetadata ? (
         <Loading />
       ) : toolMetadata.status === 'error' ? (
-        <ContentError message={toolMetadata.message} />
+        <DelayedDisplay delayMs={2000}>
+          <ContentError message={toolMetadata.message} />
+        </DelayedDisplay>
       ) : (
         <div className={cx('List')}>
           <FeaturedToolList
@@ -385,7 +395,7 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
         ref={ref}
         className={cx('SelectionBodyContent', isExpanded && 'expanded')}
         dangerouslySetInnerHTML={{
-          __html: entry?.output || '...',
+          __html: DOMPurify.sanitize(entry?.output || '...'),
         }}
       ></div>
       {isOverflowing && (

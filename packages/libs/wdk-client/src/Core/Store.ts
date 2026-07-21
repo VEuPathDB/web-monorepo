@@ -46,7 +46,7 @@ type StoreModuleRecord<T extends Record<string, any>, A extends Action> = {
 type RootReducer<T, A extends Action> = Reducer<T, A>;
 
 export function createWdkStore<
-  T,
+  T extends Record<string, any>,
   A extends Action,
   E extends EpicDependencies = EpicDependencies
 >(

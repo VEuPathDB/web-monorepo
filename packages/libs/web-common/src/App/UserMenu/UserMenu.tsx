@@ -7,6 +7,7 @@ import { useSubscriptionGroups } from '@veupathdb/wdk-client/lib/Hooks/Subscript
 import {
   userIsClassParticipant,
   userIsSubscribed,
+  userWasSubscribed,
 } from '@veupathdb/wdk-client/lib/Utils/Subscriptions';
 import { showSubscriptionProds } from '../../config';
 
@@ -45,6 +46,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
 
   // Don't determine subscription status while still loading
   const isSubscribed = userIsSubscribed(user, subscriptionGroups);
+  const wasSubscribed = userWasSubscribed(user, subscriptionGroups);
   const isClassParticipant = userIsClassParticipant(user);
 
   const renderMenu = (): JSX.Element => {
@@ -85,6 +87,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user, actions }) => {
                 <>
                   <Icon fa="mortar-board UserMenu-Pane-Item-Icon UserMenu-StatusIcon--student" />
                   Class participant
+                </>
+              ) : wasSubscribed ? (
+                <>
+                  <Icon fa="exclamation-triangle UserMenu-Pane-Item-Icon UserMenu-StatusIcon--warning" />
+                  Subscription expired
                 </>
               ) : (
                 <>

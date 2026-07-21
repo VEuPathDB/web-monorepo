@@ -310,7 +310,7 @@ function InternalGeneDatasetContent(props: Props) {
         </div>
       </div>
       <InternalGeneDatasetTable
-        searchBoxHeader="Filter Data Sets:"
+        searchBoxHeader="Filter Datasets:"
         emptyResultMessage={
           (
             <OrganismPreferencesWarning
@@ -336,7 +336,7 @@ function InternalGeneDatasetContent(props: Props) {
           },
           {
             key: 'display_name',
-            name: 'Data Set',
+            name: 'Dataset',
             type: 'html',
             sortable: true,
             sortType: 'htmlText',
@@ -436,12 +436,12 @@ function InternalGeneDatasetContent(props: Props) {
         >
           {showingOneRecord ? (
             <>
-              <i className="fa fa-arrow-down" /> Show All Data Sets{' '}
+              <i className="fa fa-arrow-down" /> Show All Datasets{' '}
               <i className="fa fa-arrow-down" />
             </>
           ) : (
             <>
-              <i className="fa fa-arrow-up" /> Hide All Data Sets{' '}
+              <i className="fa fa-arrow-up" /> Hide All Datasets{' '}
               <i className="fa fa-arrow-up" />
             </>
           )}

@@ -1,5 +1,12 @@
 import { css } from '@emotion/react';
-import { ReactNode, useState, useEffect, CSSProperties, useMemo } from 'react';
+import {
+  ReactNode,
+  useState,
+  useEffect,
+  CSSProperties,
+  useMemo,
+  AriaRole,
+} from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -64,6 +71,11 @@ export type BannerProps = {
   hideIcon?: boolean;
   primaryActionButtonProps?: Omit<SwissArmyButtonVariantProps, 'themeRole'>;
   secondaryActionButtonProps?: Omit<SwissArmyButtonVariantProps, 'themeRole'>;
+  // Accessibility: optional ARIA role (e.g. 'alert', 'status', 'note') and
+  // live-region politeness applied to the banner's outer element. Both are
+  // omitted from the DOM when undefined, so existing usages are unaffected.
+  role?: AriaRole;
+  ariaLive?: 'off' | 'polite' | 'assertive';
 };
 
 export type BannerComponentProps = {
@@ -137,6 +149,8 @@ export default function Banner(props: BannerComponentProps) {
     hideIcon = false,
     primaryActionButtonProps,
     secondaryActionButtonProps,
+    role,
+    ariaLive,
   } = banner;
 
   const mainColorLevel =
@@ -192,6 +206,8 @@ export default function Banner(props: BannerComponentProps) {
     <>
       {showBanner && (
         <div
+          role={role}
+          aria-live={ariaLive}
           css={css`
             display: flex;
             color: ${intense ? 'white' : 'black'};
@@ -211,7 +227,7 @@ export default function Banner(props: BannerComponentProps) {
             align-items: center;
             font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI',
               Arial, freesans, sans-serif;
-            font-size: ${fontSize != null ? fontSize : '13px'};
+            font-size: ${fontSize != null ? fontSize : '100%'};
             // for fadeout effect
             opacity: ${fadeoutEffect ? 0 : 1};
             transition: ${fadeoutEffect ? 'opacity 1s ease' : undefined};

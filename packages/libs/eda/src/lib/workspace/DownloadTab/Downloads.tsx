@@ -9,11 +9,13 @@ import {
 
 // Utils
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
 import StudyCitation, { getCitationString } from './StudyCitation';
+import { UserDatasetFiles } from '@veupathdb/user-datasets/lib/Components/UserDatasetFiles';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -45,6 +47,7 @@ export default function Downloads({
   );
   const datasetId = studyRecord.id[0].value;
   const { isUserStudy } = studyMetadata;
+  const recordClassName = isUserStudy ? 'userdataset' : 'dataset';
   const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const projectDisplayName = useWdkService(
@@ -55,7 +58,7 @@ export default function Downloads({
   const studyContacts = useWdkService(
     async (wdkService) =>
       await wdkService
-        .getRecord('dataset', studyRecord.id, { tables: ['Contacts'] })
+        .getRecord(recordClassName, studyRecord.id, { tables: ['Contacts'] })
         .then((record) => {
           const contactsArray = record.tables['Contacts'].map(
             (contact) => contact['contact_name']
@@ -66,6 +69,12 @@ export default function Downloads({
         }),
     []
   );
+
+  // Get VDI dataset ID for user studies
+  const vdiDatasetId = isUserStudy
+    ? wdkRecordIdToDiyUserDatasetId(datasetId)
+    : null;
+
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -127,14 +136,17 @@ export default function Downloads({
    * you have two different variables for study releases here.
    */
 
-  const WDKStudyReleases = useWdkStudyReleases();
+  const WDKStudyReleases = isUserStudy ? [] : useWdkStudyReleases();
 
   // Get a list of all available study releases according to the Download Service.
   const downloadServiceStudyReleases = usePromise(
     useCallback(async () => {
       // Only fetch study releases if they are expected to be available
       if (permission.loading) return undefined;
-      if (permission.permissions.perDataset[datasetId]?.sha1Hash == null)
+      if (
+        permission.permissions.perDataset[datasetId]?.sha1Hash == null ||
+        permission.permissions.perDataset[datasetId]?.sha1Hash === ''
+      )
         return [];
       try {
         return await downloadClient.getStudyReleases(studyMetadata.id);
@@ -219,7 +231,7 @@ export default function Downloads({
           marginRight: 75,
         }}
       >
-        {projectDisplayName === 'ClinEpiDB' &&
+        {projectDisplayName === 'dataExplorer' &&
           !isUserStudy &&
           (dataAccessDeclaration ?? '')}
         {mergedReleaseData[0] && (
@@ -235,6 +247,9 @@ export default function Downloads({
             entities={enhancedEntityData}
             analysisState={analysisState}
           />
+        )}
+        {isUserStudy && vdiDatasetId && (
+          <UserDatasetFiles datasetId={vdiDatasetId} />
         )}
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { DELAYED_RESULT_MESSAGE } from '../../Service/DelayedResultError';
 
 export interface Props {
@@ -25,8 +26,10 @@ export function ResultTableError(props: Props) {
     <>
       <p>Error: content could not be loaded ({props.message})</p>
       <p>
-        This may be caused by an incompatible column selection. We're working on
-        a fix, but in the meantime you can reset to the default columns.
+        This may be caused by an incompatible column selection, please reset to
+        the default columns. If that does not help, please take a screenshot
+        (including the browser URL bar) and{' '}
+        <Link to="/contact-us">contact us</Link>.
       </p>
       <button style={buttonStyle} onClick={props.onReset}>
         Reset to Default Columns

@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Tooltip } from '@veupathdb/coreui';
@@ -14,6 +14,9 @@ import {
   ORGANISM_PARAM,
   FILTERS_PARAM,
 } from './SiteSearchConstants';
+import { TypeAheadInput } from './TypeAheadInput';
+import { siteSearchServiceUrl } from '../../config';
+import { useRecentSearches } from './SiteSearchHooks';
 
 import './SiteSearch.scss';
 
@@ -53,6 +56,8 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
   const hasFilters =
     !isEmpty(docType) || !isEmpty(organisms) || !isEmpty(fields);
 
+  const [recentSearches, setRecentSearches] = useRecentSearches();
+
   const onSearch = useCallback(
     (queryString: string) => {
       history.push(`${SITE_SEARCH_ROUTE}?${queryString}`);
@@ -60,20 +65,42 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
     [history]
   );
 
+  const saveSearchString = useCallback(() => {
+    if (inputRef.current?.value) {
+      setRecentSearches(
+        uniq([inputRef.current.value].concat(recentSearches)).slice(0, 10)
+      );
+    }
+  }, [setRecentSearches, recentSearches]);
+
   const handleSubmitWithFilters = useCallback(() => {
     const { current } = formRef;
     if (current == null) return;
     const formData = new FormData(current);
     const queryString = new URLSearchParams(formData as any).toString();
     onSearch(queryString);
-  }, [onSearch]);
+    saveSearchString();
+  }, [onSearch, saveSearchString]);
 
   const handleSubmitWithoutFilters = useCallback(() => {
     const queryString = `q=${encodeURIComponent(
       inputRef.current?.value || ''
     )}`;
     onSearch(queryString);
-  }, [onSearch]);
+    saveSearchString();
+  }, [onSearch, saveSearchString]);
+
+  const handleSubmitWithRecentSearch = useCallback(
+    (searchString: string) => {
+      const queryString = `q=${encodeURIComponent(searchString)}`;
+      onSearch(queryString);
+    },
+    [onSearch]
+  );
+
+  const clearRecentSearches = useCallback(() => {
+    setRecentSearches([]);
+  }, [setRecentSearches]);
 
   const [lastSearchQueryString, setLastSearchQueryString] =
     useSessionBackedState<string>(
@@ -93,9 +120,21 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
     <form
       ref={formRef}
       action={SITE_SEARCH_ROUTE}
+      className={cx('--SearchBox', hasFilters && 'with-filters')}
       onSubmit={preventEventWith(handleSubmitWithFilters)}
-      className={cx('--SearchBox')}
+      autoComplete="off"
     >
+      {hasFilters ? (
+        <Tooltip title="Run a new search, without your existing filters">
+          <button
+            className="reset"
+            type="button"
+            onClick={handleSubmitWithoutFilters}
+          >
+            Clear filters
+          </button>
+        </Tooltip>
+      ) : null}
       {docType && (
         <input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType} />
       )}
@@ -110,25 +149,14 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
       {fields.map((field) => (
         <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />
       ))}
-      {hasFilters ? (
-        <Tooltip title="Run a new search, without your existing filters">
-          <button
-            className="reset"
-            type="button"
-            onClick={handleSubmitWithoutFilters}
-          >
-            Clear filters
-          </button>
-        </Tooltip>
-      ) : null}
-      <input
-        ref={inputRef}
-        type="input"
-        onFocus={(e) => e.target.select()}
-        name={SEARCH_TERM_PARAM}
-        key={searchString}
-        defaultValue={searchString}
-        placeholder={placeholderText}
+      <TypeAheadInput
+        siteSearchURL={siteSearchServiceUrl}
+        inputReference={inputRef}
+        searchString={searchString}
+        placeHolderText={placeholderText}
+        recentSearches={recentSearches}
+        onRecentSearchSelect={handleSubmitWithRecentSearch}
+        onClearRecentSearches={clearRecentSearches}
       />
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
         <Tooltip title="Go back to your last search result">

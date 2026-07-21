@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'dompurify';
 
 import './SearchCard.scss';
 
@@ -47,7 +48,7 @@ class SearchCard extends React.Component {
         <div className="box SearchCard-Body">
           <div
             dangerouslySetInnerHTML={{
-              __html: httpHtml({ description }),
+              __html: DOMPurify.sanitize(httpHtml({ description })),
             }}
           />
         </div>

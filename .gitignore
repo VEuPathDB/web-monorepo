@@ -130,5 +130,11 @@ dist
 
 .DS_Store
 
+#Emacs
+*~
+\#*\#
+
 # AI
 CLAUDE.md
+.claude
+/workspace/

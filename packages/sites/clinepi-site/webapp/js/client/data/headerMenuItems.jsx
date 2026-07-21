@@ -87,11 +87,13 @@ export default function makeHeaderMenuItemsFactory(
     const hasUserDatasets =
       filteredUserStudies?.length > 0 || filteredCommunityStudies?.length > 0;
 
+    const projectDisplayName = 'dataExplorer';
+
     return {
       mainMenu: [
         {
-          id: 'studies',
-          text: 'Studies',
+          id: 'datasets',
+          text: 'Datasets',
           children: ({ isFocused }) =>
             [
               {
@@ -106,11 +108,11 @@ export default function makeHeaderMenuItemsFactory(
                         className="ebrc-icon-table"
                         style={studyTableIconStyle}
                       ></i>{' '}
-                      Study summaries table
+                      Dataset Summaries
                     </div>
                   </>
                 ),
-                route: '/search/dataset/Studies/result',
+                route: '/search/userdataset/AllUserDatasets/result',
               },
               {
                 text: (
@@ -140,7 +142,7 @@ export default function makeHeaderMenuItemsFactory(
                             isVisible: filteredUserStudies.length > 0,
                             text: (
                               <CollapsibleDetailsSection
-                                summary="My studies"
+                                summary="My Datasets"
                                 collapsibleDetails={filteredUserStudies.map(
                                   (study, idx) => (
                                     <DIYStudyMenuItem
@@ -197,7 +199,7 @@ export default function makeHeaderMenuItemsFactory(
                             isVisible: filteredCommunityStudies.length > 0,
                             text: (
                               <CollapsibleDetailsSection
-                                summary="Community studies"
+                                summary="Public Datasets"
                                 collapsibleDetails={filteredCommunityStudies.map(
                                   (study, idx) => (
                                     <DIYStudyMenuItem
@@ -221,20 +223,28 @@ export default function makeHeaderMenuItemsFactory(
           id: 'workspace',
           text: 'Workspace',
           children: [
-            {
-              text: 'My Analyses',
-              route: makeEdaRoute(),
-            },
             ...(useUserDatasetsWorkspace
               ? [
                   {
-                    text: 'My Studies',
+                    text: 'Upload my dataset',
+                    route: '/workspace/datasets/new',
+                  },
+                ]
+              : []),
+            ...(useUserDatasetsWorkspace
+              ? [
+                  {
+                    text: 'Manage my datasets',
                     route: '/workspace/datasets',
                   },
                 ]
               : []),
             {
-              text: 'Public Analyses',
+              text: 'My analyses',
+              route: makeEdaRoute(),
+            },
+            {
+              text: 'Public analyses',
               route: `${makeEdaRoute()}/public`,
             },
             ...(requireLogin
@@ -310,19 +320,19 @@ export default function makeHeaderMenuItemsFactory(
           children: [
             {
               text: 'Tutorials',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/tutorials.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/tutorials.html`,
             },
             {
               text: 'Webinars',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/webinars.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/webinars.html`,
             },
             {
               text: 'Workshops',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/workshops.html`,
             },
             {
-              text: 'External Resources',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`,
+              text: 'External resources',
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/resources.html`,
             },
           ],
         },
@@ -331,24 +341,24 @@ export default function makeHeaderMenuItemsFactory(
           text: 'About',
           children: [
             {
-              text: 'About ClinEpiDB',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`,
+              text: 'About dataExplorer',
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/about.html`,
             },
             {
-              text: 'News',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`,
+              text: 'Why use dataExplorer',
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/whyDataExplorer.html`,
             },
             {
               text: 'FAQ',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/faq.html`,
             },
-            {
-              text: 'Submit Data to ClinEpiDB',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/submit.html`,
-            },
+            /*{
+              text: 'Submit Data to dataExplorer',
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/submit.html`,
+            },*/
             {
               text: 'Data Access & Use Policy',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/access_and_use.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/access_and_use.html`,
             },
             {
               text: 'Publications about ClinEpiDB',
@@ -360,11 +370,15 @@ export default function makeHeaderMenuItemsFactory(
               url: 'https://scholar.google.com/scholar?hl=en&q=ClinEpiDB',
               target: '_blank',
             },
+            ...socialLinks,
+            {
+              text: 'News',
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/news.html`,
+            },
             {
               text: 'Features coming soon',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/newfeatures.html`,
+              route: `${STATIC_ROUTE_PATH}/${projectDisplayName}/newfeatures.html`,
             },
-            ...socialLinks,
           ],
         },
         {

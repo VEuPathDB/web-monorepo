@@ -12,7 +12,7 @@ import { useLocation } from 'react-router';
 import { get, memoize } from 'lodash';
 
 // @ts-ignore
-import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 // @ts-ignore
 import newImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
@@ -47,6 +47,7 @@ import {
   useAlphabetizedSearchTree,
 } from '@veupathdb/web-common/lib/components/homepage/Utils';
 import {
+  communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
   showUnreleasedData,
@@ -237,10 +238,15 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
     });
   }, [setClosedBanners]);
 
+  const isBetaSite = 1; // window.location.hostname.startsWith('beta');
+
   const branding = (
     <>
       <Link to="/">
-        <div className={vpdbCx('HeaderBranding')}></div>
+        <div className={vpdbCx('HeaderBranding')} />
+        {isBetaSite && (
+          <img className={vpdbCx('BetaBadge')} src={betaImage} alt="beta" />
+        )}
       </Link>
       <div className={vpdbCx('HeaderBrandingSuperscript')}>
         {props.buildNumber && <span>Release {props.buildNumber}</span>}
@@ -489,15 +495,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'toxo-rflp',
-          display: 'RFLP Genotypes',
-          type: 'reactRoute',
-          url: '/workspace/analyses/DS_6d31c76b75/new',
-          metadata: {
-            include: [ToxoDB,UniDB],
-          },
-        },
-        {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
@@ -576,6 +573,17 @@ const useHeaderMenuItems = (
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
         },
         {
+          key: 'plasmofast',
+          display: 'plasmoFAST',
+          tooltip:
+            'Detect P. falciparum lab strains from FASTQ sequencing files, entirely in your browser',
+          type: 'reactRoute',
+          url: '/plasmoFAST',
+          metadata: {
+            include: [PlasmoDB],
+          },
+        },
+        {
           key: 'plasmoap',
           display: 'PlasmoAP',
           type: 'reactRoute',
@@ -598,6 +606,15 @@ const useHeaderMenuItems = (
           display: 'PubMed and Entrez',
           type: 'externalLink',
           url: `/pubcrawler/${displayName}`,
+        },
+        {
+          key: 'toxo-rflp',
+          display: 'RFLP Genotypes',
+          type: 'reactRoute',
+          url: '/workspace/analyses/DS_6d31c76b75/new',
+          metadata: {
+            include: [ToxoDB, UniDB],
+          },
         },
         {
           key: 'srt',
@@ -631,14 +648,30 @@ const useHeaderMenuItems = (
           url: '/workspace/blast/all',
         },
         {
-          key: 'user-data-sets',
-          display: 'My data sets',
-          type: 'reactRoute',
-          url: '/workspace/datasets',
-          metadata: {
-            exclude: [EuPathDB],
-            test: () => Boolean(useUserDatasetsWorkspace),
-          },
+          key: 'user-datasets',
+          display: 'My datasets',
+          type: 'subMenu',
+          openByDefault: true,
+          items: [
+            {
+              key: 'upload',
+              display: 'Upload my dataset',
+              type: 'reactRoute',
+              url: '/workspace/datasets/new',
+              metadata: {
+                test: () => Boolean(useUserDatasetsWorkspace),
+              },
+            },
+            {
+              key: 'manage',
+              display: 'Manage my datasets',
+              type: 'reactRoute',
+              url: '/workspace/datasets',
+              metadata: {
+                test: () => Boolean(useUserDatasetsWorkspace),
+              },
+            },
+          ],
         },
         {
           key: 'favorites',
@@ -649,7 +682,7 @@ const useHeaderMenuItems = (
             exclude: [EuPathDB],
           },
         },
-       /* {
+        /* {
           key: 'maps-workspace',
           display: 'My interactive maps',
           type: 'reactRoute',
@@ -672,27 +705,36 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'methods',
-          display: 'Analysis methods',
-          type: 'reactRoute',
-          tooltip: 'How we obtain/generate the data',
-          url: makeStaticPageRoute(`/methods.html`),
-        },
-        {
           key: 'datasets',
-          display: `Data sets in ${displayName}`,
+          display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
         },
         {
+          key: 'community-userdatasets',
+          display: 'User Datasets (my own and public)',
+          type: 'reactRoute',
+          url: '/search/userdataset/AllUserDatasets/result',
+          metadata: {
+            test: () => Boolean(communityDatasetsEnabled),
+          },
+        },
+        {
           key: 'data-files-eupathdb-beta',
-          display: <>Download data files</>,
+          display: <>Download data</>,
           type: 'reactRoute',
           url: '/downloads',
         },
         {
+          key: 'genomes-and-data-types',
+          display: 'Genome information & stats',
+          tooltip: `Table summarizing all the genomes in ${displayName}`,
+          type: 'reactRoute',
+          url: '/search/organism/GenomeDataTypes/result',
+        },
+        {
           key: 'mahpic-data',
-          display: 'MaHPIC',
+          display: 'External data: MaHPIC',
           type: 'reactRoute',
           tooltip: 'Access MaHPIC Data',
           url: makeStaticPageRoute(`/${projectId}/mahpic.html`),
@@ -701,20 +743,11 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'genomes-and-data-types',
-          display: 'Organisms: Genome Info & Stats',
-          tooltip: `Table summarizing all the genomes in ${displayName}`,
+          key: 'methods',
+          display: 'VEuPathDB processing methods',
           type: 'reactRoute',
-          url: '/search/organism/GenomeDataTypes/result',
-        },
-        {
-          key: 'community-download',
-          display: 'User uploaded files',
-          type: 'reactRoute',
-          url: '/search/file/UserFileUploads?autoRun=1',
-          metadata: {
-            exclude: [EuPathDB],
-          },
+          tooltip: 'How we obtain/generate the data',
+          url: makeStaticPageRoute(`/methods.html`),
         },
       ],
     },
@@ -889,7 +922,7 @@ const useHeaderMenuItems = (
             },
             {
               key: 'datasets-in-progress',
-              display: 'Data Sets we are working on',
+              display: 'Datasets we are working on',
               type: 'reactRoute',
               url: makeStaticPageRoute('/dataInprogress.html'),
             },

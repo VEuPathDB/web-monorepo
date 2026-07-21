@@ -97,14 +97,10 @@ function Shortcuts(props) {
     ]
   );
 
-  // Get field present in record instance. This is leveraging the fact that
+  // Get fields present in record instance. This is leveraging the fact that
   // we filter the category tree in the store based on the contents of
-  // MetaTable.
-  const instanceFields = new Set(
-    preorderSeq(categoryTree)
-      .filter((node) => !node.children.length)
-      .map((node) => node.properties.name[0])
-  );
+  // MetaTable. Computed by the parent (RecordOverview) and passed down.
+  const { instanceFields } = props;
 
   const transcriptomicsThumbnail = {
     displayName: 'Transcriptomics',
@@ -192,7 +188,44 @@ function Shortcuts(props) {
 }
 
 function RecordOverview(props) {
-  const { record } = props;
+  const {
+    record,
+    categoryTree,
+    navigationCategoriesExpanded,
+    updateSectionVisibility,
+    updateNavigationCategoryExpansion,
+  } = props;
+  const instanceFields = new Set(
+    preorderSeq(categoryTree)
+      .filter((node) => !node.children.length)
+      .map((node) => node.properties.name[0])
+  );
+  const isEmbedRecord = !instanceFields.has('UserComments');
+
+  // Open (and expand the sidebar nav for) a record section in the current page.
+  // Mirrors Shortcuts' handleThumbnailClick: the anchor's href handles the
+  // scroll, while this dispatch opens the CollapsibleSection (the hash-based
+  // effect in RecordUI only fires on mount/record change, not on in-page hash
+  // clicks).
+  const handleSectionLinkClick = useCallback(
+    (anchor) => {
+      const parentCategoryIds = Category.getAncestors(categoryTree, anchor).map(
+        Category.getId
+      );
+      updateSectionVisibility(anchor, true);
+      updateNavigationCategoryExpansion(
+        Array.from(
+          new Set([...navigationCategoriesExpanded, ...parentCategoryIds])
+        )
+      );
+    },
+    [
+      categoryTree,
+      navigationCategoriesExpanded,
+      updateSectionVisibility,
+      updateNavigationCategoryExpansion,
+    ]
+  );
 
   function r(attributeName) {
     if (!(attributeName in record.attributes)) {
@@ -258,6 +291,9 @@ function RecordOverview(props) {
             <dt>Location</dt>
             <dd>{r('location_text')}</dd>
 
+            <dt>Ortholog Group</dt>
+            <dd>{r('orthomcl_link')}</dd>
+
             <dt className="space-above">Species</dt>
             <dd>
               <i>{r('genus_species')}</i>
@@ -270,7 +306,7 @@ function RecordOverview(props) {
                 style={{ fontSize: '90%', marginLeft: '1em' }}
                 to={`/record/dataset/${record.attributes['dataset_id']}`}
               >
-                <i className="fa fa-database"></i> Data set
+                <i className="fa fa-database"></i> Dataset
               </Link>
             </dd>
 
@@ -280,19 +316,31 @@ function RecordOverview(props) {
             <dt className="space-above">User Comments</dt>
             <dd>
               <div data-show-num-user-comments="+1" data-label="User Comments">
-                <a href="#UserComments">
+                <a
+                  href={
+                    isEmbedRecord
+                      ? `${webAppUrl}/app/record/gene/${record.attributes['source_id']}#UserComments`
+                      : '#UserComments'
+                  }
+                  target={isEmbedRecord ? '_blank' : undefined}
+                  onClick={
+                    isEmbedRecord
+                      ? undefined
+                      : () => handleSectionLinkClick('UserComments')
+                  }
+                >
                   View{' '}
                   <span className="eupathdb-GeneOverviewHighlighted">
                     {r('num_user_comments')}
                   </span>{' '}
-                  / Add a new one
+                  {/*  / Add a new one  */}
                 </a>
               </div>
-              <div data-show-num-user-comments="0" data-label="User Comments">
+              {/*  <div data-show-num-user-comments="0" data-label="User Comments">
                 <a href={record.attributes['user_comment_link_url']}>
                   Add the first <i className="fa fa-comment"></i>
                 </a>
-              </div>
+              </div>  */}
             </dd>
 
             <div data-show-apollo="1">
@@ -319,10 +367,21 @@ function RecordOverview(props) {
           </div>
           <div className="eupathdb-ThumbnailsTitle">Shortcuts</div>
           <div className="eupathdb-ThumbnailsContainer">
-            <Shortcuts {...props} />
+            <Shortcuts {...props} instanceFields={instanceFields} />
           </div>
           <div className="eupathdb-RecordOverviewItem">
-            Also see {r('source_id')} in the{' '}
+            Also see{' '}
+            {isEmbedRecord ? (
+              <a
+                href={`${webAppUrl}/app/record/gene/${record.attributes['source_id']}`}
+                target="_blank"
+              >
+                {r('source_id')}
+              </a>
+            ) : (
+              r('source_id')
+            )}{' '}
+            in the{' '}
             <a href={record.attributes['jbrowseLink']} target="_blank">
               Genome Browser
             </a>
@@ -346,13 +405,7 @@ export const RecordMainSection = connect(null)(
       <div>
         <React.Fragment>
           {props.depth == null && (
-            <div
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: '1em',
-              }}
-            >
+            <div className="collapseAllSections">
               <i className="fa fa-exclamation-triangle" />
               &nbsp;
               <button
@@ -450,6 +503,10 @@ const EdaPhenotypeChildRow = makeDatasetGraphChildRow({
   dataTableName: 'EdaPhenotypeGraphsDataTable',
   DatasetGraphComponent: EdaDatasetGraph,
 });
+const EdaCellularLocalizationChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaCellularLocalizationGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
 const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
   dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
   DatasetGraphComponent: DatasetGraph,
@@ -486,9 +543,17 @@ export function RecordTable(props) {
     case 'PhenotypeGraphs':
       return <props.DefaultComponent {...props} childRow={PhenotypeChildRow} />;
 
-    case 'EdaPhenotypeGraphs':
+    case 'EdaPhenotypeDatasets':
       return (
         <props.DefaultComponent {...props} childRow={EdaPhenotypeChildRow} />
+      );
+
+    case 'EdaCellularLocalizationDatasets':
+      return (
+        <props.DefaultComponent
+          {...props}
+          childRow={EdaCellularLocalizationChildRow}
+        />
       );
 
     case 'UserDatasetsTranscriptomicsGraphs':
@@ -545,6 +610,8 @@ export function RecordTable(props) {
         <props.DefaultComponent {...props} childRow={SequencesTableChildRow} />
       );
 
+    // Reinstated for the AI-comments beta demo (the vanilla "Add a comment"
+    // button is hidden in addCommentLink; only the AI-assisted button shows).
     case 'UserComments':
       return <UserCommentsTable {...props} />;
 
@@ -655,10 +722,29 @@ function SNPsAlignment(props) {
 const RodMalPhenotypeTableChildRow = pure(function RodMalPhenotypeTableChildRow(
   props
 ) {
-  let { phenotype } = props.rowData;
+  const {
+    asexual_phenotype,
+    gametocyte_phenotype,
+    ookinete_phenotype,
+    oocyst_phenotype,
+    sporozoite_phenotype,
+    liver_stage_phenotype,
+  } = props.rowData;
+  const phenotypes = [
+    { label: 'Asexual', value: asexual_phenotype },
+    { label: 'Gametocyte', value: gametocyte_phenotype },
+    { label: 'Ookinete', value: ookinete_phenotype },
+    { label: 'Oocyst', value: oocyst_phenotype },
+    { label: 'Sporozoite', value: sporozoite_phenotype },
+    { label: 'Liver Stage', value: liver_stage_phenotype },
+  ].filter(({ value }) => value != null);
   return (
     <div>
-      <b>Phenotype</b>:{phenotype == null ? null : safeHtml(phenotype)}
+      {phenotypes.map(({ label, value }) => (
+        <div key={label}>
+          <b>{label} Phenotype</b>: {safeHtml(value)}
+        </div>
+      ))}
     </div>
   );
 });
@@ -1874,7 +1960,11 @@ const TranscriptionSummaryForm = connect(
 );
 
 const UserCommentsTable = addCommentLink(
-  (props) => props.record.attributes.user_comment_link_url
+  (props) => props.record.attributes.user_comment_link_url,
+  (props) =>
+    `/user-comments/ai-gene-publication/add?stableId=${encodeURIComponent(
+      props.record.attributes.source_id
+    )}`
 );
 
 /**

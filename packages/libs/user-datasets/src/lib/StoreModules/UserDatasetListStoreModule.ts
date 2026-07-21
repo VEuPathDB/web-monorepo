@@ -9,14 +9,14 @@ import {
   SHARING_MODAL_OPEN,
   SHARING_DATASET_PENDING,
   SHARING_ERROR,
-  updateCommunityModalVisibility,
   updateDatasetCommunityVisibilityError,
   updateDatasetCommunityVisibilityPending,
   updateDatasetCommunityVisibilitySuccess,
   LIST_ITEM_UPDATE_SUCCESS,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetListEntry } from '../Utils/types';
+import { DatasetListEntry } from '../Service';
+import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 
 export const key = 'userDatasetList';
 
@@ -25,10 +25,9 @@ type SharingModalState = {
   sharingDatasetPending: boolean;
   shareError: Error | undefined;
   shareSuccessful: boolean | undefined;
-  communityModalOpen: boolean;
   updateDatasetCommunityVisibilityPending: boolean;
   updateDatasetCommunityVisibilitySuccess: boolean;
-  updateDatasetCommunityVisibilityError: string | undefined;
+  updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
 };
 
 type InitialState = SharingModalState & {
@@ -68,7 +67,6 @@ const initialState: State = {
   sharingDatasetPending: false,
   shareError: undefined,
   shareSuccessful: undefined,
-  communityModalOpen: false,
   updateDatasetCommunityVisibilityPending: false,
   updateDatasetCommunityVisibilitySuccess: false,
   updateDatasetCommunityVisibilityError: undefined,
@@ -111,7 +109,7 @@ export function reduce(state: State = initialState, action: Action): State {
             userDatasets: state.userDatasets.map((it) =>
               it.datasetId === action.payload.userDataset.datasetId
                 ? action.payload.userDataset
-                : it,
+                : it
             ),
           }
         : state;
@@ -121,7 +119,7 @@ export function reduce(state: State = initialState, action: Action): State {
         ? {
             ...state,
             userDatasets: state.userDatasets.filter(
-              it => it.datasetId !== action.payload.datasetId,
+              (it) => it.datasetId !== action.payload.datasetId
             ),
           }
         : state;
@@ -162,19 +160,6 @@ export function reduce(state: State = initialState, action: Action): State {
       return state;
     }
 
-    case updateCommunityModalVisibility.type:
-      return {
-        ...state,
-        communityModalOpen: action.payload.isVisible,
-        // clear related states when closed
-        ...(action.payload.isVisible
-          ? {}
-          : {
-              updateDatasetCommunityVisibilityError: undefined,
-              updateDatasetCommunityVisibilityPending: false,
-              updateDatasetCommunityVisibilitySuccess: false,
-            }),
-      };
     case updateDatasetCommunityVisibilityError.type:
       return {
         ...state,
@@ -190,7 +175,7 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         updateDatasetCommunityVisibilityPending: false,
-        updateDatasetCommunityVisibilitySuccess: true,
+        updateDatasetCommunityVisibilitySuccess: action.payload.success ?? true,
       };
 
     default:

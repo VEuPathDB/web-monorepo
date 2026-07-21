@@ -25,7 +25,7 @@ export function TextNotebookCell(props: NotebookCellProps<TextCellDescriptor>) {
   );
 
   useEffect(() => {
-    setPanelState(resolvedState);
+    if (resolvedState === 'open') setPanelState('open');
   }, [resolvedState]);
 
   return (

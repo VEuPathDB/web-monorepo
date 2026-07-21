@@ -1,4 +1,5 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { useFeaturedFields } from '../variableSelectors/hooks';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
@@ -103,7 +104,8 @@ const multipleStratificationVariableLabelStyle = {
   width: '45px',
 };
 
-interface CustomSectionSpec extends SectionSpec {
+interface CustomSectionSpec extends Omit<SectionSpec, 'title'> {
+  title?: ReactNode;
   content: ReactNode;
 }
 
@@ -173,6 +175,14 @@ export interface Props {
    * Auto-selected inputs are rendered as readonly — no dropdown is shown.
    */
   autoSelectWhenPossible?: boolean;
+  /**
+   * When true, automatically selects an input with the first `isFeatured`
+   * variable that satisfies the input's constraints. Falls back gracefully
+   * when no featured variables exist.
+   */
+  autoSelectFeatured?: boolean;
+  /** Extra disabled variables to merge in, keyed by input name. */
+  additionalDisabledVariables?: Record<string, VariableDescriptor[]>;
 }
 
 export function InputVariables(props: Props) {
@@ -194,6 +204,8 @@ export function InputVariables(props: Props) {
     flexDirection,
     labelWidth,
     autoSelectWhenPossible,
+    autoSelectFeatured,
+    additionalDisabledVariables,
   } = props;
   const classes = useInputStyles(flexDirection);
   const handleChange = (
@@ -219,41 +231,50 @@ export function InputVariables(props: Props) {
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
   const disabledVariablesByInputName: Record<string, VariableDescriptor[]> =
-    useMemo(
-      () =>
-        inputs.reduce((map, input) => {
-          // ignore invalid inputs
-          if (invalidInputs.includes(input)) return map;
-          // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
-          const filteredConstraints =
-            constraints &&
-            filterConstraints(
-              selectedVariables,
-              entities,
-              constraints,
-              input.name
-            );
-
-          map[input.name] = disabledVariablesForInput(
-            input.name,
+    useMemo(() => {
+      const map = inputs.reduce((map, input) => {
+        // ignore invalid inputs
+        if (invalidInputs.includes(input)) return map;
+        // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
+        const filteredConstraints =
+          constraints &&
+          filterConstraints(
+            selectedVariables,
             entities,
-            filteredConstraints,
-            dataElementDependencyOrder,
-            variablesForConstraints ?? selectedVariables
+            constraints,
+            input.name
           );
 
-          return map;
-        }, {} as Record<string, VariableDescriptor[]>),
-      [
-        inputs,
-        invalidInputs,
-        constraints,
-        selectedVariables,
-        entities,
-        dataElementDependencyOrder,
-        variablesForConstraints,
-      ]
-    );
+        map[input.name] = disabledVariablesForInput(
+          input.name,
+          entities,
+          filteredConstraints,
+          dataElementDependencyOrder,
+          variablesForConstraints ?? selectedVariables
+        );
+
+        return map;
+      }, {} as Record<string, VariableDescriptor[]>);
+
+      if (additionalDisabledVariables) {
+        for (const [name, vars] of Object.entries(
+          additionalDisabledVariables
+        )) {
+          map[name] = [...(map[name] ?? []), ...vars];
+        }
+      }
+
+      return map;
+    }, [
+      inputs,
+      invalidInputs,
+      constraints,
+      selectedVariables,
+      entities,
+      dataElementDependencyOrder,
+      variablesForConstraints,
+      additionalDisabledVariables,
+    ]);
 
   // When autoSelectWhenPossible is enabled, find inputs that have exactly one
   // enabled (non-disabled) variable — these can be auto-selected for the user.
@@ -343,6 +364,53 @@ export function InputVariables(props: Props) {
     singleEnabledVariableByInput,
     selectedVariables,
     inputs,
+    onChange,
+  ]);
+
+  const featuredFields = useFeaturedFields(entities, 'variableTree');
+
+  // allow autoSelections to be removed with the (x) (showClearSelectionButton)
+  const autoSelectedFeaturedRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      autoSelectedFeaturedRef.current ||
+      !autoSelectFeatured ||
+      !featuredFields.length
+    )
+      return;
+
+    const autoSelections: VariablesByInputName = {};
+    for (const input of inputs) {
+      if (input.readonlyValue) continue;
+      if (selectedVariables[input.name] != null) continue;
+
+      const disabled = disabledVariablesByInputName[input.name];
+      // Skip inputs whose constraints haven't been resolved yet (disabled === undefined
+      // means "unknown", not "unrestricted" — same guard as autoSelectWhenPossible).
+      if (disabled == null) continue;
+      const first = featuredFields.find((field) => {
+        const [entityId, variableId] = field.term.split('/');
+        if (!disabled.length) return true;
+        return !disabled.some(
+          (d) => d.entityId === entityId && d.variableId === variableId
+        );
+      });
+      if (first) {
+        const [entityId, variableId] = first.term.split('/');
+        autoSelections[input.name] = { entityId, variableId };
+      }
+    }
+
+    if (Object.keys(autoSelections).length === 0) return;
+    onChange({ ...selectedVariables, ...autoSelections });
+    autoSelectedFeaturedRef.current = true;
+  }, [
+    autoSelectFeatured,
+    featuredFields,
+    inputs,
+    selectedVariables,
+    disabledVariablesByInputName,
     onChange,
   ]);
 
@@ -557,7 +625,12 @@ export function InputVariables(props: Props) {
       {customSections?.map(({ order, title, content }) => (
         <div key={order} className={classes.inputGroup} style={{ order }}>
           <div className={classes.fullRow}>
-            <h4>{title}</h4>
+            <h4
+              aria-hidden={title == null}
+              style={title == null ? { visibility: 'hidden' } : undefined}
+            >
+              {title ?? '\u00a0'}
+            </h4>
           </div>
           {content}
         </div>

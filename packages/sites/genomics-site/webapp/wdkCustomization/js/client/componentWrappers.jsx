@@ -17,6 +17,7 @@ import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCre
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
 import { useScrollUpOnRouteChange } from '@veupathdb/wdk-client/lib/Hooks/Page';
+import { SiteSearchInput } from './components/site-search/SiteSearchInput';
 import { getSingleRecordAnswerSpec } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { BinaryOperationsContext } from '@veupathdb/wdk-client/lib/Utils/Operations';
@@ -164,7 +165,7 @@ const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
-  const isPortal = projectId === 'EuPathDB';
+  const isPortal = projectId === 'UniDB';
   const ResolvedRecordLink = RecordClassSpecificRecordlink(
     makePortalRecordLink(WdkRecordLink)
   );
@@ -177,7 +178,7 @@ export function RecordLink(WdkRecordLink) {
 }
 
 function makePortalRecordLink(WdkRecordLink) {
-  if (projectId !== 'EuPathDB') return WdkRecordLink;
+  if (projectId !== 'UniDB') return WdkRecordLink;
   return function PortalRecordLink(props) {
     const { recordId, recordClass } = props;
     const projectIdPart = recordId.find((part) => part.name === 'project_id');
@@ -186,7 +187,7 @@ function makePortalRecordLink(WdkRecordLink) {
     if (
       projectUrls == null ||
       projectIdPart == null ||
-      projectIdPart.value === 'EuPathDB' ||
+      projectIdPart.value === 'UniDB' ||
       projectUrls[projectIdPart.value] == null
     )
       return <WdkRecordLink {...props} />;
@@ -249,7 +250,11 @@ export function RecordTableDescription(DefaultComponent) {
         let showDownload =
           record.tables[table.name] &&
           record.tables[table.name].length > 0 &&
-          ontologyProperties.scope.includes('download');
+          !(
+            record.recordClassName ==
+            'UserDatasetRecordClasses.UserDatasetRecordClass'
+          );
+        ontologyProperties.scope.includes('download');
 
         let hideDatasetLinkFromProperty =
           record.tables[table.name] &&
@@ -258,7 +263,11 @@ export function RecordTableDescription(DefaultComponent) {
 
         let showDatasetsLink =
           record.tables[table.name] &&
-          !table.name.startsWith('UserDatasets') &&
+          !(
+            record.recordClassName ==
+            'UserDatasetRecordClasses.UserDatasetRecordClass'
+          ) &&
+          !table.name.startsWith('UserDataset') &&
           !hideDatasetLinkFromProperty;
 
         var hasTaxonId = 0;
@@ -289,6 +298,7 @@ export function RecordTableDescription(DefaultComponent) {
                 </button>
               </span>
             )}
+            {/* hide dataset links UNTIL FIXED in GENE PAGE */}
             {hasTaxonId == 0 && showDatasetsLink && (
               <Link
                 style={{
@@ -325,9 +335,10 @@ export function RecordTableDescription(DefaultComponent) {
                   }),
                 }}
               >
-                <i className="fa fa-database" /> Data sets
+                <i className="fa fa-database" /> Datasets
               </Link>
-            )}
+            )}{' '}
+            {/* end of:  hide dataset links UNTIL FIXED in GENE PAGE */}
           </div>
         );
 
@@ -537,8 +548,8 @@ export function Page() {
   };
 }
 
-export { SiteSearchInput } from './component-wrappers/SiteSearchInput';
-
 export { AnswerController } from './component-wrappers/AnswerController';
+
+export { SiteSearchInput };
 
 // export { QuestionController } from './component-wrappers/QuestionController';

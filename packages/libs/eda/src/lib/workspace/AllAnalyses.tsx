@@ -113,7 +113,7 @@ const useStyles = makeStyles({
   },
 });
 
-const UNKNOWN_DATASET_NAME = 'Unknown study';
+const UNKNOWN_DATASET_NAME = 'Unknown dataset';
 const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 
 export function AllAnalyses(props: Props) {
@@ -189,8 +189,15 @@ export function AllAnalyses(props: Props) {
       if (isVdiCompatibleWdkService(wdkService)) {
         const user = await wdkService.getCurrentUser();
         return Promise.all([
-          user.isGuest ? [] : wdkService.getCurrentUserDatasets(),
-          wdkService.getCommunityDatasets(),
+          user.isGuest ? [] : wdkService.vdi.getDatasetList(),
+          // Community datasets are supplementary and public; a failure to load
+          // them (e.g. a 401 from a stale guest session) should degrade to an
+          // empty list rather than reject the whole tuple and surface a global
+          // "something went wrong" modal.
+          wdkService.vdi.getCommunityDatasetList().catch((error) => {
+            console.error('Failed to load community datasets', error);
+            return [];
+          }),
         ]);
       }
       return [];
@@ -308,8 +315,9 @@ export function AllAnalyses(props: Props) {
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
 
   const [sharingModalVisible, setSharingModalVisible] = useState(false);
-  const [selectedAnalysisId, setSelectedAnalysisId] =
-    useState<string | undefined>(undefined);
+  const [selectedAnalysisId, setSelectedAnalysisId] = useState<
+    string | undefined
+  >(undefined);
 
   const tableState = useMemo(
     () => ({
@@ -505,7 +513,7 @@ export function AllAnalyses(props: Props) {
           : [
               {
                 key: 'study',
-                name: 'Study',
+                name: 'Dataset',
                 sortable: true,
                 renderCell: (data: { row: AnalysisAndDataset }) => {
                   const { dataset } = data.row;

@@ -1,25 +1,26 @@
-import * as React from 'react';
+import React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
+import { DataNoun } from '../Utils/types';
 import {
-  DataNoun,
-  DatasetDetails,
+  DatasetGetResponseBody,
   DatasetListEntry,
   DatasetStatusInfo,
-} from '../Utils/types';
+  DatasetUploadStatusInfo,
+  VdiReconcilerConfig,
+  VdiServiceConfig,
+} from '../Service';
 
-// NOTE: The reinstall interval is configured in the VDI service and thus may change
-const VDI_REINSTALL_INTERVAL = 6;
-
-interface Props {
+export interface Props {
   baseUrl: string;
-  userDataset: DatasetListEntry | DatasetDetails;
+  userDataset: DatasetListEntry | DatasetGetResponseBody;
   projectId: string;
   displayName: string;
   linkToDataset: boolean;
   useTooltip: boolean;
   dataNoun: DataNoun;
+  readonly vdiConfig: VdiServiceConfig;
 }
 
 const orderedStatuses = [
@@ -51,9 +52,11 @@ function getStatus(
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
-  projects: string[]
+  projects: string[],
+  vdiConfig: VdiReconcilerConfig
 ): { content: React.ReactNode; icon: string } {
   const isTargetingCurrentSite = projects.includes(projectId);
+
   if (!isTargetingCurrentSite) {
     return {
       content: `This ${dataNoun} was uploaded and installed in a different VEuPathDB project.`,
@@ -61,20 +64,103 @@ function getStatus(
     };
   }
 
-  const importStatus = status.import.status;
+  if (status.upload.status !== 'success')
+    return getUploadStatus(status.upload, dataNoun);
+  else
+    return getPostUploadStatus(
+      status,
+      projectId,
+      dataNoun,
+      projectDisplayName,
+      vdiConfig
+    );
+}
+
+const queuedStatus = (dataNoun: string) => ({
+  content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
+  icon: 'clock-o',
+});
+
+function getUploadStatus(
+  details: DatasetUploadStatusInfo,
+  dataNoun: string
+): { content: React.ReactNode; icon: string } {
+  switch (details.status) {
+    case 'running':
+      return queuedStatus(dataNoun);
+
+    case 'rejected':
+      return {
+        content: (
+          <>
+            This {dataNoun} was rejected during initial upload processing:
+            <br />
+            {details.message?.split('\n').map((line, i, arr) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < arr.length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </>
+        ),
+        icon: 'exclamation-circle',
+      };
+
+    case 'failed':
+      return {
+        content: (
+          <>
+            Initial processing of your uploaded {dataNoun} failed. Please try
+            uploading your {dataNoun} again. If the problem persists, please let
+            us know through our{' '}
+            <Link to="/contact-us" target="_blank">
+              support form
+            </Link>
+            .
+          </>
+        ),
+        icon: 'times-circle',
+      };
+
+    default:
+      return {
+        content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
+        icon: 'clock-o',
+      };
+  }
+}
+
+/**
+ * Build dataset status details from information that is only available after
+ * the target dataset upload has been successfully processed.
+ *
+ * This info consists of the "import phase" data preprocessing step, and the
+ * data install step for all install target projects.
+ */
+function getPostUploadStatus(
+  status: DatasetStatusInfo,
+  projectId: string,
+  dataNoun: string,
+  projectDisplayName: string,
+  vdiConfig: VdiReconcilerConfig
+): { content: React.ReactNode; icon: string } {
+  const importStatus = status.import?.status;
   switch (importStatus) {
+    case null:
     case 'queued':
     case 'in-progress':
       return {
-        content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
+        content:
+          `This ${dataNoun} is queued. Please check again soon (reload ` +
+          'the page).',
         icon: 'clock-o',
       };
     case 'invalid':
       return {
         content: (
           <>
-            This {dataNoun} was rejected as invalid during the import phase:{' '}
-            {status.import.messages?.join(', ')}
+            This {dataNoun} was rejected as invalid during the import phase:
+            {renderErrorMessages(status.import!.messages || [])}
           </>
         ),
         icon: 'exclamation-circle',
@@ -101,11 +187,13 @@ function getStatus(
       icon: 'clock-o',
     };
   } else {
-    const installData = status.install?.find((d) => d.installTarget === projectId);
+    const installData = status.install?.find(
+      (d) => d.installTarget === projectId
+    );
     const metaStatus = installData?.meta.status;
-    const metaMessage = installData?.meta.messages?.join(', ') ?? '';
+    const metaMessages = installData?.meta.messages || [];
     const dataStatus = installData?.data?.status;
-    const dataMessage = installData?.data?.messages?.join(', ') ?? '';
+    const dataMessages = installData?.data?.messages || [];
 
     // Returns the "least" status between metaStatus and dataStatus
     const combinedStatus = orderedStatuses.find(
@@ -127,10 +215,8 @@ function getStatus(
         return {
           content: (
             <>
-              This {dataNoun} was rejected as invalid during the install phase:{' '}
-              {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
+              This {dataNoun} was rejected as invalid during the install phase:
+              {renderErrorMessages([...metaMessages, ...dataMessages])}
             </>
           ),
           icon: 'exclamation-circle',
@@ -153,8 +239,8 @@ function getStatus(
         return {
           content: (
             <>
-              This {dataNoun} will be reinstalled within{' '}
-              {VDI_REINSTALL_INTERVAL} hours. Please check again soon.
+              This {dataNoun} will be reinstalled within
+              {vdiConfig.fullRunInterval}. Please check again soon.
             </>
           ),
           icon: 'minus-circle',
@@ -163,9 +249,8 @@ function getStatus(
         return {
           content: (
             <>
-              This {dataNoun} is incompatible: {metaMessage}
-              {metaMessage.length && dataMessage.length ? '; ' : ''}
-              {dataMessage}
+              This {dataNoun} is incompatible:
+              {renderErrorMessages([...metaMessages, ...dataMessages])}
             </>
           ),
           icon: 'exclamation-circle',
@@ -179,6 +264,30 @@ function getStatus(
   }
 }
 
+/**
+ * Helper function to render error messages as a bulleted list.
+ * Replaces newlines with <br> tags in each message.
+ */
+function renderErrorMessages(messages: string[]): React.ReactNode {
+  if (!messages || messages.length === 0) return null;
+
+  // Always render as bulleted list with newlines as <br>
+  return (
+    <ul className="status-messages">
+      {messages.map((message, index) => (
+        <li key={index}>
+          {message.split('\n').map((line, i, arr) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < arr.length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function UserDatasetStatus(props: Props) {
   const { baseUrl, userDataset, projectId, displayName, dataNoun } = props;
   const { installTargets, status } = userDataset;
@@ -189,7 +298,8 @@ export default function UserDatasetStatus(props: Props) {
     projectId,
     lowercaseSingularDataNoun,
     displayName,
-    installTargets
+    installTargets,
+    props.vdiConfig.daemons.reconciler
   );
 
   const link = `${baseUrl}/${userDataset.datasetId}`;

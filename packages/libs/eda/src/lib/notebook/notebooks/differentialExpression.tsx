@@ -1,197 +1,19 @@
-import { colors } from '@material-ui/core';
 import { GENOMICS_PROJECTS } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
-import { AnalysisState, Filter } from '../../core';
-import { plugins } from '../../core/components/computations/plugins';
 import {
   GENE_EXPRESSION_STABLE_IDS,
   GENE_EXPRESSION_VALUE_IDS,
 } from '../../core/components/computations/Utils';
-import { VolcanoPlotConfig } from '../../core/components/visualizations/implementations/VolcanoPlotVisualization';
-import { useFindEntityAndVariable } from '../../core/hooks/workspace';
-import { DifferentialExpressionConfig } from '../../core/types/apps';
 import { PresetNotebook, TextCellContext } from '../Types';
-import { ReviewCard, ReviewRow } from '../components/ReviewCard';
-import { useGroupCounts } from '../../core/hooks/groupCounts';
 import { withResolvedSharedInputNames } from './utils';
-
-function isDEReadyToReviewAndSubmit(
-  analysisState: AnalysisState | undefined
-): boolean {
-  const config = analysisState?.analysis?.descriptor.computations.find(
-    (c: { descriptor: { type: string } }) =>
-      c.descriptor.type === 'differentialexpression'
-  )?.descriptor.configuration;
-  return plugins['differentialexpression'].isConfigurationComplete(config);
-}
-
-function DEReviewContent({
-  analysisState,
-  wdkState,
-  stepNumbers,
-}: TextCellContext) {
-  const deComputation = analysisState?.analysis?.descriptor.computations.find(
-    (c) => c.descriptor.type === 'differentialexpression'
-  );
-  const deConfig = DifferentialExpressionConfig.is(
-    deComputation?.descriptor.configuration
-  )
-    ? (deComputation?.descriptor.configuration as DifferentialExpressionConfig)
-    : undefined;
-
-  const volcanoPlotConfig = VolcanoPlotConfig.is(
-    deComputation?.visualizations?.[0]?.descriptor?.configuration
-  )
-    ? (deComputation?.visualizations?.[0]?.descriptor
-        ?.configuration as VolcanoPlotConfig)
-    : undefined;
-
-  const filters =
-    (analysisState?.analysis?.descriptor?.subset?.descriptor as Filter[]) ?? [];
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
-
-  const identifierVarInfo = deConfig?.identifierVariable
-    ? findEntityAndVariable(deConfig.identifierVariable)
-    : undefined;
-  const valueVarInfo = deConfig?.valueVariable
-    ? findEntityAndVariable(deConfig.valueVariable)
-    : undefined;
-  const comparatorVarInfo = deConfig?.comparator?.variable
-    ? findEntityAndVariable(deConfig.comparator.variable)
-    : undefined;
-
-  const hasExpressionData = identifierVarInfo != null && valueVarInfo != null;
-  const hasGroupComparison =
-    comparatorVarInfo != null &&
-    deConfig?.comparator?.groupA != null &&
-    deConfig?.comparator?.groupB != null;
-
-  const groupALabels = deConfig?.comparator?.groupA
-    ?.map((r) => r.label)
-    .join(', ');
-  const groupBLabels = deConfig?.comparator?.groupB
-    ?.map((r) => r.label)
-    .join(', ');
-
-  const { groupACount, groupBCount, groupACountPending, groupBCountPending } =
-    useGroupCounts(
-      deConfig?.comparator?.variable,
-      deConfig?.comparator?.groupA,
-      deConfig?.comparator?.groupB,
-      filters
-    );
-
-  const formatCount = (count: number | undefined, pending: boolean): string => {
-    if (pending) return ' (please wait...)';
-    if (count == null) return '';
-    return ` (${count.toLocaleString()} sample${count !== 1 ? 's' : ''})`;
-  };
-
-  const sharedInputsStep = stepNumbers?.get('de_shared_inputs');
-  const deseq2Step = stepNumbers?.get('de_deseq2_compute');
-  const volcanoStep = stepNumbers?.get('de_volcano');
-
-  const isReady = isDEReadyToReviewAndSubmit(analysisState);
-  const submitButtonText = wdkState?.submitButtonText ?? 'Get Answer';
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      {isReady && (
-        <p style={{ margin: 0 }}>
-          Click <strong>"{submitButtonText}"</strong> below to retrieve genes
-          matching the following criteria:
-        </p>
-      )}
-      <ReviewCard
-        title="Expression Data"
-        complete={hasExpressionData}
-        incompleteHint={
-          sharedInputsStep
-            ? `Complete in step ${sharedInputsStep}`
-            : 'Complete the expression data step above'
-        }
-      >
-        <ReviewRow
-          label="Gene Identifier"
-          value={
-            identifierVarInfo
-              ? `${identifierVarInfo.entity.displayName} > ${identifierVarInfo.variable.displayName}`
-              : '—'
-          }
-        />
-        <ReviewRow
-          label="Count type"
-          value={
-            valueVarInfo
-              ? `${valueVarInfo.entity.displayName} > ${valueVarInfo.variable.displayName}`
-              : '—'
-          }
-        />
-      </ReviewCard>
-
-      <ReviewCard
-        title="Group Comparison"
-        complete={hasGroupComparison}
-        incompleteHint={
-          deseq2Step
-            ? `Complete in step ${deseq2Step}`
-            : 'Complete the DESeq2 configuration step above'
-        }
-      >
-        <ReviewRow
-          label="Metadata variable"
-          value={comparatorVarInfo?.variable.displayName ?? '—'}
-        />
-        <ReviewRow
-          label="Reference group (A)"
-          value={
-            groupALabels
-              ? groupALabels + formatCount(groupACount, groupACountPending)
-              : '—'
-          }
-        />
-        <ReviewRow
-          label="Comparison group (B)"
-          value={
-            groupBLabels
-              ? groupBLabels + formatCount(groupBCount, groupBCountPending)
-              : '—'
-          }
-        />
-      </ReviewCard>
-
-      <ReviewCard title="Volcano Thresholds">
-        <ReviewRow
-          label="|Effect size| ≥"
-          value={String(volcanoPlotConfig?.effectSizeThreshold ?? '—')}
-        />
-        <ReviewRow
-          label="p-value ≤"
-          value={String(volcanoPlotConfig?.significanceThreshold ?? '—')}
-        />
-        <ReviewRow label="Direction" value="Up and down regulated" />
-        {volcanoStep && (
-          <p
-            style={{
-              fontStyle: 'italic',
-              color: colors.grey[800],
-              margin: '0.5em 0 0',
-            }}
-          >
-            Adjust thresholds in step {volcanoStep}.
-          </p>
-        )}
-      </ReviewCard>
-    </div>
-  );
-}
+import {
+  isDEReadyToReviewAndSubmit,
+  DifferentialAnalysisReviewContent,
+} from './differentialAnalysisReview';
 
 export const differentialExpressionNotebook: PresetNotebook = {
   name: 'differentialexpression',
   displayName: 'Differential Expression Notebook',
-  projects: [
-    ...GENOMICS_PROJECTS,
-    'UniDB' /* 'MicrobiomeDB' probably inappropriate */,
-  ],
+  projects: GENOMICS_PROJECTS.map((it) => it.projectId),
   cells: withResolvedSharedInputNames([
     {
       id: 'de_subset',
@@ -215,13 +37,13 @@ export const differentialExpressionNotebook: PresetNotebook = {
       inputs: [
         {
           name: 'identifierVariable',
-          label: 'Gene Identifier',
+          label: 'Gene identifier',
           role: 'axis',
           titleOverride: 'Expression Data',
         },
         {
           name: 'valueVariable',
-          label: 'Count type',
+          label: 'Measurement type',
           role: 'axis',
         },
       ],
@@ -253,6 +75,8 @@ export const differentialExpressionNotebook: PresetNotebook = {
       title: 'Set up PCA Computation',
       computationName: 'dimensionalityreduction',
       computationId: 'pca_1',
+      configOverrides: { dataFormat: 'rawCounts' as const },
+      readonlyInputNames: ['dataFormat'],
       sharedInputsCellId: 'de_shared_inputs',
       numberedHeader: true,
       helperText: (
@@ -275,6 +99,13 @@ export const differentialExpressionNotebook: PresetNotebook = {
               other sources of variation.
             </span>
           ),
+          // RNA-Seq annotations generally don't have missing data
+          // so we keep the user interface as simple as possible
+          getVizPluginOptions: () => ({
+            hideCoverageData: true,
+            autoSelectFeatured: true,
+            autoSelectWhenPossible: true,
+          }),
         },
       ],
     },
@@ -319,7 +150,7 @@ export const differentialExpressionNotebook: PresetNotebook = {
           panelStateResolver: ({ analysisState }: TextCellContext) =>
             isDEReadyToReviewAndSubmit(analysisState) ? 'open' : 'closed',
           text: ({ analysisState, wdkState, stepNumbers }: TextCellContext) => (
-            <DEReviewContent
+            <DifferentialAnalysisReviewContent
               analysisState={analysisState}
               wdkState={wdkState}
               stepNumbers={stepNumbers}

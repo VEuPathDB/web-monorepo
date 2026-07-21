@@ -92,7 +92,7 @@ export const useEbrcDescription = (question: Question) => {
         {datasetRecords.status === 'present' && (
           <div className={defaultFormCx('DescriptionSection')}>
             <h2 className={cx('SearchDatasetsHeader')}>
-              Data Sets used by this search
+              Datasets used by this search
             </h2>
             {datasetRecords.records.length > 0 ? (
               <ul className={cx('DatasetsList')}>
@@ -144,7 +144,7 @@ const recordToAttribution = (record: RecordInstance) => {
         <div className={cx('Summary')}>
           {summaryText === null ? (
             <RecordError
-              message={`summary attribute '${record.attributes.summary}' for data set ${datasetId} is invalid`}
+              message={`summary attribute '${record.attributes.summary}' for dataset ${datasetId} is invalid`}
             />
           ) : (
             safeHtml(summaryText)
@@ -152,7 +152,7 @@ const recordToAttribution = (record: RecordInstance) => {
         </div>
         {publications === null && (
           <RecordError
-            message={`table 'Publications' is missing for data set ${datasetId}`}
+            message={`table 'Publications' is missing for dataset ${datasetId}`}
           />
         )}
         {publications !== null && publications.length > 0 && (
@@ -179,7 +179,7 @@ const publicationToLink = (
     >
       {publicationLink === null ? (
         <RecordError
-          message={`pubmed_link attribute '${pubmed_link}' for data set ${dataset_id} is invalid.`}
+          message={`pubmed_link attribute '${pubmed_link}' for dataset ${dataset_id} is invalid.`}
         />
       ) : (
         <a href={publicationLink.url} target="_blank">

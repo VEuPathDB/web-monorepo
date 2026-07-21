@@ -61,6 +61,17 @@
       content: $logo;
     }
 
+    .ebrc-HeaderBrandingContainer {
+      .vpdb-BetaBadge {
+        position: absolute;
+        bottom: 64px;
+        left: calc(#{$superscript-position-left} - 80px);
+        width: 40px;
+        height: auto;
+        pointer-events: none;
+      }
+    }
+
     &__collapsed {
       box-shadow: unset;
 
@@ -75,6 +86,16 @@
       .vpdb-HeaderBranding {
         content: $small-logo;
       }
+
+      .ebrc-HeaderBrandingContainer .vpdb-BetaBadge {
+        width: 20px;
+        bottom: 36px;
+        @if ($superscript-position-left-small) {
+          left: calc(#{$superscript-position-left-small} - 15px);
+        } @else {
+          left: calc(#{$superscript-position-left} - 48px);
+        }
+      }
     }
 
     @media screen and (max-width: $cramped-header-width) {
@@ -88,6 +109,16 @@
 
       .vpdb-HeaderBranding {
         content: $small-logo;
+      }
+
+      .ebrc-HeaderBrandingContainer .vpdb-BetaBadge {
+        width: 20px;
+        bottom: 36px;
+        @if ($superscript-position-left-small) {
+          left: calc(#{$superscript-position-left-small} - 15px);
+        } @else {
+          left: calc(#{$superscript-position-left} - 48px);
+        }
       }
     }
   }

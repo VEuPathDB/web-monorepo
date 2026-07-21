@@ -4,8 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Tooltip } from '@veupathdb/coreui';
 
-import { uploadUserDataset } from '@veupathdb/user-datasets/lib/Utils/upload-user-dataset';
-
 import {
   requestAddStepToBasket,
   requestBasketCounts,
@@ -29,11 +27,17 @@ import {
   endpoint,
   rootUrl,
   useUserDatasetsWorkspace,
+  vdiServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 
 import { ExportOption } from './ResultExportSelector';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { submitNewDataset } from '@veupathdb/user-datasets/lib/Service/process/create-dataset';
+import {
+  VdiCompatibleWdkService,
+  wrapWdkService as addVdiService,
+} from '@veupathdb/user-datasets/lib/Service';
 
 const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set(['transcript']);
 
@@ -156,6 +160,10 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
     []
   );
 
+  const vdiEnabledWdk = useUserDatasetsWorkspace
+    ? addVdiService({ vdiServiceUrl }, wdkService)
+    : undefined;
+
   return useMemo(
     () =>
       isGeneListStep(resultType) && useUserDatasetsWorkspace
@@ -171,27 +179,27 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
               >
                 <div>
                   <IconAlt fa="files-o fa-fw" />{' '}
-                  <span style={{ marginLeft: '0.5em' }}>My Data Sets</span>
+                  <span style={{ marginLeft: '0.5em' }}>My Datasets</span>
                 </div>
               </Tooltip>
             ),
             isDisabled: isGuest !== false,
             onSelectionTask: Task.fromPromise(() =>
               Promise.all([
-                uploadGeneListUserDataset(wdkService, resultType.step),
-                wdkService.findRecordClass(resultType.step.recordClassName),
+                uploadGeneListUserDataset(vdiEnabledWdk!, resultType.step),
+                vdiEnabledWdk!.findRecordClass(resultType.step.recordClassName),
               ])
             ),
             onSelectionFulfillment: ([, recordClass]) => {
               dispatch(
                 enqueueStrategyNotificationAction(
                   <div>
-                    A data set with the{' '}
+                    A dataset with the{' '}
                     {resultType.step.estimatedSize === 1
                       ? recordClass.displayName
                       : recordClass.displayNamePlural}{' '}
                     in step "{resultType.step.customName}" was uploaded to{' '}
-                    <Link to="/workspace/datasets">My Data Sets</Link>.
+                    <Link to="/workspace/datasets">My Datasets</Link>.
                     <br />
                     It will be ready for use once we have finished installing it
                     in {projectDisplayName}.
@@ -210,7 +218,7 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
                   <div>
                     An error occurred while trying to upload the contents of
                     step "{resultType.step.customName}" to{' '}
-                    <Link to="/workspace/datasets">My Data Sets</Link>.
+                    <Link to="/workspace/datasets">My Datasets</Link>.
                     <br />
                     Please try again, and{' '}
                     <Link target="_blank" to="/contact-us">
@@ -230,7 +238,7 @@ ExportOption<'my-data-sets', [void, RecordClass], unknown> | undefined {
             },
           }
         : undefined,
-    [resultType, wdkService, dispatch, projectDisplayName, isGuest]
+    [resultType, vdiEnabledWdk, dispatch, projectDisplayName, isGuest]
   );
 }
 
@@ -248,11 +256,11 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
 
   const exportableProjectIds = useMemo(
     () =>
-      [...GENOMICS_PROJECTS].filter(
-        (id) =>
-          (projectId !== 'EuPathDB' && id === 'VEuPathDB') ||
-          (projectId === 'EuPathDB' && id !== 'VEuPathDB')
-      ),
+      GENOMICS_PROJECTS.filter(
+        (it) =>
+          (projectId !== 'UniDB' && it.projectId === 'UniDB') ||
+          (projectId === 'UniDB' && it.projectId !== 'UniDB')
+      ).map((it) => it.projectId),
     [projectId]
   );
 
@@ -275,7 +283,7 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
                 resultType.step,
                 new URL(
                   'app',
-                  id === 'VEuPathDB' ? projectUrls.EuPathDB : projectUrls[id]
+                  id === 'VEuPathDB' ? projectUrls.UniDB : projectUrls[id]
                 ).toString()
               )
             ),
@@ -291,7 +299,7 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
                     <a
                       href={
                         id === 'VEuPathDB'
-                          ? projectUrls.EuPathDB
+                          ? projectUrls.UniDB
                           : `https://${id}.org/${id}`
                       }
                       target="_blank"
@@ -331,7 +339,7 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
 }
 
 export async function uploadGeneListUserDataset(
-  wdkService: WdkService,
+  wdkService: VdiCompatibleWdkService,
   step: Step
 ) {
   const [temporaryResultUrl, { projectId }] = await Promise.all([
@@ -354,7 +362,8 @@ export async function uploadGeneListUserDataset(
       step.customName
     }" (${resultWorkspaceUrl}).`;
 
-  return await uploadUserDataset(wdkService, {
+  return await submitNewDataset({
+    service: wdkService.vdi,
     details: {
       name: step.customName,
       type: {
@@ -366,8 +375,7 @@ export async function uploadGeneListUserDataset(
       description: datasetDescription,
       visibility: 'private',
     },
-    dataUploadSelection: {
-      type: 'url',
+    uploads: {
       url: temporaryResultUrl,
     },
   });

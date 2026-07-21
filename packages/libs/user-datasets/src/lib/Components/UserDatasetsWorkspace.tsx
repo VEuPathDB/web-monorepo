@@ -1,69 +1,88 @@
-import { ReactNode } from 'react';
-
-import { Switch, Redirect, RouteComponentProps } from 'react-router-dom';
+import React, { ReactElement, ReactNode } from 'react';
+import { isEmpty } from 'lodash';
+import { Switch, Redirect } from 'react-router-dom';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { WorkspaceNavigationItem } from '@veupathdb/wdk-client/src/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
+import { DatasetUploadRoute } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
-import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
+import { DataNoun } from '../Utils/types';
+import {
+  DatasetTypeConfig,
+  filterAvailableDataTypes,
+  promoteTypeConfig,
+} from '../Common/Configuration';
+import { VdiMetadata } from '../Service/utils/use-vdi';
+import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
-import { DatasetUploadPageConfig, DataNoun } from '../Utils/types';
-
-interface Props {
+export interface UserDatasetWorkspaceProps {
   baseUrl: string;
   helpRoute: string;
-  uploadPageConfig: DatasetUploadPageConfig;
   urlParams: Record<string, string>;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
+
+  readonly vdiMetadata: VdiMetadata;
+  readonly workspaceConfig: DatasetWorkspaceConfig;
+  readonly datasetId?: string;
 }
 
-function UserDatasetsWorkspace(props: Props) {
+export function UserDatasetsWorkspace(
+  props: UserDatasetWorkspaceProps
+): ReactElement {
   const {
     baseUrl,
     helpRoute,
-    uploadPageConfig,
     workspaceTitle,
     helpTabContents,
     dataNoun,
     enablePublicUserDatasets,
-    showExtraMetadata = false,
+    vdiMetadata,
+    workspaceConfig: config,
   } = props;
+
+  const datasetTypes = config.baseDatasetTypeConfigs
+    .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
+    .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
+
+  const availableDataTypes = filterAvailableDataTypes(
+    datasetTypes,
+    vdiMetadata.plugins
+  );
+  const allowsUploads = !isEmpty(availableDataTypes);
+
+  const routes: WorkspaceNavigationItem[] = [
+    {
+      display: 'Manage my datasets',
+      route: '',
+    },
+  ];
+
+  if (allowsUploads) {
+    routes.push({
+      display: 'New upload',
+      route: '/new',
+      exact: false,
+    });
+  }
+
+  if (helpTabContents) {
+    routes.push({
+      display: 'My datasets help',
+      route: '/help',
+    });
+  }
 
   return (
     <div>
       <WorkspaceNavigation
         heading={workspaceTitle}
         routeBase={baseUrl}
-        items={[
-          [
-            {
-              display: 'All',
-              route: '',
-            },
-          ],
-          uploadPageConfig.hasDirectUpload
-            ? [
-                {
-                  display: 'New upload',
-                  route: '/new',
-                  exact: false,
-                },
-              ]
-            : [],
-          helpTabContents != null
-            ? [
-                {
-                  display: 'Help',
-                  route: '/help',
-                },
-              ]
-            : [],
-        ].flat()}
+        items={routes}
       />
       <Switch>
         <WdkRoute
@@ -73,84 +92,31 @@ function UserDatasetsWorkspace(props: Props) {
           component={() => (
             <UserDatasetListController
               baseUrl={baseUrl}
-              hasDirectUpload={uploadPageConfig.hasDirectUpload}
+              hasDirectUpload={allowsUploads}
               helpRoute={helpRoute}
               workspaceTitle={workspaceTitle}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
+              vdiConfig={vdiMetadata.serviceInfo.configuration}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
         />
-        {uploadPageConfig.hasDirectUpload && (
-          <WdkRoute
-            requiresLogin
-            exact
-            path={`${baseUrl}/new/:type?`}
-            component={(childProps: RouteComponentProps<{ type?: string }>) => (
-              <UserDatasetNewUploadController
-                baseUrl={baseUrl}
-                type={childProps.match.params.type}
-                availableTypes={uploadPageConfig.availableUploadTypes}
-                datasetUploadTypes={uploadPageConfig.uploadTypeConfig}
-                urlParams={props.urlParams}
-                showExtraMetadata={showExtraMetadata}
-              />
-            )}
-            disclaimerProps={{
-              toDoWhatMessage: `To upload your dataset`,
-              extraParagraphContent:
-                Object.entries(props.urlParams).length === 0 ? undefined : (
-                  <div style={{ width: '100%', paddingBottom: 20 }}>
-                    <div style={{ paddingBottom: 5, textAlign: 'center' }}>
-                      Afterwards, you will be taken back to an upload page with
-                      these details:
-                    </div>
-
-                    <ul style={{ listStyle: 'none' }}>
-                      {Object.entries(props.urlParams).map((e) => (
-                        <li
-                          key={e.join(' ')}
-                          style={{
-                            paddingBottom: 5,
-                            maxWidth: '100%',
-                            overflowX: 'auto',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          <span style={{ fontWeight: 'bold' }}>
-                            {e[0].charAt(0).toUpperCase() +
-                              e[0].slice(1).replace('_', ' ') +
-                              ': '}
-                          </span>
-                          <code style={{ verticalAlign: 'bottom' }}>
-                            {e[1].trim()}
-                          </code>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ),
-            }}
-          />
-        )}
-        {/* {uploadPageConfig.hasDirectUpload && (
-          <WdkRoute
-            requiresLogin
-            exact
-            path={`${baseUrl}/recent`}
-            component={() => (
-              <UserDatasetAllUploadsController baseUrl={baseUrl} />
-            )}
-            disclaimerProps={{ toDoWhatMessage: 'To view your recent uploads' }}
-          />
-        )} */}
-        {helpTabContents != null && (
+        {helpTabContents && (
           <WdkRoute
             requiresLogin={false}
             exact
             path={`${baseUrl}/help`}
             component={() => <>{helpTabContents}</>}
+          />
+        )}
+        {allowsUploads && (
+          <DatasetUploadRoute
+            {...props}
+            vdiConfig={vdiMetadata.serviceInfo}
+            plugins={vdiMetadata.plugins}
+            datasetTypes={datasetTypes}
+            formConfigs={config.uploadFormConfigurators}
           />
         )}
         <Redirect to={baseUrl} />

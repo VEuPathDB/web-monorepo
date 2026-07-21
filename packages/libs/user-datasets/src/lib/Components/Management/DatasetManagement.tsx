@@ -1,0 +1,821 @@
+import React, { ReactNode } from 'react';
+
+import { Public, Refresh } from '@material-ui/icons';
+
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import Link from '@veupathdb/wdk-client/lib/Components/Link';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+
+import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
+
+import SharingModal from '../Sharing/UserDatasetSharingModal';
+import CommunityModal from '../Sharing/UserDatasetCommunityModal';
+import UserDatasetStatus from '../UserDatasetStatus';
+import { makeClassifier } from '../UserDatasetUtils';
+import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
+import { ThemedDeleteButton } from '../ThemedDeleteButton';
+import { UserDatasetFiles } from '../UserDatasetFiles';
+
+import { DateTime } from '../DateTime';
+
+import '../UserDatasets.scss';
+import './DatasetManagement.scss';
+import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { FetchClientError } from '@veupathdb/http-utils';
+import {
+  removeUserDataset,
+  shareUserDatasets,
+  sharingError,
+  sharingSuccess,
+  unshareUserDataset,
+  updateDatasetCommunityVisibility,
+  updateSharingModalState,
+  updateUserDatasetDetail,
+  updateDatasetCommunityVisibilitySuccess,
+  updateDatasetCommunityVisibilityError,
+  loadUserDatasetDetailWithoutLoadingIndicator,
+} from '../../Actions/UserDatasetsActions';
+import { DataNoun } from '../../Utils/types';
+import {
+  DatasetGetResponseBody,
+  DatasetShareOffer,
+  VdiServiceMetadata,
+} from '../../Service';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
+
+// needed for eda searches, to covert vdi ID to wdk ID
+import { diyUserDatasetIdToWdkRecordId } from '../../Utils/diyDatasets';
+import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
+import { UpdateFormController } from '../Update/UpdateFormController';
+import {
+  DatasetFormConfigurators,
+  DatasetTypeConfig,
+  findDatasetTypeConfig,
+} from '../../Common/Configuration';
+import { isEmpty } from 'lodash';
+import { History } from 'history';
+import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
+import { ThemedUpdateButton } from '../ThemedUpdateButton';
+
+const classify = makeClassifier('DatasetManagement');
+
+export interface DatasetManagementProps {
+  baseUrl: string;
+  includeAllLink: boolean;
+  includeNameHeader: boolean;
+  readonly vdiConfig: VdiServiceMetadata;
+  user: User;
+  config: ServiceConfig;
+  isOwner: boolean;
+  updateError?: FetchClientError;
+  removeUserDataset: typeof removeUserDataset;
+  userDatasetUpdating: boolean;
+  shareUserDatasets: typeof shareUserDatasets;
+  unshareUserDatasets: typeof unshareUserDataset;
+  updateUserDatasetDetail: typeof updateUserDatasetDetail;
+  loadUserDatasetDetailWithoutLoadingIndicator: typeof loadUserDatasetDetailWithoutLoadingIndicator;
+  sharingModalOpen: boolean;
+  sharingDatasetPending: boolean;
+  sharingError: typeof sharingError;
+  shareError?: Error;
+  sharingSuccess: typeof sharingSuccess;
+  shareSuccessful?: boolean;
+  userDataset: DatasetGetResponseBody;
+  getQuestionUrl: (q: Question) => string;
+  questionMap: Record<string, Question>;
+  workspaceTitle: string;
+  detailsPageTitle: string;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
+  updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
+  updateSharingModalState: typeof updateSharingModalState;
+  updateDatasetCommunityVisibilityError?: CommunityPromotionError;
+  updateDatasetCommunityVisibilityPending: boolean;
+  updateDatasetCommunityVisibilitySuccess: boolean;
+  updateDatasetCommunityVisibilitySuccessReset: typeof updateDatasetCommunityVisibilitySuccess;
+  updateDatasetCommunityVisibilityErrorReset: typeof updateDatasetCommunityVisibilityError;
+  datasetSize: number;
+
+  /**
+   * When the management page is viewed by the dataset uploader, this value will
+   * be present to enable the dataset update form.
+   */
+  readonly formConfigs?: DatasetFormConfigurators;
+
+  /**
+   * When the management page is viewed by the dataset uploader, this value will
+   * be present to enable the dataset update form.
+   */
+  readonly datasetTypes?: readonly DatasetTypeConfig[];
+
+  /**
+   * Whether the dataset update form modal should be rendered.
+   */
+  readonly editModal?: DatasetEditModalProps;
+
+  readonly history: History;
+
+  readonly fetchEdaStudyLinks: (wdkDatasetId: string) => EdaStudyLinks;
+}
+
+export interface DatasetEditModalProps {
+  readonly showModal: boolean;
+  readonly updateToPublic: boolean;
+}
+
+export interface DatasetAttribute {
+  attribute: string;
+  className?: string;
+  value: React.ReactNode;
+}
+
+enum DatasetUpdateAction {
+  None,
+  OpeningDefault,
+  OpeningForPromotion,
+  Closing,
+}
+
+export interface DatasetManagementState {
+  readonly datasetUpdateAction: DatasetUpdateAction;
+  readonly isCommunityModalOpen: boolean;
+  readonly refreshing: boolean;
+  readonly statusUnchanged: boolean;
+}
+
+enum CommunityPromotability {
+  CanPromote,
+  NotInstalled,
+  MissingDatasetProperties,
+  UnknownError,
+}
+
+class DatasetManagement<
+  S extends DatasetManagementState = DatasetManagementState
+> extends React.Component<DatasetManagementProps, S> {
+  constructor(props: DatasetManagementProps) {
+    super(props);
+
+    this.state = {
+      ...this.state,
+      datasetUpdateAction: DatasetUpdateAction.None,
+      isCommunityModalOpen: false,
+      refreshing: false,
+      statusUnchanged: false,
+    };
+
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+
+    this.getAttributes = this.getAttributes.bind(this);
+    this.renderAttributeList = this.renderAttributeList.bind(this);
+    this.renderHeaderSection = this.renderHeaderSection.bind(this);
+    this.renderDatasetActions = this.renderDatasetActions.bind(this);
+
+    this.openSharingModal = this.openSharingModal.bind(this);
+    this.renderFileSection = this.renderFileSection.bind(this);
+    this.closeSharingModal = this.closeSharingModal.bind(this);
+    this.renderDetailsSection = this.renderDetailsSection.bind(this);
+    this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
+  }
+
+  private hasDatasetPropertiesFile(): boolean {
+    return !isEmpty(this.props.userDataset?.files?.datasetProperties);
+  }
+
+  private testCommunityPromotability(): CommunityPromotability {
+    if (!this.isInstalled()) return CommunityPromotability.NotInstalled;
+
+    const { userDataset, datasetTypes } = this.props;
+
+    const type = findDatasetTypeConfig(userDataset.type, datasetTypes!);
+
+    if (!type) {
+      return CommunityPromotability.UnknownError;
+    }
+
+    if (type.vdiConfig.usesDataProperties) {
+      return this.hasDatasetPropertiesFile()
+        ? CommunityPromotability.CanPromote
+        : CommunityPromotability.MissingDatasetProperties;
+    }
+
+    return CommunityPromotability.CanPromote;
+  }
+
+  openSharingModal() {
+    this.props.sharingSuccess(undefined);
+    this.props.sharingError(undefined);
+    this.props.updateSharingModalState(true);
+  }
+
+  closeSharingModal() {
+    this.props.updateSharingModalState(false);
+  }
+
+  handleDelete() {
+    const { baseUrl, isOwner, userDataset, removeUserDataset, dataNoun } =
+      this.props;
+    const { shares } = userDataset;
+    const shareCount = !Array.isArray(shares) ? null : shares.length;
+
+    const question = `Are you sure you want to ${
+      isOwner ? 'delete' : 'remove'
+    } this ${dataNoun.singular.toLowerCase()}? `;
+
+    const visibilityMessage =
+      userDataset.visibility === 'public'
+        ? 'It will no longer be visible to the community'
+        : null;
+
+    const shareMessage =
+      !isOwner || !shareCount
+        ? ''
+        : `${shareCount} collaborator${
+            shareCount === 1 ? '' : 's'
+          } you've shared with will lose access.`;
+
+    const message =
+      question +
+      (visibilityMessage && shareMessage
+        ? `${visibilityMessage}, and ${shareMessage}`
+        : visibilityMessage || shareMessage);
+
+    if (window.confirm(message)) {
+      removeUserDataset(userDataset.datasetId, baseUrl);
+    }
+  }
+
+  handleRefresh() {
+    const { userDataset, loadUserDatasetDetailWithoutLoadingIndicator } =
+      this.props;
+
+    // Capture current status for comparison
+    const currentStatusJson = JSON.stringify(userDataset.status);
+
+    this.setState({ refreshing: true, statusUnchanged: false });
+
+    // Call the action - since it returns a thunk, we need to handle it properly
+    const result = loadUserDatasetDetailWithoutLoadingIndicator(
+      userDataset.datasetId
+    );
+
+    // Wait a bit to show the loading state, then check if status changed
+    setTimeout(() => {
+      const newStatusJson = JSON.stringify(this.props.userDataset.status);
+      const unchanged = currentStatusJson === newStatusJson;
+
+      this.setState({
+        refreshing: false,
+        statusUnchanged: unchanged,
+      });
+
+      // Clear the "unchanged" indicator after a few seconds
+      if (unchanged) {
+        setTimeout(() => {
+          this.setState({ statusUnchanged: false });
+        }, 3000);
+      }
+    }, 800);
+  }
+
+  renderAllDatasetsLink() {
+    if (!this.props.includeAllLink) return null;
+    return (
+      <Link className="AllDatasetsLink" to={this.props.baseUrl}>
+        <Icon fa="chevron-left" />
+        &nbsp; Manage {this.props.workspaceTitle}
+      </Link>
+    );
+  }
+
+  isInstalled(): boolean {
+    const {
+      config: { projectId },
+    } = this.props;
+    const { status } = this.props.userDataset;
+
+    if (!status || !status.import || !status.install) return false;
+
+    return (
+      status.import.status === 'complete' &&
+      status.install.some(
+        (it) =>
+          it.installTarget === projectId &&
+          it.data?.status === 'complete' &&
+          (it.meta == null || it.meta.status === 'complete')
+      )
+    );
+  }
+
+  getGrantedShares(): DatasetShareOffer[] {
+    return (
+      this.props.userDataset.shares?.filter((it) => it.status === 'grant') ?? []
+    );
+  }
+
+  getAttributes(): DatasetAttribute[] {
+    const { userDataset, isOwner, questionMap, dataNoun, config } = this.props;
+    const isInstalled = this.isInstalled();
+    const questions = Object.values(questionMap).filter(
+      (q) =>
+        q.properties !== undefined &&
+        'userDatasetType' in q.properties &&
+        q.properties.userDatasetType.includes(userDataset.type.name)
+    );
+
+    const shares = this.getGrantedShares();
+
+    return (
+      [
+        this.props.includeNameHeader
+          ? {
+              attribute: this.props.detailsPageTitle,
+              className: classify('Name'),
+              value: userDataset.name,
+            }
+          : null,
+        {
+          attribute: 'Status',
+          value: (
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
+            >
+              <span
+                className={this.state.statusUnchanged ? 'status-blink' : ''}
+              >
+                <UserDatasetStatus
+                  vdiConfig={this.props.vdiConfig.configuration}
+                  baseUrl={this.props.baseUrl}
+                  linkToDataset={false}
+                  useTooltip={false}
+                  userDataset={userDataset}
+                  projectId={this.props.config.projectId}
+                  displayName={this.props.config.displayName}
+                  dataNoun={dataNoun}
+                />
+              </span>
+              {!isInstalled && (
+                <button
+                  className="btn btn-info"
+                  onClick={this.handleRefresh}
+                  disabled={this.state.refreshing}
+                  type="button"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5ch',
+                  }}
+                  title="Refresh status"
+                  aria-label="Refresh status"
+                >
+                  <Refresh style={{ fontSize: '1.2em' }} />
+                  Refresh
+                </button>
+              )}
+            </div>
+          ),
+        },
+        !Array.isArray(questions) || !questions.length || !isInstalled
+          ? null
+          : {
+              attribute: 'Available searches',
+              value: (
+                <ul>
+                  {questions.map((q) => {
+                    // User dataset searches typically offer changing the dataset through a dropdown
+                    // Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
+                    // 'geneListUserDataset' for genelists,  hence the regex: /ataset/
+                    const ps = q.paramNames.filter((paramName) =>
+                      paramName.match(/ataset/)
+                    );
+
+                    const urlPath = [
+                      '',
+                      'search',
+                      q.outputRecordClassName,
+                      q.urlSegment,
+                    ].join('/');
+
+                    const url =
+                      urlPath +
+                      (ps.length === 1
+                        ? '?param.' +
+                          ps[0] +
+                          '=' +
+                          (userDataset.type.name === 'phenotype'
+                            ? diyUserDatasetIdToWdkRecordId(
+                                userDataset.datasetId
+                              )
+                            : userDataset.datasetId) +
+                          (userDataset.type.name === 'genelist'
+                            ? '&autoRun'
+                            : '')
+                        : '');
+
+                    return (
+                      <li key={q.fullName}>
+                        <Link to={url}>{q.displayName}</Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ),
+            },
+        userDataset.type.name === 'isasimple' || !isInstalled
+          ? null
+          : {
+              attribute: 'View',
+              value: (
+                <Link to={`/record/userdataset/EDAUD_${userDataset.datasetId}`}>
+                  User dataset details
+                </Link>
+              ),
+            },
+        {
+          attribute: 'Uploaded by',
+          value: isOwner ? 'Me' : datasetUserFullName(userDataset.owner),
+        },
+        {
+          attribute: 'Visibility',
+          value:
+            userDataset.visibility === 'public' ? (
+              <>
+                {' '}
+                <Public className="Community-visible" /> Public - accessible to
+                the public for use and download.
+              </>
+            ) : (
+              <>
+                Private - only visible to the owner and other users it has been
+                shared it with.
+              </>
+            ),
+        },
+        {
+          attribute: 'Site search status',
+          value:
+            userDataset.visibility === 'public'
+              ? 'Enabled for public datasets'
+              : 'Disabled for private datasets',
+        },
+        !isOwner || !shares.length
+          ? null
+          : {
+              attribute: 'Shared with',
+              className: classify('SharedWith'),
+              value: (
+                <ul>
+                  {shares.map((share, index) => (
+                    <li key={`${share.recipient.userId}}-${index}`}>
+                      {datasetUserFullName(share.recipient)}
+                    </li>
+                  ))}
+                </ul>
+              ),
+            },
+        {
+          attribute: 'Summary',
+          value: userDataset.summary?.split('\n').map((line, i, arr) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < arr.length - 1 && <br />}
+            </React.Fragment>
+          )),
+        },
+        {
+          attribute: 'Description',
+          value: userDataset.description?.split('\n').map((line, i, arr) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < arr.length - 1 && <br />}
+            </React.Fragment>
+          )),
+        },
+        {
+          attribute: 'Created',
+          value: <DateTime datetime={userDataset.created} />,
+        },
+        {
+          attribute: 'Data set size',
+          value: formatFileSize(this.props.datasetSize),
+        },
+        { attribute: 'ID', value: userDataset.datasetId },
+        {
+          attribute: 'Data type',
+          value: (
+            <span>
+              {userDataset.type.category} ({userDataset.type.name}{' '}
+              {userDataset.type.version})
+            </span>
+          ),
+        },
+      ] as Array<DatasetAttribute | null>
+    ).filter((attr): attr is DatasetAttribute => !!attr);
+  }
+
+  renderHeaderSection() {
+    const AllLink = this.renderAllDatasetsLink;
+    const AttributeList = this.renderAttributeList;
+    const DatasetActions = this.renderDatasetActions;
+
+    return (
+      <section id="dataset-header">
+        <AllLink />
+        <div className={classify('Header')}>
+          <div className={classify('Header-Attributes')}>
+            <AttributeList />
+          </div>
+          <div className={classify('Header-Actions')}>
+            <DatasetActions />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  renderAttributeList() {
+    const attributes = this.getAttributes();
+    return (
+      <div className={classify('AttributeList')}>
+        {attributes.map(({ attribute, value, className }) => (
+          <div
+            className={
+              classify('AttributeRow') +
+              ' ' +
+              (className ?? classify(attribute))
+            }
+            key={attribute}
+          >
+            <div className={classify('AttributeName')}>
+              <strong>{attribute}:</strong>
+            </div>
+            <div className={classify('AttributeValue')}>{value}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  renderDatasetActions() {
+    const { isOwner } = this.props;
+
+    const unpromotableMessage = (() => {
+      switch (this.testCommunityPromotability()) {
+        case CommunityPromotability.CanPromote:
+          return undefined;
+        case CommunityPromotability.NotInstalled:
+          return 'Datasets that have not been installed cannot be made public.';
+        case CommunityPromotability.MissingDatasetProperties:
+          return 'A variable annotations file is required to make this dataset public.';
+        default:
+          return 'Dataset cannot be made public at this time due to a site error.';
+      }
+    })();
+
+    const editable =
+      isOwner &&
+      !isEmpty(this.props.datasetTypes) &&
+      !isEmpty(
+        findDatasetTypeConfig(
+          this.props.userDataset.type,
+          this.props.datasetTypes!
+        )
+      );
+
+    return (
+      <div className={classify('Actions')}>
+        {!isOwner ? null : (
+          <ThemedGrantAccessButton
+            buttonText={`Grant Access to ${this.props.dataNoun.plural}`}
+            onPress={(grantType) => {
+              switch (grantType) {
+                case 'community':
+                  this.props.updateDatasetCommunityVisibilitySuccessReset(
+                    false
+                  );
+                  this.props.updateDatasetCommunityVisibilityErrorReset(
+                    undefined
+                  );
+                  this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
+                  break;
+                case 'individual':
+                  this.openSharingModal();
+                  break;
+                default:
+                  // noop
+                  break;
+              }
+            }}
+            disableCommunityReason={unpromotableMessage}
+            communityDatasetsEnabled={this.props.enablePublicUserDatasets}
+          />
+        )}
+        {editable && (
+          <ThemedUpdateButton
+            buttonText="Update metadata"
+            onPress={() =>
+              this.setState((s) => ({
+                ...s,
+                datasetUpdateAction: DatasetUpdateAction.OpeningDefault,
+              }))
+            }
+          />
+        )}
+        {isOwner ? (
+          <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
+        ) : null}
+      </div>
+    );
+  }
+
+  renderDetailsSection() {
+    const { userDataset } = this.props;
+    return (
+      <section>
+        <details>
+          <pre>
+            <code>{JSON.stringify(userDataset, null, '  ')}</code>
+          </pre>
+        </details>
+      </section>
+    );
+  }
+
+  /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+                                    Files Table
+
+   -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
+
+  renderFileSection() {
+    const { userDataset } = this.props;
+
+    return (
+      <UserDatasetFiles
+        datasetId={userDataset.datasetId}
+        dataset={userDataset}
+      />
+    );
+  }
+
+  /* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+                                General Rendering
+
+   -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
+
+  // Explicit return type is required for two reasons:
+  // 1. JSX component constraint: These functions are used as JSX components (<Section />),
+  //    which must return ReactElement | null (not the broader ReactNode type that includes
+  //    undefined, string, number, etc.).
+  // 2. Hybrid JS/TS compatibility: JavaScript subclasses (like BigwigDatasetDetail.tsx)
+  //    generate .d.ts files from JSDoc annotations. Without an explicit type here,
+  //    TypeScript's inference can conflict with JSDoc-generated types during compilation.
+  // Subclasses may return sections that are conditionally rendered (null).
+  getPageSections(): Array<() => React.ReactElement | null> {
+    return [this.renderHeaderSection, this.renderFileSection];
+  }
+
+  render() {
+    const {
+      user,
+      userDataset,
+      shareUserDatasets,
+      unshareUserDatasets,
+      dataNoun,
+      isOwner,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareSuccessful,
+      shareError,
+      updateUserDatasetDetail,
+      enablePublicUserDatasets,
+      updateDatasetCommunityVisibility,
+      updateDatasetCommunityVisibilityError,
+      updateDatasetCommunityVisibilityPending,
+      updateDatasetCommunityVisibilitySuccess,
+    } = this.props;
+
+    const AllDatasetsLink = this.renderAllDatasetsLink;
+
+    if (!userDataset)
+      return (
+        <NotFound>
+          <AllDatasetsLink />
+        </NotFound>
+      );
+
+    const modal: ReactNode = (function (self: DatasetManagement) {
+      if (!isOwner) return null;
+
+      if (sharingModalOpen) {
+        return (
+          <SharingModal
+            user={user}
+            dataset={userDataset}
+            onClose={self.closeSharingModal}
+            shareUserDatasets={shareUserDatasets}
+            context="datasetDetails"
+            unshareUserDataset={unshareUserDatasets}
+            dataNoun={dataNoun}
+            sharingDatasetPending={sharingDatasetPending}
+            shareSuccessful={shareSuccessful}
+            shareError={shareError}
+            updateUserDatasetDetail={updateUserDatasetDetail}
+          />
+        );
+      }
+
+      if (self.state.isCommunityModalOpen && enablePublicUserDatasets) {
+        return (
+          <CommunityModal
+            user={user}
+            datasets={[userDataset]}
+            context="datasetDetails"
+            onClose={() =>
+              self.setState((s) => ({ ...s, isCommunityModalOpen: false }))
+            }
+            onFixErrors={() =>
+              self.setState((s) => ({
+                ...s,
+                datasetUpdateAction: DatasetUpdateAction.OpeningForPromotion,
+                isCommunityModalOpen: false,
+              }))
+            }
+            dataNoun={dataNoun}
+            updateDatasetCommunityVisibility={(
+              datasetIds,
+              isVisibleToCommunity,
+              context
+            ) => {
+              return updateDatasetCommunityVisibility(
+                datasetIds,
+                isVisibleToCommunity,
+                context
+              );
+            }}
+            updatePending={updateDatasetCommunityVisibilityPending}
+            updateSuccessful={updateDatasetCommunityVisibilitySuccess}
+            updateError={updateDatasetCommunityVisibilityError}
+          />
+        );
+      }
+
+      const updatePath = `${self.props.baseUrl}/${userDataset.datasetId}/edit`;
+
+      switch (self.state.datasetUpdateAction) {
+        case DatasetUpdateAction.OpeningForPromotion:
+          self.props.history.push({
+            pathname: updatePath,
+            search: '?updateToPublic',
+          });
+          break;
+
+        case DatasetUpdateAction.OpeningDefault:
+          self.props.history.push({ pathname: updatePath });
+          break;
+
+        case DatasetUpdateAction.Closing:
+          self.props.history.goBack();
+          break;
+      }
+
+      if (self.props.editModal?.showModal) {
+        return (
+          <UpdateFormController
+            datasetId={userDataset.datasetId}
+            closeModal={() =>
+              self.setState((s) => ({
+                ...s,
+                datasetUpdateAction: DatasetUpdateAction.Closing,
+              }))
+            }
+            baseUrl={self.props.baseUrl}
+            vdiConfig={self.props.vdiConfig}
+            isPromotingToPublic={self.props.editModal.updateToPublic}
+            formConfigs={self.props.formConfigs!}
+            datasetTypes={self.props.datasetTypes!}
+          />
+        );
+      }
+
+      return null;
+    })(this);
+
+    return (
+      <div className={classify()}>
+        {this.getPageSections().map((Section, key) => (
+          <Section key={key} />
+        ))}
+        {modal}
+      </div>
+    );
+  }
+}
+
+DatasetManagement.contextType = WdkDependenciesContext;
+
+export default DatasetManagement;

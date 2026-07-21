@@ -10,6 +10,7 @@ import {
 } from '../Utils/WdkModel';
 import { preorderSeq } from '../Utils/TreeUtils';
 import { isQualifying, getId } from '../Utils/CategoryUtils';
+import { getTypedError } from '../Utils/Errors';
 
 // Shared types
 // ------------
@@ -273,7 +274,7 @@ export function loadAnswer(
             parameters,
           });
         } catch (error) {
-          return endLoadingWithError(error);
+          return endLoadingWithError(getTypedError(error));
         }
       },
     ];

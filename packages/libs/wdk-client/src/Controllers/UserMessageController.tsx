@@ -61,10 +61,13 @@ class UserMessageController extends PageController<MergeProps> {
               <p>
                 <strong>Note:</strong> If you were not expecting to see this
                 message, remember that all VEuPathDB component sites (
-                {formatList([...ALL_VEUPATHDB_PROJECTS], 'or')}) share the same
-                user registration system. You have likely deleted your account
-                from a sister site. If this is not the case please{' '}
-                <Link to="/contact-us">contact the helpdesk</Link>.
+                {formatList(
+                  ALL_VEUPATHDB_PROJECTS.map((it) => it.projectId),
+                  'or'
+                )}
+                ) share the same user registration system. You have likely
+                deleted your account from a sister site. If this is not the case
+                please <Link to="/contact-us">contact the helpdesk</Link>.
               </p>
             </div>
           ),

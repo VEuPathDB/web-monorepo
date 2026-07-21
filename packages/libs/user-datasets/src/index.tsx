@@ -1,40 +1,31 @@
 import './globals';
 import { vdiServiceUrl } from './constants';
+import { useEffect, useState } from 'react';
 
 import { RouteComponentProps } from 'react-router-dom';
 
-import { partial } from 'lodash';
+import { isEmpty, partial } from 'lodash';
+import reportWebVitals from './reportWebVitals';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
-import reportWebVitals from './reportWebVitals';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { projectId } from './lib/config';
 
 import UserDatasetHelp from './lib/Components/UserDatasetHelp';
-import { quotaSize } from './lib/Components/UserDatasetUtils';
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
-import { wrapWdkService } from './lib/Service';
+import { useVdiService, wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';
-import {
-  makeDatasetUploadPageConfig,
-  uploadTypeConfig,
-} from './lib/Utils/upload-config';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-const availableUploadTypes =
-  process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim().split(/\s*,\s*/g);
-
-const hasDirectUpload = makeDatasetUploadPageConfig(
-  availableUploadTypes,
-  uploadTypeConfig
-).hasDirectUpload;
+import { VdiApiConfig } from './lib/Service/Model/response-decoders';
 
 initialize({
   rootUrl,
@@ -49,14 +40,14 @@ initialize({
       exact: false,
       component: () => (
         <UserDatasetRouter
-          availableUploadTypes={availableUploadTypes}
-          detailsPageTitle="My Data Set"
+          datasetTypeConfigs={userDatasetTypeConfigs}
+          uploadFormConfigurators={uploadFormConfigurators}
+          detailsPageTitle="My Dataset"
           helpRoute="/help"
-          workspaceTitle="My Data Sets"
-          uploadTypeConfig={uploadTypeConfig}
+          workspaceTitle="My Datasets"
           dataNoun={{
-            singular: 'Data set',
-            plural: 'Data sets',
+            singular: 'Dataset',
+            plural: 'Datasets',
           }}
         />
       ),
@@ -70,14 +61,34 @@ initialize({
           []
         );
 
-        return projectName == null ? (
+        const [vdiConf, setVdiConf] = useState<VdiApiConfig>();
+        const [allowsUploads, setAllowsUploads] = useState<boolean>();
+
+        const vdi = useVdiService();
+
+        useEffect(() => {
+          if (!vdi) {
+            return;
+          }
+
+          vdi
+            .getServiceMetadata()
+            .then((it) => it.configuration.api)
+            .then(setVdiConf);
+          vdi
+            .getPluginList(projectId)
+            .then((it) => it.some((conf) => !isEmpty(conf.dataTypes)))
+            .then(setAllowsUploads);
+        }, [vdi]);
+
+        return !projectName || !vdiConf || allowsUploads === undefined ? (
           <Loading />
         ) : (
           <UserDatasetHelp
-            hasDirectUpload={hasDirectUpload}
+            hasDirectUpload={allowsUploads}
             projectName={projectName}
-            quotaSize={quotaSize}
-            workspaceTitle="My Data Sets"
+            quotaSize={vdiConf.userMaxStorageSize}
+            workspaceTitle="My Datasets"
           />
         );
       },

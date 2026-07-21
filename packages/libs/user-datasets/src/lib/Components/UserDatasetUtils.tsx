@@ -1,6 +1,6 @@
 import { MesaDataCellProps } from './List/UserDatasetList';
-import { DatasetListEntry } from '../Utils/types';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
+import { DatasetListEntry } from '../Service';
 
 export function makeClassifier(...classNames: string[]) {
   return (substyle?: string) =>
@@ -8,8 +8,6 @@ export function makeClassifier(...classNames: string[]) {
       .map((className) => `${className}${substyle ? '-' + substyle : ''}`)
       .join(' ');
 }
-
-export const quotaSize = 10737418240; // 10 G
 
 export function normalizePercentage(value: number) {
   return Math.floor(value * 100) / 100;

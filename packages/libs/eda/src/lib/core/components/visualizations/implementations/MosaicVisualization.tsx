@@ -457,7 +457,7 @@ function MosaicViz(props: Props<Options>) {
       yAxisVocabulary,
       vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
     ) as TwoByTwoDataWithCoverage | ContTableDataWithCoverage;
-  }, [dataRequestDeps]);
+  }, [visualization.descriptor.type, dataRequestDeps]);
 
   const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
   const yAxisLabel = variableDisplayWithUnit(yAxisVariable);
@@ -1102,7 +1102,7 @@ const StatsCollapsibleBannerContent = () => {
         </tr>
       </table>
       <br />
-      <b>All studies:</b>
+      <b>All datasets:</b>
       <ul>
         <li>
           <b>
@@ -1202,7 +1202,7 @@ const StatsCollapsibleBannerContent = () => {
           <b>
             <i>Risk Ratio</i>
           </b>{' '}
-          (for studies using a population at risk approach): [A / (A + B)] / [C
+          (for datasets using a population at risk approach): [A / (A + B)] / [C
           / (C + D)]
         </li>
         <ul>
@@ -1397,7 +1397,7 @@ function TwoByTwoStats(props?: {
             </tr>
             <tr>
               <td className="stats-table_leftmost-cell">
-                Cross-sectional studies
+                Cross-sectional datasets
               </td>
               <td className="stats-table_middle-cell">
                 <b>Prevalence</b>
@@ -1412,7 +1412,7 @@ function TwoByTwoStats(props?: {
             </tr>
             <tr>
               <td className="stats-table_leftmost-cell">
-                Case control & Cross-sectional studies
+                Case control & Cross-sectional datasets
               </td>
               <td className="stats-table_middle-cell">
                 <b>Odds Ratio</b>
@@ -1427,7 +1427,7 @@ function TwoByTwoStats(props?: {
             </tr>
             <tr>
               <td className="stats-table_leftmost-cell">
-                Cohort studies & Randomized controlled trials
+                Cohort datasets & Randomized controlled trials
               </td>
               <td className="stats-table_middle-cell">
                 <b>Risk Ratio</b>

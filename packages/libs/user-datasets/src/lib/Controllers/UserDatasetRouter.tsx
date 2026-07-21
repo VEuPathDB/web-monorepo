@@ -1,52 +1,65 @@
-import { ComponentType, ReactNode, useMemo } from 'react';
+import React, { ComponentType, ReactNode, useMemo } from 'react';
 
-import { RouteComponentProps, Switch, useRouteMatch } from 'react-router-dom';
+import {
+  RouteComponentProps,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
-import { makeDatasetUploadPageConfig } from '../Utils/upload-config';
-import { DatasetUploadTypeConfig, DataNoun } from '../Utils/types';
+import { DataNoun } from '../Utils/types';
 
-import UserDatasetDetailController, {
-  UserDatasetDetailProps,
-} from './UserDatasetDetailController';
+import DatasetManagementController from '../Components/Management/DatasetManagementController';
+import { DatasetManagementProps } from '../Components/Management/DatasetManagement';
+import {
+  DatasetTypeConfig,
+  filterAvailableDataTypes,
+  promoteTypeConfig,
+} from '../Common/Configuration';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useVdiMetadata } from '../Service/utils/use-vdi';
+import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
-interface Props<T1 extends string = string, T2 extends string = string> {
-  availableUploadTypes?: T1[];
+interface Props {
   detailsPageTitle: string;
   helpRoute: string;
-  uploadTypeConfig: DatasetUploadTypeConfig<T2>;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
   detailComponentsByTypeName?: Record<
     string,
-    ComponentType<UserDatasetDetailProps>
+    ComponentType<DatasetManagementProps>
   >;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
-  showExtraMetadata?: boolean; // Used in the upload form
+
+  readonly workspaceConfig: DatasetWorkspaceConfig;
 }
 
-export function UserDatasetRouter<T1 extends string, T2 extends string>({
-  availableUploadTypes,
+export const UserDatasetRoutes = {
+  NewDataset: '/new/:type?',
+  ManageDataset: '/:id',
+  EditDataset: '/:id/edit',
+} as const;
+
+export function UserDatasetRouter({
+  workspaceConfig,
   detailsPageTitle,
   helpRoute,
-  uploadTypeConfig,
   workspaceTitle,
   helpTabContents,
   detailComponentsByTypeName,
   dataNoun,
   enablePublicUserDatasets = false,
-  showExtraMetadata = false,
-}: Props<T1, T2>) {
+}: Props) {
   const { path, url } = useRouteMatch();
 
-  const uploadPageConfig = useMemo(
-    () => makeDatasetUploadPageConfig(availableUploadTypes, uploadTypeConfig),
-    [availableUploadTypes, uploadTypeConfig]
-  );
+  const vdiMetadata = useVdiMetadata();
+
+  if (!vdiMetadata) return <Loading />;
 
   return (
     <Switch>
@@ -55,7 +68,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -69,23 +82,23 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              workspaceConfig={workspaceConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              vdiMetadata={vdiMetadata}
             />
           );
         }}
       />
       <WdkRoute
-        path={path + '/new/:type?'}
+        path={path + UserDatasetRoutes.NewDataset}
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -99,51 +112,23 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              workspaceConfig={workspaceConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              vdiMetadata={vdiMetadata}
             />
           );
         }}
       />
-      {/* <WdkRoute
-        path={path + '/recent'}
-        exact={true}
-        requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
-        ) {
-          const urlParams = useMemo(() => {
-            const searchParamEntries = new URLSearchParams(
-              props.location.search
-            ).entries();
-
-            return Object.fromEntries(searchParamEntries);
-          }, [props.location.search]);
-
-          return (
-            <UserDatasetsWorkspace
-              baseUrl={url}
-              helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
-              urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
-              helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
-            />
-          );
-        }}
-      /> */}
       <WdkRoute
         path={path + '/help'}
         exact={true}
         requiresLogin={false} // uses custom guest views
         component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps<{}>
+          props: RouteComponentProps
         ) {
           const urlParams = useMemo(() => {
             const searchParamEntries = new URLSearchParams(
@@ -157,32 +142,59 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
             <UserDatasetsWorkspace
               baseUrl={url}
               helpRoute={helpRoute}
-              uploadPageConfig={uploadPageConfig}
+              workspaceConfig={workspaceConfig}
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              vdiMetadata={vdiMetadata}
             />
           );
         }}
       />
       <WdkRoute
-        path={`${path}/:id`}
-        requiresLogin
-        component={(props: RouteComponentProps<{ id: string }>) => {
+        path={[
+          path + UserDatasetRoutes.ManageDataset,
+          path + UserDatasetRoutes.EditDataset,
+        ]}
+        exact={true}
+        requiresLogin={true}
+        component={function Component(
+          props: RouteComponentProps<{ id: string }>
+        ) {
+          const history = useHistory();
+
+          const datasetTypes = filterAvailableDataTypes(
+            workspaceConfig.baseDatasetTypeConfigs,
+            vdiMetadata.plugins
+          )
+            .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
+            .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
+
+          const editModalProps = props.location.pathname.endsWith('/edit')
+            ? {
+                showModal: true,
+                updateToPublic:
+                  props.location.search.indexOf('updateToPublic') > -1,
+              }
+            : undefined;
+
           return (
-            <UserDatasetDetailController
+            <DatasetManagementController
               baseUrl={url}
               detailsPageTitle={detailsPageTitle}
               workspaceTitle={workspaceTitle}
               detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
-              showExtraMetadata={showExtraMetadata}
+              datasetTypes={datasetTypes}
+              formConfigs={workspaceConfig.uploadFormConfigurators}
+              fetchEdaStudyLinks={workspaceConfig.fetchEdaStudyMetadata}
               includeAllLink
               includeNameHeader
+              editModal={editModalProps}
+              history={history}
               {...props.match.params}
             />
           );

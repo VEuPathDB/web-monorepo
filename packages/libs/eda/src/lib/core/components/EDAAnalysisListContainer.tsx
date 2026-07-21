@@ -13,10 +13,11 @@ import {
 import { DownloadClient } from '../api/DownloadClient';
 import { ComputeClient } from '../api/ComputeClient';
 import { useDeepValue } from '../hooks/immutability';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   studyId: string;
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode;
   className?: string;
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
@@ -47,6 +48,17 @@ export function EDAAnalysisListContainer(props: Props) {
     downloadClient,
     computeClient,
   });
+
+  if (studyMetadata.error)
+    return (
+      <Banner
+        banner={{
+          type: 'warning',
+          message:
+            'The dataset you requested could not be found. Please check the URL and try again.',
+        }}
+      />
+    );
 
   if (
     contextValue.studyRecord == null ||

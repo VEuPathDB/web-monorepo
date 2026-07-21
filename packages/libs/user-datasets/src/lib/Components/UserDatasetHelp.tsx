@@ -1,8 +1,10 @@
-import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
+import { formatFileSize } from '../Utils/formatting';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 import tutStep2 from './images/tut-step-2.jpg';
 import tutStep3 from './images/tut-step-3.jpg';
+
+// Pretty sure this file is not in use, help is now coming from static content
 
 interface Props {
   hasDirectUpload: boolean;
@@ -137,7 +139,7 @@ function UserDatasetHelp({
             </li>
             <li>
               {workspaceTitle} you've created contribute to a per-user upload
-              limit/quota of <b>{bytesToHuman(quotaSize)}</b>.
+              limit/quota of <b>{formatFileSize(quotaSize)}</b>.
             </li>
             <li>
               {' '}

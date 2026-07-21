@@ -71,9 +71,13 @@ export function EdaNotebookAnalysis(props: Props) {
     ) {
       if (cell.type === 'compute') {
         const appPlugin = plugins[cell.computationName];
+        const defaultConfig = appPlugin.createDefaultConfiguration() ?? {};
+        const mergedConfig = cell.configOverrides
+          ? { ...defaultConfig, ...cell.configOverrides }
+          : defaultConfig;
         const computation = createComputation(
           cell.computationName,
-          appPlugin.createDefaultConfiguration(),
+          mergedConfig,
           [],
           [],
           cell.computationId

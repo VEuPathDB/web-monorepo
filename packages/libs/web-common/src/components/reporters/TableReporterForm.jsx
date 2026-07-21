@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   RadioList,
   Checkbox,
@@ -26,6 +25,7 @@ let TableReporterForm = (props) => {
     onSubmit,
     ontology,
     includeSubmit,
+    postTableSelectionElement
   } = props;
   let getUpdateHandler = (fieldName) =>
     util.getChangeHandler(fieldName, updateFormState, formState);
@@ -89,6 +89,7 @@ let TableReporterForm = (props) => {
               </div>
             </div>
           </div>
+          <div className="eupathdb-ReporterFormGroup">{postTableSelectionElement}</div>
         </div>
 
         {includeSubmit && (

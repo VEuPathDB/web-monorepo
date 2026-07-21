@@ -66,7 +66,13 @@ export function ReviewCard({
   );
 }
 
-export function ReviewRow({ label, value }: { label: string; value: string }) {
+export function ReviewRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: ReactNode;
+}) {
   return (
     <div style={{ display: 'flex', gap: '0.5rem' }}>
       <span style={{ color: colors.grey[600], minWidth: '10rem' }}>

@@ -94,8 +94,8 @@ export default function SubsetDownloadModal({
   // TEMP: we also don't have wide tables for user studies; so let's apply the same
   // UI for user studies
   const { isUserStudy } = studyMetadata;
-  const canLoadTablePreview =
-    currentEntity.variables.length < 1000 && !isUserStudy;
+  const canLoadTablePreview = false;
+  //currentEntity.variables.length < 1000 && !isUserStudy;
 
   const scopedFeaturedFields = useMemo(
     () =>
@@ -166,6 +166,7 @@ export default function SubsetDownloadModal({
   // Required columns
   const requiredColumns = usePromise(
     useCallback(async () => {
+      if (!canLoadTablePreview) return null;
       const data = await subsettingClient.getTabularData(
         studyMetadata.id,
         currentEntity.id,
@@ -179,7 +180,14 @@ export default function SubsetDownloadModal({
         }
       );
       return processGridData(data, entities, currentEntity)[0];
-    }, [subsettingClient, studyMetadata.id, entities, currentEntity, mergeKeys])
+    }, [
+      subsettingClient,
+      studyMetadata.id,
+      entities,
+      currentEntity,
+      mergeKeys,
+      canLoadTablePreview,
+    ])
   );
 
   const requiredColumnAccessors = requiredColumns.value?.map(
