@@ -398,10 +398,10 @@ function InternalGeneDatasetContent(props: Props) {
           />
           <img
             src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB curated dataset"
+            alt="VEuPathDB workflow dataset"
             style={{ width: '20px', height: '20px', objectFit: 'contain' }}
           />
-          {' VEuPathDB curated datasets'}
+          {' VEuPathDB workflow datasets'}
         </label>
         <label>
           <input
@@ -447,7 +447,7 @@ function InternalGeneDatasetContent(props: Props) {
                   <img
                     src={`${webAppUrl}/images/${projectId}/favicon.ico`}
                     alt=""
-                    title="VEuPathDB curated dataset"
+                    title="VEuPathDB workflow dataset"
                     style={{
                       width: '20px',
                       height: '20px',
