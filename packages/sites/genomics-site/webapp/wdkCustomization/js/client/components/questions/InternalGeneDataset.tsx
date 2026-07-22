@@ -4,7 +4,6 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  useRef,
 } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router';
@@ -17,7 +16,6 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { TabbedDisplay, Tooltip } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
-import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
 import QuestionController, {
   useSetSearchDocumentTitle,
   Props,
@@ -57,7 +55,6 @@ import { isPreferredDataset } from '../../util/preferredOrganisms';
 import { PageLoading } from '../common/PageLoading';
 
 import './InternalGeneDataset.scss';
-import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import LockIcon from '@material-ui/icons/Lock';
 import PublicIcon from '@material-ui/icons/Public';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
@@ -1143,28 +1140,5 @@ function makeLinkClickHandler(
 }
 
 function OrganismCell(props: { value: string }) {
-  const containerRef = useRef<HTMLElement>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const maxHeight: CSSProperties['maxHeight'] = isExpanded
-    ? 'fit-content'
-    : '2.5em';
-  const isOverflowingV = useIsRefOverflowingVertically(containerRef);
-  return (
-    <>
-      {safeHtml(
-        props.value,
-        { ref: containerRef, style: { maxHeight, overflow: 'hidden' } },
-        'div'
-      )}
-      {isOverflowingV && (
-        <button
-          type="button"
-          className="link"
-          onClick={() => setIsExpanded((v) => !v)}
-        >
-          {isExpanded ? 'Read less' : 'Read more'}
-        </button>
-      )}
-    </>
-  );
+  return safeHtml(props.value, undefined, 'div');
 }
