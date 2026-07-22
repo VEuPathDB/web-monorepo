@@ -265,6 +265,15 @@ function InternalGeneDatasetContent(props: Props) {
   const [showPublicUserDatasets, setShowPublicUserDatasets] = useState(true);
   const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
 
+  const sourceTypeFilterPredicate = useCallback(
+    (record: DatasourceRecord) => {
+      if (record.source === 'datasource') return showDataSources;
+      else if (record.is_public) return showPublicUserDatasets;
+      else return showPrivateUserDatasets;
+    },
+    [showDataSources, showPublicUserDatasets, showPrivateUserDatasets]
+  );
+
   const selectedDataSetRecord = useMemo(
     () =>
       getSelectedDataSetRecord(
@@ -282,10 +291,7 @@ function InternalGeneDatasetContent(props: Props) {
         displayCategoriesByName,
         showingOneRecord,
         selectedDataSetRecord,
-        preferredOrganismsEnabled,
-        showDataSources,
-        showPublicUserDatasets,
-        showPrivateUserDatasets
+        preferredOrganismsEnabled
       ),
     [
       datasourceRecords,
@@ -293,9 +299,6 @@ function InternalGeneDatasetContent(props: Props) {
       showingOneRecord,
       selectedDataSetRecord,
       preferredOrganismsEnabled,
-      showDataSources,
-      showPublicUserDatasets,
-      showPrivateUserDatasets,
     ]
   );
 
@@ -434,6 +437,7 @@ function InternalGeneDatasetContent(props: Props) {
         }
         showCount={true}
         rows={filteredDatasourceRecords}
+        filterPredicate={sourceTypeFilterPredicate}
         columns={[
           {
             key: 'source',
@@ -717,33 +721,24 @@ function getFilteredDatasourceRecords(
     | undefined,
   showingOneRecord: boolean,
   selectedDataSetRecord: DatasourceRecord | undefined,
-  preferredOrganismsEnabled: boolean,
-  showDataSources: boolean,
-  showPublicUserDatasets: boolean,
-  showPrivateUserDatasets: boolean
+  preferredOrganismsEnabled: boolean
 ) {
   if (!datasourceRecords || !questionNamesByDatasetAndCategory) {
     return undefined;
   }
 
-  // First apply source type filtering (always)
-  const sourceFiltered = datasourceRecords.filter((record) => {
-    if (record.source === 'datasource') return showDataSources;
-    else if (record.is_public) return showPublicUserDatasets;
-    else return showPrivateUserDatasets;
-  });
-
-  // Then apply other filters
   if (showingOneRecord) {
-    return sourceFiltered.filter((record) => record === selectedDataSetRecord);
+    return datasourceRecords.filter(
+      (record) => record === selectedDataSetRecord
+    );
   }
 
   // Apply organism preference filtering if enabled
   if (preferredOrganismsEnabled) {
-    return sourceFiltered.filter(({ isPreferred }) => isPreferred);
+    return datasourceRecords.filter(({ isPreferred }) => isPreferred);
   }
 
-  return sourceFiltered;
+  return datasourceRecords;
 }
 
 function getAnswerSpec(datasetCategory: string) {
