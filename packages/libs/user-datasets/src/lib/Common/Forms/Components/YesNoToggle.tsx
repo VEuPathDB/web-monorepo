@@ -4,7 +4,7 @@ import { FieldHelpText } from './FieldHelpText';
 import { InputPair } from './InputPair';
 
 export interface YesNoToggleProps {
-  readonly value: boolean | undefined;
+  readonly value: boolean | undefined | null;
   readonly setValue: Consumer<boolean>;
   readonly fieldName: string;
   readonly helpText?: ReactNode;
@@ -30,12 +30,13 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
     <FieldHelpText>{props.helpText}</FieldHelpText>
   ) : undefined;
 
-  const className = 'section-toggle'
-    + (props.className ? ' ' + props.className : '');
+  const className =
+    'section-toggle' + (props.className ? ' ' + props.className : '');
 
-  const labelClass = props.required && props.disableRequiredStyling
-    ? 'hide-required'
-    : undefined;
+  const labelClass =
+    props.required && props.disableRequiredStyling
+      ? 'hide-required'
+      : undefined;
 
   return (
     <>

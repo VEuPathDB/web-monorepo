@@ -4,6 +4,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { BadUpload, DatasetFormState } from '../StoreModules';
 import { PartialDatasetDetails } from '../Service';
+import { DatasetPublicationLookupResult } from '../StoreModules/UserDatasetUploadStoreModule';
 
 export const trackUploadProgress = makeActionCreator(
   'user-dataset-upload/upload-progress',
@@ -47,7 +48,41 @@ export const updateFormState = makeActionCreator(
 
 export const updateFormMetadata = makeActionCreator(
   'user-dataset-form/update-dataset-metadata',
-  (metadata: PartialDatasetDetails) => metadata,
+  (metadata: PartialDatasetDetails) => metadata
+);
+
+export const CitationRequested = makeActionCreator(
+  'user-dataset-form/citation-requested',
+  (id: string): Record<string, DatasetPublicationLookupResult> => ({
+    [id]: { status: 'pending' },
+  })
+);
+
+export const CitationFound = makeActionCreator(
+  'user-dataset-form/citation-found',
+  (
+    id: string,
+    content: string
+  ): Record<string, DatasetPublicationLookupResult> => ({
+    [id]: { status: 'complete', content },
+  })
+);
+
+export const CitationNotFound = makeActionCreator(
+  'user-dataset-form/citation-not-found',
+  (id: string): Record<string, DatasetPublicationLookupResult> => ({
+    [id]: { status: 'not-found' },
+  })
+);
+
+export const CitationLookupFailed = makeActionCreator(
+  'user-dataset-form/citation-lookup-error',
+  (
+    id: string,
+    error: Error
+  ): Record<string, DatasetPublicationLookupResult> => ({
+    [id]: { status: 'failed', error },
+  })
 );
 
 export type Action =
@@ -59,4 +94,8 @@ export type Action =
   | InferAction<typeof requestUploadMessages>
   | InferAction<typeof receiveBadUploadHistoryAction>
   | InferAction<typeof updateFormState>
-  | InferAction<typeof updateFormMetadata>;
+  | InferAction<typeof updateFormMetadata>
+  | InferAction<typeof CitationRequested>
+  | InferAction<typeof CitationFound>
+  | InferAction<typeof CitationNotFound>
+  | InferAction<typeof CitationLookupFailed>;

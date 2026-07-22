@@ -1,4 +1,6 @@
 export type BiConsumer<T1, T2> = (value1: T1, value2: T2) => void;
+export type BiFunction<T1, T2, R> = (value1: T1, value2: T2) => R;
+export type Producer<R> = () => R;
 export type Consumer<T> = (value: T) => void;
 export type Function<T, R> = (value: T) => R;
 export type Runnable = () => void;
@@ -9,7 +11,7 @@ export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
 
 export type Mutable<T extends object> = {
   -readonly [K in keyof T]: T[K];
-}
+};
 
 export type DatasetFileType =
   | 'upload'
