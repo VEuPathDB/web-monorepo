@@ -78,28 +78,6 @@ type UserDatasetQuestionRecord = {
   dataset_name: string;
 };
 
-type UserDatasetRecord = {
-  displayName: string;
-  attributes: {
-    name: string;
-    ref_organism_formatted: string;
-    dataset_id: string;
-    summary: string;
-    is_public: string;
-    primary_contact_name: string;
-    owner_name: string;
-    ref_organism: string;
-  };
-  tables?: {
-    ExploreWebsiteSearches?: Array<{
-      question_name: string;
-      dataset_id_param: string;
-      dataset_id: string;
-      record_class: string;
-    }>;
-  };
-};
-
 type DatasourceRecord = {
   dataset_name: string;
   display_name: string;
