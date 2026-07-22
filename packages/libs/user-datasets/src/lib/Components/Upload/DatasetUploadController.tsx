@@ -4,7 +4,10 @@ import { UploadTypeMenu } from '../UploadTypeMenu';
 import { useVdiService, VdiServiceMetadata } from '../../Service';
 import { parseDataTypeString } from '../../Common/Configuration/data-types';
 import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormControllerConfig';
-import { configureFormProps, findDatasetTypeConfig } from '../../Common/Configuration';
+import {
+  configureFormProps,
+  findDatasetTypeConfig,
+} from '../../Common/Configuration';
 import { UploadFormController } from './UploadFormController';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 

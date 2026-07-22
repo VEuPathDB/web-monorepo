@@ -15,7 +15,7 @@ export function RecommendedInformation(
 ): ReactElement {
   return (
     <>
-      <h3 style={{ marginTop: '1em'}}>Recommended Information</h3>
+      <h3 style={{ marginTop: '1em' }}>Recommended Information</h3>
       <p className="section-description">
         <i>
           Providing this information is recommended, as it will helps others
@@ -25,10 +25,15 @@ export function RecommendedInformation(
 
       <PublicationsSection
         publications={props.datasetMeta.publications ?? []}
-        setPublications={v => props.setDatasetMeta({
-          ...props.datasetMeta, publications: v
-        })}
-        isRequired={false /* TODO: when vdi backend tracks this, use that value from the metadata*/}
+        setPublications={(v) =>
+          props.setDatasetMeta({
+            ...props.datasetMeta,
+            publications: v,
+          })
+        }
+        isRequired={
+          false /* TODO: when vdi backend tracks this, use that value from the metadata*/
+        }
         jsonPath={props.jsonPath.append<PartialDatasetDetails>('publications')}
       />
 

@@ -79,7 +79,7 @@ initialize({
             .getPluginList(projectId)
             .then((it) => it.some((conf) => !isEmpty(conf.dataTypes)))
             .then(setAllowsUploads);
-        }, [vdi])
+        }, [vdi]);
 
         return !projectName || !vdiConf || allowsUploads === undefined ? (
           <Loading />

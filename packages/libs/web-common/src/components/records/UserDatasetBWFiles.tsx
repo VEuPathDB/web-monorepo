@@ -14,9 +14,10 @@ export function UserDatasetBWFiles(props: UserDatasetBWFilesProps) {
   const { record, datasetId, showHeader = true } = props;
 
   // Extract values from record attributes
-  const genome = typeof record.attributes.ref_genome_filename === 'string'
-    ? record.attributes.ref_genome_filename
-    : record.attributes.ref_genome_filename?.displayText || '';
+  const genome =
+    typeof record.attributes.ref_genome_filename === 'string'
+      ? record.attributes.ref_genome_filename
+      : record.attributes.ref_genome_filename?.displayText || '';
 
   const datasetName = record.displayName || '';
 
@@ -37,9 +38,11 @@ export function UserDatasetBWFiles(props: UserDatasetBWFilesProps) {
           },
           {}
         );
-        return res.records && res.records.length > 0 ? res.records[0].displayName : null;
+        return res.records && res.records.length > 0
+          ? res.records[0].displayName
+          : null;
       } catch (error) {
-          console.error('Failed to fetch sequence ID:', error);
+        console.error('Failed to fetch sequence ID:', error);
         return null;
       }
     },
@@ -55,9 +58,10 @@ export function UserDatasetBWFiles(props: UserDatasetBWFilesProps) {
       try {
         const files = await wdkService.vdi.getDatasetFileList(datasetId);
         // Filter for .bw files
-        const bwFiles = files?.install?.contents?.filter(
-          (file: any) => file.fileName.endsWith('.bw')
-        ) || [];
+        const bwFiles =
+          files?.install?.contents?.filter((file: any) =>
+            file.fileName.endsWith('.bw')
+          ) || [];
         return bwFiles;
       } catch (error) {
         console.error('Failed to fetch user dataset files:', error);
@@ -77,7 +81,9 @@ export function UserDatasetBWFiles(props: UserDatasetBWFilesProps) {
 
   // Generate JBrowse URL for a given .bw filename
   const getJBrowseUrl = (bwFilename: string) => {
-    return `/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/${genome}&tracks=gene,${encodeURIComponent(datasetName)} ${encodeURIComponent(bwFilename)}&highlight=&loc=${sequenceId}`;
+    return `/a/jbrowse/index.html?data=/a/service/jbrowse/tracks/${genome}&tracks=gene,${encodeURIComponent(
+      datasetName
+    )} ${encodeURIComponent(bwFilename)}&highlight=&loc=${sequenceId}`;
   };
 
   return (
@@ -92,7 +98,11 @@ export function UserDatasetBWFiles(props: UserDatasetBWFilesProps) {
         {bwFiles.map((file: any) => (
           <li key={file.fileName}>
             <code>{file.fileName}</code> -{' '}
-            <a href={getJBrowseUrl(file.fileName)} target="_blank" rel="noreferrer">
+            <a
+              href={getJBrowseUrl(file.fileName)}
+              target="_blank"
+              rel="noreferrer"
+            >
               View in Genome Browser <Icon fa="external-link" />
             </a>
           </li>
@@ -101,4 +111,3 @@ export function UserDatasetBWFiles(props: UserDatasetBWFilesProps) {
     </div>
   );
 }
-

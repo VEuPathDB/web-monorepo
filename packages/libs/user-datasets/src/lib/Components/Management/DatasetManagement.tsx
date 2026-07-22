@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 
-import { Public } from '@material-ui/icons';
+import { Public, Refresh } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
@@ -34,6 +34,7 @@ import {
   updateUserDatasetDetail,
   updateDatasetCommunityVisibilitySuccess,
   updateDatasetCommunityVisibilityError,
+  loadUserDatasetDetailWithoutLoadingIndicator,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
 import {
@@ -74,6 +75,7 @@ export interface DatasetManagementProps {
   shareUserDatasets: typeof shareUserDatasets;
   unshareUserDatasets: typeof unshareUserDataset;
   updateUserDatasetDetail: typeof updateUserDatasetDetail;
+  loadUserDatasetDetailWithoutLoadingIndicator: typeof loadUserDatasetDetailWithoutLoadingIndicator;
   sharingModalOpen: boolean;
   sharingDatasetPending: boolean;
   sharingError: typeof sharingError;
@@ -139,6 +141,8 @@ enum DatasetUpdateAction {
 export interface DatasetManagementState {
   readonly datasetUpdateAction: DatasetUpdateAction;
   readonly isCommunityModalOpen: boolean;
+  readonly refreshing: boolean;
+  readonly statusUnchanged: boolean;
 }
 
 enum CommunityPromotability {
@@ -158,9 +162,12 @@ class DatasetManagement<
       ...this.state,
       datasetUpdateAction: DatasetUpdateAction.None,
       isCommunityModalOpen: false,
+      refreshing: false,
+      statusUnchanged: false,
     };
 
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
 
     this.getAttributes = this.getAttributes.bind(this);
     this.renderAttributeList = this.renderAttributeList.bind(this);
@@ -241,6 +248,39 @@ class DatasetManagement<
     }
   }
 
+  handleRefresh() {
+    const { userDataset, loadUserDatasetDetailWithoutLoadingIndicator } =
+      this.props;
+
+    // Capture current status for comparison
+    const currentStatusJson = JSON.stringify(userDataset.status);
+
+    this.setState({ refreshing: true, statusUnchanged: false });
+
+    // Call the action - since it returns a thunk, we need to handle it properly
+    const result = loadUserDatasetDetailWithoutLoadingIndicator(
+      userDataset.datasetId
+    );
+
+    // Wait a bit to show the loading state, then check if status changed
+    setTimeout(() => {
+      const newStatusJson = JSON.stringify(this.props.userDataset.status);
+      const unchanged = currentStatusJson === newStatusJson;
+
+      this.setState({
+        refreshing: false,
+        statusUnchanged: unchanged,
+      });
+
+      // Clear the "unchanged" indicator after a few seconds
+      if (unchanged) {
+        setTimeout(() => {
+          this.setState({ statusUnchanged: false });
+        }, 3000);
+      }
+    }, 800);
+  }
+
   renderAllDatasetsLink() {
     if (!this.props.includeAllLink) return null;
     return (
@@ -300,16 +340,42 @@ class DatasetManagement<
         {
           attribute: 'Status',
           value: (
-            <UserDatasetStatus
-              vdiConfig={this.props.vdiConfig.configuration}
-              baseUrl={this.props.baseUrl}
-              linkToDataset={false}
-              useTooltip={false}
-              userDataset={userDataset}
-              projectId={this.props.config.projectId}
-              displayName={this.props.config.displayName}
-              dataNoun={dataNoun}
-            />
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
+            >
+              <span
+                className={this.state.statusUnchanged ? 'status-blink' : ''}
+              >
+                <UserDatasetStatus
+                  vdiConfig={this.props.vdiConfig.configuration}
+                  baseUrl={this.props.baseUrl}
+                  linkToDataset={false}
+                  useTooltip={false}
+                  userDataset={userDataset}
+                  projectId={this.props.config.projectId}
+                  displayName={this.props.config.displayName}
+                  dataNoun={dataNoun}
+                />
+              </span>
+              {!isInstalled && (
+                <button
+                  className="btn btn-info"
+                  onClick={this.handleRefresh}
+                  disabled={this.state.refreshing}
+                  type="button"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5ch',
+                  }}
+                  title="Refresh status"
+                  aria-label="Refresh status"
+                >
+                  <Refresh style={{ fontSize: '1.2em' }} />
+                  Refresh
+                </button>
+              )}
+            </div>
           ),
         },
         !Array.isArray(questions) || !questions.length || !isInstalled

@@ -238,7 +238,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
     });
   }, [setClosedBanners]);
 
-  const isBetaSite = window.location.hostname.startsWith('beta');
+  const isBetaSite = 1; // window.location.hostname.startsWith('beta');
 
   const branding = (
     <>

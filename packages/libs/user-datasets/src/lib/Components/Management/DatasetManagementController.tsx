@@ -10,6 +10,7 @@ import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
   loadUserDatasetDetail,
+  loadUserDatasetDetailWithoutLoadingIndicator,
   removeUserDataset,
   shareUserDatasets,
   unshareUserDataset,
@@ -44,6 +45,7 @@ import EdaDatasetManagement from './EdaDatasetManagement';
 const ActionCreators = {
   showLoginForm,
   loadUserDatasetDetail,
+  loadUserDatasetDetailWithoutLoadingIndicator,
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
@@ -219,6 +221,7 @@ class DatasetManagementController extends PageController<MergedProps> {
     } = this.props.ownProps;
     const {
       updateUserDatasetDetail,
+      loadUserDatasetDetailWithoutLoadingIndicator,
       shareUserDatasets,
       removeUserDataset,
       unshareUserDataset,
@@ -270,6 +273,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       shareUserDatasets,
       unshareUserDatasets: unshareUserDataset,
       updateUserDatasetDetail,
+      loadUserDatasetDetailWithoutLoadingIndicator,
       sharingModalOpen,
       sharingDatasetPending,
       sharingError,

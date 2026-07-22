@@ -299,7 +299,7 @@ export function RecordTableDescription(DefaultComponent) {
               </span>
             )}
             {/* hide dataset links UNTIL FIXED in GENE PAGE */}
-	   {hasTaxonId == 0 && showDatasetsLink && (
+            {hasTaxonId == 0 && showDatasetsLink && (
               <Link
                 style={{
                   fontSize: '.8em',
@@ -337,7 +337,8 @@ export function RecordTableDescription(DefaultComponent) {
               >
                 <i className="fa fa-database" /> Datasets
               </Link>
-            )}   {/* end of:  hide dataset links UNTIL FIXED in GENE PAGE */}
+            )}{' '}
+            {/* end of:  hide dataset links UNTIL FIXED in GENE PAGE */}
           </div>
         );
 

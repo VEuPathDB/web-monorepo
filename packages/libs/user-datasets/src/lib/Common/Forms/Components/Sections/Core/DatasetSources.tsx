@@ -146,8 +146,8 @@ function DataSource({
         required={required}
         placeholder="https://data.source.org/path"
         helpText={
-          'The full URL where the dataset is hosted or was obtained. URLs must'
-          + ' include a protocol prefix such as "https://", "ftp://", etc..'
+          'The full URL where the dataset is hosted or was obtained. URLs must' +
+          ' include a protocol prefix such as "https://", "ftp://", etc..'
         }
       />
 

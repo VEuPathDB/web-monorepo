@@ -9,7 +9,7 @@ import { DataFilesSection } from './DataFilesSection';
 import { BWFilesSection } from './BWFilesSection';
 
 // formatLink(): we use now <Link> that takes target="blank"
-// 
+//
 function stripXML(str) {
   let div = document.createElement('div');
   div.innerHTML = str;
@@ -106,7 +106,8 @@ export function RecordHeading(props) {
               </div>
             )}
           </dd>
-          {type_name !== 'bigwigfiles' && veupathdb_project !== 'dataExplorer' ? (
+          {type_name !== 'bigwigfiles' &&
+          veupathdb_project !== 'dataExplorer' ? (
             <>
               <dt>Explore:</dt>
               <dd>
@@ -119,7 +120,6 @@ export function RecordHeading(props) {
     </>
   );
 }
-
 
 export function RecordAttributeSection(props) {
   const { DefaultComponent, ...restProps } = props;
@@ -135,13 +135,16 @@ export function RecordAttributeSection(props) {
     case 'dataFiles':
       return <DataFilesSection {...restProps} />;
     case 'bwFiles':
-      if (props.record.attributes.type_name === 'bigwigfiles' || props.record.attributes.type_name === 'rnaseq') return <BWFilesSection {...restProps} />;
+      if (
+        props.record.attributes.type_name === 'bigwigfiles' ||
+        props.record.attributes.type_name === 'rnaseq'
+      )
+        return <BWFilesSection {...restProps} />;
       else return null; // hides attribute in right side?
     default:
       return <UserDatasetInlineAttribute {...restProps} />;
   }
 }
-
 
 // Style for attributes: Wrapper to add fixed-width labels for aligned values in UserDataset records
 //
@@ -149,7 +152,7 @@ function UserDatasetInlineAttribute(props) {
   const { attribute, record, recordClass } = props;
   const { displayName, help, name } = attribute;
 
-  return ( 
+  return (
     <div
       id={name}
       className={`wdk-RecordAttributeSectionItem wdk-RecordAttributeSectionItem__${name}`}
@@ -179,7 +182,6 @@ function UserDatasetInlineAttribute(props) {
   );
 }
 
-
 // Hide certain tables for certain data types
 //   (this does not hide the heading :(
 //
@@ -188,22 +190,21 @@ export function RecordTable(props) {
   const type_name = record.attributes.type_name;
 
   if (
-       ( (table.name === 'ExploreWebsiteEDA' || table.name === 'Variables' ) &&
-         (type_name === 'genelist' || type_name === 'bigwigfiles' || type_name === 'rnaseq') )
-       ||
-       ( table.name === 'ExploreWebsiteSearches' &&
-         (type_name === 'isasimple' || type_name === 'bigwigfiles') )
-     ) 
-  {
+    ((table.name === 'ExploreWebsiteEDA' || table.name === 'Variables') &&
+      (type_name === 'genelist' ||
+        type_name === 'bigwigfiles' ||
+        type_name === 'rnaseq')) ||
+    (table.name === 'ExploreWebsiteSearches' &&
+      (type_name === 'isasimple' || type_name === 'bigwigfiles'))
+  ) {
     return null; //could we remove heading?
   }
 
   return <props.DefaultComponent {...props} />;
 }
 
-
 // RecordMainCategorySection
-// - dataexplorer : adhoc verbiage for category "characteristics" Field Study or Clinical Trial Characteristics 
+// - dataexplorer : adhoc verbiage for category "characteristics" Field Study or Clinical Trial Characteristics
 //    when the dataset is public and there are no data provided in attr and tables in this category
 //   (is_clinical_field = 'No'). (not sure if is_clinical_field is ever false)
 // - genomics: hide table headings for certain data types
@@ -234,14 +235,14 @@ export function RecordMainCategorySection(props) {
 
   const type_name = record.attributes.type_name;
   const table_name = category?.properties?.name?.[0];
-  if ( 
-       ( (table_name === 'ExploreWebsiteEDA' || table_name === 'Variables' ) &&
-         (type_name === 'genelist' || type_name === 'bigwigfiles' || type_name === 'rnaseq') )
-       ||
-       ( table_name === 'ExploreWebsiteSearches' &&
-         (type_name === 'isasimple' || type_name === 'bigwigfiles') )
-     )
-  {
+  if (
+    ((table_name === 'ExploreWebsiteEDA' || table_name === 'Variables') &&
+      (type_name === 'genelist' ||
+        type_name === 'bigwigfiles' ||
+        type_name === 'rnaseq')) ||
+    (table_name === 'ExploreWebsiteSearches' &&
+      (type_name === 'isasimple' || type_name === 'bigwigfiles'))
+  ) {
     return null; //could we remove heading?
   }
 
@@ -249,14 +250,13 @@ export function RecordMainCategorySection(props) {
   return <props.DefaultComponent {...props} />;
 }
 
-
 // RecordNavigationSection (record page left pane)
 //
-// dataExplorer: we hide the category 'characteristics' when the dataset is public 
+// dataExplorer: we hide the category 'characteristics' when the dataset is public
 //   and there are no data provided in attr and tables in this category
 //   (is_clinical_field = 'No'). (not sure if is_clinical_field is ever false)
 //
-// genomics: hide children of category 'Link Outs' (has no name assigned)  
+// genomics: hide children of category 'Link Outs' (has no name assigned)
 //   when they dont apply to certain data types
 //
 export function RecordNavigationSection(props) {
@@ -276,7 +276,11 @@ export function RecordNavigationSection(props) {
 
     if (shouldHideCharacteristics) nodesToHide.add('characteristics');
 
-    if (type_name === 'genelist' || type_name === 'bigwigfiles' || type_name === 'rnaseq') {
+    if (
+      type_name === 'genelist' ||
+      type_name === 'bigwigfiles' ||
+      type_name === 'rnaseq'
+    ) {
       nodesToHide.add('ExploreWebsiteEDA');
       nodesToHide.add('Variables');
     }
@@ -285,10 +289,13 @@ export function RecordNavigationSection(props) {
       nodesToHide.add('ExploreWebsiteSearches');
     }
 
-    if (type_name === 'isasimple' || type_name === 'phenotype' || type_name === 'genelist') {
+    if (
+      type_name === 'isasimple' ||
+      type_name === 'phenotype' ||
+      type_name === 'genelist'
+    ) {
       nodesToHide.add('bwFiles');
     }
-
 
     if (nodesToHide.size > 0) {
       console.log('[RecordNavigationSection] nodesToHide:', [...nodesToHide]);
@@ -298,7 +305,10 @@ export function RecordNavigationSection(props) {
           .filter((node) => {
             const categoryName = node.properties?.name?.[0];
             const shouldHide = nodesToHide.has(categoryName);
-            console.log('[RecordNavigationSection] top-level category:', { categoryName, shouldHide });
+            console.log('[RecordNavigationSection] top-level category:', {
+              categoryName,
+              shouldHide,
+            });
             return !shouldHide;
           })
           .map((node) => {
@@ -308,14 +318,18 @@ export function RecordNavigationSection(props) {
               const childCategoryName = child.properties?.name?.[0];
               const childName = wdkName ?? childCategoryName;
               const shouldHide = nodesToHide.has(childName);
-              console.log('[RecordNavigationSection] child node:', { wdkName, childCategoryName, childName, shouldHide });
+              console.log('[RecordNavigationSection] child node:', {
+                wdkName,
+                childCategoryName,
+                childName,
+                shouldHide,
+              });
               return !shouldHide;
             });
             return { ...node, children: filteredChildren };
           }),
       };
     }
-
   }
 
   return (

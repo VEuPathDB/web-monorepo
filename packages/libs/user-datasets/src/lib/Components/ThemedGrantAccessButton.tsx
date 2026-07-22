@@ -35,11 +35,17 @@ export function ThemedGrantAccessButton({
       styleOverrides={buttonTheme}
       items={[
         {
-          display: disableCommunityReason
-            ? <span title={disableCommunityReason}><Share fill="black" /> Public access</span>
-            : <><Share fill="black" /> Public access</>,
+          display: disableCommunityReason ? (
+            <span title={disableCommunityReason}>
+              <Share fill="black" /> Public access
+            </span>
+          ) : (
+            <>
+              <Share fill="black" /> Public access
+            </>
+          ),
           value: 'community',
-          disabled: !!disableCommunityReason
+          disabled: !!disableCommunityReason,
         },
         {
           display: (

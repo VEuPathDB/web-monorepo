@@ -19,6 +19,4 @@ export function wrapStoreModules(storeModules: WdkStoreModules) {
   };
 }
 
-export {
-  type ClientSideUploadFormState
-} from './UserDatasetUploadStoreModule';
+export { type ClientSideUploadFormState } from './UserDatasetUploadStoreModule';

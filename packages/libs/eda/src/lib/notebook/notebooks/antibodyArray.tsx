@@ -13,7 +13,7 @@ import {
 export const antibodyArrayNotebook: PresetNotebook = {
   name: 'antibodyArrayNotebook',
   displayName: 'Antibody Array Notebook',
-  projects: [...GENOMICS_PROJECTS, 'UniDB'],
+  projects: GENOMICS_PROJECTS.map((it) => it.projectId),
   cells: withResolvedSharedInputNames([
     {
       id: 'ab_subset',

@@ -55,7 +55,12 @@ import {
 } from './Model/response-decoders';
 
 import { RootDatasetFile } from './Model/utility-types';
-import { asyncXHR, XHRError, XHRErrorType, XHRResponseType } from './utils/async-xhr';
+import {
+  asyncXHR,
+  XHRError,
+  XHRErrorType,
+  XHRResponseType,
+} from './utils/async-xhr';
 
 export type DatasetUploadFileType =
   | 'dataFile'
@@ -269,21 +274,21 @@ export class VdiService extends FetchClientWithCredentials {
     id: DatasetId,
     file: File,
     onResponse?: (status: number, message?: string) => void,
-    onProgress?: Consumer<number>,
+    onProgress?: Consumer<number>
   ): Promise<void> {
     await this.uploadFile(
       VdiRoutes.datasetDocumentFileUri(id, file.name),
       file,
       'application/octet-stream',
       onResponse,
-      onProgress,
+      onProgress
     );
   }
 
   async getDatasetVarPropsFile(
     id: DatasetId,
     file: string,
-    download: boolean = true,
+    download: boolean = true
   ): Promise<void> {
     const queryParams = download ? '' : '?download=false';
     submitAsForm({
@@ -301,7 +306,7 @@ export class VdiService extends FetchClientWithCredentials {
     file: File,
     onResponse?: BiConsumer<number, string | undefined>,
     onProgress?: Consumer<number>,
-    onFailure?: (error: Error) => void,
+    onFailure?: (error: Error) => void
   ): Promise<void> {
     await this.uploadFile(
       VdiRoutes.datasetPropertiesFileUri(id, file.name),
@@ -309,13 +314,13 @@ export class VdiService extends FetchClientWithCredentials {
       'text/tab-separated-values',
       onResponse,
       onProgress,
-      onFailure,
+      onFailure
     );
   }
 
   async deleteDatasetVarPropsFile(
     id: DatasetId,
-    fileName: string,
+    fileName: string
   ): Promise<DatasetPropertiesDeleteResponse> {
     const auth = await this.findAuthorizationHeaders();
 
@@ -324,24 +329,25 @@ export class VdiService extends FetchClientWithCredentials {
       {
         method: 'DELETE',
         headers: new Headers(auth),
-      },
+      }
     );
 
     if (response.ok || response.status === 404) {
       return undefined;
     }
 
-    const jsonBody = response.headers.get('Content-Type') === 'application/json'
-      ? await response.json()
-      : null;
+    const jsonBody =
+      response.headers.get('Content-Type') === 'application/json'
+        ? await response.json()
+        : null;
 
     return jsonBody
       ? jsonBody
-      : {
-        status: 'server-error',
-        requestId: '',
-        message: 'unknown service or connection error'
-      } as ServerErrorBody;
+      : ({
+          status: 'server-error',
+          requestId: '',
+          message: 'unknown service or connection error',
+        } as ServerErrorBody);
   }
 
   async putDatasetShareOffer(
@@ -477,7 +483,9 @@ export class VdiService extends FetchClientWithCredentials {
           break;
         default:
           console.error('unexpected server response: ', res.response);
-          throw new Error(`unexpected server response with code ${res.responseCode}`);
+          throw new Error(
+            `unexpected server response with code ${res.responseCode}`
+          );
       }
 
       if (res.responseCode >= 500) {
@@ -495,8 +503,7 @@ export class VdiService extends FetchClientWithCredentials {
           return {
             type: 400,
             message:
-              (body as SimpleServiceErrorBody).message ??
-              'file upload failed',
+              (body as SimpleServiceErrorBody).message ?? 'file upload failed',
           };
         case 422:
           return {
@@ -505,7 +512,9 @@ export class VdiService extends FetchClientWithCredentials {
           };
         default:
           console.error('unexpected server response: ', res.responseBody);
-          throw new Error(`unexpected server response with code ${res.responseCode}`);
+          throw new Error(
+            `unexpected server response with code ${res.responseCode}`
+          );
       }
     });
   }
@@ -516,7 +525,7 @@ export class VdiService extends FetchClientWithCredentials {
     contentType: string,
     onResponse?: (status: number, message?: string) => void,
     onProgress?: Consumer<number>,
-    onFailure?: (error: Error) => void,
+    onFailure?: (error: Error) => void
   ) {
     try {
       const auth = await this.findAuthorizationHeaders();
@@ -528,7 +537,7 @@ export class VdiService extends FetchClientWithCredentials {
         body: file,
         headers: auth,
         onProgress: onProgress
-          ? (sent, total) => onProgress(Math.floor(sent/total) * 100)
+          ? (sent, total) => onProgress(Math.floor(sent / total) * 100)
           : undefined,
       });
 

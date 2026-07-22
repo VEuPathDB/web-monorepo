@@ -49,6 +49,7 @@ import {
 } from '../../Actions/UserDatasetsActions';
 import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
 import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
 
 export interface DatasetListProps {
   baseUrl: string;
@@ -311,12 +312,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
         sortable: true,
         name: 'VEuPathDB project',
         renderCell(cellProps: MesaDataCellProps) {
-          const newInstallTargets = cellProps.row.installTargets.map((val) =>
-            val === 'UniDB'
-              ? 'VEuPathDB'
-              : val === 'ClinEpiDB'
-              ? 'dataExplorer'
-              : val
+          const newInstallTargets = cellProps.row.installTargets.map(
+            projectIdToDisplayName
           );
           return newInstallTargets.join(', ');
         },
@@ -621,12 +618,21 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     });
   }
 
+  // The cases exist because the column's raw data needs some specifics before comparison.
+  // The default covers columns where data[columnKey] is already a plain, directly-comparable string.
+
   getColumnSortValueMapper(columnKey: string | null) {
     if (columnKey === null) return (data: any) => data;
     switch (columnKey) {
       case 'type':
         return (data: DatasetListEntry, _: number): string =>
           data.type.category.toLowerCase();
+      case 'projects':
+        return (data: DatasetListEntry, _: number): string =>
+          (
+            projectIdToDisplayName(data.installTargets[0]) ??
+            data.installTargets[0]
+          ).toLowerCase();
       case 'owner':
         return (data: DatasetListEntry): string =>
           datasetUserFullName(data.owner).toLowerCase();

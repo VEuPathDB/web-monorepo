@@ -188,13 +188,44 @@ function Shortcuts(props) {
 }
 
 function RecordOverview(props) {
-  const { record, categoryTree } = props;
+  const {
+    record,
+    categoryTree,
+    navigationCategoriesExpanded,
+    updateSectionVisibility,
+    updateNavigationCategoryExpansion,
+  } = props;
   const instanceFields = new Set(
     preorderSeq(categoryTree)
       .filter((node) => !node.children.length)
       .map((node) => node.properties.name[0])
   );
   const isEmbedRecord = !instanceFields.has('UserComments');
+
+  // Open (and expand the sidebar nav for) a record section in the current page.
+  // Mirrors Shortcuts' handleThumbnailClick: the anchor's href handles the
+  // scroll, while this dispatch opens the CollapsibleSection (the hash-based
+  // effect in RecordUI only fires on mount/record change, not on in-page hash
+  // clicks).
+  const handleSectionLinkClick = useCallback(
+    (anchor) => {
+      const parentCategoryIds = Category.getAncestors(categoryTree, anchor).map(
+        Category.getId
+      );
+      updateSectionVisibility(anchor, true);
+      updateNavigationCategoryExpansion(
+        Array.from(
+          new Set([...navigationCategoriesExpanded, ...parentCategoryIds])
+        )
+      );
+    },
+    [
+      categoryTree,
+      navigationCategoriesExpanded,
+      updateSectionVisibility,
+      updateNavigationCategoryExpansion,
+    ]
+  );
 
   function r(attributeName) {
     if (!(attributeName in record.attributes)) {
@@ -292,6 +323,11 @@ function RecordOverview(props) {
                       : '#UserComments'
                   }
                   target={isEmbedRecord ? '_blank' : undefined}
+                  onClick={
+                    isEmbedRecord
+                      ? undefined
+                      : () => handleSectionLinkClick('UserComments')
+                  }
                 >
                   View{' '}
                   <span className="eupathdb-GeneOverviewHighlighted">
@@ -574,8 +610,10 @@ export function RecordTable(props) {
         <props.DefaultComponent {...props} childRow={SequencesTableChildRow} />
       );
 
-   // case 'UserComments':
-   //   return <UserCommentsTable {...props} />;
+    // Reinstated for the AI-comments beta demo (the vanilla "Add a comment"
+    // button is hidden in addCommentLink; only the AI-assisted button shows).
+    case 'UserComments':
+      return <UserCommentsTable {...props} />;
 
     case 'SNPsAlignment':
       return <SNPsAlignment {...props} />;
@@ -1922,7 +1960,11 @@ const TranscriptionSummaryForm = connect(
 );
 
 const UserCommentsTable = addCommentLink(
-  (props) => props.record.attributes.user_comment_link_url
+  (props) => props.record.attributes.user_comment_link_url,
+  (props) =>
+    `/user-comments/ai-gene-publication/add?stableId=${encodeURIComponent(
+      props.record.attributes.source_id
+    )}`
 );
 
 /**
