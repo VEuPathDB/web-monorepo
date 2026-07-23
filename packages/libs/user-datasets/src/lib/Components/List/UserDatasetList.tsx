@@ -618,8 +618,8 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
     });
   }
 
-  // The cases exist because the column's raw data needs some specifics before comparison.
-  // The default covers columns where data[columnKey] is already a plain, directly-comparable string.
+// The cases exist because the column's raw data needs some specifics before comparison.
+// The default covers columns where data[columnKey] is already a plain, directly-comparable string.
 
   getColumnSortValueMapper(columnKey: string | null) {
     if (columnKey === null) return (data: any) => data;
@@ -629,10 +629,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
           data.type.category.toLowerCase();
       case 'projects':
         return (data: DatasetListEntry, _: number): string =>
-          (
-            projectIdToDisplayName(data.installTargets[0]) ??
-            data.installTargets[0]
-          ).toLowerCase();
+          (projectIdToDisplayName(data.installTargets[0]) ?? data.installTargets[0]).toLowerCase();
       case 'owner':
         return (data: DatasetListEntry): string =>
           datasetUserFullName(data.owner).toLowerCase();
