@@ -94,7 +94,7 @@ export default function SubsetDownloadModal({
   // TEMP: we also don't have wide tables for user studies; so let's apply the same
   // UI for user studies
   const { isUserStudy } = studyMetadata;
-  const canLoadTablePreview = false;
+  const canLoadTablePreview = true;
   //currentEntity.variables.length < 1000 && !isUserStudy;
 
   const scopedFeaturedFields = useMemo(
