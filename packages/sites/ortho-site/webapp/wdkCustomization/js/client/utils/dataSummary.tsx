@@ -61,10 +61,8 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     name: 'NCBI Taxon ID',
     helpText: 'The URL of the NCBI site for this taxon.',
     sortable: true,
-    makeOrder: ({ ncbi_taxon_url_link }) =>
-      Number(ncbi_taxon_url_link.displayText),
-    makeSearchableString: (ncbi_taxon_url_link) =>
-      ncbi_taxon_url_link.displayText,
+    makeOrder: ({ ncbi_taxon_url_link }) => Number(ncbi_taxon_url_link.displayText),
+    makeSearchableString: (ncbi_taxon_url_link) => ncbi_taxon_url_link.displayText,
     renderCell: ({ value }) => renderAttributeValue(value),
   },
   root_taxon: {
