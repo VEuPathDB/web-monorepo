@@ -1,13 +1,17 @@
-import React from 'react';
 import { AiProvenance } from '../../../types/userCommentTypes';
 import { LazyPubmedPreview } from './LazyPubmedPreview';
 import { Row } from './CommentSectionRow';
+import { TextDiff } from './TextDiff';
 
 const GREY = '#888';
 const LINK_BLUE = '#336f99';
 
 interface Props {
   aiProvenance: AiProvenance;
+  // The published (possibly author-edited) headline/content, diffed against
+  // aiProvenance.originalHeadline/originalContent.
+  headline: string;
+  content: string;
 }
 
 // AI provenance shown below the comment content (the headline + content stay the
@@ -15,7 +19,11 @@ interface Props {
 // Rendered as labelled rows in the same style as the other references, with the
 // source under the standard "PubMed Article(s)" heading so AI and human comments
 // match.
-export function AiProvenanceSection({ aiProvenance }: Props): JSX.Element {
+export function AiProvenanceSection({
+  aiProvenance,
+  headline,
+  content,
+}: Props): JSX.Element {
   const { isEdited, source, originalHeadline, originalContent } = aiProvenance;
 
   const howSentence = isEdited
@@ -29,17 +37,17 @@ export function AiProvenanceSection({ aiProvenance }: Props): JSX.Element {
         {isEdited && (
           <details style={{ marginTop: '6px' }}>
             <summary style={{ cursor: 'pointer', color: LINK_BLUE }}>
-              Show original AI-generated text
+              Show edits to AI-generated text
             </summary>
             <div style={{ marginTop: '6px' }}>
-              <div style={{ fontWeight: 600, fontSize: '14px' }}>
-                Original AI-generated headline
+              <div style={{ fontWeight: 600, fontSize: '14px' }}>Headline</div>
+              <div style={{ marginBottom: '8px' }}>
+                <TextDiff before={originalHeadline} after={headline} />
               </div>
-              <div style={{ marginBottom: '8px' }}>{originalHeadline}</div>
-              <div style={{ fontWeight: 600, fontSize: '14px' }}>
-                Original AI-generated content
+              <div style={{ fontWeight: 600, fontSize: '14px' }}>Content</div>
+              <div>
+                <TextDiff before={originalContent} after={content} />
               </div>
-              <div style={{ whiteSpace: 'pre-wrap' }}>{originalContent}</div>
             </div>
           </details>
         )}
