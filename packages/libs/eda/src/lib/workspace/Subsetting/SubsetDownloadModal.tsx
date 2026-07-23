@@ -88,14 +88,11 @@ export default function SubsetDownloadModal({
   const featuredFields = useFeaturedFields(entities, 'download');
 
   // In order to show a sortable preview we need a wide table of data.
-  // Wide tables can only be up to 1000 columns. So if there are at least 1000
-  // vars, (1) do not ask for the wide table and (2) tell the user that we can't
-  // show a preview but everything is okay.
-  // TEMP: we also don't have wide tables for user studies; so let's apply the same
-  // UI for user studies
+  // Wide tables can only be up to 1000 columns and are no longer generated
+  // in the latest workflow.  Currently providing pageable preview but
+  // cannot support sorting for the foreseeable future.
   const { isUserStudy } = studyMetadata;
   const canLoadTablePreview = true;
-  //currentEntity.variables.length < 1000 && !isUserStudy;
 
   const scopedFeaturedFields = useMemo(
     () =>
@@ -222,6 +219,7 @@ export default function SubsetDownloadModal({
             headerFormat: 'standard',
             trimTimeFromDateVars: true,
             paging: { numRows: pageSize, offset: pageSize * pageIndex },
+            // No longer support sorting of data fields since "wide tables" are not generated
             //sorting: filteredSortBy?.map(({ id, desc }) => ({
             //  key: id.split('/')[1],
             //  direction: desc ? 'desc' : 'asc',
@@ -445,7 +443,8 @@ export default function SubsetDownloadModal({
                   activeColor: gray[900],
                 },
               }}
-              //sortable
+              // No longer support sorting of data fields since "wide tables" are not generated
+              sortable={false}
               pagination={{
                 recordsPerPage: 10,
                 controlsLocation: 'bottom',
