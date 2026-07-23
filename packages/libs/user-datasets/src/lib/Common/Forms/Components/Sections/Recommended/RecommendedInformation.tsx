@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetInformationSection } from './DatasetInformationSection';
-import { PublicationsSection } from '../Core/Publications/PublicationsSection';
 
 export interface RecommendedInformationProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -22,20 +21,6 @@ export function RecommendedInformation(
           understand, interpret, and reuse your dataset.
         </i>
       </p>
-
-      <PublicationsSection
-        publications={props.datasetMeta.publications ?? []}
-        setPublications={(v) =>
-          props.setDatasetMeta({
-            ...props.datasetMeta,
-            publications: v,
-          })
-        }
-        isRequired={
-          false /* TODO: when vdi backend tracks this, use that value from the metadata*/
-        }
-        jsonPath={props.jsonPath.append<PartialDatasetDetails>('publications')}
-      />
 
       <DatasetInformationSection {...props} />
     </>
