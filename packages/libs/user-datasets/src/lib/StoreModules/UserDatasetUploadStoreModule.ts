@@ -6,12 +6,9 @@ import {
   clearBadUpload,
   updateFormState,
   updateFormMetadata,
-  CitationRequested,
-  CitationFound,
-  CitationLookupFailed,
 } from '../Actions/UserDatasetUploadActions';
 
-import { BiFunction, Function, UserDatasetUpload } from '../Utils/types';
+import { UserDatasetUpload } from '../Utils/types';
 import {
   PartialDatasetDetails,
   DatasetUploads,
@@ -21,27 +18,8 @@ import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
 import { defaultDatasetDetails } from '../Service/Model/constructors';
-import { runIfDefined } from '../Utils/ergonomics';
 
 export const key = 'userDatasetUpload';
-
-export interface DatasetFormState {
-  /**
-   * Metadata for the dataset being created or edited in the dataset form.
-   */
-  readonly datasetDetails: PartialDatasetDetails;
-
-  /**
-   * User file upload selections.
-   */
-  readonly fileUploads: DatasetUploads;
-
-  /**
-   * Client-side state used by the dataset form that is not passed to or used by
-   * backend services.
-   */
-  readonly formMetaState: ClientSideUploadFormState;
-}
 
 /**
  * Upload form fields and flags that are only relevant to the client application
@@ -52,21 +30,13 @@ export interface ClientSideUploadFormState {
   readonly hasExternalSources: boolean | undefined;
   readonly hasDisclaimer: boolean | undefined;
   readonly hasExperimentalOrganism: boolean | undefined;
-
-  readonly publicationLookups: Record<string, DatasetPublicationLookupResult>;
 }
 
-export type DatasetPublicationLookupResult =
-  | { readonly status: 'pending' }
-  | {
-      readonly status: 'complete';
-      readonly content: string;
-    }
-  | { readonly status: 'not-found' }
-  | {
-      readonly status: 'failed';
-      readonly error: Error;
-    };
+export interface DatasetFormState {
+  readonly datasetDetails: PartialDatasetDetails;
+  readonly fileUploads: DatasetUploads;
+  readonly formMetaState: ClientSideUploadFormState;
+}
 
 export const DefaultDatasetFormState: DatasetFormState = {
   datasetDetails: defaultDatasetDetails(),
@@ -76,7 +46,6 @@ export const DefaultDatasetFormState: DatasetFormState = {
     hasExternalSources: undefined,
     hasDisclaimer: undefined,
     hasExperimentalOrganism: undefined,
-    publicationLookups: {},
   },
 };
 
@@ -86,17 +55,6 @@ export function useDatasetFormState(): DatasetFormState {
       (state: StateSlice) => state.userDatasetUpload.formState,
       isEqual
     ) ?? DefaultDatasetFormState
-  );
-}
-
-export function useDatasetFormSelector<T>(
-  selector: Function<DatasetFormState, T>,
-  eqTest: BiFunction<T | undefined, T | undefined, boolean> = isEqual
-): T | undefined {
-  return useSelector<StateSlice, T | undefined>(
-    (state: StateSlice) =>
-      runIfDefined(state.userDatasetUpload.formState, selector),
-    eqTest
   );
 }
 
@@ -133,24 +91,6 @@ export function reduce(state: State = {}, action: Action): State {
       };
     case updateFormState.type:
       return { ...state, formState: action.payload };
-
-    case CitationRequested.type:
-    case CitationFound.type:
-    case CitationLookupFailed.type:
-      return {
-        ...state,
-        formState: {
-          ...state.formState!,
-          formMetaState: {
-            ...state.formState!.formMetaState,
-            publicationLookups: {
-              ...state.formState!.formMetaState.publicationLookups,
-              ...action.payload,
-            },
-          },
-        },
-      };
-
     default:
       return state;
   }
