@@ -1,3 +1,4 @@
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { AiProvenance } from '../../../types/userCommentTypes';
 import { LazyPubmedPreview } from './LazyPubmedPreview';
 import { Row } from './CommentSectionRow';
@@ -39,7 +40,14 @@ export function AiProvenanceSection({
             <summary style={{ cursor: 'pointer', color: LINK_BLUE }}>
               Show edits to AI-generated text
             </summary>
-            <div style={{ marginTop: '6px' }}>
+            <div
+              style={{
+                marginTop: '6px',
+                border: `1px solid ${gray[400]}`,
+                borderRadius: 7,
+                padding: '10px 14px',
+              }}
+            >
               <div style={{ fontWeight: 600, fontSize: '14px' }}>Headline</div>
               <div style={{ marginBottom: '8px' }}>
                 <TextDiff before={originalHeadline} after={headline} />
