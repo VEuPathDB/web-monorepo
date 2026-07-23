@@ -445,7 +445,7 @@ export default function SubsetDownloadModal({
                   activeColor: gray[900],
                 },
               }}
-              sortable
+              //sortable
               pagination={{
                 recordsPerPage: 10,
                 controlsLocation: 'bottom',
