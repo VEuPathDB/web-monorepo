@@ -195,14 +195,16 @@ export const datasetOrganism = io.type({
 });
 export type DatasetOrganism = io.TypeOf<typeof datasetOrganism>;
 
-export const datasetPublicationType = io.union([
+const datasetPublicationType = io.union([
   io.literal('pmid'),
   io.literal('doi'),
 ]);
+export type DatasetPublicationType = io.TypeOf<typeof datasetPublicationType>;
 
 export const datasetPublication = io.intersection([
   io.type({
     identifier: io.string,
+    citation: io.string,
   }),
   io.partial({
     type: datasetPublicationType,
@@ -217,26 +219,26 @@ export const doiReference = io.intersection([
 ]);
 export type DOIReference = io.TypeOf<typeof doiReference>;
 
-export const externalIdentifiers = io.partial({
+const externalIdentifiers = io.partial({
   dois: io.array(doiReference),
   hyperlinks: io.array(datasetHyperlink),
   bioprojectIds: io.array(bioprojectId),
 });
 export type ExternalIdentifiers = io.TypeOf<typeof externalIdentifiers>;
 
-export const linkedDataset = io.type({
+const linkedDataset = io.type({
   datasetUri: io.string,
   sharesRecords: io.boolean,
 });
 export type LinkedDataset = io.TypeOf<typeof linkedDataset>;
 
-export const datasetRevisionAction = io.union([
+const datasetRevisionAction = io.union([
   io.literal('create'),
   io.literal('extend'),
   io.literal('revise'),
 ]);
 
-export const datasetRevision = io.type({
+const datasetRevision = io.type({
   action: datasetRevisionAction,
   timestamp: io.string,
   revisionId: io.string,
@@ -244,7 +246,7 @@ export const datasetRevision = io.type({
   fileListUrl: io.string,
 });
 
-export const revisionHistory = io.type({
+const revisionHistory = io.type({
   originalId: io.string,
   revisions: io.array(datasetRevision),
 });
@@ -283,34 +285,37 @@ export const datasetMetaBase = io.intersection([
 ]);
 export type DatasetMetaBase = io.TypeOf<typeof datasetMetaBase>;
 
-export const relationType = io.union([
+const relationType = io.union([
   io.literal('publication'),
   io.literal('program-name'),
   io.literal('project-name'),
 ]);
 
-export const relatedDatasetInfo = io.type({
+const datasetRelation = io.type({
+  relationType: relationType,
+  identifier: io.string,
+  type: datasetPublicationType,
+});
+
+const relatedDatasetInfo = io.type({
   datasetId: io.string,
   type: datasetTypeOutput,
   name: io.string,
   summary: io.string,
   created: io.string,
-  relatedBy: relationType,
+  relatedBy: datasetRelation,
 });
 
-export const shareOfferAction = io.union([
-  io.literal('grant'),
-  io.literal('revoke'),
-]);
+const shareOfferAction = io.union([io.literal('grant'), io.literal('revoke')]);
 export type ShareOfferAction = io.TypeOf<typeof shareOfferAction>;
 
-export const shareOffer = io.type({
+const shareOffer = io.type({
   recipient: partialUser,
   status: shareOfferAction,
 });
 export type DatasetShareOffer = io.TypeOf<typeof shareOffer>;
 
-export const datasetIdType = io.string;
+const datasetIdType = io.string;
 export type DatasetId = io.TypeOf<typeof datasetIdType>;
 
 export const userMetadata = io.type({

@@ -4,6 +4,7 @@ export type Producer<R> = () => R;
 export type Consumer<T> = (value: T) => void;
 export type Function<T, R> = (value: T) => R;
 export type Runnable = () => void;
+export type UnaryFunction<T> = Function<T, T>;
 
 export type Nullable<T> = T | null;
 

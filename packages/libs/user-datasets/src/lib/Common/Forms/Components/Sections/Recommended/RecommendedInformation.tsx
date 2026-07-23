@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetInformationSection } from './DatasetInformationSection';
-import { PublicationsSection } from './PublicationsSection';
+import { PublicationsSection } from '../Core/Publications/PublicationsSection';
 
 export interface RecommendedInformationProps {
   readonly datasetMeta: PartialDatasetDetails;

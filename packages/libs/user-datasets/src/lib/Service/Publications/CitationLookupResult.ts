@@ -1,4 +1,5 @@
-export type PublicationCitationResult =
+export type CitationLookupResult =
+  | { readonly status: 'cancelled' }
   | { readonly status: 'not-found' }
   | {
       readonly status: 'error';

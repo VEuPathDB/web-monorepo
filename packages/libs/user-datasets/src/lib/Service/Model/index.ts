@@ -26,6 +26,7 @@ export type {
   DatasetPostResponseBody,
   DatasetPropertiesDeleteResponse,
   DatasetPublication,
+  DatasetPublicationType,
   DatasetPutResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,
