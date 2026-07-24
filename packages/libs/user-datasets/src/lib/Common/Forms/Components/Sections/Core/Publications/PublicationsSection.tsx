@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement } from 'react';
 import { InputBlock } from '../../../InputBlock';
 import { PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import {
@@ -14,10 +14,14 @@ import { PublicationRow } from './PublicationRow';
 
 import './PublicationsSection.scss';
 import { UnaryFunction } from '../../../../../../Utils/types';
+import { ClientSideUploadFormState } from '../../../../../../StoreModules';
 
 export interface PublicationsSectionProps {
   readonly publications: PublicationList;
   readonly setPublications: Consumer<PublicationList>;
+
+  readonly clientState: ClientSideUploadFormState;
+  readonly setClientState: Consumer<ClientSideUploadFormState>;
 
   readonly isRequired: boolean;
 
@@ -29,16 +33,15 @@ export function PublicationsSection(
 ): ReactElement {
   const havePubs = !isEmpty(props.publications);
 
-  const [isEnabled, setEnabled] = useState<boolean | undefined>(
-    havePubs || undefined
-  );
+  const isEnabled = havePubs || props.clientState.hasPublications;
 
   const publications: PublicationList = havePubs
     ? props.publications
     : [{ isPrimary: true }];
 
   const calcRequired = (pub: Publication, i: number) =>
-    (isEnabled ?? false) && (pub.isPrimary || i === 0);
+    (isEnabled ?? false) &&
+    (pub.isPrimary || (i === 0 && publications.length === 1));
 
   return (
     <InputBlock header="Publications">
@@ -46,7 +49,11 @@ export function PublicationsSection(
         toggle={{
           label: 'Associated Publication Available?',
           enabled: isEnabled ?? null,
-          setEnabled: setEnabled,
+          setEnabled: (v) =>
+            props.setClientState({
+              ...props.clientState,
+              hasPublications: v,
+            }),
           fieldName: 'enable-publications',
           required: props.isRequired,
           helpText:

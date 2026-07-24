@@ -1,10 +1,25 @@
 import { PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import { Consumer } from '../../../../../../Utils';
 import { UnaryFunction } from '../../../../../../Utils/types';
+import { CitationLookupResult } from '../../../../../../Service/Publications';
 
 export type PublicationList = readonly Publication[];
 
 export type PublicationSetter = Consumer<UnaryFunction<Publication>>;
+
+export type CitationLookupStatus =
+  | { readonly status: 'loading' }
+  | CitationLookupResult
+  | null;
+
+/**
+ * Status[0] = Last successfully resolved status.
+ * Status[1] = Loading status.
+ */
+export type StatusTuple = [CitationLookupStatus, CitationLookupStatus];
+export function collapseStatus(status: StatusTuple): CitationLookupStatus {
+  return status[1] ?? status[0];
+}
 
 /**
  * Ensure there is exactly one primary publication in the given array of
@@ -45,21 +60,4 @@ export function fixPrimaries(
   }
 
   return pubs.map((it, i) => ({ ...it, isPrimary: i === primaryIndex }));
-}
-
-const DEBOUNCE_DELAY_MILLIS = 666;
-
-let publicationDebounceTimer = -1;
-export function debounce<T extends (...args: any[]) => void>(
-  fn: T,
-  ...args: Parameters<T>
-) {
-  if (publicationDebounceTimer > 0)
-    window.clearTimeout(publicationDebounceTimer);
-
-  publicationDebounceTimer = window.setTimeout(
-    fn,
-    DEBOUNCE_DELAY_MILLIS,
-    ...args
-  );
 }

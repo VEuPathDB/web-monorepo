@@ -8,10 +8,13 @@
       padding-top: 0 !important;
       margin-top: -0.5em;
 
+      span {
+        align-content: center;
+      }
+
       span:first-child {
         text-align: right;
         font-weight: bold;
-        align-content: center;
       }
     }
 

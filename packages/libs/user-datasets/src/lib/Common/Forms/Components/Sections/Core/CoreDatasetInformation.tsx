@@ -76,6 +76,8 @@ export function CoreDatasetInformation({
             publications: v,
           })
         }
+        clientState={clientSideState}
+        setClientState={setClientSideState}
         isRequired={
           false /* TODO: when vdi backend tracks this, use that value from the metadata*/
         }

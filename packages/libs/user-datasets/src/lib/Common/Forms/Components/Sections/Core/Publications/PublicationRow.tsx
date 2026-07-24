@@ -1,10 +1,4 @@
-import React, {
-  CSSProperties,
-  ReactElement,
-  ReactNode,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
@@ -17,8 +11,11 @@ import {
 } from '../../../../../../Service/Publications';
 import { isNonBlankString } from '../../../../../../Utils/value-tests';
 import { asError, runIfDefined } from '../../../../../../Utils/ergonomics';
-import { debounce, PublicationSetter } from './utils';
+import { CitationLookupStatus, PublicationSetter, StatusTuple } from './utils';
 import { InputPair } from '../../../InputPair';
+import { CitationLine } from './CitationLine';
+
+const DEBOUNCE_DELAY_MILLIS = 666;
 
 export interface PublicationRowProps {
   readonly index: number;
@@ -32,17 +29,6 @@ export interface PublicationRowProps {
 
   readonly jsonPath: JsonPathBuilder;
 }
-
-type CitationLookupStatus =
-  | { readonly status: 'loading' }
-  | CitationLookupResult
-  | null;
-
-/**
- * Status[0] = Last successfully resolved status.
- * Status[1] = Loading status.
- */
-type StatusTuple = [CitationLookupStatus, CitationLookupStatus];
 
 export function PublicationRow(props: PublicationRowProps): ReactElement {
   const lookupStatus = useRef<number>(0);
@@ -180,36 +166,17 @@ function applyCitation(
     : { ...publication, identifier, citation: undefined };
 }
 
-function CitationLine({ status }: { status: StatusTuple }): ReactElement {
-  let style: CSSProperties | undefined;
+let publicationDebounceTimer = -1;
+export function debounce<T extends (...args: any[]) => void>(
+  fn: T,
+  ...args: Parameters<T>
+) {
+  if (publicationDebounceTimer > 0)
+    window.clearTimeout(publicationDebounceTimer);
 
-  if (status[0] == null) {
-    style = { visibility: 'hidden' };
-  }
-
-  return (
-    <div className="field-grid publication-hint" style={style}>
-      <span>Citation:</span>
-      {formatCitationResult(status[1] ?? status[0])}
-    </div>
+  publicationDebounceTimer = window.setTimeout(
+    fn,
+    DEBOUNCE_DELAY_MILLIS,
+    ...args
   );
-}
-
-function formatCitationResult(result: CitationLookupStatus): ReactNode {
-  switch (result?.status) {
-    case 'loading':
-      return (
-        <span>
-          <i className="fa fa-spinner fa-pulse"></i> loading...
-        </span>
-      );
-    case 'not-found':
-      return <span className="soft-error">publication not found</span>;
-    case 'error':
-      return <span className="error">publication lookup failed</span>;
-    case 'success':
-      return <span>{result.citation}</span>;
-    default:
-      return <span>unset</span>;
-  }
 }
