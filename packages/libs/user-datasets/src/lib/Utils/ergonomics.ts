@@ -1,10 +1,6 @@
 import * as util from './types';
 import { Producer } from './types';
 
-export function asError(e: any): Error {
-  return e instanceof Error ? e : new Error(String(e));
-}
-
 export function runIfDefined<T, R>(
   value: T | undefined,
   fn: util.Function<T, R>

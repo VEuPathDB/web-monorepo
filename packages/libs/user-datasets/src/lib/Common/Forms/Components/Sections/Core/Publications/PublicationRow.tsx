@@ -10,7 +10,7 @@ import {
   resemblesPublicationId,
 } from '../../../../../../Service/Publications';
 import { isNonBlankString } from '../../../../../../Utils/value-tests';
-import { asError, runIfDefined } from '../../../../../../Utils/ergonomics';
+import { runIfDefined } from '../../../../../../Utils/ergonomics';
 import { CitationLookupStatus, PublicationSetter, StatusTuple } from './utils';
 import { InputPair } from '../../../InputPair';
 import { CitationLine } from './CitationLine';
@@ -83,7 +83,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
 
         const res: CitationLookupResult = {
           status: 'error',
-          error: asError(err),
+          error: err instanceof Error ? err : new Error(String(err)),
         };
 
         setCitationStatus([res, null]);
