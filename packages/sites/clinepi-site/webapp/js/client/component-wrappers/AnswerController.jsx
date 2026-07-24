@@ -1,7 +1,7 @@
 import React from 'react';
 
 import StudyAnswerController from '@veupathdb/web-common/lib/component-wrappers/StudyAnswerController';
-import UDAnswerController from './UDAnswerController';
+import UDAnswerController from '@veupathdb/web-common/lib/component-wrappers/UDAnswerController';
 
 import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 
