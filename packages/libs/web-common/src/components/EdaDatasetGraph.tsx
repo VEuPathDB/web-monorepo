@@ -67,9 +67,11 @@ export function EdaDatasetGraph(props: Props) {
   const [selectedPlotsIndex, setSelectedPlotsIndex] = useState([0]);
   const [dataTableCollapsed, setDataTableCollapsed] = useState(false);
 
-  // simple type guarding against `AttributeValue` fields not being `string`
+  // simple type guarding against `AttributeValue` fields not being `string`.
+  // NOTE: `plot_configs_json` is intentionally NOT required here — a dataset with
+  // no configured graph has a null plot config, and we still want to render its
+  // data table below. Only the identity fields are required.
   if (
-    typeof plot_configs_json !== 'string' ||
     typeof dataset_id !== 'string' ||
     typeof source_id !== 'string' ||
     typeof graph_ids !== 'string'
@@ -78,7 +80,10 @@ export function EdaDatasetGraph(props: Props) {
     return null;
   }
 
-  const plotConfigs = parseJson(plot_configs_json);
+  const plotConfigs =
+    typeof plot_configs_json === 'string'
+      ? parseJson(plot_configs_json)
+      : undefined;
   const showGraph =
     plotConfigs != null && plotConfigs.length > 0 && has_graph_data;
 
