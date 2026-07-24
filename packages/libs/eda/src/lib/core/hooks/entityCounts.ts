@@ -6,14 +6,20 @@ import {
 } from './workspace';
 import { useDebounce } from '../hooks/debouncing';
 import { isStubEntity, STUB_ENTITY } from './study';
+import { StudyEntity } from '../types/study';
 import { useCachedPromise } from './cachedPromise';
 
 export type EntityCounts = Record<string, number>;
 
-export function useEntityCounts(filters?: Filter[]) {
+// Fetches a count per given entity, in parallel; the returned promise is
+// pending until all of them resolve, so callers should only pass the
+// entities they actually need counts for.
+export function useSpecificEntityCounts(
+  filters: Filter[] | undefined,
+  entities: StudyEntity[]
+) {
   const subsettingClient = useSubsettingClient();
   const { id, rootEntity } = useStudyMetadata();
-  const entities = useStudyEntities();
 
   // debounce to prevent a back end call for each click on a filter checkbox
   const debouncedFilters = useDebounce(filters, 2000);
@@ -42,4 +48,19 @@ export function useEntityCounts(filters?: Filter[]) {
   // count-based spinners - no data integrity issues, just potentially more spinning
   // during the debounce window
   return { ...result, pending: result.pending || stalePending };
+}
+
+export function useEntityCounts(filters?: Filter[]) {
+  const entities = useStudyEntities();
+  return useSpecificEntityCounts(filters, entities);
+}
+
+// Counts only the root entity, instead of fanning out a request per entity in
+// the study. Use this whenever the root entity's count is all that's needed
+// (e.g. sample-count gating) - useEntityCounts stays pending until every
+// entity's count resolves, even if only one is ever read.
+export function useRootEntityCount(filters?: Filter[]) {
+  const { rootEntity } = useStudyMetadata();
+  const result = useSpecificEntityCounts(filters, [rootEntity]);
+  return { ...result, value: result.value?.[rootEntity.id] };
 }
