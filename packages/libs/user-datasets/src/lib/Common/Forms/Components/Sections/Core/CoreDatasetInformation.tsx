@@ -8,6 +8,7 @@ import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
+import { PublicationsSection } from './Publications/PublicationsSection';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -66,6 +67,22 @@ export function CoreDatasetInformation({
           setClientSideState={setClientSideState}
         />
       )}
+
+      <PublicationsSection
+        publications={datasetMeta.publications ?? []}
+        setPublications={(v) =>
+          setDatasetMeta({
+            ...datasetMeta,
+            publications: v,
+          })
+        }
+        clientState={clientSideState}
+        setClientState={setClientSideState}
+        isRequired={
+          false /* TODO: when vdi backend tracks this, use that value from the metadata*/
+        }
+        jsonPath={jsonPath.append<PartialDatasetDetails>('publications')}
+      />
 
       <DatasetSources
         datasetMeta={datasetMeta}

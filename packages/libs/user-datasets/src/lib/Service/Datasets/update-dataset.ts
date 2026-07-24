@@ -21,11 +21,11 @@ import {
   trackUploadProgress,
 } from '../../Actions/UserDatasetUploadActions';
 import { statusStringToCode } from '../utils/conversions';
-import { scrubDetails } from './create-dataset';
 import { ClientSideUploadFormState } from '../../StoreModules';
 import { Mutable } from '../../Utils/types';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
+import { cleanDatasetDetails } from './payload-cleanup';
 
 export interface UpdateSubmission {
   readonly vdi: VdiService;
@@ -61,6 +61,10 @@ export async function submitUpdate(
     mutableSubmission.dataDisclaimer = undefined;
   }
 
+  if (!submission.formState.hasPublications) {
+    mutableSubmission.publications = undefined;
+  }
+
   if (
     !submission.formState.hasExperimentalOrganism &&
     !isGenomicsProjectId(projectId)
@@ -74,8 +78,8 @@ export async function submitUpdate(
 
   const patchResult: PatchResult = await (async () => {
     const patchBody = convertMetaToPatch(
-      scrubDetails(submission.original),
-      scrubDetails(mutableSubmission)
+      cleanDatasetDetails(submission.original),
+      cleanDatasetDetails(mutableSubmission)
     );
 
     return patchBody == null
