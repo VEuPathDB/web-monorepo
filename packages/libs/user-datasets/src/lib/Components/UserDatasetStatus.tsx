@@ -77,7 +77,7 @@ function getStatus(
 }
 
 const queuedStatus = (dataNoun: string) => ({
-  content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
+  content: `This ${dataNoun} is queued. Please check again soon.`,
   icon: 'clock-o',
 });
 
@@ -124,7 +124,7 @@ function getUploadStatus(
 
     default:
       return {
-        content: `This ${dataNoun} is queued. Please check again soon (reload the page).`,
+        content: `This ${dataNoun} is queued. Please check again soon.`,
         icon: 'clock-o',
       };
   }
