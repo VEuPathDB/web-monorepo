@@ -44,11 +44,13 @@ export function addCommentLink(getLink, getAiLink) {
         <div>
           <div style={buttonRowStyle}>
             <a href={link} style={buttonStyle}>
+              <i className="fa fa-plus" />
               Add a comment <i className="fa fa-comment" />
             </a>
             {/* AI button is gated: shown only when the feature is enabled. */}
             {allowAiAssistedCommentCreation && (
               <Link to={getAiLink(props)} style={buttonStyle}>
+                <i className="fa fa-plus" />
                 Add AI-assisted comment <span style={betaPillStyle}>Beta</span>
               </Link>
             )}
