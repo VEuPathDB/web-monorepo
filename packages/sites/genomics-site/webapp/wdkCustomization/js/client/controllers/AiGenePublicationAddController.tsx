@@ -47,7 +47,7 @@ import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { useDebounce } from '@veupathdb/eda/lib/core/hooks/debouncing';
 
 const POLL_INTERVAL_MS = 1000;
-const PUBMED_PREVIEW_DEBOUNCE_MS = 400;
+const PUBMED_PREVIEW_DEBOUNCE_MS = 1000;
 
 const NAV_GUARD_MESSAGE =
   'You haven’t published this comment yet — leave anyway?';
