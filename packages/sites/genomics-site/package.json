@@ -102,5 +102,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "diff": "^9.0.0"
+  }
 }
