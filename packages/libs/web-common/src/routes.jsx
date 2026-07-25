@@ -171,7 +171,7 @@ export const wrapRoutes = (wdkRoutes) => [
       />
     ),
   },
-
+/* not needed anymmore, wont be providing access to /common/downloads
   {
     path: '/downloads/:path*',
     component: (props) => (
@@ -216,7 +216,7 @@ export const wrapRoutes = (wdkRoutes) => [
       />
     ),
   },
-
+*/
   {
     path: '/reset-session',
     component: ResetSessionController,
