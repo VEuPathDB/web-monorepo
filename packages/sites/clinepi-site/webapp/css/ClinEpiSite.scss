@@ -633,8 +633,8 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 /* Hide action links on Dataset page for now */
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
   .wdk-RecordActions {
-    display: none;
-  }
+  display: none;
+}
 
 /* Hide Favorites action link on record pages */
 .wdk-RecordActionItem .favorites {
@@ -715,7 +715,7 @@ button.study-action[data-study-id][data-args] * {
   padding: 0 3em;
 
   p,
-  ul,
+  > ul,
   table {
     font-size: 130%;
     margin-bottom: 1em;
