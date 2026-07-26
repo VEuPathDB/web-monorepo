@@ -6,6 +6,7 @@ import {
   DataElementConstraintRecord,
   filterConstraints,
   disabledVariablesForInput,
+  jointCandidateEntities,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
 
@@ -389,6 +390,25 @@ export function InputVariables(props: Props) {
       // Skip inputs whose constraints haven't been resolved yet (disabled === undefined
       // means "unknown", not "unrestricted" — same guard as autoSelectWhenPossible).
       if (disabled == null) continue;
+
+      // If this input shares a same-branch dependency group with another
+      // input (ex. identifierVariable + valueVariable), and more than one
+      // entity could still satisfy every input in that group, the entity
+      // choice is still ambiguous. Auto-selecting a featured variable here
+      // would arbitrarily lock the whole group onto one entity (e.g. the
+      // first one in tree order) before the user gets a chance to choose.
+      const groupIndex = dataElementDependencyOrder?.findIndex((group) =>
+        group.includes(input.name)
+      );
+      if (groupIndex != null && groupIndex !== -1) {
+        const candidates = jointCandidateEntities(
+          dataElementDependencyOrder![groupIndex],
+          entities,
+          disabledVariablesByInputName
+        );
+        if (candidates.size > 1) continue;
+      }
+
       const first = featuredFields.find((field) => {
         const [entityId, variableId] = field.term.split('/');
         if (!disabled.length) return true;
