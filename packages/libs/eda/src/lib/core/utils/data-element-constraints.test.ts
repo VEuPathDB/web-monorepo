@@ -87,6 +87,9 @@ describe('jointCandidateEntities', () => {
     );
 
     expect(result).toEqual(new Set(['pfal3d7_htseq']));
+  });
+});
+
 describe('ancestorEntitiesForEntityId - PCA overlay entity scoping', () => {
   // Mirrors the real WGCNA/PCA notebook study tree: "Sample" is the root
   // entity, with the four RNASeq/WGCNA entities as its *children* (not
