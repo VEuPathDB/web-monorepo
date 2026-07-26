@@ -367,41 +367,8 @@ function InternalGeneDatasetContent(props: Props) {
           ))}
         </div>
       </div>
-      <div className={cx('SourceFilters')}>
-        <label>
-          <input
-            type="checkbox"
-            checked={showDataSources}
-            onChange={(e) => setShowDataSources(e.target.checked)}
-          />
-          <img
-            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB workflow dataset"
-            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-          />
-          {' VEuPathDB workflow datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPublicUserDatasets}
-            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
-          />
-          <PublicIcon style={{ width: '20px', height: '20px' }} />
-          {' Public User Datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPrivateUserDatasets}
-            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
-          />
-          <LockIcon style={{ width: '20px', height: '20px' }} />
-          {' Private User Datasets'}
-        </label>
-      </div>
       <InternalGeneDatasetTable
-        searchBoxHeader="Filter Datasets:"
+        searchBoxHeader="Filter datasets:"
         emptyResultMessage={
           (
             <OrganismPreferencesWarning
@@ -566,7 +533,41 @@ function InternalGeneDatasetContent(props: Props) {
         ]}
         initialSortColumnKey="organism_prefix"
         fixedTableHeader
-      ></InternalGeneDatasetTable>
+      >
+        <div className={cx('SourceFilters')}>
+          <label>
+            <input
+              type="checkbox"
+              checked={showDataSources}
+              onChange={(e) => setShowDataSources(e.target.checked)}
+            />
+            <img
+              src={`${webAppUrl}/images/${projectId}/favicon.ico`}
+              alt="VEuPathDB curated dataset"
+              style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+            />
+            {' VEuPathDB curated datasets'}
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showPublicUserDatasets}
+              onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
+            />
+            <PublicIcon style={{ width: '20px', height: '20px' }} />
+            {' Public user datasets'}
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={showPrivateUserDatasets}
+              onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
+            />
+            <LockIcon style={{ width: '20px', height: '20px' }} />
+            {' Private user datasets'}
+          </label>
+        </div>
+      </InternalGeneDatasetTable>
       {showingRecordToggle && (
         <div
           className={cx('RecordToggle')}
