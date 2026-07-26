@@ -15,6 +15,7 @@ import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/N
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 
 import Announcements from '@veupathdb/web-common/lib/components/Announcements';
 import CookieBanner from '@veupathdb/web-common/lib/components/CookieBanner';
@@ -89,6 +90,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
       <Link to="/">
         <div className="vpdb-HeaderBranding"></div>
       </Link>
+      <img className="BetaBadge" src={betaImage} alt="beta" />
       <div className="vpdb-HeaderBrandingSuperscript">
         {buildNumber && <span>Release {buildNumber} </span>}
         <br />
