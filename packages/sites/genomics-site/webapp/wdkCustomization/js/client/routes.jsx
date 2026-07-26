@@ -162,6 +162,28 @@ function DownloadsRouteComponent() {
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = (ebrcRoutes) => [
+  // Allow guests to access dataset record pages for SEO and public visibility
+  {
+    path: '/record/dataset/:primaryKey+',
+    requiresLogin: false,
+    component: (props) => (
+      <RecordController
+        recordClass="dataset"
+        primaryKey={props.match.params.primaryKey}
+      />
+    ),
+  },
+  // Allow guests to access dataset record pages for SEO and public visibility
+  {
+    path: '/record/organism/:primaryKey+',
+    requiresLogin: false,
+    component: (props) => (
+      <RecordController
+        recordClass="dataset"
+        primaryKey={props.match.params.primaryKey}
+      />
+    ),
+  },
   // Allow guests to access All Datasets and All Organisms for SEO and public visibility
   {
     path: '/search/dataset/AllDatasets/result',
@@ -184,13 +206,14 @@ export const wrapRoutes = (ebrcRoutes) => [
     path: '/downloads',
     component: DownloadsRouteComponent,
   },
-
+/*
   {
     path: '/record/organism/:id*',
     component: (props) => (
       <Redirect to={`/record/dataset/${props.match.params.id}`} />
     ),
   },
+*/
 
   // hardcodes a redirect from the datasets table to the EDA "study explorer"
   {
