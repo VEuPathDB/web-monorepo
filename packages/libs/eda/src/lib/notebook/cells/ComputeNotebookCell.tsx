@@ -1,5 +1,5 @@
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { useEntityCounts } from '../../core/hooks/entityCounts';
+import { useSpecificEntityCounts } from '../../core/hooks/entityCounts';
 import { useDataClient, useStudyMetadata } from '../../core/hooks/workspace';
 import { isEqual } from 'lodash';
 import { RunComputeButton } from '../../core/components/computations/RunComputeButton';
@@ -95,8 +95,15 @@ export function ComputeNotebookCell(
     2000
   );
 
-  const totalCountsResult = useEntityCounts();
-  const filteredCountsResult = useEntityCounts(debouncedFilters);
+  const { rootEntity } = useStudyMetadata();
+
+  // Notebook computation plugins only ever gate/configure on the root
+  // (sample) entity's count, so fetch just the root entity here instead of
+  // fanning out over every entity in the study via useEntityCounts.
+  const totalCountsResult = useSpecificEntityCounts(undefined, [rootEntity]);
+  const filteredCountsResult = useSpecificEntityCounts(debouncedFilters, [
+    rootEntity,
+  ]);
   const plugin = plugins[computation.descriptor.type];
   if (plugin == null) throw new Error('Computation plugin not found.');
 
@@ -152,7 +159,6 @@ export function ComputeNotebookCell(
     computation.descriptor.configuration
   );
 
-  const { rootEntity } = useStudyMetadata();
   const pluginCountGating = plugin.getCountWarning?.(
     {
       root: {
