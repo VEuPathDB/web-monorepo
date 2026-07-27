@@ -226,7 +226,7 @@ export function MergedDatasetsAnswer(props: any) {
         return null;
       }
     },
-    [props.stateProps.displayInfo]
+    [] // Empty deps - only fetch once on mount, don't re-fetch on sorting/column changes
   );
 
   // Filter by source type
