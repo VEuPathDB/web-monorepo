@@ -43,15 +43,19 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
   const type = props.publication.type ?? null;
   const hasIdentifier = isNonBlankString(props.publication.identifier);
 
-  const updatePublication = (id: string, res: CitationLookupStatus) => {
+  const updatePublication = (
+    id: string,
+    type: PublicationType,
+    res: CitationLookupStatus,
+  ) => {
     props.setPublication((pub) => {
       switch (res?.status) {
         case 'success':
-          return applyCitation(pub, id, res.citation);
+          return applyCitation(pub, id, type, res.citation);
         case 'cancelled':
           return { ...pub, identifier: id };
         default:
-          return applyCitation(pub, id, undefined);
+          return applyCitation(pub, id, type, undefined);
       }
     });
   };
@@ -73,7 +77,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
           setCitationStatus([res, null]);
         }
 
-        updatePublication(id, res);
+        updatePublication(id, type, res);
       })
       .catch((err) => {
         // disregard slow response, new search has been run
@@ -87,7 +91,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
         };
 
         setCitationStatus([res, null]);
-        updatePublication(id, res);
+        updatePublication(id, type, res);
       });
   };
 
@@ -159,11 +163,12 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
 function applyCitation(
   publication: Publication,
   identifier: string,
+  type: PublicationType,
   citation: string | undefined
 ): Publication {
   return isNonBlankString(publication.identifier)
-    ? { ...publication, identifier, citation }
-    : { ...publication, identifier, citation: undefined };
+    ? { ...publication, type, identifier, citation }
+    : { ...publication, type: undefined, identifier, citation: undefined };
 }
 
 let publicationDebounceTimer = -1;
