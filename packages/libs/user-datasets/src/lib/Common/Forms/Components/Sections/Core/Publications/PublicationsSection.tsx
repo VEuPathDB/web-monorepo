@@ -9,11 +9,10 @@ import {
 import { isEmpty } from 'lodash';
 import { AddRowButton } from '../../../AddRowButton';
 import { OptionalSection } from '../../../OptionalSection';
-import { fixPrimaries, PublicationList, PublicationSetter } from './utils';
+import { fixPrimaries, PublicationList } from './utils';
 import { PublicationRow } from './PublicationRow';
 
 import './PublicationsSection.scss';
-import { UnaryFunction } from '../../../../../../Utils/types';
 import { ClientSideUploadFormState } from '../../../../../../StoreModules';
 
 export interface PublicationsSectionProps {
@@ -33,7 +32,17 @@ export function PublicationsSection(
 ): ReactElement {
   const havePubs = !isEmpty(props.publications);
 
-  const isEnabled = havePubs || props.clientState.hasPublications;
+  let isEnabled = props.clientState.hasPublications;
+
+  const setEnabled = (v: boolean) =>
+    props.setClientState({
+      ...props.clientState,
+      hasPublications: v
+    });
+
+  if (isEnabled === undefined && havePubs) {
+    setEnabled(true)
+  }
 
   const publications: PublicationList = havePubs
     ? props.publications
@@ -49,11 +58,7 @@ export function PublicationsSection(
         toggle={{
           label: 'Associated Publication Available?',
           enabled: isEnabled ?? null,
-          setEnabled: (v) =>
-            props.setClientState({
-              ...props.clientState,
-              hasPublications: v,
-            }),
+          setEnabled: setEnabled,
           fieldName: 'enable-publications',
           required: props.isRequired,
           helpText:
@@ -99,9 +104,8 @@ function makePublicationSetter(
   index: number,
   pubList: PublicationList,
   setter: Consumer<PublicationList>
-): PublicationSetter {
-  return (fn: UnaryFunction<Publication>) =>
-    setter(
-      fixPrimaries(replaceElement(pubList, index, fn(pubList[index])), index)
-    );
+): Consumer<Publication> {
+  return (pub: Publication) => {
+    setter(fixPrimaries(replaceElement(pubList, index, pub), index));
+  }
 }
