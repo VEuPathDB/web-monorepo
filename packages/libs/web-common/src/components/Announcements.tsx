@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { groupBy, noop } from 'lodash';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -10,6 +10,11 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { SubscriptionGroup } from '@veupathdb/wdk-client/lib/Service/Mixins/OauthService';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
+import {
+  updateSectionVisibility,
+  updateNavigationCategoryExpansion,
+} from '@veupathdb/wdk-client/lib/Actions/RecordActions';
+import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { makeEdaRoute } from '../routes';
 import { colors, Warning } from '@veupathdb/coreui';
 import Banner, {
@@ -34,6 +39,11 @@ interface AnnouncementRenderProps extends ServiceConfig {
   currentUser: User;
   subscriptionGroups: SubscriptionGroup[] | undefined;
   onClose?: () => void;
+  // Expand (and reveal in the sidebar nav) a collapsed record section by its
+  // anchor id. Needed because the hash-based expand effect in RecordUI only
+  // fires on mount/record change, not when a hash link is clicked on an
+  // already-mounted record page (e.g. this banner).
+  expandRecordSection: (anchor: string) => void;
 }
 
 interface SiteMessage {
@@ -191,8 +201,8 @@ const siteAnnouncements: SiteAnnouncement[] = [
     renderDisplay: ({
       location,
       record,
-      projectId,
       onClose,
+      expandRecordSection,
     }: AnnouncementRenderProps) => {
       if (!location.pathname.startsWith('/record/gene')) return null;
 
@@ -206,14 +216,18 @@ const siteAnnouncements: SiteAnnouncement[] = [
         record.record?.id?.find(({ name }) => name === 'source_id') ?? {};
       if (!geneId) return null;
 
-      const url = `https://pgb.liv.ac.uk/aisum/?db=${projectId}&gene=${geneId}`;
+      const url = '#UserComments';
+      const goToUserComments = () => {
+        expandRecordSection('UserComments');
+        window.location.hash = 'UserComments';
+      };
 
       const bannerProps: BannerProps = {
         type: 'info',
         message: (
           <div style={{ fontSize: '1.2em' }}>
             <b>New:</b>{' '}
-            <a href={url} target="_blank">
+            <a href={url} onClick={() => expandRecordSection('UserComments')}>
               Prototype AI tool
             </a>{' '}
             for summarizing what an open-access publication or uploaded PDF says
@@ -222,9 +236,7 @@ const siteAnnouncements: SiteAnnouncement[] = [
         ),
         primaryActionButtonProps: {
           text: 'Check it out!',
-          onPress: () => {
-            window.open(url, '_blank');
-          },
+          onPress: goToUserComments,
         },
       };
       return (
@@ -1398,6 +1410,33 @@ function Announcements({
   const location = useLocation();
   const data = useWdkService(fetchAnnouncementsData, []);
   const record = useSelector((state: RootState) => state.record);
+  const dispatch = useDispatch();
+
+  // Expand (and reveal in the sidebar nav) a collapsed record section by its
+  // anchor id. Mirrors GeneRecordClasses.GeneRecordClass.jsx's
+  // handleSectionLinkClick: the anchor's href handles the scroll, while this
+  // dispatch opens the CollapsibleSection, since the hash-based effect in
+  // RecordUI only fires on mount/record change, not on in-page hash clicks.
+  const expandRecordSection = useCallback(
+    (anchor: string) => {
+      const parentCategoryIds = Category.getAncestors(
+        record.categoryTree,
+        anchor
+      ).map(Category.getId);
+      dispatch(updateSectionVisibility(anchor, true));
+      dispatch(
+        updateNavigationCategoryExpansion(
+          Array.from(
+            new Set([
+              ...record.navigationCategoriesExpanded,
+              ...parentCategoryIds,
+            ])
+          )
+        )
+      );
+    },
+    [dispatch, record.categoryTree, record.navigationCategoriesExpanded]
+  );
 
   const onCloseFactory = useCallback(
     (id: string) => () => {
@@ -1463,6 +1502,7 @@ function Announcements({
                 currentUser,
                 subscriptionGroups,
                 onClose,
+                expandRecordSection,
               })
             : category !== 'information' || location.pathname === '/'
             ? toElement(announcementData)

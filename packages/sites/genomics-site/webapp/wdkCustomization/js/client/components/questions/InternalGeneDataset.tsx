@@ -1088,8 +1088,11 @@ function getCategorySearchUrl(
   internalSearchName: string
 ): string {
   if (source === 'userdataset' && datasetIdParam) {
-    // Strip EDAUD_ prefix for question parameters
-    const paramValue = datasetId.replace(/^EDAUD_/, '');
+    // Keep EDAUD_ prefix for eda_dataset_id, strip for other params
+    const paramValue =
+      datasetIdParam === 'eda_dataset_id'
+        ? datasetId
+        : datasetId.replace(/^EDAUD_/, '');
     // For UserDatasets with parameters, format as: catalogPage?params#questionName
     return `${internalSearchName}?param.${datasetIdParam}=${paramValue}#${questionName}`;
   }
