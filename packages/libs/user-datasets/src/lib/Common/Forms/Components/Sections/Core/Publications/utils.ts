@@ -1,11 +1,7 @@
 import { PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
-import { Consumer } from '../../../../../../Utils';
-import { UnaryFunction } from '../../../../../../Utils/types';
 import { CitationLookupResult } from '../../../../../../Service/Publications';
 
 export type PublicationList = readonly Publication[];
-
-export type PublicationSetter = Consumer<UnaryFunction<Publication>>;
 
 export type CitationLookupStatus =
   | { readonly status: 'loading' }
