@@ -125,6 +125,17 @@ export function MergedDatasetsAnswer(props: any) {
           return inDatasetDefaults || inUserDatasetDefaults;
         });
 
+        console.log('Dataset defaults:', datasetDefaultAttrNames);
+        console.log('UserDataset defaults:', userDatasetDefaultAttrNames);
+        console.log(
+          'Defaults to fetch:',
+          defaultsToFetch.map((a) => ({
+            displayName: a.displayName,
+            datasetAttr: a.datasetAttrName,
+            userDatasetAttr: a.userDatasetAttrName,
+          }))
+        );
+
         const harmonizedAttributes = defaultsToFetch;
 
         // Create modified attribute metadata that uses displayName as the name
@@ -187,15 +198,30 @@ export function MergedDatasetsAnswer(props: any) {
         ]);
 
         // 7. Normalize records
+        // Use allHarmonizedAttributes so all possible columns are initialized (prevents sorting errors)
+        const allHarmonizedWithDisplayNameAsKey = allHarmonizedAttributes.map(
+          (attr) => ({
+            ...attr,
+            metadata: {
+              ...attr.metadata,
+              name:
+                attr.datasetAttrName === 'primary_key' ||
+                attr.userDatasetAttrName === 'primary_key'
+                  ? 'primary_key'
+                  : attr.displayName,
+            },
+          })
+        );
+
         const normalizedDatasets = normalizeRecords(
           datasetsAnswer.records,
-          harmonizedAttributesWithDisplayNameAsKey,
+          allHarmonizedWithDisplayNameAsKey,
           'dataset'
         );
 
         const normalizedUserDatasets = normalizeRecords(
           userDatasetsAnswer.records,
-          harmonizedAttributesWithDisplayNameAsKey,
+          allHarmonizedWithDisplayNameAsKey,
           'userdataset'
         );
 
@@ -324,17 +350,40 @@ export function MergedDatasetsAnswer(props: any) {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const description = containerRef.current.querySelector(
-      '.wdk-AnswerDescription'
-    );
-    const filters = containerRef.current.querySelector(
-      '.AllDatasets-SourceFilters'
-    );
+    const moveFilters = () => {
+      const description = containerRef.current?.querySelector(
+        '.wdk-AnswerDescription'
+      );
+      const filters = containerRef.current?.querySelector(
+        '.AllDatasets-SourceFilters'
+      ) as HTMLElement;
 
-    if (description && filters) {
-      // Insert filters after description
-      description.parentNode?.insertBefore(filters, description.nextSibling);
-    }
+      if (description && filters) {
+        // Insert filters after description
+        description.parentNode?.insertBefore(filters, description.nextSibling);
+        // Show filters now that they're positioned correctly
+        filters.classList.add('positioned');
+        return true;
+      }
+      return false;
+    };
+
+    // Try immediately
+    if (moveFilters()) return;
+
+    // If that didn't work, watch for the description element to appear
+    const observer = new MutationObserver(() => {
+      if (moveFilters()) {
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(containerRef.current, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => observer.disconnect();
   }, [mergedState]);
 
   if (!mergedState) {
@@ -497,9 +546,16 @@ function normalizeRecords(
       // Use metadata.name (which is now displayName) as the key
       const targetKey = attr.metadata.name;
 
-      normalizedAttributes[targetKey] = sourceAttrName
-        ? record.attributes[sourceAttrName]
-        : null;
+      // If this record type doesn't have this attribute, set to null
+      if (!sourceAttrName) {
+        normalizedAttributes[targetKey] = null;
+        return;
+      }
+
+      // Get the value from the record (may be null/undefined)
+      const value = record.attributes[sourceAttrName];
+
+      normalizedAttributes[targetKey] = value ?? null;
     });
 
     // For UserDatasets, extract is_public attribute
