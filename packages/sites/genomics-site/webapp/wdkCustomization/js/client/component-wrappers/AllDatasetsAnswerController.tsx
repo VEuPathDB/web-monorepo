@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import RecordLink from '@veupathdb/wdk-client/lib/Views/Records/RecordLink';
+import { renderAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import {
   AttributeField,
   RecordInstance,
@@ -48,15 +50,24 @@ export function MergedDatasetsAnswer(props: any) {
   const [showDataSources, setShowDataSources] = useState(true);
   const [showPublicUserDatasets, setShowPublicUserDatasets] = useState(true);
   const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
+  const [userSelectedColumns, setUserSelectedColumns] = useState<
+    AttributeField[] | null
+  >(null);
   const DefaultComponent = props.DefaultComponent;
+
+  // Store both record classes for custom cell rendering
+  const [datasetRecordClass, setDatasetRecordClass] =
+    useState<RecordClass | null>(null);
+  const [userDatasetRecordClass, setUserDatasetRecordClass] =
+    useState<RecordClass | null>(null);
 
   const mergedState = useWdkService(
     async (wdkService) => {
       try {
         // 1. Fetch metadata (record classes, questions, and ontology)
         const [
-          datasetRecordClass,
-          userDatasetRecordClass,
+          fetchedDatasetRecordClass,
+          fetchedUserDatasetRecordClass,
           datasetQuestion,
           userDatasetQuestion,
           ontology,
@@ -68,13 +79,17 @@ export function MergedDatasetsAnswer(props: any) {
           wdkService.getCategoriesOntology(),
         ]);
 
+        // Store record classes for custom cell rendering
+        setDatasetRecordClass(fetchedDatasetRecordClass);
+        setUserDatasetRecordClass(fetchedUserDatasetRecordClass);
+
         // 2. Get attribute names with scope='results' from ontology for each record class
         const datasetResultAttributeNames = preorderSeq(ontology.tree)
           .filter(
             isQualifying({
               scope: 'results',
               targetType: 'attribute',
-              recordClassName: datasetRecordClass.fullName,
+              recordClassName: fetchedDatasetRecordClass.fullName,
             })
           )
           .map(getId)
@@ -85,23 +100,24 @@ export function MergedDatasetsAnswer(props: any) {
             isQualifying({
               scope: 'results',
               targetType: 'attribute',
-              recordClassName: userDatasetRecordClass.fullName,
+              recordClassName: fetchedUserDatasetRecordClass.fullName,
             })
           )
           .map(getId)
           .toArray();
 
         // 3. Filter attributes to only those with result scope (plus primary_key)
-        const allDatasetAttrs = datasetRecordClass.attributes.filter(
+        const allDatasetAttrs = fetchedDatasetRecordClass.attributes.filter(
           (attr) =>
             datasetResultAttributeNames.includes(attr.name) ||
             attr.name === 'primary_key'
         );
-        const allUserDatasetAttrs = userDatasetRecordClass.attributes.filter(
-          (attr) =>
-            userDatasetResultAttributeNames.includes(attr.name) ||
-            attr.name === 'primary_key'
-        );
+        const allUserDatasetAttrs =
+          fetchedUserDatasetRecordClass.attributes.filter(
+            (attr) =>
+              userDatasetResultAttributeNames.includes(attr.name) ||
+              attr.name === 'primary_key'
+          );
 
         // 3. Harmonize ALL attributes (not just defaults) so Add Columns shows everything
         const allHarmonizedAttributes = harmonizeAttributes(
@@ -125,17 +141,6 @@ export function MergedDatasetsAnswer(props: any) {
           return inDatasetDefaults || inUserDatasetDefaults;
         });
 
-        console.log('Dataset defaults:', datasetDefaultAttrNames);
-        console.log('UserDataset defaults:', userDatasetDefaultAttrNames);
-        console.log(
-          'Defaults to fetch:',
-          defaultsToFetch.map((a) => ({
-            displayName: a.displayName,
-            datasetAttr: a.datasetAttrName,
-            userDatasetAttr: a.userDatasetAttrName,
-          }))
-        );
-
         const harmonizedAttributes = defaultsToFetch;
 
         // Create modified attribute metadata that uses displayName as the name
@@ -154,12 +159,13 @@ export function MergedDatasetsAnswer(props: any) {
           }));
 
         // 4. Determine default visible attributes (union of both question defaults)
+        // Use allHarmonizedAttributes here, not the filtered defaultsToFetch
         const defaultVisibleDisplayNames = getDefaultVisibleAttributes(
           datasetQuestion,
           userDatasetQuestion,
-          datasetRecordClass,
-          userDatasetRecordClass,
-          harmonizedAttributes
+          fetchedDatasetRecordClass,
+          fetchedUserDatasetRecordClass,
+          allHarmonizedAttributes
         );
 
         // 5. Extract all native attribute names for each record type from harmonized set
@@ -270,48 +276,29 @@ export function MergedDatasetsAnswer(props: any) {
     showPrivateUserDatasets,
   ]);
 
-  // Map user's selected visible attributes (if any) to harmonized attributes
+  // Compute visible attributes - use user selections if available, otherwise defaults
   const visibleAttributes = useMemo(() => {
     if (!mergedState) return [];
 
-    // If user has selected specific columns, map them to harmonized attributes
-    if (
-      props.stateProps.visibleAttributes &&
-      props.stateProps.visibleAttributes.length > 0
-    ) {
-      // The incoming visibleAttributes may use either:
-      // - native attribute names (on initial load)
-      // - displayNames (after user changes columns via Add Columns)
-      const mapped = props.stateProps.visibleAttributes
-        .map((attr: AttributeField) => {
-          // Find the harmonized attribute by native name OR displayName
-          const harmonized = mergedState.allHarmonizedAttributes.find(
-            (h: HarmonizedAttribute) =>
-              h.datasetAttrName === attr.name ||
-              h.userDatasetAttrName === attr.name ||
-              h.displayName === attr.name
-          );
-          return harmonized ? harmonized.metadata : null;
-        })
-        .filter(
-          (attr: AttributeField | null): attr is AttributeField => attr !== null
-        );
-
-      // If we successfully mapped some attributes, use them
-      if (mapped.length > 0) {
-        return mapped;
-      }
+    // If user has explicitly selected columns, use those
+    if (userSelectedColumns) {
+      return userSelectedColumns;
     }
 
-    // Fall back to defaults (initial load or if mapping failed)
-    const defaults = mergedState.harmonizedAttributes
+    // Otherwise use our merged defaults (union of Dataset + UserDataset defaults)
+    const defaults = mergedState.allHarmonizedAttributes
       .filter((a: HarmonizedAttribute) =>
         mergedState.defaultVisibleDisplayNames.includes(a.displayName)
       )
       .map((a: HarmonizedAttribute) => a.metadata);
 
     return defaults;
-  }, [props.stateProps.visibleAttributes, mergedState]);
+  }, [mergedState, userSelectedColumns]);
+
+  // Intercept column changes to manage our own state
+  const handleChangeColumns = useCallback((newColumns: AttributeField[]) => {
+    setUserSelectedColumns(newColumns);
+  }, []);
 
   // Create a synthetic attribute for the source icon column
   const sourceIconAttribute: AttributeField = useMemo(
@@ -343,6 +330,43 @@ export function MergedDatasetsAnswer(props: any) {
   const visibleAttributesWithIcon = useMemo(() => {
     return [sourceIconAttribute, ...visibleAttributes];
   }, [sourceIconAttribute, visibleAttributes]);
+
+  // Custom cell renderer to use correct recordClass for links
+  const renderCellContent = useCallback(
+    (cellProps: any) => {
+      const { value, attribute, record, CellContent } = cellProps;
+
+      // For primary_key, use the record's dataset_source to determine correct recordClass
+      if (
+        attribute.name === 'primary_key' &&
+        datasetRecordClass &&
+        userDatasetRecordClass
+      ) {
+        const recordClassToUse =
+          (record as NormalizedRecord).dataset_source === 'dataset'
+            ? datasetRecordClass
+            : userDatasetRecordClass;
+
+        if (value == null) {
+          return null;
+        }
+
+        return (
+          <RecordLink
+            recordId={record.id}
+            recordClass={recordClassToUse}
+            className="wdk-AnswerTable-recordLink"
+          >
+            {renderAttributeValue(value)}
+          </RecordLink>
+        );
+      }
+
+      // For all other attributes, use default rendering
+      return <CellContent {...cellProps} />;
+    },
+    [datasetRecordClass, userDatasetRecordClass]
+  );
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -427,6 +451,11 @@ export function MergedDatasetsAnswer(props: any) {
       </div>
       <DefaultComponent
         {...props}
+        renderCellContent={renderCellContent}
+        dispatchProps={{
+          ...props.dispatchProps,
+          changeVisibleColumns: handleChangeColumns,
+        }}
         stateProps={{
           ...props.stateProps,
           records: filteredRecords,
@@ -579,6 +608,8 @@ function normalizeRecords(
       attributes: normalizedAttributes,
       dataset_source: sourceType,
       is_public: isPublic,
+      // Override recordClassName so links point to correct record type
+      recordClassName: sourceType === 'dataset' ? 'dataset' : 'userdataset',
     };
   });
 }
