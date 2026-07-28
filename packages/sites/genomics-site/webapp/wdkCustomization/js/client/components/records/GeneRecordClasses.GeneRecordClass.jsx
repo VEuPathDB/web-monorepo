@@ -315,7 +315,7 @@ function RecordOverview(props) {
 
             <dt className="space-above">User Comments</dt>
             <dd>
-              <div data-show-num-user-comments="+1" data-label="User Comments">
+              <div data-label="User Comments">
                 <a
                   href={
                     isEmbedRecord
@@ -329,18 +329,18 @@ function RecordOverview(props) {
                       : () => handleSectionLinkClick('UserComments')
                   }
                 >
-                  View{' '}
-                  <span className="eupathdb-GeneOverviewHighlighted">
-                    {r('num_user_comments')}
-                  </span>{' '}
-                  / Add a new one 
+                  <span data-show-num-user-comments="+1">
+                    View{' '}
+                    <span className="eupathdb-GeneOverviewHighlighted">
+                      {r('num_user_comments')}
+                    </span>{' '}
+                    / Add a new one
+                  </span>
+                  <span data-show-num-user-comments="0">
+                    Add the first <i className="fa fa-comment"></i>
+                  </span>
                 </a>
               </div>
-              <div data-show-num-user-comments="0" data-label="User Comments">
-                <a href={record.attributes['user_comment_link_url']}>
-                  Add the first <i className="fa fa-comment"></i>
-                </a>
-              </div> 
             </dd>
 
             <div data-show-apollo="1">
