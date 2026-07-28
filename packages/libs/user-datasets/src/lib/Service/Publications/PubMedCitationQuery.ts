@@ -67,6 +67,10 @@ export class PubMedCitationQuery
     }
   }
 
+  static extractPMID(value: string): string {
+    return value.trim();
+  }
+
   static resemblesPMID(value: string): boolean {
     return PubMedCitationQuery.PMID_PATTERN.test(value);
   }

@@ -3,14 +3,17 @@ import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
 } from '../../../../../../Service/Model';
-import { Consumer, JsonPathBuilder } from '../../../../../../Utils';
+import {
+  Consumer,
+  JsonPathBuilder,
+  ifDefined,
+  isNonBlankString,
+} from '../../../../../../Utils';
 import {
   CitationLookupResult,
   lookupCitation,
   resemblesPublicationId,
 } from '../../../../../../Service/Publications';
-import { isNonBlankString } from '../../../../../../Utils/value-tests';
-import { runIfDefined } from '../../../../../../Utils/ergonomics';
 import { CitationLookupStatus, StatusTuple } from './utils';
 import { InputPair } from '../../../InputPair';
 import { CitationLine } from './CitationLine';
@@ -32,8 +35,8 @@ export interface PublicationRowProps {
 
 export function PublicationRow(props: PublicationRowProps): ReactElement {
   const lookupStatus = useRef<number>(0);
-  const [citationStatus, setCitationStatus] = useState<StatusTuple>([
-    runIfDefined(props.publication.citation, (citation) => ({
+  const [citationStatus, setCitationStatus] = useState<StatusTuple>(() => [
+    ifDefined(props.publication.citation, (citation) => ({
       status: 'success',
       citation,
     })) ?? null,
@@ -43,20 +46,19 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
   const type = props.publication.type ?? null;
   const hasIdentifier = isNonBlankString(props.publication.identifier);
 
-  const updatePublication = (
-    pub: Publication,
-    res: CitationLookupStatus,
-  ) => {
-    props.setPublication((() => {
-      switch (res?.status) {
-        case 'success':
-          return applyCitation(pub, res.citation);
-        case 'cancelled':
-          return applyCitation(pub, props.publication.citation);
-        default:
-          return applyCitation(pub, undefined);
-      }
-    })());
+  const updatePublication = (pub: Publication, res: CitationLookupStatus) => {
+    props.setPublication(
+      (() => {
+        switch (res?.status) {
+          case 'success':
+            return applyCitation(pub, res.citation);
+          case 'cancelled':
+            return applyCitation(pub, props.publication.citation);
+          default:
+            return applyCitation(pub, undefined);
+        }
+      })()
+    );
   };
 
   const runLookup = (pub: Publication) => {

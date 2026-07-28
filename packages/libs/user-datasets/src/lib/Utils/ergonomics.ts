@@ -1,18 +1,24 @@
 import * as util from './types';
-import { Producer } from './types';
 
-export function runIfDefined<T, R>(
+export function ifDefined<T, R>(
   value: T | undefined,
   fn: util.Function<T, R>
 ): R | undefined {
+  console.log('runIfDefined', value);
   return value === undefined ? undefined : fn(value);
 }
 
 export function requireValue<T>(
-  value: T | null | undefined,
-  error: Producer<Error>
-): T {
-  if (value == null) throw error();
+  value: util.Possible<T>,
+  error: util.Producer<Error> = defaultRequireError
+): NonNullable<T> {
+  if (value == null) {
+    throw error();
+  }
 
   return value;
+}
+
+function defaultRequireError(): Error {
+  return new Error('illegal state: required value was null or undefined');
 }
