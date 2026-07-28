@@ -4,9 +4,6 @@ import { Consumer } from '../../../Utils';
 export interface InputBlockProps {
   readonly header: ReactNode;
   readonly className?: string;
-
-  readonly isCommunityRelated?: boolean;
-
   readonly children: ReactNode;
 }
 
@@ -24,7 +21,6 @@ export function InputBlock(props: InputBlockProps): ReactElement {
       <InputBlockHeader
         expanded={expanded}
         setExpanded={setExpanded}
-        isCommunityRelated={props.isCommunityRelated}
       >
         {props.header}
       </InputBlockHeader>
@@ -38,7 +34,6 @@ interface InputBlockHeaderProps {
   readonly expanded: boolean;
   readonly setExpanded: Consumer<boolean>;
   readonly children: ReactNode;
-  readonly isCommunityRelated?: boolean;
 }
 
 function InputBlockHeader(props: InputBlockHeaderProps) {

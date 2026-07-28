@@ -103,21 +103,29 @@ export class VdiService extends FetchClientWithCredentials {
     dispatchUploadProgress?: Consumer<number>,
     dispatchPageRedirect?: Consumer<DatasetPostResponseBody>,
     dispatchBadUpload?: Consumer<BadUpload>
-  ) {
-    await this.uploadDataset<DatasetPostResponse>(
-      VdiRoutes.DatasetListPath,
-      'POST',
-      details,
-      uploads,
-      ioTransformer(datasetPostResponse),
-      dispatchUploadProgress
-    ).then((res) => {
-      if (dispatchPageRedirect && 'datasetId' in res) {
-        dispatchPageRedirect(res);
-      } else if (dispatchBadUpload && 'type' in res) {
-        dispatchBadUpload(res);
-      }
-    });
+  ): Promise<DatasetId | BadUpload> {
+    let result: DatasetPostResponse | BadUpload;
+    try {
+      result = await this.uploadDataset(
+        VdiRoutes.DatasetListPath,
+        'POST',
+        details,
+        uploads,
+        ioTransformer(datasetPostResponse),
+        dispatchUploadProgress
+      );
+    } catch (e: any) {
+      console.error('failed to submit dataset upload', e);
+      throw e;
+    }
+
+    if ('datasetId' in result) {
+      dispatchPageRedirect?.(result);
+      return result.datasetId;
+    }
+
+    dispatchBadUpload?.(result as BadUpload);
+    return result as BadUpload;
   }
 
   /**

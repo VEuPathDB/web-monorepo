@@ -1,11 +1,9 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
-import { FieldHelpText, InputBlock, YesNoToggle } from '../../index';
+import { FieldHelpText, InputBlock } from '../../index';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
-import { DatasetSourcesToggleID } from './DatasetSources';
-
-export const DatasetUsageToggleID = 'dataset-usage-toggle';
+import { OptionalSection } from '../../OptionalSection';
 
 export interface DatasetUsageProps {
   readonly clientSideState: ClientSideUploadFormState;
@@ -39,28 +37,21 @@ export function DatasetUsage({
   const isPublic = datasetMeta.visibility === 'public';
 
   return (
-    <InputBlock header="Dataset Usage" isCommunityRelated={true}>
-      <div className={'field-grid' + disabledClass}>
-        <label
-          className={'not-disabled' + (isPublic ? ' required' : '')}
-          id={DatasetUsageToggleID}
-        >
-          Any Reuse Considerations?
-        </label>
-        <YesNoToggle
-          value={hasDisclaimer}
-          setValue={setEnabled}
-          fieldName="enable-disclaimer"
-          className="not-disabled"
-          required={isPublic}
-          disableRequiredStyling={true}
-          helpText={
-            'Whether this dataset includes important notes, caveats, or' +
-            ' limitations that users should review before interpreting or' +
-            ' reusing the data.'
-          }
-        />
-
+    <InputBlock header="Dataset Usage">
+      <OptionalSection
+        toggle={{
+          label: 'Any Reuse Considerations?',
+          required: isPublic,
+          fieldName: 'enable-disclaimer',
+          enabled: hasDisclaimer ?? null,
+          setEnabled: setEnabled,
+          helpText:
+            'Whether this dataset includes important notes, caveats,' +
+            ' or limitations that users should review before interpreting or' +
+            ' reusing the data.',
+        }}
+        className="field-grid"
+      >
         <label
           htmlFor={fieldName}
           className={hasDisclaimer ? 'required' : undefined}
@@ -87,7 +78,7 @@ export function DatasetUsage({
           potential biases, changes in data collection, or other factors that
           may affect analysis. (maximum 1000 characters).
         </FieldHelpText>
-      </div>
+      </OptionalSection>
     </InputBlock>
   );
 }

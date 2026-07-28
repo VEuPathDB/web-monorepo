@@ -1,6 +1,10 @@
 import { useCallback, useMemo } from 'react';
-import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { useDataClient, useStudyEntities } from '../../core/hooks/workspace';
+import { useSpecificEntityCounts } from '../../core/hooks/entityCounts';
+import {
+  useDataClient,
+  useStudyEntities,
+  useStudyMetadata,
+} from '../../core/hooks/workspace';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { plugins } from '../../core/components/computations/plugins';
 import { PlotContainerStyleOverrides } from '../../core/components/visualizations/VisualizationTypes';
@@ -31,9 +35,17 @@ export function VisualizationNotebookCell(
 
   const entities = useStudyEntities();
   const geoConfigs = useGeoConfig(entities);
-  const totalCountsResult = useEntityCounts();
-  const filteredCountsResult = useEntityCounts(
-    analysis.descriptor.subset.descriptor
+  const { rootEntity } = useStudyMetadata();
+  // The PCA scatterplot and volcano plot notebook visualizations only ever
+  // read/gate on the root (sample) entity's count, so fetch just that entity
+  // instead of fanning out across every entity in the study via useEntityCounts.
+  // This also lets this query share a cache entry (and thus a single backend
+  // request) with the root-only counts fetched by ComputeNotebookCell and
+  // SubsettingNotebookCell.
+  const totalCountsResult = useSpecificEntityCounts(undefined, [rootEntity]);
+  const filteredCountsResult = useSpecificEntityCounts(
+    analysis.descriptor.subset.descriptor,
+    [rootEntity]
   );
   const { enqueueSnackbar } = useSnackbar();
 

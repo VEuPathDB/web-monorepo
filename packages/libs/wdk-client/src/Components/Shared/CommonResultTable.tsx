@@ -30,6 +30,10 @@ interface CommonResultTableProps<R> {
   children?: any;
   showCount?: boolean;
   searchBoxHeader?: string;
+  // Applied alongside the search query filter (not in place of `rows`), so
+  // rows it excludes are reflected in the Mesa row count/"No Results" state
+  // rather than in `emptyResultMessage`.
+  filterPredicate?: (row: R) => boolean;
 }
 
 export interface ColumnSettings<Row> extends MesaColumn<Row> {
@@ -152,12 +156,20 @@ export class CommonResultTable<R = Record<string, any>> extends Component<
       sort: { columnKey: sortColumnKey, direction: sortDirection },
     } = getUiState(this.state);
 
-    const filteredState = searchQuery
-      ? MesaState.filterRows(
-          this.state,
-          simpleFilterPredicateFactory(searchQuery)
-        )
-      : this.state;
+    const { filterPredicate } = this.props;
+    const searchPredicate = searchQuery
+      ? simpleFilterPredicateFactory(searchQuery)
+      : null;
+
+    const filteredState =
+      searchPredicate || filterPredicate
+        ? MesaState.filterRows(
+            this.state,
+            (row: R) =>
+              (!searchPredicate || searchPredicate(row as any)) &&
+              (!filterPredicate || filterPredicate(row))
+          )
+        : this.state;
 
     const allRows = MesaState.getRows(filteredState);
     const filteredRows = MesaState.getFilteredRows(filteredState);

@@ -1,0 +1,28 @@
+#dataset-upload,
+#dataset-update {
+  li.publication-row {
+    margin-bottom: 1em;
+
+    > div.publication-hint {
+      margin-bottom: 1.5em;
+      padding-top: 0 !important;
+      margin-top: -0.5em;
+
+      span {
+        align-content: center;
+      }
+
+      span:first-child {
+        text-align: right;
+        font-weight: bold;
+      }
+    }
+
+    > div.flex-row {
+      .join,
+      label {
+        margin-left: 2ch;
+      }
+    }
+  }
+}

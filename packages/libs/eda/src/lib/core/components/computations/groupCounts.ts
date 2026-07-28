@@ -4,8 +4,7 @@ import { LabeledRange } from '../../api/DataClient/types';
 import { VariableDescriptor } from '../../types/variable';
 import { Variable } from '../../types/study';
 import { DifferentialExpressionMethod } from '../../types/apps';
-import { useStudyMetadata } from '../../hooks/workspace';
-import { useEntityCounts } from '../../hooks/entityCounts';
+import { useRootEntityCount } from '../../hooks/entityCounts';
 
 function makeGroupFilter(
   variable: VariableDescriptor,
@@ -100,8 +99,6 @@ export function useGroupCounts({
   valueVariable,
   comparatorVariableType,
 }: UseGroupCountsParams): GroupCounts {
-  const { rootEntity } = useStudyMetadata();
-
   const filtersWithFloor = useMemo(() => {
     const floorFilter = makeExpressionValueRangeFilter(method, valueVariable);
     if (floorFilter == null) return filters;
@@ -129,14 +126,11 @@ export function useGroupCounts({
     [filtersWithFloor, groupBFilter]
   );
 
-  const groupACounts = useEntityCounts(groupAFilters);
-  const groupBCounts = useEntityCounts(groupBFilters);
+  const groupACounts = useRootEntityCount(groupAFilters);
+  const groupBCounts = useRootEntityCount(groupBFilters);
 
-  const rootEntityId = rootEntity.id;
-  const groupACount =
-    groupAFilter != null ? groupACounts.value?.[rootEntityId] : undefined;
-  const groupBCount =
-    groupBFilter != null ? groupBCounts.value?.[rootEntityId] : undefined;
+  const groupACount = groupAFilter != null ? groupACounts.value : undefined;
+  const groupBCount = groupBFilter != null ? groupBCounts.value : undefined;
   const groupACountPending = groupAFilter != null && groupACounts.pending;
   const groupBCountPending = groupBFilter != null && groupBCounts.pending;
 
