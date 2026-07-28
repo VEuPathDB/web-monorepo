@@ -711,15 +711,6 @@ const useHeaderMenuItems = (
           url: '/search/dataset/AllDatasets/result',
         },
         {
-          key: 'community-userdatasets',
-          display: 'User Datasets (my own and public)',
-          type: 'reactRoute',
-          url: '/search/userdataset/AllUserDatasets/result',
-          metadata: {
-            test: () => Boolean(communityDatasetsEnabled),
-          },
-        },
-        {
           key: 'data-files-eupathdb-beta',
           display: <>Download data</>,
           type: 'reactRoute',

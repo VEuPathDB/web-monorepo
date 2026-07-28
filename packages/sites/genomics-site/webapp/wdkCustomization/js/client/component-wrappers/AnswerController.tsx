@@ -14,6 +14,7 @@ import {
   isPreferredDataset,
   isPreferredOrganism,
 } from '../util/preferredOrganisms';
+import { MergedDatasetsAnswer } from './AllDatasetsAnswerController';
 
 interface RecordFilterPredicate {
   (record: RecordInstance): boolean;
@@ -25,7 +26,13 @@ export function AnswerController(
   return function (props) {
     return (
       <Suspense fallback={<PageLoading />}>
-        {props.ownProps.recordClass === 'organism' ? (
+        {props.ownProps.recordClass === 'dataset' &&
+        props.ownProps.question === 'AllDatasets' ? (
+          <MergedDatasetsAnswer
+            DefaultComponent={DefaultComponent}
+            {...props}
+          />
+        ) : props.ownProps.recordClass === 'organism' ? (
           <OrganismAnswerController
             {...props}
             DefaultComponent={DefaultComponent}
