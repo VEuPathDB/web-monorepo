@@ -84,10 +84,7 @@ export function CharacteristicsSection({
   const isPublic = datasetMeta.visibility === 'public';
 
   return (
-    <InputBlock
-      header="Field Study or Clinical Trial Characteristics"
-      isCommunityRelated={true}
-    >
+    <InputBlock header="Field Study or Clinical Trial Characteristics">
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}

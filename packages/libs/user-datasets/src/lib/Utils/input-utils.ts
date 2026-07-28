@@ -32,7 +32,7 @@ export function textChange(
 }
 
 export function replaceElement<T>(
-  array: T[] | undefined,
+  array: readonly T[] | undefined,
   index: number,
   value: T
 ): T[] {
