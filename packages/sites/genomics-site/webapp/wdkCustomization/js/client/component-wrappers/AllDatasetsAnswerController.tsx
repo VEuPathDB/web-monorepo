@@ -425,10 +425,10 @@ export function MergedDatasetsAnswer(props: any) {
           />
           <img
             src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB workflow dataset"
+            alt="VEuPathDB dataset"
             style={{ width: '20px', height: '20px', objectFit: 'contain' }}
           />
-          {' VEuPathDB workflow datasets'}
+          {' VEuPathDB datasets'}
         </label>
         <label>
           <input
@@ -596,7 +596,7 @@ function normalizeRecords(
     // Add synthetic source icon attribute as HTML
     const iconHtml =
       sourceType === 'dataset'
-        ? `<img src="${webAppUrl}/images/${projectId}/favicon.ico" alt="VEuPathDB workflow dataset" title="VEuPathDB workflow dataset" style="width: 20px; height: 20px; object-fit: contain;" />`
+        ? `<img src="${webAppUrl}/images/${projectId}/favicon.ico" alt="VEuPathDB dataset" title="VEuPathDB dataset" style="width: 20px; height: 20px; object-fit: contain;" />`
         : isPublic
         ? `<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" title="Public User Dataset" style="width: 20px; height: 20px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>`
         : `<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" title="Private User Dataset" style="width: 20px; height: 20px;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>`;
