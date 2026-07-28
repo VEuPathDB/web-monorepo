@@ -4,7 +4,6 @@ export function ifDefined<T, R>(
   value: T | undefined,
   fn: util.Function<T, R>
 ): R | undefined {
-  console.log('runIfDefined', value);
   return value === undefined ? undefined : fn(value);
 }
 
