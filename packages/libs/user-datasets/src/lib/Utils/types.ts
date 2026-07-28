@@ -5,6 +5,8 @@ export type Function<T, R> = (value: T) => R;
 export type Runnable = () => void;
 
 export type Nullable<T> = T | null;
+export type Possible<T> = T | undefined;
+export type Optional<T> = T | null | undefined;
 
 export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
 

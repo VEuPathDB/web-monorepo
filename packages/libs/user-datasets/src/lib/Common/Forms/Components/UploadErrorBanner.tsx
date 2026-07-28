@@ -10,9 +10,9 @@ export interface UploadErrorBannerProps {
 export function UploadErrorBanner(props: UploadErrorBannerProps): ReactElement {
   if (!props.errors) return <></>;
 
-  const makeBanner = (error: BadUpload) => {
+  const makeBanner = (error: BadUpload, index: number) => {
     const message = (
-      <div style={{ lineHeight: 1.5 }}>
+      <div style={{ lineHeight: 1.5 }} key={`upload-error-${index}`}>
         <span>Could not upload dataset:&nbsp;</span>
         {makeMessage(error)}
       </div>
