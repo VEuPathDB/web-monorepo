@@ -30,6 +30,7 @@ export interface ClientSideUploadFormState {
   readonly hasExternalSources: boolean | undefined;
   readonly hasDisclaimer: boolean | undefined;
   readonly hasExperimentalOrganism: boolean | undefined;
+  readonly hasPublications: boolean | undefined;
 }
 
 export interface DatasetFormState {
@@ -46,6 +47,7 @@ export const DefaultDatasetFormState: DatasetFormState = {
     hasExternalSources: undefined,
     hasDisclaimer: undefined,
     hasExperimentalOrganism: undefined,
+    hasPublications: undefined,
   },
 };
 

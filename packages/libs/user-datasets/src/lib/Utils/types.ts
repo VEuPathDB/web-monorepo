@@ -1,4 +1,5 @@
 export type BiConsumer<T1, T2> = (value1: T1, value2: T2) => void;
+export type Producer<R> = () => R;
 export type Consumer<T> = (value: T) => void;
 export type Function<T, R> = (value: T) => R;
 export type Runnable = () => void;
