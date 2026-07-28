@@ -25,7 +25,7 @@ import {
 } from '../../Actions/UserDatasetUploadActions';
 import { isEmpty } from 'lodash';
 import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibility';
-import { submitNewDataset } from '../../Service/process/create-dataset';
+import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
@@ -174,6 +174,9 @@ function filterDetails({
   if (!formMetaState.isStudy) delete filtered['datasetCharacteristics'];
   if (!formMetaState.hasDisclaimer) delete filtered['dataDisclaimer'];
   if (!formMetaState.hasExternalSources) delete filtered['datasetSources'];
+  if (!formMetaState.hasPublications) delete filtered['publications'];
+  if (!formMetaState.hasExperimentalOrganism)
+    delete filtered['experimentalOrganism'];
 
   return filtered;
 }

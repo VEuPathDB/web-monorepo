@@ -32,7 +32,7 @@ import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormContr
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
-import { submitUpdate } from '../../Service/process/update-dataset';
+import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {

@@ -73,7 +73,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   const isPublic = props.datasetMeta.visibility === 'public';
 
   return (
-    <InputBlock header="Dataset Source" isCommunityRelated={true}>
+    <InputBlock header="Dataset Source">
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}
