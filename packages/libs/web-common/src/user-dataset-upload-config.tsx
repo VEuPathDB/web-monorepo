@@ -492,10 +492,16 @@ function rnaseqRcFormConfigurator(
   return {
     dataType,
     verbiage: {
-      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
+      formTitle: 'Upload an RNA-Seq Raw Counts Dataset',
       formInputs: {
         samplesDescription: {
-          label: 'Description of Samples',
+          label: (
+            <>
+              Sample Details
+              <br />
+              (for AI annotation)
+            </>
+          ),
         },
       },
     },

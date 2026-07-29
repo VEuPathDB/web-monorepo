@@ -137,7 +137,7 @@ export function RootDetailsSection(
 
 This text will be submitted to the VEuPathDB AI Metadata Analyzer. The output will be carefully named and annotated samples, making the dataset as useful as possible in the website.
 
-IF THE SAMPLE NAMES ALONE DO NOT MAKE THE EXPERIMENTAL DESIGN CLEAR, PLEASE ALSO EXPLAIN WHAT ABBREVIATIONS MEAN, WHICH SAMPLES ARE REPLICATES, AND WHAT CONDITIONS OR TIMEPOINTS ARE REPRESENTED."
+IMPORTANT: If the sample names alone do not make the experimental design clear, please also explain what abbreviations mean, which samples are replicates, and what conditions or timepoints are represented."
             helpText={
               typeof formConfig.verbiage.formInputs.samplesDescription
                 .helpText === 'function'

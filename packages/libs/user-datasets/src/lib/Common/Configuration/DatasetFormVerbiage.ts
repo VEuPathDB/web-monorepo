@@ -14,7 +14,7 @@ export interface CoreInputConfigs {
     readonly helpText?: () => ReactElement;
   };
   readonly samplesDescription?: {
-    readonly label: string;
+    readonly label: ReactNode;
     readonly helpText?: () => ReactElement;
   };
 }

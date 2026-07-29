@@ -8,7 +8,7 @@ import React, {
 import { FieldHelpText } from './FieldHelpText';
 
 interface TextAreaInputProps<T extends object = object> {
-  readonly label: string;
+  readonly label: ReactNode;
 
   readonly fieldName: keyof T & string;
   readonly nameOverride?: string;

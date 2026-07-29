@@ -35,14 +35,6 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
 
     return (
       <>
-        <style>{`
-          input[type="file"].custom-file-button::file-selector-button {
-            padding: 8px;
-            margin: 0 1ch 0 0;
-            cursor: ${props.disabled ? 'not-allowed' : 'pointer'};
-            opacity: ${props.disabled ? 0.6 : 1};
-          }
-        `}</style>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <input
             ref={fileInputRef}
@@ -53,7 +45,6 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
             required={props.required}
             disabled={props.disabled}
             onChange={handleChange}
-            className="custom-file-button"
             style={{ display: 'none' }}
           />
           <button
