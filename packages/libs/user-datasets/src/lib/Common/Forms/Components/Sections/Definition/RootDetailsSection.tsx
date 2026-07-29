@@ -129,6 +129,11 @@ export function RootDetailsSection(
             }
             required={true}
             rows={15}
+            placeholder="Paste here a detailed description of the samples used in this dataset, for example the Methods section of the associated paper.
+
+This text will be submitted to the VEuPathDB AI Metadata Analyzer. The output will be carefully named and annotated samples, making the dataset as useful as possible in the website.
+
+IF THE SAMPLE NAMES ALONE DO NOT MAKE THE EXPERIMENTAL DESIGN CLEAR, PLEASE ALSO EXPLAIN WHAT ABBREVIATIONS MEAN, WHICH SAMPLES ARE REPLICATES, AND WHAT CONDITIONS OR TIMEPOINTS ARE REPRESENTED."
             helpText={
               typeof formConfig.verbiage.formInputs.samplesDescription
                 .helpText === 'function'

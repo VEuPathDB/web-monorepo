@@ -53,6 +53,12 @@ export function TextAreaInput<T extends object = object>(
 
   return (
     <>
+      <style>{`
+        textarea::placeholder {
+          color: #666;
+          opacity: 1;
+        }
+      `}</style>
       <label
         htmlFor={props.idOverride ?? props.fieldName}
         className={labelClassName}
@@ -73,7 +79,7 @@ export function TextAreaInput<T extends object = object>(
         placeholder={props.placeholder}
         rows={props.rows ?? 10}
         cols={props.cols}
-        style={{ width: '100%', fontFamily: 'monospace' }}
+        style={{ width: '100%' }}
       />
       {helpText}
     </>

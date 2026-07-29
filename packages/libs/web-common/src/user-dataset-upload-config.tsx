@@ -496,17 +496,6 @@ function rnaseqRcFormConfigurator(
       formInputs: {
         samplesDescription: {
           label: 'Description of Samples',
-          helpText: function HelpText() {
-            return (
-              <div className="formInfo">
-                <p>
-                  Provide a description of your RNA-Seq samples (e.g., your
-                  Methods section). This will be saved as SamplesDescrip.txt in
-                  your dataset.
-                </p>
-              </div>
-            );
-          },
         },
       },
     },
