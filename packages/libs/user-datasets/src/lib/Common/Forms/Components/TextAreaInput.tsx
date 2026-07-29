@@ -57,6 +57,7 @@ export function TextAreaInput<T extends object = object>(
         textarea::placeholder {
           color: #666;
           opacity: 1;
+          font-style: normal;
         }
       `}</style>
       <label

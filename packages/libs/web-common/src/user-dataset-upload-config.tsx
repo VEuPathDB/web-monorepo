@@ -502,24 +502,6 @@ function rnaseqRcFormConfigurator(
     dataInputConfig: {
       file: {
         enabled: true,
-        helpText: (
-          <div>
-            <p>Upload your RNA-Seq data file:</p>
-            <ul>
-              <li>Accepted formats: .tsv, .tab, or .zip</li>
-              <li>
-                If uploading .zip, it should contain your .tsv or .tab data file
-              </li>
-              <li>Total uncompressed files cannot be greater than 1GB</li>
-            </ul>
-          </div>
-        ),
-        renderOverride: (defaultInput) => {
-          // Clone the input element and override the accept attribute
-          return React.cloneElement(defaultInput as React.ReactElement<any>, {
-            accept: '.tsv,.tab,.txt,.zip',
-          });
-        },
       },
       helpText: () => (
         <details>
@@ -528,12 +510,18 @@ function rnaseqRcFormConfigurator(
           </summary>
           <div className="formInfo">
             <p>
-              Upload your RNA-Seq data as a tab-delimited file (.tsv or .tab) or
-              a .zip archive containing the data file.
+              Upload your RNA-Seq data files as tab-delimited files (.tsv, .tab,
+              or .txt).
+            </p>
+            <p>
+              You must provide Data file 1 (sense or unstranded file). You may
+              optionally provide Data file 2 (anti-sense file).
             </p>
             <p>
               The Description of Samples field will be automatically packaged
-              with your data file as SamplesDescrip.txt.
+              with your data files as sample-info.txt in a .zip archive. If you
+              provide both Data file 1 and Data file 2, a stranded-manifest.txt
+              file will also be generated.
             </p>
             {textFilesHelp}
           </div>

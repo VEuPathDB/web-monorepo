@@ -2,67 +2,71 @@ import JSZip from 'jszip';
 
 /**
  * Transforms an RNAseq-RC upload file into a .zip containing:
- * - The user's data file (.tsv or .tab)
- * - A SamplesDescrip.txt file created from the provided description
+ * - The user's data file (.tsv, .tab, or .txt)
+ * - A sample-info.txt file created from the provided description
+ * - Optionally, an antisense data file
+ * - A stranded-manifest.txt file (only if antisense file is provided)
  *
- * @param file - User's uploaded file (.tsv, .tab, or .zip)
- * @param samplesDescription - Text content for SamplesDescrip.txt (optional)
- * @returns A .zip File containing the data file and SamplesDescrip.txt
+ * @param file - User's uploaded sense/unstranded file (.tsv, .tab, or .txt)
+ * @param samplesDescription - Text content for sample-info.txt (optional)
+ * @param antisenseFile - Optional antisense data file (.tsv, .tab, or .txt)
+ * @returns A .zip File containing the data file(s), sample-info.txt, and optionally stranded-manifest.txt
  */
 export async function transformRnaSeqRcUpload(
   file: File,
-  samplesDescription?: string
+  samplesDescription?: string,
+  antisenseFile?: File
 ): Promise<File> {
   const zip = new JSZip();
   const fileName = file.name.toLowerCase();
 
-  // Check if user uploaded a .zip file
-  if (fileName.endsWith('.zip')) {
-    // Load the existing zip
-    const existingZip = await JSZip.loadAsync(file);
-
-    // Copy all files except SamplesDescrip.txt
-    const copyPromises: Promise<void>[] = [];
-    existingZip.forEach((relativePath: string, zipEntry: JSZip.JSZipObject) => {
-      if (relativePath !== 'SamplesDescrip.txt' && !zipEntry.dir) {
-        copyPromises.push(
-          zipEntry.async('blob').then((blob: Blob) => {
-            zip.file(relativePath, blob);
-          })
-        );
-      }
-    });
-    await Promise.all(copyPromises);
-
-    // Add SamplesDescrip.txt if description provided
-    if (samplesDescription) {
-      const samplesDescripBlob = new Blob([samplesDescription], {
-        type: 'text/plain',
-      });
-      zip.file('SamplesDescrip.txt', samplesDescripBlob);
-    } else {
-      // Keep existing SamplesDescrip.txt if present and no new description
-      const existingSamplesDescrip = existingZip.file('SamplesDescrip.txt');
-      if (existingSamplesDescrip) {
-        const blob = await existingSamplesDescrip.async('blob');
-        zip.file('SamplesDescrip.txt', blob);
-      }
-    }
-  } else if (fileName.endsWith('.tsv') || fileName.endsWith('.tab')) {
-    // User uploaded a plain .tsv or .tab file
+  // User uploaded a plain .tsv, .tab, or .txt file
+  if (
+    fileName.endsWith('.tsv') ||
+    fileName.endsWith('.tab') ||
+    fileName.endsWith('.txt')
+  ) {
     // Add the data file to the zip
     zip.file(file.name, file);
 
-    // Create and add SamplesDescrip.txt
-    const samplesDescripContent = samplesDescription || '';
-    const samplesDescripBlob = new Blob([samplesDescripContent], {
+    // Create and add sample-info.txt
+    const sampleInfoContent = samplesDescription || '';
+    const sampleInfoBlob = new Blob([sampleInfoContent], {
       type: 'text/plain',
     });
-    zip.file('SamplesDescrip.txt', samplesDescripBlob);
+    zip.file('sample-info.txt', sampleInfoBlob);
+
+    // Generate stranded-manifest.txt only if antisense file is provided
+    if (antisenseFile) {
+      let manifestContent = `${file.name}\tsense\n`;
+      manifestContent += `${antisenseFile.name}\tantisense\n`;
+
+      const manifestBlob = new Blob([manifestContent], {
+        type: 'text/plain',
+      });
+      zip.file('stranded-manifest.txt', manifestBlob);
+    }
   } else {
     throw new Error(
-      `Unsupported file type: ${file.name}. Please upload a .tsv, .tab, or .zip file.`
+      `Unsupported file type: ${file.name}. Please upload a .tsv, .tab, or .txt file.`
     );
+  }
+
+  // Add antisense file if provided
+  if (antisenseFile) {
+    const antisenseFileName = antisenseFile.name.toLowerCase();
+    if (
+      antisenseFileName.endsWith('.tsv') ||
+      antisenseFileName.endsWith('.tab') ||
+      antisenseFileName.endsWith('.txt')
+    ) {
+      // Add antisense file without renaming
+      zip.file(antisenseFile.name, antisenseFile);
+    } else {
+      throw new Error(
+        `Unsupported antisense file type: ${antisenseFile.name}. Please upload a .tsv, .tab, or .txt file.`
+      );
+    }
   }
 
   // Generate the final zip file

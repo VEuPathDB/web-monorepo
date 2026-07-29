@@ -18,6 +18,7 @@ import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
+import { DualFileInput } from './DualFileInput';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -94,6 +95,9 @@ export function RootDetailsSection(
     />
   ) : null;
 
+  // Check if this is rnaseq-rc type (has samplesDescription field)
+  const isRnaSeqRc = !!formConfig.verbiage.formInputs?.samplesDescription;
+
   return (
     <section id="define-dataset">
       <h3>Define Dataset</h3>
@@ -153,7 +157,27 @@ IF THE SAMPLE NAMES ALONE DO NOT MAKE THE EXPERIMENTAL DESIGN CLEAR, PLEASE ALSO
           />
         )}
 
-        {props.showDataInputs && (
+        {props.showDataInputs && isRnaSeqRc && (
+          <DualFileInput
+            pathBuilder={props.contentJsonPath}
+            dataType={formConfig.dataType}
+            vdiFeatures={formProps.vdiConfig.features}
+            senseFile={fileUploads.dataFiles ?? null}
+            antisenseFile={fileUploads.antisenseDataFiles ?? null}
+            setSenseFile={(files) =>
+              setUploads({ ...fileUploads, dataFiles: files ?? undefined })
+            }
+            setAntisenseFile={(files) =>
+              setUploads({
+                ...fileUploads,
+                antisenseDataFiles: files ?? undefined,
+              })
+            }
+            accept=".tsv,.tab,.txt"
+          />
+        )}
+
+        {props.showDataInputs && !isRnaSeqRc && (
           <RootDataInput
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}

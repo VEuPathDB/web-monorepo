@@ -113,7 +113,8 @@ function submitAction(
         try {
           const transformedFile = await transformRnaSeqRcUpload(
             fileUploads.dataFiles[0],
-            formState.datasetDetails.samplesDescription
+            formState.datasetDetails.samplesDescription,
+            fileUploads.antisenseDataFiles?.[0]
           );
 
           // Create a new FileList-like array with the transformed file
@@ -123,6 +124,7 @@ function submitAction(
           finalFileUploads = {
             ...fileUploads,
             dataFiles: dataTransfer.files,
+            antisenseDataFiles: undefined, // Clear antisense since it's now in the zip
           };
         } catch (transformError) {
           setSubmitting(false);
