@@ -28,6 +28,7 @@ import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibili
 import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { transformRnaSeqRcUpload } from '../../Service/utils/rnaseq-rc-file-transformer';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -100,16 +101,59 @@ function submitAction(
     try {
       assertIsVdiCompatibleWdkService(wdkService);
 
+      // Transform files for rnaseq-rc:1.0
+      // (identified by presence of samplesDescription field in form config)
+      let finalFileUploads = fileUploads;
+
+      if (
+        formConfig.verbiage.formInputs?.samplesDescription &&
+        fileUploads.dataFiles &&
+        fileUploads.dataFiles.length > 0
+      ) {
+        try {
+          const transformedFile = await transformRnaSeqRcUpload(
+            fileUploads.dataFiles[0],
+            formState.datasetDetails.samplesDescription
+          );
+
+          // Create a new FileList-like array with the transformed file
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(transformedFile);
+
+          finalFileUploads = {
+            ...fileUploads,
+            dataFiles: dataTransfer.files,
+          };
+        } catch (transformError) {
+          setSubmitting(false);
+          return receiveBadUpload([
+            {
+              type: 400,
+              message:
+                transformError instanceof Error
+                  ? transformError.message
+                  : 'Failed to transform upload files',
+            },
+          ]);
+        }
+      }
+
+      // PROTOTYPE: Map rnaseq-rc to rnaseq for backend submission
+      const backendTypeName =
+        formConfig.dataType.name === 'rnaseq-rc'
+          ? 'rnaseq'
+          : formConfig.dataType.name;
+
       await submitNewDataset({
         service: wdkService.vdi,
         details: {
           type: {
-            name: formConfig.dataType.name,
+            name: backendTypeName,
             version: formConfig.dataType.version,
           },
           ...filterDetails(formState),
         },
-        uploads: fileUploads,
+        uploads: finalFileUploads,
         onProgress: (progress: number | null) =>
           dispatch(trackUploadProgress(progress)),
         onSuccess: ({ datasetId }: DatasetPostResponseBody) => {

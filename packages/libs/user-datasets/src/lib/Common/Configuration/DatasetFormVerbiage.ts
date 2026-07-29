@@ -13,6 +13,10 @@ export interface CoreInputConfigs {
     readonly label: string;
     readonly helpText?: () => ReactElement;
   };
+  readonly samplesDescription?: {
+    readonly label: string;
+    readonly helpText?: () => ReactElement;
+  };
 }
 
 export interface DatasetFormVerbiage {

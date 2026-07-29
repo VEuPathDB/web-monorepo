@@ -7,6 +7,7 @@ import {
 } from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { InputPair, UploadButton } from '../../index';
+import { TextAreaInput } from '../../TextAreaInput';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { PartialDatasetDetails, DatasetUploads } from '../../../../../Service';
 import { isEmpty } from 'lodash';
@@ -117,6 +118,25 @@ export function RootDetailsSection(
           maxLength={4000}
           required={true}
         />
+
+        {formConfig.verbiage.formInputs?.samplesDescription && (
+          <TextAreaInput
+            label={formConfig.verbiage.formInputs.samplesDescription.label}
+            fieldName="samplesDescription"
+            value={datasetDetails.samplesDescription}
+            onChange={(v) =>
+              setMetadata({ ...datasetDetails, samplesDescription: v })
+            }
+            required={true}
+            rows={15}
+            helpText={
+              typeof formConfig.verbiage.formInputs.samplesDescription
+                .helpText === 'function'
+                ? formConfig.verbiage.formInputs.samplesDescription.helpText()
+                : formConfig.verbiage.formInputs.samplesDescription.helpText
+            }
+          />
+        )}
 
         {referenceGenome}
 

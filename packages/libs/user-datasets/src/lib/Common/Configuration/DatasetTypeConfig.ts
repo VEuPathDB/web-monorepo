@@ -52,10 +52,14 @@ export function promoteTypeConfig(
 ): DatasetTypeConfig | undefined {
   const { name: clientTypeName, version: clientTypeVersion } = clientDataType;
 
+  // PROTOTYPE: Map rnaseq-rc:1.0 to rnaseq:1.0 backend
+  const backendTypeName =
+    clientTypeName === 'rnaseq-rc' ? 'rnaseq' : clientTypeName;
+
   for (const plugin of plugins) {
     for (const vdiDataType of plugin.dataTypes) {
       if (
-        clientTypeName === vdiDataType.name &&
+        backendTypeName === vdiDataType.name &&
         clientTypeVersion === vdiDataType.version
       ) {
         return { ...clientDataType, vdiConfig: vdiDataType, vdiPlugin: plugin };
@@ -79,5 +83,11 @@ export function filterAvailableDataTypes(
     }
   }
 
-  return clientTypes.filter((cdt) => serviceTypes.has(stringifyDataType(cdt)));
+  return clientTypes.filter((cdt) => {
+    // PROTOTYPE: Map rnaseq-rc:1.0 to rnaseq:1.0 backend
+    if (cdt.name === 'rnaseq-rc' && cdt.version === '1.0') {
+      return serviceTypes.has('rnaseq:1.0');
+    }
+    return serviceTypes.has(stringifyDataType(cdt));
+  });
 }

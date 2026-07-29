@@ -31,6 +31,7 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
+  rnaseqrc: { name: 'rnaseq-rc', version: '1.0' },
   phenotype: { name: 'phenotype', version: '1.0' },
 };
 
@@ -60,6 +61,10 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
       ...implementedUploadTypes.rnaseq,
       description: `Integrate your normalized RNA-Seq data into ${projectId}.`,
     },
+    {
+      ...implementedUploadTypes.rnaseqrc,
+      description: `Upload your RNA-Seq data with sample descriptions into ${projectId}.`,
+    },
   ],
 
   uploadFormConfigurators: [
@@ -80,6 +85,9 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
     // rnaseq
     [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
+
+    // rnaseq-rc
+    [implementedUploadTypes.rnaseqrc, rnaseqRcFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
@@ -465,6 +473,79 @@ function rnaseqFormConfigurator(
                 </ul>
               </li>
             </ol>
+            {textFilesHelp}
+          </div>
+        </details>
+      ),
+    },
+    dependencies: {
+      required: true,
+      renderInput: ReferenceGenomeDependency,
+    },
+    enableExperimentalOrganism: true,
+  };
+}
+
+function rnaseqRcFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetFormConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
+      formInputs: {
+        samplesDescription: {
+          label: 'Description of Samples',
+          helpText: function HelpText() {
+            return (
+              <div className="formInfo">
+                <p>
+                  Provide a description of your RNA-Seq samples (e.g., your
+                  Methods section). This will be saved as SamplesDescrip.txt in
+                  your dataset.
+                </p>
+              </div>
+            );
+          },
+        },
+      },
+    },
+    dataInputConfig: {
+      file: {
+        enabled: true,
+        helpText: (
+          <div>
+            <p>Upload your RNA-Seq data file:</p>
+            <ul>
+              <li>Accepted formats: .tsv, .tab, or .zip</li>
+              <li>
+                If uploading .zip, it should contain your .tsv or .tab data file
+              </li>
+              <li>Total uncompressed files cannot be greater than 1GB</li>
+            </ul>
+          </div>
+        ),
+        renderOverride: (defaultInput) => {
+          // Clone the input element and override the accept attribute
+          return React.cloneElement(defaultInput as React.ReactElement<any>, {
+            accept: '.tsv,.tab,.txt,.zip',
+          });
+        },
+      },
+      helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
+          <div className="formInfo">
+            <p>
+              Upload your RNA-Seq data as a tab-delimited file (.tsv or .tab) or
+              a .zip archive containing the data file.
+            </p>
+            <p>
+              The Description of Samples field will be automatically packaged
+              with your data file as SamplesDescrip.txt.
+            </p>
             {textFilesHelp}
           </div>
         </details>
