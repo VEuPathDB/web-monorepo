@@ -95,8 +95,10 @@ export function RootDetailsSection(
     />
   ) : null;
 
-  // Check if this is rnaseq-rc type (has samplesDescription field)
-  const isRnaSeqRc = !!formConfig.verbiage.formInputs?.samplesDescription;
+  const slots = formConfig.dataInputConfig.file?.enabled
+    ? formConfig.dataInputConfig.file.slots
+    : undefined;
+  const useSlottedInputs = (slots?.length ?? 0) > 1;
 
   return (
     <section id="define-dataset">
@@ -157,20 +159,25 @@ IMPORTANT: If the sample names alone do not make the experimental design clear, 
           />
         )}
 
-        {props.showDataInputs && isRnaSeqRc && (
+        {props.showDataInputs && useSlottedInputs && (
           <DualFileInput
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}
             vdiFeatures={formProps.vdiConfig.features}
+            slots={slots!}
             files={fileUploads.dataFiles ?? []}
             setFiles={(files) =>
               setUploads({ ...fileUploads, dataFiles: files })
             }
-            accept=".tsv,.tab,.txt"
+            accept={
+              formConfig.dataInputConfig.file?.enabled
+                ? formConfig.dataInputConfig.file.accept
+                : undefined
+            }
           />
         )}
 
-        {props.showDataInputs && !isRnaSeqRc && (
+        {props.showDataInputs && !useSlottedInputs && (
           <RootDataInput
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}

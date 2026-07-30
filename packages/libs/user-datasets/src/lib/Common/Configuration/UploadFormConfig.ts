@@ -14,7 +14,23 @@ interface DisabledConfig extends UploadConfig {
   readonly enabled: false;
 }
 
-export interface FileUploadConfig extends UploadConfig {}
+/** One data file input. Position in `slots` maps to position in `dataFiles`. */
+export interface DataFileSlot {
+  readonly label: string;
+  readonly buttonText: string;
+  readonly required: boolean;
+}
+
+export interface FileUploadConfig extends UploadConfig {
+  /**
+   * Labelled data file inputs. When two or more are declared the form renders
+   * one input per slot; otherwise it renders the single default input.
+   */
+  readonly slots?: readonly DataFileSlot[];
+
+  /** `accept` attribute override. Defaults to the data type's extensions. */
+  readonly accept?: string;
+}
 
 export type EnabledFileUploadConfig = EnabledConfig & FileUploadConfig;
 export type DisabledFileUploadConfig = DisabledConfig &

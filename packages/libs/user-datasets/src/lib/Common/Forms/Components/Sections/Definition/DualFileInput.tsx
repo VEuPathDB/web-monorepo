@@ -3,6 +3,7 @@ import { DataFileInput } from './DataFileInput';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
+import { DataFileSlot } from '../../../../Configuration/UploadFormConfig';
 
 export interface DualFileInputProps {
   readonly pathBuilder: JsonPathBuilder;
@@ -11,6 +12,7 @@ export interface DualFileInputProps {
   readonly files: readonly File[];
   readonly setFiles: Consumer<readonly File[]>;
   readonly accept?: string;
+  readonly slots: readonly DataFileSlot[];
 }
 
 /**
@@ -42,16 +44,16 @@ export function DualFileInput(props: DualFileInputProps): ReactElement {
         htmlFor={senseFieldName}
         style={{ fontWeight: 'normal', color: 'red' }}
       >
-        Data file 1 <span>*</span>
+        {props.slots[0].label} {props.slots[0].required && <span>*</span>}
       </label>
       <DataFileInput
         fieldName={senseFieldName}
         dataType={props.dataType}
-        required={true}
+        required={props.slots[0].required}
         setFile={(files) => setAt(0, files)}
         vdiFeatures={props.vdiFeatures}
         accept={props.accept}
-        buttonText="Choose sense or unstranded file"
+        buttonText={props.slots[0].buttonText}
       />
       <div className="column-2"></div>
 
@@ -63,17 +65,17 @@ export function DualFileInput(props: DualFileInputProps): ReactElement {
           opacity: hasSense ? 1 : 0.85,
         }}
       >
-        Data file 2
+        {props.slots[1].label} {props.slots[1].required && <span>*</span>}
       </label>
       <DataFileInput
         fieldName={antisenseFieldName}
         dataType={props.dataType}
-        required={false}
+        required={props.slots[1].required}
         setFile={(files) => setAt(1, files)}
         vdiFeatures={props.vdiFeatures}
         disabled={!hasSense}
         accept={props.accept}
-        buttonText="Choose anti-sense file (optional)"
+        buttonText={props.slots[1].buttonText}
       />
       <div className="column-2"></div>
     </>

@@ -509,6 +509,18 @@ function rnaseqRcFormConfigurator(
     dataInputConfig: {
       file: {
         enabled: true,
+        slots: [
+          {
+            label: 'Data file 1',
+            buttonText: 'Choose sense or unstranded file',
+            required: true,
+          },
+          {
+            label: 'Data file 2',
+            buttonText: 'Choose anti-sense file (optional)',
+            required: false,
+          },
+        ],
       },
       helpText: () => (
         <details>
