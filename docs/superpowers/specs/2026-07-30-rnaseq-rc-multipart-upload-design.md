@@ -206,6 +206,7 @@ and submits `type: formConfig.dataType` directly.
 | `UploadFormController.tsx:121-128` | `new DataTransfer()` to synthesise a `FileList`           |
 | `UploadFormController.tsx:143-147` | `rnaseq-rc` → `rnaseq` type rewrite on submit             |
 | `DatasetTypeConfig.ts:86-92`       | the same alias in `filterAvailableDataTypes`              |
+| `DatasetTypeConfig.ts:55-57`       | the same alias again in `promoteTypeConfig`               |
 | `RootDetailsSection.tsx:99`        | `isRnaSeqRc` derived from verbiage config                 |
 
 Removing the last two is gated on the contract's **deployment prerequisite**,

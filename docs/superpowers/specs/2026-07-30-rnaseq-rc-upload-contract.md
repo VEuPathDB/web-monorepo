@@ -247,7 +247,11 @@ counts".
 ## Deployment prerequisite — satisfied
 
 Spec A removes the prototype `rnaseq-rc` → `rnaseq` type aliasing from both sites
-that carry it (`UploadFormController.tsx:143-147` and `DatasetTypeConfig.ts:86-92`).
+that carry it — `UploadFormController.tsx:143-147`, and **two** separate sites in
+`DatasetTypeConfig.ts`: `filterAvailableDataTypes` (86-92) and `promoteTypeConfig`
+(55-57). The second was missed during design and only surfaced in review; note it
+aliased to `rnaseq`, a _different_ pre-existing dataset type, so it would have
+misrouted rather than merely mismatched.
 After that, `rnaseqrc:1.0` must be registered in VDI's stack config as a real
 plugin data type, because:
 
