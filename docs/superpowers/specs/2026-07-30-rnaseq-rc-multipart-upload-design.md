@@ -198,9 +198,27 @@ and submits `type: formConfig.dataType` directly.
 | `DatasetTypeConfig.ts:86-92`       | the same alias in `filterAvailableDataTypes`              |
 | `RootDetailsSection.tsx:99`        | `isRnaSeqRc` derived from verbiage config                 |
 
-Removing the last two is gated on the contract's **deployment prerequisite**.
+Removing the last two is gated on the contract's **deployment prerequisite**,
+which is now satisfied — see below.
 
-### 7. Validation
+### 7. Rename the type to `rnaseqrc`
+
+`user-dataset-upload-config.tsx:34` currently reads:
+
+```ts
+rnaseqrc: { name: 'rnaseq-rc', version: '1.0' },
+```
+
+The registered VDI type name has no hyphen (see the contract's _type name_
+section), so `name` becomes `'rnaseqrc'`. One line — the object key was already
+`rnaseqrc`.
+
+This is what makes §6's alias removal safe rather than breaking: once the
+frontend asks for the name VDI actually registers, `filterAvailableDataTypes`
+matches it directly and no aliasing is needed. Do these two together, not
+separately.
+
+### 8. Validation
 
 Added to the existing `validateFormState` path, which already renders keyed
 errors:
@@ -243,9 +261,9 @@ up consistent.
 
 ## Risks
 
-| Risk                                                        | Mitigation                                                                      |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `rnaseq-rc:1.0` not registered in VDI stack config at merge | Confirm before merging; the form vanishes and `PluginRegistry.require()` throws |
-| Spec B not yet landed — plugin still expects fixed stems    | Ship in step; the archive is structurally identical, only naming differs        |
-| `File[]` migration breaks the update/revision form          | `compile:check`, and exercise the update form manually                          |
-| No test harness in `user-datasets`                          | Time-boxed; documented fallback above                                           |
+| Risk                                                     | Mitigation                                                                                                                                                     |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rnaseqrc:1.0` config not yet deployed at merge          | Registered in `webservices-quadlets` (branch `rnaseq-rc`); that branch must merge and deploy first, or the form vanishes and `PluginRegistry.require()` throws |
+| Spec B not yet landed — plugin still expects fixed stems | Ship in step; the archive is structurally identical, only naming differs                                                                                       |
+| `File[]` migration breaks the update/revision form       | `compile:check`, and exercise the update form manually                                                                                                         |
+| No test harness in `user-datasets`                       | Time-boxed; documented fallback above                                                                                                                          |

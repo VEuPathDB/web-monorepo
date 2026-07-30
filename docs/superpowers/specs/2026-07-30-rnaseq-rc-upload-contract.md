@@ -132,9 +132,10 @@ passed the form and was rejected by the plugin, and `.csv` was accepted by the
 plugin but unselectable in the form. Widening costs nothing because the plugin
 sniffs the delimiter from file content rather than trusting the extension.
 
-**Open item:** VDI's own `allowedFileExtensions` for `rnaseq-rc:1.0` is a third
-list, living in deployment stack config rather than the `vdi-service` repo. It
-rejects at upload time, before the plugin runs. It must include all four.
+VDI's own `allowedFileExtensions` is a third list, and it rejects at upload time
+before the plugin runs, so it must include all four. **Done** — widened in
+`webservices-quadlets` commit `2219913` (`vdi/config/config.yml`, branch
+`rnaseq-rc`).
 
 ## `sample-info` size limit
 
@@ -207,16 +208,52 @@ before the manifest is written and the displayed filename matches what is
 uploaded. "Original filename" therefore means _whitespace-normalised original_;
 that is an accepted, documented loss.
 
-## Deployment prerequisite
+## The type name is `rnaseqrc`, not `rnaseq-rc`
 
-Spec A removes the prototype `rnaseq-rc` → `rnaseq` type aliasing from both
-sites that carry it (`UploadFormController.tsx:143-147` and
-`DatasetTypeConfig.ts:86-92`). After that, `rnaseq-rc:1.0` must be registered in
-VDI's stack config as a real plugin data type:
+**No hyphen.** This is the canonical spelling everywhere: VDI config, the
+frontend's `implementedUploadTypes`, the plugin's `wrangle-<name>.R` script, and
+the plugin's fixture `vdi-meta.json` files.
+
+The type was originally built as `rnaseq-rc` in both the frontend and the
+wrangler plugin, and VDI config was normalised to `rnaseqrc` in
+`webservices-quadlets` commit `62f6cdb` ("remove hyphen"). All nine other
+registered types are single unseparated lowercase words — `bigwigfiles`, `biom`,
+`genelist`, `lightweight`, `rnaseq`, `phenotype`, `isasimple`, `stf` — so the
+hyphen was the outlier. Nothing technically forbids one (`DataType.of()` only
+lowercases, and the config schema puts no `pattern` on `name`), but a 9/9
+convention was judged worth keeping over a cheaper one-line revert.
+
+**The name is load-bearing, not cosmetic.** `bin/wrangle.R:63` in the plugin
+interpolates it straight into a filename:
+
+```r
+script_path <- file.path("lib/R", paste0("wrangle-", datatype, ".R"))
+```
+
+A mismatch therefore fails with _"The data type 'X' is not supported by this
+plugin"_ rather than anything diagnostic. Spec A renames the frontend constant;
+Spec B renames the script and its fixtures.
+
+Users never see this string — the user-facing label is `category`, "RNA-Seq raw
+counts".
+
+## Deployment prerequisite — satisfied
+
+Spec A removes the prototype `rnaseq-rc` → `rnaseq` type aliasing from both sites
+that carry it (`UploadFormController.tsx:143-147` and `DatasetTypeConfig.ts:86-92`).
+After that, `rnaseqrc:1.0` must be registered in VDI's stack config as a real
+plugin data type, because:
 
 - `filterAvailableDataTypes` hides the type from the upload menu when VDI does
-  not report it.
-- `PluginRegistry.require()` throws for unregistered types.
+  not report it, and
+- `PluginRegistry.require()` throws for unregistered types,
 
-So a premature merge breaks uploads rather than merely hiding the form. This
-needs confirming with whoever owns VDI stack config **before** Spec A merges.
+so a premature merge would break uploads rather than merely hide the form.
+
+**This is now done** — registered at `vdi/config/config.yml:148` in
+`webservices-quadlets` (branch `rnaseq-rc`), pointing at the `wrangler:80` plugin
+server. `rnaseq:1.0` (normalized counts, `rnaseq:80`) and `rnaseqrc:1.0` (raw
+counts, `wrangler:80`) are separate plugin servers with distinct categories, and
+coexist indefinitely by design.
+
+Remaining gate: that branch must be merged and deployed before Spec A merges.

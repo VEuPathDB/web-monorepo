@@ -52,6 +52,32 @@ contract's role tokens rather than filename stems.
 
 The bulk of the work is fixtures, not logic.
 
+## Rename the type to `rnaseqrc`
+
+Independent of the manifest work, and do it **first** — it is a prerequisite for
+any end-to-end test, since VDI will send `rnaseqrc` and nothing will run
+otherwise.
+
+The registered VDI type name has no hyphen (see the contract's _type name_
+section), and `bin/wrangle.R:63` interpolates it straight into a script path:
+
+```r
+script_path <- file.path("lib/R", paste0("wrangle-", datatype, ".R"))
+```
+
+So:
+
+- `git mv lib/R/wrangle-rnaseq-rc.R lib/R/wrangle-rnaseqrc.R`
+- In all 24 fixture `vdi-meta.json` files, `"name": "rnaseq-rc"` → `"rnaseqrc"`.
+
+Leave everything else spelled `rnaseq-rc`: the branch, `doc/rnaseq-rc.md`, and the
+`tests/testthat/rnaseq-rc/` fixture directory are not type names and nothing
+resolves them from one. Only the two items above are load-bearing.
+
+Without this, imports fail with _"The data type 'rnaseqrc' is not supported by
+this plugin"_ — a message that points at the data type rather than at the missing
+script, so it is worth fixing before it wastes anyone's afternoon.
+
 ## Changes to `lib/R/counts_files.R`
 
 ### Removed
@@ -168,9 +194,10 @@ criterion for both specs, and neither proves it alone.
 
 ## Risks
 
-| Risk                                                  | Mitigation                                         |
-| ----------------------------------------------------- | -------------------------------------------------- |
-| Merge conflict with the in-flight session             | Wait for it to land; re-verify all line references |
-| Ships before Spec A, so real uploads have no manifest | Coordinate; the plugin has no fallback by design   |
-| Fixture renaming churn obscures the logic diff        | Separate commits: logic first, then fixtures       |
-| Error-taxonomy decision unmade                        | Settle before writing error strings                |
+| Risk                                                  | Mitigation                                                                               |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Merge conflict with the in-flight session             | Wait for it to land; re-verify all line references                                       |
+| Ships before Spec A, so real uploads have no manifest | Coordinate; the plugin has no fallback by design                                         |
+| Fixture renaming churn obscures the logic diff        | Separate commits: type rename, then logic, then fixtures                                 |
+| Error-taxonomy decision unmade                        | Settle before writing error strings                                                      |
+| Type rename missed, so nothing runs end to end        | Do it first; the error message misleadingly blames the data type, not the missing script |
