@@ -75,9 +75,10 @@ immutable `FileList` would have needed.
 
 Touch points, all of them: `RootDataInput.tsx`, `DataFileInput.tsx`,
 `DualFileInput.tsx`, `RootDetailsSection.tsx` (lines 165-175 and 233-237),
-`hasUploads` in `utility-types.ts`, `UpdateForm.tsx`, and `create-dataset.ts`
-— whose `appendFiles` already does `for (const file of fileList)` and so needs
-only a widened parameter type (`Iterable<File>`).
+`hasUploads` in `utility-types.ts`, and `create-dataset.ts` — whose `appendFiles`
+already does `for (const file of fileList)` and so needs only a widened parameter
+type (`Iterable<File>`). `UpdateForm.tsx` needs no change; it references only
+`dataPropertiesFiles` and `hasUploads`.
 
 ### 2. `dataInputConfig.file.slots` — declares which inputs render
 
@@ -141,13 +142,18 @@ renamed to reflect that it no longer transforms into an archive:
 ```ts
 export function buildRnaSeqRcDataFiles(
   dataFiles: readonly File[], // [unstranded] or [sense, antisense]
-  samplesDescription?: string
+  samplesDescription: string | undefined,
+  allowedExtensions: readonly string[]
 ): readonly File[];
 ```
 
+Extensions arrive as a parameter rather than being hardcoded, so the builder stays
+pure and testable while `dataType.vdiConfig.allowedFileExtensions` remains the
+single source of truth. The configurator closure already has `dataType` in scope.
+
 Behaviour:
 
-1. Validate each input file's extension against the contract's four.
+1. Validate each input file's extension against `allowedExtensions`.
 2. Build `sample-info.txt` from `samplesDescription` —
    `new File([text], name, { type: 'text/plain' })`. A `File` is a named `Blob`
    and its constructor takes `BlobPart[]`; a string is a valid `BlobPart`, so
@@ -165,7 +171,11 @@ which adapts the hook's generic signature to this builder's:
 
 ```ts
 prepareDataFiles: (files, details) =>
-  buildRnaSeqRcDataFiles(files, details.samplesDescription),
+  buildRnaSeqRcDataFiles(
+    files,
+    details.samplesDescription,
+    dataType.vdiConfig.allowedFileExtensions
+  ),
 ```
 
 The configurator also declares the two slots and their labels, and its help text
