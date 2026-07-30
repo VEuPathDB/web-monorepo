@@ -53,6 +53,12 @@ export async function submitUpdate(
     ...submission.updated,
   };
 
+  // `samplesDescription` is a client-only field used to build the
+  // `sample-info.txt` upload; it is never a valid VDI metadata field and must
+  // never reach the outbound PATCH payload. Unlike the fields below, this is
+  // deleted unconditionally rather than gated on form meta state.
+  delete mutableSubmission.samplesDescription;
+
   if (!submission.formState.hasExternalSources) {
     mutableSubmission.datasetSources = undefined;
   }

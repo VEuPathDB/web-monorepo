@@ -19,6 +19,10 @@ import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
 import { DualFileInput } from './DualFileInput';
+import {
+  utf8ByteLength,
+  SAMPLE_INFO_MAX_BYTES,
+} from '../../../../../Service/utils/rnaseq-rc-data-files';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -95,8 +99,10 @@ export function RootDetailsSection(
     />
   ) : null;
 
-  // Check if this is rnaseq-rc type (has samplesDescription field)
-  const isRnaSeqRc = !!formConfig.verbiage.formInputs?.samplesDescription;
+  const slots = formConfig.dataInputConfig.file?.enabled
+    ? formConfig.dataInputConfig.file.slots
+    : undefined;
+  const useSlottedInputs = (slots?.length ?? 0) > 1;
 
   return (
     <section id="define-dataset">
@@ -124,27 +130,47 @@ export function RootDetailsSection(
         />
 
         {formConfig.verbiage.formInputs?.samplesDescription && (
-          <TextAreaInput
-            label={formConfig.verbiage.formInputs.samplesDescription.label}
-            fieldName="samplesDescription"
-            value={datasetDetails.samplesDescription}
-            onChange={(v) =>
-              setMetadata({ ...datasetDetails, samplesDescription: v })
-            }
-            required={true}
-            rows={15}
-            placeholder="Paste here a detailed description of the samples used in this dataset, for example the Methods section of the associated paper.
+          <>
+            <TextAreaInput
+              label={formConfig.verbiage.formInputs.samplesDescription.label}
+              fieldName="samplesDescription"
+              value={datasetDetails.samplesDescription}
+              onChange={(v) =>
+                setMetadata({ ...datasetDetails, samplesDescription: v })
+              }
+              required={true}
+              rows={15}
+              placeholder="Paste here a detailed description of the samples used in this dataset, for example the Methods section of the associated paper.
 
 This text will be submitted to the VEuPathDB AI Metadata Analyzer. The output will be carefully named and annotated samples, making the dataset as useful as possible in the website.
 
-IMPORTANT: If the sample names alone do not make the experimental design clear, please also explain what abbreviations mean, which samples are replicates, and what conditions or timepoints are represented."
-            helpText={
-              typeof formConfig.verbiage.formInputs.samplesDescription
-                .helpText === 'function'
-                ? formConfig.verbiage.formInputs.samplesDescription.helpText()
-                : formConfig.verbiage.formInputs.samplesDescription.helpText
-            }
-          />
+IMPORTANT: If the sample names alone do not make the experimental design clear, please also explain what abbreviations mean, which samples are replicates, what units any values are in, and what conditions or timepoints are represented."
+              helpText={
+                typeof formConfig.verbiage.formInputs.samplesDescription
+                  .helpText === 'function'
+                  ? formConfig.verbiage.formInputs.samplesDescription.helpText()
+                  : formConfig.verbiage.formInputs.samplesDescription.helpText
+              }
+            />
+
+            <div className="column-2" style={{ textAlign: 'right' }}>
+              <span
+                style={{
+                  fontSize: '0.9em',
+                  color:
+                    utf8ByteLength(datasetDetails.samplesDescription ?? '') >
+                    SAMPLE_INFO_MAX_BYTES
+                      ? 'red'
+                      : '#666',
+                }}
+              >
+                {utf8ByteLength(
+                  datasetDetails.samplesDescription ?? ''
+                ).toLocaleString()}{' '}
+                / {SAMPLE_INFO_MAX_BYTES.toLocaleString()} bytes
+              </span>
+            </div>
+          </>
         )}
 
         {referenceGenome}
@@ -157,27 +183,32 @@ IMPORTANT: If the sample names alone do not make the experimental design clear, 
           />
         )}
 
-        {props.showDataInputs && isRnaSeqRc && (
-          <DualFileInput
-            pathBuilder={props.contentJsonPath}
-            dataType={formConfig.dataType}
-            vdiFeatures={formProps.vdiConfig.features}
-            senseFile={fileUploads.dataFiles ?? null}
-            antisenseFile={fileUploads.antisenseDataFiles ?? null}
-            setSenseFile={(files) =>
-              setUploads({ ...fileUploads, dataFiles: files ?? undefined })
-            }
-            setAntisenseFile={(files) =>
-              setUploads({
-                ...fileUploads,
-                antisenseDataFiles: files ?? undefined,
-              })
-            }
-            accept=".tsv,.tab,.txt"
-          />
+        {props.showDataInputs && useSlottedInputs && (
+          <>
+            <DualFileInput
+              pathBuilder={props.contentJsonPath}
+              dataType={formConfig.dataType}
+              vdiFeatures={formProps.vdiConfig.features}
+              slots={slots!}
+              files={fileUploads.dataFiles ?? []}
+              setFiles={(files) =>
+                setUploads({ ...fileUploads, dataFiles: files })
+              }
+              accept={
+                formConfig.dataInputConfig.file?.enabled
+                  ? formConfig.dataInputConfig.file.accept
+                  : undefined
+              }
+            />
+            {typeof formConfig.dataInputConfig.helpText === 'function' && (
+              <div className="column-2">
+                {formConfig.dataInputConfig.helpText()}
+              </div>
+            )}
+          </>
         )}
 
-        {props.showDataInputs && !isRnaSeqRc && (
+        {props.showDataInputs && !useSlottedInputs && (
           <RootDataInput
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}

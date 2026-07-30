@@ -12,13 +12,28 @@ export function UploadErrorBanner(props: UploadErrorBannerProps): ReactElement {
 
   const makeBanner = (error: BadUpload, index: number) => {
     const message = (
-      <div style={{ lineHeight: 1.5 }} key={`upload-error-${index}`}>
+      <div style={{ lineHeight: 1.5 }}>
         <span>Could not upload dataset:&nbsp;</span>
         {makeMessage(error)}
       </div>
     );
 
-    return <Banner banner={{ type: 'error', message }} />;
+    // Keyed on the error's own content (message, or the JSON paths its
+    // validation targets) rather than just the array index, plus the index
+    // as a tiebreaker in case two errors render identical content.
+    const content =
+      error.type === 422
+        ? [...error.errors.general, ...Object.keys(error.errors.byKey)].join(
+            '|'
+          )
+        : error.message;
+
+    return (
+      <Banner
+        key={`upload-error-${index}-${error.type}-${content}`}
+        banner={{ type: 'error', message }}
+      />
+    );
   };
 
   return <>{props.errors.map(makeBanner)}</>;
@@ -40,17 +55,16 @@ function makeMessage(errors: BadUpload): ReactElement {
 function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
   const elements: ReactNode[] = [];
 
-  let index = 0;
-  const newLI = (msg: ReactNode) => (
-    <li className="upload-error error-422 general" key={++index}>
+  const newLI = (key: string, msg: ReactNode) => (
+    <li className="upload-error error-422 general" key={key}>
       {msg}
     </li>
   );
 
   if ('general' in errors) {
-    for (const msg of errors.general) {
-      elements.push(newLI(msg));
-    }
+    errors.general.forEach((msg, i) => {
+      elements.push(newLI(`general-${i}-${msg}`, msg));
+    });
   }
 
   if ('byKey' in errors) {
@@ -78,15 +92,16 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
           </button>
         );
 
-      for (const msg of errors.byKey[jsonPath]) {
+      errors.byKey[jsonPath].forEach((msg, i) => {
         elements.push(
           newLI(
+            `${jsonPath}-${i}-${msg}`,
             <>
               {link}: {msg}
             </>
           )
         );
-      }
+      });
     }
   }
 

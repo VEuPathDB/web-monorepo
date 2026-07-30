@@ -28,7 +28,14 @@ import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibili
 import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { transformRnaSeqRcUpload } from '../../Service/utils/rnaseq-rc-file-transformer';
+import {
+  utf8ByteLength,
+  SAMPLE_INFO_MAX_BYTES,
+  findDuplicateFileName,
+  findManifestNameCollision,
+  hasAllowedExtension,
+  hasTabInName,
+} from '../../Service/utils/rnaseq-rc-data-files';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -57,6 +64,7 @@ export function UploadFormController(props: UploadFormControllerProps) {
                 dispatch,
                 formState,
                 p.formConfig,
+                p.vdiConfig,
                 p.actions.setSubmitting,
                 p.baseUrl
               ),
@@ -71,6 +79,7 @@ function submitAction(
   dispatch: Dispatch<any, EpicDependencies>,
   formState: DatasetFormState,
   formConfig: DatasetFormConfig,
+  vdiConfig: VdiServiceMetadata,
   setSubmitting: Consumer<boolean>,
   baseUrl: string
 ) {
@@ -80,7 +89,11 @@ function submitAction(
   dispatch(clearBadUpload());
 
   {
-    const validationErrors = validateFormState(formState, formConfig);
+    const validationErrors = validateFormState(
+      formState,
+      formConfig,
+      vdiConfig
+    );
 
     if (!isEmpty(validationErrors)) {
       dispatch(
@@ -101,56 +114,36 @@ function submitAction(
     try {
       assertIsVdiCompatibleWdkService(wdkService);
 
-      // Transform files for rnaseq-rc:1.0
-      // (identified by presence of samplesDescription field in form config)
       let finalFileUploads = fileUploads;
 
-      if (
-        formConfig.verbiage.formInputs?.samplesDescription &&
-        fileUploads.dataFiles &&
-        fileUploads.dataFiles.length > 0
-      ) {
+      if (formConfig.prepareDataFiles != null) {
         try {
-          const transformedFile = await transformRnaSeqRcUpload(
-            fileUploads.dataFiles[0],
-            formState.datasetDetails.samplesDescription,
-            fileUploads.antisenseDataFiles?.[0]
-          );
-
-          // Create a new FileList-like array with the transformed file
-          const dataTransfer = new DataTransfer();
-          dataTransfer.items.add(transformedFile);
-
           finalFileUploads = {
             ...fileUploads,
-            dataFiles: dataTransfer.files,
-            antisenseDataFiles: undefined, // Clear antisense since it's now in the zip
+            dataFiles: formConfig.prepareDataFiles(
+              fileUploads.dataFiles ?? [],
+              formState.datasetDetails
+            ),
           };
-        } catch (transformError) {
+        } catch (e) {
           setSubmitting(false);
           return receiveBadUpload([
             {
               type: 400,
               message:
-                transformError instanceof Error
-                  ? transformError.message
-                  : 'Failed to transform upload files',
+                e instanceof Error
+                  ? e.message
+                  : 'Failed to prepare upload files',
             },
           ]);
         }
       }
 
-      // PROTOTYPE: Map rnaseq-rc to rnaseq for backend submission
-      const backendTypeName =
-        formConfig.dataType.name === 'rnaseq-rc'
-          ? 'rnaseq'
-          : formConfig.dataType.name;
-
       await submitNewDataset({
         service: wdkService.vdi,
         details: {
           type: {
-            name: backendTypeName,
+            name: formConfig.dataType.name,
             version: formConfig.dataType.version,
           },
           ...filterDetails(formState),
@@ -184,8 +177,9 @@ function submitAction(
  * upload.
  */
 function validateFormState(
-  { datasetDetails }: DatasetFormState,
-  formConfig: DatasetFormConfig
+  { datasetDetails, fileUploads }: DatasetFormState,
+  formConfig: DatasetFormConfig,
+  vdiConfig: VdiServiceMetadata
 ): Record<string, string[]> {
   const keyedErrors: Record<string, string[]> = {};
 
@@ -208,6 +202,75 @@ function validateFormState(
     keyedErrors[DatasetSourcesToggleID] = errorMessage;
    */
 
+  const { samplesDescription } = datasetDetails;
+
+  if (
+    samplesDescription != null &&
+    utf8ByteLength(samplesDescription) > SAMPLE_INFO_MAX_BYTES
+  ) {
+    keyedErrors['$.details.samplesDescription'] = [
+      `too long: ${utf8ByteLength(
+        samplesDescription
+      ).toLocaleString()} bytes, maximum ${SAMPLE_INFO_MAX_BYTES.toLocaleString()}`,
+    ];
+  }
+
+  const dataFiles = fileUploads.dataFiles ?? [];
+
+  const duplicate = findDuplicateFileName(dataFiles);
+  if (duplicate != null) {
+    keyedErrors['$.dataFiles'] = [
+      `two data files are both named "${duplicate}" - please rename one`,
+    ];
+  }
+
+  const tabbed = hasTabInName(dataFiles);
+  if (tabbed != null) {
+    keyedErrors['$.dataFiles'] = [
+      `the file name "${tabbed}" contains a tab character - please rename it`,
+    ];
+  }
+
+  // Only forms that generate a manifest (currently rnaseqrc, via
+  // `prepareDataFiles`) reserve this name - other dataset types have no
+  // reason to reject a file merely named "manifest.tsv".
+  if (formConfig.prepareDataFiles != null) {
+    const manifestCollision = findManifestNameCollision(dataFiles);
+    if (manifestCollision != null) {
+      keyedErrors['$.dataFiles'] = [
+        `"${manifestCollision}" is a reserved name (used internally for the manifest) - please rename your file`,
+      ];
+    }
+  }
+
+  // The `accept` attribute is advisory - some file pickers let users override
+  // it - so re-check here rather than relying on the builder's throw. This
+  // still surfaces as an unlinked entry in the top-of-form error banner
+  // (UploadErrorBanner), not inline against the field, since no element has
+  // id "$.dataFiles".
+  const allowed = formConfig.dataType.vdiConfig.allowedFileExtensions;
+  const archiveTypes = vdiConfig.features.supportedArchiveTypes;
+  const badExtension =
+    // An empty list means the backend "can't validate" and accepts anything;
+    // mirror that rather than rejecting every file (as an empty list would
+    // if compared with `.some`).
+    allowed.length === 0
+      ? undefined
+      : dataFiles.find(
+          (f) =>
+            !hasAllowedExtension(f.name, archiveTypes) &&
+            !hasAllowedExtension(f.name, allowed)
+        );
+  if (badExtension != null) {
+    keyedErrors['$.dataFiles'] = [
+      `"${
+        badExtension.name
+      }" is not an accepted file type - permitted types are ${allowed.join(
+        ', '
+      )}`,
+    ];
+  }
+
   return keyedErrors;
 }
 
@@ -223,6 +286,12 @@ function filterDetails({
   if (!formMetaState.hasPublications) delete filtered['publications'];
   if (!formMetaState.hasExperimentalOrganism)
     delete filtered['experimentalOrganism'];
+
+  // `samplesDescription` is a client-only field: its content is turned into
+  // the `sample-info.txt` upload by `prepareDataFiles` (which reads it from
+  // `formState.datasetDetails` before this function runs). It is never a
+  // valid VDI metadata field, so it must never reach the outbound payload.
+  delete filtered['samplesDescription'];
 
   return filtered;
 }

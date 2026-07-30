@@ -1,7 +1,6 @@
 export interface DatasetUploads {
   readonly url?: string;
-  readonly dataFiles?: FileList;
-  readonly antisenseDataFiles?: FileList;
+  readonly dataFiles?: readonly File[];
   readonly documentFiles?: FileList;
   readonly dataPropertiesFiles?: FileList;
 }

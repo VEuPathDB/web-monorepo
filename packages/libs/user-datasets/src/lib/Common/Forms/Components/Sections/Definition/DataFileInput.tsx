@@ -2,13 +2,26 @@ import React, { ReactElement } from 'react';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
 import { Consumer, Nullable } from '../../../../../Utils';
+import { sanitizeFileName } from '../../../../../Service/utils/sanitization';
 
 export interface DataFileInputProps {
   readonly fieldName: string;
   readonly dataType: DatasetTypeConfig;
   readonly vdiFeatures: VdiServiceFeatures;
   readonly required: boolean;
-  readonly setFile: Consumer<Nullable<FileList>>;
+  readonly setFile: Consumer<Nullable<readonly File[]>>;
+  /**
+   * The file currently occupying this slot, straight from the caller's own
+   * state (which is ultimately backed by Redux) - not local component state.
+   *
+   * This matters because Redux's `fileUploads` survives an unmount/remount
+   * (e.g. an SPA navigation away from and back to the form), while local
+   * state does not. If the displayed name came from local state instead, a
+   * stale slot would render as empty - inviting a user to "fill" it with a
+   * new file, silently displacing the file actually held for that slot's
+   * role without any indication anything was already there.
+   */
+  readonly currentFile: Nullable<File>;
   readonly accept?: string;
   readonly disabled?: boolean;
   readonly buttonText?: string;
@@ -22,11 +35,11 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
       props.dataType.vdiConfig.allowedFileExtensions
     );
 
-  const [fileName, setFileName] = React.useState<string>('');
+  const fileName = props.currentFile?.name ?? '';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props.setFile(e.target.files);
-    setFileName(e.target.files?.[0]?.name || '');
+    const files = Array.from(e.target.files ?? []).map(sanitizeFileName);
+    props.setFile(files.length === 0 ? null : files);
   };
 
   // If custom button text is provided, use a styled approach with CSS
@@ -75,7 +88,7 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
         name={props.fieldName}
         required={props.required}
         disabled={props.disabled}
-        onChange={(e) => props.setFile(e.target.files)}
+        onChange={handleChange}
       />
     </>
   );

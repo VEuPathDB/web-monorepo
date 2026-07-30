@@ -1,5 +1,18 @@
 # Implementation Plan: rnaseq-rc:1.0 Upload Route
 
+> **⚠️ Substantially superseded (2026-07-30).** This was the original prototype
+> plan. The zip-archive approach it describes has been replaced by an array of
+> `dataFile` parts packed server-side by VDI, and the prototype
+> `rnaseq-rc` → `rnaseq` type aliasing it introduced is being removed. Retained
+> for background and for the sections it still describes accurately (the
+> reference-genome dependency, the samples-description field).
+>
+> Current design:
+>
+> - [rnaseq-rc upload contract](docs/superpowers/specs/2026-07-30-rnaseq-rc-upload-contract.md)
+> - [Spec A — web-monorepo](docs/superpowers/specs/2026-07-30-rnaseq-rc-multipart-upload-design.md)
+> - [Spec B — vdi-plugin-wrangler](docs/superpowers/specs/2026-07-30-rnaseq-rc-wrangler-manifest-design.md)
+
 ## Overview
 
 Create a new dataset type `rnaseq-rc:1.0` with a custom "Description of Samples" textarea field. The upload process will transform user uploads into a .zip containing their data file (.tsv/.tab) and a SamplesDescrip.txt file created from the textarea content.

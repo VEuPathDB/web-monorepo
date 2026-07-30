@@ -54,7 +54,7 @@ export async function submitNewDataset({
 }
 
 function appendFiles(
-  fileList: FileList | undefined,
+  fileList: Iterable<File> | undefined,
   converter: Function<File, DatasetUpload>,
   combinedUploads: DatasetUpload[]
 ) {

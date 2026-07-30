@@ -16,6 +16,7 @@ import {
   DatasetFormConfig,
   DatasetTypeConfig,
 } from '@veupathdb/user-datasets/lib/Common/Configuration';
+import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
 import { DatasetWorkspaceConfig } from '@veupathdb/user-datasets/lib/Common/Configuration/DatasetWorkspaceConfig';
@@ -31,7 +32,7 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
-  rnaseqrc: { name: 'rnaseq-rc', version: '1.0' },
+  rnaseqrc: { name: 'rnaseqrc', version: '1.0' },
   phenotype: { name: 'phenotype', version: '1.0' },
 };
 
@@ -508,6 +509,18 @@ function rnaseqRcFormConfigurator(
     dataInputConfig: {
       file: {
         enabled: true,
+        slots: [
+          {
+            label: 'Data file 1',
+            buttonText: 'Choose sense or unstranded file',
+            required: true,
+          },
+          {
+            label: 'Data file 2',
+            buttonText: 'Choose anti-sense file (optional)',
+            required: false,
+          },
+        ],
       },
       helpText: () => (
         <details>
@@ -516,18 +529,17 @@ function rnaseqRcFormConfigurator(
           </summary>
           <div className="formInfo">
             <p>
-              Upload your RNA-Seq data files as tab-delimited files (.tsv, .tab,
-              or .txt).
+              Upload your RNA-Seq count data as tab- or comma-delimited files.
+              Your original file names are preserved.
             </p>
             <p>
-              You must provide Data file 1 (sense or unstranded file). You may
-              optionally provide Data file 2 (anti-sense file).
+              Provide either a single unstranded count file as Data file 1, or a
+              stranded pair: sense as Data file 1 and anti-sense as Data file 2.
             </p>
             <p>
-              The Description of Samples field will be automatically packaged
-              with your data files as sample-info.txt in a .zip archive. If you
-              provide both Data file 1 and Data file 2, a stranded-manifest.txt
-              file will also be generated.
+              The Sample Details you enter below are submitted alongside your
+              count files for AI annotation. You do not need to prepare any
+              additional files.
             </p>
             {textFilesHelp}
           </div>
@@ -539,6 +551,12 @@ function rnaseqRcFormConfigurator(
       renderInput: ReferenceGenomeDependency,
     },
     enableExperimentalOrganism: true,
+    prepareDataFiles: (files, details) =>
+      buildRnaSeqRcDataFiles(
+        files,
+        details.samplesDescription,
+        dataType.vdiConfig.allowedFileExtensions
+      ),
   };
 }
 
