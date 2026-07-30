@@ -28,6 +28,12 @@ import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibili
 import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  utf8ByteLength,
+  SAMPLE_INFO_MAX_BYTES,
+  findDuplicateFileName,
+  hasTabInName,
+} from '../../Service/utils/rnaseq-rc-data-files';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -163,7 +169,7 @@ function submitAction(
  * upload.
  */
 function validateFormState(
-  { datasetDetails }: DatasetFormState,
+  { datasetDetails, fileUploads }: DatasetFormState,
   formConfig: DatasetFormConfig
 ): Record<string, string[]> {
   const keyedErrors: Record<string, string[]> = {};
@@ -186,6 +192,53 @@ function validateFormState(
   if (clientSide.hasExternalSources === undefined)
     keyedErrors[DatasetSourcesToggleID] = errorMessage;
    */
+
+  const { samplesDescription } = datasetDetails;
+
+  if (
+    samplesDescription != null &&
+    utf8ByteLength(samplesDescription) > SAMPLE_INFO_MAX_BYTES
+  ) {
+    keyedErrors['$.details.samplesDescription'] = [
+      `too long: ${utf8ByteLength(
+        samplesDescription
+      ).toLocaleString()} bytes, maximum ${SAMPLE_INFO_MAX_BYTES.toLocaleString()}`,
+    ];
+  }
+
+  const dataFiles = fileUploads.dataFiles ?? [];
+
+  const duplicate = findDuplicateFileName(dataFiles);
+  if (duplicate != null) {
+    keyedErrors['$.dataFiles'] = [
+      `two data files are both named "${duplicate}" - please rename one`,
+    ];
+  }
+
+  const tabbed = hasTabInName(dataFiles);
+  if (tabbed != null) {
+    keyedErrors['$.dataFiles'] = [
+      `the file name "${tabbed}" contains a tab character - please rename it`,
+    ];
+  }
+
+  // The `accept` attribute is advisory - some file pickers let users override
+  // it - so re-check here rather than relying on the builder's throw, which
+  // surfaces as a generic submit error rather than against the field.
+  const allowed = formConfig.dataType.vdiConfig.allowedFileExtensions;
+  const badExtension = dataFiles.find(
+    (f) =>
+      !allowed.some((ext) => f.name.toLowerCase().endsWith(ext.toLowerCase()))
+  );
+  if (badExtension != null) {
+    keyedErrors['$.dataFiles'] = [
+      `"${
+        badExtension.name
+      }" is not an accepted file type - permitted types are ${allowed.join(
+        ', '
+      )}`,
+    ];
+  }
 
   return keyedErrors;
 }
