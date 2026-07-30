@@ -2,7 +2,8 @@
 
 **Date:** 2026-07-30
 **Repo:** `vdi-plugin-wrangler` (branch `rnaseq-rc`)
-**Status:** Agreed, **blocked** — do not execute yet
+**Status:** Agreed and **unblocked** — the in-flight rnaseq-rc development landed on
+2026-07-30. Anchors below re-verified against that state.
 
 Replaces fixed-filename-stem discovery with manifest-driven discovery, so that
 users' original count filenames survive into our system.
@@ -12,13 +13,36 @@ Rules stated there are not repeated here.
 
 Companion: [Spec A — web-monorepo](2026-07-30-rnaseq-rc-multipart-upload-design.md).
 
-## Blocked on
+## State of the target repo
 
-Development of the rnaseq-rc datatype is being finished in a **separate Claude
-Code session** on branch `rnaseq-rc`, which had an uncommitted `Dockerfile`
-change at the time of writing. Do not start this spec until that work has landed,
-and re-verify the line references below against the merged state — they will have
-moved.
+Work stays on branch **`rnaseq-rc`** — it is already on the remote, so do not
+rename it despite the type name now being `rnaseqrc`. Branch names are not type
+names.
+
+The previously-blocking development has landed. Re-verified 2026-07-30:
+
+| Anchor                                     | Then      | Now                 |
+| ------------------------------------------ | --------- | ------------------- |
+| `lib/R/counts_files.R` total               | 396 lines | **454**             |
+| `.COUNTS_FILE_KEY_FOR_STEM`                | line 12   | line 12 (unchanged) |
+| `SAMPLE_INFO_MAX_CHARS`                    | line 30   | line 30 (unchanged) |
+| `discover_counts_files`                    | line 48   | line 48 (unchanged) |
+| `data_file_pattern` regex                  | line 51   | line 51 (unchanged) |
+| `nchar(..., type = "bytes")`               | line 126  | **line 135**        |
+| `read_and_merge_counts`                    | line 392  | **line 404**        |
+| Fixtures under `tests/testthat/rnaseq-rc/` | 24        | **29**              |
+
+The discovery function's structure, validation blocks and `list(mode, paths)`
+return contract are all unchanged, so this spec's design holds as written. The
+growth is encoding work: five new fixtures (`25-iso8859-counts-OK`,
+`26-windows1252-counts-OK`, `27-utf16-counts-OK`, `28-windows1252-sample-info-OK`,
+`29-utf16-sample-info-OK`) and the transcoding that supports them.
+
+**Those five matter to this spec.** A manifest is UTF-8 by contract, but it names
+count files whose own contents may be Latin-1 or UTF-16 — and on a filesystem a
+filename is bytes. Manifest parsing must not assume the _named_ files share the
+manifest's encoding, and the filename comparison must work when a name contains
+non-ASCII. Each of the five needs a manifest like every other fixture.
 
 This spec lives in `web-monorepo` only because of that. Move it into
 `vdi-plugin-wrangler` when the repo is free.
@@ -88,7 +112,7 @@ script_path <- file.path("lib/R", paste0("wrangle-", datatype, ".R"))
 So:
 
 - `git mv lib/R/wrangle-rnaseq-rc.R lib/R/wrangle-rnaseqrc.R`
-- In all 24 fixture `vdi-meta.json` files, `"name": "rnaseq-rc"` → `"rnaseqrc"`.
+- In all 29 fixture `vdi-meta.json` files, `"name": "rnaseq-rc"` → `"rnaseqrc"`.
 
 Leave everything else spelled `rnaseq-rc`: the branch, `doc/rnaseq-rc.md`, and the
 `tests/testthat/rnaseq-rc/` fixture directory are not type names and nothing
@@ -170,7 +194,7 @@ user-guidance one. Not worth jumping through hoops for.
 
 ## Fixtures
 
-24 directory-based cases under `tests/testthat/rnaseq-rc/`, each holding input
+29 directory-based cases under `tests/testthat/rnaseq-rc/`, each holding input
 files plus `vdi-meta.json`.
 
 **Every fixture needs a `manifest.tsv`.**
@@ -203,13 +227,22 @@ in a form and name nothing — the whole framing changes from "name your files
 correctly" to "select your files". Also fix "100,000 characters" → bytes, and add
 `.tab` to the accepted extensions.
 
-Keep the _Counts file layout_, _sample-info_ content guidance, _Sample IDs_ and
-_Suitability for differential expression_ sections — none of them are affected.
+Keep the _Counts file layout_, _Sample IDs_ and _Suitability for differential
+expression_ sections — none of them are affected.
+
+**One addition to the `sample-info` content guidance:** ask for units. The upload
+form's placeholder now prompts for them (`web-monorepo` commit `b59fcfc1`) —
+"…what abbreviations mean, which samples are replicates, what units any values
+are in, and what conditions or timepoints are represented" — and the doc should
+say the same, so the two places a user might look agree. Units are rarely
+recoverable from sample names alone, and the AI annotation step can only label
+values it can interpret. Keep it to a clause in the existing list, not a new
+section.
 
 ## Verification
 
 `docker compose run --rm -w /opt/veupathdb bin/run_tests.R` (the build is ~45
-minutes, so avoid a rebuild if the image is current). All 24 fixtures plus the
+minutes, so avoid a rebuild if the image is current). All 29 fixtures plus the
 new BAD cases green, and `test_counts_files.R` updated rather than skipped.
 
 Then an end-to-end upload from the Spec A form against a dev VDI, with count
