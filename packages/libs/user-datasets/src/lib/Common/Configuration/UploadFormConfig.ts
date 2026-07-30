@@ -23,8 +23,13 @@ export interface DataFileSlot {
 
 export interface FileUploadConfig extends UploadConfig {
   /**
-   * Labelled data file inputs. When two or more are declared the form renders
-   * one input per slot; otherwise it renders the single default input.
+   * Labelled data file inputs. Declaring two or more renders one input per
+   * slot; otherwise the single default input is rendered.
+   *
+   * NOTE: the current renderer (`DualFileInput`) handles **exactly two** slots
+   * — it reads indices 0 and 1 only, so a third would be silently ignored.
+   * Supporting more means generalising that component, or narrowing this to a
+   * `readonly [DataFileSlot, DataFileSlot]` tuple so the compiler says so.
    */
   readonly slots?: readonly DataFileSlot[];
 
