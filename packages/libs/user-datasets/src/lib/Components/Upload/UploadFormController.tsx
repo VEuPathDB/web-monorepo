@@ -32,6 +32,8 @@ import {
   utf8ByteLength,
   SAMPLE_INFO_MAX_BYTES,
   findDuplicateFileName,
+  findManifestNameCollision,
+  hasAllowedExtension,
   hasTabInName,
 } from '../../Service/utils/rnaseq-rc-data-files';
 
@@ -62,6 +64,7 @@ export function UploadFormController(props: UploadFormControllerProps) {
                 dispatch,
                 formState,
                 p.formConfig,
+                p.vdiConfig,
                 p.actions.setSubmitting,
                 p.baseUrl
               ),
@@ -76,6 +79,7 @@ function submitAction(
   dispatch: Dispatch<any, EpicDependencies>,
   formState: DatasetFormState,
   formConfig: DatasetFormConfig,
+  vdiConfig: VdiServiceMetadata,
   setSubmitting: Consumer<boolean>,
   baseUrl: string
 ) {
@@ -85,7 +89,11 @@ function submitAction(
   dispatch(clearBadUpload());
 
   {
-    const validationErrors = validateFormState(formState, formConfig);
+    const validationErrors = validateFormState(
+      formState,
+      formConfig,
+      vdiConfig
+    );
 
     if (!isEmpty(validationErrors)) {
       dispatch(
@@ -170,7 +178,8 @@ function submitAction(
  */
 function validateFormState(
   { datasetDetails, fileUploads }: DatasetFormState,
-  formConfig: DatasetFormConfig
+  formConfig: DatasetFormConfig,
+  vdiConfig: VdiServiceMetadata
 ): Record<string, string[]> {
   const keyedErrors: Record<string, string[]> = {};
 
@@ -222,14 +231,36 @@ function validateFormState(
     ];
   }
 
+  // Only forms that generate a manifest (currently rnaseqrc, via
+  // `prepareDataFiles`) reserve this name - other dataset types have no
+  // reason to reject a file merely named "manifest.tsv".
+  if (formConfig.prepareDataFiles != null) {
+    const manifestCollision = findManifestNameCollision(dataFiles);
+    if (manifestCollision != null) {
+      keyedErrors['$.dataFiles'] = [
+        `"${manifestCollision}" is a reserved name (used internally for the manifest) - please rename your file`,
+      ];
+    }
+  }
+
   // The `accept` attribute is advisory - some file pickers let users override
-  // it - so re-check here rather than relying on the builder's throw, which
-  // surfaces as a generic submit error rather than against the field.
+  // it - so re-check here rather than relying on the builder's throw. This
+  // still surfaces as an unlinked entry in the top-of-form error banner
+  // (UploadErrorBanner), not inline against the field, since no element has
+  // id "$.dataFiles".
   const allowed = formConfig.dataType.vdiConfig.allowedFileExtensions;
-  const badExtension = dataFiles.find(
-    (f) =>
-      !allowed.some((ext) => f.name.toLowerCase().endsWith(ext.toLowerCase()))
-  );
+  const archiveTypes = vdiConfig.features.supportedArchiveTypes;
+  const badExtension =
+    // An empty list means the backend "can't validate" and accepts anything;
+    // mirror that rather than rejecting every file (as an empty list would
+    // if compared with `.some`).
+    allowed.length === 0
+      ? undefined
+      : dataFiles.find(
+          (f) =>
+            !hasAllowedExtension(f.name, archiveTypes) &&
+            !hasAllowedExtension(f.name, allowed)
+        );
   if (badExtension != null) {
     keyedErrors['$.dataFiles'] = [
       `"${

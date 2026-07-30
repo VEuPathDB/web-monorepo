@@ -184,21 +184,28 @@ IMPORTANT: If the sample names alone do not make the experimental design clear, 
         )}
 
         {props.showDataInputs && useSlottedInputs && (
-          <DualFileInput
-            pathBuilder={props.contentJsonPath}
-            dataType={formConfig.dataType}
-            vdiFeatures={formProps.vdiConfig.features}
-            slots={slots!}
-            files={fileUploads.dataFiles ?? []}
-            setFiles={(files) =>
-              setUploads({ ...fileUploads, dataFiles: files })
-            }
-            accept={
-              formConfig.dataInputConfig.file?.enabled
-                ? formConfig.dataInputConfig.file.accept
-                : undefined
-            }
-          />
+          <>
+            <DualFileInput
+              pathBuilder={props.contentJsonPath}
+              dataType={formConfig.dataType}
+              vdiFeatures={formProps.vdiConfig.features}
+              slots={slots!}
+              files={fileUploads.dataFiles ?? []}
+              setFiles={(files) =>
+                setUploads({ ...fileUploads, dataFiles: files })
+              }
+              accept={
+                formConfig.dataInputConfig.file?.enabled
+                  ? formConfig.dataInputConfig.file.accept
+                  : undefined
+              }
+            />
+            {typeof formConfig.dataInputConfig.helpText === 'function' && (
+              <div className="column-2">
+                {formConfig.dataInputConfig.helpText()}
+              </div>
+            )}
+          </>
         )}
 
         {props.showDataInputs && !useSlottedInputs && (

@@ -1,7 +1,10 @@
 import {
   buildRnaSeqRcDataFiles,
   findDuplicateFileName,
+  findManifestNameCollision,
+  hasAllowedExtension,
   hasTabInName,
+  MANIFEST_NAME,
   SAMPLE_INFO_MAX_BYTES,
   utf8ByteLength,
 } from './rnaseq-rc-data-files';
@@ -106,17 +109,6 @@ describe('buildRnaSeqRcDataFiles — generated names yield on collision', () => 
     );
   });
 
-  it('renames its own manifest when the user file claims that name', () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('manifest.tsv')],
-      'notes',
-      EXTS
-    );
-
-    expect(result.map((f) => f.name)).toContain('manifest-1.tsv');
-    expect(result.map((f) => f.name)).toContain('manifest.tsv');
-  });
-
   it('keeps counting up when the first fallback is also taken', () => {
     const result = buildRnaSeqRcDataFiles(
       [file('sample-info.txt'), file('sample-info-1.txt')],
@@ -125,6 +117,30 @@ describe('buildRnaSeqRcDataFiles — generated names yield on collision', () => 
     );
 
     expect(result.map((f) => f.name)).toContain('sample-info-2.txt');
+  });
+
+  it('yields sample-info to a user file matching case-insensitively', () => {
+    const result = buildRnaSeqRcDataFiles(
+      [file('Sample-Info.TXT')],
+      'notes',
+      EXTS
+    );
+
+    expect(result.map((f) => f.name)).toContain('sample-info-1.txt');
+  });
+});
+
+describe('buildRnaSeqRcDataFiles — manifest name is reserved', () => {
+  it('throws rather than renaming when a count file is named manifest.tsv', () => {
+    expect(() =>
+      buildRnaSeqRcDataFiles([file('manifest.tsv')], 'notes', EXTS)
+    ).toThrow(/manifest\.tsv/);
+  });
+
+  it('throws when the collision only matches case-insensitively', () => {
+    expect(() =>
+      buildRnaSeqRcDataFiles([file('Manifest.TSV')], 'notes', EXTS)
+    ).toThrow(/Manifest\.TSV/);
   });
 });
 
@@ -170,6 +186,12 @@ describe('findDuplicateFileName', () => {
       findDuplicateFileName([file('a.tsv'), file('b.tsv')])
     ).toBeUndefined();
   });
+
+  it('finds a repeated basename that only matches case-insensitively', () => {
+    expect(
+      findDuplicateFileName([file('Counts.tsv'), file('counts.TSV')])
+    ).toBe('counts.TSV');
+  });
 });
 
 describe('hasTabInName', () => {
@@ -179,6 +201,34 @@ describe('hasTabInName', () => {
 
   it('returns undefined for clean names', () => {
     expect(hasTabInName([file('fine.tsv')])).toBeUndefined();
+  });
+});
+
+describe('findManifestNameCollision', () => {
+  it('finds a count file named exactly manifest.tsv', () => {
+    expect(findManifestNameCollision([file(MANIFEST_NAME)])).toBe(
+      MANIFEST_NAME
+    );
+  });
+
+  it('finds a collision that only matches case-insensitively', () => {
+    expect(findManifestNameCollision([file('Manifest.TSV')])).toBe(
+      'Manifest.TSV'
+    );
+  });
+
+  it('returns undefined when no file collides', () => {
+    expect(findManifestNameCollision([file('counts.tsv')])).toBeUndefined();
+  });
+});
+
+describe('hasAllowedExtension', () => {
+  it('matches an allowed extension case-insensitively', () => {
+    expect(hasAllowedExtension('Counts.CSV', EXTS)).toBe(true);
+  });
+
+  it('rejects a name matching none of the extensions', () => {
+    expect(hasAllowedExtension('counts.xlsx', EXTS)).toBe(false);
   });
 });
 

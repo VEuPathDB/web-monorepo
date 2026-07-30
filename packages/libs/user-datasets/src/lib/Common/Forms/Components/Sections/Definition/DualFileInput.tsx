@@ -51,6 +51,7 @@ export function DualFileInput(props: DualFileInputProps): ReactElement {
         dataType={props.dataType}
         required={props.slots[0].required}
         setFile={(files) => setAt(0, files)}
+        currentFile={props.files[0] ?? null}
         vdiFeatures={props.vdiFeatures}
         accept={props.accept}
         buttonText={props.slots[0].buttonText}
@@ -72,6 +73,7 @@ export function DualFileInput(props: DualFileInputProps): ReactElement {
         dataType={props.dataType}
         required={props.slots[1].required}
         setFile={(files) => setAt(1, files)}
+        currentFile={props.files[1] ?? null}
         vdiFeatures={props.vdiFeatures}
         disabled={!hasSense}
         accept={props.accept}

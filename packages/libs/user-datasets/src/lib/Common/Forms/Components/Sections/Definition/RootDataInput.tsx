@@ -159,6 +159,7 @@ function fileInput(props: FileUploadProps): ReactElement {
       dataType={props.dataType}
       required={props.required && !props.files}
       setFile={props.setFiles}
+      currentFile={props.files?.[0] ?? null}
       vdiFeatures={props.vdiConfig.features}
     />
   );
