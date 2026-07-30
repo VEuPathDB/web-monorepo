@@ -228,11 +228,18 @@ errors:
 - tabs in filenames
 - required slots unfilled
 
-The size limit is enforced **softly** — a live byte counter plus a
-submit-blocking error — rather than via the `maxLength` attribute `TextAreaInput`
-already supports. `maxLength` silently truncates a paste, and someone pasting a
-Methods section would lose the tail with no indication. A counter also gives
-useful feedback well before the limit.
+The size limit **blocks submit**, and shows a live byte counter alongside. It is
+deliberately not implemented via the `maxLength` attribute `TextAreaInput`
+already supports: `maxLength` silently truncates a paste, so someone pasting a
+Methods section would lose the tail with no indication. Blocking with a visible
+counter catches the same case instantly and explains itself.
+
+This duplicates the plugin's rule across two repos, which is accepted rather than
+accidental — the alternative is a user discovering the limit only after an async
+import failure. **The plugin remains the authority.** The form's job is to catch
+the common case early, so if the two ever disagree, fix the form. Keep the
+`TextEncoder` byte count in step with `nchar(type = "bytes")`; see the contract's
+_size limit_ section for why the unit matters.
 
 ## Testing
 

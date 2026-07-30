@@ -123,26 +123,30 @@ listed_.
   `nchar(..., type = "bytes")` at line 126 measures bytes. The measure is right
   and stays; the wording should say bytes. `doc/rnaseq-rc.md` needs the same fix.
 
-## Error taxonomy — a genuine question
+## Error taxonomy — decided
 
 `stop_validation_error(user_msg =, technical_msg =)` assumes the user can act on
 `user_msg`. For manifest faults that assumption breaks: **the UI generates the
 manifest, so a bad manifest is our bug, not the uploader's.** Telling someone to
-fix a file they never created is actively misleading.
+fix a file they never created would be actively misleading.
 
-But the plugin cannot tell how an upload arrived. Besides the form there is
-VDI's proxy POST route and direct API access, where a hand-crafted manifest is
-possible and a user-actionable message _would_ be right.
+**Manifest-structure faults** — missing, malformed line, unknown role, duplicate
+role, dangling reference, unreferenced extra — report the internal error plainly
+and point at the helpdesk:
 
-**Recommendation:** manifest-structure faults (missing, malformed, unknown role,
-duplicate role, dangling reference) get a `user_msg` that is honest rather than
-instructive — along the lines of _"There was a problem with the structure of your
-upload. If you uploaded through the website, please report this."_ — with full
-detail in `technical_msg`. Content faults the user genuinely owns (empty
-`sample-info`, oversized `sample-info`, bad counts, mode violations) keep their
-current instructive messages.
+> There was a problem with the structure of your upload. If you uploaded through
+> the website, please contact the helpdesk.
 
-Confirm this before implementing; it shapes every new error string.
+Full diagnostic detail goes in `technical_msg` as usual.
+
+**Content faults the user genuinely owns** — empty `sample-info`, oversized
+`sample-info`, malformed counts, mode violations — keep their current instructive
+messages unchanged.
+
+No further branching. The plugin cannot tell a form upload from a hand-crafted
+API one, and deliberately does not try: a manifest arriving from the web client
+should never be malformed, so this path is a bug report channel rather than a
+user-guidance one. Not worth jumping through hoops for.
 
 ## Fixtures
 
