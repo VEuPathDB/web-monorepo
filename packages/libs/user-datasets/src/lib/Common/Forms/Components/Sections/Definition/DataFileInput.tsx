@@ -2,13 +2,14 @@ import React, { ReactElement } from 'react';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
 import { Consumer, Nullable } from '../../../../../Utils';
+import { sanitizeFileName } from '../../../../../Service/utils/sanitization';
 
 export interface DataFileInputProps {
   readonly fieldName: string;
   readonly dataType: DatasetTypeConfig;
   readonly vdiFeatures: VdiServiceFeatures;
   readonly required: boolean;
-  readonly setFile: Consumer<Nullable<FileList>>;
+  readonly setFile: Consumer<Nullable<readonly File[]>>;
   readonly accept?: string;
   readonly disabled?: boolean;
   readonly buttonText?: string;
@@ -25,8 +26,9 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
   const [fileName, setFileName] = React.useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props.setFile(e.target.files);
-    setFileName(e.target.files?.[0]?.name || '');
+    const files = Array.from(e.target.files ?? []).map(sanitizeFileName);
+    props.setFile(files.length === 0 ? null : files);
+    setFileName(files[0]?.name ?? '');
   };
 
   // If custom button text is provided, use a styled approach with CSS
@@ -75,7 +77,7 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
         name={props.fieldName}
         required={props.required}
         disabled={props.disabled}
-        onChange={(e) => props.setFile(e.target.files)}
+        onChange={handleChange}
       />
     </>
   );

@@ -162,16 +162,9 @@ IMPORTANT: If the sample names alone do not make the experimental design clear, 
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}
             vdiFeatures={formProps.vdiConfig.features}
-            senseFile={fileUploads.dataFiles ?? null}
-            antisenseFile={fileUploads.antisenseDataFiles ?? null}
-            setSenseFile={(files) =>
-              setUploads({ ...fileUploads, dataFiles: files ?? undefined })
-            }
-            setAntisenseFile={(files) =>
-              setUploads({
-                ...fileUploads,
-                antisenseDataFiles: files ?? undefined,
-              })
+            files={fileUploads.dataFiles ?? []}
+            setFiles={(files) =>
+              setUploads({ ...fileUploads, dataFiles: files })
             }
             accept=".tsv,.tab,.txt"
           />

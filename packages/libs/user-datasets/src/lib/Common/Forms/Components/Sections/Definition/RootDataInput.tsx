@@ -133,8 +133,8 @@ interface UploadFieldProps {
 // region File Input Sub-Component
 
 interface FileUploadState {
-  readonly files: Nullable<FileList>;
-  readonly setFiles: Consumer<Nullable<FileList>>;
+  readonly files: Nullable<readonly File[]>;
+  readonly setFiles: Consumer<Nullable<readonly File[]>>;
   readonly vdiConfig: VdiServiceMetadata;
 }
 
