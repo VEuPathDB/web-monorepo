@@ -24,7 +24,7 @@
 - **Accepted extensions** come from `dataType.vdiConfig.allowedFileExtensions` — do not hardcode a second list. VDI config currently has `.txt .tsv .csv .tab`; a dev site on `main` quadlets config will lack `.tab` until that branch deploys.
 - **Never use `new DataTransfer()`.** Removing it is a goal of this work.
 - **Import style:** regular imports, not `import type`.
-- **Dependencies:** if you ever need to add one, use `yarn add`; never hand-edit `package.json`. (Removal in Task 4 uses `yarn remove`.)
+- **Dependencies:** if you ever need to add one, use `yarn add`; never hand-edit `package.json`. (Removal in Task 2 uses `yarn remove`.)
 - Run all commands from the repo root unless stated. Use `~/.volta/bin/yarn` if `yarn --version` reports 1.x.
 
 ---
@@ -447,9 +447,19 @@ Establishes the first tests in this package."
 
 ---
 
-## Task 2: Migrate upload state to `readonly File[]`
+## Task 2: Migrate upload state to `readonly File[]` and send separate parts
 
-Mechanical type migration. Deletes `antisenseDataFiles`, folding the second count file into `dataFiles[1]`. No behaviour change intended — the form should look and work identically afterwards.
+Migrates the upload state off `FileList`, folding the second count file into
+`dataFiles[1]`, **and** replaces the client-side zip with the Task 1 builder
+behind a `prepareDataFiles` hook.
+
+These are one task rather than two because they are inseparable: deleting
+`antisenseDataFiles` breaks the old transform block that consumed it, so the
+replacement has to land in the same commit. Splitting them would leave a commit
+that silently uploads no `sample-info.txt` and no manifest.
+
+Net effect for a user: rnaseq-rc uploads send 3-4 `dataFile` parts instead of one
+zip. The form looks identical — Task 3 is what changes its structure.
 
 **Files:**
 
@@ -459,12 +469,19 @@ Mechanical type migration. Deletes `antisenseDataFiles`, folding the second coun
 - Modify: `.../Common/Forms/Components/Sections/Definition/DualFileInput.tsx` (whole file)
 - Modify: `.../Common/Forms/Components/Sections/Definition/RootDataInput.tsx:136-137`
 - Modify: `.../Common/Forms/Components/Sections/Definition/RootDetailsSection.tsx:161-186,233-237`
-- Modify: `packages/libs/user-datasets/src/lib/Components/Upload/UploadFormController.tsx:106-128`
+- Modify: `packages/libs/user-datasets/src/lib/Common/Configuration/DatasetFormConfig.ts:29`
+- Modify: `packages/libs/user-datasets/src/lib/Components/Upload/UploadFormController.tsx:106-147`
+- Modify: `packages/libs/web-common/src/user-dataset-upload-config.tsx`
+- Delete: `packages/libs/user-datasets/src/lib/Service/utils/rnaseq-rc-file-transformer.ts`
+- Modify: `packages/libs/user-datasets/package.json` (via `yarn remove`)
 
 **Interfaces:**
 
-- Consumes: nothing.
-- Produces: `DatasetUploads.dataFiles?: readonly File[]`, and `antisenseDataFiles` no longer exists. Task 3 relies on `dataFiles` being index-addressable.
+- Consumes: `buildRnaSeqRcDataFiles` from Task 1.
+- Produces:
+
+  - `DatasetUploads.dataFiles?: readonly File[]`; `antisenseDataFiles` no longer exists. Task 3 relies on `dataFiles` being index-addressable.
+  - `DatasetFormConfig.prepareDataFiles?: (dataFiles: readonly File[], details: PartialDatasetDetails) => readonly File[]`
 
 - [ ] **Step 1: Change the upload state type**
 
@@ -640,15 +657,140 @@ In `RootDetailsSection.tsx`, replace the `DualFileInput` call site (currently li
 
 Leave the `isRnaSeqRc` condition alone for now — Task 3 removes it. The `buildFileProps` block at lines 233-237 needs no edit; `lodash.isEmpty` handles arrays.
 
-In `UploadFormController.tsx`, the old transform block at lines 106-141 still references `antisenseDataFiles` and won't compile. Replace that whole block with a temporary passthrough — Task 4 replaces it properly:
+- [ ] **Step 6: Add the `prepareDataFiles` hook to the form config**
+
+In `DatasetFormConfig.ts`, import `PartialDatasetDetails` from `'../../Service'` and add to the interface:
 
 ```ts
-const finalFileUploads = fileUploads;
+  /**
+   * Optional hook assembling the final set of files sent to VDI as `dataFile`
+   * parts. Return value replaces `uploads.dataFiles`. Filenames arrive already
+   * sanitized.
+   *
+   * May throw, but only as a backstop: everything it rejects is also caught by
+   * the form's own validation, which reports inline against the offending
+   * field. A throw here means a validation gap and surfaces as a generic
+   * submit error.
+   */
+  readonly prepareDataFiles?: (
+    dataFiles: readonly File[],
+    details: PartialDatasetDetails
+  ) => readonly File[];
 ```
 
-Delete the now-unused `transformRnaSeqRcUpload` import.
+- [ ] **Step 7: Replace the transform block in the controller**
 
-- [ ] **Step 6: Type-check**
+In `UploadFormController.tsx`, the old block at lines 106-141 references `antisenseDataFiles` and `transformRnaSeqRcUpload`, and will not compile. Replace all of it with:
+
+```ts
+let finalFileUploads = fileUploads;
+
+if (formConfig.prepareDataFiles != null) {
+  try {
+    finalFileUploads = {
+      ...fileUploads,
+      dataFiles: formConfig.prepareDataFiles(
+        fileUploads.dataFiles ?? [],
+        formState.datasetDetails
+      ),
+    };
+  } catch (e) {
+    setSubmitting(false);
+    return receiveBadUpload([
+      {
+        type: 400,
+        message:
+          e instanceof Error ? e.message : 'Failed to prepare upload files',
+      },
+    ]);
+  }
+}
+```
+
+Delete the `transformRnaSeqRcUpload` import.
+
+Then delete the `backendTypeName` variable and its `// PROTOTYPE` comment (lines 143-147), and use the config value directly in the submit call:
+
+```ts
+        details: {
+          type: {
+            name: formConfig.dataType.name,
+            version: formConfig.dataType.version,
+          },
+          ...filterDetails(formState),
+        },
+```
+
+Leave `DatasetTypeConfig.ts`'s alias alone — Task 4 removes it, and removing it here would hide the type from the upload menu before the config deploys.
+
+- [ ] **Step 8: Register the builder for rnaseq-rc**
+
+In `user-dataset-upload-config.tsx`, add the import. Match the deep-path style already used in that file (see its existing `@veupathdb/user-datasets/lib/...` imports):
+
+```ts
+import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
+```
+
+Add to the object returned by `rnaseqRcFormConfigurator`:
+
+```ts
+    prepareDataFiles: (files, details) =>
+      buildRnaSeqRcDataFiles(
+        files,
+        details.samplesDescription,
+        dataType.vdiConfig.allowedFileExtensions
+      ),
+```
+
+`dataType` is the configurator's own parameter, so it is already in scope.
+
+- [ ] **Step 9: Rewrite the help text**
+
+Still in `rnaseqRcFormConfigurator`, replace the `helpText` body. The current text promises a `.zip` archive and a manifest only when two files are given — both now wrong:
+
+```tsx
+      helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
+          <div className="formInfo">
+            <p>
+              Upload your RNA-Seq count data as tab- or comma-delimited files.
+              Your original file names are preserved.
+            </p>
+            <p>
+              Provide either a single unstranded count file as Data file 1, or a
+              stranded pair: sense as Data file 1 and anti-sense as Data file 2.
+            </p>
+            <p>
+              The Sample Details you enter below are submitted alongside your
+              count files for AI annotation. You do not need to prepare any
+              additional files.
+            </p>
+            {textFilesHelp}
+          </div>
+        </details>
+      ),
+```
+
+- [ ] **Step 10: Delete the old transformer and the JSZip dependency**
+
+```bash
+git rm packages/libs/user-datasets/src/lib/Service/utils/rnaseq-rc-file-transformer.ts
+cd packages/libs/user-datasets && ~/.volta/bin/yarn remove jszip @types/jszip
+```
+
+Then confirm nothing still references either:
+
+```bash
+cd /home/maccallr/Desktop/EDA/web-monorepo
+grep -rn "jszip\|JSZip\|rnaseq-rc-file-transformer" packages/libs packages/sites --include="*.ts" --include="*.tsx" --include="*.json" | grep -v node_modules
+```
+
+Expected: no hits.
+
+- [ ] **Step 11: Type-check**
 
 ```bash
 ~/.volta/bin/yarn nx compile:check @veupathdb/genomics-site
@@ -656,30 +798,41 @@ Delete the now-unused `transformRnaSeqRcUpload` import.
 
 Expected: no errors. `DatasetUploads` is part of the library's public API, so if a site package fails, fix it there too rather than widening the type back.
 
-- [ ] **Step 7: Confirm the unit tests still pass**
+- [ ] **Step 12: Confirm the unit tests still pass**
 
 ```bash
 cd packages/libs/user-datasets && CI=true ~/.volta/bin/yarn test
 ```
 
-Expected: PASS. Task 1's tests are independent of this change, so a failure here means something was over-edited.
+Expected: PASS. Task 1's tests do not depend on this change, so a failure here means something was over-edited.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 13: Commit**
 
 ```bash
-git add -A packages/libs
-git commit -m "Hold uploaded data files as readonly File[]
+cd /home/maccallr/Desktop/EDA/web-monorepo
+git add -A packages/libs yarn.lock
+git commit -m "Send rnaseq-rc uploads as separate dataFile parts
 
-FileList is a legacy interop type whose immutability protects no
-invariant here - the list is replaced wholesale on every change, and the
-immutability that matters lives in File itself. An array gives
-compile-time immutability and composes, removing the need to synthesise
-FileLists via DataTransfer.
+VDI already packs multiple dataFile parts into a flat archive
+server-side, structurally identical to what JSZip was building in the
+browser - so the client-side archive was redundant work that also forced
+the upload to be async and put file assembly behind a type sniff in the
+controller.
 
-Folds the antisense file into dataFiles[1], so a second count file is no
-longer a special-cased upload field. The second input stays gated on the
-first being filled, which now also guarantees position keeps meaning
-role."
+File assembly moves to a prepareDataFiles hook on the form config,
+keeping the user-datasets library free of rnaseq-rc knowledge.
+
+Holds uploaded data files as readonly File[] rather than FileList, a
+legacy interop type whose immutability protects no invariant here: the
+list is replaced wholesale on every change, and the immutability that
+matters lives in File itself. An array composes, removing the need to
+synthesise FileLists via DataTransfer. The antisense file folds into
+dataFiles[1], so a second count file is no longer a special-cased upload
+field, and the second input stays gated on the first being filled, which
+also guarantees position keeps meaning role.
+
+Drops the jszip dependency and the rnaseq-rc-to-rnaseq type rewrite on
+submit."
 ```
 
 ---
@@ -880,180 +1033,7 @@ allowedFileExtensions from VDI is the single source of truth."
 
 ---
 
-## Task 4: Wire the builder in via `prepareDataFiles`, and delete JSZip
-
-**Files:**
-
-- Modify: `packages/libs/user-datasets/src/lib/Common/Configuration/DatasetFormConfig.ts:29`
-- Modify: `packages/libs/user-datasets/src/lib/Components/Upload/UploadFormController.tsx`
-- Modify: `packages/libs/web-common/src/user-dataset-upload-config.tsx`
-- Delete: `packages/libs/user-datasets/src/lib/Service/utils/rnaseq-rc-file-transformer.ts`
-- Modify: `packages/libs/user-datasets/package.json` (via `yarn remove`)
-
-**Interfaces:**
-
-- Consumes: `buildRnaSeqRcDataFiles` from Task 1.
-- Produces: `DatasetFormConfig.prepareDataFiles?: (dataFiles: readonly File[], details: PartialDatasetDetails) => readonly File[]`.
-
-- [ ] **Step 1: Add the hook to the form config**
-
-In `DatasetFormConfig.ts`, add to the interface and import `PartialDatasetDetails` from `'../../Service'`:
-
-```ts
-  /**
-   * Optional hook assembling the final set of files sent to VDI as `dataFile`
-   * parts. Return value replaces `uploads.dataFiles`. Filenames arrive already
-   * sanitized.
-   *
-   * May throw, but only as a backstop: everything it rejects is already caught
-   * by the form's own validation, which reports inline against the offending
-   * field. A throw here means a validation gap and surfaces as a generic
-   * submit error.
-   */
-  readonly prepareDataFiles?: (
-    dataFiles: readonly File[],
-    details: PartialDatasetDetails
-  ) => readonly File[];
-```
-
-- [ ] **Step 2: Use the hook in the controller**
-
-In `UploadFormController.tsx`, replace the temporary `const finalFileUploads = fileUploads;` from Task 2 with:
-
-```ts
-let finalFileUploads = fileUploads;
-
-if (formConfig.prepareDataFiles != null) {
-  try {
-    finalFileUploads = {
-      ...fileUploads,
-      dataFiles: formConfig.prepareDataFiles(
-        fileUploads.dataFiles ?? [],
-        formState.datasetDetails
-      ),
-    };
-  } catch (e) {
-    setSubmitting(false);
-    return receiveBadUpload([
-      {
-        type: 400,
-        message:
-          e instanceof Error ? e.message : 'Failed to prepare upload files',
-      },
-    ]);
-  }
-}
-```
-
-Then replace the submit call's type with the unmodified config value — delete the `backendTypeName` variable and its comment entirely:
-
-```ts
-        details: {
-          type: {
-            name: formConfig.dataType.name,
-            version: formConfig.dataType.version,
-          },
-          ...filterDetails(formState),
-        },
-```
-
-- [ ] **Step 3: Register the builder**
-
-In `user-dataset-upload-config.tsx`, import the builder:
-
-```ts
-import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
-```
-
-Match the import style already used in that file for other `@veupathdb/user-datasets` imports — if it imports from the package root, export `buildRnaSeqRcDataFiles` from `packages/libs/user-datasets/src/lib/Service/utils/index.ts` (or the nearest barrel) and import it from there instead.
-
-Add to `rnaseqRcFormConfigurator`'s returned object:
-
-```ts
-    prepareDataFiles: (files, details) =>
-      buildRnaSeqRcDataFiles(
-        files,
-        details.samplesDescription,
-        dataType.vdiConfig.allowedFileExtensions
-      ),
-```
-
-- [ ] **Step 4: Rewrite the help text**
-
-Still in `rnaseqRcFormConfigurator`, replace the `helpText` body. The current text promises a `.zip` archive and a manifest only when two files are given — both now wrong:
-
-```tsx
-      helpText: () => (
-        <details>
-          <summary>
-            Instructions to upload your {dataType.vdiConfig.category} dataset
-          </summary>
-          <div className="formInfo">
-            <p>
-              Upload your RNA-Seq count data as tab- or comma-delimited files.
-              Your original file names are preserved.
-            </p>
-            <p>
-              Provide either a single unstranded count file as Data file 1, or a
-              stranded pair: sense as Data file 1 and anti-sense as Data file 2.
-            </p>
-            <p>
-              The Sample Details you enter below are submitted alongside your
-              count files for AI annotation. You do not need to prepare any
-              additional files.
-            </p>
-            {textFilesHelp}
-          </div>
-        </details>
-      ),
-```
-
-- [ ] **Step 5: Delete the old transformer and its dependency**
-
-```bash
-git rm packages/libs/user-datasets/src/lib/Service/utils/rnaseq-rc-file-transformer.ts
-cd packages/libs/user-datasets && ~/.volta/bin/yarn remove jszip @types/jszip
-```
-
-Then confirm nothing else referenced it:
-
-```bash
-cd /home/maccallr/Desktop/EDA/web-monorepo
-grep -rn "jszip\|JSZip\|rnaseq-rc-file-transformer" packages/libs packages/sites --include="*.ts" --include="*.tsx" --include="*.json" | grep -v node_modules
-```
-
-Expected: no hits outside `yarn.lock`.
-
-- [ ] **Step 6: Type-check and test**
-
-```bash
-~/.volta/bin/yarn nx compile:check @veupathdb/genomics-site
-cd packages/libs/user-datasets && CI=true ~/.volta/bin/yarn test
-```
-
-Expected: both clean.
-
-- [ ] **Step 7: Commit**
-
-```bash
-cd /home/maccallr/Desktop/EDA/web-monorepo
-git add -A packages/libs yarn.lock
-git commit -m "Send rnaseq-rc uploads as separate dataFile parts
-
-VDI already packs multiple dataFile parts into a flat archive
-server-side, structurally identical to what JSZip was building in the
-browser - so the client-side archive was redundant work that also forced
-the upload to be async and put file assembly behind a type sniff in the
-controller.
-
-File assembly moves to a prepareDataFiles hook on the form config,
-keeping the user-datasets library free of rnaseq-rc knowledge. Drops the
-jszip dependency and the rnaseq-rc-to-rnaseq type rewrite on submit."
-```
-
----
-
-## Task 5: Rename the type to `rnaseqrc` and drop the alias
+## Task 4: Rename the type to `rnaseqrc` and drop the alias
 
 Do this **after** the quadlets branch registering `rnaseqrc:1.0` is merged and deployed to the target dev site. Until then the upload type will not appear in the menu.
 
@@ -1128,7 +1108,7 @@ Requires the quadlets config registering rnaseqrc:1.0 to be deployed."
 
 ---
 
-## Task 6: Form validation
+## Task 5: Form validation
 
 Catches the failures the builder would otherwise throw on, reporting them inline against the right field instead of as a generic submit error.
 
@@ -1258,7 +1238,7 @@ which would silently truncate a pasted methods section."
 
 ---
 
-## Task 7: End-to-end verification
+## Task 6: End-to-end verification
 
 The acceptance gate. Neither spec proves itself alone: Spec B must have landed in `vdi-plugin-wrangler` for an import to succeed.
 
@@ -1310,6 +1290,7 @@ Expected: upload succeeds with no error shown; the archive contains the user's `
 
 ## Notes for the implementer
 
-- **Task ordering matters.** Task 2 leaves a deliberate stub in `UploadFormController` that Task 4 replaces; do not skip ahead. Task 5 is gated on a deployment and can be deferred without blocking 6.
+- **Task ordering matters.** Task 2 depends on Task 1's builder existing. Task 4 is gated on the quadlets config deploying and can be deferred without blocking Task 5.
+- **Every task leaves the branch working.** Task 2 deliberately merges the type migration with the rewiring, because deleting `antisenseDataFiles` breaks the code that consumed it — split apart, they would leave a commit that silently uploads no `sample-info.txt` and no manifest.
 - **`packages/libs/user-datasets` had no tests before this work.** The harness needs no configuration — verified — but you are the first user of it in that package, so treat an odd jest error as environmental before assuming your code is wrong.
 - If you need to rebuild a library while a dev server is running: `cd packages/libs/<package> && ~/.volta/bin/yarn build-npm-modules`.

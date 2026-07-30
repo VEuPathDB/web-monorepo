@@ -29,7 +29,7 @@ Deliberately not planned in the same context as Spec A, for three reasons:
 
 1. **Line references will have moved.** Every anchor below points at the
    pre-merge state of `counts_files.R`. Re-verify before relying on any of them.
-2. **Spec A produces the best fixture source.** Its Task 7 Step 3 dumps a real
+2. **Spec A produces the best fixture source.** Its Task 6 Step 3 dumps a real
    `manifest.tsv` from a real upload with `cat -A`. Use that verbatim as the
    canonical fixture rather than hand-writing one — it is the artifact this spec
    parses, so copying it removes any chance of the two sides disagreeing about
@@ -37,7 +37,7 @@ Deliberately not planned in the same context as Spec A, for three reasons:
 3. Different language, harness and idiom. Nothing from the TypeScript work
    carries over, and every decision that matters is written down here.
 
-**Verification is partly circular, so sequence it:** Spec A's Task 7 steps 1-4
+**Verification is partly circular, so sequence it:** Spec A's Task 6 steps 1-4
 and 6 validate the producer on its own, since they only inspect what VDI stored.
 Step 5 — the import actually succeeding — is the joint gate and waits on this
 spec. So implement and archive-verify Spec A first, then plan this from its
