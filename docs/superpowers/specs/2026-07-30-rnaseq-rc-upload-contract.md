@@ -149,13 +149,20 @@ measure is correct and stays.
 The form must therefore measure the same way:
 
 ```ts
-new TextEncoder().encode(text).length;
+new Blob([text]).size; // UTF-8 byte length
 ```
 
 **Not** `String.prototype.length`, which counts UTF-16 code units. The three
 candidate measures — UTF-8 bytes, UTF-16 code units, and Unicode code points —
 coincide only for ASCII. A French or CJK Methods section could otherwise pass the
 form and be rejected by the plugin after upload.
+
+`Blob` rather than the more obvious `new TextEncoder().encode(text).length`
+because **jsdom does not provide `TextEncoder`**, so the latter passes in a
+browser and throws in jest. Verified empirically: `Blob` gives 2 for `é`, 5 for
+`hello`, 9 for `日本語`, and works in both environments with no polyfill. It is
+also the same primitive the `File` constructor uses, so it cannot disagree with
+the bytes actually uploaded.
 
 ## Filename collisions
 

@@ -248,11 +248,22 @@ out, no DOM, no network. Cases — unstranded, stranded pair, manifest content a
 ordering, generated-name de-collision, rejected extensions, duplicate basenames,
 tabs, the 100,000-byte boundary in both ASCII and multi-byte text.
 
-**Caveat:** `packages/libs/user-datasets` has a `test` script
-(`veupathdb-react-scripts test`) but **zero existing test files**. This
-establishes the harness in that package and may need config work; budget for
-that. If it proves obstructive, the fallback is to co-locate these tests in a
-package that already has a working runner rather than to skip them.
+**The harness works out of the box** — verified empirically, not assumed.
+`packages/libs/user-datasets` has no test files yet, but it does have
+`src/setupTests.ts` (loading `@testing-library/jest-dom`), and
+`CI=true yarn test` runs and collects co-located `*.test.ts` files with no config
+work. `eda` uses the identical script with 5 such files.
+
+Two jsdom gaps found by probing, both worked around without a polyfill:
+
+| Gap                             | Workaround                                                                         |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| `TextEncoder` is `undefined`    | `new Blob([text]).size` for UTF-8 bytes (see contract)                             |
+| `File.prototype.text()` missing | `await new Response(file).text()` — terser than `FileReader`, and verified working |
+
+Neither appears in browser code, so this only affects how tests read assertions
+back. Do not reach for `TextEncoder` or `file.text()` in either implementation or
+tests.
 
 Then `yarn nx compile:check` for the `File[]` migration, and a real upload
 against a dev VDI — including the deliberate collision cases, to confirm the
