@@ -118,7 +118,12 @@ collapse to an indexed read/write over `dataFiles`.
 /**
  * Optional hook assembling the final set of files sent to VDI as `dataFile`
  * parts. Return value replaces `uploads.dataFiles`. Receives filenames already
- * sanitized. Throws on validation failure; the caller surfaces the message.
+ * sanitized.
+ *
+ * May throw, but only as a defensive backstop: everything it could reject is
+ * already caught by `validateFormState` (see below), which is the user-facing
+ * gate and reports errors inline against the offending field. A throw here
+ * means a form-validation gap, and surfaces as a generic submit error.
  */
 readonly prepareDataFiles?: (
   dataFiles: readonly File[],
@@ -156,8 +161,15 @@ Behaviour:
 Drops the debug `console.log` calls at lines 79-84.
 
 Registered in `rnaseqRcFormConfigurator` (`web-common/src/user-dataset-upload-config.tsx`),
-which also declares the two slots and their labels, and whose help text needs
-rewriting — it currently promises "a .zip archive" and a manifest only "if you
+which adapts the hook's generic signature to this builder's:
+
+```ts
+prepareDataFiles: (files, details) =>
+  buildRnaSeqRcDataFiles(files, details.samplesDescription),
+```
+
+The configurator also declares the two slots and their labels, and its help text
+needs rewriting — it currently promises "a .zip archive" and a manifest only "if you
 provide both Data file 1 and Data file 2".
 
 ### 5. Controller simplification
