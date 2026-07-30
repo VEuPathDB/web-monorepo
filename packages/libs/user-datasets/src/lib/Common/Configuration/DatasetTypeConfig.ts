@@ -83,11 +83,5 @@ export function filterAvailableDataTypes(
     }
   }
 
-  return clientTypes.filter((cdt) => {
-    // PROTOTYPE: Map rnaseq-rc:1.0 to rnaseq:1.0 backend
-    if (cdt.name === 'rnaseq-rc' && cdt.version === '1.0') {
-      return serviceTypes.has('rnaseq:1.0');
-    }
-    return serviceTypes.has(stringifyDataType(cdt));
-  });
+  return clientTypes.filter((cdt) => serviceTypes.has(stringifyDataType(cdt)));
 }

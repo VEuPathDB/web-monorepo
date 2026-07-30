@@ -32,7 +32,7 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
-  rnaseqrc: { name: 'rnaseq-rc', version: '1.0' },
+  rnaseqrc: { name: 'rnaseqrc', version: '1.0' },
   phenotype: { name: 'phenotype', version: '1.0' },
 };
 
