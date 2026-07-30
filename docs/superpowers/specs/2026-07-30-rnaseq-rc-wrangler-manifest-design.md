@@ -44,28 +44,34 @@ filename is bytes. Manifest parsing must not assume the _named_ files share the
 manifest's encoding, and the filename comparison must work when a name contains
 non-ASCII. Each of the five needs a manifest like every other fixture.
 
-This spec lives in `web-monorepo` only because of that. Move it into
-`vdi-plugin-wrangler` when the repo is free.
+This spec and its plan live in `web-monorepo` for now. Move both into
+`vdi-plugin-wrangler` when convenient — the repo is no longer busy.
 
-### Write the implementation plan in a fresh session, after Spec A
+Implementation plan:
+[2026-07-30-rnaseq-rc-wrangler-manifest.md](../plans/2026-07-30-rnaseq-rc-wrangler-manifest.md)
 
-Deliberately not planned in the same context as Spec A, for three reasons:
+### Two of the three deferral reasons are discharged; one is not
 
-1. **Line references will have moved.** Every anchor below points at the
-   pre-merge state of `counts_files.R`. Re-verify before relying on any of them.
-2. **Spec A produces the best fixture source.** Its Task 6 Step 3 dumps a real
-   `manifest.tsv` from a real upload with `cat -A`. Use that verbatim as the
-   canonical fixture rather than hand-writing one — it is the artifact this spec
-   parses, so copying it removes any chance of the two sides disagreeing about
-   bytes.
-3. Different language, harness and idiom. Nothing from the TypeScript work
-   carries over, and every decision that matters is written down here.
+Planning was originally deferred for three reasons. Where they now stand:
+
+1. **Line references would move** — discharged. Re-verified above; the anchors
+   this spec depends on are stable, and the moved ones are recorded.
+2. **Different language, harness and idiom** — discharged in practice. Every
+   decision that matters is written down here, so a reader needs this document
+   rather than the TypeScript history.
+3. **Spec A's real `manifest.tsv` is the best fixture source** — **NOT
+   discharged.** Spec A is implemented but its end-to-end upload has not been run
+   yet, so no real manifest exists to copy. The plan's fixture task is therefore
+   written against the contract, with an explicit instruction to replace the
+   hand-written manifest with the real artifact as soon as Spec A's Task 6 Step 3
+   produces one. Do not skip that swap: hand-written fixtures can encode the same
+   misunderstanding on both sides and still pass.
 
 **Verification is partly circular, so sequence it:** Spec A's Task 6 steps 1-4
 and 6 validate the producer on its own, since they only inspect what VDI stored.
 Step 5 — the import actually succeeding — is the joint gate and waits on this
-spec. So implement and archive-verify Spec A first, then plan this from its
-output, then close Spec A's Step 5 last.
+spec. Archive-verify Spec A first, swap the real manifest into these fixtures,
+then close Spec A's Step 5 last.
 
 ## Why change a working design
 
