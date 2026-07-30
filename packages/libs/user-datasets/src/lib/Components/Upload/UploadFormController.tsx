@@ -287,5 +287,11 @@ function filterDetails({
   if (!formMetaState.hasExperimentalOrganism)
     delete filtered['experimentalOrganism'];
 
+  // `samplesDescription` is a client-only field: its content is turned into
+  // the `sample-info.txt` upload by `prepareDataFiles` (which reads it from
+  // `formState.datasetDetails` before this function runs). It is never a
+  // valid VDI metadata field, so it must never reach the outbound payload.
+  delete filtered['samplesDescription'];
+
   return filtered;
 }
