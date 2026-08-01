@@ -35,6 +35,8 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { makeAnswerControllerRouteComponent } from '@veupathdb/wdk-client/lib/Core/routes';
 import { Srt } from './components/Srt';
 
+import RecordController from '@veupathdb/wdk-client/lib/Controllers/RecordController';
+
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = ['dataset', 'sample'];
@@ -206,7 +208,7 @@ export const wrapRoutes = (ebrcRoutes) => [
     path: '/downloads',
     component: DownloadsRouteComponent,
   },
-/*
+  /*
   {
     path: '/record/organism/:id*',
     component: (props) => (
