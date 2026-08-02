@@ -64,7 +64,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     },
     {
       ...implementedUploadTypes.rnaseqrc,
-      description: `Upload your RNA-Seq data with sample descriptions into ${projectId}.`,
+      description: `Integrate your RNA-Seq raw counts into ${projectId}, and perform DE analysis.`,
     },
   ],
 
@@ -87,8 +87,8 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     // rnaseq
     [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
 
-    // rnaseq-rc
-    [implementedUploadTypes.rnaseqrc, rnaseqRcFormConfigurator],
+    // rnaseqrc
+    [implementedUploadTypes.rnaseqrc, rnaseqFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
