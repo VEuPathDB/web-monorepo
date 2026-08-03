@@ -5,6 +5,8 @@ export type {
   Consumer,
   Function,
   Nullable,
+  Optional,
+  Possible,
   Runnable,
 } from './types';
 
@@ -15,4 +17,6 @@ export {
   replaceElement,
 } from './input-utils';
 
-export { isNonEmptyString } from './value-tests';
+export { ifDefined, requireValue } from './ergonomics';
+
+export { isNonBlankString, isNonEmpty, isNonEmptyString } from './value-tests';

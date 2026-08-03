@@ -3,15 +3,18 @@ import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
 } from '../../../../../../Service/Model';
-import { JsonPathBuilder } from '../../../../../../Utils';
+import {
+  Consumer,
+  JsonPathBuilder,
+  ifDefined,
+  isNonBlankString,
+} from '../../../../../../Utils';
 import {
   CitationLookupResult,
   lookupCitation,
   resemblesPublicationId,
 } from '../../../../../../Service/Publications';
-import { isNonBlankString } from '../../../../../../Utils/value-tests';
-import { runIfDefined } from '../../../../../../Utils/ergonomics';
-import { CitationLookupStatus, PublicationSetter, StatusTuple } from './utils';
+import { CitationLookupStatus, StatusTuple } from './utils';
 import { InputPair } from '../../../InputPair';
 import { CitationLine } from './CitationLine';
 
@@ -21,7 +24,7 @@ export interface PublicationRowProps {
   readonly index: number;
 
   readonly publication: Publication;
-  readonly setPublication: PublicationSetter;
+  readonly setPublication: Consumer<Publication>;
 
   readonly isRequired: boolean;
   readonly isDisabled: boolean;
@@ -32,8 +35,8 @@ export interface PublicationRowProps {
 
 export function PublicationRow(props: PublicationRowProps): ReactElement {
   const lookupStatus = useRef<number>(0);
-  const [citationStatus, setCitationStatus] = useState<StatusTuple>([
-    runIfDefined(props.publication.citation, (citation) => ({
+  const [citationStatus, setCitationStatus] = useState<StatusTuple>(() => [
+    ifDefined(props.publication.citation, (citation) => ({
       status: 'success',
       citation,
     })) ?? null,
@@ -43,28 +46,26 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
   const type = props.publication.type ?? null;
   const hasIdentifier = isNonBlankString(props.publication.identifier);
 
-  const updatePublication = (
-    id: string,
-    type: PublicationType,
-    res: CitationLookupStatus,
-  ) => {
-    props.setPublication((pub) => {
-      switch (res?.status) {
-        case 'success':
-          return applyCitation(pub, id, type, res.citation);
-        case 'cancelled':
-          return { ...pub, identifier: id };
-        default:
-          return applyCitation(pub, id, type, undefined);
-      }
-    });
+  const updatePublication = (pub: Publication, res: CitationLookupStatus) => {
+    props.setPublication(
+      (() => {
+        switch (res?.status) {
+          case 'success':
+            return applyCitation(pub, res.citation);
+          case 'cancelled':
+            return applyCitation(pub, props.publication.citation);
+          default:
+            return applyCitation(pub, undefined);
+        }
+      })()
+    );
   };
 
-  const runLookup = (id: string, type: PublicationType) => {
+  const runLookup = (pub: Publication) => {
     const timestamp = Date.now();
     lookupStatus.current = timestamp;
 
-    lookupCitation(id, type)
+    lookupCitation(pub.identifier!, pub.type!)
       .then((res) => {
         // disregard slow response, new search has been run
         if (lookupStatus.current > timestamp) {
@@ -77,7 +78,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
           setCitationStatus([res, null]);
         }
 
-        updatePublication(id, type, res);
+        updatePublication(pub, res);
       })
       .catch((err) => {
         // disregard slow response, new search has been run
@@ -91,17 +92,19 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
         };
 
         setCitationStatus([res, null]);
-        updatePublication(id, type, res);
+        updatePublication(pub, res);
       });
   };
 
   const onInput = (id: string, type: PublicationType) => {
-    props.setPublication((it) => ({
-      ...it,
+    const newPub = {
+      ...props.publication,
       identifier: id,
       type: id.length > 0 ? type : undefined,
       citation: undefined,
-    }));
+    };
+
+    props.setPublication(newPub);
 
     if (!isNonBlankString(id)) {
       setCitationStatus([null, null]);
@@ -113,7 +116,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
     }
 
     setCitationStatus((it) => [it[0], { status: 'loading' }]);
-    debounce(runLookup, id, type);
+    debounce(runLookup, newPub);
   };
 
   return (
@@ -149,7 +152,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
             disabled={props.isDisabled || props.isSingular}
             checked={props.publication.isPrimary}
             onChange={(v) =>
-              props.setPublication((it) => ({ ...it, isPrimary: v }))
+              props.setPublication({ ...props.publication, isPrimary: v })
             }
           />
         </div>
@@ -162,13 +165,11 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
 
 function applyCitation(
   publication: Publication,
-  identifier: string,
-  type: PublicationType,
   citation: string | undefined
 ): Publication {
   return isNonBlankString(publication.identifier)
-    ? { ...publication, type, identifier, citation }
-    : { ...publication, type: undefined, identifier, citation: undefined };
+    ? { ...publication, citation }
+    : { isPrimary: publication.isPrimary };
 }
 
 let publicationDebounceTimer = -1;

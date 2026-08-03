@@ -34,6 +34,7 @@ export type {
   DatasetUploadStatusInfo,
   DatasetUser,
   DatasetVisibility,
+  ExternalIdentifiers,
   PluginDataType,
   SampleYearRange,
   ServerErrorBody,

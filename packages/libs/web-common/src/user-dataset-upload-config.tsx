@@ -31,6 +31,7 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
+  rnaseqrc: { name: 'rnaseqrc', version: '1.0' },
   phenotype: { name: 'phenotype', version: '1.0' },
 };
 
@@ -60,6 +61,10 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
       ...implementedUploadTypes.rnaseq,
       description: `Integrate your normalized RNA-Seq data into ${projectId}.`,
     },
+    {
+      ...implementedUploadTypes.rnaseqrc,
+      description: `Analyze and integrate your RNA-Seq raw counts into ${projectId}.`,
+    },
   ],
 
   uploadFormConfigurators: [
@@ -80,6 +85,9 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
     // rnaseq
     [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
+
+    // rnaseqrc
+    [implementedUploadTypes.rnaseqrc, rnaseqFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
