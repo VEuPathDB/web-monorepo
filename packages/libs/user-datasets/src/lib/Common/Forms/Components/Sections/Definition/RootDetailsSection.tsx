@@ -129,49 +129,50 @@ export function RootDetailsSection(
           required={true}
         />
 
-        {formConfig.verbiage.formInputs?.samplesDescription && (
-          <>
-            <TextAreaInput
-              label={formConfig.verbiage.formInputs.samplesDescription.label}
-              fieldName="samplesDescription"
-              value={datasetDetails.samplesDescription}
-              onChange={(v) =>
-                setMetadata({ ...datasetDetails, samplesDescription: v })
-              }
-              required={true}
-              rows={15}
-              placeholder="Paste here a detailed description of the samples used in this dataset, for example the Methods section of the associated paper.
+        {formConfig.verbiage.formInputs?.samplesDescription &&
+          props.showDataInputs && (
+            <>
+              <TextAreaInput
+                label={formConfig.verbiage.formInputs.samplesDescription.label}
+                fieldName="samplesDescription"
+                value={datasetDetails.samplesDescription}
+                onChange={(v) =>
+                  setMetadata({ ...datasetDetails, samplesDescription: v })
+                }
+                required={props.showDataInputs}
+                rows={15}
+                placeholder="Paste here a detailed description of the samples used in this dataset, for example the Methods section of the associated paper.
 
 This text will be submitted to the VEuPathDB AI Metadata Analyzer. The output will be carefully named and annotated samples, making the dataset as useful as possible in the website.
 
 IMPORTANT: If the sample names alone do not make the experimental design clear, please also explain what abbreviations mean, which samples are replicates, what units any values are in, and what conditions or timepoints are represented."
-              helpText={
-                typeof formConfig.verbiage.formInputs.samplesDescription
-                  .helpText === 'function'
-                  ? formConfig.verbiage.formInputs.samplesDescription.helpText()
-                  : formConfig.verbiage.formInputs.samplesDescription.helpText
-              }
-            />
+                helpText={
+                  typeof formConfig.verbiage.formInputs.samplesDescription
+                    .helpText === 'function'
+                    ? formConfig.verbiage.formInputs.samplesDescription.helpText()
+                    : formConfig.verbiage.formInputs.samplesDescription.helpText
+                }
+              />
 
-            <div className="column-2" style={{ textAlign: 'right' }}>
-              <span
-                style={{
-                  fontSize: '0.9em',
-                  color:
-                    utf8ByteLength(datasetDetails.samplesDescription ?? '') >
-                    SAMPLE_INFO_MAX_BYTES
-                      ? 'red'
-                      : '#666',
-                }}
-              >
-                {utf8ByteLength(
-                  datasetDetails.samplesDescription ?? ''
-                ).toLocaleString()}{' '}
-                / {SAMPLE_INFO_MAX_BYTES.toLocaleString()} bytes
-              </span>
-            </div>
-          </>
-        )}
+              <div className="column-2" style={{ textAlign: 'right' }}>
+                <span
+                  style={{
+                    fontSize: '0.9em',
+                    color:
+                      utf8ByteLength(datasetDetails.samplesDescription ?? '') >
+                      SAMPLE_INFO_MAX_BYTES
+                        ? 'red'
+                        : '#666',
+                  }}
+                >
+                  {utf8ByteLength(
+                    datasetDetails.samplesDescription ?? ''
+                  ).toLocaleString()}{' '}
+                  / {SAMPLE_INFO_MAX_BYTES.toLocaleString()} bytes
+                </span>
+              </div>
+            </>
+          )}
 
         {referenceGenome}
 

@@ -88,7 +88,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
 
     // rnaseqrc
-    [implementedUploadTypes.rnaseqrc, rnaseqFormConfigurator],
+    [implementedUploadTypes.rnaseqrc, rnaseqRcFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
