@@ -5,9 +5,8 @@ import {
 } from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
 import { BadUpload } from '../../StoreModules';
-import { Consumer, Function } from '../../Utils';
+import { Consumer, Function, isNonBlankString } from '../../Utils';
 import { sanitizeFileName } from '../utils/sanitization';
-import { isNonBlankString } from '../../Utils/value-tests';
 import { cleanDatasetDetails } from './payload-cleanup';
 
 export interface NewDatasetSubmission {

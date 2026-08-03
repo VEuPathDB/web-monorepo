@@ -2,21 +2,22 @@ import { CitationLookupResult } from './CitationLookupResult';
 import { isEmpty } from 'lodash';
 import { CitationQuery } from './CitationQuery';
 import { AbstractCitationQuery } from './AbstractCitationQuery';
+import { endpoint as ServicePath } from '../../config';
 
 export class PubMedCitationQuery
   extends AbstractCitationQuery
   implements CitationQuery
 {
-  // NOTE: the slash in between 'pubmed' and the query params is included
-  // intentionally to avoid redirects.
-  private static readonly NCBI_URL_ROOT =
-    'https://pmc.ncbi.nlm.nih.gov/api/ctxp/v1/pubmed/?format=citation';
+  // using a proxy service in the wdk to work around the lack of CORS headers
+  // in the ncbi api responses
+  private static readonly URL_ROOT =
+    ServicePath + '/pubmed/citation';
 
   private static readonly PMID_PATTERN = /^\d+$/;
 
   protected override async runLookup(): Promise<CitationLookupResult> {
     const url =
-      PubMedCitationQuery.NCBI_URL_ROOT + '&id=' + encodeURIComponent(this.id);
+      PubMedCitationQuery.URL_ROOT + '?pmid=' + encodeURIComponent(this.id);
 
     try {
       const response = await this.fetch(url);
