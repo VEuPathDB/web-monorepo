@@ -1,11 +1,10 @@
 import React, { ReactElement } from 'react';
 import { FieldHelpText, InputBlock, InputPair, YesNoToggle } from '../../index';
 import { partialRight } from 'lodash';
-import { changeHandler, Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { changeHandler, isNonBlankString, Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
-import { isNonBlankString } from '../../../../../Utils/value-tests';
 import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
