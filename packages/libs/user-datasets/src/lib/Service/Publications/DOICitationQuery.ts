@@ -1,5 +1,5 @@
 import { CitationLookupResult } from './CitationLookupResult';
-import { requireValue } from '../../Utils/ergonomics';
+import { requireValue } from '../../Utils';
 import { CitationQuery } from './CitationQuery';
 import { AbstractCitationQuery } from './AbstractCitationQuery';
 
