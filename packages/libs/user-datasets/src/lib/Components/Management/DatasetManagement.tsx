@@ -405,7 +405,7 @@ class DatasetManagement<
                         ? '?param.' +
                           ps[0] +
                           '=' +
-                          (userDataset.type.name === 'phenotype'
+                          (ps[0] === 'eda_dataset_id'
                             ? diyUserDatasetIdToWdkRecordId(
                                 userDataset.datasetId
                               )

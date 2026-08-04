@@ -150,9 +150,7 @@ function getPostUploadStatus(
     case 'queued':
     case 'in-progress':
       return {
-        content:
-          `This ${dataNoun} is queued. Please check again soon (reload ` +
-          'the page).',
+        content: `This ${dataNoun} is queued. Please check again soon.`,
         icon: 'clock-o',
       };
     case 'invalid':
