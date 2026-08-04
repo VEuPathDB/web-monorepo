@@ -44,10 +44,11 @@ export const datasetImportStatus = io.union([
   io.literal('failed'),
 ]);
 
-export const datasetImportStatusDetails = io.intersection([
+const datasetImportStatusDetails = io.intersection([
   io.type({ status: datasetImportStatus }),
   io.partial({ messages: io.array(io.string) }),
 ]);
+export type DatasetImportStatusInfo = io.TypeOf<typeof datasetImportStatusDetails>;
 
 export const datasetInstallStatus = io.union([
   io.literal('running'),
@@ -62,14 +63,16 @@ const datasetInstallStatusEntry = io.intersection([
   io.type({ status: datasetInstallStatus }),
   io.partial({ messages: io.array(io.string) }),
 ]);
+export type DatasetInstallStatusEntry = io.TypeOf<typeof datasetInstallStatusEntry>;
 
-export const datasetInstallStatusMap = io.intersection([
+const datasetInstallStatusMap = io.intersection([
   io.type({
     installTarget: io.string,
     meta: datasetInstallStatusEntry,
   }),
   io.partial({ data: datasetInstallStatusEntry }),
 ]);
+export type DatasetInstallStatusInfo = io.TypeOf<typeof datasetInstallStatusMap>;
 
 export const partialUser = io.intersection([
   io.type({ userId: io.number }),

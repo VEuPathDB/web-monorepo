@@ -1,27 +1,26 @@
 import React, { ReactElement } from 'react';
 import { Modal } from '@veupathdb/coreui';
 import { Consumer } from '../../../../../Utils';
+import { MetadataImportTable, MetadataImportTableProps } from './MetadataImportTable';
 
-export function MetadataImportModalController(
-  props: MetadataImportModalProps,
-): ReactElement {
-
-}
 
 export interface MetadataImportModalProps {
-  readonly visible: boolean;
-  readonly toggleVisibility: Consumer<boolean>;
+  readonly modalProps: {
+    readonly visible: boolean;
+    readonly setVisible: Consumer<boolean>;
+  };
 
+  readonly tableProps: MetadataImportTableProps;
 }
 
-
-export function MetadataImportModal(
-  props: MetadataImportModalProps,
-): ReactElement {
+export function MetadataImportModal({
+  modalProps: props,
+  tableProps,
+}: MetadataImportModalProps): ReactElement {
   return (
     <Modal
       title="Import Dataset Metadata"
-      toggleVisible={props.toggleVisibility}
+      toggleVisible={props.setVisible}
       visible={props.visible}
     >
       <h2>
@@ -41,7 +40,7 @@ export function MetadataImportModal(
         and edited before uploading the current dataset.
       </p>
 
-      <MetadataImportTable />
+      <MetadataImportTable {...tableProps} />
     </Modal>
   );
 }

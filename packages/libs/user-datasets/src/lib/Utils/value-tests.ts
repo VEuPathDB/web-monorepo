@@ -1,7 +1,7 @@
 import lodash from 'lodash';
 
 // export function isNonEmpty<T extends object>(value: Optional<T>): value is T;
-export function isNonEmpty<T>(value: any): value is T {
+export function isNonEmpty<T extends string | Array<any>>(value: any): value is T {
   return !lodash.isEmpty(value);
 }
 

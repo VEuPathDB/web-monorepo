@@ -19,11 +19,9 @@ import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isEmpty, isEqual } from 'lodash';
 import {
   DatasetGetResponseBody,
-  DatasetUploads,
   PartialDatasetDetails,
 } from '../../Service';
 import { hasUploads } from '../../Service/Model/utility-types';
-import { DatasetTypeConfig } from '../../Common/Configuration';
 
 export interface UpdateFormProps extends DatasetFormProps {
   readonly originalDataset: DatasetGetResponseBody;
