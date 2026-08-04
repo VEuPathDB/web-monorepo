@@ -44,6 +44,7 @@ export type PartialDatasetDetails = Readonly<
   readonly contacts?: readonly PartialDatasetContact[];
   readonly linkedDatasets?: readonly PartialLinkedDataset[];
   readonly funding?: readonly PartialDatasetFunding[];
+  readonly samplesDescription?: string;
 };
 
 export type PartialOrganism = Readonly<Partial<DatasetOrganism>>;
