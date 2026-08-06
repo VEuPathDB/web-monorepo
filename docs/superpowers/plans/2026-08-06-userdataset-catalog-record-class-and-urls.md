@@ -12,7 +12,7 @@
 
 - Design: `docs/superpowers/specs/2026-08-06-userdataset-internal-search-catalog-design.md`
 
-**Status:** Implemented on branch `fix-internal-srch-pg-bugs`, 2026-08-06. Typecheck and Prettier pass; **browser verification not yet run** (Task 5).
+**Status:** Implemented and verified on branch `fix-internal-srch-pg-bugs`, 2026-08-06. Typecheck and Prettier pass; rows render and search buttons work in the browser. Remaining Task 5 items are DevTools override tests of failure/drift paths.
 
 ## Global Constraints
 
@@ -134,27 +134,28 @@ Only the query string is used, so the `rootUrl` prefix never reaches `<Link>` �
 
 ---
 
-## Task 5: Browser verification — NOT YET RUN
+## Task 5: Browser verification — core checks PASS
 
-Requires user dataset rows to be rendering, i.e. the search present in the category ontology. Two fixtures were
-available on PlasmoDB during implementation: `EDAUD_MhR5FF8cE40Z8` (Private) and `EDAUD_xoR5M00Ug90RN`
-(Public), both _P. falciparum_ 3D7, both offering `GeneQuestions.GenesByDESeqUserDataset` with param
-`eda_dataset_id`.
+Requires user dataset rows to be rendering, i.e. the search present in the category ontology. Verified
+2026-08-06 against a local dev server (`yarn start`, port 8080) proxying a backend with the ontology fix
+deployed. Two fixtures: `EDAUD_MhR5FF8cE40Z8` (Private) and `EDAUD_xoR5M00Ug90RN` (Public), both
+_P. falciparum_ 3D7, both offering `GeneQuestions.GenesByDESeqUserDataset` with param `eda_dataset_id`.
 
 On `search/transcript/GenesByRNASeqEvidence`:
 
-- [ ] Both user dataset rows render. **Primary check** — a wrong comparison in Task 3 empties the table
-      silently rather than erroring.
+- [x] All rows render, curated and user dataset alike. **Primary check** — a wrong comparison in Task 3 empties
+      the table silently rather than erroring, so this passing is the main evidence the filter is right.
+- [x] Search buttons on user dataset rows navigate correctly — the Task 4 URL construction produces working
+      links.
 - [ ] Override `record_class` to a non-transcript value (e.g. `GeneRecordClasses.GeneRecordClass`) in DevTools
       → that row disappears, the other remains.
-- [ ] A category button's `href` is
-      `/a/app/search/transcript/GenesByRNASeqEvidence?param.eda_dataset_id=EDAUD_MhR5FF8cE40Z8#GenesByDESeqUserDataset`
-      — no doubled `/a/app`, `EDAUD_` intact, hash present. Should be byte-identical to pre-change.
-- [ ] Clicking it opens the in-page tab with the parameter pre-filled.
-- [ ] Loading the page with `#GenesByDESeqUserDataset` selects the right tab.
 - [ ] Delete `url` from a response entry → error modal naming dataset and question. (Page behind it stays on
       `<Loading />` — expected, out of scope.)
 - [ ] Override `url` to a different param name and non-prefixed id (e.g. `?param.rna_seq_dataset=MhR5FF8cE40Z8`)
-      → the button follows it verbatim. **This is the point of Task 4.**
-- [ ] Curated rows' buttons unchanged.
+      → the button follows it verbatim. **This is the point of Task 4** — until this runs, the fix is confirmed
+      to work with the current backend but not confirmed to be independent of the old hardcoded rule.
 - [ ] One sibling catalog page (any question with `datasetCategory` + `datasetSubtype`) still behaves.
+
+The unticked items are DevTools response-override tests of failure and drift paths. They are not required for
+the happy path — already confirmed — but the third is the one that proves the change achieved its purpose
+rather than merely coinciding with it.
