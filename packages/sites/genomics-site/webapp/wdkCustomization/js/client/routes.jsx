@@ -209,7 +209,6 @@ export const wrapRoutes = (ebrcRoutes) => [
     component: DownloadsRouteComponent,
   },
 
-
   {
     path: '/fasta-tool',
     exact: false,

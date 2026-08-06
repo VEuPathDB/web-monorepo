@@ -16,6 +16,7 @@ import {
   DatasetFormConfig,
   DatasetTypeConfig,
 } from '@veupathdb/user-datasets/lib/Common/Configuration';
+import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
 import { DatasetWorkspaceConfig } from '@veupathdb/user-datasets/lib/Common/Configuration/DatasetWorkspaceConfig';
@@ -63,7 +64,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     },
     {
       ...implementedUploadTypes.rnaseqrc,
-      description: `Analyze and integrate your RNA-Seq raw counts into ${projectId}.`,
+      description: `Integrate your RNA-Seq raw counts into ${projectId}, and perform DE analysis.`,
     },
   ],
 
@@ -87,7 +88,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
 
     // rnaseqrc
-    [implementedUploadTypes.rnaseqrc, rnaseqFormConfigurator],
+    [implementedUploadTypes.rnaseqrc, rnaseqRcFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
@@ -483,6 +484,79 @@ function rnaseqFormConfigurator(
       renderInput: ReferenceGenomeDependency,
     },
     enableExperimentalOrganism: true,
+  };
+}
+
+function rnaseqRcFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetFormConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: 'Upload an RNA-Seq Raw Counts Dataset',
+      formInputs: {
+        samplesDescription: {
+          label: (
+            <>
+              Sample Details
+              <br />
+              (for AI annotation)
+            </>
+          ),
+        },
+      },
+    },
+    dataInputConfig: {
+      file: {
+        enabled: true,
+        slots: [
+          {
+            label: 'Data file 1',
+            buttonText: 'Choose sense or unstranded file',
+            required: true,
+          },
+          {
+            label: 'Data file 2',
+            buttonText: 'Choose anti-sense file (optional)',
+            required: false,
+          },
+        ],
+      },
+      helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
+          <div className="formInfo">
+            <p>
+              Upload your RNA-Seq count data as tab- or comma-delimited files.
+              Your original file names are preserved.
+            </p>
+            <p>
+              Provide either a single unstranded count file as Data file 1, or a
+              stranded pair: sense as Data file 1 and anti-sense as Data file 2.
+            </p>
+            <p>
+              The Sample Details you enter below are submitted alongside your
+              count files for AI annotation. You do not need to prepare any
+              additional files.
+            </p>
+            {textFilesHelp}
+          </div>
+        </details>
+      ),
+    },
+    dependencies: {
+      required: true,
+      renderInput: ReferenceGenomeDependency,
+    },
+    enableExperimentalOrganism: true,
+    prepareDataFiles: (files, details) =>
+      buildRnaSeqRcDataFiles(
+        files,
+        details.samplesDescription,
+        dataType.vdiConfig.allowedFileExtensions
+      ),
   };
 }
 
