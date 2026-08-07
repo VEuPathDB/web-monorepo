@@ -1,0 +1,23 @@
+.DatasetSourceFilters {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.5rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    font-size: 110%;
+
+    svg,
+    img {
+      width: 22px;
+      height: 22px;
+    }
+
+    input[type='checkbox'] {
+      cursor: pointer;
+    }
+  }
+}

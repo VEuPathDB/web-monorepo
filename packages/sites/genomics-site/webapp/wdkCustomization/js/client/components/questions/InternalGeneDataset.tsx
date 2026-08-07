@@ -55,10 +55,15 @@ import { isPreferredDataset } from '../../util/preferredOrganisms';
 import { PageLoading } from '../common/PageLoading';
 
 import './InternalGeneDataset.scss';
-import LockIcon from '@material-ui/icons/Lock';
-import PublicIcon from '@material-ui/icons/Public';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import { projectId, webAppUrl } from '@veupathdb/web-common/lib/config';
+
+import {
+  DatasetSourceFilters,
+  DatasetSourceIcon,
+  getDatasetCategory,
+  parseYesNo,
+  useDatasetSourceFilter,
+} from '../../util/datasetSourceCategory';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
@@ -90,6 +95,7 @@ type DatasourceRecord = {
   isPreferred: boolean;
   source: 'datasource' | 'userdataset';
   is_public?: boolean;
+  owner_is_veupathdb_curator?: boolean;
   /** Search URL supplied by the service. Absent on curated datasource rows. */
   search_url?: string;
 };
@@ -241,17 +247,21 @@ function InternalGeneDatasetContent(props: Props) {
   const [showingOneRecord, updateShowingOneRecord] =
     useState(showingRecordToggle);
 
-  const [showDataSources, setShowDataSources] = useState(true);
-  const [showPublicUserDatasets, setShowPublicUserDatasets] = useState(true);
-  const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
+  const { visibility, setVisibility } = useDatasetSourceFilter();
+
+  const toSourceInfo = useCallback(
+    (record: DatasourceRecord) => ({
+      isUserDataset: record.source !== 'datasource',
+      isPublic: record.is_public === true,
+      ownerIsVeupathdbCurator: record.owner_is_veupathdb_curator === true,
+    }),
+    []
+  );
 
   const sourceTypeFilterPredicate = useCallback(
-    (record: DatasourceRecord) => {
-      if (record.source === 'datasource') return showDataSources;
-      else if (record.is_public) return showPublicUserDatasets;
-      else return showPrivateUserDatasets;
-    },
-    [showDataSources, showPublicUserDatasets, showPrivateUserDatasets]
+    (record: DatasourceRecord) =>
+      visibility[getDatasetCategory(toSourceInfo(record))],
+    [visibility, toSourceInfo]
   );
 
   const selectedDataSetRecord = useMemo(
@@ -372,39 +382,11 @@ function InternalGeneDatasetContent(props: Props) {
           ))}
         </div>
       </div>
-      <div className={cx('SourceFilters')}>
-        <label>
-          <input
-            type="checkbox"
-            checked={showDataSources}
-            onChange={(e) => setShowDataSources(e.target.checked)}
-          />
-          <img
-            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB dataset"
-            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-          />
-          {' VEuPathDB datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPublicUserDatasets}
-            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
-          />
-          <PublicIcon style={{ width: '20px', height: '20px' }} />
-          {' Public User Datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPrivateUserDatasets}
-            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
-          />
-          <LockIcon style={{ width: '20px', height: '20px' }} />
-          {' Private User Datasets'}
-        </label>
-      </div>
+      <DatasetSourceFilters
+        visibility={visibility}
+        setVisibility={setVisibility}
+        className={cx('SourceFilters')}
+      />
       <InternalGeneDatasetTable
         searchBoxHeader="Filter Datasets:"
         emptyResultMessage={
@@ -424,36 +406,11 @@ function InternalGeneDatasetContent(props: Props) {
             name: ' ',
             width: '50px',
             sortable: false,
-            renderCell: ({ row }: any) => {
-              if (row.source === 'datasource') {
-                return (
-                  <img
-                    src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-                    alt=""
-                    title="VEuPathDB dataset"
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      objectFit: 'contain',
-                    }}
-                  />
-                );
-              } else if (row.is_public) {
-                return (
-                  <PublicIcon
-                    style={{ width: '20px', height: '20px' }}
-                    titleAccess="Public User Dataset"
-                  />
-                );
-              } else {
-                return (
-                  <LockIcon
-                    style={{ width: '20px', height: '20px' }}
-                    titleAccess="Private User Dataset"
-                  />
-                );
-              }
-            },
+            renderCell: ({ row }: any) => (
+              <DatasetSourceIcon
+                category={getDatasetCategory(toSourceInfo(row))}
+              />
+            ),
           },
           {
             key: 'searches',
@@ -990,6 +947,9 @@ function getUserDatasetRecords(
         isPreferred,
         source: 'userdataset' as const,
         is_public: attrs.is_public === 'Public',
+        owner_is_veupathdb_curator: parseYesNo(
+          attrs.owner_is_veupathdb_curator
+        ),
         search_url: userDatasetRecord.tables?.ExploreWebsiteSearches?.[0]?.url,
       };
     });
