@@ -72,10 +72,10 @@ type InternalQuestionRecord = {
 
 type UserDatasetQuestionRecord = {
   question_name: string;
-  dataset_id_param: string;
   dataset_id: string;
   record_class: string;
   dataset_name: string;
+  url: string;
 };
 
 type DatasourceRecord = {
@@ -90,7 +90,8 @@ type DatasourceRecord = {
   isPreferred: boolean;
   source: 'datasource' | 'userdataset';
   is_public?: boolean;
-  dataset_id_param?: string;
+  /** Search URL supplied by the service. Absent on curated datasource rows. */
+  search_url?: string;
 };
 
 type DisplayCategory = {
@@ -178,13 +179,17 @@ function InternalGeneDatasetContent(props: Props) {
       // Merge questions from both sources
       const allInternalQuestions = [
         ...internalQuestions,
-        ...userdatasetInternalQuestions.map((udq) => ({
-          target_name: udq.question_name,
-          dataset_id: udq.dataset_id,
-          target_type: 'question',
-          dataset_name: udq.dataset_name,
-          record_type: udq.record_class,
-        })),
+        ...userdatasetInternalQuestions
+          // Mirror the datasource path (see getInternalQuestions), which keeps
+          // only references whose record type matches this page's output.
+          .filter((udq) => udq.record_class === outputRecordClass.fullName)
+          .map((udq) => ({
+            target_name: udq.question_name,
+            dataset_id: udq.dataset_id,
+            target_type: 'question',
+            dataset_name: udq.dataset_name,
+            record_type: udq.record_class,
+          })),
       ];
 
       const displayCategoryMetadata = getDisplayCategoryMetadata(
@@ -457,8 +462,7 @@ function InternalGeneDatasetContent(props: Props) {
             renderCell: (cellProps: any) => (
               <>
                 {displayCategoryOrder.map((categoryName) => {
-                  const { dataset_name, dataset_id, source, dataset_id_param } =
-                    cellProps.row;
+                  const { dataset_name, source, search_url } = cellProps.row;
                   const categorySearchName = getCategorySearchName(
                     questionNamesByDatasetAndCategory,
                     dataset_name,
@@ -476,10 +480,9 @@ function InternalGeneDatasetContent(props: Props) {
                           }
                           to={getCategorySearchUrl(
                             categorySearchName,
-                            dataset_id,
                             source,
-                            dataset_id_param,
-                            internalSearchName
+                            internalSearchName,
+                            search_url
                           )}
                           onClick={makeLinkClickHandler(
                             submissionMetadata,
@@ -828,13 +831,23 @@ function getUserDatasetInternalQuestions(
         `ExploreWebsiteSearches table missing for UserDataset ${record.attributes.dataset_id}`
       );
     }
-    return exploreSearches.map((search: any) => ({
-      question_name: search.question_name,
-      dataset_id_param: search.dataset_id_param,
-      dataset_id: search.dataset_id,
-      record_class: search.record_class,
-      dataset_name: record.attributes.dataset_id,
-    }));
+    return exploreSearches.map((search: any) => {
+      // A search with no url is not explorable - treat it as a service defect
+      // rather than reconstructing a link from the dataset id.
+      if (typeof search.url !== 'string' || search.url === '') {
+        throw new Error(
+          `ExploreWebsiteSearches entry for UserDataset ${record.attributes.dataset_id} / ${search.question_name} has no url`
+        );
+      }
+
+      return {
+        question_name: search.question_name,
+        dataset_id: search.dataset_id,
+        record_class: search.record_class,
+        dataset_name: record.attributes.dataset_id,
+        url: search.url,
+      };
+    });
   });
 }
 
@@ -976,9 +989,7 @@ function getUserDatasetRecords(
         isPreferred,
         source: 'userdataset' as const,
         is_public: attrs.is_public === 'Public',
-        dataset_id_param:
-          userDatasetRecord.tables?.ExploreWebsiteSearches?.[0]
-            ?.dataset_id_param,
+        search_url: userDatasetRecord.tables?.ExploreWebsiteSearches?.[0]?.url,
       };
     });
 }
@@ -1082,19 +1093,19 @@ function getCategorySearchName(
 
 function getCategorySearchUrl(
   questionName: string,
-  datasetId: string,
   source: 'datasource' | 'userdataset',
-  datasetIdParam: string | undefined,
-  internalSearchName: string
+  internalSearchName: string,
+  searchUrl: string
 ): string {
-  if (source === 'userdataset' && datasetIdParam) {
-    // Keep EDAUD_ prefix for eda_dataset_id, strip for other params
-    const paramValue =
-      datasetIdParam === 'eda_dataset_id'
-        ? datasetId
-        : datasetId.replace(/^EDAUD_/, '');
+  if (source === 'userdataset') {
+    // Reuse the query string the service supplied: it already encodes the
+    // parameter name and the id format, so the client does not need to know
+    // which parameters keep the EDAUD_ prefix. Only the query string is used,
+    // since the supplied url is rootUrl-prefixed and <Link> is router-relative.
+    const queryStart = searchUrl.indexOf('?');
+    const queryString = queryStart === -1 ? '' : searchUrl.slice(queryStart);
     // For UserDatasets with parameters, format as: catalogPage?params#questionName
-    return `${internalSearchName}?param.${datasetIdParam}=${paramValue}#${questionName}`;
+    return `${internalSearchName}${queryString}#${questionName}`;
   }
   // For DataSources, format as: catalogPage#questionName
   return `${internalSearchName}#${questionName}`;
