@@ -35,6 +35,7 @@ import {
   updateDatasetCommunityVisibilitySuccess,
   updateDatasetCommunityVisibilityError,
   loadUserDatasetDetailWithoutLoadingIndicator,
+  loadUserDatasetSearches,
 } from '../../Actions/UserDatasetsActions';
 import { DataNoun } from '../../Utils/types';
 import {
@@ -76,6 +77,8 @@ export interface DatasetManagementProps {
   unshareUserDatasets: typeof unshareUserDataset;
   updateUserDatasetDetail: typeof updateUserDatasetDetail;
   loadUserDatasetDetailWithoutLoadingIndicator: typeof loadUserDatasetDetailWithoutLoadingIndicator;
+  loadUserDatasetSearches: typeof loadUserDatasetSearches;
+  userDatasetSearches?: Question[];
   sharingModalOpen: boolean;
   sharingDatasetPending: boolean;
   sharingError: typeof sharingError;
@@ -319,12 +322,17 @@ class DatasetManagement<
   getAttributes(): DatasetAttribute[] {
     const { userDataset, isOwner, questionMap, dataNoun, config } = this.props;
     const isInstalled = this.isInstalled();
-    const questions = Object.values(questionMap).filter(
-      (q) =>
-        q.properties !== undefined &&
-        'userDatasetType' in q.properties &&
-        q.properties.userDatasetType.includes(userDataset.type.name)
-    );
+    // Prefer searches fetched after this dataset installed. questionMap comes
+    // from globalData, which is loaded once per page and so cannot contain a
+    // dataset installed during this session.
+    const questions =
+      this.props.userDatasetSearches ??
+      Object.values(questionMap).filter(
+        (q) =>
+          q.properties !== undefined &&
+          'userDatasetType' in q.properties &&
+          q.properties.userDatasetType.includes(userDataset.type.name)
+      );
 
     const shares = this.getGrantedShares();
 
