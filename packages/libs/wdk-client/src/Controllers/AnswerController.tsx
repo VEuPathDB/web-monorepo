@@ -71,7 +71,7 @@ type Options = {
   customSortBys?: Record<string, ListIteratee<RecordInstance>[]>;
   additionalActions?: TableAction[];
   useStickyFirstNColumns?: number;
-  // Optional content rendered after the description, e.g. for additional filters
+  // Optional content rendered after the description, e.g., for additional filters
   descriptionSuffix?: React.ReactNode;
 };
 
