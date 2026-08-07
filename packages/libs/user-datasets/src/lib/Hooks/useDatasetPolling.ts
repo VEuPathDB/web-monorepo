@@ -74,8 +74,13 @@ export function useDatasetPolling({
       } finally {
         inFlight = false;
       }
-      if (cancelled) return;
+      // Reset isChecking on the cancelled path too, so correctness does not
+      // depend solely on the `isPolling &&` mask applied to the returned
+      // value — if this effect ever restarts (e.g. a status transitioning
+      // back to a polling disposition), isChecking should not still be true
+      // from a stale in-flight request.
       setIsChecking(false);
+      if (cancelled) return;
       pollCount += 1;
       schedule();
     };

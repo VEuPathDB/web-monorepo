@@ -508,14 +508,18 @@ export const SEARCHES_RECEIVED = 'user-datasets/searches-received';
 export interface SearchesReceivedAction {
   type: typeof SEARCHES_RECEIVED;
   payload: {
+    userDatasetType: string;
     searches: Question[];
   };
 }
 
-export function searchesReceived(searches: Question[]): SearchesReceivedAction {
+export function searchesReceived(
+  userDatasetType: string,
+  searches: Question[]
+): SearchesReceivedAction {
   return {
     type: SEARCHES_RECEIVED,
-    payload: { searches },
+    payload: { userDatasetType, searches },
   };
 }
 
@@ -526,7 +530,9 @@ export function searchesReceived(searches: Question[]): SearchesReceivedAction {
  */
 export function loadUserDatasetSearches(userDatasetType: string) {
   return validateVdiCompatibleThunk<SearchesReceivedAction>(({ wdkService }) =>
-    getUserDatasetSearches(wdkService, userDatasetType).then(searchesReceived)
+    getUserDatasetSearches(wdkService, userDatasetType).then((searches) =>
+      searchesReceived(userDatasetType, searches)
+    )
   );
 }
 

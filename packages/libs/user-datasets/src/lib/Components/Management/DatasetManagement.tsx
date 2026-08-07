@@ -65,6 +65,37 @@ import { ThemedUpdateButton } from '../ThemedUpdateButton';
 
 const classify = makeClassifier('DatasetManagement');
 
+/**
+ * Selects which searches to show for a dataset: freshly fetched searches are
+ * preferred, but ONLY when they were fetched for THIS dataset's type.
+ * Searches fetched for a different type are leftovers from another dataset
+ * viewed earlier in the session (the store only ever holds one entry) and
+ * must be ignored in favor of the questionMap fallback — otherwise a
+ * dataset's page could render another dataset type's searches, spliced with
+ * the wrong datasetId into their links.
+ *
+ * An empty fetched array is deliberately preferred over the fallback when its
+ * type matches: it correctly means "no searches for this type", whereas an
+ * empty array for a mismatched type is correctly ignored.
+ */
+export function selectDatasetSearches(
+  userDatasetType: string,
+  fetchedSearches:
+    | { userDatasetType: string; searches: Question[] }
+    | undefined,
+  questionMap: Record<string, Question>
+): Question[] {
+  if (fetchedSearches?.userDatasetType === userDatasetType) {
+    return fetchedSearches.searches;
+  }
+  return Object.values(questionMap).filter(
+    (q) =>
+      q.properties !== undefined &&
+      'userDatasetType' in q.properties &&
+      q.properties.userDatasetType.includes(userDatasetType)
+  );
+}
+
 export interface DatasetManagementProps {
   baseUrl: string;
   includeAllLink: boolean;
@@ -81,7 +112,7 @@ export interface DatasetManagementProps {
   updateUserDatasetDetail: typeof updateUserDatasetDetail;
   loadUserDatasetDetailWithoutLoadingIndicator: typeof loadUserDatasetDetailWithoutLoadingIndicator;
   loadUserDatasetSearches: typeof loadUserDatasetSearches;
-  userDatasetSearches?: Question[];
+  userDatasetSearches?: { userDatasetType: string; searches: Question[] };
   sharingModalOpen: boolean;
   sharingDatasetPending: boolean;
   sharingError: typeof sharingError;
@@ -344,17 +375,15 @@ class DatasetManagement<
   getAttributes(): DatasetAttribute[] {
     const { userDataset, isOwner, questionMap, dataNoun, config } = this.props;
     const isInstalled = this.isInstalled();
-    // Prefer searches fetched after this dataset installed. questionMap comes
-    // from globalData, which is loaded once per page and so cannot contain a
-    // dataset installed during this session.
-    const questions =
-      this.props.userDatasetSearches ??
-      Object.values(questionMap).filter(
-        (q) =>
-          q.properties !== undefined &&
-          'userDatasetType' in q.properties &&
-          q.properties.userDatasetType.includes(userDataset.type.name)
-      );
+    // questionMap comes from globalData, which is loaded once per page and
+    // so cannot contain a dataset installed during this session; see
+    // selectDatasetSearches for why the fetched searches are only used when
+    // they match this dataset's type.
+    const questions = selectDatasetSearches(
+      userDataset.type.name,
+      this.props.userDatasetSearches,
+      questionMap
+    );
 
     const shares = this.getGrantedShares();
 

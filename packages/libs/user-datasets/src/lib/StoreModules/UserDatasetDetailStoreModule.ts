@@ -54,11 +54,17 @@ export interface State {
   updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
   serviceMetadata?: VdiServiceMetadata;
   /**
-   * Searches for this dataset's type, fetched fresh on install. Preferred over
-   * the cached globalData.questions, which cannot contain a dataset installed
-   * during this session.
+   * Searches fetched fresh on install, tagged with the dataset type they were
+   * fetched for. Preferred over the cached globalData.questions — which
+   * cannot contain a dataset installed during this session — but only when
+   * userDatasetType matches the dataset currently being viewed; otherwise
+   * these are leftover searches from a different dataset type and must be
+   * ignored in favor of the questionMap fallback.
    */
-  userDatasetSearches?: Question[];
+  userDatasetSearches?: {
+    userDatasetType: string;
+    searches: Question[];
+  };
 }
 
 const initialState: State = {
@@ -188,7 +194,10 @@ export function reduce(state: State = initialState, action: Action): State {
     case SEARCHES_RECEIVED:
       return {
         ...state,
-        userDatasetSearches: action.payload.searches,
+        userDatasetSearches: {
+          userDatasetType: action.payload.userDatasetType,
+          searches: action.payload.searches,
+        },
       };
 
     case updateDatasetCommunityVisibilityError.type:
