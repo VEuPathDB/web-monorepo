@@ -19,10 +19,12 @@ import {
   updateDatasetCommunityVisibilitySuccess,
   METADATA_LOADING,
   METADATA_RECEIVED,
+  SEARCHES_RECEIVED,
 } from '../Actions/UserDatasetsActions';
 
 import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service';
 import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const key = 'userDatasetDetail';
 
@@ -51,6 +53,12 @@ export interface State {
   updateDatasetCommunityVisibilitySuccess: boolean;
   updateDatasetCommunityVisibilityError: undefined | CommunityPromotionError;
   serviceMetadata?: VdiServiceMetadata;
+  /**
+   * Searches for this dataset's type, fetched fresh on install. Preferred over
+   * the cached globalData.questions, which cannot contain a dataset installed
+   * during this session.
+   */
+  userDatasetSearches?: Question[];
 }
 
 const initialState: State = {
@@ -175,6 +183,12 @@ export function reduce(state: State = initialState, action: Action): State {
       return {
         ...state,
         serviceMetadata: action.payload,
+      };
+
+    case SEARCHES_RECEIVED:
+      return {
+        ...state,
+        userDatasetSearches: action.payload.searches,
       };
 
     case updateDatasetCommunityVisibilityError.type:

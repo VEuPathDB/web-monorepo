@@ -34,6 +34,8 @@ import {
 } from '../Components/Sharing/CommunityPromotionError';
 import { Consumer } from '../Utils';
 import { VdiCompatibleEpicDependencies } from '../Service/utils/compatibility';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { getUserDatasetSearches } from '../Service/Datasets/getUserDatasetSearches';
 
 export type Action =
   | DetailErrorAction
@@ -58,7 +60,8 @@ export type Action =
   | SharingErrorAction
   | CommunityAction
   | ServiceMetaLoading
-  | ServiceMetaReceived;
+  | ServiceMetaReceived
+  | SearchesReceivedAction;
 
 //==============================================================================
 
@@ -496,6 +499,35 @@ export function serviceMetaReceived(
     type: METADATA_RECEIVED,
     payload: meta,
   };
+}
+
+//==============================================================================
+
+export const SEARCHES_RECEIVED = 'user-datasets/searches-received';
+
+export interface SearchesReceivedAction {
+  type: typeof SEARCHES_RECEIVED;
+  payload: {
+    searches: Question[];
+  };
+}
+
+export function searchesReceived(searches: Question[]): SearchesReceivedAction {
+  return {
+    type: SEARCHES_RECEIVED,
+    payload: { searches },
+  };
+}
+
+/**
+ * Loads the searches for a dataset type, bypassing the cached
+ * `globalData.questions`. Dispatched when a dataset finishes installing, so
+ * its searches can appear without a page reload.
+ */
+export function loadUserDatasetSearches(userDatasetType: string) {
+  return validateVdiCompatibleThunk<SearchesReceivedAction>(({ wdkService }) =>
+    getUserDatasetSearches(wdkService, userDatasetType).then(searchesReceived)
+  );
 }
 
 //==============================================================================
