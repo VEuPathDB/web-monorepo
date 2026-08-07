@@ -57,10 +57,11 @@ the loop.
 
 Reuse the existing action `loadUserDatasetDetailWithoutLoadingIndicator` — already wired as a prop.
 
-- **Backoff:** 2s × 5 (first ~10s) → 5s × 6 (to ~40s) → **15s** thereafter. Fast while the user is
-  most attentive, cheap over the long tail of a multi-minute import.
+- **Backoff:** three flat rates, not a smooth ramp — 2s for 5 polls (first ~10s), then 5s for 6 polls
+  (to ~40s), then **15s** for every poll thereafter. Fast while the user is most attentive, cheap over
+  the long tail of a multi-minute import.
 - **`install: ready-for-reinstall`** waits on the VDI reconciler (`vdiConfig.fullRunInterval`, likely
-  minutes-to-hours), so it gets a longer **60s** ceiling instead of 15s.
+  minutes-to-hours), so its steady-state rate is **60s** rather than 15s.
 - **Tab visibility:** pause while `document.hidden`; on resume, poll immediately and reset the backoff
   to the fastest tier — the user just came back, so treat it as a fresh look.
 - **No give-up cap** — polls while the page is open. This is only safe _because_ of the visibility
@@ -104,7 +105,10 @@ changes avoids all three.
 
 ### 4. Bug 2 — UD-local searches refetch
 
-On the transition into `install: complete`:
+On the transition into `install: complete`. A single refetch at that moment is sufficient: as soon as
+VDI reports the install complete, the dataset id is available to WDK and the backend queries behind
+the model data are ready and fast (confirmed by the team, 2026-08-07). No retry or settle delay is
+needed — if the refetch returned nothing, that would be a real absence rather than a timing artifact.
 
 - Fetch `/record-types?format=expanded` via `sendRequest(..., { useCache: false })`. Verified at
   `ServiceBase.ts:185`: `useCache: false` skips `_getFromCache` and goes straight to `_fetchJson`,
@@ -178,6 +182,5 @@ End-to-end, against a real VDI import:
 6. Force a failure (e.g. an invalid upload): confirm polling stops and the error status renders
 7. Leave a `ready-for-reinstall` dataset open: confirm the 60s ceiling, not 15s
 
-**Unverified premise, worth confirming before building step 4:** that WDK surfaces a dataset's
-searches promptly once VDI reports `install: complete`. If the model lags server-side, step 3 fails
-and the refetch alone will not fix bug 2.
+The premise behind step 3 is confirmed rather than assumed: WDK has the dataset id and its model data
+ready as soon as VDI reports `install: complete`, so the single refetch is enough (see _Bug 2_ above).
