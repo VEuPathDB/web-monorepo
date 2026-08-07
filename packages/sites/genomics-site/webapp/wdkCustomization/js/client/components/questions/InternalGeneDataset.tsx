@@ -755,6 +755,7 @@ const USERDATASET_REPORT_CONFIG = {
     'dataset_id',
     'summary',
     'is_public',
+    'owner_is_veupathdb_curator',
     'primary_contact_name',
     'owner_name',
     'ref_organism',

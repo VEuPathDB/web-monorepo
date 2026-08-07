@@ -173,14 +173,29 @@ export function MergedDatasetsAnswer(props: any) {
           allHarmonizedAttributes
         );
 
-        // 5. Extract all native attribute names for each record type from harmonized set
-        const datasetAttrsToFetch = harmonizedAttributesWithDisplayNameAsKey
+        // 5. Extract all native attribute names for each record type.
+        // Fetch every result-scope attribute, not just the question defaults:
+        // the Add/Remove Columns panel offers all of them, and adding a column
+        // does not trigger a re-fetch (the useWdkService deps below are empty),
+        // so any attribute missing here renders as an empty column with no error.
+        const allHarmonizedWithKeyForFetch = withDisplayNameAsKey(
+          allHarmonizedAttributes
+        );
+
+        const datasetAttrsToFetch = allHarmonizedWithKeyForFetch
           .map((a) => a.datasetAttrName)
           .filter((name): name is string => name !== null);
 
-        const userDatasetAttrsToFetch = harmonizedAttributesWithDisplayNameAsKey
+        const userDatasetAttrsToFetch = allHarmonizedWithKeyForFetch
           .map((a) => a.userDatasetAttrName)
           .filter((name): name is string => name !== null);
+
+        // The source-category filter needs this attribute even when its column
+        // is hidden, so pin it explicitly rather than relying on harmonization
+        // to carry it through.
+        if (!userDatasetAttrsToFetch.includes('owner_is_veupathdb_curator')) {
+          userDatasetAttrsToFetch.push('owner_is_veupathdb_curator');
+        }
 
         // 6. Fetch data in parallel
         const reportConfig = {
