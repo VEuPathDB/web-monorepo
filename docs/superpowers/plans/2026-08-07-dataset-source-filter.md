@@ -479,7 +479,11 @@ requested, so they rendered as empty columns with no error."
 
 ---
 
-### Task 4: Adopt the shared module in AllDatasetsAnswerController
+### Task 4: Adopt the shared module in AllDatasetsAnswerController — ✅ DONE (2026-08-07, uncommitted)
+
+**Verified in the browser:** filters and categorization work on the AllDatasets page. `tsc --noEmit` passes. 97 lines removed, 45 added.
+
+Note beyond the written steps: `toSourceInfo` had to be added to `renderCellContent`'s `useCallback` dependency array — omitting it would have been a stale-closure bug.
 
 **Files:**
 

@@ -14,9 +14,13 @@ import {
   isQualifying,
   getId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import LockIcon from '@material-ui/icons/Lock';
-import PublicIcon from '@material-ui/icons/Public';
-import { projectId, webAppUrl } from '@veupathdb/web-common/lib/config';
+import {
+  DatasetSourceFilters,
+  DatasetSourceIcon,
+  getDatasetCategory,
+  parseYesNo,
+  useDatasetSourceFilter,
+} from '../util/datasetSourceCategory';
 
 import './AllDatasetsAnswerController.scss';
 
@@ -30,6 +34,7 @@ interface HarmonizedAttribute {
 interface NormalizedRecord extends RecordInstance {
   dataset_source: 'dataset' | 'userdataset';
   is_public?: boolean;
+  owner_is_veupathdb_curator?: boolean;
 }
 
 interface MergedState {
@@ -39,34 +44,18 @@ interface MergedState {
   defaultVisibleDisplayNames: string[];
 }
 
-function SourceIcon({ record }: { record: NormalizedRecord }) {
-  if (record.dataset_source === 'dataset') {
-    return (
-      <img
-        src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-        alt="VEuPathDB dataset"
-        title="VEuPathDB dataset"
-        style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-      />
-    );
-  }
-  return record.is_public ? (
-    <PublicIcon
-      titleAccess="Public User Dataset"
-      style={{ width: '20px', height: '20px' }}
-    />
-  ) : (
-    <LockIcon
-      titleAccess="Private User Dataset"
-      style={{ width: '20px', height: '20px' }}
-    />
-  );
-}
-
 export function MergedDatasetsAnswer(props: any) {
-  const [showDataSources, setShowDataSources] = useState(true);
-  const [showPublicUserDatasets, setShowPublicUserDatasets] = useState(true);
-  const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
+  const { visibility, setVisibility } = useDatasetSourceFilter();
+
+  const toSourceInfo = useCallback(
+    (record: NormalizedRecord) => ({
+      isUserDataset: record.dataset_source !== 'dataset',
+      isPublic: record.is_public === true,
+      ownerIsVeupathdbCurator: record.owner_is_veupathdb_curator === true,
+    }),
+    []
+  );
+
   const [userSelectedColumns, setUserSelectedColumns] = useState<
     AttributeField[] | null
   >(null);
@@ -261,20 +250,13 @@ export function MergedDatasetsAnswer(props: any) {
     [] // Empty deps - only fetch once on mount, don't re-fetch on sorting/column changes
   );
 
-  // Filter by source type
+  // Filter by source category
   const filteredRecords = useMemo(() => {
     if (!mergedState) return [];
-    return mergedState.records.filter((record) => {
-      if (record.dataset_source === 'dataset') return showDataSources;
-      else if (record.is_public) return showPublicUserDatasets;
-      else return showPrivateUserDatasets;
-    });
-  }, [
-    mergedState,
-    showDataSources,
-    showPublicUserDatasets,
-    showPrivateUserDatasets,
-  ]);
+    return mergedState.records.filter(
+      (record) => visibility[getDatasetCategory(toSourceInfo(record))]
+    );
+  }, [mergedState, visibility, toSourceInfo]);
 
   // Compute visible attributes - use user selections if available, otherwise defaults
   const visibleAttributes = useMemo(() => {
@@ -391,49 +373,25 @@ export function MergedDatasetsAnswer(props: any) {
       // component rather than an HTML string baked into the record data.
       if (attribute.name === '__source_icon__') {
         const normalizedRecord = record as NormalizedRecord;
-        return <SourceIcon record={normalizedRecord} />;
+        return (
+          <DatasetSourceIcon
+            category={getDatasetCategory(toSourceInfo(normalizedRecord))}
+          />
+        );
       }
 
       // For all other attributes, use default rendering
       return <CellContent {...cellProps} />;
     },
-    [datasetRecordClass, userDatasetRecordClass]
+    [datasetRecordClass, userDatasetRecordClass, toSourceInfo]
   );
 
   const sourceFilters = (
-    <div className="AllDatasets-SourceFilters">
-      <label>
-        <input
-          type="checkbox"
-          checked={showDataSources}
-          onChange={(e) => setShowDataSources(e.target.checked)}
-        />
-        <img
-          src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-          alt="VEuPathDB dataset"
-          style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-        />
-        {' VEuPathDB datasets'}
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          checked={showPublicUserDatasets}
-          onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
-        />
-        <PublicIcon style={{ width: '20px', height: '20px' }} />
-        {' Public User Datasets'}
-      </label>
-      <label>
-        <input
-          type="checkbox"
-          checked={showPrivateUserDatasets}
-          onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
-        />
-        <LockIcon style={{ width: '20px', height: '20px' }} />
-        {' Private User Datasets'}
-      </label>
-    </div>
+    <DatasetSourceFilters
+      visibility={visibility}
+      setVisibility={setVisibility}
+      className="AllDatasets-SourceFilters"
+    />
   );
 
   if (!mergedState) {
@@ -604,11 +562,20 @@ function normalizeRecords(
         ? record.attributes.is_public === 'Public'
         : undefined;
 
+    // Read straight off the raw record: this attribute drives the source
+    // category even when its column is hidden, so it is not necessarily
+    // present in the harmonized/normalized attribute set.
+    const ownerIsVeupathdbCurator =
+      sourceType === 'userdataset'
+        ? parseYesNo(record.attributes.owner_is_veupathdb_curator)
+        : undefined;
+
     return {
       ...record,
       attributes: normalizedAttributes,
       dataset_source: sourceType,
       is_public: isPublic,
+      owner_is_veupathdb_curator: ownerIsVeupathdbCurator,
       // Override recordClassName so links point to correct record type
       recordClassName: sourceType === 'dataset' ? 'dataset' : 'userdataset',
     };
