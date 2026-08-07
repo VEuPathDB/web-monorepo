@@ -41,6 +41,13 @@ export function useDatasetPolling({
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let pollCount = 0;
+    // Guards against onVisibilityChange starting a second concurrent poll
+    // while a tick's request is still in flight. timeoutId alone is not
+    // sufficient for this: it is undefined for the entire span between a
+    // tick starting its request and that request settling (schedule() runs
+    // only after), so a rapid hide/show/hide/show during that window would
+    // otherwise find no timer to clear and call tick() again.
+    let inFlight = false;
 
     const schedule = () => {
       timeoutId = setTimeout(
@@ -59,10 +66,13 @@ export function useDatasetPolling({
       }
 
       setIsChecking(true);
+      inFlight = true;
       try {
         await onPollRef.current();
       } catch {
         // Transient failure: keep the loop alive and try again next tick.
+      } finally {
+        inFlight = false;
       }
       if (cancelled) return;
       setIsChecking(false);
@@ -71,7 +81,7 @@ export function useDatasetPolling({
     };
 
     const onVisibilityChange = () => {
-      if (document.hidden || cancelled) return;
+      if (document.hidden || cancelled || inFlight) return;
       // The user just came back — refresh now and restart the backoff, rather
       // than making them wait out a 15s interval that elapsed off-screen.
       if (timeoutId) clearTimeout(timeoutId);
