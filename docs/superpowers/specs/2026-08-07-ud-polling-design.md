@@ -150,17 +150,24 @@ Detail page only. `UserDatasetList` also renders `UserDatasetStatus` and
 `loadUserDatasetListWithoutLoadingIndicator` exists, but list polling refreshes _all_ datasets in one
 request and its stop condition becomes "every dataset terminal" — a different problem, deferred.
 
-## Relationship to PR #1835
+## PR #1835 — abandoned
 
-PR #1835 (branch `fix-ud-refresh-bug`) fixes bug 1 by reworking `handleRefresh`'s settle logic. This
-branch **deletes** `handleRefresh`, so that work is superseded and is not present here — `ud-polling`
-branches from `main`, not from `fix-ud-refresh-bug`.
+PR #1835 (branch `fix-ud-refresh-bug`) reworked `handleRefresh`'s settle logic to fix bug 1. **It is
+being closed unmerged.** It was built against a defect inferred from reading the code — the 100ms
+stale-props race — rather than against the behaviour actually reported, and the race it fixed is
+cosmetic and self-correcting. This branch deletes `handleRefresh` outright, so the fix has nothing
+left to apply to. `ud-polling` branches from `main`, not from `fix-ud-refresh-bug`.
 
-One review comment on #1835 still applies: `NodeJS.Timeout` is the wrong annotation for a browser
-timer handle. Browser `setTimeout` returns `number`, and `@types/node` is only ambiently present via
-hoisting — the shared `@veupathdb/tsconfig` sets `lib` to dom/dom.iterable/esnext with no
-`types: ["node"]`. Use `ReturnType<typeof setTimeout>`, which is correct under both. The polling
-timer needs the same treatment.
+One finding from its review survives and should be carried into the polling timer:
+`NodeJS.Timeout` is the wrong annotation for a browser timer handle. Browser `setTimeout` returns
+`number`, and `@types/node` is only ambiently present via hoisting — the shared `@veupathdb/tsconfig`
+sets `lib` to dom/dom.iterable/esnext with no `types: ["node"]`. Use `ReturnType<typeof setTimeout>`,
+which is correct under both.
+
+The other review comment on #1835 — that `setState` would wipe sibling state keys — rests on a false
+premise. React's `setState` merges a partial state object; it does not replace. The
+`this.setState(s => ({...s, …}))` spread used elsewhere in that class is redundant with respect to
+merging, though the updater form is still the right choice when deriving new state from old.
 
 Worth deciding whether #1835 still merits merging once this lands.
 
