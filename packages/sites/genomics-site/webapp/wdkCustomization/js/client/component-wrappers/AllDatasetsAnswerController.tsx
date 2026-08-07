@@ -1,11 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  ComponentType,
-  useRef,
-} from 'react';
+import React, { useMemo, useState, useCallback, ComponentType } from 'react';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import RecordLink from '@veupathdb/wdk-client/lib/Views/Records/RecordLink';
@@ -44,6 +37,30 @@ interface MergedState {
   harmonizedAttributes: HarmonizedAttribute[];
   allHarmonizedAttributes: HarmonizedAttribute[];
   defaultVisibleDisplayNames: string[];
+}
+
+function SourceIcon({ record }: { record: NormalizedRecord }) {
+  if (record.dataset_source === 'dataset') {
+    return (
+      <img
+        src={`${webAppUrl}/images/${projectId}/favicon.ico`}
+        alt="VEuPathDB dataset"
+        title="VEuPathDB dataset"
+        style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+      />
+    );
+  }
+  return record.is_public ? (
+    <PublicIcon
+      titleAccess="Public User Dataset"
+      style={{ width: '20px', height: '20px' }}
+    />
+  ) : (
+    <LockIcon
+      titleAccess="Private User Dataset"
+      style={{ width: '20px', height: '20px' }}
+    />
+  );
 }
 
 export function MergedDatasetsAnswer(props: any) {
@@ -131,7 +148,7 @@ export function MergedDatasetsAnswer(props: any) {
           userDatasetQuestion.defaultAttributes;
 
         // 5. Build list of default attributes to fetch from harmonized set
-        const defaultsToFetch = allHarmonizedAttributes.filter((attr) => {
+        const harmonizedAttributes = allHarmonizedAttributes.filter((attr) => {
           const inDatasetDefaults =
             attr.datasetAttrName &&
             datasetDefaultAttrNames.includes(attr.datasetAttrName);
@@ -141,25 +158,13 @@ export function MergedDatasetsAnswer(props: any) {
           return inDatasetDefaults || inUserDatasetDefaults;
         });
 
-        const harmonizedAttributes = defaultsToFetch;
-
         // Create modified attribute metadata that uses displayName as the name
         // Exception: keep primary_key as 'primary_key' so WDK renders it as a link
         const harmonizedAttributesWithDisplayNameAsKey =
-          harmonizedAttributes.map((attr) => ({
-            ...attr,
-            metadata: {
-              ...attr.metadata,
-              name:
-                attr.datasetAttrName === 'primary_key' ||
-                attr.userDatasetAttrName === 'primary_key'
-                  ? 'primary_key'
-                  : attr.displayName,
-            },
-          }));
+          withDisplayNameAsKey(harmonizedAttributes);
 
         // 4. Determine default visible attributes (union of both question defaults)
-        // Use allHarmonizedAttributes here, not the filtered defaultsToFetch
+        // Use allHarmonizedAttributes here, not the filtered harmonizedAttributes
         const defaultVisibleDisplayNames = getDefaultVisibleAttributes(
           datasetQuestion,
           userDatasetQuestion,
@@ -205,18 +210,8 @@ export function MergedDatasetsAnswer(props: any) {
 
         // 7. Normalize records
         // Use allHarmonizedAttributes so all possible columns are initialized (prevents sorting errors)
-        const allHarmonizedWithDisplayNameAsKey = allHarmonizedAttributes.map(
-          (attr) => ({
-            ...attr,
-            metadata: {
-              ...attr.metadata,
-              name:
-                attr.datasetAttrName === 'primary_key' ||
-                attr.userDatasetAttrName === 'primary_key'
-                  ? 'primary_key'
-                  : attr.displayName,
-            },
-          })
+        const allHarmonizedWithDisplayNameAsKey = withDisplayNameAsKey(
+          allHarmonizedAttributes
         );
 
         const normalizedDatasets = normalizeRecords(
@@ -240,17 +235,7 @@ export function MergedDatasetsAnswer(props: any) {
         return {
           records: mergedRecords,
           harmonizedAttributes: harmonizedAttributesWithDisplayNameAsKey,
-          allHarmonizedAttributes: allHarmonizedAttributes.map((attr) => ({
-            ...attr,
-            metadata: {
-              ...attr.metadata,
-              name:
-                attr.datasetAttrName === 'primary_key' ||
-                attr.userDatasetAttrName === 'primary_key'
-                  ? 'primary_key'
-                  : attr.displayName,
-            },
-          })),
+          allHarmonizedAttributes: allHarmonizedWithDisplayNameAsKey,
           defaultVisibleDisplayNames,
         };
       } catch (error) {
@@ -295,10 +280,35 @@ export function MergedDatasetsAnswer(props: any) {
     return defaults;
   }, [mergedState, userSelectedColumns]);
 
-  // Intercept column changes to manage our own state
-  const handleChangeColumns = useCallback((newColumns: AttributeField[]) => {
-    setUserSelectedColumns(newColumns);
-  }, []);
+  // Intercept column changes to manage our own state.
+  // Strip the synthetic source icon column here since it is always
+  // re-prepended below; it is isRemovable: false so it always round-trips
+  // back through this handler, and without stripping it here it would
+  // end up duplicated once prepended again.
+  const handleChangeColumns = useCallback(
+    (newColumns: AttributeField[]) => {
+      const filteredColumns = newColumns.filter(
+        (attr) => attr.name !== '__source_icon__'
+      );
+      setUserSelectedColumns(filteredColumns);
+
+      // If the column currently being sorted on was just removed, WDK's
+      // Answer view falls back to sorting by the first visible column,
+      // which for us is always the unsortable, valueless icon column and
+      // crashes. Reset sorting to the default (primary_key) instead.
+      const sorting = props.stateProps.displayInfo?.sorting;
+      const sortedAttrName = sorting?.[0]?.attributeName;
+      const sortedAttrStillVisible = filteredColumns.some(
+        (attr) => attr.name === sortedAttrName
+      );
+      if (sortedAttrName && !sortedAttrStillVisible) {
+        props.dispatchProps.changeSorting([
+          { attributeName: 'primary_key', direction: 'ASC' },
+        ]);
+      }
+    },
+    [props.stateProps.displayInfo, props.dispatchProps]
+  );
 
   // Create a synthetic attribute for the source icon column
   const sourceIconAttribute: AttributeField = useMemo(
@@ -362,113 +372,80 @@ export function MergedDatasetsAnswer(props: any) {
         );
       }
 
+      // For the synthetic source icon column, render the icon as a real
+      // component rather than an HTML string baked into the record data.
+      if (attribute.name === '__source_icon__') {
+        const normalizedRecord = record as NormalizedRecord;
+        return <SourceIcon record={normalizedRecord} />;
+      }
+
       // For all other attributes, use default rendering
       return <CellContent {...cellProps} />;
     },
     [datasetRecordClass, userDatasetRecordClass]
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Inject filters after description element
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const moveFilters = () => {
-      const description = containerRef.current?.querySelector(
-        '.wdk-AnswerDescription'
-      );
-      const filters = containerRef.current?.querySelector(
-        '.AllDatasets-SourceFilters'
-      ) as HTMLElement;
-
-      if (description && filters) {
-        // Insert filters after description
-        description.parentNode?.insertBefore(filters, description.nextSibling);
-        // Show filters now that they're positioned correctly
-        filters.classList.add('positioned');
-        return true;
-      }
-      return false;
-    };
-
-    // Try immediately
-    if (moveFilters()) return;
-
-    // If that didn't work, watch for the description element to appear
-    const observer = new MutationObserver(() => {
-      if (moveFilters()) {
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(containerRef.current, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => observer.disconnect();
-  }, [mergedState]);
+  const sourceFilters = (
+    <div className="AllDatasets-SourceFilters">
+      <label>
+        <input
+          type="checkbox"
+          checked={showDataSources}
+          onChange={(e) => setShowDataSources(e.target.checked)}
+        />
+        <img
+          src={`${webAppUrl}/images/${projectId}/favicon.ico`}
+          alt="VEuPathDB dataset"
+          style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+        />
+        {' VEuPathDB datasets'}
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={showPublicUserDatasets}
+          onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
+        />
+        <PublicIcon style={{ width: '20px', height: '20px' }} />
+        {' Public User Datasets'}
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={showPrivateUserDatasets}
+          onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
+        />
+        <LockIcon style={{ width: '20px', height: '20px' }} />
+        {' Private User Datasets'}
+      </label>
+    </div>
+  );
 
   if (!mergedState) {
     return <Loading />;
   }
 
   return (
-    <div className="AllDatasets-Container" ref={containerRef}>
-      <div className="AllDatasets-SourceFilters">
-        <label>
-          <input
-            type="checkbox"
-            checked={showDataSources}
-            onChange={(e) => setShowDataSources(e.target.checked)}
-          />
-          <img
-            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB dataset"
-            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-          />
-          {' VEuPathDB datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPublicUserDatasets}
-            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
-          />
-          <PublicIcon style={{ width: '20px', height: '20px' }} />
-          {' Public User Datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPrivateUserDatasets}
-            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
-          />
-          <LockIcon style={{ width: '20px', height: '20px' }} />
-          {' Private User Datasets'}
-        </label>
-      </div>
-      <DefaultComponent
-        {...props}
-        renderCellContent={renderCellContent}
-        dispatchProps={{
-          ...props.dispatchProps,
-          changeVisibleColumns: handleChangeColumns,
-        }}
-        stateProps={{
-          ...props.stateProps,
-          records: filteredRecords,
-          allAttributes: allAttributesWithIcon,
-          visibleAttributes: visibleAttributesWithIcon,
-          meta: {
-            ...props.stateProps.meta,
-            totalCount: filteredRecords.length,
-            responseCount: filteredRecords.length,
-          },
-        }}
-      />
-    </div>
+    <DefaultComponent
+      {...props}
+      renderCellContent={renderCellContent}
+      descriptionSuffix={sourceFilters}
+      dispatchProps={{
+        ...props.dispatchProps,
+        changeVisibleColumns: handleChangeColumns,
+      }}
+      stateProps={{
+        ...props.stateProps,
+        records: filteredRecords,
+        allAttributes: allAttributesWithIcon,
+        visibleAttributes: visibleAttributesWithIcon,
+        meta: {
+          ...props.stateProps.meta,
+          totalCount: filteredRecords.length,
+          responseCount: filteredRecords.length,
+        },
+      }}
+    />
   );
 }
 
@@ -558,12 +535,31 @@ function harmonizeAttributes(
   return Array.from(map.values());
 }
 
+// Returns a copy of the given harmonized attributes whose metadata.name is
+// set to displayName, so records can be normalized/keyed by displayName.
+// Exception: primary_key keeps the name 'primary_key' so WDK renders it as a link.
+function withDisplayNameAsKey(
+  attrs: HarmonizedAttribute[]
+): HarmonizedAttribute[] {
+  return attrs.map((attr) => ({
+    ...attr,
+    metadata: {
+      ...attr.metadata,
+      name:
+        attr.datasetAttrName === 'primary_key' ||
+        attr.userDatasetAttrName === 'primary_key'
+          ? 'primary_key'
+          : attr.displayName,
+    },
+  }));
+}
+
 function normalizeRecords(
   records: RecordInstance[],
   harmonizedAttrs: HarmonizedAttribute[],
   sourceType: 'dataset' | 'userdataset'
 ): NormalizedRecord[] {
-  return records.map((record, index) => {
+  return records.map((record) => {
     const normalizedAttributes: Record<string, any> = {};
 
     harmonizedAttrs.forEach((attr) => {
@@ -592,16 +588,6 @@ function normalizeRecords(
       sourceType === 'userdataset'
         ? record.attributes.is_public === 'Public'
         : undefined;
-
-    // Add synthetic source icon attribute as HTML
-    const iconHtml =
-      sourceType === 'dataset'
-        ? `<img src="${webAppUrl}/images/${projectId}/favicon.ico" alt="VEuPathDB dataset" title="VEuPathDB dataset" style="width: 20px; height: 20px; object-fit: contain;" />`
-        : isPublic
-        ? `<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" title="Public User Dataset" style="width: 20px; height: 20px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>`
-        : `<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" title="Private User Dataset" style="width: 20px; height: 20px;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>`;
-
-    normalizedAttributes['__source_icon__'] = iconHtml;
 
     return {
       ...record,
