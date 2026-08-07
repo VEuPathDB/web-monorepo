@@ -1,0 +1,24 @@
+/*
+ * Active-state highlight for the leaflet-lasso toolbar button.
+ *
+ * While a lasso is being drawn, leaflet-lasso adds the
+ * `leaflet-lasso-active` class to the map container; the lasso control
+ * button (`.leaflet-control-lasso`) lives inside that container, so this
+ * descendant rule turns it blue for the duration of the draw and reverts
+ * automatically when the lasso finishes or is cancelled.
+ *
+ * !important is needed on the resting (non-hover) state: some other
+ * same-specificity stylesheet rule loaded after this one (Leaflet's own
+ * control CSS uses the `background` shorthand, which resets
+ * background-color) was winning the resting-state background-color, so
+ * the highlight only appeared while hovering. Without !important here,
+ * clicking the button showed no highlight until the mouse moved over it.
+ */
+.leaflet-lasso-active .leaflet-control-lasso {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+}
+
+.leaflet-lasso-active .leaflet-control-lasso:hover {
+  background-color: #1565c0 !important;
+}
