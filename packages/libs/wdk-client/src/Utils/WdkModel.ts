@@ -319,6 +319,7 @@ export interface AttributeField extends NamedModelEntity {
   isRemovable: boolean;
   isDisplayable: boolean;
   type?: string;
+  columnDataType?: string;
   truncateTo: number;
   formats: Reporter[];
 }
