@@ -1,21 +1,5 @@
 @import '@veupathdb/wdk-client/lib/Core/Style/palette';
 
-@keyframes opacity-blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.status-blink {
-  animation: opacity-blink 0.2s ease-in-out;
-}
-
 .DatasetManagement {
   details {
     margin: 30px 0;

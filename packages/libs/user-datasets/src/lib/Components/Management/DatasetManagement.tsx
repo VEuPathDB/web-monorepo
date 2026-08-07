@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 
-import { Public, Refresh } from '@material-ui/icons';
+import { Public } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
@@ -15,6 +15,8 @@ import { makeClassifier } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
 import { UserDatasetFiles } from '../UserDatasetFiles';
+
+import { useDatasetPolling } from '../../Hooks/useDatasetPolling';
 
 import { DateTime } from '../DateTime';
 
@@ -41,6 +43,7 @@ import { DataNoun } from '../../Utils/types';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
+  DatasetStatusInfo,
   VdiServiceMetadata,
 } from '../../Service';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -144,8 +147,6 @@ enum DatasetUpdateAction {
 export interface DatasetManagementState {
   readonly datasetUpdateAction: DatasetUpdateAction;
   readonly isCommunityModalOpen: boolean;
-  readonly refreshing: boolean;
-  readonly statusUnchanged: boolean;
 }
 
 enum CommunityPromotability {
@@ -153,6 +154,66 @@ enum CommunityPromotability {
   NotInstalled,
   MissingDatasetProperties,
   UnknownError,
+}
+
+interface DatasetPollingIndicatorProps {
+  status: DatasetStatusInfo | undefined;
+  projectId: string;
+  datasetId: string;
+  userDatasetType: string;
+  isInstalled: boolean;
+  loadUserDatasetDetailWithoutLoadingIndicator: (id: string) => unknown;
+  loadUserDatasetSearches: (type: string) => unknown;
+}
+
+/**
+ * Bridges the polling hook into the surrounding class component, and refetches
+ * this dataset type's searches when the install completes — globalData's cached
+ * question list cannot contain a dataset installed during this session.
+ */
+function DatasetPollingIndicator({
+  status,
+  projectId,
+  datasetId,
+  userDatasetType,
+  isInstalled,
+  loadUserDatasetDetailWithoutLoadingIndicator,
+  loadUserDatasetSearches,
+}: DatasetPollingIndicatorProps) {
+  const { isPolling, isChecking } = useDatasetPolling({
+    status,
+    projectId,
+    onPoll: async () => {
+      loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+    },
+  });
+
+  const wasInstalled = useRef(isInstalled);
+  useEffect(() => {
+    if (isInstalled && !wasInstalled.current) {
+      loadUserDatasetSearches(userDatasetType);
+    }
+    wasInstalled.current = isInstalled;
+  }, [isInstalled, userDatasetType, loadUserDatasetSearches]);
+
+  if (!isPolling) return null;
+
+  return (
+    <span
+      className="UserDatasetPollingIndicator"
+      role="status"
+      aria-live="polite"
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.5ch',
+        opacity: isChecking ? 1 : 0.6,
+        transition: 'opacity 0.3s',
+      }}
+    >
+      <Icon fa="refresh" /> Checking for updates
+    </span>
+  );
 }
 
 class DatasetManagement<
@@ -165,12 +226,9 @@ class DatasetManagement<
       ...this.state,
       datasetUpdateAction: DatasetUpdateAction.None,
       isCommunityModalOpen: false,
-      refreshing: false,
-      statusUnchanged: false,
     };
 
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleRefresh = this.handleRefresh.bind(this);
 
     this.getAttributes = this.getAttributes.bind(this);
     this.renderAttributeList = this.renderAttributeList.bind(this);
@@ -251,39 +309,6 @@ class DatasetManagement<
     }
   }
 
-  handleRefresh() {
-    const { userDataset, loadUserDatasetDetailWithoutLoadingIndicator } =
-      this.props;
-
-    // Capture current status for comparison
-    const currentStatusJson = JSON.stringify(userDataset.status);
-
-    this.setState({ refreshing: true, statusUnchanged: false });
-
-    // Call the action - since it returns a thunk, we need to handle it properly
-    const result = loadUserDatasetDetailWithoutLoadingIndicator(
-      userDataset.datasetId
-    );
-
-    // Wait a bit to show the loading state, then check if status changed
-    setTimeout(() => {
-      const newStatusJson = JSON.stringify(this.props.userDataset.status);
-      const unchanged = currentStatusJson === newStatusJson;
-
-      this.setState({
-        refreshing: false,
-        statusUnchanged: unchanged,
-      });
-
-      // Clear the "unchanged" indicator after a few seconds
-      if (unchanged) {
-        setTimeout(() => {
-          this.setState({ statusUnchanged: false });
-        }, 3000);
-      }
-    }, 800);
-  }
-
   renderAllDatasetsLink() {
     if (!this.props.includeAllLink) return null;
     return (
@@ -351,9 +376,7 @@ class DatasetManagement<
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
             >
-              <span
-                className={this.state.statusUnchanged ? 'status-blink' : ''}
-              >
+              <span>
                 <UserDatasetStatus
                   vdiConfig={this.props.vdiConfig.configuration}
                   baseUrl={this.props.baseUrl}
@@ -365,24 +388,17 @@ class DatasetManagement<
                   dataNoun={dataNoun}
                 />
               </span>
-              {!isInstalled && (
-                <button
-                  className="btn btn-info"
-                  onClick={this.handleRefresh}
-                  disabled={this.state.refreshing}
-                  type="button"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5ch',
-                  }}
-                  title="Refresh status"
-                  aria-label="Refresh status"
-                >
-                  <Refresh style={{ fontSize: '1.2em' }} />
-                  Refresh
-                </button>
-              )}
+              <DatasetPollingIndicator
+                status={userDataset.status}
+                projectId={this.props.config.projectId}
+                datasetId={userDataset.datasetId}
+                userDatasetType={userDataset.type.name}
+                isInstalled={isInstalled}
+                loadUserDatasetDetailWithoutLoadingIndicator={
+                  this.props.loadUserDatasetDetailWithoutLoadingIndicator
+                }
+                loadUserDatasetSearches={this.props.loadUserDatasetSearches}
+              />
             </div>
           ),
         },
