@@ -162,7 +162,9 @@ interface DatasetPollingIndicatorProps {
   datasetId: string;
   userDatasetType: string;
   isInstalled: boolean;
-  loadUserDatasetDetailWithoutLoadingIndicator: (id: string) => unknown;
+  loadUserDatasetDetailWithoutLoadingIndicator: (
+    id: string
+  ) => ReturnType<typeof loadUserDatasetDetailWithoutLoadingIndicator>;
   loadUserDatasetSearches: (type: string) => unknown;
 }
 
@@ -184,7 +186,7 @@ function DatasetPollingIndicator({
     status,
     projectId,
     onPoll: async () => {
-      loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+      await loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
     },
   });
 
@@ -200,16 +202,11 @@ function DatasetPollingIndicator({
 
   return (
     <span
-      className="UserDatasetPollingIndicator"
+      className={
+        'UserDatasetPollingIndicator' +
+        (isChecking ? ' UserDatasetPollingIndicator__checking' : '')
+      }
       role="status"
-      aria-live="polite"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.5ch',
-        opacity: isChecking ? 1 : 0.6,
-        transition: 'opacity 0.3s',
-      }}
     >
       <Icon fa="refresh" /> Checking for updates
     </span>
