@@ -1,4 +1,9 @@
 import { DatasetStatusInfo } from '../Service';
+import type {
+  DatasetUploadStatusCode,
+  DatasetImportStatus,
+  DatasetInstallStatus,
+} from '../Service/Model/response-decoders';
 
 /**
  * What the poller should do next, given a dataset's current status.
@@ -11,9 +16,12 @@ export type PollingDisposition = 'continue' | 'continue-slow' | 'stop';
 // Written as explicit lists rather than `!== 'running'` on purpose. These are
 // decoder unions; if VDI adds a value, an unknown status should keep polling
 // (visibly wrong, easy to spot) rather than silently stop (looks stuck).
-const TERMINAL_UPLOAD = ['rejected', 'failed'];
-const TERMINAL_IMPORT = ['invalid', 'failed'];
-const TERMINAL_INSTALL = [
+const TERMINAL_UPLOAD: readonly DatasetUploadStatusCode[] = [
+  'rejected',
+  'failed',
+];
+const TERMINAL_IMPORT: readonly DatasetImportStatus[] = ['invalid', 'failed'];
+const TERMINAL_INSTALL: readonly DatasetInstallStatus[] = [
   'complete',
   'failed-validation',
   'failed-installation',
@@ -41,7 +49,7 @@ export function getPollingDisposition(
   // Both sub-entries gate the outcome: a failure in either is terminal, and
   // neither being terminal means the install is still in flight.
   const subStatuses = [entry.meta?.status, entry.data?.status].filter(
-    (s): s is string => s != null
+    (s): s is DatasetInstallStatus => s != null
   );
 
   if (subStatuses.some((s) => s !== 'complete' && TERMINAL_INSTALL.includes(s)))

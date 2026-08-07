@@ -43,6 +43,7 @@ export const datasetImportStatus = io.union([
   io.literal('invalid'),
   io.literal('failed'),
 ]);
+export type DatasetImportStatus = io.TypeOf<typeof datasetImportStatus>;
 
 export const datasetImportStatusDetails = io.intersection([
   io.type({ status: datasetImportStatus }),
@@ -57,6 +58,7 @@ export const datasetInstallStatus = io.union([
   io.literal('ready-for-reinstall'),
   io.literal('missing-dependency'),
 ]);
+export type DatasetInstallStatus = io.TypeOf<typeof datasetInstallStatus>;
 
 const datasetInstallStatusEntry = io.intersection([
   io.type({ status: datasetInstallStatus }),
@@ -91,12 +93,13 @@ const datasetListShareUser = io.type({
 });
 export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
 
-const datasetUploadStatusCode = io.union([
+export const datasetUploadStatusCode = io.union([
   io.literal('running'),
   io.literal('success'),
   io.literal('rejected'),
   io.literal('failed'),
 ]);
+export type DatasetUploadStatusCode = io.TypeOf<typeof datasetUploadStatusCode>;
 
 const datasetUploadStatusInfo = io.intersection([
   io.type({ status: datasetUploadStatusCode }),
