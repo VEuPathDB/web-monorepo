@@ -1,5 +1,8 @@
 import { DatasetStatusInfo } from '../Service';
-import { getPollingDisposition } from './polling-schedule';
+import {
+  getPollingDisposition,
+  getPollingIntervalMs,
+} from './polling-schedule';
 
 const PROJECT = 'PlasmoDB';
 
@@ -153,5 +156,29 @@ describe('getPollingDisposition', () => {
         PROJECT
       )
     ).toBe('stop');
+  });
+});
+
+describe('getPollingIntervalMs', () => {
+  it('uses 2s for the first five polls', () => {
+    for (const n of [0, 1, 2, 3, 4]) {
+      expect(getPollingIntervalMs(n, 'continue')).toBe(2000);
+    }
+  });
+
+  it('uses 5s for the next six polls', () => {
+    for (const n of [5, 6, 7, 8, 9, 10]) {
+      expect(getPollingIntervalMs(n, 'continue')).toBe(5000);
+    }
+  });
+
+  it('settles at 15s thereafter', () => {
+    expect(getPollingIntervalMs(11, 'continue')).toBe(15000);
+    expect(getPollingIntervalMs(500, 'continue')).toBe(15000);
+  });
+
+  it('uses 60s for ready-for-reinstall regardless of tier', () => {
+    expect(getPollingIntervalMs(0, 'continue-slow')).toBe(60000);
+    expect(getPollingIntervalMs(500, 'continue-slow')).toBe(60000);
   });
 });

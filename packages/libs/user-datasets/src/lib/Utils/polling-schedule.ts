@@ -63,3 +63,24 @@ export function getPollingDisposition(
 
   return 'continue';
 }
+
+/**
+ * Three flat rates, not a smooth ramp: fast while the user is most likely
+ * watching, then cheap over the long tail of a multi-minute import.
+ */
+const TIERS = [
+  { throughPollCount: 5, intervalMs: 2000 },
+  { throughPollCount: 11, intervalMs: 5000 },
+];
+const STEADY_INTERVAL_MS = 15000;
+const REINSTALL_INTERVAL_MS = 60000;
+
+export function getPollingIntervalMs(
+  pollCount: number,
+  disposition: PollingDisposition
+): number {
+  if (disposition === 'continue-slow') return REINSTALL_INTERVAL_MS;
+
+  const tier = TIERS.find((t) => pollCount < t.throughPollCount);
+  return tier?.intervalMs ?? STEADY_INTERVAL_MS;
+}
