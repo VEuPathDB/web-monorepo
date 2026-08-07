@@ -1,13 +1,15 @@
 import React, { ReactElement } from 'react';
 import { Modal } from '@veupathdb/coreui';
-import { Consumer } from '../../../../../Utils';
-import { MetadataImportTable, MetadataImportTableProps } from './MetadataImportTable';
-
+import { Runnable } from '../../../../../Utils';
+import {
+  MetadataImportTable,
+  MetadataImportTableProps,
+} from './MetadataImportTable';
 
 export interface MetadataImportModalProps {
   readonly modalProps: {
     readonly visible: boolean;
-    readonly setVisible: Consumer<boolean>;
+    readonly hide: Runnable;
   };
 
   readonly tableProps: MetadataImportTableProps;
@@ -20,7 +22,7 @@ export function MetadataImportModal({
   return (
     <Modal
       title="Import Dataset Metadata"
-      toggleVisible={props.setVisible}
+      toggleVisible={(_) => props.hide()}
       visible={props.visible}
     >
       <h2>
@@ -29,15 +31,14 @@ export function MetadataImportModal({
 
       <p>
         You will need to provide a new Dataset Name, Summary, and Data File(s)
-        before the current dataset can be uploaded. These required fields can
-        be completed before or after importing metadata from an existing
-        dataset.
+        before the current dataset can be uploaded. These required fields can be
+        completed before or after importing metadata from an existing dataset.
       </p>
 
       <p>
         Metadata can be imported from a dataset you previously uploaded or one
-        that has been shared with you. All imported metadata can be reviewed
-        and edited before uploading the current dataset.
+        that has been shared with you. All imported metadata can be reviewed and
+        edited before uploading the current dataset.
       </p>
 
       <MetadataImportTable {...tableProps} />

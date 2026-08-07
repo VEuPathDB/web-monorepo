@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback } from 'react';
-import { JsonPathBuilder } from '../../../../Utils';
+import { JsonPathBuilder, Runnable } from '../../../../Utils';
 import { CoreDatasetInformation } from './Core';
 import { useDispatch } from 'react-redux';
 import {
@@ -14,11 +14,13 @@ import { DatasetFormProps } from '../../DatasetFormProps';
 export interface MetadataSectionProps {
   readonly formProps: DatasetFormProps;
   readonly jsonPath: JsonPathBuilder;
+  readonly openMetaImport: Runnable;
 }
 
 export function MetadataSection({
   formProps,
   jsonPath,
+  openMetaImport,
 }: MetadataSectionProps): ReactElement {
   const dispatch = useDispatch();
   const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
@@ -46,6 +48,7 @@ export function MetadataSection({
         clientSideState={formMetaState}
         setClientSideState={setFormState}
         jsonPath={jsonPath}
+        openMetaImport={openMetaImport}
       />
 
       <RecommendedInformation

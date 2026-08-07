@@ -1,4 +1,5 @@
 import * as io from 'io-ts';
+import { datasetMetadata } from './metadata-decoder';
 
 export const bioprojectId = io.intersection([
   io.type({ id: io.string }),
@@ -48,7 +49,9 @@ const datasetImportStatusDetails = io.intersection([
   io.type({ status: datasetImportStatus }),
   io.partial({ messages: io.array(io.string) }),
 ]);
-export type DatasetImportStatusInfo = io.TypeOf<typeof datasetImportStatusDetails>;
+export type DatasetImportStatusInfo = io.TypeOf<
+  typeof datasetImportStatusDetails
+>;
 
 export const datasetInstallStatus = io.union([
   io.literal('running'),
@@ -63,7 +66,9 @@ const datasetInstallStatusEntry = io.intersection([
   io.type({ status: datasetInstallStatus }),
   io.partial({ messages: io.array(io.string) }),
 ]);
-export type DatasetInstallStatusEntry = io.TypeOf<typeof datasetInstallStatusEntry>;
+export type DatasetInstallStatusEntry = io.TypeOf<
+  typeof datasetInstallStatusEntry
+>;
 
 const datasetInstallStatusMap = io.intersection([
   io.type({
@@ -72,7 +77,9 @@ const datasetInstallStatusMap = io.intersection([
   }),
   io.partial({ data: datasetInstallStatusEntry }),
 ]);
-export type DatasetInstallStatusInfo = io.TypeOf<typeof datasetInstallStatusMap>;
+export type DatasetInstallStatusInfo = io.TypeOf<
+  typeof datasetInstallStatusMap
+>;
 
 export const partialUser = io.intersection([
   io.type({ userId: io.number }),
@@ -540,6 +547,13 @@ export const deleteResponse = io.union([
   ccServerErrorBody,
 ]);
 export type DatasetPropertiesDeleteResponse = io.TypeOf<typeof deleteResponse>;
+
+export const rawMetadataResponse = io.union([
+  simpleContainerCoreErrorBody,
+  ccServerErrorBody,
+  datasetMetadata,
+]);
+export type RawDatasetMetadataResponse = io.TypeOf<typeof rawMetadataResponse>;
 
 // endregion Service Responses
 

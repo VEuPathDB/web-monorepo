@@ -23,7 +23,7 @@ import {
   receiveBadUpload,
   updateFormState,
 } from '../../Actions/UserDatasetUploadActions';
-import { UpdateForm } from './UpdateForm';
+import { UpdateForm, UpdateFormProps } from './UpdateForm';
 import {
   configureFormProps,
   findDatasetTypeConfig,
@@ -207,7 +207,7 @@ export function UpdateFormController(
         titleSize="medium"
         scrollContainerRef={modalScroll}
       >
-        <DatasetFormController
+        <DatasetFormController<UpdateFormProps>
           {...props}
           propFactory={(p) => ({
             ...p,

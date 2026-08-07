@@ -3,12 +3,13 @@ import { CollaboratorsSection } from './Collaborators/CollaboratorsSection';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
-import { Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { Consumer, JsonPathBuilder, Runnable } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { PublicationsSection } from './Publications/PublicationsSection';
+import { DatasetMetadataImportButton } from '../../DatasetMetadataImportButton';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -17,6 +18,8 @@ export interface CoreDatasetInformationProps {
   readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
   readonly formProps: DatasetFormProps;
+
+  readonly openMetaImport: Runnable;
 }
 
 export function CoreDatasetInformation({
@@ -25,11 +28,15 @@ export function CoreDatasetInformation({
   clientSideState,
   setClientSideState,
   jsonPath,
+  openMetaImport,
   formProps: { formConfig },
 }: CoreDatasetInformationProps): ReactElement {
   return (
     <>
-      <h3>Core Dataset Information</h3>
+      <div className="header-line">
+        <h3>Core Dataset Information</h3>
+        <DatasetMetadataImportButton onClick={openMetaImport} />
+      </div>
       <p className="section-description">
         This Core Dataset Information must be completed before you can make this
         dataset public. If you choose to not provide it, you will still be able

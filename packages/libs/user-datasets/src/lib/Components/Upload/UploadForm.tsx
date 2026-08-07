@@ -1,4 +1,10 @@
-import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { Refresh } from '@material-ui/icons';
 
@@ -123,7 +129,11 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
           showDataInputs={true}
         />
 
-        <MetadataSection formProps={props} jsonPath={metaPath} />
+        <MetadataSection
+          formProps={props}
+          jsonPath={metaPath}
+          openMetaImport={props.actions.openMetaImportModal}
+        />
 
         <UploadButton onClick={onSubmit} submittable={uploadSubmittable} />
       </form>

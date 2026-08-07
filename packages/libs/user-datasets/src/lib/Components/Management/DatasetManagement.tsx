@@ -798,6 +798,8 @@ class DatasetManagement<
             isPromotingToPublic={self.props.editModal.updateToPublic}
             formConfigs={self.props.formConfigs!}
             datasetTypes={self.props.datasetTypes!}
+            dataNoun={self.props.dataNoun}
+            enablePublicDatasets={self.props.enablePublicUserDatasets}
           />
         );
       }

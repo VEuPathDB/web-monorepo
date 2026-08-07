@@ -30,6 +30,21 @@
     margin-left: 32px;
   }
 
+  .header-line {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      padding: 0.6em 1.2ch;
+      height: fit-content;
+      border-radius: 8px;
+      font-weight: bold;
+      color: var(--coreui-gray-700);
+      border-width: 0;
+      border-style: none;
+    }
+  }
+
   .title-with-button {
     display: flex;
     justify-content: space-between;

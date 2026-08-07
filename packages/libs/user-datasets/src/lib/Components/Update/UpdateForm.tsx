@@ -17,10 +17,7 @@ import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreMo
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isEmpty, isEqual } from 'lodash';
-import {
-  DatasetGetResponseBody,
-  PartialDatasetDetails,
-} from '../../Service';
+import { DatasetGetResponseBody, PartialDatasetDetails } from '../../Service';
 import { hasUploads } from '../../Service/Model/utility-types';
 
 export interface UpdateFormProps extends DatasetFormProps {
@@ -100,7 +97,11 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
           requireDatasetPropertiesFile={isMissingDatasetProperties}
         />
 
-        <MetadataSection formProps={props} jsonPath={metaPath} />
+        <MetadataSection
+          formProps={props}
+          jsonPath={metaPath}
+          openMetaImport={props.actions.openMetaImportModal}
+        />
 
         <UploadButton
           onClick={onSubmit}
