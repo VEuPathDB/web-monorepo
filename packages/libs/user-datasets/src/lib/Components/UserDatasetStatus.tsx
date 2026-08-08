@@ -83,7 +83,7 @@ function getStatus(
 }
 
 const queuedStatus = (dataNoun: string) => ({
-  content: `This ${dataNoun} is queued. Please check again soon.`,
+  content: `This ${dataNoun} is queued.`,
   icon: 'clock-o',
 });
 
@@ -130,7 +130,7 @@ function getUploadStatus(
 
     default:
       return {
-        content: `This ${dataNoun} is queued. Please check again soon.`,
+        content: `This ${dataNoun} is queued.`,
         icon: 'clock-o',
       };
   }
@@ -156,7 +156,7 @@ function getPostUploadStatus(
     case 'queued':
     case 'in-progress':
       return {
-        content: `This ${dataNoun} is queued. Please check again soon.`,
+        content: `This ${dataNoun} is queued.`,
         icon: 'clock-o',
       };
     case 'invalid':
@@ -187,7 +187,7 @@ function getPostUploadStatus(
 
   if (importStatus !== 'complete') {
     return {
-      content: `This ${dataNoun} is queued. Please check again soon.`,
+      content: `This ${dataNoun} is queued.`,
       icon: 'clock-o',
     };
   } else {
@@ -207,7 +207,7 @@ function getPostUploadStatus(
     switch (combinedStatus) {
       case 'running':
         return {
-          content: 'In progress. Please check again soon.',
+          content: 'In progress.',
           icon: 'clock-o',
         };
       case 'complete':
@@ -243,8 +243,8 @@ function getPostUploadStatus(
         return {
           content: (
             <>
-              This {dataNoun} will be reinstalled within
-              {vdiConfig.fullRunInterval}. Please check again soon.
+              This {dataNoun} will be reinstalled within{' '}
+              {vdiConfig.fullRunInterval}.
             </>
           ),
           icon: 'minus-circle',
@@ -261,7 +261,7 @@ function getPostUploadStatus(
         };
       default:
         return {
-          content: 'Status unknown at this time. Please check again soon.',
+          content: 'Status unknown at this time.',
           icon: 'clock-o',
         };
     }

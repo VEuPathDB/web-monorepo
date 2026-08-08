@@ -72,6 +72,10 @@
      */
     &.StatusIcon--polling {
       color: $blue;
+      // circle-o-notch fills more of its em box than the clock face it stands
+      // in for, so it reads larger at the shared 20px. Trimmed ~10% to match
+      // optically rather than nominally.
+      font-size: 18px;
       animation: UserDatasetStatus-spin 1.6s linear infinite;
 
       @media (prefers-reduced-motion: reduce) {
