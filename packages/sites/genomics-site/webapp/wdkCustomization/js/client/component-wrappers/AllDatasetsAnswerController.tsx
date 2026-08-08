@@ -20,7 +20,7 @@ import {
   getDatasetCategory,
   parseYesNo,
   useDatasetSourceFilter,
-} from '../util/datasetSourceCategory';
+} from '@veupathdb/web-common/lib/component-wrappers/datasetSourceCategory';
 
 import './AllDatasetsAnswerController.scss';
 
