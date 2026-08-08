@@ -155,6 +155,9 @@ enum CommunityPromotability {
 class DatasetManagement<
   S extends DatasetManagementState = DatasetManagementState
 > extends React.Component<DatasetManagementProps, S> {
+  private statusUnchangedTimer?: NodeJS.Timeout;
+  private previousInstalledState?: boolean;
+
   constructor(props: DatasetManagementProps) {
     super(props);
 
@@ -179,6 +182,40 @@ class DatasetManagement<
     this.closeSharingModal = this.closeSharingModal.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
     this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
+  }
+
+  componentDidMount() {
+    // Track the initial installed state
+    this.previousInstalledState = this.isInstalled();
+  }
+
+  componentDidUpdate(prevProps: DatasetManagementProps) {
+    // Check if the dataset status has changed and update the UI accordingly
+    // This handles the case where Redux updates arrive after handleRefresh completes
+    const currentIsInstalled = this.isInstalled();
+
+    // If the installed state changed, force a re-render to update the UI
+    if (this.previousInstalledState !== currentIsInstalled) {
+      this.previousInstalledState = currentIsInstalled;
+      // The component will automatically re-render due to prop changes
+      // This ensures Available Searches and View fields appear when status becomes 'installed'
+    }
+
+    // Also check if we're in a refresh operation and the dataset has updated
+    if (
+      this.state.refreshing &&
+      prevProps.userDataset.status !== this.props.userDataset.status
+    ) {
+      // Status has changed during refresh, ensure we update the UI state
+      // This helps handle async updates that arrive after our setTimeout
+    }
+  }
+
+  componentWillUnmount() {
+    // Clear any pending timers when the component unmounts
+    if (this.statusUnchangedTimer) {
+      clearTimeout(this.statusUnchangedTimer);
+    }
   }
 
   private hasDatasetPropertiesFile(): boolean {
@@ -248,37 +285,49 @@ class DatasetManagement<
     }
   }
 
-  handleRefresh() {
+  async handleRefresh() {
     const { userDataset, loadUserDatasetDetailWithoutLoadingIndicator } =
       this.props;
+
+    // Clear any existing timer
+    if (this.statusUnchangedTimer) {
+      clearTimeout(this.statusUnchangedTimer);
+      this.statusUnchangedTimer = undefined;
+    }
 
     // Capture current status for comparison
     const currentStatusJson = JSON.stringify(userDataset.status);
 
     this.setState({ refreshing: true, statusUnchanged: false });
 
-    // Call the action - since it returns a thunk, we need to handle it properly
-    const result = loadUserDatasetDetailWithoutLoadingIndicator(
-      userDataset.datasetId
-    );
+    try {
+      // Properly await the thunk - it returns a promise
+      // The thunk will dispatch actions that update Redux state
+      await loadUserDatasetDetailWithoutLoadingIndicator(userDataset.datasetId);
 
-    // Wait a bit to show the loading state, then check if status changed
-    setTimeout(() => {
-      const newStatusJson = JSON.stringify(this.props.userDataset.status);
-      const unchanged = currentStatusJson === newStatusJson;
+      // After the async operation completes, check if status changed
+      // Note: We need a small delay to ensure React has processed the prop updates
+      setTimeout(() => {
+        const newStatusJson = JSON.stringify(this.props.userDataset.status);
+        const unchanged = currentStatusJson === newStatusJson;
 
-      this.setState({
-        refreshing: false,
-        statusUnchanged: unchanged,
-      });
+        this.setState({
+          refreshing: false,
+          statusUnchanged: unchanged,
+        });
 
-      // Clear the "unchanged" indicator after a few seconds
-      if (unchanged) {
-        setTimeout(() => {
-          this.setState({ statusUnchanged: false });
-        }, 3000);
-      }
-    }, 800);
+        // Clear the "unchanged" indicator after showing it for 3 seconds
+        if (unchanged) {
+          this.statusUnchangedTimer = setTimeout(() => {
+            this.setState({ statusUnchanged: false });
+          }, 3000);
+        }
+      }, 100); // Small delay to ensure props have updated
+    } catch (error) {
+      // Handle any errors from the refresh operation
+      console.error('Error refreshing dataset details:', error);
+      this.setState({ refreshing: false, statusUnchanged: false });
+    }
   }
 
   renderAllDatasetsLink() {

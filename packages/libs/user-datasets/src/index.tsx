@@ -40,8 +40,11 @@ initialize({
       exact: false,
       component: () => (
         <UserDatasetRouter
-          datasetTypeConfigs={userDatasetTypeConfigs}
-          uploadFormConfigurators={uploadFormConfigurators}
+          workspaceConfig={{
+            baseDatasetTypeConfigs: [],
+            uploadFormConfigurators: [],
+            fetchEdaStudyMetadata: () => ({}),
+          }}
           detailsPageTitle="My Dataset"
           helpRoute="/help"
           workspaceTitle="My Datasets"
