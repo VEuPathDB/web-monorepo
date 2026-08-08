@@ -2,8 +2,9 @@ import React from 'react';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 /**
- * The record class is "Variation" but every source_id reads "Variant_...", so the
- * default "<recordClass>: <id>" heading pairs two different words. Show the id alone.
+ * The default heading is "<recordClass>: <id>", which here reads
+ * "Short Variant: Variant_Pf3D7_01_v3_100057" - the id already says what it is.
+ * Show the id alone.
  */
 export function RecordHeading({ DefaultComponent, ...props }) {
   return (
