@@ -21,6 +21,12 @@ export interface Props {
   useTooltip: boolean;
   dataNoun: DataNoun;
   readonly vdiConfig: VdiServiceConfig;
+  /**
+   * When true, the status icon spins to show the view is watching for changes.
+   * Only the detail page polls, so the listing leaves this unset and keeps the
+   * static clock — a spinning icon there would imply an update that never comes.
+   */
+  readonly isPolling?: boolean;
 }
 
 const orderedStatuses = [
@@ -301,7 +307,13 @@ export default function UserDatasetStatus(props: Props) {
   );
 
   const link = `${baseUrl}/${userDataset.datasetId}`;
-  const children = <Icon className="StatusIcon" fa={faIcon} />;
+  // While polling, the clock gives way to a spinner: the clock says "this
+  // dataset is waiting", the spinner says "and this page is watching it".
+  const children = props.isPolling ? (
+    <Icon className="StatusIcon StatusIcon--polling" fa="circle-o-notch" />
+  ) : (
+    <Icon className="StatusIcon" fa={faIcon} />
+  );
   if (props.useTooltip && props.linkToDataset) {
     return (
       <Tooltip title={content ?? ''}>

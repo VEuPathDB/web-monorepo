@@ -197,12 +197,17 @@ interface DatasetPollingIndicatorProps {
     id: string
   ) => ReturnType<typeof loadUserDatasetDetailWithoutLoadingIndicator>;
   loadUserDatasetSearches: (type: string) => unknown;
+  /** Renders the status row, told whether polling is currently live. */
+  children: (isPolling: boolean) => ReactNode;
 }
 
 /**
  * Bridges the polling hook into the surrounding class component, and refetches
  * this dataset type's searches when the install completes — globalData's cached
  * question list cannot contain a dataset installed during this session.
+ *
+ * Renders via a child function because the class component cannot call hooks
+ * itself, but owns the status row that needs to know whether polling is live.
  */
 function DatasetPollingIndicator({
   status,
@@ -212,8 +217,13 @@ function DatasetPollingIndicator({
   isInstalled,
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
+  children,
 }: DatasetPollingIndicatorProps) {
-  const { isPolling, isChecking } = useDatasetPolling({
+  // isChecking is deliberately not consumed. Driving the icon from individual
+  // requests would expose the backoff — the gap stretches from 2s to 15s, and
+  // 60s while awaiting reinstall — and an indicator that visibly slows down
+  // reads as something degrading rather than as steady monitoring.
+  const { isPolling } = useDatasetPolling({
     status,
     projectId,
     onPoll: async () => {
@@ -229,19 +239,7 @@ function DatasetPollingIndicator({
     wasInstalled.current = isInstalled;
   }, [isInstalled, userDatasetType, loadUserDatasetSearches]);
 
-  if (!isPolling) return null;
-
-  return (
-    <span
-      className={
-        'UserDatasetPollingIndicator' +
-        (isChecking ? ' UserDatasetPollingIndicator__checking' : '')
-      }
-      role="status"
-    >
-      <Icon fa="refresh" /> Checking for updates
-    </span>
-  );
+  return <>{children(isPolling)}</>;
 }
 
 class DatasetManagement<
@@ -402,18 +400,6 @@ class DatasetManagement<
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
             >
-              <span>
-                <UserDatasetStatus
-                  vdiConfig={this.props.vdiConfig.configuration}
-                  baseUrl={this.props.baseUrl}
-                  linkToDataset={false}
-                  useTooltip={false}
-                  userDataset={userDataset}
-                  projectId={this.props.config.projectId}
-                  displayName={this.props.config.displayName}
-                  dataNoun={dataNoun}
-                />
-              </span>
               <DatasetPollingIndicator
                 status={userDataset.status}
                 projectId={this.props.config.projectId}
@@ -424,7 +410,23 @@ class DatasetManagement<
                   this.props.loadUserDatasetDetailWithoutLoadingIndicator
                 }
                 loadUserDatasetSearches={this.props.loadUserDatasetSearches}
-              />
+              >
+                {(isPolling) => (
+                  <span>
+                    <UserDatasetStatus
+                      vdiConfig={this.props.vdiConfig.configuration}
+                      baseUrl={this.props.baseUrl}
+                      linkToDataset={false}
+                      useTooltip={false}
+                      userDataset={userDataset}
+                      projectId={this.props.config.projectId}
+                      displayName={this.props.config.displayName}
+                      dataNoun={dataNoun}
+                      isPolling={isPolling}
+                    />
+                  </span>
+                )}
+              </DatasetPollingIndicator>
             </div>
           ),
         },

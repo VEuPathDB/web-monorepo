@@ -1,17 +1,5 @@
 @import '@veupathdb/wdk-client/lib/Core/Style/palette';
 
-.UserDatasetPollingIndicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5ch;
-  opacity: 0.6;
-  transition: opacity 0.3s;
-
-  &.UserDatasetPollingIndicator__checking {
-    opacity: 1;
-  }
-}
-
 .DatasetManagement {
   details {
     margin: 30px 0;

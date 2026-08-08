@@ -62,6 +62,31 @@
     &.fa-exclamation-circle {
       color: $gold;
     }
+    /**
+     * Shown in place of the clock while a view is actively polling for status
+     * changes. Spins at a constant rate, deliberately decoupled from the poll
+     * schedule: driving it from actual requests would expose the backoff — the
+     * gap stretches from 2s to 15s, and 60s while awaiting reinstall — and an
+     * indicator that visibly slows down reads as something degrading rather
+     * than as steady watching.
+     */
+    &.StatusIcon--polling {
+      color: $blue;
+      animation: UserDatasetStatus-spin 1.6s linear infinite;
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
+    }
+  }
+}
+
+@keyframes UserDatasetStatus-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
