@@ -187,7 +187,7 @@ enum CommunityPromotability {
   UnknownError,
 }
 
-interface DatasetPollingIndicatorProps {
+interface StatusRowWithPollingProps {
   status: DatasetStatusInfo | undefined;
   projectId: string;
   datasetId: string;
@@ -202,14 +202,18 @@ interface DatasetPollingIndicatorProps {
 }
 
 /**
- * Bridges the polling hook into the surrounding class component, and refetches
- * this dataset type's searches when the install completes — globalData's cached
- * question list cannot contain a dataset installed during this session.
+ * Wraps the status row in a polling loop, passing the child whether polling is
+ * currently live so the status icon can reflect it.
  *
- * Renders via a child function because the class component cannot call hooks
- * itself, but owns the status row that needs to know whether polling is live.
+ * Takes a child function rather than rendering the row itself: the surrounding
+ * class component owns that markup but cannot call hooks, so this supplies the
+ * polling state without the row's JSX having to move.
+ *
+ * Also refetches this dataset type's searches when the install completes —
+ * globalData's cached question list cannot contain a dataset installed during
+ * this session.
  */
-function DatasetPollingIndicator({
+function StatusRowWithPolling({
   status,
   projectId,
   datasetId,
@@ -218,7 +222,7 @@ function DatasetPollingIndicator({
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
   children,
-}: DatasetPollingIndicatorProps) {
+}: StatusRowWithPollingProps) {
   // isChecking is deliberately not consumed. Driving the icon from individual
   // requests would expose the backoff — the gap stretches from 2s to 15s, and
   // 60s while awaiting reinstall — and an indicator that visibly slows down
@@ -400,7 +404,7 @@ class DatasetManagement<
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
             >
-              <DatasetPollingIndicator
+              <StatusRowWithPolling
                 status={userDataset.status}
                 projectId={this.props.config.projectId}
                 datasetId={userDataset.datasetId}
@@ -426,7 +430,7 @@ class DatasetManagement<
                     />
                   </span>
                 )}
-              </DatasetPollingIndicator>
+              </StatusRowWithPolling>
             </div>
           ),
         },
