@@ -265,11 +265,32 @@ export function createMergedDatasetsAnswerController(
             ...normalizedUserDatasets,
           ];
 
+          // When the dataset side has no rows at all (e.g. clinepi-site
+          // today, before curated datasets are populated), showing its
+          // default-visible columns by default would just be a wall of
+          // empty cells. Drop columns that exist ONLY on the dataset side
+          // from the initial view; shared columns (meaningful for the
+          // userdataset rows present) stay visible. This is re-evaluated on
+          // every load, so the columns reappear automatically once the
+          // dataset side has real rows again — no code change needed then.
+          const visibleDisplayNames =
+            datasetsAnswer.records.length === 0
+              ? defaultVisibleDisplayNames.filter((displayName) => {
+                  const attr = allHarmonizedAttributes.find(
+                    (a) => a.displayName === displayName
+                  );
+                  return !(
+                    attr?.datasetAttrName != null &&
+                    attr?.userDatasetAttrName == null
+                  );
+                })
+              : defaultVisibleDisplayNames;
+
           return {
             records: mergedRecords,
             harmonizedAttributes: harmonizedAttributesWithDisplayNameAsKey,
             allHarmonizedAttributes: allHarmonizedWithDisplayNameAsKey,
-            defaultVisibleDisplayNames,
+            defaultVisibleDisplayNames: visibleDisplayNames,
           };
         } catch (error) {
           console.error('Error fetching/merging datasets:', error);
