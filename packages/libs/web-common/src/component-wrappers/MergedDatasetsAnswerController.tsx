@@ -266,30 +266,40 @@ export function createMergedDatasetsAnswerController(
           ];
 
           // When the dataset side has no rows at all (e.g. clinepi-site
-          // today, before curated datasets are populated), showing its
-          // default-visible columns by default would just be a wall of
-          // empty cells. Drop columns that exist ONLY on the dataset side
-          // from the initial view; shared columns (meaningful for the
-          // userdataset rows present) stay visible. This is re-evaluated on
-          // every load, so the columns reappear automatically once the
-          // dataset side has real rows again — no code change needed then.
-          const visibleDisplayNames =
+          // today, before curated datasets are populated), offering or
+          // defaulting to its columns would just be a wall of empty cells
+          // and dead entries in Add Columns. Drop columns that exist ONLY
+          // on the dataset side from both the default-visible set and the
+          // Add Columns list; shared columns (meaningful for the
+          // userdataset rows present) stay available. Row normalization
+          // above still uses the full, unfiltered attribute set — sorting
+          // depends on every record having every attribute key, even as
+          // null — so this only affects what the UI offers, not the data.
+          // Re-evaluated on every load (this effect has empty deps and
+          // fetches once per page load), so the columns reappear
+          // automatically once the dataset side has real rows again — no
+          // code change needed then.
+          const isDatasetOnlyColumn = (attr: HarmonizedAttribute) =>
+            attr.datasetAttrName != null && attr.userDatasetAttrName == null;
+
+          const uiHarmonizedAttributes =
             datasetsAnswer.records.length === 0
-              ? defaultVisibleDisplayNames.filter((displayName) => {
-                  const attr = allHarmonizedAttributes.find(
-                    (a) => a.displayName === displayName
-                  );
-                  return !(
-                    attr?.datasetAttrName != null &&
-                    attr?.userDatasetAttrName == null
-                  );
-                })
-              : defaultVisibleDisplayNames;
+              ? allHarmonizedWithDisplayNameAsKey.filter(
+                  (attr) => !isDatasetOnlyColumn(attr)
+                )
+              : allHarmonizedWithDisplayNameAsKey;
+
+          const visibleDisplayNames = defaultVisibleDisplayNames.filter(
+            (displayName) =>
+              uiHarmonizedAttributes.some(
+                (attr) => attr.displayName === displayName
+              )
+          );
 
           return {
             records: mergedRecords,
             harmonizedAttributes: harmonizedAttributesWithDisplayNameAsKey,
-            allHarmonizedAttributes: allHarmonizedWithDisplayNameAsKey,
+            allHarmonizedAttributes: uiHarmonizedAttributes,
             defaultVisibleDisplayNames: visibleDisplayNames,
           };
         } catch (error) {
