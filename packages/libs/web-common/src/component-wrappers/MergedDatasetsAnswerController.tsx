@@ -398,6 +398,33 @@ export function createMergedDatasetsAnswerController(
       return [sourceIconAttribute, ...visibleAttributes];
     }, [sourceIconAttribute, visibleAttributes]);
 
+    // Column drag-reorder does not go through changeVisibleColumns at all —
+    // Answer.jsx's onColumnReorder calls onMoveColumn (dispatchProps.changeColumnPosition)
+    // instead, a separate action carrying just (columnName, newPosition). Left
+    // unhandled, the visibleAttributes memo above has no path back to that
+    // reorder and silently discards it on every render, so the column snaps back
+    // to its prior position. Mirror what WDK's own moveTableColumn reducer does:
+    // splice the moved column into its new position within the currently visible
+    // order, then store that as our own column state, the same way
+    // handleChangeColumns does for add/remove.
+    const handleMoveColumn = useCallback(
+      (columnName: string, newPosition: number) => {
+        const currentIndex = visibleAttributesWithIcon.findIndex(
+          (attr) => attr.name === columnName
+        );
+        if (currentIndex < 0) return;
+
+        const reordered = [...visibleAttributesWithIcon];
+        const [moved] = reordered.splice(currentIndex, 1);
+        reordered.splice(newPosition, 0, moved);
+
+        setUserSelectedColumns(
+          reordered.filter((attr) => attr.name !== '__source_icon__')
+        );
+      },
+      [visibleAttributesWithIcon]
+    );
+
     // Custom cell renderer to use correct recordClass for links
     const renderCellContent = useCallback(
       (cellProps: any) => {
@@ -460,6 +487,7 @@ export function createMergedDatasetsAnswerController(
         dispatchProps={{
           ...props.dispatchProps,
           changeVisibleColumns: handleChangeColumns,
+          changeColumnPosition: handleMoveColumn,
         }}
         stateProps={{
           ...props.stateProps,
