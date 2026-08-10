@@ -57,12 +57,9 @@ export function ExperimentalOrganism(
 
   return (
     <>
-      <InputBlock header="Experimental Organism">
+      <InputBlock header="Organism Details">
         <p className="section-description">
-          Indicate the species and strain of the organism that was used to
-          generate data. The Experimental Organism may differ from the Reference
-          Genome used for mapping or analysis and/or the Study Population
-          Species from which samples or data were collected.
+          Indicate the species and strain of each organism represented by biological data in this dataset. Organisms may include pathogens, vectors, symbionts, or other organisms represented directly or indirectly by the data. The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.
         </p>
 
         <div className={'field-grid' + disabledClass}>
@@ -72,7 +69,7 @@ export function ExperimentalOrganism(
                 className={'not-disabled' + (isPublic ? ' required' : '')}
                 id={ExpOrganismToggleID}
               >
-                Available Experimental Organism?
+                Includes Biological Data about Organisms?
               </label>
               <YesNoToggle
                 value={hasExperimentalOrganism}
@@ -82,9 +79,7 @@ export function ExperimentalOrganism(
                 required={isPublic}
                 disableRequiredStyling={true}
                 helpText={
-                  'Whether this dataset includes laboratory data from specific organisms(s)' +
-                  ', including organisms collected from study participants' +
-                  ', animals, vectors, or environmental samples.'
+                  'Whether this dataset includes biological data describing one or more organisms. Organisms may include the study population species in field studies or clinical trials and, where applicable, pathogens, vectors, symbionts, and any other organisms represented directly or indirectly by the data.'
                 }
               />
             </>
@@ -104,8 +99,7 @@ export function ExperimentalOrganism(
             maxLength={128}
           />
           <FieldHelpText>
-            Scientific name of the organism used to generate data (e.g.,
-            Plasmodium falciparum).
+            Scientific name of the organism that was detected, measured, characterized, or otherwise represented in this dataset (e.g., Plasmodium falciparum).
           </FieldHelpText>
 
           <InputPair
@@ -120,9 +114,7 @@ export function ExperimentalOrganism(
             maxLength={128}
           />
           <FieldHelpText>
-            The strain of the organism used to generate data. For
-            field-collected organisms without a defined strain, enter 'field
-            isolate' or 'field sample'.
+            The strain of the organism represented in this dataset. For field-collected organisms without a defined strain, enter "field isolates" or "field samples", as appropriate.
           </FieldHelpText>
         </div>
       </InputBlock>

@@ -1,11 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  ComponentType,
-  useRef,
-} from 'react';
+import React, { useMemo, useState, useCallback, ComponentType } from 'react';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import RecordLink from '@veupathdb/wdk-client/lib/Views/Records/RecordLink';
@@ -21,9 +14,13 @@ import {
   isQualifying,
   getId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import LockIcon from '@material-ui/icons/Lock';
-import PublicIcon from '@material-ui/icons/Public';
-import { projectId, webAppUrl } from '@veupathdb/web-common/lib/config';
+import {
+  DatasetSourceFilters,
+  DatasetSourceIcon,
+  getDatasetCategory,
+  parseYesNo,
+  useDatasetSourceFilter,
+} from '../util/datasetSourceCategory';
 
 import './AllDatasetsAnswerController.scss';
 
@@ -37,6 +34,7 @@ interface HarmonizedAttribute {
 interface NormalizedRecord extends RecordInstance {
   dataset_source: 'dataset' | 'userdataset';
   is_public?: boolean;
+  owner_is_veupathdb_curator?: boolean;
 }
 
 interface MergedState {
@@ -47,9 +45,17 @@ interface MergedState {
 }
 
 export function MergedDatasetsAnswer(props: any) {
-  const [showDataSources, setShowDataSources] = useState(true);
-  const [showPublicUserDatasets, setShowPublicUserDatasets] = useState(true);
-  const [showPrivateUserDatasets, setShowPrivateUserDatasets] = useState(true);
+  const { visibility, setVisibility } = useDatasetSourceFilter();
+
+  const toSourceInfo = useCallback(
+    (record: NormalizedRecord) => ({
+      isUserDataset: record.dataset_source !== 'dataset',
+      isPublic: record.is_public === true,
+      ownerIsVeupathdbCurator: record.owner_is_veupathdb_curator === true,
+    }),
+    []
+  );
+
   const [userSelectedColumns, setUserSelectedColumns] = useState<
     AttributeField[] | null
   >(null);
@@ -131,7 +137,7 @@ export function MergedDatasetsAnswer(props: any) {
           userDatasetQuestion.defaultAttributes;
 
         // 5. Build list of default attributes to fetch from harmonized set
-        const defaultsToFetch = allHarmonizedAttributes.filter((attr) => {
+        const harmonizedAttributes = allHarmonizedAttributes.filter((attr) => {
           const inDatasetDefaults =
             attr.datasetAttrName &&
             datasetDefaultAttrNames.includes(attr.datasetAttrName);
@@ -141,25 +147,13 @@ export function MergedDatasetsAnswer(props: any) {
           return inDatasetDefaults || inUserDatasetDefaults;
         });
 
-        const harmonizedAttributes = defaultsToFetch;
-
         // Create modified attribute metadata that uses displayName as the name
         // Exception: keep primary_key as 'primary_key' so WDK renders it as a link
         const harmonizedAttributesWithDisplayNameAsKey =
-          harmonizedAttributes.map((attr) => ({
-            ...attr,
-            metadata: {
-              ...attr.metadata,
-              name:
-                attr.datasetAttrName === 'primary_key' ||
-                attr.userDatasetAttrName === 'primary_key'
-                  ? 'primary_key'
-                  : attr.displayName,
-            },
-          }));
+          withDisplayNameAsKey(harmonizedAttributes);
 
         // 4. Determine default visible attributes (union of both question defaults)
-        // Use allHarmonizedAttributes here, not the filtered defaultsToFetch
+        // Use allHarmonizedAttributes here, not the filtered harmonizedAttributes
         const defaultVisibleDisplayNames = getDefaultVisibleAttributes(
           datasetQuestion,
           userDatasetQuestion,
@@ -168,14 +162,29 @@ export function MergedDatasetsAnswer(props: any) {
           allHarmonizedAttributes
         );
 
-        // 5. Extract all native attribute names for each record type from harmonized set
-        const datasetAttrsToFetch = harmonizedAttributesWithDisplayNameAsKey
+        // 5. Extract all native attribute names for each record type.
+        // Fetch every result-scope attribute, not just the question defaults:
+        // the Add/Remove Columns panel offers all of them, and adding a column
+        // does not trigger a re-fetch (the useWdkService deps below are empty),
+        // so any attribute missing here renders as an empty column with no error.
+        const allHarmonizedWithKeyForFetch = withDisplayNameAsKey(
+          allHarmonizedAttributes
+        );
+
+        const datasetAttrsToFetch = allHarmonizedWithKeyForFetch
           .map((a) => a.datasetAttrName)
           .filter((name): name is string => name !== null);
 
-        const userDatasetAttrsToFetch = harmonizedAttributesWithDisplayNameAsKey
+        const userDatasetAttrsToFetch = allHarmonizedWithKeyForFetch
           .map((a) => a.userDatasetAttrName)
           .filter((name): name is string => name !== null);
+
+        // The source-category filter needs this attribute even when its column
+        // is hidden, so pin it explicitly rather than relying on harmonization
+        // to carry it through.
+        if (!userDatasetAttrsToFetch.includes('owner_is_veupathdb_curator')) {
+          userDatasetAttrsToFetch.push('owner_is_veupathdb_curator');
+        }
 
         // 6. Fetch data in parallel
         const reportConfig = {
@@ -205,18 +214,8 @@ export function MergedDatasetsAnswer(props: any) {
 
         // 7. Normalize records
         // Use allHarmonizedAttributes so all possible columns are initialized (prevents sorting errors)
-        const allHarmonizedWithDisplayNameAsKey = allHarmonizedAttributes.map(
-          (attr) => ({
-            ...attr,
-            metadata: {
-              ...attr.metadata,
-              name:
-                attr.datasetAttrName === 'primary_key' ||
-                attr.userDatasetAttrName === 'primary_key'
-                  ? 'primary_key'
-                  : attr.displayName,
-            },
-          })
+        const allHarmonizedWithDisplayNameAsKey = withDisplayNameAsKey(
+          allHarmonizedAttributes
         );
 
         const normalizedDatasets = normalizeRecords(
@@ -240,17 +239,7 @@ export function MergedDatasetsAnswer(props: any) {
         return {
           records: mergedRecords,
           harmonizedAttributes: harmonizedAttributesWithDisplayNameAsKey,
-          allHarmonizedAttributes: allHarmonizedAttributes.map((attr) => ({
-            ...attr,
-            metadata: {
-              ...attr.metadata,
-              name:
-                attr.datasetAttrName === 'primary_key' ||
-                attr.userDatasetAttrName === 'primary_key'
-                  ? 'primary_key'
-                  : attr.displayName,
-            },
-          })),
+          allHarmonizedAttributes: allHarmonizedWithDisplayNameAsKey,
           defaultVisibleDisplayNames,
         };
       } catch (error) {
@@ -261,20 +250,13 @@ export function MergedDatasetsAnswer(props: any) {
     [] // Empty deps - only fetch once on mount, don't re-fetch on sorting/column changes
   );
 
-  // Filter by source type
+  // Filter by source category
   const filteredRecords = useMemo(() => {
     if (!mergedState) return [];
-    return mergedState.records.filter((record) => {
-      if (record.dataset_source === 'dataset') return showDataSources;
-      else if (record.is_public) return showPublicUserDatasets;
-      else return showPrivateUserDatasets;
-    });
-  }, [
-    mergedState,
-    showDataSources,
-    showPublicUserDatasets,
-    showPrivateUserDatasets,
-  ]);
+    return mergedState.records.filter(
+      (record) => visibility[getDatasetCategory(toSourceInfo(record))]
+    );
+  }, [mergedState, visibility, toSourceInfo]);
 
   // Compute visible attributes - use user selections if available, otherwise defaults
   const visibleAttributes = useMemo(() => {
@@ -295,10 +277,35 @@ export function MergedDatasetsAnswer(props: any) {
     return defaults;
   }, [mergedState, userSelectedColumns]);
 
-  // Intercept column changes to manage our own state
-  const handleChangeColumns = useCallback((newColumns: AttributeField[]) => {
-    setUserSelectedColumns(newColumns);
-  }, []);
+  // Intercept column changes to manage our own state.
+  // Strip the synthetic source icon column here since it is always
+  // re-prepended below; it is isRemovable: false so it always round-trips
+  // back through this handler, and without stripping it here it would
+  // end up duplicated once prepended again.
+  const handleChangeColumns = useCallback(
+    (newColumns: AttributeField[]) => {
+      const filteredColumns = newColumns.filter(
+        (attr) => attr.name !== '__source_icon__'
+      );
+      setUserSelectedColumns(filteredColumns);
+
+      // If the column currently being sorted on was just removed, WDK's
+      // Answer view falls back to sorting by the first visible column,
+      // which for us is always the unsortable, valueless icon column and
+      // crashes. Reset sorting to the default (primary_key) instead.
+      const sorting = props.stateProps.displayInfo?.sorting;
+      const sortedAttrName = sorting?.[0]?.attributeName;
+      const sortedAttrStillVisible = filteredColumns.some(
+        (attr) => attr.name === sortedAttrName
+      );
+      if (sortedAttrName && !sortedAttrStillVisible) {
+        props.dispatchProps.changeSorting([
+          { attributeName: 'primary_key', direction: 'ASC' },
+        ]);
+      }
+    },
+    [props.stateProps.displayInfo, props.dispatchProps]
+  );
 
   // Create a synthetic attribute for the source icon column
   const sourceIconAttribute: AttributeField = useMemo(
@@ -362,113 +369,56 @@ export function MergedDatasetsAnswer(props: any) {
         );
       }
 
+      // For the synthetic source icon column, render the icon as a real
+      // component rather than an HTML string baked into the record data.
+      if (attribute.name === '__source_icon__') {
+        const normalizedRecord = record as NormalizedRecord;
+        return (
+          <DatasetSourceIcon
+            category={getDatasetCategory(toSourceInfo(normalizedRecord))}
+          />
+        );
+      }
+
       // For all other attributes, use default rendering
       return <CellContent {...cellProps} />;
     },
-    [datasetRecordClass, userDatasetRecordClass]
+    [datasetRecordClass, userDatasetRecordClass, toSourceInfo]
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Inject filters after description element
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const moveFilters = () => {
-      const description = containerRef.current?.querySelector(
-        '.wdk-AnswerDescription'
-      );
-      const filters = containerRef.current?.querySelector(
-        '.AllDatasets-SourceFilters'
-      ) as HTMLElement;
-
-      if (description && filters) {
-        // Insert filters after description
-        description.parentNode?.insertBefore(filters, description.nextSibling);
-        // Show filters now that they're positioned correctly
-        filters.classList.add('positioned');
-        return true;
-      }
-      return false;
-    };
-
-    // Try immediately
-    if (moveFilters()) return;
-
-    // If that didn't work, watch for the description element to appear
-    const observer = new MutationObserver(() => {
-      if (moveFilters()) {
-        observer.disconnect();
-      }
-    });
-
-    observer.observe(containerRef.current, {
-      childList: true,
-      subtree: true,
-    });
-
-    return () => observer.disconnect();
-  }, [mergedState]);
+  const sourceFilters = (
+    <DatasetSourceFilters
+      visibility={visibility}
+      setVisibility={setVisibility}
+      className="AllDatasets-SourceFilters"
+    />
+  );
 
   if (!mergedState) {
     return <Loading />;
   }
 
   return (
-    <div className="AllDatasets-Container" ref={containerRef}>
-      <div className="AllDatasets-SourceFilters">
-        <label>
-          <input
-            type="checkbox"
-            checked={showDataSources}
-            onChange={(e) => setShowDataSources(e.target.checked)}
-          />
-          <img
-            src={`${webAppUrl}/images/${projectId}/favicon.ico`}
-            alt="VEuPathDB dataset"
-            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-          />
-          {' VEuPathDB datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPublicUserDatasets}
-            onChange={(e) => setShowPublicUserDatasets(e.target.checked)}
-          />
-          <PublicIcon style={{ width: '20px', height: '20px' }} />
-          {' Public User Datasets'}
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={showPrivateUserDatasets}
-            onChange={(e) => setShowPrivateUserDatasets(e.target.checked)}
-          />
-          <LockIcon style={{ width: '20px', height: '20px' }} />
-          {' Private User Datasets'}
-        </label>
-      </div>
-      <DefaultComponent
-        {...props}
-        renderCellContent={renderCellContent}
-        dispatchProps={{
-          ...props.dispatchProps,
-          changeVisibleColumns: handleChangeColumns,
-        }}
-        stateProps={{
-          ...props.stateProps,
-          records: filteredRecords,
-          allAttributes: allAttributesWithIcon,
-          visibleAttributes: visibleAttributesWithIcon,
-          meta: {
-            ...props.stateProps.meta,
-            totalCount: filteredRecords.length,
-            responseCount: filteredRecords.length,
-          },
-        }}
-      />
-    </div>
+    <DefaultComponent
+      {...props}
+      renderCellContent={renderCellContent}
+      descriptionSuffix={sourceFilters}
+      dispatchProps={{
+        ...props.dispatchProps,
+        changeVisibleColumns: handleChangeColumns,
+      }}
+      stateProps={{
+        ...props.stateProps,
+        records: filteredRecords,
+        allAttributes: allAttributesWithIcon,
+        visibleAttributes: visibleAttributesWithIcon,
+        meta: {
+          ...props.stateProps.meta,
+          totalCount: filteredRecords.length,
+          responseCount: filteredRecords.length,
+        },
+      }}
+    />
   );
 }
 
@@ -558,12 +508,31 @@ function harmonizeAttributes(
   return Array.from(map.values());
 }
 
+// Returns a copy of the given harmonized attributes whose metadata.name is
+// set to displayName, so records can be normalized/keyed by displayName.
+// Exception: primary_key keeps the name 'primary_key' so WDK renders it as a link.
+function withDisplayNameAsKey(
+  attrs: HarmonizedAttribute[]
+): HarmonizedAttribute[] {
+  return attrs.map((attr) => ({
+    ...attr,
+    metadata: {
+      ...attr.metadata,
+      name:
+        attr.datasetAttrName === 'primary_key' ||
+        attr.userDatasetAttrName === 'primary_key'
+          ? 'primary_key'
+          : attr.displayName,
+    },
+  }));
+}
+
 function normalizeRecords(
   records: RecordInstance[],
   harmonizedAttrs: HarmonizedAttribute[],
   sourceType: 'dataset' | 'userdataset'
 ): NormalizedRecord[] {
-  return records.map((record, index) => {
+  return records.map((record) => {
     const normalizedAttributes: Record<string, any> = {};
 
     harmonizedAttrs.forEach((attr) => {
@@ -593,21 +562,20 @@ function normalizeRecords(
         ? record.attributes.is_public === 'Public'
         : undefined;
 
-    // Add synthetic source icon attribute as HTML
-    const iconHtml =
-      sourceType === 'dataset'
-        ? `<img src="${webAppUrl}/images/${projectId}/favicon.ico" alt="VEuPathDB dataset" title="VEuPathDB dataset" style="width: 20px; height: 20px; object-fit: contain;" />`
-        : isPublic
-        ? `<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" title="Public User Dataset" style="width: 20px; height: 20px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>`
-        : `<svg class="MuiSvgIcon-root" focusable="false" viewBox="0 0 24 24" aria-hidden="true" title="Private User Dataset" style="width: 20px; height: 20px;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>`;
-
-    normalizedAttributes['__source_icon__'] = iconHtml;
+    // Read straight off the raw record: this attribute drives the source
+    // category even when its column is hidden, so it is not necessarily
+    // present in the harmonized/normalized attribute set.
+    const ownerIsVeupathdbCurator =
+      sourceType === 'userdataset'
+        ? parseYesNo(record.attributes.owner_is_veupathdb_curator)
+        : undefined;
 
     return {
       ...record,
       attributes: normalizedAttributes,
       dataset_source: sourceType,
       is_public: isPublic,
+      owner_is_veupathdb_curator: ownerIsVeupathdbCurator,
       // Override recordClassName so links point to correct record type
       recordClassName: sourceType === 'dataset' ? 'dataset' : 'userdataset',
     };
