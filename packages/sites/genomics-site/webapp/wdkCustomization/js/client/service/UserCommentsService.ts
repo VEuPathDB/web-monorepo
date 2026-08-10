@@ -88,6 +88,8 @@ function deserializeJobStatus(payload: any): AiGenePublicationJobStatus {
       };
     case 'text-unavailable':
       return { type: 'text-unavailable', reason: payload.reason };
+    case 'upstream-unavailable':
+      return { type: 'upstream-unavailable', reason: payload.reason };
     case 'internal-error':
       return { type: 'internal-error', error: payload.error };
     case 'cancelled':
