@@ -218,6 +218,10 @@
       grid-column-start: 2;
     }
 
+    > .span-2 {
+      grid-column: span 2;
+    }
+
     > label,
     > .multi-input-label {
       text-align: right;
@@ -237,9 +241,10 @@
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
-    column-gap: 1ch;
+    column-gap: 2ch;
     margin-left: 8%;
     margin-right: 8%;
+    align-items: baseline;
 
     > * {
       white-space: nowrap;

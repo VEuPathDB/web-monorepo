@@ -39,7 +39,7 @@ export const {
   communityDatasetsEnabled = false,
   aiExpressionQualtricsId = '',
   showSubscriptionProds = false,
-  allowAiAssistedCommentCreation = false,
+  allowAiAssistedCommentCreation = true,
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

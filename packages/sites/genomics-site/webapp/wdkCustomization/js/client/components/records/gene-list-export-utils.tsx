@@ -33,11 +33,11 @@ import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 
 import { ExportOption } from './ResultExportSelector';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { submitNewDataset } from '@veupathdb/user-datasets/lib/Service/process/create-dataset';
 import {
   VdiCompatibleWdkService,
   wrapWdkService as addVdiService,
 } from '@veupathdb/user-datasets/lib/Service';
+import { submitNewDataset } from '@veupathdb/user-datasets/lib/Service/Datasets';
 
 const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set(['transcript']);
 

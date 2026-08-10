@@ -61,6 +61,8 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     name: 'NCBI Taxon ID',
     helpText: 'The URL of the NCBI site for this taxon.',
     sortable: true,
+    makeOrder: ({ ncbi_taxon_url_link }) => Number(ncbi_taxon_url_link.displayText),
+    makeSearchableString: (ncbi_taxon_url_link) => ncbi_taxon_url_link.displayText,
     renderCell: ({ value }) => renderAttributeValue(value),
   },
   root_taxon: {
@@ -106,6 +108,8 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     name: 'Resource',
     helpText: 'The source of the organism proteome.',
     sortable: true,
+    makeOrder: ({ resource_url_link }) => resource_url_link.displayText || '',
+    makeSearchableString: (resource_url_link) => resource_url_link.displayText,
     renderCell: ({ value }) => renderAttributeValue(value),
   },
   most_recent: {

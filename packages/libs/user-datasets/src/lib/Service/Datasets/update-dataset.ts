@@ -21,11 +21,11 @@ import {
   trackUploadProgress,
 } from '../../Actions/UserDatasetUploadActions';
 import { statusStringToCode } from '../utils/conversions';
-import { scrubDetails } from './create-dataset';
 import { ClientSideUploadFormState } from '../../StoreModules';
 import { Mutable } from '../../Utils/types';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
+import { cleanDatasetDetails } from './payload-cleanup';
 
 export interface UpdateSubmission {
   readonly vdi: VdiService;
@@ -53,12 +53,22 @@ export async function submitUpdate(
     ...submission.updated,
   };
 
+  // `samplesDescription` is a client-only field used to build the
+  // `sample-info.txt` upload; it is never a valid VDI metadata field and must
+  // never reach the outbound PATCH payload. Unlike the fields below, this is
+  // deleted unconditionally rather than gated on form meta state.
+  delete mutableSubmission.samplesDescription;
+
   if (!submission.formState.hasExternalSources) {
     mutableSubmission.datasetSources = undefined;
   }
 
   if (!submission.formState.hasDisclaimer) {
     mutableSubmission.dataDisclaimer = undefined;
+  }
+
+  if (!submission.formState.hasPublications) {
+    mutableSubmission.publications = undefined;
   }
 
   if (
@@ -74,8 +84,8 @@ export async function submitUpdate(
 
   const patchResult: PatchResult = await (async () => {
     const patchBody = convertMetaToPatch(
-      scrubDetails(submission.original),
-      scrubDetails(mutableSubmission)
+      cleanDatasetDetails(submission.original),
+      cleanDatasetDetails(mutableSubmission)
     );
 
     return patchBody == null

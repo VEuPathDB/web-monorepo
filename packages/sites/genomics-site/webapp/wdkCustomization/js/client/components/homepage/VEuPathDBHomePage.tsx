@@ -238,7 +238,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
     });
   }, [setClosedBanners]);
 
-  const isBetaSite = window.location.hostname.startsWith('beta');
+  const isBetaSite = 1; // window.location.hostname.startsWith('beta');
 
   const branding = (
     <>
@@ -709,15 +709,6 @@ const useHeaderMenuItems = (
           display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
-        },
-        {
-          key: 'community-userdatasets',
-          display: 'User Datasets (my own and public)',
-          type: 'reactRoute',
-          url: '/search/userdataset/AllUserDatasets/result',
-          metadata: {
-            test: () => Boolean(communityDatasetsEnabled),
-          },
         },
         {
           key: 'data-files-eupathdb-beta',
