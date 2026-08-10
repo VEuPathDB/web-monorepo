@@ -25,7 +25,6 @@ export const datasetMetadata = io.intersection([
     origin: io.string,
     created: io.string,
     daysForApproval: io.number,
-    shortName: io.string,
   }),
   io.partial({
     description: io.string,

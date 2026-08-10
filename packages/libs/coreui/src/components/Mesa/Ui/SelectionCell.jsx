@@ -37,14 +37,16 @@ class SelectionCell extends React.PureComponent {
     const checked = rows.length && rows.every(isRowSelected);
     const isIndeterminate = selection.length > 0 && !checked;
 
-    const { selectColumnHeadingDetails } = options;
+    const { selectColumnHeadingDetails, hideSelectAll } = options;
 
-    let handler = (e) => {
-      e.stopPropagation();
-      return checked || isIndeterminate
-        ? this.deselectAllRows()
-        : this.selectAllRows();
-    };
+    let handler = hideSelectAll
+      ? undefined
+      : (e) => {
+        e.stopPropagation();
+        return checked || isIndeterminate
+          ? this.deselectAllRows()
+          : this.selectAllRows();
+      };
 
     return (
       <th
@@ -53,7 +55,7 @@ class SelectionCell extends React.PureComponent {
         }
         onClick={handler}
       >
-        {inert ? null : (
+        {inert || hideSelectAll ? null : (
           <AnchoredTooltip
             content={checked || isIndeterminate ? 'Clear all' : 'Select all'}
           >

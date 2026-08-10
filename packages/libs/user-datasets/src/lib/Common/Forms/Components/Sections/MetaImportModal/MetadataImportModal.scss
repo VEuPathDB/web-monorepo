@@ -1,0 +1,44 @@
+#ud-meta-selection-modal {
+  padding: 1em 2em;
+  width: 1280px;
+  min-height: 650px;
+
+  > .MesaComponent {
+    min-height: 350px;
+  }
+
+  .Toolbar {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .ActionToolbar {
+    width: 65%;
+  }
+
+  .ActionToolbar-Info {
+    display: none;
+  }
+
+  .ActionToolbar-ItemList {
+    column-gap: 1em;
+    padding-left: 4em;
+  }
+
+  .TableToolbar {
+    width: 35%;
+  }
+
+  .TableSearch {
+    max-width: 400px;
+
+    button {
+      display: none;
+    }
+
+    input {
+      font-size: 1em;
+      transition: none;
+    }
+  }
+}

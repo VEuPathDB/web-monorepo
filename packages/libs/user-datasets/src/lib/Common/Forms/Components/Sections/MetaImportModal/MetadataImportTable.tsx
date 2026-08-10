@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useState } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { partialRight } from 'lodash';
 
 import * as mesa from '@veupathdb/coreui/lib/components/Mesa/types';
@@ -6,13 +6,14 @@ import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import {
+  DatasetId,
   DatasetListEntry as Dataset,
-  VdiServiceConfig,
+  VdiServiceConfig
 } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import UserDatasetStatus from '../../../../../Components/UserDatasetStatus';
 import * as util from '../../../../../Utils';
-import { Consumer, ifDefined, Nullable } from '../../../../../Utils';
+import { Consumer, ifDefined, Nullable, Possible } from '../../../../../Utils';
 
 export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
@@ -22,6 +23,9 @@ export interface MetadataImportTableProps {
   readonly userId: number;
   readonly datasets: Dataset[];
   readonly arePublicDatasetsEnabled: boolean;
+
+  readonly selection: Possible<DatasetId>;
+  readonly setSelection: Consumer<Possible<string>>;
 }
 
 type TableColumn<K extends keyof Dataset> = mesa.MesaColumn<
@@ -41,16 +45,17 @@ export function MetadataImportTable(
 ): ReactElement {
   const [filterString, setFilterString] = useState<Nullable<string>>(null);
   const [filteredDatasets, setFilteredDatasets] = useState(props.datasets);
-  const [selectedDataset, setSelectedDataset] = useState<Dataset>();
   const [onlyMyDatasets, setOnlyMyDatasets] = useState(false);
   const [onlyThisSite, setOnlyThisSite] = useState(false);
 
-  const filterOptions: FilterOptions = {
-    query: filterString,
-    excludePublic: onlyMyDatasets,
-    excludeOtherSites: onlyThisSite,
-    userId: props.userId,
-  };
+  useEffect(() => {
+    setFilteredDatasets(filterDatasets(props.datasets, {
+      query: filterString,
+      excludePublic: onlyMyDatasets,
+      excludeOtherSites: onlyThisSite,
+      userId: props.userId,
+    }));
+  }, [ filterString, onlyMyDatasets, onlyThisSite, props.userId, props.datasets ])
 
   return (
     <Mesa
@@ -65,30 +70,18 @@ export function MetadataImportTable(
           editableColumns: false,
           showCount: false,
           toolbar: true,
+          hideSelectAll: true,
           getRowId: (row) => row.datasetId,
-          isRowSelected: (row) => row === selectedDataset,
+          isRowSelected: (row) => row.datasetId === props.selection,
         },
         eventHandlers: {
-          onRowSelect: setSelectedDataset,
-          onRowDeselect: (_) => setSelectedDataset(undefined),
-          onSearch: (query) => {
-            setFilterString(query);
-            setFilteredDatasets(
-              filterDatasets(props.datasets, { ...filterOptions, query })
-            );
-          },
+          onRowSelect: it => props.setSelection(it.datasetId),
+          onRowDeselect: _ => props.setSelection(undefined),
+          onSearch: setFilterString,
         },
         actions: [
           { element: onlyMyDatasetsToggle(onlyMyDatasets, setOnlyMyDatasets) },
-          {
-            element: (
-              <span>
-                Only show datasets uploaded to{' '}
-                <strong>{props.siteDisplayName}</strong>
-              </span>
-            ),
-            callback: (row, _) => {},
-          },
+          { element: onlyThisSiteToggle(onlyThisSite, setOnlyThisSite, props.siteDisplayName) },
         ],
       }}
     />
@@ -199,6 +192,8 @@ function renderVersion({ row }: TableCellProps): string {
 
 // endregion Columns
 
+// region Toolbar
+
 interface FilterOptions {
   readonly query: Nullable<string>;
   readonly excludePublic: boolean;
@@ -262,3 +257,23 @@ function onlyMyDatasetsToggle(
     </>
   );
 }
+
+function onlyThisSiteToggle(
+  value: boolean,
+  setValue: Consumer<boolean>,
+  siteName: string,
+): ReactElement {
+  return <>
+    <input
+      id="meta-import-modal-otst"
+      type="checkbox"
+      checked={value}
+      onChange={(e) => ifDefined(e.target?.checked, setValue)}
+    />{' '}
+    <label htmlFor="meta-import-modal-otst">
+      Only show datasets uploaded to <strong>{siteName}</strong>
+    </label>
+  </>;
+}
+
+// endregion Toolbar

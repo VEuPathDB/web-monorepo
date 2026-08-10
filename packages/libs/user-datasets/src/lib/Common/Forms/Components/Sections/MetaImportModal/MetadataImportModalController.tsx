@@ -1,9 +1,9 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { DataNoun, Runnable } from '../../../../../Utils';
+import { Consumer, DataNoun, ifDefined, Runnable } from '../../../../../Utils';
 import {
   DatasetListEntry,
   VdiServiceConfig,
-  useVdiService,
+  useVdiService, DatasetId
 } from '../../../../../Service';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { MetadataImportModal } from './MetadataImportModal';
@@ -18,6 +18,7 @@ export interface MetadataImportModalControllerProps {
   readonly arePublicDatasetsEnabled: boolean;
   readonly isModalShowing: boolean;
   readonly hideModal: Runnable;
+  readonly copyAction: Consumer<DatasetId>;
 }
 
 export function MetadataImportModalController(
@@ -30,6 +31,8 @@ export function MetadataImportModalController(
   const userId = useWdkService((wdk) => wdk.getCurrentUser())?.id;
 
   const siteDisplayName = projectIdToDisplayName(projectId)!;
+
+  const [selection, setSelection] = useState<DatasetId>();
 
   useEffect(
     () => {
@@ -50,7 +53,18 @@ export function MetadataImportModalController(
   return (
     <MetadataImportModal
       modalProps={{ visible: props.isModalShowing, hide: props.hideModal }}
-      tableProps={{ ...props, datasets, userId, siteDisplayName }}
+      tableProps={{
+        ...props,
+        datasets,
+        userId,
+        siteDisplayName,
+        selection,
+        setSelection
+      }}
+      copyAction={() => {
+        ifDefined(selection, props.copyAction);
+        props.hideModal();
+      }}
     />
   );
 }

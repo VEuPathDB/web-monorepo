@@ -23,7 +23,7 @@ import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
 import { DatasetMetadata } from '../../Service/Model';
 import { DataNoun, Nullable } from '../../Utils';
-import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
+import { defaultClientSideUploadFormState, useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { MetadataImportModalController } from './Components/Sections/MetaImportModal';
 
 export interface DatasetFormControllerProps<
@@ -96,7 +96,8 @@ export function DatasetFormController<
 
         dispatch(
           updateFormState({
-            ...formState,
+            fileUploads: formState.fileUploads,
+            formMetaState: defaultClientSideUploadFormState(), // recalc
             datasetDetails: applyMetadata(formState.datasetDetails, res),
           })
         );
@@ -134,7 +135,8 @@ export function DatasetFormController<
         dataNoun={props.dataNoun}
         arePublicDatasetsEnabled={props.enablePublicDatasets}
         isModalShowing={isDatasetSelectionModalShowing}
-        hideModal={() => setDatasetSelectionModalShowing(true)}
+        hideModal={() => setDatasetSelectionModalShowing(false)}
+        copyAction={fetchDatasetMetadata}
       />
 
       <SubmissionModal
@@ -150,11 +152,11 @@ function notImplemented() {
 }
 
 function setMetadata<K extends keyof PartialDatasetDetails>(
-  this: any,
+  obj: any,
   key: K,
   value: PartialDatasetDetails[K]
 ) {
-  this[key] = value;
+  obj[key] = value;
 }
 
 function applyMetadata(
@@ -168,22 +170,20 @@ function applyMetadata(
     ): void;
   } = { ...(formMeta ?? {}) };
 
-  (out as any).prototype.set = setMetadata;
-
-  out.set!('description', rawMeta.description);
-  out.set!('publications', rawMeta.publications);
-  out.set!('contacts', rawMeta.contacts);
-  out.set!('shortAttribution', rawMeta.shortAttribution);
-  out.set!('projectName', rawMeta.projectName);
-  out.set!('programName', rawMeta.programName);
-  out.set!('linkedDatasets', rawMeta.linkedDatasets);
-  out.set!('experimentalOrganism', rawMeta.experimentalOrganism);
-  out.set!('hostOrganism', rawMeta.hostOrganism);
-  out.set!('datasetCharacteristics', rawMeta.datasetCharacteristics);
-  out.set!('externalIdentifiers', rawMeta.externalIdentifiers);
-  out.set!('funding', rawMeta.funding);
-  out.set!('dataDisclaimer', rawMeta.dataDisclaimer);
-  out.set!('datasetSources', rawMeta.datasetSources);
+  setMetadata(out, 'description', rawMeta.description);
+  setMetadata(out, 'publications', rawMeta.publications);
+  setMetadata(out, 'contacts', rawMeta.contacts);
+  setMetadata(out, 'shortAttribution', rawMeta.shortAttribution);
+  setMetadata(out, 'projectName', rawMeta.projectName);
+  setMetadata(out, 'programName', rawMeta.programName);
+  setMetadata(out, 'linkedDatasets', rawMeta.linkedDatasets);
+  setMetadata(out, 'experimentalOrganism', rawMeta.experimentalOrganism);
+  setMetadata(out, 'hostOrganism', rawMeta.hostOrganism);
+  setMetadata(out, 'datasetCharacteristics', rawMeta.datasetCharacteristics);
+  setMetadata(out, 'externalIdentifiers', rawMeta.externalIdentifiers);
+  setMetadata(out, 'funding', rawMeta.funding);
+  setMetadata(out, 'dataDisclaimer', rawMeta.dataDisclaimer);
+  setMetadata(out, 'datasetSources', rawMeta.datasetSources);
 
   return out as PartialDatasetDetails;
 }

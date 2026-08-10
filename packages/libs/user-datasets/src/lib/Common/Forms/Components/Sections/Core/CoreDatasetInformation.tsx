@@ -9,7 +9,7 @@ import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { PublicationsSection } from './Publications/PublicationsSection';
-import { DatasetMetadataImportButton } from '../../DatasetMetadataImportButton';
+import { SecondaryButton } from '../../SecondaryButton';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -35,7 +35,9 @@ export function CoreDatasetInformation({
     <>
       <div className="header-line">
         <h3>Core Dataset Information</h3>
-        <DatasetMetadataImportButton onClick={openMetaImport} />
+        <SecondaryButton disabled={false} onClick={openMetaImport}>
+          Import from Existing Dataset
+        </SecondaryButton>
       </div>
       <p className="section-description">
         This Core Dataset Information must be completed before you can make this
