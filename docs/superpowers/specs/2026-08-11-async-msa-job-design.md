@@ -133,12 +133,32 @@ aware of or specialized for. Any other place in the UI that ends up with a list 
 IDs — a different table, a basket, a step result — can call the same
 `resolveTranscriptFeatures` with no changes.
 
-**Aside, not part of this design:** the Orthologs table's "Show only one transcript per gene"
-toggle (`GeneRecordClasses.GeneRecordClass.jsx:1569-1601`) currently dedups by comparing
+#### Orthologs table: selection requires "one transcript per gene"
+
+MSA alignment across multiple transcripts of the _same_ gene isn't a meaningful operation —
+an alignment is meant to compare orthologs across genes, one representative sequence per gene.
+So checking a transcript row must require the table's existing "Show only one transcript per
+gene" toggle to be on first; this isn't an independent feature, it's a precondition for
+selection.
+
+- **Toggle off, user clicks a checkbox:** the check does not take effect (the row does not
+  become selected). Show "Select one-per-gene first" as feedback. This is a hard gate, not a
+  disabled-looking control — no selection can be made at all while the toggle is off.
+- **Toggle on, then user unchecks it after already selecting rows:** existing selections are
+  left alone; only _new_ checkbox clicks are blocked while the toggle is off. Submission stays
+  available with whatever was already selected.
+- This sidesteps a harder problem entirely: with the toggle enforced at selection time, only
+  one transcript row per gene is ever selectable in the first place, so there's no scenario
+  where the user has checked two transcripts of the same gene and the resolver has to pick a
+  winner between them.
+- This also means the toggle's own correctness now matters for submission, not just display
+  — see the note on `transcript_length` below.
+
+**Aside, not part of the client-side design above:** the toggle
+(`GeneRecordClasses.GeneRecordClass.jsx:1569-1601`) currently dedups by comparing
 `protein_length`, which does not reliably select the longest transcript. A fix is planned
 separately (an internal `transcript_length` attribute, not shown as a column but readable from
-row data client-side, the same way `sort_key` already is via `SortKeyTable`) — unrelated to the
-MSA migration, noted here only because it was discovered while investigating this table.
+row data client-side, the same way `sort_key` already is via `SortKeyTable`).
 
 **Popset and ortho-site (follow-on, same shape):** each needs its own `IdList search +
 bed-capable reporter` (or, for ortho-site, a "whole sequence" resolver producing
