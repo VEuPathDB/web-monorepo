@@ -12,8 +12,14 @@ Omega for multiple sequence alignment, via a shared `ClustalAlignmentForm`
 
 1. **Gene record Orthologs table**
    (`packages/sites/genomics-site/.../GeneRecordClasses.GeneRecordClass.jsx:1713-1821`) —
-   select orthologous genes, choose sequence type (protein/CDS/genomic + flanking offsets)
-   and output format.
+   rows are **transcripts**, not genes. `ortho_gene_source_id` (the only row-identity field the
+   current React code reads) is a real gene ID, the transcript's parent gene — not the
+   transcript's own ID. The row must also carry a transcript-level ID somewhere (needed to
+   resolve BED coordinates per transcript), but no such field is referenced anywhere in the
+   current client code; its exact name needs confirming against the live record/table
+   attributes before implementation (see Open questions). The user selects orthologous
+   transcripts, chooses sequence type (protein/CDS/genomic + flanking offsets), and output
+   format.
 2. **Popset isolate summary table**
    (`packages/sites/genomics-site/.../PopsetResultSummaryViewTableController.jsx`) — select
    isolates, align the locus used to type them.
@@ -109,20 +115,30 @@ regardless of which table the user started from.
 
 Each site implements `resolveFeatures(selection): Promise<Feature[]>`.
 
-**Genes, from any gene-ID-producing UI (built first):** the resolver here is
-`resolveGeneFeatures(geneIds: string[]): Promise<Feature[]>` — it takes a plain list of gene
-IDs and has no notion of where they came from. Submit the IDs as the `ds_gene_ids` parameter
-to the existing `GeneByLocusTag` search, requesting the `bedReporter` report format via
+**Transcripts, from any transcript-ID-producing UI (built first):** the resolver here is
+`resolveTranscriptFeatures(transcriptIds: string[]): Promise<Feature[]>` — it takes a plain
+list of transcript IDs and has no notion of where they came from. `bedReporter` is naturally a
+transcript-level report (BED features are exon/CDS structures, which only make sense per
+transcript, not per gene), so working in transcript IDs is the right fit, not an awkward
+consequence of the table's data shape. Submit the IDs as the ID-list parameter to an
+appropriate transcript-based ID-list search (the existing `GeneByLocusTag`-style search
+family, exact search TBD — see Open questions), requesting the `bedReporter` report format via
 `wdkService.getTemporaryResultPath(answerSpec, 'bedReporter', reportConfig)` — the same
 mechanism `gene-list-export-utils.tsx` already uses with `'attributesTabular'`. Fetch the
 resulting BED text from `/temporary-results/{id}` and parse it into `Feature[]`. This reuses
 an existing search and reporter rather than adding a new WDK attribute-fetch call.
 
-The Orthologs table (the record's own `source_id` plus every checked
-`ortho_gene_source_id`) is simply the first caller of this resolver, not something the
-resolver is aware of or specialized for. Any other place in the UI that ends up with a list
-of gene IDs — a different table, a basket, a step result — can call the same
-`resolveGeneFeatures` with no changes.
+The Orthologs table is simply the first caller of this resolver, not something the resolver is
+aware of or specialized for. Any other place in the UI that ends up with a list of transcript
+IDs — a different table, a basket, a step result — can call the same
+`resolveTranscriptFeatures` with no changes.
+
+**Aside, not part of this design:** the Orthologs table's "Show only one transcript per gene"
+toggle (`GeneRecordClasses.GeneRecordClass.jsx:1569-1601`) currently dedups by comparing
+`protein_length`, which does not reliably select the longest transcript. A fix is planned
+separately (an internal `transcript_length` attribute, not shown as a column but readable from
+row data client-side, the same way `sort_key` already is via `SortKeyTable`) — unrelated to the
+MSA migration, noted here only because it was discovered while investigating this table.
 
 **Popset and ortho-site (follow-on, same shape):** each needs its own `IdList search +
 bed-capable reporter` (or, for ortho-site, a "whole sequence" resolver producing
@@ -130,7 +146,7 @@ bed-capable reporter` (or, for ortho-site, a "whole sequence" resolver producing
 CGI form posts `sid`/`start`/`end` hidden inputs that are never populated (dead fields) — so
 this isn't a like-for-like migration for Popset, it's a fix. Building the real resolver is
 separate work; this design defines the interface it must satisfy (`Promise<Feature[]>`) and
-scopes only `resolveGeneFeatures` for initial implementation.
+scopes only `resolveTranscriptFeatures` for initial implementation.
 
 ### 2. Shared submit/poll/results package
 
@@ -153,8 +169,9 @@ into its own routes, the way `packages/sites/ortho-site/.../blastRoutes.tsx` imp
   interval — so a single dropped request doesn't fall back to the slow tier.
 - **`lib/components/ComputeJobPage.tsx`** — the "Running Compute Job" page. Renders:
   - Title ("Running Compute Job").
-  - Params summary (e.g. "13 Genes, FASTA output format") — passed in as props at submit
-    time, not re-derived from the job response (the service doesn't echo back the params).
+  - Params summary (e.g. "13 Transcripts, FASTA output format") — passed in as props at
+    submit time, not re-derived from the job response (the service doesn't echo back the
+    params).
   - Live status while polling (spinner + "queued"/"running" copy, matching the persistent,
     content-changing indicator style validated in the user-datasets polling design — no
     flashing/disappearing status text).
@@ -205,9 +222,16 @@ multi-minute job. The only change is what happens on confirm: instead of
 
 - Exact name/home for the new package (`packages/libs/compute-jobs` proposed, following the
   `multi-blast` precedent of "one package per reusable async-job UI").
-- Whether `sequenceType` for the Orthologs case should be `genomic` or `protein` by default,
+- Whether `sequenceType` for the transcript case should be `genomic` or `protein` by default,
   matching the old form's `sequence_Type` radio choice — carries over 1:1, just renamed.
-- Exact attribute name for gene strand in the BED output (not confirmed by name from
-  web-monorepo alone, since gene record-class attribute definitions live in ApiCommonModel;
-  should fall out naturally once `bedReporter`'s actual output is inspected during
-  implementation).
+- **The transcript-level ID field.** The Orthologs table's only row-identity field visible in
+  current client code, `ortho_gene_source_id`, is confirmed to be the parent gene's ID, not the
+  transcript's own ID — so the field `resolveTranscriptFeatures` should actually key on is not
+  yet identified. Needs confirming against the live table's row/attribute shape before
+  implementation.
+- **Which ID-list search `resolveTranscriptFeatures` submits to.** `GeneByLocusTag` takes gene
+  IDs (`ds_gene_ids`); a transcript-ID-list search may be a different existing search, or may
+  need its own param — TBD, to confirm alongside the transcript-ID field above.
+- Exact attribute name for strand in the `bedReporter` output (not confirmed by name from
+  web-monorepo alone, since record-class attribute definitions live in ApiCommonModel; should
+  fall out naturally once `bedReporter`'s actual output is inspected during implementation).
