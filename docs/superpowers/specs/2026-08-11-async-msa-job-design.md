@@ -12,14 +12,14 @@ Omega for multiple sequence alignment, via a shared `ClustalAlignmentForm`
 
 1. **Gene record Orthologs table**
    (`packages/sites/genomics-site/.../GeneRecordClasses.GeneRecordClass.jsx:1713-1821`) —
-   rows are **transcripts**, not genes. `ortho_gene_source_id` (the only row-identity field the
-   current React code reads) is a real gene ID, the transcript's parent gene — not the
-   transcript's own ID. The row must also carry a transcript-level ID somewhere (needed to
-   resolve BED coordinates per transcript), but no such field is referenced anywhere in the
-   current client code; its exact name needs confirming against the live record/table
-   attributes before implementation (see Open questions). The user selects orthologous
-   transcripts, chooses sequence type (protein/CDS/genomic + flanking offsets), and output
-   format.
+   rows are **transcripts**, not genes. `ortho_gene_source_id` is the parent gene's ID; the
+   row's own transcript ID is a separate field, `ortho_source_id`, which the row data carries
+   but which no code in this file currently reads (row selection, the checkbox handlers, and
+   the "one transcript per gene" dedup are all keyed on the gene ID today, not the transcript
+   ID — meaning the current UI cannot distinguish two different transcripts of the same
+   selected gene). `resolveTranscriptFeatures` (below) uses `ortho_source_id`, not
+   `ortho_gene_source_id`. The user selects orthologous transcripts, chooses sequence type
+   (protein/CDS/genomic + flanking offsets), and output format.
 2. **Popset isolate summary table**
    (`packages/sites/genomics-site/.../PopsetResultSummaryViewTableController.jsx`) — select
    isolates, align the locus used to type them.
@@ -224,14 +224,16 @@ multi-minute job. The only change is what happens on confirm: instead of
   `multi-blast` precedent of "one package per reusable async-job UI").
 - Whether `sequenceType` for the transcript case should be `genomic` or `protein` by default,
   matching the old form's `sequence_Type` radio choice — carries over 1:1, just renamed.
-- **The transcript-level ID field.** The Orthologs table's only row-identity field visible in
-  current client code, `ortho_gene_source_id`, is confirmed to be the parent gene's ID, not the
-  transcript's own ID — so the field `resolveTranscriptFeatures` should actually key on is not
-  yet identified. Needs confirming against the live table's row/attribute shape before
-  implementation.
 - **Which ID-list search `resolveTranscriptFeatures` submits to.** `GeneByLocusTag` takes gene
-  IDs (`ds_gene_ids`); a transcript-ID-list search may be a different existing search, or may
-  need its own param — TBD, to confirm alongside the transcript-ID field above.
+  IDs (`ds_gene_ids`); submitting `ortho_source_id` values needs a transcript-ID-list search,
+  which may be a different existing search or may need its own param — TBD.
+- **Row selection should switch from `ortho_gene_source_id` to `ortho_source_id`.** Since the
+  current Orthologs table selection/checkbox state (`isRowSelected`/`onRowSelect`/etc.,
+  `GeneRecordClasses.GeneRecordClass.jsx:1626-1662`) is keyed on the gene ID, implementing this
+  design means switching that keying to the transcript ID — otherwise selecting one transcript
+  of a multi-transcript gene would show as selected for all of that gene's transcript rows, and
+  the resolver would receive the wrong ID. This is a required part of the migration, not
+  optional cleanup.
 - Exact attribute name for strand in the `bedReporter` output (not confirmed by name from
   web-monorepo alone, since record-class attribute definitions live in ApiCommonModel; should
   fall out naturally once `bedReporter`'s actual output is inspected during implementation).
