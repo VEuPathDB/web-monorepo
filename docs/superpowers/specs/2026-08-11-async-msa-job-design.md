@@ -35,9 +35,14 @@ This design covers the client-side replacement.
 
 Despite different domains (genes, isolates, OrthoMCL proteins), each site's selection reduces
 to the same shape the service wants: a list of `Feature` objects — `{contig, start, end,
-strand?, query?}` — describing a region on some underlying sequence set. "Contig" here is
-whatever coordinate system that site's reference sequences use; for whole-sequence alignment
-(as in ortho-site) a `Feature` is just `{contig: <accession>, start: 0, end: <length>}`.
+strand?, query?}` — describing a region on some underlying sequence set. `contig` is the
+service's literal, fixed field name (confirmed in `schema/library.raml` and the generated
+`Feature` DTO in `service-sequence-retrieval`) — it is not chromosome-specific despite the
+name. It is whatever key the configured `sequenceType`'s FASTA index uses to look up a
+sequence (`ReferenceDAO`/`FastaSequenceIndexEntry` are generic over the loaded reference set),
+so a protein accession or an isolate locus ID is just as valid a `contig` value as a
+chromosome/scaffold ID. For whole-sequence alignment (as in ortho-site) a `Feature` is just
+`{contig: <accession>, start: 0, end: <length>}`.
 
 This split is what makes one shared implementation possible: only the "which records did the
 user select, and what coordinates do they resolve to" step is genuinely site-specific.
@@ -104,13 +109,20 @@ regardless of which table the user started from.
 
 Each site implements `resolveFeatures(selection): Promise<Feature[]>`.
 
-**Gene Orthologs (built first):** submit the selected gene IDs (the record's own `source_id`
-plus every checked `ortho_gene_source_id`) as the `ds_gene_ids` parameter to the existing
-`GeneByLocusTag` search, requesting the `bedReporter` report format via
+**Genes, from any gene-ID-producing UI (built first):** the resolver here is
+`resolveGeneFeatures(geneIds: string[]): Promise<Feature[]>` — it takes a plain list of gene
+IDs and has no notion of where they came from. Submit the IDs as the `ds_gene_ids` parameter
+to the existing `GeneByLocusTag` search, requesting the `bedReporter` report format via
 `wdkService.getTemporaryResultPath(answerSpec, 'bedReporter', reportConfig)` — the same
 mechanism `gene-list-export-utils.tsx` already uses with `'attributesTabular'`. Fetch the
 resulting BED text from `/temporary-results/{id}` and parse it into `Feature[]`. This reuses
 an existing search and reporter rather than adding a new WDK attribute-fetch call.
+
+The Orthologs table (the record's own `source_id` plus every checked
+`ortho_gene_source_id`) is simply the first caller of this resolver, not something the
+resolver is aware of or specialized for. Any other place in the UI that ends up with a list
+of gene IDs — a different table, a basket, a step result — can call the same
+`resolveGeneFeatures` with no changes.
 
 **Popset and ortho-site (follow-on, same shape):** each needs its own `IdList search +
 bed-capable reporter` (or, for ortho-site, a "whole sequence" resolver producing
@@ -118,7 +130,7 @@ bed-capable reporter` (or, for ortho-site, a "whole sequence" resolver producing
 CGI form posts `sid`/`start`/`end` hidden inputs that are never populated (dead fields) — so
 this isn't a like-for-like migration for Popset, it's a fix. Building the real resolver is
 separate work; this design defines the interface it must satisfy (`Promise<Feature[]>`) and
-scopes only the Orthologs resolver for initial implementation.
+scopes only `resolveGeneFeatures` for initial implementation.
 
 ### 2. Shared submit/poll/results package
 
