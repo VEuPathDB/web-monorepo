@@ -97,7 +97,7 @@ class AnswerFilter extends React.Component {
       <div>
         <ul>
           <li>
-            The data sets in your refined list will contain ALL your terms (or
+            The datasets in your refined list will contain ALL your terms (or
             phrases, when using double quotes), in ANY of the selected fields.
           </li>
           <li>Click on the arrow inside the box to select/unselect fields. </li>
