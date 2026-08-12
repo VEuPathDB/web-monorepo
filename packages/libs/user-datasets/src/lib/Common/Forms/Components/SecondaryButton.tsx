@@ -9,8 +9,11 @@ export interface SecondaryButtonProps {
   readonly onClick: Runnable;
 }
 
-export function SecondaryButton(props: SecondaryButtonProps): ReactElement {
-  return <button type="button" className="ud-secondary-action" {...props}>
-    {props.children}
+export function SecondaryButton({
+  children,
+  ...attrs
+}: SecondaryButtonProps): ReactElement {
+  return <button type="button" className="ud-secondary-action" {...attrs}>
+    {children}
   </button>;
 }
