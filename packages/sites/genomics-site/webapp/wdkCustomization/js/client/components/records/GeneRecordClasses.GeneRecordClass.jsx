@@ -1623,22 +1623,22 @@ class OrthologsForm extends SortKeyTable {
     this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
   }
 
-  isRowSelected({ ortho_gene_source_id }) {
-    return this.state.selectedRowIds.includes(ortho_gene_source_id);
+  isRowSelected({ ortho_source_id }) {
+    return this.state.selectedRowIds.includes(ortho_source_id);
   }
 
-  onRowSelect({ ortho_gene_source_id }) {
+  onRowSelect({ ortho_source_id }) {
     this.setState((state) => ({
       ...state,
-      selectedRowIds: state.selectedRowIds.concat(ortho_gene_source_id),
+      selectedRowIds: state.selectedRowIds.concat(ortho_source_id),
     }));
   }
 
-  onRowDeselect({ ortho_gene_source_id }) {
+  onRowDeselect({ ortho_source_id }) {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter(
-        (id) => id !== ortho_gene_source_id
+        (id) => id !== ortho_source_id
       ),
     }));
   }
@@ -1647,7 +1647,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(
-        rows.map((row) => row['ortho_gene_source_id'])
+        rows.map((row) => row['ortho_source_id'])
       ),
     }));
   }
@@ -1656,7 +1656,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter((row) =>
-        rows.includes(row['ortho_gene_source_id'])
+        rows.includes(row['ortho_source_id'])
       ),
     }));
   }
