@@ -3,6 +3,10 @@
   width: 1280px;
   min-height: 500px;
 
+  > p {
+    font-style: italic;
+  }
+
   > .MesaComponent {
     min-height: 350px;
   }
