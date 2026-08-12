@@ -1172,10 +1172,19 @@ URLs relative to the WDK service base, same as `gene-list-export-utils.tsx`'s
 `parseBedToFeatures` is still a best guess pending a real sample** — see the note above this
 task; it must be verified/corrected before this task's tests are trusted:
 
+**Post-implementation correction:** `@veupathdb/compute-platform-job`'s `package.json` has no
+`main`/`exports` field (matching the established convention for this whole family of
+in-monorepo "libs" packages — `user-datasets` has the identical gap, and no package in this
+family is ever imported by bare name anywhere in the codebase). A bare
+`from '@veupathdb/compute-platform-job'` import cannot resolve. Use a deep import into the
+source file instead, `@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes` — this was
+discovered and fixed during Task 6's actual implementation; Tasks 8 and 12 below have been
+corrected to match:
+
 ```typescript
 // packages/sites/genomics-site/webapp/wdkCustomization/js/client/util/resolveTranscriptFeatures.ts
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
-import { Feature } from '@veupathdb/compute-platform-job';
+import { Feature } from '@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes';
 
 const TRANSCRIPT_ID_LIST_SEARCH = 'GeneByLocusTag';
 const TRANSCRIPT_ID_PARAM = 'ds_gene_ids';
@@ -1230,19 +1239,21 @@ export async function resolveTranscriptFeatures(
     }
   );
 
-  const bedText = await fetchTemporaryResultText(
-    wdkService,
-    temporaryResultPath
-  );
+  const bedText = await fetchTemporaryResultText(temporaryResultPath);
 
   return parseBedToFeatures(bedText);
 }
 
+// Post-implementation correction: WdkService#getConfig()'s ServiceConfig has
+// no endpoint/URL field at all (confirmed against
+// packages/libs/wdk-client/src/Service/ServiceBase.ts) — the WDK service
+// base URL comes from the site's own build-time config instead
+// (window.__SITE_CONFIG__, via @veupathdb/web-common/lib/config's `endpoint`
+// export — add `import { endpoint } from '@veupathdb/web-common/lib/config';`
+// to this file's top-level imports).
 async function fetchTemporaryResultText(
-  wdkService: WdkService,
   temporaryResultPath: string
 ): Promise<string> {
-  const { endpoint } = await wdkService.getConfig();
   const response = await fetch(`${endpoint}${temporaryResultPath}`);
   return response.text();
 }
@@ -1494,7 +1505,7 @@ git commit -m "Add ComputeJobPage component"
 **Interfaces:**
 
 - Consumes: `ComputeJobPage` from Task 7; `SequenceRetrievalApi` from Task 2.
-- Produces: `ComputeJobRouter` component with props `{ api: SequenceRetrievalApi }`, exposing `/result/:jobId`. Task 9 (`computeJobRoutes.tsx` in genomics-site) is the consumer. `index.ts` re-exports everything public for `@veupathdb/compute-platform-job` imports (used by Task 6's resolver, importing `Feature`).
+- Produces: `ComputeJobRouter` component with props `{ api: SequenceRetrievalApi }`, exposing `/result/:jobId`. Task 9 (`computeJobRoutes.tsx` in genomics-site) is the consumer. `index.ts` re-exports everything public as a matter of good package hygiene, but note (established during Task 6) that this package has no `main`/`exports` field, so nothing outside the package can actually resolve a bare `@veupathdb/compute-platform-job` import — every consumer deep-imports into the specific source file (e.g. Task 6's resolver imports `Feature` from `@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes`, not from the package root).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -1601,7 +1612,9 @@ git commit -m "Add ComputeJobRouter and package exports"
 
 - [ ] **Step 2: Write `computeJobRoutes.tsx`**
 
-Needs a `SequenceRetrievalApi` instance, which needs a `baseUrl` (the sequence-retrieval service's URL) and the site's `WdkService`. Follow the `BlastApi.getBlastClient` memoization pattern (`FetchClientWithCredentials.getClient`, already inherited) so route re-renders don't construct a new client instance each time:
+Needs a `SequenceRetrievalApi` instance, which needs a `baseUrl` (the sequence-retrieval service's URL) and the site's `WdkService`. Follow the `BlastApi.getBlastClient` memoization pattern (`FetchClientWithCredentials.getClient`, already inherited) so route re-renders don't construct a new client instance each time.
+
+**Import note (established during Task 6):** `@veupathdb/compute-platform-job` has no `main`/`exports` field, matching every other in-monorepo "libs" package of this shape (`user-datasets` has the identical gap) — none of them are ever imported by bare name anywhere in this codebase. Deep-import into source, the same way Task 6's resolver does:
 
 ```tsx
 // packages/sites/genomics-site/webapp/wdkCustomization/js/client/computeJobRoutes.tsx
@@ -1611,10 +1624,8 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import {
-  ComputeJobRouter,
-  SequenceRetrievalApi,
-} from '@veupathdb/compute-platform-job';
+import { ComputeJobRouter } from '@veupathdb/compute-platform-job/src/lib/Controllers/ComputeJobRouter';
+import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 
 // TODO: confirm the actual deployed base URL for service-sequence-retrieval
 // with the team before this ships — this is a placeholder host.
@@ -2095,7 +2106,9 @@ Add the format-code mapping and imports near the top of the file:
 import { useHistory } from 'react-router';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job';
+// Deep import — see the note in Task 8: this package has no main/exports
+// field, matching every other in-monorepo "libs" package of this shape.
+import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 
 // Old CGI form codes -> new service MsaFormat values (see design doc's
