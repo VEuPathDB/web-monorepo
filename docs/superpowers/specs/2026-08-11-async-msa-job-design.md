@@ -94,28 +94,24 @@ regardless of which table the user started from.
 - **No cancel/delete endpoint exists anywhere in `lib-compute-platform` or
   `service-sequence-retrieval`.** Once submitted, a job cannot be stopped early — the client
   can only stop watching it.
-- **Expiration:** per `lib-compute-platform`'s readme, job results are pruned after a
-  configurable idle period (30 days by default) and the job record moves to `expired`.
-  Resubmitting the _identical_ request via `POST` transparently restarts an expired job under
-  the same content-addressed `jobID` — this is the platform's actual "rerun" mechanism, not a
-  distinct endpoint. That means a `GET /jobs/{id}` poll can only ever observe `expired` on a
-  job nobody has resubmitted since it lapsed — practically, a bookmarked/returned-to
-  `/result/:jobId` page, since that path only ever calls `GET`, never re-`POST`s. The client
-  can't reconstruct the original `Feature[]`/`msaOptions` itself (the page only has the
-  `jobId` from the URL, and the service never echoes params back) — which is why the new
-  `POST /jobs/{id}/rerun` endpoint below exists. Whether a data release should also
-  purge/expire jobs (independent of the 30-day idle prune) is a separate backend/ops concern,
-  tracked in Non-goals.
-- **Rerun (new, backend work this design depends on):** `service-sequence-retrieval` will add
-  `POST /jobs/{id}/rerun`, which reruns a job — most usefully an expired one — using its
-  originally submitted request, with no request body needed from the caller. Confirmed
-  buildable entirely within `service-sequence-retrieval`, no `lib-compute-platform` change
-  required: `AsyncJob.config` (the original request) survives in Postgres past expiration —
-  only the S3-side copy is pruned — so the endpoint just reads `config` back via
-  `AsyncPlatform.getJob(jobID)` and calls `AsyncPlatform.submitJob(...)` with that same
-  `jobID`, identical in effect to a client re-`POST`ing the original JSON itself. This is the
-  one piece of backend work this design requires beyond what already exists; see the results
-  page's `expired` handling below.
+- **Expiration is a dead end by design — there is no rerun.** Per `lib-compute-platform`'s
+  readme, job results are pruned after a configurable idle period (30 days by default) and the
+  job record moves to `expired`. Resubmitting the _identical_ request via `POST` transparently
+  restarts an expired job under the same content-addressed `jobID` — but "identical request"
+  means the resolved `Feature[]` (genomic intervals), not the user's original input (gene IDs).
+  **The job ID is a hash of intervals, not of the gene IDs that produced them** — nothing about
+  the ID or the stored `config` remembers which gene IDs were selected. Resubmitting those
+  stale intervals after a new data release would silently realign against coordinates that may
+  no longer be valid (annotation shifts, re-numbered builds), producing a result that looks
+  fine but reflects superseded data. A hypothetical `POST /jobs/{id}/rerun` — rerun by ID alone
+  — would do exactly that: it can only replay the stored intervals, never re-resolve the
+  original gene IDs against current data, because the intervals are all it has. That makes such
+  an endpoint actively wrong to build, not merely extra work — out of scope for that reason, not
+  because it's hard. The only correct recovery is what the resolver already does on every fresh
+  submission: re-resolve the user's original gene-ID selection into fresh intervals. See the
+  results page's `expired` handling below — it sends the user back to reselect and resubmit,
+  full stop. Whether a data release should also purge/expire jobs outright (independent of the
+  30-day idle prune) is a separate backend/ops concern, tracked in Non-goals.
 
 ## Architecture: three layers
 
@@ -213,9 +209,9 @@ way `service-sequence-retrieval` does — not a third, competing "compute job" p
 - **`lib/utils/ServiceTypes.ts`** — `Feature`, `MsaOptions`, `MsaFormat`, `JobResponse`
   (`jobID`/`status`/`queuePosition`), `JobStatus` union.
 - **`lib/utils/api.ts`** — `SequenceRetrievalApi extends FetchClientWithCredentials`:
-  `submitJob(sequenceType, request)`, `fetchJob(jobId)`, `rerunJob(jobId)`,
-  `fetchJobFiles(jobId)`, `fetchJobFile(jobId, name)`. Modeled on `multi-blast`'s `BlastApi`.
-  `rerunJob` calls the new `POST /jobs/{id}/rerun` (see Service contract).
+  `submitJob(sequenceType, request)`, `fetchJob(jobId)`, `fetchJobFiles(jobId)`,
+  `fetchJobFile(jobId, name)`. Modeled on `multi-blast`'s `BlastApi`. No `rerunJob` — no such
+  endpoint exists, and none should (see Service contract).
 - **`lib/hooks/useJobPolling.ts`** — recursive-`setTimeout` hook modeled on
   `useDatasetPolling`/`polling-schedule.ts` (tiered backoff: 2s for the first ~10s, 5s to
   ~40s, 15s steady-state; pause while `document.hidden`, force-poll + backoff reset on tab
@@ -224,30 +220,22 @@ way `service-sequence-retrieval` does — not a third, competing "compute job" p
   (1s/2s/4s, cap 3 retries) before surfacing, separate from the normal status-polling
   interval — so a single dropped request doesn't fall back to the slow tier.
 - **`lib/components/ComputeJobPage.tsx`** — the "Running Compute Job" page. Renders:
-  - **Title distinguishes a fresh run from a rerun.** These are different situations for the
-    user — a rerun means the page just triggered real compute time on a job that had already
-    finished once — so the page tracks, in its own local state (not derivable from `status`
-    alone, since the poll right after calling `rerunJob` returns `queued`/`in-progress` just
-    like a normal first run), whether it has called `rerunJob` this visit:
-    - Never called `rerunJob`: "Running Compute Job" (or "Running Job {jobId}").
-    - Called `rerunJob` this visit (i.e. the page loaded and found the job already
-      `expired`): "Re-running Expired Job {jobId}".
+  - Title ("Running Compute Job").
   - Params summary (e.g. "13 Transcripts, FASTA output format") — passed in as props at
     submit time, not re-derived from the job response (the service doesn't echo back the
-    params). On the rerun path there are no such props (the page only has the `jobId` from
-    the URL); the params summary is simply omitted rather than shown as blank/wrong.
+    params).
   - Live status while polling (spinner + "queued"/"running" copy, matching the persistent,
     content-changing indicator style validated in the user-datasets polling design — no
     flashing/disappearing status text).
   - On `complete`: fetch file list, fetch `output` (and `guidetree.dnd` if present), render
     inline (plain text / HTML preview for `clustal_dnd`) plus a download link.
-  - On `failed`: an error state with no retry action — a real execution failure, not
-    something rerunning the same input would fix — directing the user back to the record
-    page to resubmit (with different input) if they want to try again.
-  - On `expired`: set the "reran" flag, call `rerunJob(jobId)`, then resume polling under
-    the "Re-running Expired Job" title. No dead end and no need for the user to
-    reselect/resubmit themselves — just a visibly different heading so they understand why a
-    supposedly-finished job is running again.
+  - On `failed` or `expired`: both are dead ends, for different reasons. `failed` is a real
+    execution error — rerunning identical input wouldn't fix it. `expired` is a dead end
+    because rerunning identical input is exactly the wrong move: the job ID and its stored
+    request are a hash of resolved genomic intervals, not of the original gene IDs, so nothing
+    server-side remembers what to re-resolve against current data (see Service contract). Both
+    states direct the user back to the record page to reselect and resubmit from scratch,
+    which is what re-runs the resolver against current data.
 - **`lib/controllers/ComputeJobRouter.tsx`** — exposes `/result/:jobId`.
 
 Each site adds a thin `computeJobRoutes.tsx` (its own `RouteEntry[]`, e.g. path
@@ -257,15 +245,11 @@ Each site adds a thin `computeJobRoutes.tsx` (its own `RouteEntry[]`, e.g. path
 **Revisit/return behavior:** the route is keyed purely on `jobId` in the URL, and job status
 comes from `GET /jobs/:id` — nothing is cached client-side across navigations. A user can
 leave the page and come back (bookmark, browser back/forward, sharing the URL) and the page
-re-derives correct state from scratch — this is also, in practice, the only way this page
-calls `rerunJob` at all, since a job that's still running or already complete never reaches
-`expired` in the first place:
+re-derives correct state from scratch:
 
 1. Still running (`queued`/`in-progress`) → "Running Compute Job", polling resumes normally.
 2. Complete → the result is fetched and shown.
-3. Failed → shown as a dead end (see above).
-4. Expired → `rerunJob` is called, the title switches to "Re-running Expired Job", and
-   polling resumes.
+3. Failed or expired → both are dead ends (see above); the user goes back to the record page.
 
 There is no separate "job history" list for this feature (unlike multi-blast's `/all` jobs
 list) — out of scope unless requested.
@@ -288,6 +272,16 @@ multi-minute job. The only change is what happens on confirm: instead of
   real lookup).
 - **Job cancellation.** Not possible — no such endpoint exists in `lib-compute-platform` or
   `service-sequence-retrieval`.
+- **A "rerun by jobId" endpoint.** Deliberately not proposed, not merely undone: the
+  content-addressed `jobID` (and the `config` stored alongside it in `lib-compute-platform`)
+  is a hash of resolved `Feature[]` intervals, not of the gene IDs the resolver started from.
+  An endpoint that reruns "by ID alone" could only replay those stored intervals — it has no
+  way to re-resolve the original gene selection against current data, so after a data release
+  changes annotation it would silently realign a completed-looking alignment against
+  coordinates that may no longer mean what they used to. That is a correctness hazard the
+  endpoint would introduce, not a convenience it's missing until built. The only correct
+  recovery path is what already happens on a fresh submission: re-run the resolver against
+  current data, which requires the user's original gene-ID selection, not just a `jobId`.
 - **Data-release-driven job expiration/purging.** Flagged as desired (expire all jobs on new
   data release, ~every 2 months) but this is backend/ops policy (a queue purge or TTL
   configured around the release cadence), not something the client can or should enforce.
