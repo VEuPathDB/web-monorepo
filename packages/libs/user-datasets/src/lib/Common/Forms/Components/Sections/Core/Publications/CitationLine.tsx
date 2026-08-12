@@ -9,8 +9,6 @@ interface CitationLineProps {
 export function CitationLine(props: CitationLineProps): ReactElement {
   const result = collapseStatus(props.status);
 
-  console.log(props);
-
   let style: CSSProperties | undefined;
   let className: string | undefined;
 
