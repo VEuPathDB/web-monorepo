@@ -29,12 +29,20 @@ export async function resolveTranscriptFeatures(
   transcriptIds: string[],
   flankingOffsets: FlankingOffsets = { upstream: 0, downstream: 0 }
 ): Promise<Feature[]> {
+  // ds_gene_ids is an input-dataset param: the search only accepts a
+  // dataset ID, not a raw list of transcript IDs, so the IDs must be
+  // uploaded first via the datasets endpoint.
+  const datasetId = await wdkService.createDataset({
+    sourceType: 'idList',
+    sourceContent: { ids: transcriptIds },
+  });
+
   const temporaryResultPath = await wdkService.getTemporaryResultPath(
     {
       searchName: TRANSCRIPT_ID_LIST_SEARCH,
       searchConfig: {
         parameters: {
-          [TRANSCRIPT_ID_PARAM]: transcriptIds.join(','),
+          [TRANSCRIPT_ID_PARAM]: String(datasetId),
         },
       },
     },

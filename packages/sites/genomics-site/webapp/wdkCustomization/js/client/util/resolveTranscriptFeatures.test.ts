@@ -1,6 +1,7 @@
 import { resolveTranscriptFeatures } from './resolveTranscriptFeatures';
 
 function makeFakeWdkService(bedText: string) {
+  const createDataset = jest.fn().mockResolvedValue(42);
   const getTemporaryResultPath = jest
     .fn()
     .mockResolvedValue('/temporary-results/xyz');
@@ -8,6 +9,7 @@ function makeFakeWdkService(bedText: string) {
     text: () => Promise.resolve(bedText),
   });
   return {
+    createDataset,
     getTemporaryResultPath,
   } as any;
 }
@@ -18,19 +20,24 @@ afterEach(() => {
 });
 
 describe('resolveTranscriptFeatures', () => {
-  it('requests bedReporter for the given transcript IDs', async () => {
+  it('uploads the transcript IDs as a dataset before requesting bedReporter', async () => {
     const wdkService = makeFakeWdkService(
       'PF3D7_0200300\t100\t500\tPF3D7_0200300.1\t0\t+\n'
     );
 
     await resolveTranscriptFeatures(wdkService, ['PF3D7_0200300.1']);
 
+    expect(wdkService.createDataset).toHaveBeenCalledWith({
+      sourceType: 'idList',
+      sourceContent: { ids: ['PF3D7_0200300.1'] },
+    });
+
     expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
       expect.objectContaining({
         searchName: 'GeneByLocusTag',
         searchConfig: expect.objectContaining({
           parameters: expect.objectContaining({
-            ds_gene_ids: 'PF3D7_0200300.1',
+            ds_gene_ids: '42',
           }),
         }),
       }),
