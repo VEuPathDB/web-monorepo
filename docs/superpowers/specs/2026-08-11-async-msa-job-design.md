@@ -258,13 +258,17 @@ multi-minute job. The only change is what happens on confirm: instead of
   real lookup).
 - **Job cancellation.** Not possible — no such endpoint exists in `lib-compute-platform` or
   `service-sequence-retrieval`.
-- **Restarting an expired job from just its `jobId`.** The platform's only restart mechanism
-  is resubmitting the full original request via `POST` (which lands on the same
-  content-addressed `jobID`) — there is no "rerun by ID" endpoint, so a bookmarked
-  `/result/:jobId` page that hits `expired` has no way to recover on its own; it shows a
-  terminal state directing the user back to reselect and resubmit. A "rerun by ID" endpoint
-  would remove that dead end, but doesn't exist today — a backend feature request, not
-  something this design can build against.
+- **Restarting an expired job from just its `jobId`.** No such endpoint exists in
+  `service-sequence-retrieval` today, so a bookmarked `/result/:jobId` page that hits `expired`
+  has no way to recover on its own; it shows a terminal state directing the user back to
+  reselect and resubmit. This is confirmed buildable, though: `lib-compute-platform`'s
+  `AsyncJob.config` (the original submitted request) is preserved in Postgres even after a job
+  expires — only the S3-side output/config copy is pruned — so `service-sequence-retrieval`
+  could add a `POST /jobs/{id}/rerun`-style endpoint using only `lib-compute-platform`'s
+  existing public API (`AsyncPlatform.getJob(jobID)` to read back `config`, then
+  `AsyncPlatform.submitJob(...)` with that same `jobID`) — no `lib-compute-platform` change
+  needed. Still a backend feature request outside this design's scope, but a small, well-
+  scoped, service-local one rather than an open-ended ask.
 - **Data-release-driven job expiration/purging.** Flagged as desired (expire all jobs on new
   data release, ~every 2 months) but this is backend/ops policy (a queue purge or TTL
   configured around the release cadence), not something the client can or should enforce.
