@@ -475,52 +475,67 @@ git commit -m "Add SequenceRetrievalApi client"
 
 ---
 
-## Task 3: Discovery spike — confirm `bedReporter` shape and the strand attribute name
+## Task 3: Record `bedReporter` findings (already resolved)
 
-**This task produces a short findings note, not application code.** Both facts are genuine unknowns per the design doc's Open questions history — do not let Task 6 (the resolver) proceed on a guessed shape.
+**Both unknowns this task originally existed to discover are now resolved**, confirmed
+against a live WDK instance directly by the user rather than by a subagent (no WDK
+credentials are available in the implementation sandbox — confirmed by the controller before
+this task was dispatched: a live host is reachable, but returns an interactive login redirect
+a subagent cannot complete). This task is now just "write the findings down for the record,"
+not a discovery spike.
 
 **Files:**
 
-- Create: `docs/superpowers/plans/2026-08-12-async-msa-jobs-bedreporter-findings.md` (scratch findings doc, committed for the record)
+- Create: `docs/superpowers/plans/2026-08-12-async-msa-jobs-bedreporter-findings.md` (findings doc, committed for the record)
 
-- [ ] **Step 1: Find a running WDK instance or existing bedReporter usage server-side**
+- [ ] **Step 1: Write the findings doc**
 
-This cannot be answered from the web-monorepo client repo alone (confirmed in the design doc's research — no client code calls `bedReporter` today). Two ways to resolve it, in order of preference:
+Write `docs/superpowers/plans/2026-08-12-async-msa-jobs-bedreporter-findings.md` containing:
 
-1. If a local or staging WDK service is reachable, call it directly:
-   ```bash
-   curl -s -X POST 'https://<wdk-service-host>/record-types/transcript/searches/GeneByLocusTag/reports/standard' \
-     -H 'Content-Type: application/json' \
-     -d '{"searchConfig":{"parameters":{"ds_gene_ids":"PF3D7_0200300"}},"reportConfig":{"format":"bedReporter"}}'
-   ```
-   Adjust `reportConfig` shape based on the actual 400 error message if the first guess is wrong — WDK typically echoes the expected shape in validation errors.
-2. If no live instance is reachable, grep the WDK service's own source (a separate repo, not web-monorepo) for `bedReporter`'s Java reporter class to read its expected config fields directly. Search for a class implementing WDK's `Reporter` interface with a `getConfigClass()` or `@Reporter(name = "bedReporter")`-style annotation.
+**`bedReporter`'s confirmed `reportConfig` shape:**
 
-- [ ] **Step 2: Determine the strand attribute's exact name**
-
-From a live WDK instance, fetch the `transcript` record class's attribute metadata and search for anything strand-related:
-
-```bash
-curl -s 'https://<wdk-service-host>/record-types/transcript' | grep -io '"[a-z_]*strand[a-z_]*"'
+```json
+{
+  "attachmentType": "plain",
+  "deflineType": "full",
+  "deflineFields": ["gene_id"],
+  "sequenceFormat": "fixed_width",
+  "basesPerLine": 60,
+  "type": "genomic",
+  "reverseAndComplement": false,
+  "upstreamAnchor": "Start",
+  "upstreamSign": "plus",
+  "upstreamOffset": 0,
+  "downstreamAnchor": "End",
+  "downstreamSign": "plus",
+  "downstreamOffset": 0,
+  "dnaComponent": "exon",
+  "transcriptComponent": "five_prime_utr",
+  "splicedGenomic": "cds"
+}
 ```
 
-If no live instance is reachable, check the transcript record class's XML model definition in `ApiCommonModel` (a separate repo) for an attribute query selecting strand, or ask a team member who has DB/model access.
+`upstreamOffset`/`downstreamOffset` map directly onto the old CGI form's `oneOffset`/
+`twoOffset` upstream/downstream-nt inputs — this report accepts flanking-region offsets
+natively, so `resolveTranscriptFeatures` (Task 6) does not need any client-side coordinate
+math to support them.
 
-- [ ] **Step 3: Record findings**
+**A confirmed real sample of `bedReporter`'s BED output** (for gene `PF3D7_1133400`):
 
-Write `docs/superpowers/plans/2026-08-12-async-msa-jobs-bedreporter-findings.md` with:
+```
+Pf3D7_11_v3	1292965	1296696	PF3D7_1133400.1	0	+
+```
 
-- The exact `reportConfig` shape `bedReporter` accepts (field names, whether `attributes` is required/ignored, any format options).
-- A sample of the actual BED text `bedReporter` returns for a small test gene ID, so Task 6's parser can be written against a real example rather than an assumed BED8/BED12 layout.
-- The confirmed strand attribute name.
+Tab-separated, 6 columns: `chrom`, `chromStart` (0-based), `chromEnd`, `name` (the transcript
+ID), `score`, `strand` (`+`/`-`, standard BED symbols) — a standard 6-column BED format. Task
+6's `parseBedToFeatures` was already written against exactly this shape; this sample confirms
+it rather than requiring any correction.
 
-If this task cannot be completed (no WDK access available in this environment), **stop and flag to the user** rather than guessing — Task 6 depends on this and a wrong guess produces a resolver that silently returns wrong `Feature[]` data (wrong strand, or a parse that reads the wrong BED column as `start`/`end`).
-
-- [ ] **Step 4: Commit the findings note**
+- [ ] **Step 2: Commit the findings note**
 
 ```bash
 git add docs/superpowers/plans/2026-08-12-async-msa-jobs-bedreporter-findings.md
-git commit -m "Record bedReporter config shape and strand attribute name findings"
+git commit -m "Record confirmed bedReporter config shape and BED output sample"
 ```
 
 ---
@@ -1003,7 +1018,49 @@ git commit -m "Add useJobPolling hook"
 
 ## Task 6: `resolveTranscriptFeatures` resolver
 
-**This task depends on Task 3's findings.** Do not write the BED parser until Task 3 has recorded a real sample of `bedReporter`'s output — the field below marked "per Task 3 findings" must be filled in from that sample, not assumed.
+**`bedReporter`'s `reportConfig` shape is now confirmed** (verified against a live WDK instance
+by the user):
+
+```json
+{
+  "attachmentType": "plain",
+  "deflineType": "full",
+  "deflineFields": ["gene_id"],
+  "sequenceFormat": "fixed_width",
+  "basesPerLine": 60,
+  "type": "genomic",
+  "reverseAndComplement": false,
+  "upstreamAnchor": "Start",
+  "upstreamSign": "plus",
+  "upstreamOffset": 0,
+  "downstreamAnchor": "End",
+  "downstreamSign": "plus",
+  "downstreamOffset": 0,
+  "dnaComponent": "exon",
+  "transcriptComponent": "five_prime_utr",
+  "splicedGenomic": "cds"
+}
+```
+
+Crucially, `upstreamOffset`/`downstreamOffset` are real fields this report accepts — this is
+what **resolves** the flanking-offset gap the earlier draft of this plan flagged as unhandled:
+the old CGI form's `oneOffset`/`twoOffset` inputs (upstream/downstream nt, shown only for
+genomic sequence type) map directly onto these two fields. `resolveTranscriptFeatures` must
+therefore accept them as parameters and pass them through — not silently drop them.
+
+**The BED output format is now also confirmed** (real sample, verified against a live WDK
+instance by the user):
+
+```
+Pf3D7_11_v3	1292965	1296696	PF3D7_1133400.1	0	+
+```
+
+Tab-separated, 6 columns, in order: `chrom`, `chromStart` (0-based), `chromEnd`, `name`
+(the transcript ID), `score`, `strand` (`+`/`-`, standard BED symbols). This matches the
+format the plan's `parseBedToFeatures` was already written against — no code or test-fixture
+changes needed as a result of this sample; it confirms the guess rather than correcting it.
+Both of Task 3's unknowns are now resolved: this BED-format sample, and the `bedReporter`
+`reportConfig` shape (above). Task 3 itself can be marked complete without further discovery.
 
 **Files:**
 
@@ -1013,7 +1070,7 @@ git commit -m "Add useJobPolling hook"
 **Interfaces:**
 
 - Consumes: `Feature` from `@veupathdb/compute-platform-job`; `WdkService` from `@veupathdb/wdk-client/lib/Core`.
-- Produces: `resolveTranscriptFeatures(wdkService: WdkService, transcriptIds: string[]): Promise<Feature[]>`. Task 12 (`OrthologsForm`'s confirm handler) is the sole consumer.
+- Produces: `resolveTranscriptFeatures(wdkService: WdkService, transcriptIds: string[], flankingOffsets?: { upstream: number; downstream: number }): Promise<Feature[]>`. Task 12 (`OrthologsForm`'s confirm handler) is the sole consumer, and must pass the user's entered upstream/downstream nt values through as `flankingOffsets` when sequence type is genomic.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1108,7 +1165,12 @@ Expected: FAIL — `Cannot find module './resolveTranscriptFeatures'`
 
 - [ ] **Step 3: Write `resolveTranscriptFeatures.ts`**
 
-Modeled on `gene-list-export-utils.tsx`'s `getGeneListTemporaryResultUrl` (which uses `getTemporaryResultPath` with `'attributesTabular'`) — swap the report name and config for `'bedReporter'` per Task 3's findings, and fetch the resulting path's content directly (temporary-result paths are plain GET-able URLs relative to the WDK service base, same as `getGeneListTemporaryResultUrl` constructs). **The `reportConfig` object passed as the third argument, and the BED-parsing logic, must be updated to match Task 3's actual findings before this step is done** — the shapes below are the best guess from `attributesTabular`'s precedent and a standard 6-column BED format, not confirmed:
+Uses `getTemporaryResultPath` with the now-confirmed `bedReporter` config shape (see above),
+and fetches the resulting path's content directly (temporary-result paths are plain GET-able
+URLs relative to the WDK service base, same as `gene-list-export-utils.tsx`'s
+`getGeneListTemporaryResultUrl` constructs for `attributesTabular`). **The BED-parsing logic in
+`parseBedToFeatures` is still a best guess pending a real sample** — see the note above this
+task; it must be verified/corrected before this task's tests are trusted:
 
 ```typescript
 // packages/sites/genomics-site/webapp/wdkCustomization/js/client/util/resolveTranscriptFeatures.ts
@@ -1118,14 +1180,25 @@ import { Feature } from '@veupathdb/compute-platform-job';
 const TRANSCRIPT_ID_LIST_SEARCH = 'GeneByLocusTag';
 const TRANSCRIPT_ID_PARAM = 'ds_gene_ids';
 
+interface FlankingOffsets {
+  upstream: number;
+  downstream: number;
+}
+
 /**
  * Resolves a plain list of transcript IDs to Feature[] via the existing
  * GeneByLocusTag search's bedReporter report. Has no notion of where the IDs
  * came from — any transcript-ID-producing UI can call this.
+ *
+ * flankingOffsets carries the old CGI form's upstream/downstream nt inputs
+ * (only meaningful for genomic sequence type) straight into bedReporter's
+ * own upstreamOffset/downstreamOffset fields, confirmed to exist on this
+ * report's reportConfig.
  */
 export async function resolveTranscriptFeatures(
   wdkService: WdkService,
-  transcriptIds: string[]
+  transcriptIds: string[],
+  flankingOffsets: FlankingOffsets = { upstream: 0, downstream: 0 }
 ): Promise<Feature[]> {
   const temporaryResultPath = await wdkService.getTemporaryResultPath(
     {
@@ -1138,11 +1211,22 @@ export async function resolveTranscriptFeatures(
     },
     'bedReporter',
     {
-      // TODO(Task 3 findings): confirm this reportConfig shape against a
-      // live WDK instance. attributesTabular's shape (includeHeader,
-      // attachmentType) is the closest known precedent but bedReporter may
-      // take different or no config fields.
       attachmentType: 'plain',
+      deflineType: 'full',
+      deflineFields: ['gene_id'],
+      sequenceFormat: 'fixed_width',
+      basesPerLine: 60,
+      type: 'genomic',
+      reverseAndComplement: false,
+      upstreamAnchor: 'Start',
+      upstreamSign: 'plus',
+      upstreamOffset: flankingOffsets.upstream,
+      downstreamAnchor: 'End',
+      downstreamSign: 'plus',
+      downstreamOffset: flankingOffsets.downstream,
+      dnaComponent: 'exon',
+      transcriptComponent: 'five_prime_utr',
+      splicedGenomic: 'cds',
     }
   );
 
@@ -1884,10 +1968,16 @@ function TranscriptMsaSubmission({
   const [clustalOutFormat, setClustalOutFormat] = useState('clu');
 
   const handleConfirm = async () => {
-    const features = await resolveTranscriptFeatures(wdkService, [
-      sourceId,
-      ...selectedTranscriptIds,
-    ]);
+    const features = await resolveTranscriptFeatures(
+      wdkService,
+      [sourceId, ...selectedTranscriptIds],
+      sequenceTypeChoice === 'genomic'
+        ? {
+            upstream: Number(oneOffset) || 0,
+            downstream: Number(twoOffset) || 0,
+          }
+        : undefined
+    );
 
     const sequenceType =
       sequenceTypeChoice === 'genomic' ? 'genomic' : 'protein';
@@ -2024,7 +2114,7 @@ const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
 const SEQUENCE_RETRIEVAL_BASE_URL = 'https://sequence-retrieval.example.org';
 ```
 
-Note this task deliberately drops the upstream/downstream flanking-offset values (`oneOffset`/`twoOffset`) from actually being sent anywhere — the old CGI form applied them server-side when building genomic coordinates from gene IDs, but `resolveTranscriptFeatures`'s current implementation (Task 6) returns exon/CDS-level BED coordinates from `bedReporter` directly, with no flanking-offset parameter. **This is a real gap, not an oversight to silently ignore**: flag it to the user/team before this ships — either `bedReporter` needs a flanking-region parameter (extending Task 3's discovery), or the resolver needs to add the offsets to `start`/`end` client-side after parsing the BED response, which requires knowing the contig's total length to avoid producing an out-of-bounds `end`. Do not guess at a fix within this task; the offset inputs are left in the UI (matching the old form) but not yet wired to anything, and that gap must be called out explicitly when this task is reviewed.
+The upstream/downstream flanking-offset values (`oneOffset`/`twoOffset`) are wired through to `resolveTranscriptFeatures`'s `flankingOffsets` parameter (only when sequence type is genomic — the old form only showed these inputs in that case too), which passes them straight into `bedReporter`'s own `upstreamOffset`/`downstreamOffset` fields (confirmed to exist on that report — see Task 3/6). This is no longer a gap: `bedReporter` accepts flanking offsets natively, so no client-side coordinate math against contig length is needed.
 
 - [ ] **Step 3: Run the existing test suite for regressions**
 
@@ -2059,8 +2149,14 @@ git commit -m "Wire Orthologs confirm dialog to resolve, submit, and navigate to
 - Confirm dialog kept, action changed → Task 12
 - Non-goals (Popset/ortho-site resolvers, cancellation, rerun endpoint, data-release purging, job history list) → correctly excluded from every task above; no task builds toward any of them.
 
-**Known gaps surfaced by this plan, not hidden:**
+**Resolved during execution, before Task 3 was dispatched:** the controller confirmed no
+implementer subagent can reach a live, authenticated WDK instance in this sandbox (network
+access exists; the response is an interactive login redirect). Rather than let Task 3 spin on
+that dead end, the user supplied both of Task 3's original unknowns directly — `bedReporter`'s
+confirmed `reportConfig` shape (including `upstreamOffset`/`downstreamOffset`, which resolves
+the flanking-offset gap this plan originally flagged in Task 12) and a real BED-output sample
+confirming the guessed 6-column format was already correct. Task 3 is now a
+write-up-and-commit task, not a discovery spike; Task 6 and Task 12 were updated in place to
+use the confirmed shapes rather than guesses.
 
-- Flanking-offset (`oneOffset`/`twoOffset`) handling is left unresolved in Task 12 and explicitly flagged rather than guessed at.
-- Task 3's `bedReporter` shape and strand-attribute discovery may require access this environment doesn't have (a live WDK instance) — Task 3 says to stop and flag rather than fabricate an answer.
 - `SEQUENCE_RETRIEVAL_BASE_URL` is a placeholder in two files (Task 9, Task 12) needing a real value from the team before this ships to any real environment; both are marked `TODO` and called out again in each task's manual-verification step.
