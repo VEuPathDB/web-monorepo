@@ -163,6 +163,14 @@ selection.
 separately (an internal `transcript_length` attribute, not shown as a column but readable from
 row data client-side, the same way `sort_key` already is via `SortKeyTable`).
 
+#### Orthologs table: `sequenceType` carries over from the existing radio button unchanged
+
+The old form's `sequence_Type` radio (protein/CDS/genomic, plus upstream/downstream flanking
+offsets when genomic) is preserved as-is — same options, same default (protein when the gene
+is protein-coding, genomic otherwise, per `GeneRecordClasses.GeneRecordClass.jsx:1757,1773`).
+This is a straight carryover, not a new decision: the radio's choice maps directly to the
+`sequenceType` path segment on `POST /sequences-async/{sequenceType}`.
+
 **Popset and ortho-site (follow-on, same shape):** each needs its own `IdList search +
 bed-capable reporter` (or, for ortho-site, a "whole sequence" resolver producing
 `{contig: accession, start: 0, end: length}` per selected protein). Note: today Popset's old
@@ -246,8 +254,3 @@ multi-minute job. The only change is what happens on confirm: instead of
   Tracked as a follow-up outside this design's scope.
 - **A jobs history/list page.** Not requested; the shared package only needs the single
   result-by-ID route.
-
-## Open questions
-
-- Whether `sequenceType` for the transcript case should be `genomic` or `protein` by default,
-  matching the old form's `sequence_Type` radio choice — carries over 1:1, just renamed.
