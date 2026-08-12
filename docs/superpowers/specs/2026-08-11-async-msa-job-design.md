@@ -120,13 +120,15 @@ Each site implements `resolveFeatures(selection): Promise<Feature[]>`.
 list of transcript IDs and has no notion of where they came from. `bedReporter` is naturally a
 transcript-level report (BED features are exon/CDS structures, which only make sense per
 transcript, not per gene), so working in transcript IDs is the right fit, not an awkward
-consequence of the table's data shape. Submit the IDs as the ID-list parameter to an
-appropriate transcript-based ID-list search (the existing `GeneByLocusTag`-style search
-family, exact search TBD — see Open questions), requesting the `bedReporter` report format via
-`wdkService.getTemporaryResultPath(answerSpec, 'bedReporter', reportConfig)` — the same
-mechanism `gene-list-export-utils.tsx` already uses with `'attributesTabular'`. Fetch the
-resulting BED text from `/temporary-results/{id}` and parse it into `Feature[]`. This reuses
-an existing search and reporter rather than adding a new WDK attribute-fetch call.
+consequence of the table's data shape. Submit the IDs as the ID-list parameter to the existing
+`GeneByLocusTag` search (confirmed: despite the gene-sounding name, this search — like "gene"
+searches generally in this model — returns a transcript-level answer, so it is exactly the
+right search for a list of transcript IDs, not a workaround), requesting the `bedReporter`
+report format via `wdkService.getTemporaryResultPath(answerSpec, 'bedReporter',
+reportConfig)` — the same mechanism `gene-list-export-utils.tsx` already uses with
+`'attributesTabular'`. Fetch the resulting BED text from `/temporary-results/{id}` and parse
+it into `Feature[]`. This reuses an existing search and reporter rather than adding a new WDK
+attribute-fetch call.
 
 The Orthologs table is simply the first caller of this resolver, not something the resolver is
 aware of or specialized for. Any other place in the UI that ends up with a list of transcript
@@ -244,9 +246,6 @@ multi-minute job. The only change is what happens on confirm: instead of
   `multi-blast` precedent of "one package per reusable async-job UI").
 - Whether `sequenceType` for the transcript case should be `genomic` or `protein` by default,
   matching the old form's `sequence_Type` radio choice — carries over 1:1, just renamed.
-- **Which ID-list search `resolveTranscriptFeatures` submits to.** `GeneByLocusTag` takes gene
-  IDs (`ds_gene_ids`); submitting `ortho_source_id` values needs a transcript-ID-list search,
-  which may be a different existing search or may need its own param — TBD.
 - **Row selection should switch from `ortho_gene_source_id` to `ortho_source_id`.** Since the
   current Orthologs table selection/checkbox state (`isRowSelected`/`onRowSelect`/etc.,
   `GeneRecordClasses.GeneRecordClass.jsx:1626-1662`) is keyed on the gene ID, implementing this
