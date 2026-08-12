@@ -1605,6 +1605,7 @@ function OrthologsFormContainer(props) {
       {...props}
       value={transcriptFilterAwareValues}
       transcriptFilter={transcriptFilter}
+      showLongestTranscriptPerGene={showLongestTranscriptPerGene}
     />
   );
 }
@@ -1615,6 +1616,7 @@ class OrthologsForm extends SortKeyTable {
     this.state = {
       selectedRowIds: [],
       groupBySelected: false,
+      showSelectGateMessage: false,
     };
     this.isRowSelected = this.isRowSelected.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
@@ -1628,13 +1630,22 @@ class OrthologsForm extends SortKeyTable {
   }
 
   onRowSelect({ ortho_source_id }) {
+    if (!this.props.showLongestTranscriptPerGene) {
+      this.setState({ showSelectGateMessage: true });
+      return;
+    }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(ortho_source_id),
+      showSelectGateMessage: false,
     }));
   }
 
   onRowDeselect({ ortho_source_id }) {
+    // Deselecting is always allowed, regardless of the toggle — the gate is
+    // only on adding new selections (see design doc: "existing selections
+    // are left alone; only new checkbox clicks are blocked while the toggle
+    // is off").
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter(
@@ -1644,11 +1655,16 @@ class OrthologsForm extends SortKeyTable {
   }
 
   onMultipleRowSelect(rows) {
+    if (!this.props.showLongestTranscriptPerGene) {
+      this.setState({ showSelectGateMessage: true });
+      return;
+    }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(
         rows.map((row) => row['ortho_source_id'])
       ),
+      showSelectGateMessage: false,
     }));
   }
 
@@ -1735,6 +1751,11 @@ class OrthologsForm extends SortKeyTable {
             />
           ))}
           {this.props.transcriptFilter}
+          {this.state.showSelectGateMessage && (
+            <p className="SelectGateMessage" style={{ color: 'firebrick' }}>
+              Select one-per-gene first
+            </p>
+          )}
           <this.props.DefaultComponent
             {...this.props}
             value={this.sortValue(this.props.value)}
