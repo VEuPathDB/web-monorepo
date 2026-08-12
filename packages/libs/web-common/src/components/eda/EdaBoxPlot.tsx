@@ -103,12 +103,11 @@ function BoxPlotAdapter(props: AdapterProps) {
   // A no-data response from the backend serialises as { facets: [] } (see
   // boxplotResponseToData). isFaceted() treats an empty facets array as faceted
   // via a vacuous [].every(), so detect emptiness explicitly before the throw.
-  // Unfaceted BoxplotData is itself the array of series.
   const noData =
     data.value != null &&
     (isFaceted(data.value)
       ? data.value.facets.length === 0
-      : data.value.length === 0);
+      : data.value.series.length === 0);
 
   if (noData) {
     return (
@@ -126,7 +125,9 @@ function BoxPlotAdapter(props: AdapterProps) {
     <Boxplot
       interactive
       showSpinner={data.pending}
-      data={data.value}
+      // BoxplotVisualization shadows the components package's BoxplotData with
+      // its own { series } wrapper, so the plot's data is the series within.
+      data={data.value?.series}
       dependentAxisLabel={yAxisEntityAndVariable?.variable.displayName}
       independentAxisLabel={xAxisEntityAndVariable?.variable.displayName}
       displayLegend={false}
