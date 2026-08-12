@@ -1679,7 +1679,11 @@ function TranscriptMsaSubmission({
       msaOptions: { format: outFormat },
     });
 
-    history.push(`/workspace/msa/result/${job.jobID}`);
+    const paramsSummary = `${
+      selectedTranscriptIds.length + 1
+    } Transcripts, ${outFormat.toUpperCase()} output format`;
+
+    history.push(`/workspace/msa/result/${job.jobID}`, { paramsSummary });
   };
 
   return (

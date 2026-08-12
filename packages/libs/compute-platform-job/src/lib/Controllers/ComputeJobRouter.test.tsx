@@ -35,4 +35,33 @@ describe('ComputeJobRouter', () => {
 
     expect(await screen.findByText('Running Compute Job')).toBeInTheDocument();
   });
+
+  it('forwards paramsSummary from location.state to ComputeJobPage', async () => {
+    render(
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname: '/result/abc123',
+            state: { paramsSummary: '13 Transcripts, FASTA output format' },
+          },
+        ]}
+      >
+        <ComputeJobRouter api={makeFakeApi()} />
+      </MemoryRouter>
+    );
+
+    expect(
+      await screen.findByText('13 Transcripts, FASTA output format')
+    ).toBeInTheDocument();
+  });
+
+  it('does not throw when location.state is missing (e.g. bookmarked URL)', async () => {
+    render(
+      <MemoryRouter initialEntries={['/result/abc123']}>
+        <ComputeJobRouter api={makeFakeApi()} />
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Running Compute Job')).toBeInTheDocument();
+  });
 });
