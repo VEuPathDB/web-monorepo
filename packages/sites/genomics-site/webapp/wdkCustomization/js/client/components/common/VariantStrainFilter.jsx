@@ -4,12 +4,6 @@ import { get, pick } from 'lodash';
 import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
 import { QuestionActions } from '@veupathdb/wdk-client/lib/Actions';
 
-const headingStyle = {
-  fontSize: '1.2em',
-  fontWeight: 500,
-  margin: '2rem 0 1rem',
-};
-
 const enhance = connect(({ question, globalData }) =>
   Object.assign(
     {
@@ -36,7 +30,6 @@ export const VariantStrainFilter = enhance(function VariantStrainFilter(props) {
 
   return (
     <div>
-      <div style={headingStyle}>Select strains:</div>
       <FilterParamNew
         ctx={{ searchName, parameter, paramValues }}
         parameter={parameter}
