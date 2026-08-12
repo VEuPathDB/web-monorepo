@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 describe('resolveTranscriptFeatures', () => {
-  it('uploads the transcript IDs as a dataset before requesting bedReporter', async () => {
+  it('uploads the transcript IDs as a dataset before requesting the bed report', async () => {
     const wdkService = makeFakeWdkService(
       'PF3D7_0200300\t100\t500\tPF3D7_0200300.1\t0\t+\n'
     );
@@ -41,7 +41,7 @@ describe('resolveTranscriptFeatures', () => {
           }),
         }),
       }),
-      'bedReporter',
+      'bed',
       expect.anything()
     );
   });
@@ -87,7 +87,7 @@ describe('resolveTranscriptFeatures', () => {
     });
   });
 
-  it('passes flankingOffsets through to bedReporter upstream/downstreamOffset', async () => {
+  it('passes flankingOffsets through to the bed report upstream/downstreamOffset', async () => {
     const wdkService = makeFakeWdkService(
       'PF3D7_0200300\t100\t500\tPF3D7_0200300.1\t0\t+\n'
     );
@@ -99,7 +99,7 @@ describe('resolveTranscriptFeatures', () => {
 
     expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
       expect.anything(),
-      'bedReporter',
+      'bed',
       expect.objectContaining({
         upstreamOffset: 500,
         downstreamOffset: 250,

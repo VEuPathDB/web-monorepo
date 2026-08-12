@@ -16,11 +16,11 @@ interface FlankingOffsets {
 
 /**
  * Resolves a plain list of transcript IDs to Feature[] via the existing
- * GeneByLocusTag search's bedReporter report. Has no notion of where the IDs
+ * GeneByLocusTag search's 'bed' report. Has no notion of where the IDs
  * came from — any transcript-ID-producing UI can call this.
  *
  * flankingOffsets carries the old CGI form's upstream/downstream nt inputs
- * (only meaningful for genomic sequence type) straight into bedReporter's
+ * (only meaningful for genomic sequence type) straight into the report's
  * own upstreamOffset/downstreamOffset fields, confirmed to exist on this
  * report's reportConfig.
  */
@@ -46,7 +46,7 @@ export async function resolveTranscriptFeatures(
         },
       },
     },
-    'bedReporter',
+    'bed',
     {
       attachmentType: 'plain',
       deflineType: 'full',
