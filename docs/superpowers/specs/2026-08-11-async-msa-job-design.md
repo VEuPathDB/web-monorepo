@@ -94,10 +94,20 @@ regardless of which table the user started from.
 - **No cancel/delete endpoint exists anywhere in `lib-compute-platform` or
   `service-sequence-retrieval`.** Once submitted, a job cannot be stopped early — the client
   can only stop watching it.
-- **Expiration:** what triggers `expired`, and whether a data release should purge/expire old
-  jobs, is a backend/ops concern (tracked separately — see Non-goals). The client's only
-  obligation is to handle `expired` as a terminal status like any other, with no assumption
-  about why it occurred.
+- **Expiration:** per `lib-compute-platform`'s readme, job results are pruned after a
+  configurable idle period (30 days by default) and the job record moves to `expired`.
+  Resubmitting the _identical_ request via `POST` transparently restarts an expired job under
+  the same content-addressed `jobID` — this is the platform's actual "rerun" mechanism, not a
+  distinct endpoint. That means a `GET /jobs/{id}` poll can only ever observe `expired` on a
+  job nobody has resubmitted since it lapsed — practically, a bookmarked/returned-to
+  `/result/:jobId` page, since that path only ever calls `GET`, never re-`POST`s (see the
+  Confirm dialog and results-page behavior below). The client cannot itself resubmit in that
+  situation: the page holds only the `jobId` from the URL, not the original `Feature[]`/
+  `msaOptions` that produced it, and the service never echoes those back. Restarting a
+  bookmarked job by ID alone would need a new endpoint that doesn't exist today — tracked as a
+  backend follow-up, not something this design can build around (see Non-goals). Whether a
+  data release should also purge/expire jobs (independent of the 30-day idle prune) is a
+  separate backend/ops concern, also tracked in Non-goals.
 
 ## Architecture: three layers
 
@@ -248,6 +258,13 @@ multi-minute job. The only change is what happens on confirm: instead of
   real lookup).
 - **Job cancellation.** Not possible — no such endpoint exists in `lib-compute-platform` or
   `service-sequence-retrieval`.
+- **Restarting an expired job from just its `jobId`.** The platform's only restart mechanism
+  is resubmitting the full original request via `POST` (which lands on the same
+  content-addressed `jobID`) — there is no "rerun by ID" endpoint, so a bookmarked
+  `/result/:jobId` page that hits `expired` has no way to recover on its own; it shows a
+  terminal state directing the user back to reselect and resubmit. A "rerun by ID" endpoint
+  would remove that dead end, but doesn't exist today — a backend feature request, not
+  something this design can build against.
 - **Data-release-driven job expiration/purging.** Flagged as desired (expire all jobs on new
   data release, ~every 2 months) but this is backend/ops policy (a queue purge or TTL
   configured around the release cadence), not something the client can or should enforce.
