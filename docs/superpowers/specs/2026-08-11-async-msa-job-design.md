@@ -224,10 +224,18 @@ way `service-sequence-retrieval` does — not a third, competing "compute job" p
   (1s/2s/4s, cap 3 retries) before surfacing, separate from the normal status-polling
   interval — so a single dropped request doesn't fall back to the slow tier.
 - **`lib/components/ComputeJobPage.tsx`** — the "Running Compute Job" page. Renders:
-  - Title ("Running Compute Job").
+  - **Title distinguishes a fresh run from a rerun.** These are different situations for the
+    user — a rerun means the page just triggered real compute time on a job that had already
+    finished once — so the page tracks, in its own local state (not derivable from `status`
+    alone, since the poll right after calling `rerunJob` returns `queued`/`in-progress` just
+    like a normal first run), whether it has called `rerunJob` this visit:
+    - Never called `rerunJob`: "Running Compute Job" (or "Running Job {jobId}").
+    - Called `rerunJob` this visit (i.e. the page loaded and found the job already
+      `expired`): "Re-running Expired Job {jobId}".
   - Params summary (e.g. "13 Transcripts, FASTA output format") — passed in as props at
     submit time, not re-derived from the job response (the service doesn't echo back the
-    params).
+    params). On the rerun path there are no such props (the page only has the `jobId` from
+    the URL); the params summary is simply omitted rather than shown as blank/wrong.
   - Live status while polling (spinner + "queued"/"running" copy, matching the persistent,
     content-changing indicator style validated in the user-datasets polling design — no
     flashing/disappearing status text).
@@ -236,10 +244,10 @@ way `service-sequence-retrieval` does — not a third, competing "compute job" p
   - On `failed`: an error state with no retry action — a real execution failure, not
     something rerunning the same input would fix — directing the user back to the record
     page to resubmit (with different input) if they want to try again.
-  - On `expired`: call `rerunJob(jobId)`, then resume polling as if nothing happened. From
-    the user's perspective, a bookmarked link that's gone idle just takes a moment longer
-    before showing status again, with no dead end and no need to reselect/resubmit
-    themselves.
+  - On `expired`: set the "reran" flag, call `rerunJob(jobId)`, then resume polling under
+    the "Re-running Expired Job" title. No dead end and no need for the user to
+    reselect/resubmit themselves — just a visibly different heading so they understand why a
+    supposedly-finished job is running again.
 - **`lib/controllers/ComputeJobRouter.tsx`** — exposes `/result/:jobId`.
 
 Each site adds a thin `computeJobRoutes.tsx` (its own `RouteEntry[]`, e.g. path
@@ -249,12 +257,18 @@ Each site adds a thin `computeJobRoutes.tsx` (its own `RouteEntry[]`, e.g. path
 **Revisit/return behavior:** the route is keyed purely on `jobId` in the URL, and job status
 comes from `GET /jobs/:id` — nothing is cached client-side across navigations. A user can
 leave the page and come back (bookmark, browser back/forward, sharing the URL) and the page
-re-derives correct state from scratch: if still running, polling resumes; if complete, the
-result is fetched and shown; if failed, that's shown as a dead end; if expired, `rerunJob` is
-called and polling resumes automatically (this is, in practice, the main way a bookmarked
-`/result/:jobId` page can end up calling `rerunJob` at all — see Service contract). There is
-no separate "job history" list for this feature (unlike multi-blast's `/all` jobs list) — out
-of scope unless requested.
+re-derives correct state from scratch — this is also, in practice, the only way this page
+calls `rerunJob` at all, since a job that's still running or already complete never reaches
+`expired` in the first place:
+
+1. Still running (`queued`/`in-progress`) → "Running Compute Job", polling resumes normally.
+2. Complete → the result is fetched and shown.
+3. Failed → shown as a dead end (see above).
+4. Expired → `rerunJob` is called, the title switches to "Re-running Expired Job", and
+   polling resumes.
+
+There is no separate "job history" list for this feature (unlike multi-blast's `/all` jobs
+list) — out of scope unless requested.
 
 ### 3. Confirm dialog (kept, action changed)
 
