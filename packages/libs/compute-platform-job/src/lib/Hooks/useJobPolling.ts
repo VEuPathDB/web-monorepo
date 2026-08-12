@@ -63,8 +63,8 @@ export function useJobPolling({ status, onPoll }: UseJobPollingOptions): {
       } finally {
         inFlight = false;
       }
-      setIsChecking(false);
       if (cancelled) return;
+      setIsChecking(false);
       pollCount += 1;
       schedule();
     };

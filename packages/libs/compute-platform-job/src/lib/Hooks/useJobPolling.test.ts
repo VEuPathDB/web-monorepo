@@ -126,6 +126,37 @@ describe('useJobPolling', () => {
     expect(onPoll).not.toHaveBeenCalled();
   });
 
+  it('does not update state after unmount when a poll is still in flight', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    let resolvePoll: (() => void) | undefined;
+    const onPoll = jest.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolvePoll = resolve;
+        })
+    );
+    const { unmount } = renderHook(() =>
+      useJobPolling({ status: 'in-progress' as JobStatus, onPoll })
+    );
+
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
+    expect(onPoll).toHaveBeenCalledTimes(1);
+
+    unmount();
+
+    await act(async () => {
+      resolvePoll?.();
+    });
+
+    expect(consoleError).not.toHaveBeenCalled();
+
+    consoleError.mockRestore();
+  });
+
   describe('tab visibility', () => {
     afterEach(() => {
       Object.defineProperty(document, 'hidden', {
