@@ -56,6 +56,7 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 // field, matching every other in-monorepo "libs" package of this shape.
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
+import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
 
 // Old CGI form codes -> new service MsaFormat values (see design doc's
 // carried-over sequenceType/output-format table).
@@ -66,11 +67,6 @@ const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
   st: 'stockholm',
   vie: 'vienna',
 };
-
-// TODO: share this constant with computeJobRoutes.tsx instead of duplicating
-// it — extract to a small shared config module in a follow-up cleanup once
-// the real deployed URL is confirmed with the team.
-const SEQUENCE_RETRIEVAL_BASE_URL = 'https://sequence-retrieval.example.org';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer

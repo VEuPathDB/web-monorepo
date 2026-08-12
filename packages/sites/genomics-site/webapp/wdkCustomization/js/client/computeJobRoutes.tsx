@@ -7,9 +7,7 @@ import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullab
 import { ComputeJobRouter } from '@veupathdb/compute-platform-job/src/lib/Controllers/ComputeJobRouter';
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 
-// TODO: confirm the actual deployed base URL for service-sequence-retrieval
-// with the team before this ships — this is a placeholder host.
-const SEQUENCE_RETRIEVAL_BASE_URL = 'https://sequence-retrieval.example.org';
+import { SEQUENCE_RETRIEVAL_BASE_URL } from './util/computeJobConfig';
 
 function ComputeJobRouterContainer() {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
