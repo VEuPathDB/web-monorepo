@@ -1,8 +1,13 @@
 {
   "name": "@veupathdb/compute-platform-job",
   "version": "0.1.0",
-  "sideEffects": ["src/globals.js"],
-  "files": ["lib", "src/lib"],
+  "sideEffects": [
+    "src/globals.js"
+  ],
+  "files": [
+    "lib",
+    "src/lib"
+  ],
   "dependencies": {
     "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^"
@@ -18,9 +23,13 @@
     "clean": "rm -rf lib"
   },
   "eslintConfig": {
-    "extends": ["@veupathdb"]
+    "extends": [
+      "@veupathdb"
+    ]
   },
-  "browserslist": ["extends @veupathdb/browserslist-config"],
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
   "peerDependencies": {
     "react": "^16.14.0 || ^17.0.2",
     "react-dom": "^16.14.0 || ^17.0.2",
