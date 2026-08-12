@@ -49,6 +49,28 @@ import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+// Deep import — see the note in Task 8: this package has no main/exports
+// field, matching every other in-monorepo "libs" package of this shape.
+import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
+import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
+
+// Old CGI form codes -> new service MsaFormat values (see design doc's
+// carried-over sequenceType/output-format table).
+const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
+  clu: 'clustal',
+  fasta: 'fasta',
+  phy: 'phylip',
+  st: 'stockholm',
+  vie: 'vienna',
+};
+
+// TODO: share this constant with computeJobRoutes.tsx instead of duplicating
+// it — extract to a small shared config module in a follow-up cleanup once
+// the real deployed URL is confirmed with the team.
+const SEQUENCE_RETRIEVAL_BASE_URL = 'https://sequence-retrieval.example.org';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1610,6 +1632,165 @@ function OrthologsFormContainer(props) {
   );
 }
 
+function TranscriptMsaSubmission({
+  selectedTranscriptIds,
+  sourceId,
+  isProtein,
+  isNotProtein,
+  orthoTableProps,
+  transcriptFilter,
+  showSelectGateMessage,
+  defaultComponent: DefaultComponent,
+  value,
+  childProps,
+}) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const history = useHistory();
+  const [sequenceTypeChoice, setSequenceTypeChoice] = useState(
+    isProtein ? 'protein' : 'genomic'
+  );
+  const [oneOffset, setOneOffset] = useState('');
+  const [twoOffset, setTwoOffset] = useState('');
+  const [clustalOutFormat, setClustalOutFormat] = useState('clu');
+
+  const handleConfirm = async () => {
+    const features = await resolveTranscriptFeatures(
+      wdkService,
+      [sourceId, ...selectedTranscriptIds],
+      sequenceTypeChoice === 'genomic'
+        ? {
+            upstream: Number(oneOffset) || 0,
+            downstream: Number(twoOffset) || 0,
+          }
+        : undefined
+    );
+
+    const sequenceType =
+      sequenceTypeChoice === 'genomic' ? 'genomic' : 'protein';
+    const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
+
+    const api = SequenceRetrievalApi.getClient(
+      SEQUENCE_RETRIEVAL_BASE_URL,
+      wdkService
+    );
+    const job = await api.submitJob(sequenceType, {
+      features,
+      postProcess: 'MSA',
+      msaOptions: { format: outFormat },
+    });
+
+    history.push(`/workspace/msa/result/${job.jobID}`);
+  };
+
+  return (
+    <ClustalAlignmentForm
+      action="/cgi-bin/isolateAlignment"
+      sequenceCount={selectedTranscriptIds.length + 1}
+      sequenceType="genes"
+      warnThreshold={() => (sequenceTypeChoice === 'genomic' ? 10 : 1000)}
+      blockThreshold={() => (sequenceTypeChoice === 'genomic' ? 50 : 1000)}
+      onConfirm={handleConfirm}
+    >
+      {transcriptFilter}
+      {showSelectGateMessage && (
+        <p className="SelectGateMessage" style={{ color: 'firebrick' }}>
+          Select one-per-gene first
+        </p>
+      )}
+      <DefaultComponent
+        {...childProps}
+        value={value}
+        orthoTableProps={orthoTableProps}
+      />
+      <p>
+        <b>
+          Select sequence type for Clustal Omega multiple sequence alignment:
+        </b>
+      </p>
+      <div id="userOptions">
+        {isProtein && (
+          <>
+            {' '}
+            <input
+              type="radio"
+              name="sequence_Type"
+              checked={sequenceTypeChoice === 'protein'}
+              onChange={() => setSequenceTypeChoice('protein')}
+            />{' '}
+            Protein{' '}
+          </>
+        )}
+        {isProtein && (
+          <>
+            {' '}
+            <input
+              type="radio"
+              name="sequence_Type"
+              checked={sequenceTypeChoice === 'CDS'}
+              onChange={() => setSequenceTypeChoice('CDS')}
+            />{' '}
+            CDS (spliced){' '}
+          </>
+        )}
+        <input
+          type="radio"
+          name="sequence_Type"
+          checked={sequenceTypeChoice === 'genomic'}
+          onChange={() => setSequenceTypeChoice('genomic')}
+        />{' '}
+        Genomic
+        <span className="genomic">
+          <input
+            type="number"
+            placeholder="0"
+            size="4"
+            pattern="[0-9]+"
+            min="0"
+            max="2500"
+            value={oneOffset}
+            onChange={(e) => setOneOffset(e.target.value)}
+          />{' '}
+          nt upstream (max 2500)
+          <input
+            type="number"
+            placeholder="0"
+            size="4"
+            pattern="[0-9]+"
+            min="0"
+            max="2500"
+            value={twoOffset}
+            onChange={(e) => setTwoOffset(e.target.value)}
+          />{' '}
+          nt downstream (max 2500)
+        </span>
+        <p>
+          Output format: &nbsp;
+          <select
+            value={clustalOutFormat}
+            onChange={(e) => setClustalOutFormat(e.target.value)}
+          >
+            <option value="clu">Mismatches highlighted</option>
+            <option value="fasta">FASTA</option>
+            <option value="phy">PHYLIP</option>
+            <option value="st">STOCKHOLM</option>
+            <option value="vie">VIENNA</option>
+          </select>
+        </p>
+        <input
+          type="submit"
+          value="Run Clustal Omega for selected genes"
+          disabled={selectedTranscriptIds.length < 2}
+          title={
+            selectedTranscriptIds.length < 2
+              ? 'Check two or more checkboxes in the table above to use this feature.'
+              : ''
+          }
+        />
+      </div>
+    </ClustalAlignmentForm>
+  );
+}
+
 class OrthologsForm extends SortKeyTable {
   constructor() {
     super();
@@ -1726,120 +1907,18 @@ class OrthologsForm extends SortKeyTable {
       // TODO: Discuss how to retain "large flanking region" warning in the modal
       // Original message: "Please note: selecting a large flanking region or a large number of sequences will take several minutes to align."
       return (
-        <ClustalAlignmentForm
-          action="/cgi-bin/isolateAlignment"
-          sequenceCount={this.state.selectedRowIds.length + 1}
-          sequenceType="genes"
-          warnThreshold={(form) => {
-            const formData = new FormData(form);
-            return formData.get('sequence_Type') === 'genomic' ? 10 : 1000;
-          }}
-          blockThreshold={(form) => {
-            const formData = new FormData(form);
-            return formData.get('sequence_Type') === 'genomic' ? 50 : 1000;
-          }}
-        >
-          <input type="hidden" name="type" value="geneOrthologs" />
-          <input type="hidden" name="project_id" value={projectId} />
-          <input type="hidden" name="gene_ids" value={source_id} />
-          {this.state.selectedRowIds.map((sourceId) => (
-            <input
-              key={sourceId}
-              type="hidden"
-              name="gene_ids"
-              value={sourceId}
-            />
-          ))}
-          {this.props.transcriptFilter}
-          {this.state.showSelectGateMessage && (
-            <p className="SelectGateMessage" style={{ color: 'firebrick' }}>
-              Select one-per-gene first
-            </p>
-          )}
-          <this.props.DefaultComponent
-            {...this.props}
-            value={this.sortValue(this.props.value)}
-            orthoTableProps={orthoTableProps}
-          />
-          <p>
-            <b>
-              Select sequence type for Clustal Omega multiple sequence
-              alignment:
-            </b>
-          </p>
-          <div id="userOptions">
-            {is_protein && (
-              <>
-                {' '}
-                <input
-                  type="radio"
-                  name="sequence_Type"
-                  value="protein"
-                  defaultChecked={is_protein}
-                />{' '}
-                Protein{' '}
-              </>
-            )}
-            {is_protein && (
-              <>
-                {' '}
-                <input type="radio" name="sequence_Type" value="CDS" /> CDS
-                (spliced){' '}
-              </>
-            )}
-            <input
-              type="radio"
-              name="sequence_Type"
-              value="genomic"
-              defaultChecked={not_protein}
-            />{' '}
-            Genomic
-            <span className="genomic">
-              <input
-                type="number"
-                id="oneOffset"
-                name="oneOffset"
-                placeholder="0"
-                size="4"
-                pattern="[0-9]+"
-                min="0"
-                max="2500"
-              />{' '}
-              nt upstream (max 2500)
-              <input
-                type="number"
-                id="twoOffset"
-                name="twoOffset"
-                placeholder="0"
-                size="4"
-                pattern="[0-9]+"
-                min="0"
-                max="2500"
-              />{' '}
-              nt downstream (max 2500)
-            </span>
-            <p>
-              Output format: &nbsp;
-              <select name="clustalOutFormat">
-                <option value="clu">Mismatches highlighted</option>
-                <option value="fasta">FASTA</option>
-                <option value="phy">PHYLIP</option>
-                <option value="st">STOCKHOLM</option>
-                <option value="vie">VIENNA</option>
-              </select>
-            </p>
-            <input
-              type="submit"
-              value="Run Clustal Omega for selected genes"
-              disabled={this.state.selectedRowIds.length < 2}
-              title={
-                this.state.selectedRowIds.length < 2
-                  ? 'Check two or more checkboxes in the table above to use this feature.'
-                  : ''
-              }
-            />
-          </div>
-        </ClustalAlignmentForm>
+        <TranscriptMsaSubmission
+          selectedTranscriptIds={this.state.selectedRowIds}
+          sourceId={source_id}
+          isProtein={is_protein}
+          isNotProtein={not_protein}
+          orthoTableProps={orthoTableProps}
+          transcriptFilter={this.props.transcriptFilter}
+          showSelectGateMessage={this.state.showSelectGateMessage}
+          defaultComponent={this.props.DefaultComponent}
+          value={this.sortValue(this.props.value)}
+          childProps={this.props}
+        />
       );
     }
   }

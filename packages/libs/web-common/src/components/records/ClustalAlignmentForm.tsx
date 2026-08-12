@@ -10,6 +10,8 @@ interface ClustalAlignmentFormProps {
   sequenceType?: string;
   warnThreshold?: number | ((form: HTMLFormElement) => number);
   blockThreshold?: number | ((form: HTMLFormElement) => number);
+  /** If provided, called instead of submitting the form on confirm. */
+  onConfirm?: () => void;
 }
 
 const DEFAULT_WARN_THRESHOLD = 50;
@@ -22,13 +24,16 @@ export default function ClustalAlignmentForm({
   sequenceType = 'sequences',
   warnThreshold,
   blockThreshold,
+  onConfirm,
 }: ClustalAlignmentFormProps) {
   const theme = useUITheme();
   const [showModal, setShowModal] = useState(false);
-  const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] =
-    useState<number | null>(null);
-  const [evaluatedBlockThreshold, setEvaluatedBlockThreshold] =
-    useState<number | null>(null);
+  const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] = useState<
+    number | null
+  >(null);
+  const [evaluatedBlockThreshold, setEvaluatedBlockThreshold] = useState<
+    number | null
+  >(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -55,7 +60,9 @@ export default function ClustalAlignmentForm({
 
   const handleConfirm = () => {
     setShowModal(false);
-    if (formRef.current) {
+    if (onConfirm) {
+      onConfirm();
+    } else if (formRef.current) {
       formRef.current.submit();
     }
   };
