@@ -2,34 +2,28 @@ import React, { ReactElement } from 'react';
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../../../../Utils';
 import {
-  MetadataImportTable,
+  DatasetSelectionTable,
   MetadataImportTableProps,
-} from './MetadataImportTable';
+} from './DatasetSelectionTable';
 
 import "./MetadataImportModal.scss";
 import { SecondaryButton } from '../../SecondaryButton';
 
-export interface MetadataImportModalProps {
-  readonly modalProps: {
-    readonly visible: boolean;
-    readonly hide: Runnable;
-  };
-
-  readonly tableProps: MetadataImportTableProps;
-
+export interface MetadataImportModalProps extends MetadataImportTableProps {
+  readonly closeAction: Runnable;
   readonly copyAction: Runnable;
 }
 
-export function MetadataImportModal({
-  modalProps: props,
-  tableProps,
+export function DatasetSelectionModal({
+  closeAction,
   copyAction,
+  ...tableProps
 }: MetadataImportModalProps): ReactElement {
   return (
     <Modal
       title="Import Dataset Metadata"
-      toggleVisible={(_) => props.hide()}
-      visible={props.visible}
+      toggleVisible={(_) => closeAction()}
+      visible={true}
       closeOnEsc={true}
       includeCloseButton={true}
     >
@@ -50,11 +44,11 @@ export function MetadataImportModal({
           edited before uploading the current dataset.
         </p>
 
-        <MetadataImportTable {...tableProps} />
+        <DatasetSelectionTable {...tableProps} />
 
         <SecondaryButton
           onClick={copyAction}
-          disabled={tableProps.selection === undefined}
+          disabled={tableProps.selection.isUndefined}
         >
           Copy from Selected Dataset
         </SecondaryButton>

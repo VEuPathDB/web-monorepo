@@ -1,7 +1,7 @@
 #ud-meta-selection-modal {
   padding: 1em 2em;
   width: 1280px;
-  min-height: 650px;
+  min-height: 500px;
 
   > .MesaComponent {
     min-height: 350px;
@@ -14,6 +14,7 @@
 
   .ActionToolbar {
     width: 65%;
+    justify-content: flex-end;
   }
 
   .ActionToolbar-Info {
@@ -40,5 +41,9 @@
       font-size: 1em;
       transition: none;
     }
+  }
+
+  .ud-secondary-action {
+    margin-bottom: 0.5em;
   }
 }

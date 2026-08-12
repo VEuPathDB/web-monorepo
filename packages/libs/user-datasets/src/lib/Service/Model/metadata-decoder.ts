@@ -37,12 +37,16 @@ export const datasetMetadata = io.intersection([
       })
     ),
     publications: io.array(
-      io.type({
-        identifier: io.string,
-        type: io.union([io.literal('pmid'), io.literal('doi')]),
-        citation: io.string,
-        isPrimary: io.boolean,
-      })
+      io.intersection([
+        io.type({
+          identifier: io.string,
+          type: io.union([io.literal('pmid'), io.literal('doi')]),
+          citation: io.string,
+        }),
+        io.partial({
+          isPrimary: io.boolean,
+        }),
+      ]),
     ),
     contacts: io.array(
       io.intersection([

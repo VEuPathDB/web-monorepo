@@ -24,3 +24,4 @@ export type {
 export { isNonBlankString, isNonEmpty, isNonEmptyString } from './value-tests';
 
 export { JsonPathBuilder } from './JsonPathBuilder';
+export { SimpleState, useSimpleState } from './SimpleState';

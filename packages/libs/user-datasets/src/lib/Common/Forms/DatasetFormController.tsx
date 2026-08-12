@@ -22,9 +22,9 @@ import {
 import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
 import { DatasetMetadata } from '../../Service/Model';
-import { DataNoun, Nullable } from '../../Utils';
+import { DataNoun, Nullable, useSimpleState } from '../../Utils';
 import { defaultClientSideUploadFormState, useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
-import { MetadataImportModalController } from './Components/Sections/MetaImportModal';
+import { MetadataImportModalController } from './Components/Modals/MetaImportModal';
 
 export interface DatasetFormControllerProps<
   P extends DatasetFormProps = DatasetFormProps
@@ -78,8 +78,7 @@ export function DatasetFormController<
   const vdi = useVdiService();
   const formState = useDatasetFormState();
 
-  const [isDatasetSelectionModalShowing, setDatasetSelectionModalShowing] =
-    useState(false);
+  const isDatasetSelectionVisible = useSimpleState(false);
 
   const fetchDatasetMetadata = useCallback(
     (id: DatasetId) => {
@@ -121,7 +120,7 @@ export function DatasetFormController<
       submit: notImplemented,
       clearUploadError: clearBadUpload,
       setSubmitting,
-      openMetaImportModal: () => setDatasetSelectionModalShowing(true),
+      openMetaImportModal: () => isDatasetSelectionVisible.set(true),
     },
   });
 
@@ -133,10 +132,9 @@ export function DatasetFormController<
         baseUrl={props.baseUrl}
         vdiConfig={props.vdiConfig.configuration}
         dataNoun={props.dataNoun}
-        arePublicDatasetsEnabled={props.enablePublicDatasets}
-        isModalShowing={isDatasetSelectionModalShowing}
-        hideModal={() => setDatasetSelectionModalShowing(false)}
-        copyAction={fetchDatasetMetadata}
+        visibleState={isDatasetSelectionVisible}
+        onDatasetSelect={fetchDatasetMetadata}
+        publicDatasetsEnabled={props.enablePublicDatasets}
       />
 
       <SubmissionModal

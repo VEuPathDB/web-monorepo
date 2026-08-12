@@ -32,17 +32,8 @@
 
   .header-line {
     display: flex;
-    justify-content: space-between;
-
-    button {
-      padding: 0.6em 1.2ch;
-      height: fit-content;
-      border-radius: 8px;
-      font-weight: bold;
-      color: var(--coreui-gray-700);
-      border-width: 0;
-      border-style: none;
-    }
+    align-items: first baseline;
+    column-gap: 3ch;
   }
 
   .title-with-button {

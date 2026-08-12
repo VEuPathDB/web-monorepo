@@ -13,7 +13,7 @@ import {
 import { projectId } from '../../../../../config';
 import UserDatasetStatus from '../../../../../Components/UserDatasetStatus';
 import * as util from '../../../../../Utils';
-import { Consumer, ifDefined, Nullable, Possible } from '../../../../../Utils';
+import { Consumer, ifDefined, Nullable, Possible, SimpleState } from '../../../../../Utils';
 
 export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
@@ -22,10 +22,9 @@ export interface MetadataImportTableProps {
   readonly dataNoun: util.DataNoun;
   readonly userId: number;
   readonly datasets: Dataset[];
-  readonly arePublicDatasetsEnabled: boolean;
+  readonly publicDatasetsEnabled: boolean;
 
-  readonly selection: Possible<DatasetId>;
-  readonly setSelection: Consumer<Possible<string>>;
+  readonly selection: SimpleState<Possible<DatasetId>>;
 }
 
 type TableColumn<K extends keyof Dataset> = mesa.MesaColumn<
@@ -40,7 +39,7 @@ interface TableRowProps {
   readonly index: number;
 }
 
-export function MetadataImportTable(
+export function DatasetSelectionTable(
   props: MetadataImportTableProps
 ): ReactElement {
   const [filterString, setFilterString] = useState<Nullable<string>>(null);
@@ -72,11 +71,11 @@ export function MetadataImportTable(
           toolbar: true,
           hideSelectAll: true,
           getRowId: (row) => row.datasetId,
-          isRowSelected: (row) => row.datasetId === props.selection,
+          isRowSelected: (row) => row.datasetId === props.selection.get(),
         },
         eventHandlers: {
-          onRowSelect: it => props.setSelection(it.datasetId),
-          onRowDeselect: _ => props.setSelection(undefined),
+          onRowSelect: it => props.selection.set(it.datasetId),
+          onRowDeselect: _ => props.selection.set(undefined),
           onSearch: setFilterString,
         },
         actions: [
@@ -101,7 +100,7 @@ function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
     column('shares', 'Shared With', true, partialRight(renderShares, props)),
   ];
 
-  if (props.arePublicDatasetsEnabled) {
+  if (props.publicDatasetsEnabled) {
     columns.push(column('visibility', 'Visibility', true, renderVisibility));
   }
 
