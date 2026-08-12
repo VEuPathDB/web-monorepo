@@ -13,13 +13,14 @@ Omega for multiple sequence alignment, via a shared `ClustalAlignmentForm`
 1. **Gene record Orthologs table**
    (`packages/sites/genomics-site/.../GeneRecordClasses.GeneRecordClass.jsx:1713-1821`) —
    rows are **transcripts**, not genes. `ortho_gene_source_id` is the parent gene's ID; the
-   row's own transcript ID is a separate field, `ortho_source_id`, which the row data carries
-   but which no code in this file currently reads (row selection, the checkbox handlers, and
-   the "one transcript per gene" dedup are all keyed on the gene ID today, not the transcript
-   ID — meaning the current UI cannot distinguish two different transcripts of the same
-   selected gene). `resolveTranscriptFeatures` (below) uses `ortho_source_id`, not
-   `ortho_gene_source_id`. The user selects orthologous transcripts, chooses sequence type
-   (protein/CDS/genomic + flanking offsets), and output format.
+   row's own transcript ID is a separate field, `ortho_source_id`. Row selection (the checkbox
+   handlers at `1626-1662`) and the "one transcript per gene" dedup are currently keyed on the
+   gene ID, not the transcript ID — meaning the current UI cannot distinguish two different
+   transcripts of the same selected gene. **This design's implementation includes switching
+   that keying to `ortho_source_id`** — required, not optional cleanup, since
+   `resolveTranscriptFeatures` (below) needs the transcript ID, not the gene ID, for each
+   selected row. The user selects orthologous transcripts, chooses sequence type (protein/CDS/
+   genomic + flanking offsets), and output format.
 2. **Popset isolate summary table**
    (`packages/sites/genomics-site/.../PopsetResultSummaryViewTableController.jsx`) — select
    isolates, align the locus used to type them.
@@ -250,13 +251,3 @@ multi-minute job. The only change is what happens on confirm: instead of
 
 - Whether `sequenceType` for the transcript case should be `genomic` or `protein` by default,
   matching the old form's `sequence_Type` radio choice — carries over 1:1, just renamed.
-- **Row selection should switch from `ortho_gene_source_id` to `ortho_source_id`.** Since the
-  current Orthologs table selection/checkbox state (`isRowSelected`/`onRowSelect`/etc.,
-  `GeneRecordClasses.GeneRecordClass.jsx:1626-1662`) is keyed on the gene ID, implementing this
-  design means switching that keying to the transcript ID — otherwise selecting one transcript
-  of a multi-transcript gene would show as selected for all of that gene's transcript rows, and
-  the resolver would receive the wrong ID. This is a required part of the migration, not
-  optional cleanup.
-- Exact attribute name for strand in the `bedReporter` output (not confirmed by name from
-  web-monorepo alone, since record-class attribute definitions live in ApiCommonModel; should
-  fall out naturally once `bedReporter`'s actual output is inspected during implementation).
