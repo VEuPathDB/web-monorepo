@@ -15,7 +15,7 @@ import {
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { Consumer } from '../../Utils';
+import { Consumer, DataNoun } from '../../Utils';
 import {
   clearBadUpload,
   receiveBadUpload,
@@ -42,6 +42,8 @@ export interface UploadFormControllerProps {
   readonly formConfig: DatasetFormConfig;
   readonly vdiConfig: VdiServiceMetadata;
   readonly urlParams: Record<string, string>;
+  readonly dataNoun: DataNoun;
+  readonly enablePublicDatasets: boolean;
 }
 
 export function UploadFormController(props: UploadFormControllerProps) {
