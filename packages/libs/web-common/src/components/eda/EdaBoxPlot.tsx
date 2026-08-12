@@ -1,0 +1,136 @@
+import Boxplot from '@veupathdb/components/lib/plots/Boxplot';
+import { isFaceted } from '@veupathdb/components/lib/types/guards';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+  useStudyMetadata,
+} from '@veupathdb/eda/lib/core';
+import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
+import { boxplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/BoxplotVisualization';
+import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
+import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
+import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
+import { edaServiceUrl } from '../../config';
+import { geneSubsetFilters, GeneDisplaySpec } from './geneDisplaySpec';
+
+interface Props {
+  datasetId: string;
+  xAxisVariable: VariableDescriptor;
+  yAxisVariable: VariableDescriptor;
+  geneDisplaySpec?: GeneDisplaySpec;
+  plotTitle?: string;
+}
+
+/**
+ * A simplified EDA BoxPlot component.
+ *
+ * This will render a plot and a legend.
+ */
+export function EdaBoxPlot(props: Props) {
+  const { datasetId } = props;
+  return (
+    <DocumentationContainer>
+      <WorkspaceContainer
+        studyId={datasetId}
+        edaServiceUrl={edaServiceUrl}
+        className="EdaBoxPlot"
+      >
+        <BoxPlotAdapter {...props} />
+      </WorkspaceContainer>
+    </DocumentationContainer>
+  );
+}
+
+interface AdapterProps {
+  xAxisVariable: VariableDescriptor;
+  yAxisVariable: VariableDescriptor;
+  geneDisplaySpec?: GeneDisplaySpec;
+  plotTitle?: string;
+}
+
+function BoxPlotAdapter(props: AdapterProps) {
+  const { xAxisVariable, yAxisVariable, geneDisplaySpec, plotTitle } = props;
+  const { id: studyId } = useStudyMetadata();
+  const dataClient = useDataClient();
+  const findEntityAndVariable = useFindEntityAndVariable();
+  const data = useCachedPromise(
+    async function getData() {
+      // Unlike the scatter plot, a box plot has no per-point identity, so there
+      // is nothing to highlight within it: a box of every gene's values says
+      // nothing about the gene whose record page this is. Both display modes
+      // therefore subset to the gene.
+      const filters = geneSubsetFilters(geneDisplaySpec);
+
+      const boxplotDataResponse$ = dataClient.getBoxplot('pass', {
+        studyId,
+        filters,
+        config: {
+          // The measured value lives on the y-axis entity, which is at or below
+          // the x-axis entity in the study tree (for these gene graphs the x is
+          // typically a sample-level covariate). Output there so the x variable
+          // is inherited down rather than the y variable aggregated up.
+          outputEntityId: yAxisVariable.entityId,
+          points: 'outliers',
+          mean: 'FALSE',
+          xAxisVariable,
+          yAxisVariable,
+        },
+      });
+
+      const boxplotDataResponse = await boxplotDataResponse$;
+
+      const xAxisVar = findEntityAndVariable(xAxisVariable);
+      const yAxisVar = findEntityAndVariable(yAxisVariable);
+
+      if (!xAxisVar || !yAxisVar) {
+        throw new Error('Could not find x or y axis variable');
+      }
+
+      // The box labels are the x-axis categories, so that is the variable
+      // boxplotResponseToData needs for label formatting.
+      return boxplotResponseToData(boxplotDataResponse, xAxisVar.variable);
+    },
+    ['BoxPlotAdapter', studyId, xAxisVariable, yAxisVariable, geneDisplaySpec]
+  );
+
+  const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);
+  const yAxisEntityAndVariable = findEntityAndVariable(yAxisVariable);
+
+  if (data.error) {
+    return <div>Error: {String(data.error)}</div>;
+  }
+
+  // A no-data response from the backend serialises as { facets: [] } (see
+  // boxplotResponseToData). isFaceted() treats an empty facets array as faceted
+  // via a vacuous [].every(), so detect emptiness explicitly before the throw.
+  // Unfaceted BoxplotData is itself the array of series.
+  const noData =
+    data.value != null &&
+    (isFaceted(data.value)
+      ? data.value.facets.length === 0
+      : data.value.length === 0);
+
+  if (noData) {
+    return (
+      <div>
+        {plotTitle ? `${plotTitle}: no data available` : 'No data available'}
+      </div>
+    );
+  }
+
+  if (isFaceted(data.value)) {
+    throw new Error('Received unexpected faceted data.');
+  }
+
+  return (
+    <Boxplot
+      interactive
+      showSpinner={data.pending}
+      data={data.value}
+      dependentAxisLabel={yAxisEntityAndVariable?.variable.displayName}
+      independentAxisLabel={xAxisEntityAndVariable?.variable.displayName}
+      displayLegend={false}
+      title={plotTitle}
+    />
+  );
+}

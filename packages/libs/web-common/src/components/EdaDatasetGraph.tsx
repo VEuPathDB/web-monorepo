@@ -8,19 +8,39 @@ import * as t from 'io-ts';
 import { useState } from 'react';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
 import { EdaBarPlot } from './eda/EdaBarPlot';
+import { EdaBoxPlot } from './eda/EdaBoxPlot';
 import { Link } from 'react-router-dom';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 
-const PlotConfig = t.type({
-  plotName: t.string,
-  plotType: t.string,
-  xAxisEntityId: t.string,
-  xAxisVariableId: t.string,
-  yAxisEntityId: t.string,
-  yAxisVariableId: t.string,
-  displaySpecVariableId: t.string,
-  displayMode: t.union([t.literal('highlight'), t.literal('subset')]),
-});
+const PlotConfig = t.intersection([
+  t.type({
+    plotName: t.string,
+    plotType: t.string,
+    xAxisEntityId: t.string,
+    xAxisVariableId: t.string,
+    yAxisEntityId: t.string,
+    yAxisVariableId: t.string,
+    displaySpecVariableId: t.string,
+    displayMode: t.union([t.literal('highlight'), t.literal('subset')]),
+  }),
+  t.partial({
+    // Entity carrying displaySpecVariableId. Defaults to the x-axis entity,
+    // which is only correct when both axes share an entity; a plot whose axes
+    // span two entities must say where the gene id variable actually lives.
+    displaySpecEntityId: t.string,
+  }),
+]);
+
+/**
+ * Plot component per `plotType`. A type with no entry here renders an explicit
+ * message rather than falling back to some other plot, so an unhandled type is
+ * visible instead of being silently drawn as the wrong chart.
+ */
+const PLOT_COMPONENTS = {
+  bar: EdaBarPlot,
+  boxplot: EdaBoxPlot,
+  scatterplot: EdaScatterPlot,
+} as const;
 
 const PlotConfigs = t.array(PlotConfig);
 
@@ -146,14 +166,25 @@ export function EdaDatasetGraph(props: Props) {
               const geneDisplaySpec = graphIds && {
                 ids: graphIds,
                 variableId: plotConfig.displaySpecVariableId,
-                entityId: plotConfig.xAxisEntityId,
+                entityId:
+                  plotConfig.displaySpecEntityId ?? plotConfig.xAxisEntityId,
                 traceName: source_id,
                 mode: plotConfig.displayMode,
               };
 
-              // Conditional rendering based on plot type
               const PlotComponent =
-                plotConfig.plotType === 'bar' ? EdaBarPlot : EdaScatterPlot;
+                PLOT_COMPONENTS[
+                  plotConfig.plotType as keyof typeof PLOT_COMPONENTS
+                ];
+
+              if (PlotComponent == null) {
+                return (
+                  <div key={plotConfig.plotName}>
+                    {plotConfig.plotName}: unsupported plot type "
+                    {plotConfig.plotType}"
+                  </div>
+                );
+              }
 
               return (
                 <div
