@@ -100,14 +100,22 @@ regardless of which table the user started from.
   the same content-addressed `jobID` — this is the platform's actual "rerun" mechanism, not a
   distinct endpoint. That means a `GET /jobs/{id}` poll can only ever observe `expired` on a
   job nobody has resubmitted since it lapsed — practically, a bookmarked/returned-to
-  `/result/:jobId` page, since that path only ever calls `GET`, never re-`POST`s (see the
-  Confirm dialog and results-page behavior below). The client cannot itself resubmit in that
-  situation: the page holds only the `jobId` from the URL, not the original `Feature[]`/
-  `msaOptions` that produced it, and the service never echoes those back. Restarting a
-  bookmarked job by ID alone would need a new endpoint that doesn't exist today — tracked as a
-  backend follow-up, not something this design can build around (see Non-goals). Whether a
-  data release should also purge/expire jobs (independent of the 30-day idle prune) is a
-  separate backend/ops concern, also tracked in Non-goals.
+  `/result/:jobId` page, since that path only ever calls `GET`, never re-`POST`s. The client
+  can't reconstruct the original `Feature[]`/`msaOptions` itself (the page only has the
+  `jobId` from the URL, and the service never echoes params back) — which is why the new
+  `POST /jobs/{id}/rerun` endpoint below exists. Whether a data release should also
+  purge/expire jobs (independent of the 30-day idle prune) is a separate backend/ops concern,
+  tracked in Non-goals.
+- **Rerun (new, backend work this design depends on):** `service-sequence-retrieval` will add
+  `POST /jobs/{id}/rerun`, which reruns a job — most usefully an expired one — using its
+  originally submitted request, with no request body needed from the caller. Confirmed
+  buildable entirely within `service-sequence-retrieval`, no `lib-compute-platform` change
+  required: `AsyncJob.config` (the original request) survives in Postgres past expiration —
+  only the S3-side copy is pruned — so the endpoint just reads `config` back via
+  `AsyncPlatform.getJob(jobID)` and calls `AsyncPlatform.submitJob(...)` with that same
+  `jobID`, identical in effect to a client re-`POST`ing the original JSON itself. This is the
+  one piece of backend work this design requires beyond what already exists; see the results
+  page's `expired` handling below.
 
 ## Architecture: three layers
 
@@ -205,8 +213,9 @@ way `service-sequence-retrieval` does — not a third, competing "compute job" p
 - **`lib/utils/ServiceTypes.ts`** — `Feature`, `MsaOptions`, `MsaFormat`, `JobResponse`
   (`jobID`/`status`/`queuePosition`), `JobStatus` union.
 - **`lib/utils/api.ts`** — `SequenceRetrievalApi extends FetchClientWithCredentials`:
-  `submitJob(sequenceType, request)`, `fetchJob(jobId)`, `fetchJobFiles(jobId)`,
-  `fetchJobFile(jobId, name)`. Modeled on `multi-blast`'s `BlastApi`.
+  `submitJob(sequenceType, request)`, `fetchJob(jobId)`, `rerunJob(jobId)`,
+  `fetchJobFiles(jobId)`, `fetchJobFile(jobId, name)`. Modeled on `multi-blast`'s `BlastApi`.
+  `rerunJob` calls the new `POST /jobs/{id}/rerun` (see Service contract).
 - **`lib/hooks/useJobPolling.ts`** — recursive-`setTimeout` hook modeled on
   `useDatasetPolling`/`polling-schedule.ts` (tiered backoff: 2s for the first ~10s, 5s to
   ~40s, 15s steady-state; pause while `document.hidden`, force-poll + backoff reset on tab
@@ -224,8 +233,13 @@ way `service-sequence-retrieval` does — not a third, competing "compute job" p
     flashing/disappearing status text).
   - On `complete`: fetch file list, fetch `output` (and `guidetree.dnd` if present), render
     inline (plain text / HTML preview for `clustal_dnd`) plus a download link.
-  - On `failed`/`expired`: an error state with no retry action (no rerun endpoint exists),
-    directing the user back to the record page to resubmit if they want to try again.
+  - On `failed`: an error state with no retry action — a real execution failure, not
+    something rerunning the same input would fix — directing the user back to the record
+    page to resubmit (with different input) if they want to try again.
+  - On `expired`: call `rerunJob(jobId)`, then resume polling as if nothing happened. From
+    the user's perspective, a bookmarked link that's gone idle just takes a moment longer
+    before showing status again, with no dead end and no need to reselect/resubmit
+    themselves.
 - **`lib/controllers/ComputeJobRouter.tsx`** — exposes `/result/:jobId`.
 
 Each site adds a thin `computeJobRoutes.tsx` (its own `RouteEntry[]`, e.g. path
@@ -236,9 +250,11 @@ Each site adds a thin `computeJobRoutes.tsx` (its own `RouteEntry[]`, e.g. path
 comes from `GET /jobs/:id` — nothing is cached client-side across navigations. A user can
 leave the page and come back (bookmark, browser back/forward, sharing the URL) and the page
 re-derives correct state from scratch: if still running, polling resumes; if complete, the
-result is fetched and shown; if failed/expired, that's shown. There is no separate "job
-history" list for this feature (unlike multi-blast's `/all` jobs list) — out of scope unless
-requested.
+result is fetched and shown; if failed, that's shown as a dead end; if expired, `rerunJob` is
+called and polling resumes automatically (this is, in practice, the main way a bookmarked
+`/result/:jobId` page can end up calling `rerunJob` at all — see Service contract). There is
+no separate "job history" list for this feature (unlike multi-blast's `/all` jobs list) — out
+of scope unless requested.
 
 ### 3. Confirm dialog (kept, action changed)
 
@@ -258,17 +274,6 @@ multi-minute job. The only change is what happens on confirm: instead of
   real lookup).
 - **Job cancellation.** Not possible — no such endpoint exists in `lib-compute-platform` or
   `service-sequence-retrieval`.
-- **Restarting an expired job from just its `jobId`.** No such endpoint exists in
-  `service-sequence-retrieval` today, so a bookmarked `/result/:jobId` page that hits `expired`
-  has no way to recover on its own; it shows a terminal state directing the user back to
-  reselect and resubmit. This is confirmed buildable, though: `lib-compute-platform`'s
-  `AsyncJob.config` (the original submitted request) is preserved in Postgres even after a job
-  expires — only the S3-side output/config copy is pruned — so `service-sequence-retrieval`
-  could add a `POST /jobs/{id}/rerun`-style endpoint using only `lib-compute-platform`'s
-  existing public API (`AsyncPlatform.getJob(jobID)` to read back `config`, then
-  `AsyncPlatform.submitJob(...)` with that same `jobID`) — no `lib-compute-platform` change
-  needed. Still a backend feature request outside this design's scope, but a small, well-
-  scoped, service-local one rather than an open-ended ask.
 - **Data-release-driven job expiration/purging.** Flagged as desired (expire all jobs on new
   data release, ~every 2 months) but this is backend/ops policy (a queue purge or TTL
   configured around the release cadence), not something the client can or should enforce.
