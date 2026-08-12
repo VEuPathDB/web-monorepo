@@ -172,10 +172,16 @@ scopes only `resolveTranscriptFeatures` for initial implementation.
 
 ### 2. Shared submit/poll/results package
 
-New package, `packages/libs/compute-jobs` (name open — see Open questions), following the
-`multi-blast` package as a structural template (a standalone lib each site imports and wires
-into its own routes, the way `packages/sites/ortho-site/.../blastRoutes.tsx` imports
-`@veupathdb/multi-blast`):
+New package, `packages/libs/compute-platform-job`, following the `multi-blast` package as a
+structural template (a standalone lib each site imports and wires into its own routes, the way
+`packages/sites/ortho-site/.../blastRoutes.tsx` imports `@veupathdb/multi-blast`). Named after
+`lib-compute-platform` specifically, not "compute jobs" generically — BLAST and EDA already
+have their own compute-job UIs, on different, incompatible backend contracts (BLAST's own
+bespoke `/jobs`/`/reports` service; EDA wraps `lib-compute-platform` behind its own
+`/computes/{name}` API rather than exposing the generic shape). This package is the client for
+`lib-compute-platform`'s generic job REST shape itself (submit → `GET /jobs/{id}` →
+`GET /jobs/{id}/files`), reusable by any future service that exposes that shape directly, the
+way `service-sequence-retrieval` does — not a third, competing "compute job" package.
 
 - **`lib/utils/ServiceTypes.ts`** — `Feature`, `MsaOptions`, `MsaFormat`, `JobResponse`
   (`jobID`/`status`/`queuePosition`), `JobStatus` union.
@@ -242,8 +248,6 @@ multi-minute job. The only change is what happens on confirm: instead of
 
 ## Open questions
 
-- Exact name/home for the new package (`packages/libs/compute-jobs` proposed, following the
-  `multi-blast` precedent of "one package per reusable async-job UI").
 - Whether `sequenceType` for the transcript case should be `genomic` or `protein` by default,
   matching the old form's `sequence_Type` radio choice — carries over 1:1, just renamed.
 - **Row selection should switch from `ortho_gene_source_id` to `ortho_source_id`.** Since the
