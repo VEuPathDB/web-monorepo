@@ -3,15 +3,21 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
   useDataClient,
   useFindEntityAndVariable,
+  useStudyEntities,
   useStudyMetadata,
 } from '@veupathdb/eda/lib/core';
+import { leastAncestralVariable } from '@veupathdb/eda/lib/core/utils/data-element-constraints';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
 import { boxplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/BoxplotVisualization';
 import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
-import { geneSubsetFilters, GeneDisplaySpec } from './geneDisplaySpec';
+import {
+  geneSubsetFilters,
+  resolveGeneDisplaySpec,
+  GeneDisplaySpec,
+} from './geneDisplaySpec';
 
 interface Props {
   datasetId: string;
@@ -53,23 +59,34 @@ function BoxPlotAdapter(props: AdapterProps) {
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
   const findEntityAndVariable = useFindEntityAndVariable();
+  const entities = useStudyEntities();
+
+  // Both entities below are derived from the study metadata rather than
+  // configured per dataset: they are facts about the study's entity tree, and a
+  // stale or mistyped id would silently produce a plot of the wrong rows.
+  const resolvedGeneDisplaySpec = resolveGeneDisplaySpec(
+    geneDisplaySpec,
+    entities
+  );
+  // The output entity is the leaf-most of the two axes, so an ancestor-entity
+  // variable is inherited down rather than the descendant aggregated up.
+  const outputEntityId =
+    leastAncestralVariable([xAxisVariable, yAxisVariable], entities)
+      ?.entityId ?? yAxisVariable.entityId;
+
   const data = useCachedPromise(
     async function getData() {
       // Unlike the scatter plot, a box plot has no per-point identity, so there
       // is nothing to highlight within it: a box of every gene's values says
       // nothing about the gene whose record page this is. Both display modes
       // therefore subset to the gene.
-      const filters = geneSubsetFilters(geneDisplaySpec);
+      const filters = geneSubsetFilters(resolvedGeneDisplaySpec);
 
       const boxplotDataResponse$ = dataClient.getBoxplot('pass', {
         studyId,
         filters,
         config: {
-          // The measured value lives on the y-axis entity, which is at or below
-          // the x-axis entity in the study tree (for these gene graphs the x is
-          // typically a sample-level covariate). Output there so the x variable
-          // is inherited down rather than the y variable aggregated up.
-          outputEntityId: yAxisVariable.entityId,
+          outputEntityId,
           points: 'outliers',
           mean: 'FALSE',
           xAxisVariable,
@@ -90,7 +107,14 @@ function BoxPlotAdapter(props: AdapterProps) {
       // boxplotResponseToData needs for label formatting.
       return boxplotResponseToData(boxplotDataResponse, xAxisVar.variable);
     },
-    ['BoxPlotAdapter', studyId, xAxisVariable, yAxisVariable, geneDisplaySpec]
+    [
+      'BoxPlotAdapter',
+      studyId,
+      xAxisVariable,
+      yAxisVariable,
+      resolvedGeneDisplaySpec,
+      outputEntityId,
+    ]
   );
 
   const xAxisEntityAndVariable = findEntityAndVariable(xAxisVariable);

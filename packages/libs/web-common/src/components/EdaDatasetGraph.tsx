@@ -12,24 +12,16 @@ import { EdaBoxPlot } from './eda/EdaBoxPlot';
 import { Link } from 'react-router-dom';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 
-const PlotConfig = t.intersection([
-  t.type({
-    plotName: t.string,
-    plotType: t.string,
-    xAxisEntityId: t.string,
-    xAxisVariableId: t.string,
-    yAxisEntityId: t.string,
-    yAxisVariableId: t.string,
-    displaySpecVariableId: t.string,
-    displayMode: t.union([t.literal('highlight'), t.literal('subset')]),
-  }),
-  t.partial({
-    // Entity carrying displaySpecVariableId. Defaults to the x-axis entity,
-    // which is only correct when both axes share an entity; a plot whose axes
-    // span two entities must say where the gene id variable actually lives.
-    displaySpecEntityId: t.string,
-  }),
-]);
+const PlotConfig = t.type({
+  plotName: t.string,
+  plotType: t.string,
+  xAxisEntityId: t.string,
+  xAxisVariableId: t.string,
+  yAxisEntityId: t.string,
+  yAxisVariableId: t.string,
+  displaySpecVariableId: t.string,
+  displayMode: t.union([t.literal('highlight'), t.literal('subset')]),
+});
 
 /**
  * Plot component per `plotType`. A type with no entry here renders an explicit
@@ -166,8 +158,10 @@ export function EdaDatasetGraph(props: Props) {
               const geneDisplaySpec = graphIds && {
                 ids: graphIds,
                 variableId: plotConfig.displaySpecVariableId,
-                entityId:
-                  plotConfig.displaySpecEntityId ?? plotConfig.xAxisEntityId,
+                // A starting point only: the adapters correct this to whichever
+                // entity actually declares the variable, which is the x-axis
+                // entity only when both axes share one.
+                entityId: plotConfig.xAxisEntityId,
                 traceName: source_id,
                 mode: plotConfig.displayMode,
               };
