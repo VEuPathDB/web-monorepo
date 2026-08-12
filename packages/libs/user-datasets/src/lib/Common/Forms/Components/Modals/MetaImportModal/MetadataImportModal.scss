@@ -7,6 +7,11 @@
     font-style: italic;
   }
 
+  span.ds-id {
+    opacity: 0.6;
+    font-size: 0.9em;
+  }
+
   > .MesaComponent {
     min-height: 350px;
   }

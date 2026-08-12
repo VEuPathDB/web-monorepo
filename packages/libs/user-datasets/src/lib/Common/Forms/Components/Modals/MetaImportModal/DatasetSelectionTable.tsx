@@ -91,7 +91,7 @@ export function DatasetSelectionTable(
 
 function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
   const columns: TableColumn<any>[] = [
-    column('name', 'Dataset Name', true),
+    column('name', 'Dataset Name', true, renderDatasetName),
     column('summary', 'Summary', false),
     column('type', 'Data Type', true, ({ row }) => row.type.category),
     column('installTargets', 'VEuPathDB Project', true, renderProjects),
@@ -123,6 +123,13 @@ function defaultColumn(
   key: keyof Dataset
 ): util.Function<TableCellProps, string> {
   return ({ row }) => String(row[key]);
+}
+
+function renderDatasetName({ row }: TableCellProps): ReactElement {
+  return <>
+    {row.name}<br />
+    <span className="ds-id">({row.datasetId})</span>
+  </>;
 }
 
 function renderProjects({ row }: TableCellProps): string {
@@ -207,27 +214,38 @@ function filterDatasets(
   const out: Dataset[] = [];
 
   for (const dataset of datasets) {
-    // If we have a query string, but that query string is not in the dataset
-    // name, then exclude the dataset.
-    if (filters.query && dataset.name.indexOf(filters.query) === -1) continue;
+    // If we have a query string, but that query string does not match the
+    // dataset row, then exclude the dataset.
+    if (filters.query && !matchesQuery(dataset, filters.query)) {
+      continue;
+    }
 
     // If we are excluding other sites, and the dataset does not target the
     // current site, then exclude the dataset.
     if (filters.excludeOtherSites) {
-      if (!dataset.installTargets.includes(projectId)) continue;
+      if (!dataset.installTargets.includes(projectId)) {
+        continue;
+      }
     }
 
     // If we are excluding datasets that are only available because they are
     // public, AND the dataset is public, AND the dataset is not otherwise
     // visible to the user, then exclude the dataset.
     if (filters.excludePublic && dataset.visibility === 'public') {
-      if (!isAlwaysVisibleTo(dataset, filters.userId)) continue;
+      if (!isAlwaysVisibleTo(dataset, filters.userId)) {
+        continue;
+      }
     }
 
     out.push(dataset);
   }
 
   return out;
+}
+
+function matchesQuery(dataset: Dataset, query: string): boolean {
+  return dataset.datasetId === query
+    || dataset.name.indexOf(query) > -1;
 }
 
 function isAlwaysVisibleTo(dataset: Dataset, userId: number): boolean {
