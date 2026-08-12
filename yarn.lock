@@ -6512,7 +6512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.11.4, @testing-library/jest-dom@npm:^5.16.5":
+"@testing-library/jest-dom@npm:5.16.5, @testing-library/jest-dom@npm:^5.11.4, @testing-library/jest-dom@npm:^5.16.5":
   version: 5.16.5
   resolution: "@testing-library/jest-dom@npm:5.16.5"
   dependencies:
@@ -8969,6 +8969,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@veupathdb/compute-platform-job@workspace:packages/libs/compute-platform-job"
   dependencies:
+    "@testing-library/jest-dom": "npm:5.16.5"
     "@testing-library/react": "npm:12.1.2"
     "@testing-library/react-hooks": "npm:^8.0.1"
     "@types/react": "npm:^18.3.1"
