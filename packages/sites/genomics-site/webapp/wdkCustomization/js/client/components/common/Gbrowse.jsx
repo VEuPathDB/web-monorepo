@@ -79,6 +79,15 @@ export let contexts = [
     isPbrowse: false,
   },
   {
+    // Variant record page. Same tracks as the Gene page's SNPs context, but the
+    // window is built by the model around the single variant position rather than
+    // around a gene span.
+    gbrowse_url: 'VariantGbrowseUrl',
+    displayName: 'Short Variants',
+    anchor: 'VariantGbrowseUrl',
+    isPbrowse: false,
+  },
+  {
     gbrowse_url: 'FeaturesPbrowseUrl',
     displayName: 'Protein Properties',
     anchor: 'ProteinProperties',
@@ -193,7 +202,8 @@ export function GbrowseContext(props) {
   if (
     attribute.name == 'SyntenyGbrowseUrl' ||
     attribute.name == 'BlatAlignmentsGbrowseUrl' ||
-    attribute.name == 'SnpsGbrowseUrl'
+    attribute.name == 'SnpsGbrowseUrl' ||
+    attribute.name == 'VariantGbrowseUrl'
   ) {
     if (attribute.name == 'SyntenyGbrowseUrl') {
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
@@ -206,6 +216,10 @@ export function GbrowseContext(props) {
     if (attribute.name == 'SnpsGbrowseUrl') {
       jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
       jbrowseUrlFull = record.attributes.snpsJbrowseFullUrl;
+    }
+    if (attribute.name == 'VariantGbrowseUrl') {
+      jbrowseUrlMinimal = record.attributes.variantJbrowseUrl;
+      jbrowseUrlFull = record.attributes.variantJbrowseFullUrl;
     }
     return (
       <div>
