@@ -36,14 +36,11 @@ describe('ComputeJobRouter', () => {
     expect(await screen.findByText('Running Compute Job')).toBeInTheDocument();
   });
 
-  it('forwards paramsSummary from location.state to ComputeJobPage', async () => {
+  it('forwards paramsSummary from the query string to ComputeJobPage', async () => {
     render(
       <MemoryRouter
         initialEntries={[
-          {
-            pathname: '/result/abc123',
-            state: { paramsSummary: '13 Transcripts, FASTA output format' },
-          },
+          '/result/abc123?paramsSummary=13+Transcripts%2C+FASTA+output+format',
         ]}
       >
         <ComputeJobRouter api={makeFakeApi()} />
@@ -55,7 +52,7 @@ describe('ComputeJobRouter', () => {
     ).toBeInTheDocument();
   });
 
-  it('does not throw when location.state is missing (e.g. bookmarked URL)', async () => {
+  it('does not throw when the query string is missing (e.g. bookmarked URL)', async () => {
     render(
       <MemoryRouter initialEntries={['/result/abc123']}>
         <ComputeJobRouter api={makeFakeApi()} />

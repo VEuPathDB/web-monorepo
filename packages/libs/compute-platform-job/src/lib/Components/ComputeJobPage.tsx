@@ -8,16 +8,29 @@ interface ComputeJobPageProps {
   jobId: string;
   api: SequenceRetrievalApi;
   paramsSummary?: string;
+  /** The MsaFormat value the job was submitted with, e.g. 'clustal_dnd'. */
+  format?: string;
+}
+
+// The /files/{name} endpoint always returns Content-Type: text/plain
+// regardless of the actual content, so an HTML-producing format (only
+// clustal_dnd today) needs its real MIME type set client-side via a Blob —
+// otherwise the browser renders/downloads it as plain text instead of HTML.
+const HTML_MSA_FORMATS = new Set(['clustal_dnd']);
+
+function getResultMimeType(format: string | undefined): string {
+  return format != null && HTML_MSA_FORMATS.has(format)
+    ? 'text/html'
+    : 'text/plain';
 }
 
 export function ComputeJobPage({
   jobId,
   api,
   paramsSummary,
+  format,
 }: ComputeJobPageProps) {
   const [status, setStatus] = useState<JobStatus>('queued');
-  const [fileContent, setFileContent] = useState<string | null>(null);
-  const [guideTreeContent, setGuideTreeContent] = useState<string | null>(null);
 
   const onPoll = useCallback(async () => {
     const job = await api.fetchJob(jobId);
@@ -30,19 +43,24 @@ export function ComputeJobPage({
     if (status !== 'complete') return;
     let cancelled = false;
     (async () => {
-      const files = await api.fetchJobFiles(jobId);
       const output = await api.fetchJobFile(jobId, 'output');
       if (cancelled) return;
-      setFileContent(output);
-      if (files.includes('guidetree.dnd')) {
-        const guideTree = await api.fetchJobFile(jobId, 'guidetree.dnd');
-        if (!cancelled) setGuideTreeContent(guideTree);
-      }
+      // The 'output' file is already the complete document for every
+      // format — for clustal_dnd it includes the guide tree as its own
+      // section (<hr><h4>Guide Tree...) — no separate file to fetch/concat.
+      //
+      // This page's whole purpose from here is to hand off to the real
+      // result — replace it in place (no dead "Running Compute Job" tab
+      // left behind) rather than rendering the result inline.
+      const blobUrl = URL.createObjectURL(
+        new Blob([output], { type: getResultMimeType(format) })
+      );
+      window.location.replace(blobUrl);
     })();
     return () => {
       cancelled = true;
     };
-  }, [status, api, jobId]);
+  }, [status, api, jobId, format]);
 
   return (
     <div className="ComputeJobPage">
@@ -51,17 +69,6 @@ export function ComputeJobPage({
       {status === 'queued' || status === 'in-progress' ? (
         <p className="Status">Status: {status}</p>
       ) : null}
-      {status === 'complete' && fileContent != null && (
-        <div className="Result">
-          <pre>{fileContent}</pre>
-          {guideTreeContent != null && (
-            <details>
-              <summary>Guide tree</summary>
-              <pre>{guideTreeContent}</pre>
-            </details>
-          )}
-        </div>
-      )}
       {status === 'failed' && (
         <p className="DeadEnd">
           This job failed. Please go back and resubmit your request.

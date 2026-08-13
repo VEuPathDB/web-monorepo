@@ -35,7 +35,7 @@ import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
 
-import { projectId, webAppUrl } from '../../config';
+import { projectId, rootUrl, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
 import { SnpsAlignmentForm } from '../common/Snps';
@@ -52,7 +52,6 @@ import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 // Deep import — see the note in Task 8: this package has no main/exports
@@ -1655,7 +1654,6 @@ function TranscriptMsaSubmission({
   childProps,
 }) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-  const history = useHistory();
   const [sequenceTypeChoice, setSequenceTypeChoice] = useState(
     isProtein ? 'protein' : 'genomic'
   );
@@ -1716,7 +1714,16 @@ function TranscriptMsaSubmission({
       selectedTranscriptIds.length + 1
     } Transcripts, ${outFormat.toUpperCase()} output format`;
 
-    history.push(`/workspace/msa/result/${job.jobID}`, { paramsSummary });
+    // Opens in a new tab (like the old CGI form's target="_blank" submit) so
+    // the record page's selections/form state are left completely
+    // untouched — the new tab can't receive React Router location.state, so
+    // paramsSummary/format travel as query params instead.
+    const resultUrl = new URL(
+      `${window.location.origin}${rootUrl}/workspace/msa/result/${job.jobID}`
+    );
+    resultUrl.searchParams.set('paramsSummary', paramsSummary);
+    resultUrl.searchParams.set('format', outFormat);
+    window.open(resultUrl.toString(), '_blank');
   };
 
   return (

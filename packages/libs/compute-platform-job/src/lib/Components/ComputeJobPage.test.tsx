@@ -45,20 +45,69 @@ describe('ComputeJobPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('fetches and renders the result on complete', async () => {
+  it('fetches the result and replaces the page with a blob URL on complete', async () => {
     const api = makeFakeApi({
       fetchJob: jest
         .fn()
         .mockResolvedValue({ jobID: 'abc', status: 'complete' }),
-      fetchJobFiles: jest.fn().mockResolvedValue(['output']),
       fetchJobFile: jest.fn().mockResolvedValue('CLUSTAL O alignment text'),
     });
 
-    render(<ComputeJobPage jobId="abc" api={api} />);
+    // JSDOM doesn't implement URL.createObjectURL at all, so there's
+    // nothing for jest.spyOn to wrap — assign a mock directly.
+    const createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
+    (URL as any).createObjectURL = createObjectURL;
+    const replace = jest.fn();
+    const originalLocation = window.location;
+    // @ts-expect-error - deleting to allow a mock replacement, restored below
+    delete window.location;
+    window.location = { ...originalLocation, replace } as Location;
 
-    await waitFor(() => {
-      expect(screen.getByText('CLUSTAL O alignment text')).toBeInTheDocument();
+    try {
+      render(<ComputeJobPage jobId="abc" api={api} />);
+
+      await waitFor(() => {
+        expect(replace).toHaveBeenCalledWith('blob:mock-url');
+      });
+
+      expect(api.fetchJobFile).toHaveBeenCalledWith('abc', 'output');
+      const [[blobArg]]: [Blob][] = createObjectURL.mock.calls;
+      expect(blobArg.type).toBe('text/plain');
+    } finally {
+      window.location = originalLocation;
+      delete (URL as any).createObjectURL;
+    }
+  });
+
+  it('uses text/html for the clustal_dnd format', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest
+        .fn()
+        .mockResolvedValue({ jobID: 'abc', status: 'complete' }),
+      fetchJobFile: jest.fn().mockResolvedValue('<html></html>'),
     });
+
+    const createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
+    (URL as any).createObjectURL = createObjectURL;
+    const replace = jest.fn();
+    const originalLocation = window.location;
+    // @ts-expect-error - deleting to allow a mock replacement, restored below
+    delete window.location;
+    window.location = { ...originalLocation, replace } as Location;
+
+    try {
+      render(<ComputeJobPage jobId="abc" api={api} format="clustal_dnd" />);
+
+      await waitFor(() => {
+        expect(replace).toHaveBeenCalledWith('blob:mock-url');
+      });
+
+      const [[blobArg]]: [Blob][] = createObjectURL.mock.calls;
+      expect(blobArg.type).toBe('text/html');
+    } finally {
+      window.location = originalLocation;
+      delete (URL as any).createObjectURL;
+    }
   });
 
   it('shows a dead-end message on failed with no retry action', async () => {

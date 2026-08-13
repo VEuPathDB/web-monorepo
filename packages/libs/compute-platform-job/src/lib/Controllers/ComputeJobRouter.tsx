@@ -7,25 +7,15 @@ interface Props {
   api: SequenceRetrievalApi;
 }
 
-interface LocationState {
-  paramsSummary?: string;
-}
-
-function isLocationState(state: unknown): state is LocationState {
-  return (
-    state != null &&
-    typeof state === 'object' &&
-    (!('paramsSummary' in state) ||
-      typeof (state as LocationState).paramsSummary === 'string')
-  );
-}
-
+// The result page opens in a new browser tab (window.open at submit time),
+// which has no access to the submitting tab's React Router location.state —
+// so paramsSummary/format travel as query params instead.
 export function ComputeJobRouter({ api }: Props) {
   const { path } = useRouteMatch();
-  const location = useLocation<unknown>();
-  const paramsSummary = isLocationState(location.state)
-    ? location.state.paramsSummary
-    : undefined;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const paramsSummary = searchParams.get('paramsSummary') ?? undefined;
+  const format = searchParams.get('format') ?? undefined;
 
   return (
     <Switch>
@@ -37,6 +27,7 @@ export function ComputeJobRouter({ api }: Props) {
             jobId={routeProps.match.params.jobId}
             api={api}
             paramsSummary={paramsSummary}
+            format={format}
           />
         )}
       />
