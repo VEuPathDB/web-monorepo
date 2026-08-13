@@ -16,6 +16,7 @@ import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
+  Dialog,
   Loading,
   RecordTable as WdkRecordTable,
 } from '@veupathdb/wdk-client/lib/Components';
@@ -1624,6 +1625,7 @@ function OrthologsFormContainer(props) {
       value={transcriptFilterAwareValues}
       transcriptFilter={transcriptFilter}
       showLongestTranscriptPerGene={showLongestTranscriptPerGene}
+      setShowLongestTranscriptPerGene={setShowLongestTranscriptPerGene}
     />
   );
 }
@@ -1635,7 +1637,6 @@ function TranscriptMsaSubmission({
   isNotProtein,
   orthoTableProps,
   transcriptFilter,
-  showSelectGateMessage,
   defaultComponent: DefaultComponent,
   value,
   childProps,
@@ -1692,11 +1693,6 @@ function TranscriptMsaSubmission({
       onConfirm={handleConfirm}
     >
       {transcriptFilter}
-      {showSelectGateMessage && (
-        <p className="SelectGateMessage" style={{ color: 'firebrick' }}>
-          Select one-per-gene first
-        </p>
-      )}
       <DefaultComponent
         {...childProps}
         value={value}
@@ -1797,28 +1793,38 @@ class OrthologsForm extends SortKeyTable {
     this.state = {
       selectedRowIds: [],
       groupBySelected: false,
-      showSelectGateMessage: false,
+      showSelectGateDialog: false,
     };
     this.isRowSelected = this.isRowSelected.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
     this.onRowDeselect = this.onRowDeselect.bind(this);
     this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
     this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
+    this.closeSelectGateDialog = this.closeSelectGateDialog.bind(this);
+    this.viewOneTranscriptPerGene = this.viewOneTranscriptPerGene.bind(this);
   }
 
   isRowSelected({ ortho_source_id }) {
     return this.state.selectedRowIds.includes(ortho_source_id);
   }
 
+  closeSelectGateDialog() {
+    this.setState({ showSelectGateDialog: false });
+  }
+
+  viewOneTranscriptPerGene() {
+    this.props.setShowLongestTranscriptPerGene(true);
+    this.setState({ showSelectGateDialog: false });
+  }
+
   onRowSelect({ ortho_source_id }) {
     if (!this.props.showLongestTranscriptPerGene) {
-      this.setState({ showSelectGateMessage: true });
+      this.setState({ showSelectGateDialog: true });
       return;
     }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(ortho_source_id),
-      showSelectGateMessage: false,
     }));
   }
 
@@ -1837,7 +1843,7 @@ class OrthologsForm extends SortKeyTable {
 
   onMultipleRowSelect(rows) {
     if (!this.props.showLongestTranscriptPerGene) {
-      this.setState({ showSelectGateMessage: true });
+      this.setState({ showSelectGateDialog: true });
       return;
     }
     this.setState((state) => ({
@@ -1845,7 +1851,6 @@ class OrthologsForm extends SortKeyTable {
       selectedRowIds: state.selectedRowIds.concat(
         rows.map((row) => row['ortho_source_id'])
       ),
-      showSelectGateMessage: false,
     }));
   }
 
@@ -1907,18 +1912,52 @@ class OrthologsForm extends SortKeyTable {
       // TODO: Discuss how to retain "large flanking region" warning in the modal
       // Original message: "Please note: selecting a large flanking region or a large number of sequences will take several minutes to align."
       return (
-        <TranscriptMsaSubmission
-          selectedTranscriptIds={this.state.selectedRowIds}
-          sourceId={source_id}
-          isProtein={is_protein}
-          isNotProtein={not_protein}
-          orthoTableProps={orthoTableProps}
-          transcriptFilter={this.props.transcriptFilter}
-          showSelectGateMessage={this.state.showSelectGateMessage}
-          defaultComponent={this.props.DefaultComponent}
-          value={this.sortValue(this.props.value)}
-          childProps={this.props}
-        />
+        <>
+          <TranscriptMsaSubmission
+            selectedTranscriptIds={this.state.selectedRowIds}
+            sourceId={source_id}
+            isProtein={is_protein}
+            isNotProtein={not_protein}
+            orthoTableProps={orthoTableProps}
+            transcriptFilter={this.props.transcriptFilter}
+            defaultComponent={this.props.DefaultComponent}
+            value={this.sortValue(this.props.value)}
+            childProps={this.props}
+          />
+          <Dialog
+            open={this.state.showSelectGateDialog}
+            modal
+            title="One transcript per gene required"
+            onClose={this.closeSelectGateDialog}
+          >
+            <div style={{ padding: '10px', width: '400px' }}>
+              <p>Must first filter table to one transcript per gene.</p>
+              <div
+                style={{
+                  marginTop: '20px',
+                  display: 'flex',
+                  gap: '10px',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={this.closeSelectGateDialog}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={this.viewOneTranscriptPerGene}
+                >
+                  View one transcript per gene
+                </button>
+              </div>
+            </div>
+          </Dialog>
+        </>
       );
     }
   }
