@@ -1,5 +1,5 @@
 import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
-import { partialRight } from 'lodash';
+import { orderBy, partialRight } from 'lodash';
 
 import * as mesa from '@veupathdb/coreui/lib/components/Mesa/types';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
@@ -11,11 +11,71 @@ import {
   VdiServiceConfig
 } from '../../../../../Service';
 import { projectId } from '../../../../../config';
-import UserDatasetStatus from '../../../../../Components/UserDatasetStatus';
 import * as util from '../../../../../Utils';
 import { Consumer, ifDefined, Nullable, Possible, SimpleState } from '../../../../../Utils';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 
-export interface MetadataImportTableProps {
+// FIXME: help text values are to be shared with all tables having these columns
+const DatasetColumns = {
+  DatasetName: [
+    'name',
+    'Dataset Name',
+    '',
+  ],
+  DatasetID: [
+    'datasetId',
+    'VEuPathDB ID',
+    'A stable, unique identifier assigned by VEuPathDB and that be used to'
+    + ' reference or cite this dataset.',
+  ],
+  Summary: [
+    'summary',
+    'Summary',
+    'A short description of the dataset.'
+  ],
+  Category: [
+    'type',
+    'Category',
+    'Dataset classification, according to the biological characteristics and'
+    + ' structure of the data it contains.',
+  ],
+  Project: [
+    'installTargets',
+    'VEuPathDB Project',
+    'VEuPathDB component website (ex: PlasmoDB, FungiDB, ToxoDB, etc.) where'
+    + ' the dataset was integrated.',
+  ],
+  Uploader: [
+    'owner',
+    'Uploaded By',
+    'The person or organization who uploaded this dataset through the User'
+    + ' Datasets workflow. Not applicable to datasets integrated using the'
+    + ' VEuPathDB workflow.'
+  ],
+  Shares: [
+    'shares',
+    'Shared With',
+    'Names of collaborators the owner has explicitly invited to discover,'
+    + ' explore, and download this dataset.'
+  ],
+  Visibility: [
+    'visibility',
+    'Visibility',
+    'Public datasets can be discovered and explored by the research community.'
+    + ' Private datasets can only be discovered and explored by the uploader'
+    + ' and collaborators the uploader has explicitly invited.'
+  ],
+  Version: [
+    'created',
+    'Version & Date',
+    'The date and VEuPathDB release number (VEuPathDB workflow) or date and'
+    + ' version (User Datasets workflow) of the dataset as it currently'
+    + ' appears.'
+  ],
+} as const;
+
+
+  export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
   readonly baseUrl: string;
   readonly vdiConfig: VdiServiceConfig;
@@ -46,15 +106,29 @@ export function DatasetSelectionTable(
   const [filteredDatasets, setFilteredDatasets] = useState(props.datasets);
   const [onlyMyDatasets, setOnlyMyDatasets] = useState(false);
   const [onlyThisSite, setOnlyThisSite] = useState(false);
+  const [sortBy, setSortBy] = useState<MesaSortObject>();
 
   useEffect(() => {
-    setFilteredDatasets(filterDatasets(props.datasets, {
+    let filtered = filterDatasets(props.datasets, {
       query: filterString,
       excludePublic: onlyMyDatasets,
       excludeOtherSites: onlyThisSite,
       userId: props.userId,
-    }));
-  }, [ filterString, onlyMyDatasets, onlyThisSite, props.userId, props.datasets ])
+    });
+
+    if (sortBy != null) {
+      filtered = sortDatasets(filtered, sortBy);
+    }
+
+    setFilteredDatasets(filtered);
+  }, [
+    filterString,
+    onlyMyDatasets,
+    onlyThisSite,
+    sortBy,
+    props.userId,
+    props.datasets,
+  ])
 
   return (
     <Mesa
@@ -64,6 +138,7 @@ export function DatasetSelectionTable(
         columns: makeTableColumns(props),
         uiState: {
           searchQuery: filterString ?? '',
+          sort: sortBy,
         },
         options: {
           editableColumns: false,
@@ -77,6 +152,7 @@ export function DatasetSelectionTable(
           onRowSelect: it => props.selection.set(it.datasetId),
           onRowDeselect: _ => props.selection.set(undefined),
           onSearch: setFilterString,
+          onSort: ({ key: columnKey }, direction) => setSortBy({ columnKey, direction }),
         },
         actions: [
           { element: onlyMyDatasetsToggle(onlyMyDatasets, setOnlyMyDatasets) },
@@ -91,32 +167,38 @@ export function DatasetSelectionTable(
 
 function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
   const columns: TableColumn<any>[] = [
-    column('name', 'Dataset Name', true, renderDatasetName),
-    column('summary', 'Summary', false),
-    column('type', 'Data Type', true, ({ row }) => row.type.category),
-    column('installTargets', 'VEuPathDB Project', true, renderProjects),
-    column('status', 'Status', true, partialRight(renderStatus, props)),
-    column('owner', 'Uploaded By', true, partialRight(renderUploader, props)),
-    column('shares', 'Shared With', true, partialRight(renderShares, props)),
+    column(DatasetColumns.DatasetName, true),
+    column(DatasetColumns.DatasetID, false),
+    column(DatasetColumns.Summary, false),
+    column(DatasetColumns.Category, true, ({ row }) => row.type.category),
+    column(DatasetColumns.Project, true, renderProjects),
+    column(DatasetColumns.Uploader, true, partialRight(renderUploader, props)),
+    column(DatasetColumns.Shares, false, partialRight(renderShares, props)),
   ];
 
   if (props.publicDatasetsEnabled) {
-    columns.push(column('visibility', 'Visibility', true, renderVisibility));
+    columns.push(column(DatasetColumns.Visibility, true, renderVisibility));
   }
 
-  columns.push(column('created', 'Version & Date', true, renderVersion));
+  columns.push(column(DatasetColumns.Version, true, renderVersion));
 
   return columns;
 }
 
 function column<K extends keyof Dataset>(
-  key: K,
-  name: string,
+  [ key, name, helpText ]: readonly [K, string, string],
   sortable: boolean,
   renderCell: util.Function<TableCellProps, ReactNode> = defaultColumn(key),
   getValue?: util.Function<TableRowProps, Dataset[K]>
 ): mesa.MesaColumn<Dataset, K, Dataset[K]> {
-  return { key, name, sortable, renderCell, getValue };
+  return {
+    key,
+    name,
+    helpText,
+    sortable,
+    renderCell,
+    getValue,
+  };
 }
 
 function defaultColumn(
@@ -125,33 +207,8 @@ function defaultColumn(
   return ({ row }) => String(row[key]);
 }
 
-function renderDatasetName({ row }: TableCellProps): ReactElement {
-  return <>
-    {row.name}<br />
-    <span className="ds-id">({row.datasetId})</span>
-  </>;
-}
-
 function renderProjects({ row }: TableCellProps): string {
   return row.installTargets.map(projectIdToDisplayName).join(', ');
-}
-
-function renderStatus(
-  cell: TableCellProps,
-  props: MetadataImportTableProps
-): ReactNode {
-  return (
-    <UserDatasetStatus
-      baseUrl={props.baseUrl}
-      userDataset={cell.row}
-      projectId={projectId}
-      displayName={projectIdToDisplayName(projectId)!}
-      linkToDataset={false}
-      useTooltip={true}
-      dataNoun={props.dataNoun}
-      vdiConfig={props.vdiConfig}
-    />
-  );
 }
 
 function renderUploader(
@@ -197,6 +254,27 @@ function renderVersion({ row }: TableCellProps): string {
 }
 
 // endregion Columns
+
+// region Sorting
+
+function sortDatasets(rows: readonly Dataset[], by: MesaSortObject): Dataset[] {
+  const valueFn: util.Function<Dataset, any> = (row) => {
+    switch (by.columnKey as keyof Dataset) {
+      case 'type':
+        return row.type.category;
+      case 'installTargets':
+        return row.installTargets.join(' ');
+      case 'owner':
+        return (row.owner.firstName + ' ' + row.owner.lastName).toLowerCase();
+      default:
+        return row[by.columnKey as keyof Dataset];
+    }
+  };
+
+  return orderBy(rows, valueFn, by.direction);
+}
+
+// endregion Sorting
 
 // region Toolbar
 
