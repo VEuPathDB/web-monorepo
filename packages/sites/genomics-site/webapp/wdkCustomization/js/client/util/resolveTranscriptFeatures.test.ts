@@ -87,15 +87,48 @@ describe('resolveTranscriptFeatures', () => {
     });
   });
 
+  it("passes bedReportType through as the report's type field, defaulting to genomic", async () => {
+    const wdkService = makeFakeWdkService(
+      'PF3D7_0200300\t100\t500\tPF3D7_0200300.1\t0\t+\n'
+    );
+
+    await resolveTranscriptFeatures(wdkService, ['PF3D7_0200300.1']);
+
+    expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
+      expect.anything(),
+      'bed',
+      expect.objectContaining({ type: 'genomic' })
+    );
+  });
+
+  it("passes bedReportType through as the report's type field for protein", async () => {
+    const wdkService = makeFakeWdkService(
+      'NC_004325\t100\t500\tPF3D7_0200300.1\t0\t+\n'
+    );
+
+    await resolveTranscriptFeatures(wdkService, ['PF3D7_0200300.1'], 'protein');
+
+    expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
+      expect.anything(),
+      'bed',
+      expect.objectContaining({ type: 'protein' })
+    );
+  });
+
   it('passes flankingOffsets through to the bed report upstream/downstreamOffset', async () => {
     const wdkService = makeFakeWdkService(
       'PF3D7_0200300\t100\t500\tPF3D7_0200300.1\t0\t+\n'
     );
 
-    await resolveTranscriptFeatures(wdkService, ['PF3D7_0200300.1'], {
-      upstream: 500,
-      downstream: 250,
-    });
+    await resolveTranscriptFeatures(
+      wdkService,
+      ['PF3D7_0200300.1'],
+      'genomic',
+      {
+        upstream: 500,
+        downstream: 250,
+      }
+    );
 
     expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
       expect.anything(),

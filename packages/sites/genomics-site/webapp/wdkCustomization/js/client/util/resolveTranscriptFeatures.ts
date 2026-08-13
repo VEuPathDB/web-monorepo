@@ -19,6 +19,12 @@ interface FlankingOffsets {
  * GeneByLocusTag search's 'bed' report. Has no notion of where the IDs
  * came from — any transcript-ID-producing UI can call this.
  *
+ * bedReportType selects the report's own `type` field (the backend's
+ * SequenceType enum — e.g. `genomic`, `protein`) so the returned Feature[]'s
+ * `contig` values come from the right reference index (a protein alignment
+ * submitted against genomic contigs fails server-side with "Contig not
+ * found in the index").
+ *
  * flankingOffsets carries the old CGI form's upstream/downstream nt inputs
  * (only meaningful for genomic sequence type) straight into the report's
  * own upstreamOffset/downstreamOffset fields, confirmed to exist on this
@@ -27,6 +33,7 @@ interface FlankingOffsets {
 export async function resolveTranscriptFeatures(
   wdkService: WdkService,
   transcriptIds: string[],
+  bedReportType: 'genomic' | 'protein' = 'genomic',
   flankingOffsets: FlankingOffsets = { upstream: 0, downstream: 0 }
 ): Promise<Feature[]> {
   // ds_gene_ids is an input-dataset param: the search only accepts a
@@ -53,7 +60,7 @@ export async function resolveTranscriptFeatures(
       deflineFields: ['gene_id'],
       sequenceFormat: 'fixed_width',
       basesPerLine: 60,
-      type: 'genomic',
+      type: bedReportType,
       reverseAndComplement: false,
       upstreamAnchor: 'Start',
       upstreamSign: 'plus',
