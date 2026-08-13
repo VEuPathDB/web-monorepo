@@ -213,7 +213,10 @@ export function createMergedDatasetsAnswerController(
           const reportConfig = {
             tables: [],
             pagination: { offset: 0, numRecords: 4000 },
-            sorting: props.stateProps.displayInfo?.sorting || [],
+            sorting: (props.stateProps.displayInfo?.sorting || []).map((s: { attributeName: string; direction: string } ) => ({
+                attributeName: s.attributeName,
+                direction: s.direction.toUpperCase() as 'ASC' | 'DESC',
+            })),
           };
 
           const [datasetsAnswer, userDatasetsAnswer] = await Promise.all([

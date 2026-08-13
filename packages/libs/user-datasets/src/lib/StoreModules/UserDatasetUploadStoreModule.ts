@@ -33,6 +33,16 @@ export interface ClientSideUploadFormState {
   readonly hasPublications: boolean | undefined;
 }
 
+export function defaultClientSideUploadFormState(): ClientSideUploadFormState {
+  return {
+    isStudy: undefined,
+    hasExternalSources: undefined,
+    hasDisclaimer: undefined,
+    hasExperimentalOrganism: undefined,
+    hasPublications: undefined,
+  };
+}
+
 export interface DatasetFormState {
   readonly datasetDetails: PartialDatasetDetails;
   readonly fileUploads: DatasetUploads;
@@ -42,13 +52,7 @@ export interface DatasetFormState {
 export const DefaultDatasetFormState: DatasetFormState = {
   datasetDetails: defaultDatasetDetails(),
   fileUploads: {},
-  formMetaState: {
-    isStudy: undefined,
-    hasExternalSources: undefined,
-    hasDisclaimer: undefined,
-    hasExperimentalOrganism: undefined,
-    hasPublications: undefined,
-  },
+  formMetaState: defaultClientSideUploadFormState(),
 };
 
 export function useDatasetFormState(): DatasetFormState {

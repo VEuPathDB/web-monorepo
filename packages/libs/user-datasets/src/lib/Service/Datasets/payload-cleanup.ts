@@ -9,6 +9,7 @@ import {
   isNonEmpty,
   ifDefined,
   requireValue,
+  Possible,
 } from '../../Utils';
 import { extractPublicationId } from '../Publications';
 
@@ -54,7 +55,7 @@ export function cleanDatasetDetails(
 
 function cleanDatasetCharacteristics(
   dChars: PartialCharacteristics
-): PartialCharacteristics | undefined {
+): Possible<PartialCharacteristics> {
   return isNonEmpty<PartialCharacteristics>(dChars)
     ? {
         ...dChars,
@@ -73,7 +74,7 @@ function cleanDatasetCharacteristics(
 
 function cleanExternalIdentifiers(
   ext: ExternalIdentifiers
-): ExternalIdentifiers | undefined {
+): Possible<ExternalIdentifiers> {
   return isNonEmpty(ext)
     ? {
         dois: ifDefined(ext.dois, removeEmpties),
@@ -89,7 +90,7 @@ function cleanExternalIdentifiers(
 
 type PubList = readonly Publication[];
 
-function prunePublications(publications: PubList): PubList | undefined {
+function prunePublications(publications: PubList): Possible<PubList> {
   if (!isNonEmpty(publications)) {
     return undefined;
   }
@@ -108,7 +109,7 @@ function cleanPublication({
   type,
   isPrimary,
   citation,
-}: Publication): Publication | undefined {
+}: Publication): Possible<Publication> {
   return isNonBlankString(identifier) &&
     isNonBlankString(citation) &&
     isNonBlankString(type)
@@ -134,7 +135,7 @@ function cleanPublication({
  */
 function pruneSimpleRecords<T extends object>(
   records: readonly T[]
-): T[] | undefined {
+): Possible<T[]> {
   if (!records) return undefined;
 
   const out: T[] = [];
@@ -146,7 +147,7 @@ function pruneSimpleRecords<T extends object>(
   return out.length > 0 ? out : undefined;
 }
 
-function removeEmpties<T>(values: readonly T[]): T[] | undefined {
+function removeEmpties<T>(values: readonly T[]): Possible<T[]> {
   if (!isNonEmpty(values)) {
     return undefined;
   }
@@ -160,8 +161,8 @@ function removeEmpties<T>(values: readonly T[]): T[] | undefined {
   return out.length > 0 ? out : undefined;
 }
 
-type SimpleObject = Record<string, string | number | undefined>;
-function cleanSimpleObject(obj: SimpleObject): SimpleObject | undefined {
+type SimpleObject = Record<string, Possible<string | number>>;
+function cleanSimpleObject(obj: SimpleObject): Possible<SimpleObject> {
   if (!isNonEmpty(obj)) {
     return undefined;
   }

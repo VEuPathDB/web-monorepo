@@ -32,4 +32,6 @@ export interface DatasetFormActions {
    * uneditable.
    */
   readonly setSubmitting: Consumer<boolean>;
+
+  readonly openMetaImportModal: Runnable;
 }
