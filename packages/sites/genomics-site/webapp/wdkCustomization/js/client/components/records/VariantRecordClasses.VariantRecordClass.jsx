@@ -4,7 +4,7 @@ import { VariantStrainFilter } from '../common/VariantStrainFilter';
 
 export function RecordAttributeSection(props) {
   return props.attribute.name === 'variant_strain_form' ? (
-    StrainFilterSection(props)
+    <StrainFilterSection {...props} />
   ) : (
     <props.DefaultComponent {...props} />
   );
