@@ -17,6 +17,7 @@ import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
   Dialog,
+  HelpIcon,
   Loading,
   RecordTable as WdkRecordTable,
 } from '@veupathdb/wdk-client/lib/Components';
@@ -46,6 +47,7 @@ import {
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
@@ -1555,6 +1557,11 @@ function OrthologsFormContainer(props) {
 
   const [preferredOrganisms] = usePreferredOrganismsState();
 
+  const theme = useUITheme();
+  const primaryButtonColor = theme
+    ? theme.palette.primary.hue[theme.palette.primary.level]
+    : '#4D4D4D';
+
   const [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene] =
     useState(false);
 
@@ -1567,8 +1574,12 @@ function OrthologsFormContainer(props) {
           onChange={(e) => setShowLongestTranscriptPerGene(e.target.checked)}
         />{' '}
         <strong>
-          <em>Show only one transcript per gene</em>
-        </strong>
+          <em>View only longest transcript per gene</em>
+        </strong>{' '}
+        <HelpIcon>
+          The orthology relationships here were computed by OrthoMCL. It uses
+          the longest transcript per gene for representative proteins.
+        </HelpIcon>
       </label>
     ),
     [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene]
@@ -1627,6 +1638,7 @@ function OrthologsFormContainer(props) {
       transcriptFilter={transcriptFilter}
       showLongestTranscriptPerGene={showLongestTranscriptPerGene}
       setShowLongestTranscriptPerGene={setShowLongestTranscriptPerGene}
+      primaryButtonColor={primaryButtonColor}
     />
   );
 }
@@ -1928,11 +1940,14 @@ class OrthologsForm extends SortKeyTable {
           <Dialog
             open={this.state.showSelectGateDialog}
             modal
-            title="One transcript per gene required"
+            title="MSA Requirements"
             onClose={this.closeSelectGateDialog}
           >
             <div style={{ padding: '10px', width: '400px' }}>
-              <p>Must first filter table to one transcript per gene.</p>
+              <p>
+                MSA of orthologs must use longest transcript per gene. Orthology
+                is based on that.
+              </p>
               <div
                 style={{
                   marginTop: '20px',
@@ -1952,8 +1967,13 @@ class OrthologsForm extends SortKeyTable {
                   type="button"
                   className="btn"
                   onClick={this.viewOneTranscriptPerGene}
+                  style={{
+                    backgroundColor: this.props.primaryButtonColor,
+                    color: 'white',
+                    fontWeight: 600,
+                  }}
                 >
-                  View one transcript per gene
+                  View only longest transcripts
                 </button>
               </div>
             </div>
