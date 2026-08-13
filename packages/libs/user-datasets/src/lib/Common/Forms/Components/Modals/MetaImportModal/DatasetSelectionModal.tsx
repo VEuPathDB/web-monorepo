@@ -5,9 +5,9 @@ import {
   DatasetSelectionTable,
   MetadataImportTableProps,
 } from './DatasetSelectionTable';
+import { SecondaryButton } from '../../SecondaryButton';
 
 import "./MetadataImportModal.scss";
-import { SecondaryButton } from '../../SecondaryButton';
 
 export interface MetadataImportModalProps extends MetadataImportTableProps {
   readonly closeAction: Runnable;
