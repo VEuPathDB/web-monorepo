@@ -1563,6 +1563,7 @@ function OrthologsFormContainer(props) {
       <label style={{ display: 'inline-block', margin: '0.5em 0' }}>
         <input
           type="checkbox"
+          checked={showLongestTranscriptPerGene}
           onChange={(e) => setShowLongestTranscriptPerGene(e.target.checked)}
         />{' '}
         <strong>
@@ -1570,7 +1571,7 @@ function OrthologsFormContainer(props) {
         </strong>
       </label>
     ),
-    [setShowLongestTranscriptPerGene]
+    [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene]
   );
 
   const filteredValue = useMemo(() => {
