@@ -64,7 +64,7 @@ import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
 // Old CGI form codes -> new service MsaFormat values (see design doc's
 // carried-over sequenceType/output-format table).
 const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
-  clu: 'clustal',
+  clu: 'clustal_dnd',
   fasta: 'fasta',
   phy: 'phylip',
   st: 'stockholm',
