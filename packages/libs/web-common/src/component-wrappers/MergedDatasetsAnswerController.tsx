@@ -210,6 +210,7 @@ export function createMergedDatasetsAnswerController(
           }
 
           // 6. Fetch data in parallel
+          /*  until we dont fix the error 'is not an attribute for this question'
           const reportConfig = {
             tables: [],
             pagination: { offset: 0, numRecords: 4000 },
@@ -218,7 +219,12 @@ export function createMergedDatasetsAnswerController(
                 direction: s.direction.toUpperCase() as 'ASC' | 'DESC',
             })),
           };
-
+          */
+          const reportConfig = {
+            tables: [],
+            pagination: { offset: 0, numRecords: 4000 },
+            sorting: [],
+          };
           const [datasetsAnswer, userDatasetsAnswer] = await Promise.all([
             wdkService.getAnswerJson(
               {
