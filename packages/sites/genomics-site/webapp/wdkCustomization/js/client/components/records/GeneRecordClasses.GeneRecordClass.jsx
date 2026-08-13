@@ -1577,8 +1577,8 @@ function OrthologsFormContainer(props) {
           <em>View only longest transcript per gene</em>
         </strong>{' '}
         <HelpIcon>
-          The orthology relationships here were computed by OrthoMCL. It uses
-          the longest transcript per gene for representative proteins.
+          The orthology relationships here were computed by OrthoMCL. OrthoMCL
+          uses the longest transcript per gene for representative proteins.
         </HelpIcon>
       </label>
     ),
@@ -1945,15 +1945,15 @@ class OrthologsForm extends SortKeyTable {
           >
             <div style={{ padding: '10px', width: '400px' }}>
               <p>
-                MSA of orthologs must use longest transcript per gene. Orthology
-                is based on that.
+                MSA of orthologs must use the longest transcript per gene.
+                OrthoMCL orthology is based on that.
               </p>
               <div
                 style={{
                   marginTop: '20px',
                   display: 'flex',
                   gap: '10px',
-                  justifyContent: 'flex-end',
+                  justifyContent: 'space-between',
                 }}
               >
                 <button
