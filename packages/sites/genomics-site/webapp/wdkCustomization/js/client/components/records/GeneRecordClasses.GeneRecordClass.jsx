@@ -1664,7 +1664,7 @@ function TranscriptMsaSubmission({
   const [clustalOutFormat, setClustalOutFormat] = useState('clu');
 
   const handleConfirm = async () => {
-    const features = await resolveTranscriptFeatures(
+    const resolvedFeatures = await resolveTranscriptFeatures(
       wdkService,
       [sourceId, ...selectedTranscriptIds],
       sequenceTypeChoice === 'genomic'
@@ -1678,6 +1678,13 @@ function TranscriptMsaSubmission({
     const sequenceType =
       sequenceTypeChoice === 'genomic' ? 'genomic' : 'protein';
     const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
+
+    // Protein reference sequences have no strand — the service rejects a
+    // stranded feature on an unstranded (protein) reference.
+    const features =
+      sequenceType === 'protein'
+        ? resolvedFeatures.map(({ strand, ...feature }) => feature)
+        : resolvedFeatures;
 
     const api = SequenceRetrievalApi.getClient(
       SEQUENCE_RETRIEVAL_BASE_URL,
