@@ -108,7 +108,7 @@ export default function makeHeaderMenuItemsFactory(
                         className="ebrc-icon-table"
                         style={studyTableIconStyle}
                       ></i>{' '}
-                      Datasets Summary
+                      Datasets in data<i>Explorer</i>
                     </div>
                   </>
                 ),

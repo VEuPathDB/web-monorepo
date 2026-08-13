@@ -1,6 +1,7 @@
 import { VdiPluginConfig, VdiServiceMetadata } from '../../Service';
 import { DatasetTypeConfig, DatasetFormConfigurators } from '../Configuration';
 import { ReactNode } from 'react';
+import { DataNoun } from '../../Utils';
 
 export interface DatasetFormRouteProps {
   readonly vdiConfig: VdiServiceMetadata;
@@ -9,6 +10,9 @@ export interface DatasetFormRouteProps {
   readonly datasetTypes: readonly DatasetTypeConfig[];
   readonly plugins: readonly VdiPluginConfig[];
   readonly datasetTypeMenuHeader?: ReactNode;
+  readonly dataNoun: DataNoun;
+
+  readonly enablePublicDatasets: boolean;
 
   readonly formConfigs: DatasetFormConfigurators;
   readonly datasetId?: string;

@@ -30,6 +30,7 @@ import {
   DatasetPutDetails,
   DatasetPutResponseBody,
   GetDatasetsQueryParamEnum,
+  RawDatasetMetadataResponse,
   ServerErrorBody,
   ShareOfferAction,
   ShareOfferListEntry,
@@ -49,6 +50,7 @@ import {
   datasetPatchResponse,
   datasetPostResponse,
   pluginListItem,
+  rawMetadataResponse,
   serviceMetadata,
   shareOfferListEntry,
   userMetadata,
@@ -439,6 +441,21 @@ export class VdiService extends FetchClientWithCredentials {
           (installTarget ? `?install-target=${installTarget}` : ''),
         method: 'GET',
         transformResponse: ioTransformer(io.array(pluginListItem)),
+      })
+    );
+  }
+
+  async getRawDatasetMetadata(
+    datasetId: DatasetId,
+    download: boolean
+  ): Promise<RawDatasetMetadataResponse> {
+    return this.fetch(
+      createJsonRequest({
+        path:
+          VdiRoutes.datasetStaticFileUri(datasetId, 'vdi-meta.json') +
+          `?download=${download}`,
+        method: 'GET',
+        transformResponse: ioTransformer(rawMetadataResponse),
       })
     );
   }
