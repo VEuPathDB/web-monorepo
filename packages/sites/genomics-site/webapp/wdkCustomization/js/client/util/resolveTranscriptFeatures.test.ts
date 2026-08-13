@@ -111,7 +111,34 @@ describe('resolveTranscriptFeatures', () => {
     expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
       expect.anything(),
       'bed',
-      expect.objectContaining({ type: 'protein' })
+      expect.objectContaining({
+        type: 'protein',
+        startAnchor3: 'DownstreamFromStart',
+        startOffset3: 0,
+        endAnchor3: 'UpstreamFromEnd',
+        endOffset3: 0,
+      })
+    );
+  });
+
+  it("passes bedReportType through as the report's type field for spliced_genomic (CDS), always sending splicedGenomic: 'cds'", async () => {
+    const wdkService = makeFakeWdkService(
+      'PF3D7_0200300\t100\t500\tPF3D7_0200300.1\t0\t+\n'
+    );
+
+    await resolveTranscriptFeatures(
+      wdkService,
+      ['PF3D7_0200300.1'],
+      'spliced_genomic'
+    );
+
+    expect(wdkService.getTemporaryResultPath).toHaveBeenCalledWith(
+      expect.anything(),
+      'bed',
+      expect.objectContaining({
+        type: 'spliced_genomic',
+        splicedGenomic: 'cds',
+      })
     );
   });
 

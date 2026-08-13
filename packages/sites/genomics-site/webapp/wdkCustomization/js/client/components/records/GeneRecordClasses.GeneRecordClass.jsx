@@ -1664,14 +1664,28 @@ function TranscriptMsaSubmission({
   const [clustalOutFormat, setClustalOutFormat] = useState('clu');
 
   const handleConfirm = async () => {
+    // sequenceTypeChoice is the radio the user picked (Protein / CDS
+    // (spliced) / Genomic). It maps to two different things that don't
+    // collapse the same way:
+    //  - the bed report's own `type` (coordinate resolution) — CDS needs
+    //    its own distinct 'spliced_genomic' value, plus splicedGenomic:
+    //    'cds' (always sent, harmless for the other two types).
+    //  - the sequenceType path segment submitJob POSTs to — CDS submits
+    //    as 'genomic' there, not as its own type.
+    const bedReportType =
+      sequenceTypeChoice === 'genomic'
+        ? 'genomic'
+        : sequenceTypeChoice === 'CDS'
+        ? 'spliced_genomic'
+        : 'protein';
     const sequenceType =
-      sequenceTypeChoice === 'genomic' ? 'genomic' : 'protein';
+      sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
 
     const resolvedFeatures = await resolveTranscriptFeatures(
       wdkService,
       [sourceId, ...selectedTranscriptIds],
-      sequenceType,
-      sequenceType === 'genomic'
+      bedReportType,
+      sequenceTypeChoice === 'genomic'
         ? {
             upstream: Number(oneOffset) || 0,
             downstream: Number(twoOffset) || 0,
