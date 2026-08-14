@@ -9,25 +9,11 @@ import { SequenceRetrievalApi } from '../Service/SequenceRetrievalApi';
 import { JobStatus } from '../Service/ServiceTypes';
 import { useJobPolling } from '../Hooks/useJobPolling';
 
-// Same icon/animation values as user-datasets' UserDatasetStatus.tsx
-// polling spinner (StatusIcon--polling in UserDatasets.scss) — no shared
-// component/stylesheet exists to import across packages, so the values are
-// reproduced locally rather than introducing a cross-package CSS
-// dependency for one animation.
-const SPIN_STYLE = `
-  @keyframes ComputeJobPage-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .ComputeJobPage-StatusIcon {
-    animation: ComputeJobPage-spin 1.6s linear infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .ComputeJobPage-StatusIcon {
-      animation: none;
-    }
-  }
-`;
+// Same icon/animation as user-datasets' UserDatasetStatus.tsx polling
+// spinner (StatusIcon--polling); the color is wdk-client's $blue, imported
+// via Sass so it stays in sync with the shared palette rather than a
+// hardcoded copy.
+import './ComputeJobPage.scss';
 
 interface ComputeJobPageProps {
   jobId: string;
@@ -98,9 +84,8 @@ export function ComputeJobPage({
 
   return (
     <div className="ComputeJobPage">
-      <style>{SPIN_STYLE}</style>
       <h1>Clustal Omega Job Status</h1>
-      <div style={{ fontSize: '1.25em' }}>
+      <div style={{ fontSize: '1.5em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
           <p className="Status">
