@@ -42,7 +42,7 @@ export const userDatasetRoutes: RouteEntry[] = [
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
             workspaceConfig={UserDatasetWorkspaceConfig}
-            detailsPageTitle="My Dataset"
+            detailsPageTitle="Manage my dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
             helpTabContents={

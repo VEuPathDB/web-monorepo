@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
@@ -35,13 +35,15 @@ export interface PublicationRowProps {
 
 export function PublicationRow(props: PublicationRowProps): ReactElement {
   const lookupStatus = useRef<number>(0);
-  const [citationStatus, setCitationStatus] = useState<StatusTuple>(() => [
+  const [citationStatus, setCitationStatus] = useState<StatusTuple>([null, null]);
+
+  useEffect(() => setCitationStatus([
     ifDefined(props.publication.citation, (citation) => ({
       status: 'success',
       citation,
     })) ?? null,
     null,
-  ]);
+  ]), [props.publication.citation]);
 
   const type = props.publication.type ?? null;
   const hasIdentifier = isNonBlankString(props.publication.identifier);

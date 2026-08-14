@@ -117,7 +117,7 @@ export function RecordHeading(props) {
         <dl>
           {organism_prefix ? (
             <>
-              <dt>Organism (source or reference)</dt>
+              <dt>Organism(s)</dt>
               <dd
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(organism_prefix),

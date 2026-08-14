@@ -8,6 +8,7 @@ import * as t from 'io-ts';
 import { useState } from 'react';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
 import { EdaBarPlot } from './eda/EdaBarPlot';
+import { EdaBoxPlot } from './eda/EdaBoxPlot';
 import { Link } from 'react-router-dom';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 
@@ -21,6 +22,17 @@ const PlotConfig = t.type({
   displaySpecVariableId: t.string,
   displayMode: t.union([t.literal('highlight'), t.literal('subset')]),
 });
+
+/**
+ * Plot component per `plotType`. A type with no entry here renders an explicit
+ * message rather than falling back to some other plot, so an unhandled type is
+ * visible instead of being silently drawn as the wrong chart.
+ */
+const PLOT_COMPONENTS = {
+  bar: EdaBarPlot,
+  boxplot: EdaBoxPlot,
+  scatterplot: EdaScatterPlot,
+} as const;
 
 const PlotConfigs = t.array(PlotConfig);
 
@@ -146,14 +158,27 @@ export function EdaDatasetGraph(props: Props) {
               const geneDisplaySpec = graphIds && {
                 ids: graphIds,
                 variableId: plotConfig.displaySpecVariableId,
+                // A starting point only: the adapters correct this to whichever
+                // entity actually declares the variable, which is the x-axis
+                // entity only when both axes share one.
                 entityId: plotConfig.xAxisEntityId,
                 traceName: source_id,
                 mode: plotConfig.displayMode,
               };
 
-              // Conditional rendering based on plot type
               const PlotComponent =
-                plotConfig.plotType === 'bar' ? EdaBarPlot : EdaScatterPlot;
+                PLOT_COMPONENTS[
+                  plotConfig.plotType as keyof typeof PLOT_COMPONENTS
+                ];
+
+              if (PlotComponent == null) {
+                return (
+                  <div key={plotConfig.plotName}>
+                    {plotConfig.plotName}: unsupported plot type "
+                    {plotConfig.plotType}"
+                  </div>
+                );
+              }
 
               return (
                 <div

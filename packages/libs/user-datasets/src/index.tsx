@@ -42,7 +42,7 @@ initialize({
         <UserDatasetRouter
           datasetTypeConfigs={userDatasetTypeConfigs}
           uploadFormConfigurators={uploadFormConfigurators}
-          detailsPageTitle="My Dataset"
+          detailsPageTitle="Manage my dataset"
           helpRoute="/help"
           workspaceTitle="My Datasets"
           dataNoun={{

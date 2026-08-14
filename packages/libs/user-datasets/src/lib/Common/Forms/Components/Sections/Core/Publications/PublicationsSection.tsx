@@ -62,10 +62,7 @@ export function PublicationsSection(
           fieldName: 'enable-publications',
           required: props.isRequired,
           helpText:
-            'Whether this dataset is also available from an external' +
-            ' source (e.g., a public repository, journal-hosted supplementary' +
-            ' materials, project website, or institutional archive) outside' +
-            ' of this platform.',
+            'Whether the data underlying this dataset have been described in a published manuscript, journal article, or preprint.',
         }}
         className="field-grid"
       >
