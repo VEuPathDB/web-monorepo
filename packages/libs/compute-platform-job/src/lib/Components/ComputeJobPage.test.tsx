@@ -45,7 +45,14 @@ describe('ComputeJobPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('fetches the result and replaces the page with a blob URL on complete', async () => {
+  // showResultDocument (invoked on complete) mutates the live `document` in
+  // place — for a non-HTML format that's just document.body.textContent,
+  // safe to let run for real in JSDOM. The HTML-format branch replaces
+  // document.documentElement itself, which would tear down the JSDOM
+  // document RTL's own container lives in, so that path is covered by
+  // spying on DOMParser/replaceChild instead of letting it actually run.
+
+  it('fetches the result and shows it as plain text on complete', async () => {
     const api = makeFakeApi({
       fetchJob: jest
         .fn()
@@ -53,60 +60,46 @@ describe('ComputeJobPage', () => {
       fetchJobFile: jest.fn().mockResolvedValue('CLUSTAL O alignment text'),
     });
 
-    // JSDOM doesn't implement URL.createObjectURL at all, so there's
-    // nothing for jest.spyOn to wrap — assign a mock directly.
-    const createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
-    (URL as any).createObjectURL = createObjectURL;
-    const replace = jest.fn();
-    const originalLocation = window.location;
-    // @ts-expect-error - deleting to allow a mock replacement, restored below
-    delete window.location;
-    window.location = { ...originalLocation, replace } as Location;
+    render(<ComputeJobPage jobId="abc" api={api} />);
 
-    try {
-      render(<ComputeJobPage jobId="abc" api={api} />);
+    await waitFor(() => {
+      expect(document.body.textContent).toBe('CLUSTAL O alignment text');
+    });
 
-      await waitFor(() => {
-        expect(replace).toHaveBeenCalledWith('blob:mock-url');
-      });
-
-      expect(api.fetchJobFile).toHaveBeenCalledWith('abc', 'output');
-      const [[blobArg]]: [Blob][] = createObjectURL.mock.calls;
-      expect(blobArg.type).toBe('text/plain');
-    } finally {
-      window.location = originalLocation;
-      delete (URL as any).createObjectURL;
-    }
+    expect(api.fetchJobFile).toHaveBeenCalledWith('abc', 'output');
   });
 
-  it('uses text/html for the clustal_dnd format', async () => {
+  it('parses and swaps in the full document for the clustal_dnd format', async () => {
     const api = makeFakeApi({
       fetchJob: jest
         .fn()
         .mockResolvedValue({ jobID: 'abc', status: 'complete' }),
-      fetchJobFile: jest.fn().mockResolvedValue('<html></html>'),
+      fetchJobFile: jest
+        .fn()
+        .mockResolvedValue('<!DOCTYPE html><html><body>result</body></html>'),
     });
 
-    const createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
-    (URL as any).createObjectURL = createObjectURL;
-    const replace = jest.fn();
-    const originalLocation = window.location;
-    // @ts-expect-error - deleting to allow a mock replacement, restored below
-    delete window.location;
-    window.location = { ...originalLocation, replace } as Location;
+    const parseFromString = jest.spyOn(DOMParser.prototype, 'parseFromString');
+    const replaceChild = jest
+      .spyOn(document, 'replaceChild')
+      // Actually swapping document.documentElement would tear down JSDOM's
+      // own document for the rest of this test file's suite — no-op it.
+      .mockImplementation((node) => node);
 
     try {
       render(<ComputeJobPage jobId="abc" api={api} format="clustal_dnd" />);
 
       await waitFor(() => {
-        expect(replace).toHaveBeenCalledWith('blob:mock-url');
+        expect(replaceChild).toHaveBeenCalled();
       });
 
-      const [[blobArg]]: [Blob][] = createObjectURL.mock.calls;
-      expect(blobArg.type).toBe('text/html');
+      expect(parseFromString).toHaveBeenCalledWith(
+        '<!DOCTYPE html><html><body>result</body></html>',
+        'text/html'
+      );
     } finally {
-      window.location = originalLocation;
-      delete (URL as any).createObjectURL;
+      parseFromString.mockRestore();
+      replaceChild.mockRestore();
     }
   });
 

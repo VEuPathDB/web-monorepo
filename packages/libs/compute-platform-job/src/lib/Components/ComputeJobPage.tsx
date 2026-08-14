@@ -14,14 +14,30 @@ interface ComputeJobPageProps {
 
 // The /files/{name} endpoint always returns Content-Type: text/plain
 // regardless of the actual content, so an HTML-producing format (only
-// clustal_dnd today) needs its real MIME type set client-side via a Blob —
-// otherwise the browser renders/downloads it as plain text instead of HTML.
+// clustal_dnd today) needs to be recognized and rendered as real HTML
+// client-side — otherwise the browser (or React) would just show the raw
+// markup as literal text.
 const HTML_MSA_FORMATS = new Set(['clustal_dnd']);
 
-function getResultMimeType(format: string | undefined): string {
-  return format != null && HTML_MSA_FORMATS.has(format)
-    ? 'text/html'
-    : 'text/plain';
+// Swaps the live document in place with the fetched result, same URL, no
+// navigation — same as visiting a static result page directly (matching
+// the old CGI flow, which always returned a standalone document). This
+// intentionally tears down the React app on this tab: there's nothing left
+// for it to render once the real result is showing. A fresh visit/reload of
+// this URL always remounts ComputeJobPage first and re-derives status live,
+// so a bookmark still lands back on the polling UI for an incomplete job,
+// and repeats this same swap deterministically for an already-complete one.
+function showResultDocument(content: string, format: string | undefined) {
+  if (format != null && HTML_MSA_FORMATS.has(format)) {
+    const parsed = new DOMParser().parseFromString(content, 'text/html');
+    document.replaceChild(
+      document.importNode(parsed.documentElement, true),
+      document.documentElement
+    );
+  } else {
+    document.title = 'Multiple Sequence Alignment';
+    document.body.textContent = content;
+  }
 }
 
 export function ComputeJobPage({
@@ -48,14 +64,7 @@ export function ComputeJobPage({
       // The 'output' file is already the complete document for every
       // format — for clustal_dnd it includes the guide tree as its own
       // section (<hr><h4>Guide Tree...) — no separate file to fetch/concat.
-      //
-      // This page's whole purpose from here is to hand off to the real
-      // result — replace it in place (no dead "Running Compute Job" tab
-      // left behind) rather than rendering the result inline.
-      const blobUrl = URL.createObjectURL(
-        new Blob([output], { type: getResultMimeType(format) })
-      );
-      window.location.replace(blobUrl);
+      showResultDocument(output, format);
     })();
     return () => {
       cancelled = true;
