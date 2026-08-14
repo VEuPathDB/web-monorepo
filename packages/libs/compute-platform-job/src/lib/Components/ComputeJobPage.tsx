@@ -99,8 +99,8 @@ export function ComputeJobPage({
   return (
     <div className="ComputeJobPage">
       <style>{SPIN_STYLE}</style>
-      <h1>Clustalo Job Status</h1>
-      <div style={{ fontSize: '2em' }}>
+      <h1>Clustal Omega Job Status</h1>
+      <div style={{ fontSize: '1.25em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
           <p className="Status">

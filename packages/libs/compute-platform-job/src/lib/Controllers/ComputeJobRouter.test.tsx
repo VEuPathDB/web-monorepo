@@ -33,7 +33,9 @@ describe('ComputeJobRouter', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('Clustalo Job Status')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Clustal Omega Job Status')
+    ).toBeInTheDocument();
   });
 
   it('forwards paramsSummary from the query string to ComputeJobPage', async () => {
@@ -59,6 +61,8 @@ describe('ComputeJobRouter', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('Clustalo Job Status')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Clustal Omega Job Status')
+    ).toBeInTheDocument();
   });
 });
