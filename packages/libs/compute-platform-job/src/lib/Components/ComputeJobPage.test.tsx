@@ -39,7 +39,7 @@ describe('ComputeJobPage', () => {
       />
     );
 
-    expect(await screen.findByText('Running Compute Job')).toBeInTheDocument();
+    expect(await screen.findByText('Clustalo Job Status')).toBeInTheDocument();
     expect(
       screen.getByText('13 Transcripts, FASTA output format')
     ).toBeInTheDocument();

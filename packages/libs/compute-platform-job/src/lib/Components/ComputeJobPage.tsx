@@ -73,21 +73,23 @@ export function ComputeJobPage({
 
   return (
     <div className="ComputeJobPage">
-      <h1>Running Compute Job</h1>
-      {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
-      {status === 'queued' || status === 'in-progress' ? (
-        <p className="Status">Status: {status}</p>
-      ) : null}
-      {status === 'failed' && (
-        <p className="DeadEnd">
-          This job failed. Please go back and resubmit your request.
-        </p>
-      )}
-      {status === 'expired' && (
-        <p className="DeadEnd">
-          This job has expired. Please go back and resubmit your request.
-        </p>
-      )}
+      <h1>Clustalo Job Status</h1>
+      <div style={{ fontSize: '2em' }}>
+        {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
+        {status === 'queued' || status === 'in-progress' ? (
+          <p className="Status">Status: {status}</p>
+        ) : null}
+        {status === 'failed' && (
+          <p className="DeadEnd">
+            This job failed. Please go back and resubmit your request.
+          </p>
+        )}
+        {status === 'expired' && (
+          <p className="DeadEnd">
+            This job has expired. Please go back and resubmit your request.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
