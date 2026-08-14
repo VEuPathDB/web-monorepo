@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import LockIcon from '@material-ui/icons/Lock';
 import PublicIcon from '@material-ui/icons/Public';
-import { projectId, webAppUrl } from '@veupathdb/web-common/lib/config';
+import { projectId, webAppUrl } from '../config';
 
 import './datasetSourceCategory.scss';
 

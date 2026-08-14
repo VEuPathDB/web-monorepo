@@ -1,0 +1,58 @@
+#ud-meta-selection-modal {
+  padding: 1em 2em;
+  width: 1280px;
+  min-height: 500px;
+
+  > p {
+    font-style: italic;
+  }
+
+  span.ds-id {
+    opacity: 0.6;
+    font-size: 0.9em;
+  }
+
+  > .MesaComponent {
+    min-height: 350px;
+  }
+
+  .Toolbar {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .ActionToolbar {
+    width: 65%;
+    justify-content: flex-end;
+  }
+
+  .ActionToolbar-Info {
+    display: none;
+  }
+
+  .ActionToolbar-ItemList {
+    column-gap: 1em;
+    padding-left: 4em;
+  }
+
+  .TableToolbar {
+    width: 35%;
+  }
+
+  .TableSearch {
+    max-width: 400px;
+
+    button {
+      display: none;
+    }
+
+    input {
+      font-size: 1em;
+      transition: none;
+    }
+  }
+
+  .ud-secondary-action {
+    margin-bottom: 0.5em;
+  }
+}

@@ -10,7 +10,7 @@ export type DatasetZipType = 'upload' | 'install';
 export type RootDatasetFile =
   | 'upload'
   | 'install'
-  | 'metadata.json'
+  | 'vdi-meta.json'
   | 'upload-errors.json';
 
 export function hasUploads(obj: DatasetUploads): boolean {

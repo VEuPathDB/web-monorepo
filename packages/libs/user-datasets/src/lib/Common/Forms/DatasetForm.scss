@@ -30,6 +30,12 @@
     margin-left: 32px;
   }
 
+  .header-line {
+    display: flex;
+    align-items: first baseline;
+    column-gap: 3ch;
+  }
+
   .title-with-button {
     display: flex;
     justify-content: space-between;
@@ -74,6 +80,7 @@
 
   .section-description {
     font-style: italic;
+    color: var(--coreui-gray-900);
   }
 
   p.section-description {

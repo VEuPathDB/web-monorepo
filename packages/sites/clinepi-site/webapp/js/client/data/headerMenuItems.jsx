@@ -108,11 +108,11 @@ export default function makeHeaderMenuItemsFactory(
                         className="ebrc-icon-table"
                         style={studyTableIconStyle}
                       ></i>{' '}
-                      Dataset Summaries
+                      Datasets in data<i>Explorer</i>
                     </div>
                   </>
                 ),
-                route: '/search/userdataset/AllUserDatasets/result',
+                route: '/search/dataset/AllDatasets/result',
               },
               {
                 text: (
