@@ -1,8 +1,33 @@
 import { useCallback, useEffect, useState } from 'react';
 
+// Deep import, not the @veupathdb/wdk-client/lib/Components barrel — that
+// barrel transitively pulls in AttributeFilter/Histogram.js, which requires
+// 'jquery', a dependency this package never otherwise needs.
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+
 import { SequenceRetrievalApi } from '../Service/SequenceRetrievalApi';
 import { JobStatus } from '../Service/ServiceTypes';
 import { useJobPolling } from '../Hooks/useJobPolling';
+
+// Same icon/animation values as user-datasets' UserDatasetStatus.tsx
+// polling spinner (StatusIcon--polling in UserDatasets.scss) — no shared
+// component/stylesheet exists to import across packages, so the values are
+// reproduced locally rather than introducing a cross-package CSS
+// dependency for one animation.
+const SPIN_STYLE = `
+  @keyframes ComputeJobPage-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .ComputeJobPage-StatusIcon {
+    animation: ComputeJobPage-spin 1.6s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ComputeJobPage-StatusIcon {
+      animation: none;
+    }
+  }
+`;
 
 interface ComputeJobPageProps {
   jobId: string;
@@ -73,11 +98,19 @@ export function ComputeJobPage({
 
   return (
     <div className="ComputeJobPage">
+      <style>{SPIN_STYLE}</style>
       <h1>Clustalo Job Status</h1>
       <div style={{ fontSize: '2em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
-          <p className="Status">Status: {status}</p>
+          <p className="Status">
+            <Icon
+              className="ComputeJobPage-StatusIcon"
+              fa="circle-o-notch"
+              style={{ marginRight: '0.3em' }}
+            />
+            Status: {status}
+          </p>
         ) : null}
         {status === 'failed' && (
           <p className="DeadEnd">
