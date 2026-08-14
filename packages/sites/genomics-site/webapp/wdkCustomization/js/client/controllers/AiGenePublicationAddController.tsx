@@ -66,6 +66,7 @@ type TerminalErrorStatus = Extract<
   AiGenePublicationJobStatus,
   | { type: 'cancelled' }
   | { type: 'text-unavailable' }
+  | { type: 'upstream-unavailable' }
   | { type: 'internal-error' }
 >;
 
@@ -293,6 +294,7 @@ function AiGenePublicationAddController({
         }
         case 'cancelled':
         case 'text-unavailable':
+        case 'upstream-unavailable':
         case 'internal-error':
           setState({ kind: 'terminal-error', status: result });
           break;
@@ -552,6 +554,7 @@ function AiGenePublicationAddController({
         setState({ kind: 'reject', jobId: outcome.jobId, status: outcome });
         break;
       case 'text-unavailable':
+      case 'upstream-unavailable':
       case 'internal-error':
       case 'cancelled':
         setState({ kind: 'terminal-error', status: outcome });
