@@ -141,11 +141,11 @@ export function RootDetailsSection(
                 }
                 required={props.showDataInputs}
                 rows={15}
-                placeholder="Paste here a detailed description of the samples used in this dataset, for example the Methods section of the associated paper.
+                placeholder="Paste here a detailed description of the samples, such as the Methods section of the associated paper.
 
-This text will be submitted to the VEuPathDB AI Metadata Analyzer. The output will be carefully named and annotated samples, making the dataset as useful as possible in the website.
+*This text will be submitted to the VEuPathDB AI Metadata Analyzer*. The output will be named samples with metadata annotations, making the dataset as useful as possible on the website.
 
-IMPORTANT: If the sample names alone do not make the experimental design clear, please also explain what abbreviations mean, which samples are replicates, what units any values are in, and what conditions or timepoints are represented."
+The AI Metadata Analyzer will attempt to interpret your column names automatically. If they contain abbreviations or are otherwise difficult to interpret, include an explanation here."
                 helpText={
                   typeof formConfig.verbiage.formInputs.samplesDescription
                     .helpText === 'function'
