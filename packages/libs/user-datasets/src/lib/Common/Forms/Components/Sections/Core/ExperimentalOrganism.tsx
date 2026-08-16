@@ -65,9 +65,11 @@ export function ExperimentalOrganism(
       <InputBlock header="Organism Details">
         <p className="section-description">
           Indicate the species and strain of each organism represented by
-          biological data in this dataset. Organisms may include pathogens,
-          vectors, symbionts, or other organisms represented directly or
-          indirectly by the data..
+          biological data in this dataset. Organisms may include 
+          {!isGenomics &&
+            ' the study population species in field studies or clinical trials and, where applicable,'} 
+          {' '}pathogens, vectors, symbionts, or other organisms represented directly or
+          indirectly by the data.
           {isGenomics &&
             ' The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.'}
         </p>
