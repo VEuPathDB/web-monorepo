@@ -530,12 +530,11 @@ const useHeaderMenuItems = (
         {
           key: 'legacyvbmap',
           display: 'MapVEu — Geolocation visualizations of field-based studies',
-          tooltip:
-            'Will send you to the legacy site.',
+          tooltip: 'Will send you to the legacy site.',
           type: 'externalLink',
           url: 'https://legacy.vectorbase.org//vectorbase/app/workspace/maps/DS_480c976ef9/new',
           metadata: {
-            include: [UniDB,VectorBase],
+            include: [UniDB, VectorBase],
           },
         },
         !showInteractiveMaps
@@ -631,7 +630,7 @@ const useHeaderMenuItems = (
               key: 'lookup',
               display: 'ToxoDB genotype # lookup',
               type: 'externalLink',
-              url: '/documents/Unique_RFLP_Genotypes_tutorial.pdf',
+              url: `https://${communitySite}/documents/Unique_RFLP_Genotypes_tutorial.pdf`,
             },
             {
               key: 'genotypes',
