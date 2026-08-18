@@ -141,11 +141,13 @@ export function RootDetailsSection(
                 }
                 required={props.showDataInputs}
                 rows={15}
-                placeholder="Paste here a detailed description of the samples, such as the Methods section of the associated paper.
+                placeholder="Describe your samples here, as a table or as free text (for example, the Methods section of the associated paper).
 
-*This text will be submitted to the VEuPathDB AI Metadata Analyzer*. The output will be named samples with metadata annotations, making the dataset as useful as possible on the website.
+If the sample names in your count file headers already describe the samples (e.g. 'male_3h_rep1'), you don't need to repeat that here. But if those sample names are codes or numbers (e.g. 'S001'), each one must appear somewhere in this description, and you should say what it means.
 
-The AI Metadata Analyzer will attempt to interpret your column names automatically. If they contain abbreviations or are otherwise difficult to interpret, include an explanation here."
+State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
+
+*This text is submitted to the VEuPathDB AI Metadata Analyzer*, which uses it to describe your samples so you can compare groups (for example, treated vs. control) in your analysis."
                 helpText={
                   typeof formConfig.verbiage.formInputs.samplesDescription
                     .helpText === 'function'

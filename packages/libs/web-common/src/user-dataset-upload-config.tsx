@@ -529,17 +529,35 @@ function rnaseqRcFormConfigurator(
           </summary>
           <div className="formInfo">
             <p>
-              Upload your RNA-Seq count data as tab- or comma-delimited files.
-              Your original file names are preserved.
+              Upload your RNA-Seq count data as tab- or comma-delimited files
+              (.txt, .tsv, .csv or .tab).
             </p>
             <p>
               Provide either a single unstranded count file as Data file 1, or a
               stranded pair: sense as Data file 1 and anti-sense as Data file 2.
             </p>
+            <p>Each count file should have:</p>
+            <ul>
+              <li>
+                a header row naming each sample - these names become that
+                sample's ID, and for a stranded pair the same sample names must
+                be used, in the same way, in both files;
+              </li>
+              <li>
+                one row per gene, with gene IDs in the first column (the header
+                of this first column is ignored, so it can be left blank or set
+                to anything you like);
+              </li>
+              <li>
+                whole, non-negative numbers everywhere else (no decimals, no
+                negative numbers, no commas).
+              </li>
+            </ul>
             <p>
-              The Sample Details you enter below are submitted alongside your
-              count files for AI annotation. You do not need to prepare any
-              additional files.
+              We use an AI step to read the Sample Details you provide together
+              with the sample names in your count files, so we can describe your
+              samples and let you compare groups (for example, treated vs.
+              control) in your analysis.
             </p>
             {textFilesHelp}
           </div>
