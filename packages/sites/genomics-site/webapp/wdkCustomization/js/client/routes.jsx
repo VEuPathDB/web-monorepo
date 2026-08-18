@@ -27,6 +27,7 @@ import SampleForm from './components/samples/SampleForm';
 import { projectId, webAppUrl } from './config';
 
 import { blastRoutes } from './blastRoutes';
+import { computeJobRoutes } from './computeJobRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
@@ -252,6 +253,8 @@ export const wrapRoutes = (ebrcRoutes) => [
   },
 
   ...blastRoutes,
+
+  ...computeJobRoutes,
 
   ...preferredOrganismsRoutes,
 
