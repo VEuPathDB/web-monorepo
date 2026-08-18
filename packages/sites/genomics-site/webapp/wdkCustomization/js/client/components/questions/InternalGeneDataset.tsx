@@ -387,146 +387,148 @@ function InternalGeneDatasetContent(props: Props) {
         setVisibility={setVisibility}
         className={cx('SourceFilters')}
       />
-      <InternalGeneDatasetTable
-        searchBoxHeader="Filter Datasets:"
-        emptyResultMessage={
-          (
-            <OrganismPreferencesWarning
-              action="use this page"
-              explanation="Your current preferences exclude all organisms used in this page's searches."
-            />
-          ) as any
-        }
-        showCount={true}
-        rows={filteredDatasourceRecords}
-        filterPredicate={sourceTypeFilterPredicate}
-        columns={[
-          {
-            key: 'source',
-            name: ' ',
-            width: '50px',
-            sortable: false,
-            renderCell: ({ row }: any) => (
-              <DatasetSourceIcon
-                category={getDatasetCategory(toSourceInfo(row))}
+      <div className={cx('DatasetsTable')}>
+        <InternalGeneDatasetTable
+          searchBoxHeader="Filter Datasets:"
+          emptyResultMessage={
+            (
+              <OrganismPreferencesWarning
+                action="use this page"
+                explanation="Your current preferences exclude all organisms used in this page's searches."
               />
-            ),
-          },
-          {
-            key: 'searches',
-            name: 'Choose a Search',
-            sortable: false,
-            renderCell: (cellProps: any) => (
-              <>
-                {displayCategoryOrder.map((categoryName) => {
-                  const { dataset_name, source, search_url } = cellProps.row;
-                  const categorySearchName = getCategorySearchName(
-                    questionNamesByDatasetAndCategory,
-                    dataset_name,
-                    categoryName
-                  );
-
-                  return (
-                    <div key={categoryName}>
-                      {categorySearchName && (
-                        <Link
-                          className={
-                            categorySearchName === searchName
-                              ? 'bttn bttn-cyan bttn-active'
-                              : 'bttn bttn-cyan'
-                          }
-                          to={getCategorySearchUrl(
-                            categorySearchName,
-                            source,
-                            internalSearchName,
-                            search_url
-                          )}
-                          onClick={makeLinkClickHandler(
-                            submissionMetadata,
-                            categorySearchName,
-                            searchName,
-                            setSelectedSearch
-                          )}
-                        >
-                          {
-                            displayCategoriesByName[categoryName]
-                              .shortDisplayName
-                          }
-                        </Link>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            ),
-          },
-          {
-            key: 'organism_prefix',
-            name: 'Organism',
-            sortable: true,
-            sortType: 'htmlText',
-            helpText: 'Organism data is aligned to',
-            renderCell: (props: any) => <OrganismCell {...props} />,
-          },
-          {
-            key: 'display_name',
-            name: 'Dataset',
-            type: 'html',
-            sortable: true,
-            sortType: 'htmlText',
-            renderCell: (cellProps: any) => {
-              const {
-                dataset_id,
-                display_name,
-                summary,
-                publications,
-                build_number_introduced,
-                source,
-              }: DatasourceRecord = cellProps.row;
-
-              const recordUrl =
-                source === 'datasource'
-                  ? `/record/dataset/${dataset_id}`
-                  : `/record/userdataset/${dataset_id}`;
-
-              return (
-                <div>
-                  <HelpIcon>
-                    <div>
-                      <h4>Summary</h4>
-                      {safeHtml(summary)}
-                      {publications.length > 0 && (
-                        <>
-                          <h4>Publications</h4>
-                          <ul>
-                            {publications.map((link) => (
-                              <li key={link.url}>
-                                {formatLink(link, { newWindow: true })}
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
-                    </div>
-                  </HelpIcon>{' '}
-                  {safeHtml(display_name)}
-                  <Link
-                    to={recordUrl}
-                    style={{ marginLeft: '0.5em', verticalAlign: 'middle' }}
-                  >
-                    <OpenInNewIcon style={{ fontSize: '16px' }} />
-                  </Link>
-                  {build_number_introduced === buildNumber && (
-                    <span className={cx('NewDataset')}></span>
-                  )}
-                </div>
-              );
+            ) as any
+          }
+          showCount={true}
+          rows={filteredDatasourceRecords}
+          filterPredicate={sourceTypeFilterPredicate}
+          columns={[
+            {
+              key: 'source',
+              name: ' ',
+              width: '50px',
+              sortable: false,
+              renderCell: ({ row }: any) => (
+                <DatasetSourceIcon
+                  category={getDatasetCategory(toSourceInfo(row))}
+                />
+              ),
             },
-          },
-        ]}
-        initialSortColumnKey="organism_prefix"
-        fixedTableHeader
-      ></InternalGeneDatasetTable>
+            {
+              key: 'searches',
+              name: 'Choose a Search',
+              sortable: false,
+              renderCell: (cellProps: any) => (
+                <>
+                  {displayCategoryOrder.map((categoryName) => {
+                    const { dataset_name, source, search_url } = cellProps.row;
+                    const categorySearchName = getCategorySearchName(
+                      questionNamesByDatasetAndCategory,
+                      dataset_name,
+                      categoryName
+                    );
+
+                    return (
+                      <div key={categoryName}>
+                        {categorySearchName && (
+                          <Link
+                            className={
+                              categorySearchName === searchName
+                                ? 'bttn bttn-cyan bttn-active'
+                                : 'bttn bttn-cyan'
+                            }
+                            to={getCategorySearchUrl(
+                              categorySearchName,
+                              source,
+                              internalSearchName,
+                              search_url
+                            )}
+                            onClick={makeLinkClickHandler(
+                              submissionMetadata,
+                              categorySearchName,
+                              searchName,
+                              setSelectedSearch
+                            )}
+                          >
+                            {
+                              displayCategoriesByName[categoryName]
+                                .shortDisplayName
+                            }
+                          </Link>
+                        )}
+                      </div>
+                    );
+                  })}
+                </>
+              ),
+            },
+            {
+              key: 'organism_prefix',
+              name: 'Organism',
+              sortable: true,
+              sortType: 'htmlText',
+              helpText: 'Organism data is aligned to',
+              renderCell: (props: any) => <OrganismCell {...props} />,
+            },
+            {
+              key: 'display_name',
+              name: 'Dataset',
+              type: 'html',
+              sortable: true,
+              sortType: 'htmlText',
+              renderCell: (cellProps: any) => {
+                const {
+                  dataset_id,
+                  display_name,
+                  summary,
+                  publications,
+                  build_number_introduced,
+                  source,
+                }: DatasourceRecord = cellProps.row;
+
+                const recordUrl =
+                  source === 'datasource'
+                    ? `/record/dataset/${dataset_id}`
+                    : `/record/userdataset/${dataset_id}`;
+
+                return (
+                  <div>
+                    <HelpIcon>
+                      <div>
+                        <h4>Summary</h4>
+                        {safeHtml(summary)}
+                        {publications.length > 0 && (
+                          <>
+                            <h4>Publications</h4>
+                            <ul>
+                              {publications.map((link) => (
+                                <li key={link.url}>
+                                  {formatLink(link, { newWindow: true })}
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </div>
+                    </HelpIcon>{' '}
+                    {safeHtml(display_name)}
+                    <Link
+                      to={recordUrl}
+                      style={{ marginLeft: '0.5em', verticalAlign: 'middle' }}
+                    >
+                      <OpenInNewIcon style={{ fontSize: '16px' }} />
+                    </Link>
+                    {build_number_introduced === buildNumber && (
+                      <span className={cx('NewDataset')}></span>
+                    )}
+                  </div>
+                );
+              },
+            },
+          ]}
+          initialSortColumnKey="organism_prefix"
+          fixedTableHeader
+        ></InternalGeneDatasetTable>
+      </div>
       {showingRecordToggle && (
         <div
           className={cx('RecordToggle')}
