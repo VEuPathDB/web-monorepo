@@ -29,7 +29,7 @@ import {
   keys,
   pick,
 } from 'lodash';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
@@ -69,6 +69,7 @@ import {
   nonUniqueWarning,
   assertValidInputVariables,
   substituteUnselectedToken,
+  requiredInputsAreSelected,
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
@@ -95,8 +96,7 @@ import { padISODateTime } from '../../../utils/date-conversion';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // use variant
 import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import TruncationNotification from '../TruncationNotification';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import {
   UIState,
@@ -105,9 +105,15 @@ import {
 // change defaultIndependentAxisRange to hook
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
+  useAxisTruncationWarningEffect,
+  useConfigChangeHandlerFactory,
   useNeutralPaletteProps,
   useVizConfig,
 } from '../../../hooks/visualizations';
+import {
+  modalPlotContainerStyles,
+  usePlotContainerStyles,
+} from '../plotStyles';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import {
   histogramDefaultIndependentAxisMinMax,
@@ -134,22 +140,8 @@ export type HistogramDataWithCoverageStatistics = (
 ) &
   CoverageStatistics;
 
-const plotContainerStyles = {
-  width: 750,
-  height: 450,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
-
 const spacingOptions = {
   marginTop: 50,
-};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
 };
 
 export const histogramVisualization = createVisualizationPlugin({
@@ -226,12 +218,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -304,64 +292,47 @@ function HistogramViz(props: VisualizationProps<Options>) {
     [updateVizConfig]
   );
 
-  // prettier-ignore
-  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
-  const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof HistogramConfig,
-      resetCheckedLegendItems?: boolean,
-      resetIndependentAxisRanges?: boolean,
-      resetDependentAxisRanges?: boolean,
-      ) => (newValue?: ValueType) => {
-      const newPartialConfig = {
-        [key]: newValue,
-        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
-        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
-      };
-      updateVizConfig(newPartialConfig);
-      if (resetIndependentAxisRanges) {
-        setTruncatedIndependentAxisWarning('');
-      }
-      if (resetDependentAxisRanges) {
-        setTruncatedDependentAxisWarning('');
-      }
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<HistogramConfig>(updateVizConfig);
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
-    false,
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',
-    false,
-    true,
-    true
+    { independentAxisRange: undefined, dependentAxisRange: undefined },
+    () => {
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
+    }
   );
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
-    false,
-    true,
-    false
+    { independentAxisRange: undefined },
+    () => setTruncatedIndependentAxisWarning('')
   );
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
-    false,
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
-  // set checkedLegendItems: undefined for the change of showMissingness
+  // also reset checkedLegendItems and axis ranges for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
-    true,
-    true,
-    true
+    {
+      checkedLegendItems: undefined,
+      independentAxisRange: undefined,
+      dependentAxisRange: undefined,
+    },
+    () => {
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
+    }
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
@@ -871,9 +842,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const areRequiredInputsSelected =
     !dataElementConstraints ||
-    Object.entries(dataElementConstraints[0])
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    requiredInputsAreSelected(dataElementConstraints, vizConfig);
 
   const widgetHeight = '4em';
 
@@ -960,33 +929,17 @@ function HistogramViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning('');
   }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
-  // set useEffect for changing truncation warning message
-  useEffect(() => {
-    if (
-      truncationConfigIndependentAxisMin ||
-      truncationConfigIndependentAxisMax
-    ) {
-      setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigIndependentAxisMin,
     truncationConfigIndependentAxisMax,
-    setTruncatedIndependentAxisWarning,
-  ]);
+    setTruncatedIndependentAxisWarning
+  );
 
-  useEffect(() => {
-    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-    setTruncatedDependentAxisWarning,
-  ]);
+    setTruncatedDependentAxisWarning
+  );
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -1177,24 +1130,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
                   vizConfig.independentAxisValueSpec === 'Auto-zoom'
                 }
               />
-              {/* truncation notification */}
-              {truncatedIndependentAxisWarning ? (
-                <Notification
-                  title={''}
-                  text={truncatedIndependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedIndependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  // set maxWidth per type
-                  containerStyles={{
-                    // maxWidth: valueType === 'date' ? '362px': '350px',
-                    maxWidth: '350px',
-                  }}
-                />
-              ) : null}
+              <TruncationNotification
+                warning={truncatedIndependentAxisWarning}
+                onAcknowledge={() => setTruncatedIndependentAxisWarning('')}
+              />
             </LabelledGroup>
           </LabelledGroup>
         </div>
@@ -1276,21 +1215,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
                   vizConfig.dependentAxisValueSpec === 'Auto-zoom'
                 }
               />
-              {/* truncation notification */}
-              {truncatedDependentAxisWarning ? (
-                <Notification
-                  title={''}
-                  text={truncatedDependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedDependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  // change maxWidth
-                  containerStyles={{ maxWidth: '350px' }}
-                />
-              ) : null}
+              <TruncationNotification
+                warning={truncatedDependentAxisWarning}
+                onAcknowledge={() => setTruncatedDependentAxisWarning('')}
+              />
             </LabelledGroup>
           </LabelledGroup>
         </div>

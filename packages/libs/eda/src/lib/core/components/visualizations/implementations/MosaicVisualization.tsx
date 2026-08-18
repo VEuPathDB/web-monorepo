@@ -56,13 +56,21 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   assertValidInputVariables,
+  requiredInputsAreSelected,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useConfigChangeHandlerFactory,
+  useVizConfig,
+} from '../../../hooks/visualizations';
+import {
+  modalPlotContainerStyles,
+  usePlotContainerStyles,
+} from '../plotStyles';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
@@ -78,14 +86,6 @@ import { useCachedPromise } from '../../../hooks/cachedPromise';
  * viz is in the standalone map. We can formalise this later if confusing.
  */
 
-const plotContainerStyles = {
-  width: 750,
-  height: 450,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
-
 const plotSpacingOptions = {};
 
 const facetedStatsTableStyles = {};
@@ -98,12 +98,6 @@ const facetedStatsTableContainerStyles = {
   width: '100%',
   overflow: 'auto',
   gap: '0.5em',
-};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
 };
 
 const twoByTwoInputStyle: React.CSSProperties = {
@@ -203,12 +197,8 @@ function MosaicViz(props: Props<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   // set default tab to Mosaic in TabbedDisplay component
@@ -298,22 +288,8 @@ function MosaicViz(props: Props<Options>) {
     ]
   );
 
-  // prettier-ignore
-  // changed for consistency as now all other Vizs have this format
-  const onChangeHandlerFactory = useCallback(
-    <ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-          [key]: newValue,
-          checkedLegendItems: undefined
-        }
-        : {
-          [key]: newValue
-        };
-      updateVizConfig(newPartialConfig);
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<MosaicConfig>(updateVizConfig);
 
   const onShowMissingnessChange =
     onChangeHandlerFactory<boolean>('showMissingness');
@@ -676,11 +652,10 @@ function MosaicViz(props: Props<Options>) {
 
   const areRequiredInputsSelected = useMemo(() => {
     if (!dataElementConstraints) return false;
-    const areRequiredMosaicInputsSelected = Object.entries(
-      dataElementConstraints[0]
-    )
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    const areRequiredMosaicInputsSelected = requiredInputsAreSelected(
+      dataElementConstraints,
+      vizConfig
+    );
     if (!isTwoByTwo) return areRequiredMosaicInputsSelected;
     return (
       areRequiredMosaicInputsSelected &&
