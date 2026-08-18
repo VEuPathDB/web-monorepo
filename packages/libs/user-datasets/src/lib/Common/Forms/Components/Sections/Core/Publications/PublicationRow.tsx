@@ -172,8 +172,6 @@ function PublicationInput(props: PublicationInputProps): ReactElement {
   const hasType = isNonBlankString(props.publication.type);
   const pubTypeIsFieldType = props.publication.type === props.fieldType;
 
-  console.log(hasType, pubTypeIsFieldType, props);
-
   return <InputPair
     label={props.fieldType.toUpperCase()}
     fieldName={`pub-${props.index}-${props.fieldType}`}
