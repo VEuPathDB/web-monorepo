@@ -166,11 +166,15 @@
   input[type='url'],
   input[type='text'],
   textarea {
-    &:not(:focus) {
-      &.invalid,
-      &:user-invalid {
+    &.invalid,
+    &:user-invalid {
+      &:not(:focus) {
         border-color: var(--coreui-red-900);
         background-color: var(--coreui-mutedRed-300);
+      }
+
+      &:focus {
+        color: var(--coreui-red-700);
       }
     }
   }
