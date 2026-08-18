@@ -112,7 +112,7 @@ const cancelIcon = <i className="fa fa-times" />;
 
 // to show in NO results and in One recordtype results
 const warningUserDatasets =
-  'Only public user datasets are indexed. Private datasets are excluded, and newly public datasets may take up to 24 hours to appear in search results.';
+  'Note: Private user datasets are excluded from site search. Newly public user datasets may take up to 24 hours to appear in search results.';
 
 function FilterTitleSegment(props: Props) {
   const filters = [
