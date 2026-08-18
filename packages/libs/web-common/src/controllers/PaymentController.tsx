@@ -9,6 +9,8 @@ interface AutoSubmitFormProps {
   params: any;
 }
 
+type ErrorKey = 'amount' | 'invoiceNumber' | 'general';
+
 function AutoSubmitForm(props: AutoSubmitFormProps) {
   // submit form as soon as it is rendered
   const formRef = useRef<HTMLFormElement>(null);
@@ -33,8 +35,14 @@ function AutoSubmitForm(props: AutoSubmitFormProps) {
   );
 }
 
-async function getFormData(amount: string) {
-  const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
+// empty string invoiceNumber is a valid arg
+async function getFormData(amount: string, invoiceNumber: string) {
+  const url =
+    webAppUrl +
+    '/service/payment-form-content?amount=' +
+    amount +
+    '&invoice_number=' +
+    invoiceNumber;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Pre-payment form service error');
@@ -44,8 +52,12 @@ async function getFormData(amount: string) {
 
 export default function PaymentController() {
   const [formData, setFormData] = useState(null);
-  const [amount, setAmount] = useState('0.00');
-  const [errorMessage, setErrorMessage] = useState<ReactNode>('');
+  const [amount, setAmount] = useState('');
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  // errorType => errorMessage
+  const [errors, setErrors] = useState<Partial<Record<ErrorKey, ReactNode>>>(
+    {}
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // If we're showing a persisted page from a back-button navigation
@@ -66,41 +78,64 @@ export default function PaymentController() {
 
   const handleUserSubmit = () => {
     if (isSubmitting) return;
-    setIsSubmitting(true);
 
-    var amountNum: number = Number(removeCommaThousandSeparators(amount));
-    if (isNaN(amountNum) || amountNum < 0.01) {
-      setErrorMessage(
+    // invoiceNumber validation
+    // see https://github.com/VEuPathDB/EbrcWebsiteCommon/blob/baf3e3c6936b309b6d677019351c1a5fe06c08f0/Model/src/main/java/org/eupathdb/common/service/CyberSourceFormService.java#L58
+
+    const invoiceNumberIsValid =
+      invoiceNumber === '' || invoiceNumber.match(/^[0-9a-zA-Z\-]+$/);
+    setErrors((errors) => ({
+      ...errors,
+      invoiceNumber: invoiceNumberIsValid ? undefined : (
+        <>
+          Invoice numbers may contain only A-Z a-z 0-9 and dash ('-')
+          characters.
+        </>
+      ),
+    }));
+
+    // amount validation and remove any leading dollar sign
+    const amountNum: number = Number(
+      removeCommaThousandSeparators(amount).replace(/^\$/, '')
+    );
+    const amountIsValid = !isNaN(amountNum) && amountNum >= 0.01;
+
+    setErrors((errors) => ({
+      ...errors,
+      amount: amountIsValid ? undefined : (
         <>
           You must enter a positive dollar amount. <br />
           Do not use commas for decimals.
         </>
-      );
-      setIsSubmitting(false);
-    } else {
-      setErrorMessage('');
+      ),
+    }));
+
+    if (amountIsValid && invoiceNumberIsValid) {
+      // submit to our service
+      // clear all errors including 'general'
+      setErrors({});
+
       // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
-
-      // optionally update UI with trimmed amount
-      // (will only be visible for a short time, so potentially panic-inducing?)
-      // setAmount(amountNum.toFixed(2));
-
-      getFormData(amountNum.toFixed(2))
+      setIsSubmitting(true);
+      getFormData(amountNum.toFixed(2), invoiceNumber)
         .then((formData) => {
           setFormData(formData);
         })
         .catch((error) => {
           console.error(error);
-          setErrorMessage(
-            <>
-              Cannot connect to payment system. <br />
-              Please{' '}
-              <Link to="/contact-us" target="_blank">
-                let us know
-              </Link>{' '}
-              about this.
-            </>
-          );
+          setErrors((errors) => ({
+            ...errors,
+            general: (
+              <>
+                Cannot connect to payment system. <br />
+                Please{' '}
+                <Link to="/contact-us" target="_blank">
+                  let us know
+                </Link>{' '}
+                about this.
+              </>
+            ),
+          }));
           setIsSubmitting(false);
         });
     }
@@ -123,19 +158,41 @@ export default function PaymentController() {
         </p>
         <div className="payment-form">
           <div className="error-message">
-            <p>{errorMessage}</p>
+            <p>{errors.amount}</p>
           </div>
-          <div className="amount">
-            <p>
-              Please enter the amount from your invoice in USD:&nbsp;&nbsp;
-              <input
-                className={errorMessage ? 'hasError' : undefined}
-                type="text"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </p>
+
+          <div className="form-row">
+            <label htmlFor="amount">Amount (USD):&nbsp;*</label>
+            <input
+              id="amount"
+              className={errors.amount ? 'hasError' : undefined}
+              type="text"
+              value={amount}
+              placeholder="0.00"
+              onChange={(e) => setAmount(e.target.value)}
+            />
           </div>
+
+          <div className="error-message">
+            <p>{errors.invoiceNumber}</p>
+          </div>
+
+          <div className="form-row optional">
+            <label htmlFor="invoiceNumber">Invoice number:</label>
+            <input
+              id="invoiceNumber"
+              className={errors.invoiceNumber ? 'hasError' : undefined}
+              type="text"
+              value={invoiceNumber}
+              placeholder="VEuPathDB-####-####"
+              onChange={(e) => setInvoiceNumber(e.target.value)}
+            />
+          </div>
+
+          <div className="error-message">
+            <p>{errors.general}</p>
+          </div>
+
           <div className="button">
             {isSubmitting && <Loading />}
             <input
@@ -144,6 +201,7 @@ export default function PaymentController() {
               disabled={isSubmitting}
               onClick={handleUserSubmit}
             />
+            <p>* indicates required field</p>
             <p>
               (Clicking the button will take you to secure.cybersource.com.)
             </p>
