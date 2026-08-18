@@ -269,6 +269,8 @@ export default function PlotListLegend({
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
+                        // set width to avoid unnecessary ellipsis for image export
+                        width: '100%',
                       }}
                     >
                       {item.label === 'No data' ||
