@@ -554,6 +554,13 @@ function rnaseqRcFormConfigurator(
               </li>
             </ul>
             <p>
+              If your pipeline gives you one file per sample instead, merge them
+              into this format first - matching genes by their ID, not by row
+              position. An AI coding assistant can write this merge script for
+              you if you ask it to join on gene ID and check that no genes are
+              lost or duplicated.
+            </p>
+            <p>
               We use an AI step to read the Sample Details you provide together
               with the sample names in your count files, so we can describe your
               samples and let you compare groups (for example, treated vs.
