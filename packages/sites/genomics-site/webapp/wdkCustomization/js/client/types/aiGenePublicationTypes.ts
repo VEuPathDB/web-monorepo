@@ -55,8 +55,13 @@ export type AiGenePublicationJobStatus =
       synonymsChecked: string[];
       source: AiProvenanceSource;
     }
-  // terminal — fetch failed (not cached; retry is free; not publishable)
+  // terminal — this article has no usable open-access full text (not cached;
+  // retry is free; not publishable). Retrying the same article won't help.
   | { type: 'text-unavailable'; reason: string }
+  // terminal — NCBI itself was down or unreachable, so we never learned anything
+  // about the article. Distinct from text-unavailable because the user should be
+  // told to try again later rather than to give up on this publication.
+  | { type: 'upstream-unavailable'; reason: string }
   | { type: 'internal-error'; error: string }
   | { type: 'cancelled' };
 

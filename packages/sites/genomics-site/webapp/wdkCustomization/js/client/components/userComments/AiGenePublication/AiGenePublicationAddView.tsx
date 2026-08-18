@@ -6,6 +6,7 @@ import {
   RadioList,
   FileInput,
   Checkbox,
+  Link,
 } from '@veupathdb/wdk-client/lib/Components';
 import { AiGenePublicationBreadcrumb } from './AiGenePublicationBreadcrumb';
 import { PubmedIdEntry } from '../UserCommentForm/PubmedIdEntry';
@@ -954,6 +955,7 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
 
               case 'cancelled':
               case 'text-unavailable':
+              case 'upstream-unavailable':
               case 'internal-error': {
                 let errorMessage: React.ReactNode;
                 if (status.type === 'cancelled') {
@@ -964,6 +966,24 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                       We couldn't retrieve the full text for this article — it
                       may not be freely available. Try a different publication,
                       or upload the PDF if you have it.
+                    </>
+                  );
+                } else if (status.type === 'upstream-unavailable') {
+                  // Deliberately does NOT suggest a different publication: when
+                  // the article-text service is down, every publication fails.
+                  // Uploading a PDF still works — that path never calls NCBI.
+                  errorMessage = (
+                    <>
+                      We couldn't retrieve the full text for this article right
+                      now. This may be a temporary problem with NCBI's servers
+                      rather than anything to do with your article, so please
+                      try again in a little while. You can also upload the PDF
+                      instead, which doesn't rely on NCBI. If the problem
+                      persists, please let us know via the{' '}
+                      <Link to="/contact-us" target="_blank">
+                        support page
+                      </Link>
+                      .
                     </>
                   );
                 } else {
@@ -996,9 +1016,15 @@ export function AiGenePublicationAddView(props: AiGenePublicationAddViewProps) {
                     <TerminalRecoveryButtons
                       onTryDifferentPublication={job.onTryDifferentPublication}
                       onBackToGenePage={job.onBackToGenePage}
-                      {...(status.type === 'text-unavailable'
+                      {...(status.type === 'text-unavailable' ||
+                      status.type === 'upstream-unavailable'
                         ? { onUploadPdfInstead: job.onUploadPdfInstead }
                         : {})}
+                      variant={
+                        status.type === 'upstream-unavailable'
+                          ? 'upstream-outage'
+                          : 'article-problem'
+                      }
                     />
                   </div>
                 );
@@ -1042,27 +1068,43 @@ function TerminalRecoveryButtons({
   onTryDifferentPublication,
   onUploadPdfInstead,
   onBackToGenePage,
+  variant = 'article-problem',
 }: {
   onTryDifferentPublication: () => void;
-  // Only supplied for the text-unavailable case, where uploading the PDF is a
-  // viable alternative to the failed PubMed full-text fetch.
+  // Only supplied where uploading the PDF is a viable alternative to the failed
+  // PubMed full-text fetch.
   onUploadPdfInstead?: () => void;
   onBackToGenePage: () => void;
+  // 'article-problem' — this article has no full text, so a different one is the
+  // natural next step. 'upstream-outage' — NCBI is down, so a different article
+  // would fail identically; uploading a PDF is the action that can still work,
+  // and retrying the same article later is the other sensible option. Both
+  // variants return to the form, which preserves the PubMed id already typed.
+  variant?: 'article-problem' | 'upstream-outage';
 }) {
+  const outage = variant === 'upstream-outage';
+
+  const retryButton = (
+    <FilledButton
+      key="retry"
+      text={outage ? 'Try again' : 'Try a different publication'}
+      onPress={onTryDifferentPublication}
+      themeRole="primary"
+    />
+  );
+  const uploadButton = onUploadPdfInstead && (
+    <FilledButton
+      key="upload"
+      text="Upload a PDF instead"
+      onPress={onUploadPdfInstead}
+      themeRole="primary"
+    />
+  );
+
   return (
     <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-      <FilledButton
-        text="Try a different publication"
-        onPress={onTryDifferentPublication}
-        themeRole="primary"
-      />
-      {onUploadPdfInstead && (
-        <FilledButton
-          text="Upload a PDF instead"
-          onPress={onUploadPdfInstead}
-          themeRole="primary"
-        />
-      )}
+      {/* During an outage the upload path leads, since it's the one that works. */}
+      {outage ? [uploadButton, retryButton] : [retryButton, uploadButton]}
       <PlainLinkButton
         text="Back to gene page"
         onPress={onBackToGenePage}

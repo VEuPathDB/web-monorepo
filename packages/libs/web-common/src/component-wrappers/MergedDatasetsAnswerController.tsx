@@ -2,6 +2,8 @@ import React, {
   useMemo,
   useState,
   useCallback,
+  useEffect,
+  useRef,
   ComponentType,
   ReactNode,
 } from 'react';
@@ -62,6 +64,10 @@ export interface MergedDatasetsConfig {
   }) => ReactNode;
 }
 
+const DEFAULT_MERGED_SORTING = [
+  { attributeName: 'Date and Version', direction: 'DESC' as const },
+];
+
 export function createMergedDatasetsAnswerController(
   config: MergedDatasetsConfig
 ): ComponentType<any> {
@@ -81,6 +87,10 @@ export function createMergedDatasetsAnswerController(
       AttributeField[] | null
     >(null);
     const DefaultComponent = props.DefaultComponent;
+
+    const [localSorting, setLocalSorting] = useState<
+      Array<{ attributeName: string; direction: 'ASC' | 'DESC' }>
+    >(DEFAULT_MERGED_SORTING);
 
     // Store both record classes for custom cell rendering
     const [datasetRecordClass, setDatasetRecordClass] =
@@ -209,22 +219,12 @@ export function createMergedDatasetsAnswerController(
             userDatasetAttrsToFetch.push('owner_is_veupathdb_curator');
           }
 
-          // 6. Fetch data in parallel
-          /*  until we dont fix the error 'is not an attribute for this question'
+          // 6. Fetch data in parallel (no server-side sorting; merged list is sorted client-side)
           const reportConfig = {
             tables: [],
             pagination: { offset: 0, numRecords: 4000 },
-            sorting: (props.stateProps.displayInfo?.sorting || []).map((s: { attributeName: string; direction: string } ) => ({
-                attributeName: s.attributeName,
-                direction: s.direction.toUpperCase() as 'ASC' | 'DESC',
-            })),
           };
-          */
-          const reportConfig = {
-            tables: [],
-            pagination: { offset: 0, numRecords: 4000 },
-            sorting: [],
-          };
+
           const [datasetsAnswer, userDatasetsAnswer] = await Promise.all([
             wdkService.getAnswerJson(
               {
@@ -319,6 +319,36 @@ export function createMergedDatasetsAnswerController(
       [] // Empty deps - only fetch once on mount, don't re-fetch on sorting/column changes
     );
 
+    // Capture the Redux sort at mount time. If the user had previously sorted
+    // this page in the same SPA session, Redux still holds that value.
+    // We apply it once mergedState is available (needed for backend→display name mapping).
+    const initialReduxSortingRef = useRef(props.stateProps.displayInfo?.sorting);
+
+    useEffect(() => {
+      if (!mergedState) return;
+      const reduxSorting = initialReduxSortingRef.current;
+      if (
+        !reduxSorting?.length ||
+        (reduxSorting.length === 1 &&
+          reduxSorting[0].attributeName === 'primary_key')
+      ) {
+        return; // No meaningful prior sort; keep DEFAULT_MERGED_SORTING
+      }
+      setLocalSorting(
+        reduxSorting.map((s: { attributeName: string; direction: string }) => {
+          const found = mergedState.allHarmonizedAttributes.find(
+            (a) =>
+              a.datasetAttrName === s.attributeName ||
+              a.userDatasetAttrName === s.attributeName
+          );
+          return {
+            attributeName: found ? found.displayName : s.attributeName,
+            direction: s.direction.toUpperCase() as 'ASC' | 'DESC',
+          };
+        })
+      );
+    }, [mergedState]); // eslint-disable-line react-hooks/exhaustive-deps
+
     // Filter by source category
     const filteredRecords = useMemo(() => {
       if (!mergedState) return [];
@@ -326,6 +356,23 @@ export function createMergedDatasetsAnswerController(
         (record) => visibility[getDatasetCategory(toSourceInfo(record))]
       );
     }, [mergedState, visibility, toSourceInfo]);
+
+    // Sort the merged list client-side so datasets and user datasets are
+    // interleaved correctly rather than appearing as two separate sorted blocks.
+    // localSorting uses column keys (displayNames / 'primary_key') and is
+    // initialized to DEFAULT_MERGED_SORTING; updated on user sort changes.
+    const sortedRecords = useMemo(() => {
+      if (!localSorting.length) return filteredRecords;
+      return [...filteredRecords].sort((a, b) => {
+        for (const s of localSorting) {
+          const aVal = String(a.attributes[s.attributeName] ?? '').toLowerCase();
+          const bVal = String(b.attributes[s.attributeName] ?? '').toLowerCase();
+          if (aVal < bVal) return s.direction === 'ASC' ? -1 : 1;
+          if (aVal > bVal) return s.direction === 'ASC' ? 1 : -1;
+        }
+        return 0;
+      });
+    }, [filteredRecords, localSorting]);
 
     // Compute visible attributes - use user selections if available, otherwise defaults
     const visibleAttributes = useMemo(() => {
@@ -497,12 +544,70 @@ export function createMergedDatasetsAnswerController(
           ...props.dispatchProps,
           changeVisibleColumns: handleChangeColumns,
           changeColumnPosition: handleMoveColumn,
+          loadAnswer: (
+            searchName: string,
+            recordClassName: string,
+            opts: any
+          ) => {
+            // Map column keys to backend attribute names so the API call
+            // succeeds. Sorting is handled client-side; the backend result
+            // is ignored for ordering.
+            const incomingSorting: Array<{
+              attributeName: string;
+              direction: string;
+            }> = opts.displayInfo?.sorting || [];
+            const backendSorting = incomingSorting.flatMap((s) => {
+              const found = mergedState.allHarmonizedAttributes.find(
+                (a) =>
+                  a.displayName === s.attributeName ||
+                  a.datasetAttrName === s.attributeName ||
+                  a.userDatasetAttrName === s.attributeName
+              );
+              const attrName = found
+                ? found.datasetAttrName ?? found.userDatasetAttrName
+                : null;
+              return attrName
+                ? [
+                    {
+                      attributeName: attrName,
+                      direction: s.direction.toUpperCase() as 'ASC' | 'DESC',
+                    },
+                  ]
+                : [];
+            });
+            return props.dispatchProps.loadAnswer(
+              searchName,
+              recordClassName,
+              {
+                ...opts,
+                displayInfo: {
+                  ...opts.displayInfo,
+                  sorting: backendSorting,
+                },
+              }
+            );
+          },
+          changeSorting: (
+            sorting: Array<{ attributeName: string; direction: 'ASC' | 'DESC' }>
+          ) => {
+            setLocalSorting(
+              sorting.map((s) => ({
+                attributeName: s.attributeName,
+                direction: s.direction.toUpperCase() as 'ASC' | 'DESC',
+              }))
+            );
+            return props.dispatchProps.changeSorting(sorting);
+          },
         }}
         stateProps={{
           ...props.stateProps,
-          records: filteredRecords,
+          records: sortedRecords,
           allAttributes: allAttributesWithIcon,
           visibleAttributes: visibleAttributesWithIcon,
+          displayInfo: {
+            ...props.stateProps.displayInfo,
+            sorting: localSorting,
+          },
           meta: {
             ...props.stateProps.meta,
             totalCount: filteredRecords.length,
