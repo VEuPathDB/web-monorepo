@@ -6,9 +6,9 @@ export function addCommentLink(getLink) {
     return (
       <div>
         <p>
-          <a href={link}>
+          {/* <a href={link}>
             Add a comment <i className="fa fa-comment" />
-          </a>
+          </a> */}
         </p>
         <props.DefaultComponent {...props} />
       </div>

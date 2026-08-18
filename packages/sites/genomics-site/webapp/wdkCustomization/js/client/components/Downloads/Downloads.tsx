@@ -86,10 +86,6 @@ export function Downloads() {
             in the ‘File’ column, or multiple files using the checkboxes in the
             first column.
           </li>
-          <li>
-            To access older files please see the{' '}
-            <a href="/common/downloads/">Download Archive</a>.
-          </li>
         </ul>
       </p>
       <div className="Downloads-Filter-Container">
