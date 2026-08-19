@@ -373,7 +373,7 @@ const mergeProps = (
           <a id={`${comment.id}`}>{comment.headline}</a>
           <div className="wdk-UserComments-Show-EditControls">
             {userId === comment.author.userId && (
-              <div>
+              <div> {/* legacy sites dont modify comments
                 <Link
                   to={`/user-comments/edit?commentId=${comment.id}`}
                   target="_blank"
@@ -394,7 +394,7 @@ const mergeProps = (
                   }}
                 >
                   [delete comment]
-                </Link>
+                </Link>   */}
               </div>
             )}
           </div>
