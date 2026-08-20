@@ -25,6 +25,7 @@ export function formatLink(link, opts) {
   );
 }
 
+
 // The exports below are used in packages/libs/web-common/src/component-wrappers/RecordPage.jsx (dynamic wrapping)
 //  1. RecordPage.jsx uses require.context to load components from components/records directory
 //  2. At runtime, it looks for a file matching the record class name: UserDatasetRecordClasses.UserDatasetRecordClass.js
@@ -57,7 +58,7 @@ export function RecordHeading(props) {
           <dt>Primary publication:</dt>
           {primary_publication ? (
             <>
-              <dd>{primary_publication}</dd>
+              <Link to={primary_publication.pub_url}>{primary_publication.displayText}</Link>
             </>
           ) : null}
 
@@ -81,7 +82,7 @@ export function RecordHeading(props) {
           <dd>{veupathdb_id}</dd>
 
           <dt>Dataset version / Date:</dt>
-          <dd>v1, {creation_date}</dd>
+          <dd>{creation_date}</dd>
 
           <dt>Summary:</dt>
           <dd
