@@ -3,7 +3,7 @@ import React, { Suspense, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect, useLocation } from 'react-router';
 
-import { communitySite } from './config';
+import { communitySite, projectId } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import PaymentController from './controllers/PaymentController';
@@ -171,7 +171,10 @@ export const wrapRoutes = (wdkRoutes) => [
       />
     ),
   },
-/* not needed anymmore, wont be providing access to /common/downloads
+/* still needed in ortho, access to /common/downloads */
+  ...(projectId === 'OrthoMCL'
+  ? [
+
   {
     path: '/downloads/:path*',
     component: (props) => (
@@ -216,7 +219,9 @@ export const wrapRoutes = (wdkRoutes) => [
       />
     ),
   },
-*/
+      ]
+    : []),
+
   {
     path: '/reset-session',
     component: ResetSessionController,
