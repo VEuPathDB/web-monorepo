@@ -141,9 +141,9 @@ export function RootDetailsSection(
                 }
                 required={props.showDataInputs}
                 rows={15}
-                placeholder="Describe your samples here, as a table or as free text (for example, the Methods section of the associated paper).
+                placeholder="Describe your samples here, as a table or as free text (for example, the Methods section of the associated paper or the metadata from supplemental files).
 
-If the sample names in your count file headers already describe the samples (e.g. 'male_3h_rep1'), you don't need to repeat that here - though details such as time-series reference points or treatment specifics are still worth adding. But if those sample names are codes or numbers (e.g. 'S001'), each one must appear somewhere in this description, and you should say what it means.
+If the sample names in your count file headers already describe the samples (e.g. 'male_3h_rep1'), you don't need to repeat that here - though details such as time-series reference points or treatment specifics are still worth adding. But if those sample names are codes or numbers (e.g. 'S001'), each one must appear somewhere in this description, with its meaning explained.
 
 State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
 

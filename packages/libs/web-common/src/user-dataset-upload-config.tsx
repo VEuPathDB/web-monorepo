@@ -533,38 +533,38 @@ function rnaseqRcFormConfigurator(
               (.txt, .tsv, .csv or .tab).
             </p>
             <p>
-              Provide either a single unstranded count file as Data file 1, or a
-              stranded pair: sense as Data file 1 and anti-sense as Data file 2.
+              If unstranded, provide a single unstranded count file as Data file
+              1. If stranded, provide two files: sense as Data file 1 and
+              anti-sense as Data file 2.
             </p>
             <p>Each count file should have:</p>
             <ul>
               <li>
-                a header row naming each sample - these names become that
-                sample's ID, and for a stranded pair the same sample names must
-                be used, in the same way, in both files;
+                a first row that names all the columns. The first column must be
+                the gene ID. Its name doesn't matter. The rest of the columns
+                are the names for each sample. These names become that sample's
+                ID, and for a stranded pair the same sample names must be used,
+                in the same position, in both files;
               </li>
               <li>
-                one row per gene, with gene IDs in the first column (the header
-                of this first column is ignored, so it can be left blank or set
-                to anything you like);
-              </li>
-              <li>
-                whole, non-negative numbers everywhere else (no decimals, no
+                one row per gene, with a gene ID in the first column and whole,
+                non-negative numbers for per sample counts (no decimals, no
                 negative numbers, no commas).
               </li>
             </ul>
             <p>
-              If your pipeline gives you one file per sample instead, merge them
-              into this format first - matching genes by their ID, not by row
-              position. An AI coding assistant can write this merge script for
-              you if you ask it to join on gene ID and check that no genes are
-              lost or duplicated.
+              If your pipeline gives you multiple files instead (one per
+              sample), merge them into the multi-column format first - matching
+              genes by their ID, not by row position. An AI coding assistant can
+              write this merge script for you if you ask it to join on gene ID
+              and check that no genes are lost or duplicated.
             </p>
             <p>
-              We use an AI step to read the Sample Details you provide together
-              with the sample names in your count files, so we can describe your
-              samples and let you compare groups (for example, treated vs.
-              control) in your analysis.
+              We use the VEuPathDB AI Metadata Analyzer to read your{' '}
+              <b>Sample Details</b> together with the sample names in your count
+              files. It automatically describes your samples to let you and
+              other users compare groups (for example, treated vs. control) in
+              your analysis.
             </p>
             {textFilesHelp}
           </div>
