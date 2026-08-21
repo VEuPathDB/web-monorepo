@@ -101,7 +101,10 @@ export function DatasetSelectionTable(
   const [filteredDatasets, setFilteredDatasets] = useState(props.datasets);
   const [onlyMyDatasets, setOnlyMyDatasets] = useState(false);
   const [onlyThisSite, setOnlyThisSite] = useState(false);
-  const [sortBy, setSortBy] = useState<MesaSortObject>();
+  const [sortBy, setSortBy] = useState<MesaSortObject<keyof Dataset>>({
+    columnKey: 'created',
+    direction: 'desc'
+  });
 
   useEffect(() => {
     let filtered = filterDatasets(props.datasets, {
@@ -111,9 +114,7 @@ export function DatasetSelectionTable(
       userId: props.userId,
     });
 
-    if (sortBy != null) {
-      filtered = sortDatasets(filtered, sortBy);
-    }
+    filtered = sortDatasets(filtered, sortBy);
 
     setFilteredDatasets(filtered);
   }, [
@@ -262,9 +263,9 @@ function renderVersion({ row }: TableCellProps): string {
 
 // region Sorting
 
-function sortDatasets(rows: readonly Dataset[], by: MesaSortObject): Dataset[] {
+function sortDatasets(rows: readonly Dataset[], by: MesaSortObject<keyof Dataset>): Dataset[] {
   const valueFn: util.Function<Dataset, any> = (row) => {
-    switch (by.columnKey as keyof Dataset) {
+    switch (by.columnKey) {
       case 'type':
         return row.type.category;
       case 'installTargets':
@@ -272,7 +273,7 @@ function sortDatasets(rows: readonly Dataset[], by: MesaSortObject): Dataset[] {
       case 'owner':
         return (row.owner.firstName + ' ' + row.owner.lastName).toLowerCase();
       default:
-        return row[by.columnKey as keyof Dataset];
+        return row[by.columnKey];
     }
   };
 
