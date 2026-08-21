@@ -529,17 +529,42 @@ function rnaseqRcFormConfigurator(
           </summary>
           <div className="formInfo">
             <p>
-              Upload your RNA-Seq count data as tab- or comma-delimited files.
-              Your original file names are preserved.
+              Upload your RNA-Seq count data as tab- or comma-delimited files
+              (.txt, .tsv, .csv or .tab).
             </p>
             <p>
-              Provide either a single unstranded count file as Data file 1, or a
-              stranded pair: sense as Data file 1 and anti-sense as Data file 2.
+              If unstranded, provide a single unstranded count file as Data file
+              1. If stranded, provide two files: sense as Data file 1 and
+              anti-sense as Data file 2.
+            </p>
+            <p>Each count file should have:</p>
+            <ul>
+              <li>
+                a first row that names all the columns. The first column must be
+                the gene ID. Its name doesn't matter. The rest of the columns
+                are the names for each sample. These names become that sample's
+                ID, and for a stranded pair the same sample names must be used,
+                in the same position, in both files;
+              </li>
+              <li>
+                one row per gene, with a gene ID in the first column and whole,
+                non-negative numbers for per sample counts (no decimals, no
+                negative numbers, no commas).
+              </li>
+            </ul>
+            <p>
+              If your pipeline gives you multiple files instead (one per
+              sample), merge them into the multi-column format first - matching
+              genes by their ID, not by row position. An AI coding assistant can
+              write this merge script for you if you ask it to join on gene ID
+              and check that no genes are lost or duplicated.
             </p>
             <p>
-              The Sample Details you enter below are submitted alongside your
-              count files for AI annotation. You do not need to prepare any
-              additional files.
+              We use the VEuPathDB AI Metadata Analyzer to read your{' '}
+              <b>Sample Details</b> together with the sample names in your count
+              files. It automatically describes your samples to let you and
+              other users compare groups (for example, treated vs. control) in
+              your analysis.
             </p>
             {textFilesHelp}
           </div>

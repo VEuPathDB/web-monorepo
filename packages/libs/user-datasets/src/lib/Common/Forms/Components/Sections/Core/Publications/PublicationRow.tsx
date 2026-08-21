@@ -4,6 +4,7 @@ import {
   DatasetPublicationType as PublicationType,
 } from '../../../../../../Service/Model';
 import {
+  BiConsumer,
   Consumer,
   JsonPathBuilder,
   ifDefined,
@@ -29,6 +30,7 @@ export interface PublicationRowProps {
   readonly isRequired: boolean;
   readonly isDisabled: boolean;
   readonly isSingular: boolean;
+  readonly isDuplicate: boolean;
 
   readonly jsonPath: JsonPathBuilder;
 }
@@ -44,9 +46,6 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
     })) ?? null,
     null,
   ]), [props.publication.citation]);
-
-  const type = props.publication.type ?? null;
-  const hasIdentifier = isNonBlankString(props.publication.identifier);
 
   const updatePublication = (pub: Publication, res: CitationLookupStatus) => {
     props.setPublication(
@@ -125,26 +124,20 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
     <>
       <li className="publication-row">
         <div className="flex-row">
-          <InputPair
-            label="PMID"
-            fieldName={`pub-${props.index}-pmid`}
-            required={props.isRequired && type !== 'doi'}
-            value={type !== 'doi' ? props.publication.identifier : undefined}
-            onChange={(v) => onInput(v, 'pmid')}
-            labelClass={type === 'doi' ? 'disabled' : undefined}
-            disabled={props.isDisabled || (hasIdentifier && type === 'doi')}
+          <PublicationInput
+            {...props}
+            fieldType="pmid"
+            isInvalid={props.isDuplicate}
+            onInput={onInput}
           />
 
           <span className="join">OR</span>
 
-          <InputPair
-            label="DOI"
-            fieldName={`pub-${props.index}-doi`}
-            required={props.isRequired && type !== 'pmid'}
-            value={type !== 'pmid' ? props.publication.identifier : undefined}
-            onChange={(v) => onInput(v, 'doi')}
-            labelClass={type === 'pmid' ? 'disabled' : undefined}
-            disabled={props.isDisabled || (hasIdentifier && type === 'pmid')}
+          <PublicationInput
+            {...props}
+            fieldType="doi"
+            isInvalid={props.isDuplicate}
+            onInput={onInput}
           />
 
           <InputPair
@@ -163,6 +156,35 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
       </li>
     </>
   );
+}
+
+interface PublicationInputProps {
+  readonly index: number;
+  readonly publication: Publication;
+  readonly fieldType: PublicationType;
+  readonly isRequired: boolean;
+  readonly isDisabled: boolean;
+  readonly isInvalid: boolean;
+  readonly onInput: BiConsumer<string, PublicationType>;
+}
+
+function PublicationInput(props: PublicationInputProps): ReactElement {
+  const hasType = isNonBlankString(props.publication.type);
+  const pubTypeIsFieldType = props.publication.type === props.fieldType;
+
+  return <InputPair
+    label={props.fieldType.toUpperCase()}
+    fieldName={`pub-${props.index}-${props.fieldType}`}
+    required={props.isRequired && (!hasType || pubTypeIsFieldType)}
+    value={pubTypeIsFieldType ? props.publication.identifier : undefined}
+    onChange={(v) => props.onInput(v, props.fieldType)}
+    className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
+    labelClass={hasType && !pubTypeIsFieldType ? 'disabled' : undefined}
+    disabled={
+      props.isDisabled
+      || (isNonBlankString(props.publication.identifier) && !pubTypeIsFieldType)
+    }
+  />;
 }
 
 function applyCitation(

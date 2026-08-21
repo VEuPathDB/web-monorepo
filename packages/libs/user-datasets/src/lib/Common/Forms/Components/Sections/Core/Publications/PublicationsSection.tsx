@@ -2,9 +2,9 @@ import React, { ReactElement } from 'react';
 import { InputBlock } from '../../../InputBlock';
 import { PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import {
-  Consumer,
+  Consumer, isNonBlankString,
   JsonPathBuilder,
-  replaceElement,
+  replaceElement
 } from '../../../../../../Utils';
 import { isEmpty } from 'lodash';
 import { AddRowButton } from '../../../AddRowButton';
@@ -52,6 +52,8 @@ export function PublicationsSection(
     (isEnabled ?? false) &&
     (pub.isPrimary || (i === 0 && publications.length === 1));
 
+  const seenIdentifiers = new Set<string>();
+
   return (
     <InputBlock header="Publications">
       <OptionalSection
@@ -67,22 +69,35 @@ export function PublicationsSection(
         className="field-grid"
       >
         <ol className="span-2 multi-input">
-          {publications.map((pub, index) => (
-            <PublicationRow
-              key={`pub-${index}`}
-              index={index}
-              publication={pub}
-              setPublication={makePublicationSetter(
-                index,
-                publications,
-                props.setPublications
-              )}
-              isRequired={calcRequired(pub, index)}
-              isSingular={publications.length === 1}
-              isDisabled={!isEnabled}
-              jsonPath={props.jsonPath.append(index)}
-            />
-          ))}
+          {publications.map((pub, index) => {
+            let isDuplicate = false;
+
+            if (isNonBlankString(pub.identifier)) {
+              if (seenIdentifiers.has(pub.identifier)) {
+                isDuplicate = true;
+              } else {
+                seenIdentifiers.add(pub.identifier);
+              }
+            }
+
+            return (
+              <PublicationRow
+                key={`pub-${index}`}
+                index={index}
+                publication={pub}
+                setPublication={makePublicationSetter(
+                  index,
+                  publications,
+                  props.setPublications
+                )}
+                isRequired={calcRequired(pub, index)}
+                isSingular={publications.length === 1}
+                isDisabled={!isEnabled}
+                jsonPath={props.jsonPath.append(index)}
+                isDuplicate={isDuplicate}
+              />
+            );
+          })}
         </ol>
 
         <AddRowButton

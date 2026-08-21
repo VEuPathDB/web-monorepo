@@ -239,7 +239,7 @@ export function RecordTableDescription(DefaultComponent) {
 
         let { table, record, downloadRecordTable, ontologyProperties } =
           this.props;
-        let customName = `Data Sets used to generate ${String.fromCharCode(
+        let customName = `Datasets used to generate ${String.fromCharCode(
           8220
         )}${table.displayName.replace('/', '-')}${String.fromCharCode(8221)}`;
         let callDownloadTable = (event) => {
@@ -315,7 +315,7 @@ export function RecordTableDescription(DefaultComponent) {
                   }),
                 }}
               >
-                <i className="fa fa-database" /> Data Sets
+                <i className="fa fa-database" /> Datasets
               </Link>
             )}
             {hasTaxonId == 1 && showDatasetsLink && (

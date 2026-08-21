@@ -54,10 +54,10 @@ export function RecordHeading(props) {
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-          <dt>Primary publication:</dt>
           {primary_publication ? (
             <>
-              <dd>{primary_publication}</dd>
+              <dt>Primary publication:</dt>
+              <dd>{formatLink(primary_publication, { newWindow: true })}</dd>
             </>
           ) : null}
 
@@ -81,7 +81,7 @@ export function RecordHeading(props) {
           <dd>{veupathdb_id}</dd>
 
           <dt>Dataset version / Date:</dt>
-          <dd>v1, {creation_date}</dd>
+          <dd>{creation_date}</dd>
 
           <dt>Summary:</dt>
           <dd
