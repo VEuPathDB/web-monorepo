@@ -3,6 +3,7 @@ import { orderBy, partialRight } from 'lodash';
 
 import * as mesa from '@veupathdb/coreui/lib/components/Mesa/types';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
+import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import {
@@ -12,8 +13,7 @@ import {
 } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import * as util from '../../../../../Utils';
-import { Consumer, ifDefined, Nullable, Possible, SimpleState } from '../../../../../Utils';
-import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
+import { ifDefined, Nullable, Possible, SimpleState } from '../../../../../Utils';
 
 // FIXME: help text values are to be shared with all tables having these columns
 const DatasetColumns = {
@@ -49,8 +49,7 @@ const DatasetColumns = {
     'owner',
     'Uploaded By',
     'The person or organization who uploaded this dataset through the User'
-    + ' Datasets workflow. Not applicable to datasets integrated using the'
-    + ' VEuPathDB workflow.'
+    + 'Datasets workflow.'
   ],
   Shares: [
     'shares',
@@ -68,14 +67,12 @@ const DatasetColumns = {
   Version: [
     'created',
     'Version & Date',
-    'The date and VEuPathDB release number (VEuPathDB workflow) or date and'
-    + ' version (User Datasets workflow) of the dataset as it currently'
-    + ' appears.'
+    'The date and version of the dataset as it currently appears.'
   ],
 } as const;
 
 
-  export interface MetadataImportTableProps {
+export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
   readonly baseUrl: string;
   readonly vdiConfig: VdiServiceConfig;
@@ -87,11 +84,9 @@ const DatasetColumns = {
   readonly selection: SimpleState<Possible<DatasetId>>;
 }
 
-type TableColumn<K extends keyof Dataset> = mesa.MesaColumn<
-  Dataset,
-  K,
-  Dataset[K]
->;
+type TableColumn<K extends keyof Dataset> =
+  mesa.MesaColumn<Dataset, K, Dataset[K]>;
+
 type TableCellProps = mesa.CellProps<Dataset>;
 
 interface TableRowProps {
@@ -142,7 +137,6 @@ export function DatasetSelectionTable(
         },
         options: {
           editableColumns: false,
-          showCount: false,
           toolbar: true,
           hideSelectAll: true,
           getRowId: (row) => row.datasetId,
@@ -159,7 +153,17 @@ export function DatasetSelectionTable(
           { element: onlyThisSiteToggle(onlyThisSite, setOnlyThisSite, props.siteDisplayName) },
         ],
       }}
-    />
+    >
+      {
+        // Bizarrely, the Mesa component's `children` property is used as either
+        // the toolbar or action bar content depending on undocumented
+        // combinations of options and handlers above.
+        //
+        // In this case, the toolbar is enabled which will lead to the row-count
+        // element being shown as part of the toolbar and not the action bar.
+        rowCounts(props.datasets.length, filteredDatasets.length)
+      }
+    </Mesa>
   );
 }
 
@@ -198,6 +202,7 @@ function column<K extends keyof Dataset>(
     sortable,
     renderCell,
     getValue,
+    className: key,
   };
 }
 
@@ -334,9 +339,13 @@ function isAlwaysVisibleTo(dataset: Dataset, userId: number): boolean {
   );
 }
 
+function rowCounts(total: number, current: number): ReactElement {
+  return <span className="row-count">Showing {current} of {total} datasets</span>;
+}
+
 function onlyMyDatasetsToggle(
   value: boolean,
-  setValue: Consumer<boolean>
+  setValue: util.Consumer<boolean>
 ): ReactElement {
   return (
     <>
@@ -355,7 +364,7 @@ function onlyMyDatasetsToggle(
 
 function onlyThisSiteToggle(
   value: boolean,
-  setValue: Consumer<boolean>,
+  setValue: util.Consumer<boolean>,
   siteName: string,
 ): ReactElement {
   return <>
