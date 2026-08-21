@@ -25,7 +25,6 @@ export function formatLink(link, opts) {
   );
 }
 
-
 // The exports below are used in packages/libs/web-common/src/component-wrappers/RecordPage.jsx (dynamic wrapping)
 //  1. RecordPage.jsx uses require.context to load components from components/records directory
 //  2. At runtime, it looks for a file matching the record class name: UserDatasetRecordClasses.UserDatasetRecordClass.js
@@ -55,10 +54,10 @@ export function RecordHeading(props) {
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-          <dt>Primary publication:</dt>
           {primary_publication ? (
             <>
-              <Link to={primary_publication.pub_url}>{primary_publication.displayText}</Link>
+              <dt>Primary publication:</dt>
+              <dd>{formatLink(primary_publication, { newWindow: true })}</dd>
             </>
           ) : null}
 
