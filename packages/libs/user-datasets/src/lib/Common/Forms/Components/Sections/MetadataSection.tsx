@@ -43,7 +43,7 @@ export function MetadataSection({
       <div className="header-line">
         <h2>Provide Dataset Metadata:</h2>
         <SecondaryButton disabled={false} onClick={openMetaImport}>
-          Import from Existing Dataset
+          Copy from existing dataset
         </SecondaryButton>
       </div>
 
