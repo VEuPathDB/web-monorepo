@@ -39,7 +39,7 @@ import {
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
 } from '../../Actions/UserDatasetsActions';
-import { DataNoun } from '../../Utils/types';
+import { DataNoun } from '../../Utils';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
@@ -621,11 +621,13 @@ class DatasetManagement<
     const unpromotableMessage = (() => {
       switch (this.testCommunityPromotability()) {
         case CommunityPromotability.CanPromote:
+        // allow the promote link to be enabled.  the user will be forced to add
+        // the missing dataset properties file as a next step.
+        // eslint-disable-next-line no-fallthrough
+        case CommunityPromotability.MissingDatasetProperties:
           return undefined;
         case CommunityPromotability.NotInstalled:
           return 'Datasets that have not been installed cannot be made public.';
-        case CommunityPromotability.MissingDatasetProperties:
-          return 'A variable annotations file is required to make this dataset public.';
         default:
           return 'Dataset cannot be made public at this time due to a site error.';
       }

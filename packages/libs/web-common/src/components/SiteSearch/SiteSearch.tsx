@@ -79,6 +79,7 @@ import { CellProps, Column } from 'react-table';
 import { CommonModal } from '@veupathdb/wdk-client/lib/Components';
 import './SiteSearch.scss';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { useUserDatasetsWorkspace } from '../../config';
 
 interface Props {
   loading: boolean;
@@ -163,8 +164,12 @@ function Results(props: Props) {
           <Title {...props} />
         </h1>
         <div style={{ fontSize: '1.2em' }}>
-          <p style={p2Style}>{warningUserDatasets}</p>
-          <br />
+          {useUserDatasetsWorkspace && (
+            <>
+              <p style={p2Style}>{warningUserDatasets}</p>
+              <br />
+            </>
+          )}
           <p style={pStyle}>Your search returned 0 results.</p>
           <p style={pStyle}>
             Consider using a wildcard to broaden your search. For example,{' '}
@@ -246,11 +251,13 @@ function Title(props: Props) {
   return (
     <React.Fragment>
       {display} matching <strong>{searchString}</strong>{' '}
-      <div
-        style={{ fontSize: '0.45em', fontStyle: 'italic', margin: '0.5em 0' }}
-      >
-        {warningUserDatasets}
-      </div>
+      {useUserDatasetsWorkspace && (
+        <div
+          style={{ fontSize: '0.45em', fontStyle: 'italic', margin: '0.5em 0' }}
+        >
+          {warningUserDatasets}
+        </div>
+      )}
       <FilterTitleSegment {...props} />
     </React.Fragment>
   );
