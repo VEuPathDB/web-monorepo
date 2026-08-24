@@ -1232,18 +1232,6 @@ function resultDetails(
     []
   );
 
-  // wdk records
-  if (documentType.isWdkRecordType || projectId != 'ClinEpiDB') {
-    return {
-      display: makeRecordLink(
-        document,
-        projectUrls,
-        organismToProject,
-        projectId
-      ),
-      summary: makeGenericSummary(document, documentType),
-    };
-  }
 
   // eda study
   if (documentType.id === 'dataset' || projectId === 'ClinEpiDB') {
@@ -1307,6 +1295,19 @@ function resultDetails(
           />
         </>
       ),
+    };
+  }
+
+  // wdk records
+  if (documentType.isWdkRecordType ) {
+    return {
+      display: makeRecordLink(
+        document,
+        projectUrls,
+        organismToProject,
+        projectId
+      ),
+      summary: makeGenericSummary(document, documentType),
     };
   }
 
