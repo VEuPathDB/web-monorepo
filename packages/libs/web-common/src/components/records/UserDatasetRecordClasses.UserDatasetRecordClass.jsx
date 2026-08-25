@@ -80,7 +80,7 @@ export function RecordHeading(props) {
           <dt>VEuPathDB Dataset ID:</dt>
           <dd>{veupathdb_id}</dd>
 
-          <dt>Dataset version / Date:</dt>
+          <dt>Date and version:</dt>
           <dd>{creation_date}</dd>
 
           <dt>Summary:</dt>

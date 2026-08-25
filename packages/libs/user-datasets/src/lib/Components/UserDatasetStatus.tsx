@@ -156,7 +156,7 @@ function getPostUploadStatus(
     case 'queued':
     case 'in-progress':
       return {
-        content: `This ${dataNoun} is queued.`,
+        content: `This ${dataNoun} is being processed.`,
         icon: 'clock-o',
       };
     case 'invalid':

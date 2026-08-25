@@ -264,10 +264,17 @@ const ConnectedReferences = connect(
 )(References);
 
 export function RecordAttributeSection({ DefaultComponent, ...props }) {
-  if (props.attribute.name === 'description') {
-    return <BlockRecordAttributeSection {...props} />;
+  const { ...restProps } = props;
+  switch (restProps.attribute.name) {
+    case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'organism_prefix':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'release_policy':
+      return <BlockRecordAttributeSection {...restProps} />;
+    default:
+      return <DefaultComponent {...props} />;
   }
-  return <DefaultComponent {...props} />;
 }
 
 export function RecordTable(props) {

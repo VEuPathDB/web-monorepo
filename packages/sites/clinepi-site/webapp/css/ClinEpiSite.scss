@@ -753,7 +753,7 @@ button.study-action[data-study-id][data-args] * {
 div#ce-static-content summary {
   color: #069;
 }
-div#ce-static-content li {
+div#ce-static-content > h1#FAQ ~ div > ul > li {
   margin: 1em 0;
   list-style: none;
 }
