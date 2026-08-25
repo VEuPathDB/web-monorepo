@@ -66,7 +66,7 @@ const DatasetColumns = {
   ],
   Version: [
     'created',
-    'Version & Date',
+    'Date & Version',
     'The date and version of the dataset as it currently appears.'
   ],
 } as const;
@@ -256,7 +256,7 @@ function renderVersion({ row }: TableCellProps): string {
     version = idMatch[1];
   }
 
-  return `v${version}, ${row.created.substring(0, 10)}`;
+  return `${row.created.substring(0, 10)}, v${version}`;
 }
 
 // endregion Columns
