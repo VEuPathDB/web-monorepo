@@ -527,6 +527,16 @@ const useHeaderMenuItems = (
             include: [TriTrypDB],
           },
         },
+        {
+          key: 'legacyvbmap',
+          display: 'MapVEu — Geolocation visualizations of field-based studies',
+          tooltip: 'Will send you to the legacy site.',
+          type: 'externalLink',
+          url: 'https://legacy.vectorbase.org//vectorbase/app/workspace/maps/DS_480c976ef9/new',
+          metadata: {
+            include: [UniDB, VectorBase],
+          },
+        },
         !showInteractiveMaps
           ? {
               type: 'custom',
@@ -610,11 +620,25 @@ const useHeaderMenuItems = (
         {
           key: 'toxo-rflp',
           display: 'RFLP Genotypes',
-          type: 'reactRoute',
-          url: '/workspace/analyses/DS_6d31c76b75/new',
+          type: 'subMenu',
+          openByDefault: true,
           metadata: {
             include: [ToxoDB, UniDB],
           },
+          items: [
+            {
+              key: 'lookup',
+              display: 'ToxoDB genotype # lookup',
+              type: 'externalLink',
+              url: `https://${communitySite}/documents/Unique_RFLP_Genotypes_tutorial.pdf`,
+            },
+            {
+              key: 'genotypes',
+              display: 'T. gondii Isolate Genotypes and Metadata',
+              type: 'reactRoute',
+              url: '/workspace/analyses/DS_6d31c76b75/new/variables/RFLP_ISOLATE/VAR_998763dc',
+            },
+          ],
         },
         {
           key: 'srt',

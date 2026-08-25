@@ -115,23 +115,6 @@ export function RecordHeading(props) {
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-          {organism_prefix ? (
-            <>
-              <dt>Organism (source or reference)</dt>
-              <dd
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(organism_prefix),
-                }}
-              />
-            </>
-          ) : null}
-
-          {newcategory ? (
-            <>
-              <dt>Category</dt>
-              <dd>{newcategory}</dd>
-            </>
-          ) : null}
 
           {primaryPublication && primaryPublication.pubmed_link ? (
             <>
@@ -149,16 +132,35 @@ export function RecordHeading(props) {
             </>
           ) : null}
 
+          {newcategory ? (
+            <>
+              <dt>Data type</dt>
+              <dd>{newcategory}</dd>
+            </>
+          ) : null}
+
+          {organism_prefix ? (
+            <>
+              <dt>Organism(s)</dt>
+              <dd
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(organism_prefix),
+                }}
+              />
+            </>
+          ) : null}
+
+
           {version ? (
             <>
-              <dt>Source version(s)</dt>
+              <dt>External sources</dt>
               <dd>{renderSourceVersion(version, newcategory)}</dd>
             </>
           ) : null}
 
           {eupath_release ? (
             <>
-              <dt>Release # / date</dt>
+              <dt>Date and version</dt>
               <dd>{eupath_release}</dd>
             </>
           ) : null}
@@ -262,10 +264,17 @@ const ConnectedReferences = connect(
 )(References);
 
 export function RecordAttributeSection({ DefaultComponent, ...props }) {
-  if (props.attribute.name === 'description') {
-    return <BlockRecordAttributeSection {...props} />;
+  const { ...restProps } = props;
+  switch (restProps.attribute.name) {
+    case 'description':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'organism_prefix':
+      return <BlockRecordAttributeSection {...restProps} />;
+    case 'release_policy':
+      return <BlockRecordAttributeSection {...restProps} />;
+    default:
+      return <DefaultComponent {...props} />;
   }
-  return <DefaultComponent {...props} />;
 }
 
 export function RecordTable(props) {

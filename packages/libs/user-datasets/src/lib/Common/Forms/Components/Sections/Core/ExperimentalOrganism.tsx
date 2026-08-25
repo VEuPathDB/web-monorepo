@@ -1,7 +1,12 @@
 import React, { ReactElement } from 'react';
 import { FieldHelpText, InputBlock, InputPair, YesNoToggle } from '../../index';
 import { partialRight } from 'lodash';
-import { changeHandler, isNonBlankString, Consumer, JsonPathBuilder } from '../../../../../Utils';
+import {
+  changeHandler,
+  isNonBlankString,
+  Consumer,
+  JsonPathBuilder,
+} from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
 import { ClientSideUploadFormState } from '../../../../../StoreModules';
@@ -59,7 +64,14 @@ export function ExperimentalOrganism(
     <>
       <InputBlock header="Organism Details">
         <p className="section-description">
-          Indicate the species and strain of each organism represented by biological data in this dataset. Organisms may include pathogens, vectors, symbionts, or other organisms represented directly or indirectly by the data. The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.
+          Indicate the species and strain of each organism represented by
+          biological data in this dataset. Organisms may include 
+          {!isGenomics &&
+            ' the study population species in field studies or clinical trials and, where applicable,'} 
+          {' '}pathogens, vectors, symbionts, or other organisms represented directly or
+          indirectly by the data.
+          {isGenomics &&
+            ' The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.'}
         </p>
 
         <div className={'field-grid' + disabledClass}>
@@ -79,7 +91,7 @@ export function ExperimentalOrganism(
                 required={isPublic}
                 disableRequiredStyling={true}
                 helpText={
-                  'Whether this dataset includes biological data describing one or more organisms. Organisms may include the study population species in field studies or clinical trials and, where applicable, pathogens, vectors, symbionts, and any other organisms represented directly or indirectly by the data.'
+                  'Whether this dataset includes biological data describing one or more organisms.'
                 }
               />
             </>
@@ -99,7 +111,9 @@ export function ExperimentalOrganism(
             maxLength={128}
           />
           <FieldHelpText>
-            Scientific name of the organism that was detected, measured, characterized, or otherwise represented in this dataset (e.g., Plasmodium falciparum).
+            Scientific name of the organism that was detected, measured,
+            characterized, or otherwise represented in this dataset (e.g.,
+            Plasmodium falciparum).
           </FieldHelpText>
 
           <InputPair
@@ -114,7 +128,9 @@ export function ExperimentalOrganism(
             maxLength={128}
           />
           <FieldHelpText>
-            The strain of the organism represented in this dataset. For field-collected organisms without a defined strain, enter "field isolates" or "field samples", as appropriate.
+            The strain of the organism represented in this dataset. For
+            field-collected organisms without a defined strain, enter "field
+            isolates" or "field samples", as appropriate.
           </FieldHelpText>
         </div>
       </InputBlock>

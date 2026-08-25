@@ -79,6 +79,7 @@ import { CellProps, Column } from 'react-table';
 import { CommonModal } from '@veupathdb/wdk-client/lib/Components';
 import './SiteSearch.scss';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { useUserDatasetsWorkspace } from '../../config';
 
 interface Props {
   loading: boolean;
@@ -112,7 +113,7 @@ const cancelIcon = <i className="fa fa-times" />;
 
 // to show in NO results and in One recordtype results
 const warningUserDatasets =
-  'Only public user datasets are indexed. Private datasets are excluded, and newly public datasets may take up to 24 hours to appear in search results.';
+  'Note: Private user datasets are excluded from site search. Newly public user datasets may take up to 24 hours to appear in search results.';
 
 function FilterTitleSegment(props: Props) {
   const filters = [
@@ -163,8 +164,12 @@ function Results(props: Props) {
           <Title {...props} />
         </h1>
         <div style={{ fontSize: '1.2em' }}>
-          <p style={p2Style}>{warningUserDatasets}</p>
-          <br />
+          {useUserDatasetsWorkspace && (
+            <>
+              <p style={p2Style}>{warningUserDatasets}</p>
+              <br />
+            </>
+          )}
           <p style={pStyle}>Your search returned 0 results.</p>
           <p style={pStyle}>
             Consider using a wildcard to broaden your search. For example,{' '}
@@ -246,11 +251,13 @@ function Title(props: Props) {
   return (
     <React.Fragment>
       {display} matching <strong>{searchString}</strong>{' '}
-      <div
-        style={{ fontSize: '0.45em', fontStyle: 'italic', margin: '0.5em 0' }}
-      >
-        {warningUserDatasets}
-      </div>
+      {useUserDatasetsWorkspace && (
+        <div
+          style={{ fontSize: '0.45em', fontStyle: 'italic', margin: '0.5em 0' }}
+        >
+          {warningUserDatasets}
+        </div>
+      )}
       <FilterTitleSegment {...props} />
     </React.Fragment>
   );
@@ -1225,18 +1232,6 @@ function resultDetails(
     []
   );
 
-  // wdk records
-  if (documentType.isWdkRecordType || projectId != 'ClinEpiDB') {
-    return {
-      display: makeRecordLink(
-        document,
-        projectUrls,
-        organismToProject,
-        projectId
-      ),
-      summary: makeGenericSummary(document, documentType),
-    };
-  }
 
   // eda study
   if (documentType.id === 'dataset' || projectId === 'ClinEpiDB') {
@@ -1300,6 +1295,19 @@ function resultDetails(
           />
         </>
       ),
+    };
+  }
+
+  // wdk records
+  if (documentType.isWdkRecordType ) {
+    return {
+      display: makeRecordLink(
+        document,
+        projectUrls,
+        organismToProject,
+        projectId
+      ),
+      summary: makeGenericSummary(document, documentType),
     };
   }
 

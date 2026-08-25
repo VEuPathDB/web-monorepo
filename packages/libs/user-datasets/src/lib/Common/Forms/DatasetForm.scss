@@ -30,6 +30,12 @@
     margin-left: 32px;
   }
 
+  .header-line {
+    display: flex;
+    align-items: first baseline;
+    column-gap: 3ch;
+  }
+
   .title-with-button {
     display: flex;
     justify-content: space-between;
@@ -74,6 +80,7 @@
 
   .section-description {
     font-style: italic;
+    color: var(--coreui-gray-900);
   }
 
   p.section-description {
@@ -159,11 +166,15 @@
   input[type='url'],
   input[type='text'],
   textarea {
-    &:not(:focus) {
-      &.invalid,
-      &:user-invalid {
+    &.invalid,
+    &:user-invalid {
+      &:not(:focus) {
         border-color: var(--coreui-red-900);
         background-color: var(--coreui-mutedRed-300);
+      }
+
+      &:focus {
+        color: var(--coreui-red-700);
       }
     }
   }

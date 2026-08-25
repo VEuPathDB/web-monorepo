@@ -1,4 +1,13 @@
-export { JsonPathBuilder } from './JsonPathBuilder';
+export { ifDefined, requireValue } from './ergonomics';
+
+export { datasetUserFullName } from './formatting';
+
+export {
+  changeHandler,
+  arrayChangeHandler,
+  textChange,
+  replaceElement,
+} from './input-utils';
 
 export type {
   BiConsumer,
@@ -8,15 +17,11 @@ export type {
   Optional,
   Possible,
   Runnable,
+
+  DataNoun,
 } from './types';
 
-export {
-  changeHandler,
-  arrayChangeHandler,
-  textChange,
-  replaceElement,
-} from './input-utils';
-
-export { ifDefined, requireValue } from './ergonomics';
-
 export { isNonBlankString, isNonEmpty, isNonEmptyString } from './value-tests';
+
+export { JsonPathBuilder } from './JsonPathBuilder';
+export { SimpleState, useSimpleState } from './SimpleState';

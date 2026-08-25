@@ -507,6 +507,10 @@ const EdaCellularLocalizationChildRow = makeDatasetGraphChildRow({
   dataTableName: 'EdaCellularLocalizationGraphsDataTable',
   DatasetGraphComponent: EdaDatasetGraph,
 });
+const EdaAntibodyArrayChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaAntibodyArrayGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
 const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
   dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
   DatasetGraphComponent: DatasetGraph,
@@ -553,6 +557,14 @@ export function RecordTable(props) {
         <props.DefaultComponent
           {...props}
           childRow={EdaCellularLocalizationChildRow}
+        />
+      );
+
+    case 'EdaAntibodyArrayDatasets':
+      return (
+        <props.DefaultComponent
+          {...props}
+          childRow={EdaAntibodyArrayChildRow}
         />
       );
 

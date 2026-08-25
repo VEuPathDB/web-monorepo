@@ -42,7 +42,7 @@ export const userDatasetRoutes: RouteEntry[] = [
           <UserDatasetRouter
             workspaceConfig={UserDatasetWorkspaceConfig}
             enablePublicUserDatasets={!!communityDatasetsEnabled}
-            detailsPageTitle="My Dataset"
+            detailsPageTitle="Manage my dataset"
             helpRoute="/workspace/datasets/help"
             workspaceTitle="My Datasets"
             helpTabContents={

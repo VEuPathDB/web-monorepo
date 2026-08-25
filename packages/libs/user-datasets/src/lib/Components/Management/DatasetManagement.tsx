@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 
-import { Public, Refresh } from '@material-ui/icons';
+import { Public } from '@material-ui/icons';
 
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Link from '@veupathdb/wdk-client/lib/Components/Link';
@@ -15,6 +15,8 @@ import { makeClassifier } from '../UserDatasetUtils';
 import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
 import { ThemedDeleteButton } from '../ThemedDeleteButton';
 import { UserDatasetFiles } from '../UserDatasetFiles';
+
+import { useDatasetPolling } from '../../Hooks/useDatasetPolling';
 
 import { DateTime } from '../DateTime';
 
@@ -35,11 +37,13 @@ import {
   updateDatasetCommunityVisibilitySuccess,
   updateDatasetCommunityVisibilityError,
   loadUserDatasetDetailWithoutLoadingIndicator,
+  loadUserDatasetSearches,
 } from '../../Actions/UserDatasetsActions';
-import { DataNoun } from '../../Utils/types';
+import { DataNoun } from '../../Utils';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
+  DatasetStatusInfo,
   VdiServiceMetadata,
 } from '../../Service';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -61,6 +65,37 @@ import { ThemedUpdateButton } from '../ThemedUpdateButton';
 
 const classify = makeClassifier('DatasetManagement');
 
+/**
+ * Selects which searches to show for a dataset: freshly fetched searches are
+ * preferred, but ONLY when they were fetched for THIS dataset's type.
+ * Searches fetched for a different type are leftovers from another dataset
+ * viewed earlier in the session (the store only ever holds one entry) and
+ * must be ignored in favor of the questionMap fallback — otherwise a
+ * dataset's page could render another dataset type's searches, spliced with
+ * the wrong datasetId into their links.
+ *
+ * An empty fetched array is deliberately preferred over the fallback when its
+ * type matches: it correctly means "no searches for this type", whereas an
+ * empty array for a mismatched type is correctly ignored.
+ */
+export function selectDatasetSearches(
+  userDatasetType: string,
+  fetchedSearches:
+    | { userDatasetType: string; searches: Question[] }
+    | undefined,
+  questionMap: Record<string, Question>
+): Question[] {
+  if (fetchedSearches?.userDatasetType === userDatasetType) {
+    return fetchedSearches.searches;
+  }
+  return Object.values(questionMap).filter(
+    (q) =>
+      q.properties !== undefined &&
+      'userDatasetType' in q.properties &&
+      q.properties.userDatasetType.includes(userDatasetType)
+  );
+}
+
 export interface DatasetManagementProps {
   baseUrl: string;
   includeAllLink: boolean;
@@ -76,6 +111,8 @@ export interface DatasetManagementProps {
   unshareUserDatasets: typeof unshareUserDataset;
   updateUserDatasetDetail: typeof updateUserDatasetDetail;
   loadUserDatasetDetailWithoutLoadingIndicator: typeof loadUserDatasetDetailWithoutLoadingIndicator;
+  loadUserDatasetSearches: typeof loadUserDatasetSearches;
+  userDatasetSearches?: { userDatasetType: string; searches: Question[] };
   sharingModalOpen: boolean;
   sharingDatasetPending: boolean;
   sharingError: typeof sharingError;
@@ -141,8 +178,6 @@ enum DatasetUpdateAction {
 export interface DatasetManagementState {
   readonly datasetUpdateAction: DatasetUpdateAction;
   readonly isCommunityModalOpen: boolean;
-  readonly refreshing: boolean;
-  readonly statusUnchanged: boolean;
 }
 
 enum CommunityPromotability {
@@ -150,6 +185,65 @@ enum CommunityPromotability {
   NotInstalled,
   MissingDatasetProperties,
   UnknownError,
+}
+
+interface StatusRowWithPollingProps {
+  status: DatasetStatusInfo | undefined;
+  projectId: string;
+  datasetId: string;
+  userDatasetType: string;
+  isInstalled: boolean;
+  loadUserDatasetDetailWithoutLoadingIndicator: (
+    id: string
+  ) => ReturnType<typeof loadUserDatasetDetailWithoutLoadingIndicator>;
+  loadUserDatasetSearches: (type: string) => unknown;
+  /** Renders the status row, told whether polling is currently live. */
+  children: (isPolling: boolean) => ReactNode;
+}
+
+/**
+ * Wraps the status row in a polling loop, passing the child whether polling is
+ * currently live so the status icon can reflect it.
+ *
+ * Takes a child function rather than rendering the row itself: the surrounding
+ * class component owns that markup but cannot call hooks, so this supplies the
+ * polling state without the row's JSX having to move.
+ *
+ * Also refetches this dataset type's searches when the install completes —
+ * globalData's cached question list cannot contain a dataset installed during
+ * this session.
+ */
+function StatusRowWithPolling({
+  status,
+  projectId,
+  datasetId,
+  userDatasetType,
+  isInstalled,
+  loadUserDatasetDetailWithoutLoadingIndicator,
+  loadUserDatasetSearches,
+  children,
+}: StatusRowWithPollingProps) {
+  // isChecking is deliberately not consumed. Driving the icon from individual
+  // requests would expose the backoff — the gap stretches from 2s to 15s, and
+  // 60s while awaiting reinstall — and an indicator that visibly slows down
+  // reads as something degrading rather than as steady monitoring.
+  const { isPolling } = useDatasetPolling({
+    status,
+    projectId,
+    onPoll: async () => {
+      await loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+    },
+  });
+
+  const wasInstalled = useRef(isInstalled);
+  useEffect(() => {
+    if (isInstalled && !wasInstalled.current) {
+      loadUserDatasetSearches(userDatasetType);
+    }
+    wasInstalled.current = isInstalled;
+  }, [isInstalled, userDatasetType, loadUserDatasetSearches]);
+
+  return <>{children(isPolling)}</>;
 }
 
 class DatasetManagement<
@@ -162,12 +256,9 @@ class DatasetManagement<
       ...this.state,
       datasetUpdateAction: DatasetUpdateAction.None,
       isCommunityModalOpen: false,
-      refreshing: false,
-      statusUnchanged: false,
     };
 
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleRefresh = this.handleRefresh.bind(this);
 
     this.getAttributes = this.getAttributes.bind(this);
     this.renderAttributeList = this.renderAttributeList.bind(this);
@@ -248,39 +339,6 @@ class DatasetManagement<
     }
   }
 
-  handleRefresh() {
-    const { userDataset, loadUserDatasetDetailWithoutLoadingIndicator } =
-      this.props;
-
-    // Capture current status for comparison
-    const currentStatusJson = JSON.stringify(userDataset.status);
-
-    this.setState({ refreshing: true, statusUnchanged: false });
-
-    // Call the action - since it returns a thunk, we need to handle it properly
-    const result = loadUserDatasetDetailWithoutLoadingIndicator(
-      userDataset.datasetId
-    );
-
-    // Wait a bit to show the loading state, then check if status changed
-    setTimeout(() => {
-      const newStatusJson = JSON.stringify(this.props.userDataset.status);
-      const unchanged = currentStatusJson === newStatusJson;
-
-      this.setState({
-        refreshing: false,
-        statusUnchanged: unchanged,
-      });
-
-      // Clear the "unchanged" indicator after a few seconds
-      if (unchanged) {
-        setTimeout(() => {
-          this.setState({ statusUnchanged: false });
-        }, 3000);
-      }
-    }, 800);
-  }
-
   renderAllDatasetsLink() {
     if (!this.props.includeAllLink) return null;
     return (
@@ -319,11 +377,14 @@ class DatasetManagement<
   getAttributes(): DatasetAttribute[] {
     const { userDataset, isOwner, questionMap, dataNoun, config } = this.props;
     const isInstalled = this.isInstalled();
-    const questions = Object.values(questionMap).filter(
-      (q) =>
-        q.properties !== undefined &&
-        'userDatasetType' in q.properties &&
-        q.properties.userDatasetType.includes(userDataset.type.name)
+    // questionMap comes from globalData, which is loaded once per page and
+    // so cannot contain a dataset installed during this session; see
+    // selectDatasetSearches for why the fetched searches are only used when
+    // they match this dataset's type.
+    const questions = selectDatasetSearches(
+      userDataset.type.name,
+      this.props.userDatasetSearches,
+      questionMap
     );
 
     const shares = this.getGrantedShares();
@@ -343,38 +404,33 @@ class DatasetManagement<
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
             >
-              <span
-                className={this.state.statusUnchanged ? 'status-blink' : ''}
+              <StatusRowWithPolling
+                status={userDataset.status}
+                projectId={this.props.config.projectId}
+                datasetId={userDataset.datasetId}
+                userDatasetType={userDataset.type.name}
+                isInstalled={isInstalled}
+                loadUserDatasetDetailWithoutLoadingIndicator={
+                  this.props.loadUserDatasetDetailWithoutLoadingIndicator
+                }
+                loadUserDatasetSearches={this.props.loadUserDatasetSearches}
               >
-                <UserDatasetStatus
-                  vdiConfig={this.props.vdiConfig.configuration}
-                  baseUrl={this.props.baseUrl}
-                  linkToDataset={false}
-                  useTooltip={false}
-                  userDataset={userDataset}
-                  projectId={this.props.config.projectId}
-                  displayName={this.props.config.displayName}
-                  dataNoun={dataNoun}
-                />
-              </span>
-              {!isInstalled && (
-                <button
-                  className="btn btn-info"
-                  onClick={this.handleRefresh}
-                  disabled={this.state.refreshing}
-                  type="button"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5ch',
-                  }}
-                  title="Refresh status"
-                  aria-label="Refresh status"
-                >
-                  <Refresh style={{ fontSize: '1.2em' }} />
-                  Refresh
-                </button>
-              )}
+                {(isPolling) => (
+                  <span>
+                    <UserDatasetStatus
+                      vdiConfig={this.props.vdiConfig.configuration}
+                      baseUrl={this.props.baseUrl}
+                      linkToDataset={false}
+                      useTooltip={false}
+                      userDataset={userDataset}
+                      projectId={this.props.config.projectId}
+                      displayName={this.props.config.displayName}
+                      dataNoun={dataNoun}
+                      isPolling={isPolling}
+                    />
+                  </span>
+                )}
+              </StatusRowWithPolling>
             </div>
           ),
         },
@@ -565,11 +621,13 @@ class DatasetManagement<
     const unpromotableMessage = (() => {
       switch (this.testCommunityPromotability()) {
         case CommunityPromotability.CanPromote:
+        // allow the promote link to be enabled.  the user will be forced to add
+        // the missing dataset properties file as a next step.
+        // eslint-disable-next-line no-fallthrough
+        case CommunityPromotability.MissingDatasetProperties:
           return undefined;
         case CommunityPromotability.NotInstalled:
           return 'Datasets that have not been installed cannot be made public.';
-        case CommunityPromotability.MissingDatasetProperties:
-          return 'A variable annotations file is required to make this dataset public.';
         default:
           return 'Dataset cannot be made public at this time due to a site error.';
       }
@@ -798,6 +856,8 @@ class DatasetManagement<
             isPromotingToPublic={self.props.editModal.updateToPublic}
             formConfigs={self.props.formConfigs!}
             datasetTypes={self.props.datasetTypes!}
+            dataNoun={self.props.dataNoun}
+            enablePublicDatasets={self.props.enablePublicUserDatasets}
           />
         );
       }

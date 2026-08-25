@@ -40,6 +40,7 @@ export function observe(action$, state$, services) {
   return merge(
     RecordStoreModule.observe(action$, state$, services),
     observeSnpsAlignment(action$, state$, services),
+    observeVariantStrainFilter(action$, state$, services),
     observeRequestedOrganisms(action$, state$, services)
   );
 }
@@ -184,7 +185,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     }
     if (index[row.target_name + '-' + row.target_type].keep) return index;
     if (
-   //   row.organisms == null ||
+      //   row.organisms == null ||
       row.organisms === record.attributes.organism_full
     ) {
       index[row.target_name + '-' + row.target_type].keep = true;
@@ -207,15 +208,21 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     if (tableName === 'UserDatasetsEdaPhenotype') return true;
 
     //  if (metaTableIndex[key] === undefined) return true;
-    if ( (metaTableIndex[key] === undefined) && (targetType == 'table') ) {
+    if (metaTableIndex[key] === undefined && targetType == 'table') {
       console.log('FILTERING OUT table (not in MetaTable):', tableName);
       return false;
     }
-    if ( (metaTableIndex[key] === undefined) && (targetType == 'attribute') ) return true;
+    if (metaTableIndex[key] === undefined && targetType == 'attribute')
+      return true;
 
     const shouldKeep = metaTableIndex[key].keep;
     if (targetType === 'table' && !shouldKeep) {
-      console.log('FILTERING OUT (in this website) table:', tableName, 'keep:', shouldKeep);
+      console.log(
+        'FILTERING OUT (in this website) table:',
+        tableName,
+        'keep:',
+        shouldKeep
+      );
     }
 
     return shouldKeep;
@@ -310,6 +317,33 @@ function observeSnpsAlignment(action$) {
         },
       });
     })
+  );
+}
+
+/**
+ * Load filterParam data for the Variant record's strain filter.
+ *
+ * organismSinglePick is a depended param of the filter and a record page has no organism
+ * picker, so it is seeded from the record's own organism_text.
+ */
+function observeVariantStrainFilter(action$) {
+  return action$.pipe(
+    filter((action) => action.type === RecordActions.RECORD_UPDATE),
+    mergeMap((action) =>
+      action.payload.record.recordClassName ===
+      'VariantRecordClasses.VariantRecordClass'
+        ? of(action.payload.record.attributes.organism_text)
+        : EMPTY
+    ),
+    map((organismSinglePick) =>
+      QuestionActions.updateActiveQuestion({
+        searchName: 'VariantAlignmentForm',
+        initialParamData: {
+          organismSinglePick,
+          variant_strain_meta: JSON.stringify({ filters: [] }),
+        },
+      })
+    )
   );
 }
 
