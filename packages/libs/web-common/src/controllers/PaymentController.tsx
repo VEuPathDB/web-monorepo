@@ -29,7 +29,11 @@ interface UnifiedCheckoutInstance {
 interface CaptureContextResponse {
   captureContext: string;
   referenceNumber: string;
+  // URL and SRI hash of the Unified Checkout JS asset, extracted server-side
+  // from the capture context JWT itself (CyberSource requires these not be
+  // hardcoded, since they are unique to each transaction).
   scriptUrl: string;
+  scriptIntegrity: string | null;
 }
 
 // The capture context response plus the amount that produced it (not
@@ -86,9 +90,16 @@ async function submitPayment(
 }
 
 // Loads the CyberSource Unified Checkout JS asset if it isn't already present
-// on the page. The asset URL (test vs. production) is determined server-side
-// from the deployed cybersource config, so we don't hardcode it here.
-function loadUnifiedCheckoutScript(scriptUrl: string): Promise<void> {
+// on the page. Per CyberSource's docs, scriptUrl/scriptIntegrity must come
+// from the capture context JWT (never hardcoded) since they're unique to
+// each transaction; the script tag must carry a matching `integrity` (SRI)
+// attribute and `crossorigin="anonymous"`, or the browser will refuse to
+// execute the script:
+// https://developer.cybersource.com/docs/cybs/en-us/unified-checkout/developer/all/rest/unified-checkout/uc-getting-started-cs-setup-intro/uc-getting-started-cs-js-library-intro.html
+function loadUnifiedCheckoutScript(
+  scriptUrl: string,
+  scriptIntegrity: string | null
+): Promise<void> {
   const existing = document.querySelector(
     `script[src="${scriptUrl}"]`
   ) as HTMLScriptElement | null;
@@ -105,6 +116,8 @@ function loadUnifiedCheckoutScript(scriptUrl: string): Promise<void> {
     const script = document.createElement('script');
     script.src = scriptUrl;
     script.async = true;
+    script.crossOrigin = 'anonymous';
+    if (scriptIntegrity) script.integrity = scriptIntegrity;
     script.onload = () => resolve();
     script.onerror = () =>
       reject(new Error('Failed to load Unified Checkout script'));
@@ -158,7 +171,10 @@ export default function PaymentController() {
       try {
         setStage({ name: 'awaiting-payment' });
 
-        await loadUnifiedCheckoutScript(captureContext.scriptUrl);
+        await loadUnifiedCheckoutScript(
+          captureContext.scriptUrl,
+          captureContext.scriptIntegrity
+        );
         if (window.VAS == null)
           throw new Error('Unified Checkout failed to load');
 
