@@ -1234,7 +1234,7 @@ function resultDetails(
 
 
   // eda study
-  if (documentType.id === 'dataset' || projectId === 'ClinEpiDB') {
+  if (documentType.id === 'dataset' && projectId === 'ClinEpiDB') {
     const [datasetId] = document.primaryKey;
     return {
       display: {
