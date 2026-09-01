@@ -298,17 +298,20 @@ export const datasetMetaBase = io.intersection([
 ]);
 export type DatasetMetaBase = io.TypeOf<typeof datasetMetaBase>;
 
-const relationType = io.union([
-  io.literal('publication'),
-  io.literal('program-name'),
-  io.literal('project-name'),
-]);
+const datasetRelation = io.union([
+  io.type({
+    relationType: io.literal('publication'),
+    identifier: io.string,
+    type: datasetPublicationType,
+  }),
 
-const datasetRelation = io.type({
-  relationType: relationType,
-  identifier: io.string,
-  type: datasetPublicationType,
-});
+  io.type({
+    relationType: io.union([
+      io.literal('program-name'),
+      io.literal('project-name'),
+    ]),
+  }),
+]);
 
 const relatedDatasetInfo = io.type({
   datasetId: io.string,
