@@ -23,7 +23,7 @@ import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
 import { DatasetMetadata } from '../../Service/Model';
 import { DataNoun, Nullable, useSimpleState } from '../../Utils';
-import { defaultClientSideUploadFormState, useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
+import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { MetadataImportModalController } from './Components/Modals/MetaImportModal';
 
 export interface DatasetFormControllerProps<
@@ -96,7 +96,6 @@ export function DatasetFormController<
         dispatch(
           updateFormState({
             fileUploads: formState.fileUploads,
-            formMetaState: defaultClientSideUploadFormState(), // recalc
             datasetDetails: applyMetadata(formState.datasetDetails, res),
           })
         );

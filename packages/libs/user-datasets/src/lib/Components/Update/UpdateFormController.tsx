@@ -127,7 +127,6 @@ export function UpdateFormController(
         updated: formState.datasetDetails,
         newFiles: formState.fileUploads,
         oldFiles: dataset!.files.datasetProperties,
-        formState: formState.formMetaState,
       })
         .then((res) => {
           setSubmitting(false);
