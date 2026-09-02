@@ -1,4 +1,5 @@
 import React, { useState, useEffect, ReactNode } from 'react';
+import { useHistory } from 'react-router';
 import { webAppUrl } from '../config';
 
 import '../styles/Payment.scss';
@@ -126,6 +127,7 @@ function loadUnifiedCheckoutScript(
 }
 
 export default function PaymentController() {
+  const history = useHistory();
   const [stage, setStage] = useState<Stage>({ name: 'entry' });
   const [amount, setAmount] = useState('0.00');
   const [errorMessage, setErrorMessage] = useState<ReactNode>('');
@@ -225,6 +227,13 @@ export default function PaymentController() {
     };
   }, [captureContext]);
 
+  // Once a payment succeeds, move the payer to their permanent, bookmarkable
+  // receipt page instead of showing a one-off inline message.
+  useEffect(() => {
+    if (stage.name !== 'success') return;
+    history.push('/payment/' + stage.result.referenceNumber);
+  }, [stage, history]);
+
   const handleUserSubmit = () => {
     if (stage.name !== 'entry') return;
 
@@ -263,13 +272,10 @@ export default function PaymentController() {
   };
 
   if (stage.name === 'success') {
+    // Redirecting to /payment/{referenceNumber}; see the useEffect above.
     return (
       <div className="payment-container">
-        <h1>Thank you for your payment</h1>
-        <p>
-          Your payment (reference number {stage.result.referenceNumber}) was
-          processed successfully.
-        </p>
+        <Loading />
       </div>
     );
   }
