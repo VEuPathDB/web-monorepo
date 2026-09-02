@@ -270,7 +270,7 @@ const datasetSource = io.type({
 });
 export type DatasetSource = io.TypeOf<typeof datasetSource>;
 
-const datasetMetadataContentFlags = io.type({
+const datasetMetadataContentFlags = io.partial({
   hasDatasetCharacteristics: io.boolean,
   hasDataDisclaimer: io.boolean,
   hasDatasetSources: io.boolean,

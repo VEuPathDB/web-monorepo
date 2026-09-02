@@ -267,6 +267,7 @@ function convertMetaToPatch(
       // complex properties with dedicated subtypes
       case 'externalIdentifiers':
       case 'datasetCharacteristics':
+      case 'metadataContentFlags':
         patch = objectPropertyDiff(original[key], updated[key]);
         break;
 
