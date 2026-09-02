@@ -24,7 +24,6 @@ import {
   InputPair,
   YesNoToggle,
 } from '../../index';
-import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../../Configuration/DatasetFormConfig';
 
 export const FieldStudyToggleID = 'field-study-toggle';
@@ -32,8 +31,6 @@ export const FieldStudyToggleID = 'field-study-toggle';
 export interface CharacteristicsSectionProps {
   readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly clientSideState: ClientSideUploadFormState;
-  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly pathBuilder: JsonPathBuilder;
   readonly formProps: DatasetCharacteristicsFormSectionConfig;
 }
@@ -41,15 +38,18 @@ export interface CharacteristicsSectionProps {
 export function CharacteristicsSection({
   datasetMeta,
   setDatasetMeta,
-  clientSideState,
-  setClientSideState,
   pathBuilder: jsonPath,
   formProps,
 }: CharacteristicsSectionProps): ReactElement {
-  const { isStudy: enabled } = clientSideState;
+  const enabled = datasetMeta.metadataContentFlags?.hasDatasetCharacteristics;
 
   const setEnabled = (enabled: boolean) =>
-    setClientSideState({ ...clientSideState, isStudy: enabled });
+    setDatasetMeta({
+      ...datasetMeta,
+      metadataContentFlags: {
+        ...(datasetMeta.metadataContentFlags ?? {}),
+        hasDatasetCharacteristics: enabled
+      } });
 
   useEffect(
     () => {

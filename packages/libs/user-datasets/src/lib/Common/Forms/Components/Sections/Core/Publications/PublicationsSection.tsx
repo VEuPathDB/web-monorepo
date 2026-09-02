@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { InputBlock } from '../../../InputBlock';
-import { PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
+import { PartialDatasetDetails, PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import {
   Consumer, isNonBlankString,
   JsonPathBuilder,
@@ -13,14 +13,13 @@ import { fixPrimaries, PublicationList } from './utils';
 import { PublicationRow } from './PublicationRow';
 
 import './PublicationsSection.scss';
-import { ClientSideUploadFormState } from '../../../../../../StoreModules';
 
 export interface PublicationsSectionProps {
+  readonly datasetMeta: PartialDatasetDetails,
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>,
+
   readonly publications: PublicationList;
   readonly setPublications: Consumer<PublicationList>;
-
-  readonly clientState: ClientSideUploadFormState;
-  readonly setClientState: Consumer<ClientSideUploadFormState>;
 
   readonly isRequired: boolean;
 
@@ -32,12 +31,15 @@ export function PublicationsSection(
 ): ReactElement {
   const havePubs = !isEmpty(props.publications);
 
-  let isEnabled = props.clientState.hasPublications;
+  let isEnabled = props.datasetMeta.metadataContentFlags?.hasPublications;
 
   const setEnabled = (v: boolean) =>
-    props.setClientState({
-      ...props.clientState,
-      hasPublications: v
+    props.setDatasetMeta({
+      ...props.datasetMeta,
+      metadataContentFlags: {
+        ...(props.datasetMeta.metadataContentFlags ?? {}),
+        hasPublications: v
+      }
     });
 
   if (isEnabled === undefined && havePubs) {
