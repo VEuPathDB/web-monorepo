@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
 import FormEvent = React.FormEvent;
 
@@ -18,6 +17,8 @@ export type IndeterminateCheckboxProps<T> = {
 export default class IndeterminateCheckbox<T> extends React.Component<
   IndeterminateCheckboxProps<T>
 > {
+  private inputRef = React.createRef<HTMLInputElement>();
+
   constructor(props: IndeterminateCheckboxProps<T>) {
     super(props);
 
@@ -39,8 +40,10 @@ export default class IndeterminateCheckbox<T> extends React.Component<
    * @param indeterminate
    */
   setIndeterminate(indeterminate: boolean) {
-    const node = ReactDOM.findDOMNode(this) as HTMLInputElement;
-    node.indeterminate = indeterminate;
+    const node = this.inputRef.current;
+    if (node) {
+      node.indeterminate = indeterminate;
+    }
   }
 
   handleChange(e: FormEvent<HTMLInputElement>) {
@@ -53,6 +56,7 @@ export default class IndeterminateCheckbox<T> extends React.Component<
     let nameProp = this.props.name ? { name: this.props.name } : {};
     return (
       <input
+        ref={this.inputRef}
         type="checkbox"
         {...nameProp}
         className={this.props.className}
