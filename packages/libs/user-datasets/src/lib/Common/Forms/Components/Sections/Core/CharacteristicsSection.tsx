@@ -110,6 +110,7 @@ export function CharacteristicsSection({
           vocab={formProps.studyDesignVocab}
           enabled={enabled === true}
           required={requireAll}
+          selection={datasetMeta.datasetCharacteristics?.studyDesign}
           onChange={(d, t) => {
             setDatasetMeta({
               ...datasetMeta,
@@ -224,6 +225,7 @@ interface StudyDesignProps {
   readonly onChange: BiConsumer<string, string>;
   readonly enabled: boolean;
   readonly required: boolean;
+  readonly selection?: String;
 }
 
 function StudyDesign({
@@ -231,12 +233,19 @@ function StudyDesign({
   onChange,
   enabled,
   required,
+  selection,
 }: StudyDesignProps): ReactElement {
-  const options = vocab.map(([v, _], i) => (
-    <option key={i} value={i}>
-      {v}
-    </option>
-  ));
+  const options = [
+    <option key={vocab.length} disabled selected={selection == null}>
+      Select a study design
+    </option>,
+
+    ...vocab.map(([v, _], i) => (
+      <option key={i} value={i} selected={selection === v}>
+        {v}
+      </option>
+    ))
+  ];
 
   return (
     <>
