@@ -8,10 +8,11 @@ import React, {
 import { partialRight } from 'lodash';
 
 import {
+  BiConsumer,
   Consumer,
   JsonPathBuilder,
-  changeHandler,
-  BiConsumer,
+  Possible,
+  changeHandler
 } from '../../../../../Utils';
 import {
   PartialDatasetDetails,
@@ -63,10 +64,7 @@ export function CharacteristicsSection({
     [enabled, datasetMeta.datasetCharacteristics]
   );
 
-  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {
-    studyDesign: formProps.studyDesignVocab[0][0],
-    studyType: formProps.studyDesignVocab[0][1],
-  };
+  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {};
 
   const requireAll = useMemo(
     () => enabled === true && datasetMeta.visibility === 'public',
@@ -247,9 +245,17 @@ function StudyDesign({
     ))
   ];
 
+  let className: Possible<string> = undefined;
+
+  if (required) {
+    className = selection == null
+      ? "required invalid"
+      : "required";
+  }
+
   return (
     <>
-      <label htmlFor="meta.studyCharacteristics.studyDesign">
+      <label htmlFor="meta.studyCharacteristics.studyDesign" className={className}>
         Study Design
       </label>
       <select
@@ -301,15 +307,24 @@ function YearsInputs({
         v: string | undefined,
         ref: RefObject<HTMLInputElement>
       ) => {
-        if (!v) return;
+        ref.current?.classList?.remove('invalid');
+
+        if (!v) {
+          const { [k]: ignored, ...trimmed } = safeYears
+          setYears(trimmed)
+          return;
+        }
 
         const parsed = parseInt(v);
 
-        if (isNaN(parsed)) return;
+        if (isNaN(parsed)) {
+          const { [k]: ignored, ...trimmed } = safeYears
+          setYears(trimmed)
+          return;
+        }
 
         if (parsed < 1500 || parsed > 9999)
           ref.current?.classList?.add('invalid');
-        else ref.current?.classList?.remove('invalid');
 
         setYears({ ...safeYears, [k]: parsed });
       };
