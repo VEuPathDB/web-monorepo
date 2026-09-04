@@ -7,6 +7,7 @@ import { communitySite, projectId } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import PaymentController from './controllers/PaymentController';
+import PaymentReceiptController from './controllers/PaymentReceiptController';
 import ContactUsController from './controllers/ContactUsController';
 import GalaxyTermsController from './controllers/GalaxyTermsController';
 import ExternalContentController from './controllers/ExternalContentController';
@@ -154,6 +155,16 @@ export const wrapRoutes = (wdkRoutes) => [
   },
 
   {
+    path: '/payment/:referenceNumber',
+    requiresLogin: false,
+    component: (props) => (
+      <PaymentReceiptController
+        referenceNumber={props.match.params.referenceNumber}
+      />
+    ),
+  },
+
+  {
     path: '/contact-us',
     requiresLogin: false,
     component: (props) => {
@@ -171,54 +182,55 @@ export const wrapRoutes = (wdkRoutes) => [
       />
     ),
   },
-/* still needed in ortho, access to /common/downloads */
+  /* still needed in ortho, access to /common/downloads */
   ...(projectId === 'OrthoMCL'
-  ? [
+    ? [
+        {
+          path: '/downloads/:path*',
+          component: (props) => (
+            <iframe
+              src={`/common/downloads/${
+                (props.match.params.path || '') +
+                props.location.search +
+                props.location.hash
+              }`}
+              style={{
+                width: '100%',
+                height: '100%',
+                border: 'none',
+              }}
+              onLoad={(event) => {
+                window.scrollTo(0, 0);
+                const iframe = event.target;
+                const pathname = iframe.contentWindow.location.pathname.replace(
+                  /^\/common/,
+                  ''
+                );
+                const { search, hash } = iframe.contentWindow.location;
+                const href = props.history.createHref({
+                  ...props.location,
+                  pathname,
+                  search,
+                  hash,
+                });
+                window.history.replaceState({}, '', href);
+                iframe.style.height =
+                  iframe.contentDocument.body.scrollHeight + 'px';
 
-  {
-    path: '/downloads/:path*',
-    component: (props) => (
-      <iframe
-        src={`/common/downloads/${
-          (props.match.params.path || '') +
-          props.location.search +
-          props.location.hash
-        }`}
-        style={{
-          width: '100%',
-          height: '100%',
-          border: 'none',
-        }}
-        onLoad={(event) => {
-          window.scrollTo(0, 0);
-          const iframe = event.target;
-          const pathname = iframe.contentWindow.location.pathname.replace(
-            /^\/common/,
-            ''
-          );
-          const { search, hash } = iframe.contentWindow.location;
-          const href = props.history.createHref({
-            ...props.location,
-            pathname,
-            search,
-            hash,
-          });
-          window.history.replaceState({}, '', href);
-          iframe.style.height = iframe.contentDocument.body.scrollHeight + 'px';
-
-          if (pathname == '/downloads/') {
-            // remove Parent Directory link
-            const img = iframe.contentDocument.body.querySelector('hr + img');
-            if (img == null) return;
-            for (let i = 0; i < 3; i++) {
-              img.nextSibling.remove();
-            }
-            img.remove();
-          }
-        }}
-      />
-    ),
-  },
+                if (pathname == '/downloads/') {
+                  // remove Parent Directory link
+                  const img =
+                    iframe.contentDocument.body.querySelector('hr + img');
+                  if (img == null) return;
+                  for (let i = 0; i < 3; i++) {
+                    img.nextSibling.remove();
+                  }
+                  img.remove();
+                }
+              }}
+            />
+          ),
+        },
       ]
     : []),
 

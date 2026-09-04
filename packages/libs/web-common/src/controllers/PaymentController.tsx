@@ -1,40 +1,71 @@
-import React, { useState, useEffect, useRef, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
+import { useHistory } from 'react-router';
 import { webAppUrl } from '../config';
 
 import '../styles/Payment.scss';
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 
-interface AutoSubmitFormProps {
-  actionUrl: string;
-  params: any;
+const CHECKOUT_CONTAINER_ID = 'unified-checkout-container';
+
+declare global {
+  interface Window {
+    VAS?: {
+      UnifiedCheckout: (
+        captureContext: string
+      ) => Promise<UnifiedCheckoutClient>;
+    };
+  }
 }
 
-function AutoSubmitForm(props: AutoSubmitFormProps) {
-  // submit form as soon as it is rendered
-  const formRef = useRef<HTMLFormElement>(null);
-  useEffect(() => {
-    if (formRef.current !== null) {
-      formRef.current.submit();
-    }
-  }, []);
-
-  // create a hidden form with the passed action URL and parameters
-  return (
-    <form ref={formRef} method="POST" action={props.actionUrl}>
-      {Object.keys(props.params).map((name) => (
-        <input
-          type="hidden"
-          key={name}
-          name={name}
-          value={props.params[name]}
-        ></input>
-      ))}
-    </form>
-  );
+interface UnifiedCheckoutClient {
+  createCheckout: (options?: {
+    autoProcessing?: boolean;
+  }) => Promise<UnifiedCheckoutInstance>;
 }
 
-async function getFormData(amount: string) {
-  const url = webAppUrl + '/service/payment-form-content?amount=' + amount;
+interface UnifiedCheckoutInstance {
+  mount: (selector: string) => Promise<string>; // resolves with transient token JWT
+}
+
+interface CaptureContextResponse {
+  captureContext: string;
+  referenceNumber: string;
+  // URL and SRI hash of the Unified Checkout JS asset, extracted server-side
+  // from the capture context JWT itself (CyberSource requires these not be
+  // hardcoded, since they are unique to each transaction).
+  scriptUrl: string;
+  scriptIntegrity: string | null;
+}
+
+// The capture context response plus the amount that produced it (not
+// returned by the service, but needed again when we submit the payment).
+interface PaymentAttempt extends CaptureContextResponse {
+  amount: string;
+}
+
+interface PaymentResultResponse {
+  status: string;
+  transactionId: string;
+  referenceNumber: string;
+}
+
+// Statuses returned by CyberSource's Payments API that represent a
+// successfully authorized (and, per completeMandate.type=CAPTURE, captured) sale.
+const SUCCESS_STATUSES = ['AUTHORIZED', 'PARTIAL_AUTHORIZED'];
+
+type Stage =
+  | { name: 'entry' }
+  | { name: 'loading-checkout' }
+  | { name: 'awaiting-payment' }
+  | { name: 'processing' }
+  | { name: 'success'; result: PaymentResultResponse }
+  | { name: 'declined'; result: PaymentResultResponse }
+  | { name: 'error'; message: ReactNode };
+
+async function fetchCaptureContext(
+  amount: string
+): Promise<CaptureContextResponse> {
+  const url = webAppUrl + '/service/payment-form-context?amount=' + amount;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Pre-payment form service error');
@@ -42,19 +73,85 @@ async function getFormData(amount: string) {
   return await response.json();
 }
 
+async function submitPayment(
+  transientToken: string,
+  referenceNumber: string,
+  amount: string
+): Promise<PaymentResultResponse> {
+  const url = webAppUrl + '/service/payment-process';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transientToken, referenceNumber, amount }),
+  });
+  if (!response.ok) {
+    throw new Error('Payment processing service error');
+  }
+  return await response.json();
+}
+
+// Loads the CyberSource Unified Checkout JS asset if it isn't already present
+// on the page. Per CyberSource's docs, scriptUrl/scriptIntegrity must come
+// from the capture context JWT (never hardcoded) since they're unique to
+// each transaction; the script tag must carry a matching `integrity` (SRI)
+// attribute and `crossorigin="anonymous"`, or the browser will refuse to
+// execute the script:
+// https://developer.cybersource.com/docs/cybs/en-us/unified-checkout/developer/all/rest/unified-checkout/uc-getting-started-cs-setup-intro/uc-getting-started-cs-js-library-intro.html
+function loadUnifiedCheckoutScript(
+  scriptUrl: string,
+  scriptIntegrity: string | null
+): Promise<void> {
+  const existing = document.querySelector(
+    `script[src="${scriptUrl}"]`
+  ) as HTMLScriptElement | null;
+  if (existing != null) {
+    if (window.VAS != null) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () =>
+        reject(new Error('Failed to load Unified Checkout script'))
+      );
+    });
+  }
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    if (scriptIntegrity) script.integrity = scriptIntegrity;
+    script.onload = () => resolve();
+    script.onerror = () =>
+      reject(new Error('Failed to load Unified Checkout script'));
+    document.body.appendChild(script);
+  });
+}
+
 export default function PaymentController() {
-  const [formData, setFormData] = useState(null);
+  const history = useHistory();
+  const [stage, setStage] = useState<Stage>({ name: 'entry' });
   const [amount, setAmount] = useState('0.00');
   const [errorMessage, setErrorMessage] = useState<ReactNode>('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Set once per payment attempt (by handleUserSubmit) and cleared on
+  // retry/reset. This is deliberately NOT part of `stage`: the effect below
+  // is keyed on this value so that its own setStage() calls (entry ->
+  // awaiting-payment -> processing -> success/declined/error) don't change
+  // its dependency and tear down/cancel itself mid-flight.
+  const [captureContext, setCaptureContext] = useState<PaymentAttempt | null>(
+    null
+  );
+
+  const resetToEntry = () => {
+    setCaptureContext(null);
+    setStage({ name: 'entry' });
+  };
 
   // If we're showing a persisted page from a back-button navigation
   // we need to reset some state.
   useEffect(() => {
     function handlePageShow(event: PageTransitionEvent) {
       if (event.persisted) {
-        setFormData(null); // Clear stale formData
-        setIsSubmitting(false); // and clear this, so the button can be pressed again
+        resetToEntry();
       }
     }
 
@@ -64,11 +161,83 @@ export default function PaymentController() {
     };
   }, []);
 
-  const handleUserSubmit = () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+  // Once we have a capture context, load the widget and mount it. When the
+  // donor finishes entering payment info in CyberSource's embedded iframe,
+  // checkout.mount() resolves with a transient token (never raw card data),
+  // which we forward to our backend to actually authorize/capture.
+  useEffect(() => {
+    if (captureContext == null) return;
+    let cancelled = false;
 
-    var amountNum: number = Number(removeCommaThousandSeparators(amount));
+    (async () => {
+      try {
+        setStage({ name: 'awaiting-payment' });
+
+        await loadUnifiedCheckoutScript(
+          captureContext.scriptUrl,
+          captureContext.scriptIntegrity
+        );
+        if (window.VAS == null)
+          throw new Error('Unified Checkout failed to load');
+
+        const client = await window.VAS.UnifiedCheckout(
+          captureContext.captureContext
+        );
+        const checkout = await client.createCheckout({ autoProcessing: false });
+        const transientToken = await checkout.mount(
+          `#${CHECKOUT_CONTAINER_ID}`
+        );
+
+        if (cancelled) return;
+        setStage({ name: 'processing' });
+
+        const result = await submitPayment(
+          transientToken,
+          captureContext.referenceNumber,
+          captureContext.amount
+        );
+
+        if (cancelled) return;
+        setStage(
+          SUCCESS_STATUSES.includes(result.status)
+            ? { name: 'success', result }
+            : { name: 'declined', result }
+        );
+      } catch (error) {
+        if (cancelled) return;
+        console.error(error);
+        setStage({
+          name: 'error',
+          message: (
+            <>
+              Something went wrong processing your payment. <br />
+              Please{' '}
+              <Link to="/contact-us" target="_blank">
+                let us know
+              </Link>{' '}
+              about this.
+            </>
+          ),
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [captureContext]);
+
+  // Once a payment succeeds, move the payer to their permanent, bookmarkable
+  // receipt page instead of showing a one-off inline message.
+  useEffect(() => {
+    if (stage.name !== 'success') return;
+    history.push('/payment/' + stage.result.referenceNumber);
+  }, [stage, history]);
+
+  const handleUserSubmit = () => {
+    if (stage.name !== 'entry') return;
+
+    const amountNum: number = Number(removeCommaThousandSeparators(amount));
     if (isNaN(amountNum) || amountNum < 0.01) {
       setErrorMessage(
         <>
@@ -76,89 +245,124 @@ export default function PaymentController() {
           Do not use commas for decimals.
         </>
       );
-      setIsSubmitting(false);
-    } else {
-      setErrorMessage('');
-      // console.log('Submitting form with payment amount $' + amountNum.toFixed(2));
-
-      // optionally update UI with trimmed amount
-      // (will only be visible for a short time, so potentially panic-inducing?)
-      // setAmount(amountNum.toFixed(2));
-
-      getFormData(amountNum.toFixed(2))
-        .then((formData) => {
-          setFormData(formData);
-        })
-        .catch((error) => {
-          console.error(error);
-          setErrorMessage(
-            <>
-              Cannot connect to payment system. <br />
-              Please{' '}
-              <Link to="/contact-us" target="_blank">
-                let us know
-              </Link>{' '}
-              about this.
-            </>
-          );
-          setIsSubmitting(false);
-        });
+      return;
     }
+
+    setErrorMessage('');
+    setStage({ name: 'loading-checkout' });
+
+    fetchCaptureContext(amountNum.toFixed(2))
+      .then((context) => {
+        setCaptureContext({ ...context, amount: amountNum.toFixed(2) });
+      })
+      .catch((error) => {
+        console.error(error);
+        setErrorMessage(
+          <>
+            Cannot connect to payment system. <br />
+            Please{' '}
+            <Link to="/contact-us" target="_blank">
+              let us know
+            </Link>{' '}
+            about this.
+          </>
+        );
+        setStage({ name: 'entry' });
+      });
   };
 
-  // initially show the starter form
-  if (formData == null) {
+  if (stage.name === 'success') {
+    // Redirecting to /payment/{referenceNumber}; see the useEffect above.
+    return (
+      <div className="payment-container">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (stage.name === 'declined') {
+    return (
+      <div className="payment-container">
+        <h1>Payment Declined</h1>
+        <p id="warning">
+          Your card was declined (reference number{' '}
+          {stage.result.referenceNumber}
+          ). Please check your card details or try a different card.
+        </p>
+        <div className="button">
+          <input type="button" value="Try Again" onClick={resetToEntry} />
+        </div>
+      </div>
+    );
+  }
+
+  if (stage.name === 'error') {
+    return (
+      <div className="payment-container">
+        <h1>Payment Error</h1>
+        <p id="warning">{stage.message}</p>
+        <div className="button">
+          <input type="button" value="Try Again" onClick={resetToEntry} />
+        </div>
+      </div>
+    );
+  }
+
+  if (stage.name === 'awaiting-payment' || stage.name === 'processing') {
     return (
       <div className="payment-container">
         <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
         <p id="warning">
           Payments are processed securely by CyberSource.
           <br /> VEuPathDB does not store or have access to your credit card
-          information. <br />
-          See{' '}
-          <a href="/a/app/static-content/subscriptions.html">
-            VEuPathDB Subscriptions
-          </a>{' '}
-          to learn about subscriptions and create an invoice.
+          information.
         </p>
-        <div className="payment-form">
-          <div className="error-message">
-            <p>{errorMessage}</p>
-          </div>
-          <div className="amount">
-            <p>
-              Please enter the amount from your invoice in USD:&nbsp;&nbsp;
-              <input
-                className={errorMessage ? 'hasError' : undefined}
-                type="text"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </p>
-          </div>
-          <div className="button">
-            {isSubmitting && <Loading />}
-            <input
-              type="button"
-              value="Pay with Credit Card"
-              disabled={isSubmitting}
-              onClick={handleUserSubmit}
-            />
-            <p>
-              (Clicking the button will take you to secure.cybersource.com.)
-            </p>
-          </div>
-        </div>
+        <div id={CHECKOUT_CONTAINER_ID} />
+        {stage.name === 'processing' && <Loading />}
       </div>
     );
   }
 
-  // once form data has been fetched, return form which will automatically submit when rendered
+  // 'entry' and 'loading-checkout' stages show the starter form
   return (
-    <AutoSubmitForm
-      actionUrl="https://secureacceptance.cybersource.com/pay"
-      params={formData}
-    />
+    <div className="payment-container">
+      <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
+      <p id="warning">
+        Payments are processed securely by CyberSource.
+        <br /> VEuPathDB does not store or have access to your credit card
+        information. <br />
+        See{' '}
+        <a href="/a/app/static-content/subscriptions.html">
+          VEuPathDB Subscriptions
+        </a>{' '}
+        to learn about subscriptions and create an invoice.
+      </p>
+      <div className="payment-form">
+        <div className="error-message">
+          <p>{errorMessage}</p>
+        </div>
+        <div className="amount">
+          <p>
+            Please enter the amount from your invoice in USD:&nbsp;&nbsp;
+            <input
+              className={errorMessage ? 'hasError' : undefined}
+              type="text"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </p>
+        </div>
+        <div className="button">
+          {stage.name === 'loading-checkout' && <Loading />}
+          <input
+            type="button"
+            value="Pay with Credit Card"
+            disabled={stage.name === 'loading-checkout'}
+            onClick={handleUserSubmit}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
