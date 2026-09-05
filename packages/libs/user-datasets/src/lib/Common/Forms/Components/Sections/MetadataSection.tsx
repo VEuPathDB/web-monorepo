@@ -3,7 +3,6 @@ import { JsonPathBuilder, Runnable } from '../../../../Utils';
 import { CoreDatasetInformation } from './Core';
 import { useDispatch } from 'react-redux';
 import {
-  ClientSideUploadFormState,
   useDatasetFormState,
 } from '../../../../StoreModules/UserDatasetUploadStoreModule';
 import { PartialDatasetDetails } from '../../../../Service';
@@ -24,18 +23,12 @@ export function MetadataSection({
   openMetaImport,
 }: MetadataSectionProps): ReactElement {
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
+  const { datasetDetails, fileUploads } = useDatasetFormState();
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, fileUploads, formMetaState]
-  );
-
-  const setFormState = useCallback(
-    (formMetaState: ClientSideUploadFormState) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, datasetDetails, fileUploads]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, fileUploads]
   );
 
   return (
@@ -43,7 +36,7 @@ export function MetadataSection({
       <div className="header-line">
         <h2>Provide Dataset Metadata:</h2>
         <SecondaryButton disabled={false} onClick={openMetaImport}>
-          Import from Existing Dataset
+          Copy from existing dataset
         </SecondaryButton>
       </div>
 
@@ -51,8 +44,6 @@ export function MetadataSection({
         formProps={formProps}
         datasetMeta={datasetDetails}
         setDatasetMeta={setMetadata}
-        clientSideState={formMetaState}
-        setClientSideState={setFormState}
         jsonPath={jsonPath}
       />
 

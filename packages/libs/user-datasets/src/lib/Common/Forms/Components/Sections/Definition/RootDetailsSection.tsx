@@ -71,21 +71,21 @@ export function RootDetailsSection(
   } = props;
 
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
+  const { datasetDetails, fileUploads } = useDatasetFormState();
 
   const nameKey = jsonPath.appendToString<PartialDatasetDetails>('name');
   const summaryKey = jsonPath.appendToString<PartialDatasetDetails>('summary');
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, fileUploads, formMetaState]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, fileUploads]
   );
 
   const setUploads = useCallback(
     (fileUploads: DatasetUploads) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, datasetDetails, formMetaState]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, datasetDetails]
   );
 
   const fileUpload = buildFileProps(props.formProps, fileUploads, setUploads);
@@ -141,11 +141,13 @@ export function RootDetailsSection(
                 }
                 required={props.showDataInputs}
                 rows={15}
-                placeholder="Paste here a detailed description of the samples, such as the Methods section of the associated paper.
+                placeholder="Describe your samples here using free text or a table. For example, you can provide the relevant Methods section from the associated paper or sample metadata from supplementary files.
 
-*This text will be submitted to the VEuPathDB AI Metadata Analyzer*. The output will be named samples with metadata annotations, making the dataset as useful as possible on the website.
+If the sample names in your count file headers already describe the samples (e.g. 'male_3h_rep1'), you don't need to repeat that here - though details such as time-series reference points or treatment specifics are still worth adding. But if those sample names are codes or numbers (e.g. 'S001'), each one must appear somewhere in this description, with its meaning explained.
 
-The AI Metadata Analyzer will attempt to interpret your column names automatically. If they contain abbreviations or are otherwise difficult to interpret, include an explanation here."
+State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
+
+*This text is submitted to the VEuPathDB AI Metadata Analyzer*, which uses it to describe your samples so you can compare groups (for example, treated vs. control) in your analysis."
                 helpText={
                   typeof formConfig.verbiage.formInputs.samplesDescription
                     .helpText === 'function'

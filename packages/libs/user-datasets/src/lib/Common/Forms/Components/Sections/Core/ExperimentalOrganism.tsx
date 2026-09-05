@@ -9,15 +9,12 @@ import {
 } from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
-import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export const ExpOrganismToggleID = 'exp-organism-toggle';
 
 export interface ExperimentalOrganismProps {
-  readonly clientSideState: ClientSideUploadFormState;
-  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
   readonly datasetMeta: PartialDatasetDetails;
   readonly jsonPath: JsonPathBuilder;
@@ -26,12 +23,15 @@ export interface ExperimentalOrganismProps {
 export function ExperimentalOrganism(
   props: ExperimentalOrganismProps
 ): ReactElement {
-  const { hasExperimentalOrganism } = props.clientSideState;
+  const { hasOrganismData } = props.datasetMeta.metadataContentFlags ?? {};
 
   const setEnabled = (enabled: boolean) =>
-    props.setClientSideState({
-      ...props.clientSideState,
-      hasExperimentalOrganism: enabled,
+    props.setDatasetDetails({
+      ...props.datasetMeta,
+      metadataContentFlags: {
+        ...(props.datasetMeta.metadataContentFlags ?? {}),
+        hasOrganismData: enabled,
+      },
     });
 
   const safeExperimentalOrganism = props.datasetMeta.experimentalOrganism ?? {};
@@ -49,12 +49,12 @@ export function ExperimentalOrganism(
   const isGenomics = isGenomicsProjectId(projectId);
 
   const required = !isGenomics
-    ? hasExperimentalOrganism
+    ? hasOrganismData
     : props.datasetMeta.visibility === 'public' ||
       isNonBlankString(safeExperimentalOrganism.species) ||
       isNonBlankString(safeExperimentalOrganism.strain);
 
-  const disabled = isGenomics ? undefined : !hasExperimentalOrganism;
+  const disabled = isGenomics ? undefined : !hasOrganismData;
 
   const disabledClass = disabled ? ' disabled-fields' : '';
 
@@ -65,9 +65,9 @@ export function ExperimentalOrganism(
       <InputBlock header="Organism Details">
         <p className="section-description">
           Indicate the species and strain of each organism represented by
-          biological data in this dataset. Organisms may include 
+          biological data in this dataset. Organisms may include
           {!isGenomics &&
-            ' the study population species in field studies or clinical trials and, where applicable,'} 
+            ' the study population species in field studies or clinical trials and, where applicable,'}
           {' '}pathogens, vectors, symbionts, or other organisms represented directly or
           indirectly by the data.
           {isGenomics &&
@@ -84,7 +84,7 @@ export function ExperimentalOrganism(
                 Includes Biological Data about Organisms?
               </label>
               <YesNoToggle
-                value={hasExperimentalOrganism}
+                value={hasOrganismData}
                 setValue={setEnabled}
                 fieldName="enable-exp-organism"
                 className="not-disabled"
