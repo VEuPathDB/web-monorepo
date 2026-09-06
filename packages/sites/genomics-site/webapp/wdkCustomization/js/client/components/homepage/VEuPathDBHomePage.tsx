@@ -456,7 +456,7 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           tooltip:
             'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'https://companion.ac.uk/',
+          url: 'https://companion.gla.ac.uk/',
           metadata: {
             exclude: [VectorBase],
           },
