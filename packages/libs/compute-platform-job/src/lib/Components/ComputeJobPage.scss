@@ -1,0 +1,21 @@
+@import '@veupathdb/wdk-client/lib/Core/Style/palette';
+
+@keyframes ComputeJobPage-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ComputeJobPage {
+  .ComputeJobPage-StatusIcon {
+    color: $blue;
+    animation: ComputeJobPage-spin 1.6s linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+}
