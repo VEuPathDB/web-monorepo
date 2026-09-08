@@ -1,5 +1,6 @@
 import React, {
   FunctionComponent,
+  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -58,7 +59,11 @@ import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 import { getWdkStudyRecords } from '@veupathdb/eda/lib/core/utils/study-records';
 
-import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
+const PreferredOrganismsSummary = React.lazy(() =>
+  import(
+    '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary'
+  ).then((m) => ({ default: m.PreferredOrganismsSummary }))
+);
 
 import { Props as PageProps } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
@@ -120,9 +125,13 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const [headerExpanded, setHeaderExpanded] = useState(true);
   const [footerThin, setFooterThin] = useState(true);
 
+  const user = useSelector((state: RootState) => state.globalData.user);
+
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
-    location.pathname.includes('workspace/analyses');
+    location.pathname.includes('workspace/analyses') ||
+    user == null ||
+    user.isGuest;
 
   useEffect(() => {
     if (isHomePage && props.displayName) {
@@ -276,7 +285,9 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
           </ErrorBoundary>
           {!shouldHideOrgPrefsSubheader && (
             <div className={subHeaderClassName}>
-              <PreferredOrganismsSummary />
+              <Suspense fallback={null}>
+                <PreferredOrganismsSummary />
+              </Suspense>
             </div>
           )}
           <div className={vpdbCx('Announcements')}>
