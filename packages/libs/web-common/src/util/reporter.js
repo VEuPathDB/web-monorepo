@@ -69,6 +69,7 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'SequenceRecordClasses.SequenceRecordClass':
           return BedGenomicSequenceReporterForm;
         case 'DynSpanRecordClasses.DynSpanRecordClass':
+        case 'StrainSegmentRecordClasses.StrainSegmentRecordClass':
         case 'PopsetRecordClasses.PopsetRecordClass':
         case 'EstRecordClasses.EstRecordClass':
           return BedSimpleReporterForm;
@@ -84,6 +85,7 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'SequenceRecordClasses.SequenceRecordClass':
           return SequenceGenomicSequenceReporterForm;
         case 'DynSpanRecordClasses.DynSpanRecordClass':
+        case 'StrainSegmentRecordClasses.StrainSegmentRecordClass':
         case 'PopsetRecordClasses.PopsetRecordClass':
         case 'EstRecordClasses.EstRecordClass':
           return SequenceSimpleReporterForm;
