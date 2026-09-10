@@ -49,7 +49,7 @@ jobs:
         # Use development mode for pre-release tags so dev-only UI (e.g. "Open all sections") is included
       - run: |
           git_tag="${GITHUB_REF_NAME#v}"
-          if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-patch([-.][0-9]+)?)?$ ]]; then
             echo "bundle_target=bundle:npm" >> $GITHUB_ENV
           else
             echo "bundle_target=bundle:dev" >> $GITHUB_ENV
@@ -65,9 +65,10 @@ jobs:
           # Check if the tag is a plain version (e.g., 1.2.3) and tag 'latest' on npm
           if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "npm_tag=latest" >> $GITHUB_ENV
-          # else look for a word-like suffix (ignoring optional trailing .1, .2 etc) and tag with that word
+          # else look for a word-like suffix (ignoring optional trailing .1, -1, .2, -2 etc) and tag with that word
           # e.g. v.1.2.3-experimental will be tagged 'experimental' on npm
-          elif [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)(\.[0-9]+)*$ ]]; then
+          # e.g. v1.2.3-patch-2 or v1.2.3-patch.2 will be tagged 'patch' on npm
+          elif [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)([-.][0-9]+)*$ ]]; then
             npm_tag="${BASH_REMATCH[1]}"
             echo "npm_tag=$npm_tag" >> $GITHUB_ENV
           # or fall back to 'latest' just in case

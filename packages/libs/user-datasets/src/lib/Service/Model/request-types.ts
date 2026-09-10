@@ -4,13 +4,13 @@ import {
   DatasetCharacteristics,
   DatasetContact,
   DatasetFundingAward,
-  DatasetMetaBase,
+  DatasetMetaBase, DatasetMetadataContentFlags,
   DatasetOrganism,
   DatasetPublication,
   DatasetSource as ApiSource,
   DatasetVisibility,
   LinkedDataset,
-  SampleYearRange,
+  SampleYearRange
 } from './response-decoders';
 
 import { DatasetTypeSelection } from '../../Common/Configuration';
@@ -45,6 +45,7 @@ export type PartialDatasetDetails = Readonly<
   readonly linkedDatasets?: readonly PartialLinkedDataset[];
   readonly funding?: readonly PartialDatasetFunding[];
   readonly samplesDescription?: string;
+  readonly metadataContentFlags?: PartialMetadataContentFlags;
 };
 
 export type PartialOrganism = Readonly<Partial<DatasetOrganism>>;
@@ -66,6 +67,8 @@ export type PartialDatasetContact = Readonly<Partial<DatasetContact>>;
 export type PartialLinkedDataset = Readonly<Partial<LinkedDataset>>;
 
 export type PartialDatasetFunding = Readonly<Partial<DatasetFundingAward>>;
+
+export type PartialMetadataContentFlags = Readonly<Partial<DatasetMetadataContentFlags>>;
 
 // endregion CreateDataset
 

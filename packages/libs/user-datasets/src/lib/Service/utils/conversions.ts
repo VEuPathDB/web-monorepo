@@ -33,7 +33,8 @@ export function convertDetailsToMeta(
       daysForApproval: meta.daysForApproval,
       dataDisclaimer: meta.dataDisclaimer,
       datasetSources: meta.datasetSources,
-    })
+      metadataContentFlags: meta.metadataContentFlags,
+    } as PartialDatasetDetails)
   );
 }
 

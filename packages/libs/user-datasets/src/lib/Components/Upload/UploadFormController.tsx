@@ -192,18 +192,6 @@ function validateFormState(
     keyedErrors['$.details.dependencies'] = ['selection is required'];
   }
 
-  /* TODO: to be re-enabled for the update form
-  const errorMessage = ['selection is required'];
-
-  // Required Client-Only Fields
-  if (clientSide.isStudy === undefined)
-    keyedErrors[FieldStudyToggleID] = errorMessage;
-  if (clientSide.hasDisclaimer === undefined)
-    keyedErrors[DatasetUsageToggleID] = errorMessage;
-  if (clientSide.hasExternalSources === undefined)
-    keyedErrors[DatasetSourcesToggleID] = errorMessage;
-   */
-
   const { samplesDescription } = datasetDetails;
 
   if (
@@ -276,17 +264,18 @@ function validateFormState(
   return keyedErrors;
 }
 
-function filterDetails({
-  formMetaState,
-  datasetDetails,
-}: DatasetFormState): PartialDatasetDetails {
+function filterDetails({ datasetDetails }: DatasetFormState): PartialDatasetDetails {
   const filtered = { ...datasetDetails };
 
-  if (!formMetaState.isStudy) delete filtered['datasetCharacteristics'];
-  if (!formMetaState.hasDisclaimer) delete filtered['dataDisclaimer'];
-  if (!formMetaState.hasExternalSources) delete filtered['datasetSources'];
-  if (!formMetaState.hasPublications) delete filtered['publications'];
-  if (!formMetaState.hasExperimentalOrganism)
+  if (!datasetDetails.metadataContentFlags?.hasDatasetCharacteristics)
+    delete filtered['datasetCharacteristics'];
+  if (!datasetDetails.metadataContentFlags?.hasDataDisclaimer)
+    delete filtered['dataDisclaimer'];
+  if (!datasetDetails.metadataContentFlags?.hasDatasetSources)
+    delete filtered['datasetSources'];
+  if (!datasetDetails.metadataContentFlags?.hasPublications)
+    delete filtered['publications'];
+  if (!datasetDetails.metadataContentFlags?.hasOrganismData)
     delete filtered['experimentalOrganism'];
 
   // `samplesDescription` is a client-only field: its content is turned into

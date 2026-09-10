@@ -10,6 +10,8 @@ interface ClustalAlignmentFormProps {
   sequenceType?: string;
   warnThreshold?: number | ((form: HTMLFormElement) => number);
   blockThreshold?: number | ((form: HTMLFormElement) => number);
+  /** If provided, called instead of submitting the form on confirm. */
+  onConfirm?: () => void | Promise<void>;
 }
 
 const DEFAULT_WARN_THRESHOLD = 50;
@@ -22,13 +24,17 @@ export default function ClustalAlignmentForm({
   sequenceType = 'sequences',
   warnThreshold,
   blockThreshold,
+  onConfirm,
 }: ClustalAlignmentFormProps) {
   const theme = useUITheme();
   const [showModal, setShowModal] = useState(false);
-  const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] =
-    useState<number | null>(null);
-  const [evaluatedBlockThreshold, setEvaluatedBlockThreshold] =
-    useState<number | null>(null);
+  const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] = useState<
+    number | null
+  >(null);
+  const [evaluatedBlockThreshold, setEvaluatedBlockThreshold] = useState<
+    number | null
+  >(null);
+  const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -50,18 +56,31 @@ export default function ClustalAlignmentForm({
 
     setEvaluatedWarnThreshold(actualWarn);
     setEvaluatedBlockThreshold(actualBlock);
+    setError(null);
     setShowModal(true);
   };
 
-  const handleConfirm = () => {
-    setShowModal(false);
-    if (formRef.current) {
-      formRef.current.submit();
+  const handleConfirm = async () => {
+    if (onConfirm) {
+      try {
+        await onConfirm();
+        setShowModal(false);
+      } catch {
+        setError(
+          'Something went wrong submitting your request. Please try again.'
+        );
+      }
+    } else {
+      setShowModal(false);
+      if (formRef.current) {
+        formRef.current.submit();
+      }
     }
   };
 
   const handleCancel = () => {
     setShowModal(false);
+    setError(null);
   };
 
   const isBlocked =
@@ -91,6 +110,14 @@ export default function ClustalAlignmentForm({
         onClose={handleCancel}
       >
         <div style={{ padding: '10px', width: '500px' }}>
+          {error && (
+            <Banner
+              banner={{
+                type: 'error',
+                message: error,
+              }}
+            />
+          )}
           {showWarning && (
             <Banner
               banner={{

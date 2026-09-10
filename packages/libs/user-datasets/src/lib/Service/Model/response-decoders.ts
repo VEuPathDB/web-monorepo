@@ -270,6 +270,15 @@ const datasetSource = io.type({
 });
 export type DatasetSource = io.TypeOf<typeof datasetSource>;
 
+const datasetMetadataContentFlags = io.partial({
+  hasDatasetCharacteristics: io.boolean,
+  hasDataDisclaimer: io.boolean,
+  hasDatasetSources: io.boolean,
+  hasOrganismData: io.boolean,
+  hasPublications: io.boolean,
+});
+export type DatasetMetadataContentFlags = io.TypeOf<typeof datasetMetadataContentFlags>;
+
 export const datasetMetaBase = io.intersection([
   io.type({
     installTargets: io.array(io.string),
@@ -513,6 +522,7 @@ export const datasetGetResponseBody = io.intersection([
     shortName: io.string,
     status: datasetStatusInfo,
     files: datasetFileListing,
+    metadataContentFlags: datasetMetadataContentFlags,
   }),
   io.partial({
     sourceUrl: io.string,
