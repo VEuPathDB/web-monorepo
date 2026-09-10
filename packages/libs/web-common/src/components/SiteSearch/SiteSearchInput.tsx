@@ -1,7 +1,8 @@
 import { isEmpty, uniq } from 'lodash';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Tooltip } from '@veupathdb/coreui';
+import { CommonModal } from '@veupathdb/wdk-client/lib/Components';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import {
   makeClassNameHelper,
@@ -26,6 +27,16 @@ const preventEventWith = (callback: () => void) => (event: React.FormEvent) => {
   event.preventDefault();
   callback();
 };
+
+const MAX_SEARCH_WORDS = 6;
+
+const countWords = (value: string) =>
+  value
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
+
+const hasTooManyWords = (value: string) => countWords(value) > MAX_SEARCH_WORDS;
 
 export interface Props {
   placeholderText?: string;
@@ -57,6 +68,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
     !isEmpty(docType) || !isEmpty(organisms) || !isEmpty(fields);
 
   const [recentSearches, setRecentSearches] = useRecentSearches();
+  const [showTooManyWordsModal, setShowTooManyWordsModal] = useState(false);
 
   const onSearch = useCallback(
     (queryString: string) => {
@@ -76,6 +88,10 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
   const handleSubmitWithFilters = useCallback(() => {
     const { current } = formRef;
     if (current == null) return;
+    if (hasTooManyWords(inputRef.current?.value || '')) {
+      setShowTooManyWordsModal(true);
+      return;
+    }
     const formData = new FormData(current);
     const queryString = new URLSearchParams(formData as any).toString();
     onSearch(queryString);
@@ -83,15 +99,22 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
   }, [onSearch, saveSearchString]);
 
   const handleSubmitWithoutFilters = useCallback(() => {
-    const queryString = `q=${encodeURIComponent(
-      inputRef.current?.value || ''
-    )}`;
+    const value = inputRef.current?.value || '';
+    if (hasTooManyWords(value)) {
+      setShowTooManyWordsModal(true);
+      return;
+    }
+    const queryString = `q=${encodeURIComponent(value)}`;
     onSearch(queryString);
     saveSearchString();
   }, [onSearch, saveSearchString]);
 
   const handleSubmitWithRecentSearch = useCallback(
     (searchString: string) => {
+      if (hasTooManyWords(searchString)) {
+        setShowTooManyWordsModal(true);
+        return;
+      }
       const queryString = `q=${encodeURIComponent(searchString)}`;
       onSearch(queryString);
     },
@@ -180,6 +203,54 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
           <i className="fa fa-search" />
         </button>
       </Tooltip>
+      {showTooManyWordsModal && (
+        <CommonModal
+          title={
+            <>
+              <i
+                style={{
+                  margin: 'auto 0',
+                  marginRight: '0.25em',
+                  color: '#CB0',
+                }}
+                className="fa fa-warning"
+              />
+              <span>Too Many Words</span>
+            </>
+          }
+          onClose={() => setShowTooManyWordsModal(false)}
+        >
+          <div
+            style={{
+              fontSize: '1.1em',
+              minWidth: '425px',
+            }}
+          >
+            <p style={{ margin: 0 }}>
+              Too many words. Please reduce your search to six words or less.
+              <br />
+              <br />
+              (If you entered a list of IDs, find an appropriate search in the
+              Searches menu instead of using the Site Search bar.)
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '1em',
+              }}
+            >
+              <button
+                className="btn"
+                type="button"
+                onClick={() => setShowTooManyWordsModal(false)}
+              >
+                Ok
+              </button>
+            </div>
+          </div>
+        </CommonModal>
+      )}
     </form>
   );
 });
