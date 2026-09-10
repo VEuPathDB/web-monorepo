@@ -18,6 +18,7 @@ export interface AiExpressionGeneResponse {
   numExperiments?: number;
   numExperimentsComplete?: number;
   expressionSummary?: AiExpressionSummary;
+  basedOnIncompleteData?: boolean;
 }
 
 export interface AiExpressionSummary {
