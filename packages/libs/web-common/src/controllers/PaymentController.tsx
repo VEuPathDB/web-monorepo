@@ -326,8 +326,11 @@ function PaymentControllerFunction() {
         <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
         <p id="warning">
           Payments are processed securely by CyberSource.
-          <br /> VEuPathDB does not store or have access to your credit card
-          information.
+          <br />
+          <b>
+            VEuPathDB does not store or have access to your credit card
+            information.
+          </b>
         </p>
         <div id={CHECKOUT_CONTAINER_ID} />
         {stage.name === 'processing' && <Loading />}
@@ -341,8 +344,12 @@ function PaymentControllerFunction() {
       <h1>Make a credit card payment based on your VEuPathDB invoice</h1>
       <p id="warning">
         Payments are processed securely by CyberSource.
-        <br /> VEuPathDB does not store or have access to your credit card
-        information. <br />
+        <br />
+        <b>
+          VEuPathDB does not store or have access to your credit card
+          information.
+        </b>
+        <br />
         See{' '}
         <a href="/a/app/static-content/subscriptions.html">
           VEuPathDB Subscriptions
