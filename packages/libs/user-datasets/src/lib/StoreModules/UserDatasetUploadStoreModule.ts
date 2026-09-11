@@ -21,38 +21,14 @@ import { defaultDatasetDetails } from '../Service/Model/constructors';
 
 export const key = 'userDatasetUpload';
 
-/**
- * Upload form fields and flags that are only relevant to the client application
- * and are not used by any other user dataset features or functionality.
- */
-export interface ClientSideUploadFormState {
-  readonly isStudy: boolean | undefined;
-  readonly hasExternalSources: boolean | undefined;
-  readonly hasDisclaimer: boolean | undefined;
-  readonly hasExperimentalOrganism: boolean | undefined;
-  readonly hasPublications: boolean | undefined;
-}
-
-export function defaultClientSideUploadFormState(): ClientSideUploadFormState {
-  return {
-    isStudy: undefined,
-    hasExternalSources: undefined,
-    hasDisclaimer: undefined,
-    hasExperimentalOrganism: undefined,
-    hasPublications: undefined,
-  };
-}
-
 export interface DatasetFormState {
   readonly datasetDetails: PartialDatasetDetails;
   readonly fileUploads: DatasetUploads;
-  readonly formMetaState: ClientSideUploadFormState;
 }
 
 export const DefaultDatasetFormState: DatasetFormState = {
   datasetDetails: defaultDatasetDetails(),
   fileUploads: {},
-  formMetaState: defaultClientSideUploadFormState(),
 };
 
 export function useDatasetFormState(): DatasetFormState {

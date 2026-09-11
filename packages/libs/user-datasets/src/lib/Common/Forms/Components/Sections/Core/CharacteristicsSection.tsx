@@ -8,10 +8,11 @@ import React, {
 import { partialRight } from 'lodash';
 
 import {
+  BiConsumer,
   Consumer,
   JsonPathBuilder,
-  changeHandler,
-  BiConsumer,
+  Possible,
+  changeHandler
 } from '../../../../../Utils';
 import {
   PartialDatasetDetails,
@@ -24,7 +25,6 @@ import {
   InputPair,
   YesNoToggle,
 } from '../../index';
-import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../../Configuration/DatasetFormConfig';
 
 export const FieldStudyToggleID = 'field-study-toggle';
@@ -32,8 +32,6 @@ export const FieldStudyToggleID = 'field-study-toggle';
 export interface CharacteristicsSectionProps {
   readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly clientSideState: ClientSideUploadFormState;
-  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly pathBuilder: JsonPathBuilder;
   readonly formProps: DatasetCharacteristicsFormSectionConfig;
 }
@@ -41,15 +39,18 @@ export interface CharacteristicsSectionProps {
 export function CharacteristicsSection({
   datasetMeta,
   setDatasetMeta,
-  clientSideState,
-  setClientSideState,
   pathBuilder: jsonPath,
   formProps,
 }: CharacteristicsSectionProps): ReactElement {
-  const { isStudy: enabled } = clientSideState;
+  const enabled = datasetMeta.metadataContentFlags?.hasDatasetCharacteristics;
 
   const setEnabled = (enabled: boolean) =>
-    setClientSideState({ ...clientSideState, isStudy: enabled });
+    setDatasetMeta({
+      ...datasetMeta,
+      metadataContentFlags: {
+        ...(datasetMeta.metadataContentFlags ?? {}),
+        hasDatasetCharacteristics: enabled
+      } });
 
   useEffect(
     () => {
@@ -63,10 +64,7 @@ export function CharacteristicsSection({
     [enabled, datasetMeta.datasetCharacteristics]
   );
 
-  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {
-    studyDesign: formProps.studyDesignVocab[0][0],
-    studyType: formProps.studyDesignVocab[0][1],
-  };
+  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {};
 
   const requireAll = useMemo(
     () => enabled === true && datasetMeta.visibility === 'public',
@@ -110,6 +108,7 @@ export function CharacteristicsSection({
           vocab={formProps.studyDesignVocab}
           enabled={enabled === true}
           required={requireAll}
+          selection={datasetMeta.datasetCharacteristics?.studyDesign}
           onChange={(d, t) => {
             setDatasetMeta({
               ...datasetMeta,
@@ -224,6 +223,7 @@ interface StudyDesignProps {
   readonly onChange: BiConsumer<string, string>;
   readonly enabled: boolean;
   readonly required: boolean;
+  readonly selection?: String;
 }
 
 function StudyDesign({
@@ -231,16 +231,31 @@ function StudyDesign({
   onChange,
   enabled,
   required,
+  selection,
 }: StudyDesignProps): ReactElement {
-  const options = vocab.map(([v, _], i) => (
-    <option key={i} value={i}>
-      {v}
-    </option>
-  ));
+  const options = [
+    <option key={vocab.length} disabled selected={selection == null}>
+      Select a study design
+    </option>,
+
+    ...vocab.map(([v, _], i) => (
+      <option key={i} value={i} selected={selection === v}>
+        {v}
+      </option>
+    ))
+  ];
+
+  let className: Possible<string> = undefined;
+
+  if (required) {
+    className = selection == null
+      ? "required invalid"
+      : "required";
+  }
 
   return (
     <>
-      <label htmlFor="meta.studyCharacteristics.studyDesign">
+      <label htmlFor="meta.studyCharacteristics.studyDesign" className={className}>
         Study Design
       </label>
       <select
@@ -292,15 +307,24 @@ function YearsInputs({
         v: string | undefined,
         ref: RefObject<HTMLInputElement>
       ) => {
-        if (!v) return;
+        ref.current?.classList?.remove('invalid');
+
+        if (!v) {
+          const { [k]: ignored, ...trimmed } = safeYears
+          setYears(trimmed)
+          return;
+        }
 
         const parsed = parseInt(v);
 
-        if (isNaN(parsed)) return;
+        if (isNaN(parsed)) {
+          const { [k]: ignored, ...trimmed } = safeYears
+          setYears(trimmed)
+          return;
+        }
 
         if (parsed < 1500 || parsed > 9999)
           ref.current?.classList?.add('invalid');
-        else ref.current?.classList?.remove('invalid');
 
         setYears({ ...safeYears, [k]: parsed });
       };

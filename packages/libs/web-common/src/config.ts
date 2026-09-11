@@ -16,6 +16,7 @@ export const {
   rootElement = '',
   endpoint = '',
   projectId = '',
+  projectName = '',
   webAppUrl = '',
   facebookUrl = '',
   twitterUrl = '',

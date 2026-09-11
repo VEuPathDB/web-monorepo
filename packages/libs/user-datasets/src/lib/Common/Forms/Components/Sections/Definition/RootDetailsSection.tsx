@@ -71,21 +71,21 @@ export function RootDetailsSection(
   } = props;
 
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
+  const { datasetDetails, fileUploads } = useDatasetFormState();
 
   const nameKey = jsonPath.appendToString<PartialDatasetDetails>('name');
   const summaryKey = jsonPath.appendToString<PartialDatasetDetails>('summary');
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, fileUploads, formMetaState]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, fileUploads]
   );
 
   const setUploads = useCallback(
     (fileUploads: DatasetUploads) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, datasetDetails, formMetaState]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, datasetDetails]
   );
 
   const fileUpload = buildFileProps(props.formProps, fileUploads, setUploads);

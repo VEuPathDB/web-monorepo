@@ -1232,9 +1232,11 @@ function resultDetails(
     []
   );
 
-
   // eda study
-  if (documentType.id === 'dataset' || projectId === 'ClinEpiDB') {
+  if (
+    (documentType.id === 'dataset' || documentType.id === 'userdataset') &&
+    projectId === 'ClinEpiDB'
+  ) {
     const [datasetId] = document.primaryKey;
     return {
       display: {
@@ -1299,7 +1301,7 @@ function resultDetails(
   }
 
   // wdk records
-  if (documentType.isWdkRecordType ) {
+  if (documentType.isWdkRecordType) {
     return {
       display: makeRecordLink(
         document,

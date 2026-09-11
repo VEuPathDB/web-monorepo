@@ -1,7 +1,7 @@
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
 import React, { ReactElement, useCallback, useState } from 'react';
-import { edaServiceUrl, projectId } from './config';
+import { edaServiceUrl, projectId, projectName } from './config';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -40,31 +40,31 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
   baseDatasetTypeConfigs: [
     {
       ...implementedUploadTypes.bigwigfiles,
-      description: `Integrate your bigWig data into ${projectId}.`,
+      description: `Integrate your bigWig data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.biom,
-      description: `Integrate your BIOM study data into ${projectId}.`,
+      description: `Integrate your BIOM study data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.genelist,
-      description: `Integrate your gene list into ${projectId}.`,
+      description: `Integrate your gene list into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.isasimple,
-      description: `Explore and visualize your data table in ${projectId}`,
+      description: `Explore and visualize your data table in ${projectName}`,
     },
     {
       ...implementedUploadTypes.phenotype,
-      description: `Integrate your phenotype data into ${projectId}.`,
+      description: `Integrate your phenotype data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.rnaseq,
-      description: `Integrate your normalized RNA-Seq data into ${projectId}.`,
+      description: `Integrate your normalized RNA-Seq data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.rnaseqrc,
-      description: `Integrate your RNA-Seq raw counts into ${projectId}, and perform DE analysis.`,
+      description: `Integrate your RNA-Seq raw counts into ${projectName}, and perform DE analysis.`,
     },
   ],
 
