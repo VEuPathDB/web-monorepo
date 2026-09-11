@@ -1,6 +1,7 @@
 import {
   fetchTemporaryResultText,
   parseBedToFeatures,
+  submitClustalMsaJob,
 } from './msaJobSubmission';
 
 describe('parseBedToFeatures', () => {
@@ -69,5 +70,86 @@ describe('fetchTemporaryResultText', () => {
     expect(text).toBe('>seq1\nACGT\n');
     const [url] = (global.fetch as jest.Mock).mock.calls[0];
     expect(url).toContain('/temporary-results/xyz');
+  });
+});
+
+function makeFakeTab() {
+  return { location: { replace: jest.fn() }, close: jest.fn() };
+}
+
+function makeFakeApi(job: { jobID: string }) {
+  return { submitJob: jest.fn().mockResolvedValue(job) } as any;
+}
+
+describe('submitClustalMsaJob', () => {
+  const originalOpen = window.open;
+  afterEach(() => {
+    window.open = originalOpen;
+  });
+
+  it('opens a blank tab before submitting, then navigates it to the result URL', async () => {
+    const fakeTab = makeFakeTab();
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+
+    await submitClustalMsaJob({
+      api,
+      sequenceType: 'dnaseq',
+      features,
+      msaFormat: 'clustal',
+      resultRouteBase: '/app/workspace/msa',
+      paramsSummary: '5 Strain Segments',
+    });
+
+    expect(window.open).toHaveBeenCalledWith('about:blank', '_blank');
+    expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
+      features,
+      postProcess: 'MSA',
+      msaOptions: { format: 'clustal' },
+    });
+    expect(fakeTab.location.replace).toHaveBeenCalledTimes(1);
+    const [navigatedUrl] = fakeTab.location.replace.mock.calls[0];
+    expect(navigatedUrl).toContain('/app/workspace/msa/result/abc123');
+    expect(navigatedUrl).toContain('paramsSummary=');
+    expect(navigatedUrl).toContain('format=clustal');
+  });
+
+  it('closes the tab and rethrows if submitJob rejects', async () => {
+    const fakeTab = makeFakeTab();
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const api = {
+      submitJob: jest.fn().mockRejectedValue(new Error('service down')),
+    } as any;
+
+    await expect(
+      submitClustalMsaJob({
+        api,
+        sequenceType: 'dnaseq',
+        features: [],
+        msaFormat: 'clustal',
+        resultRouteBase: '/app/workspace/msa',
+        paramsSummary: '0 Strain Segments',
+      })
+    ).rejects.toThrow('service down');
+
+    expect(fakeTab.close).toHaveBeenCalledTimes(1);
+    expect(fakeTab.location.replace).not.toHaveBeenCalled();
+  });
+
+  it('does not throw if window.open returns null (popup blocked)', async () => {
+    window.open = jest.fn().mockReturnValue(null);
+    const api = makeFakeApi({ jobID: 'abc123' });
+
+    await expect(
+      submitClustalMsaJob({
+        api,
+        sequenceType: 'dnaseq',
+        features: [],
+        msaFormat: 'clustal',
+        resultRouteBase: '/app/workspace/msa',
+        paramsSummary: '0 Strain Segments',
+      })
+    ).resolves.toBeUndefined();
   });
 });
