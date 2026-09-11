@@ -126,11 +126,16 @@
       "json",
       "node"
     ],
+    "moduleNameMapper": {
+      "\\.(css|scss)$": "<rootDir>/jest.style-mock.js",
+      "\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/jest.style-mock.js",
+      "^jquery$": "<rootDir>/jest.jquery-mock.js"
+    },
     "transform": {
       "^.+\\.(t|j)sx?$": "<rootDir>/jest.babel-transform.js"
     },
     "transformIgnorePatterns": [
-      "/node_modules/(?!@veupathdb/web-common/lib/)"
+      "/node_modules/(?!@veupathdb/web-common/lib/|spin\\.js/)"
     ]
   },
   "files": [
