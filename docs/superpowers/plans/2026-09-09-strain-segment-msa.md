@@ -18,7 +18,8 @@
 - No step/answer/strategy is ever created for `StrainSegmentsByMeta`. Submission is always a direct `wdkService.getTemporaryResultPath({searchName: 'StrainSegmentsByMeta', searchConfig}, reportName, reportConfig)` call — never `QuestionActions.submitQuestion`.
 - `eda_sample_table_suffix` is never sent by the client — omit it from `initialParamData` and from the submit payload's `searchConfig.parameters` in every task that touches either.
 - Strand (`sequence_strand`) is a plain UI control defaulting to `+`. Never read strand from a record attribute (no `strand_plus_minus` lookup, no `bed`-report resolution) in either the Gene or Variant context.
-- `organismSinglePick`/`sequenceId` are fixed, non-editable values seeded from the record's own attributes (`organism_full`/`sequence_id`) — never rendered as UI controls.
+- `organismSinglePick`/`sequenceId` are fixed, non-editable values seeded from the record's own attributes — never rendered as UI controls. The source attribute names differ per record class: Gene uses `organism_full`/`sequence_id`; Variant uses `organism_text`/`sequence_source_id`.
+- Region input differs by record class and is never unified into one shared UI shape: Gene renders editable start/end inputs defaulted from `start_min`/`end_max`; Variant renders a single editable offset input (default `1000`) applied symmetrically around its `location` attribute (`start_point = location - offset`, `end_point_segment = location + offset`). `StrainMsaForm` receives `record` as an explicit prop from its caller (never reads it from Redux) specifically so it can branch on `record.recordClassName` for this.
 - Do not modify `compute-platform-job`, `ClustalAlignmentForm`, or any Orthologs code path except the one extraction this plan calls for (`parseBedToFeatures` and the tab-submit helper moving to a shared location).
 - New files are `.ts`/`.tsx`, never `.js`/`.jsx` (per this repo's CLAUDE.md), even though several files this plan edits (`Record.js`, `GeneRecordClasses.GeneRecordClass.jsx`, `VariantRecordClasses.VariantRecordClass.jsx`) are existing `.js`/`.jsx` — those are edited in place, not converted, per Task boundaries below.
 
@@ -521,7 +522,7 @@ import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmis
 
 - [ ] **Step 2: Verify the file still compiles**
 
-Run: `yarn --cwd packages/sites/genomics-site tsc --noEmit` (or the site's existing type-check script if named differently — check `package.json`'s `scripts` for the exact name before running)
+Run: `yarn --cwd packages/sites/genomics-site compile:check` (the site's own type-check script, `tsc --noEmit` under the hood — confirmed at `packages/sites/genomics-site/package.json:15`)
 Expected: no new type errors introduced by this change (the file is `.jsx`, so this mainly catches import-resolution issues, not full type-checking of the JSX body).
 
 - [ ] **Step 3: Manually smoke-test the Orthologs "Run Clustal Omega" flow**
@@ -557,7 +558,10 @@ No existing test file covers this module today (`Record.js` has no `Record.test.
 // packages/sites/genomics-site/webapp/wdkCustomization/js/client/storeModules/Record.test.js
 import { of } from 'rxjs';
 import { toArray } from 'rxjs/operators';
-import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
+import {
+  RecordActions,
+  QuestionActions,
+} from '@veupathdb/wdk-client/lib/Actions';
 import { observeStrainMsaFilter } from './Record';
 
 function makeRecordUpdateAction(recordClassName, attributes) {
@@ -586,7 +590,7 @@ describe('observeStrainMsaFilter', () => {
       .subscribe((actions) => {
         expect(actions).toHaveLength(1);
         expect(actions[0]).toEqual({
-          type: 'question/update-active-question',
+          type: QuestionActions.UPDATE_ACTIVE_QUESTION,
           payload: {
             searchName: 'StrainSegmentsByMeta',
             initialParamData: {
@@ -601,11 +605,11 @@ describe('observeStrainMsaFilter', () => {
       });
   });
 
-  it('seeds StrainSegmentsByMeta from a Variant record', (done) => {
+  it('seeds StrainSegmentsByMeta from a Variant record, using Variant-specific attribute names', (done) => {
     const action$ = of(
       makeRecordUpdateAction('VariantRecordClasses.VariantRecordClass', {
-        organism_full: 'Plasmodium falciparum 3D7',
-        sequence_id: 'Pf3D7_11_v3',
+        organism_text: 'Plasmodium falciparum 3D7',
+        sequence_source_id: 'Pf3D7_11_v3',
       })
     );
 
@@ -614,6 +618,12 @@ describe('observeStrainMsaFilter', () => {
       .subscribe((actions) => {
         expect(actions).toHaveLength(1);
         expect(actions[0].payload.searchName).toBe('StrainSegmentsByMeta');
+        expect(actions[0].payload.initialParamData).toEqual(
+          expect.objectContaining({
+            organismSinglePick: 'Plasmodium falciparum 3D7',
+            sequenceId: 'Pf3D7_11_v3',
+          })
+        );
         done();
       });
   });
@@ -644,7 +654,7 @@ describe('observeStrainMsaFilter', () => {
 });
 ```
 
-Note: `type: 'question/update-active-question'` in the first assertion is a placeholder for whatever `QuestionActions.UPDATE_ACTIVE_QUESTION`'s actual string constant is — **before running this test, look up the real value** (`grep -n "UPDATE_ACTIVE_QUESTION =" packages/libs/wdk-client/src/Actions/QuestionActions.ts`) and substitute it, or better, import the constant directly and use `type: QuestionActions.UPDATE_ACTIVE_QUESTION` (whichever export name that constant actually has) instead of a hardcoded string, so the test can't silently drift from the real action type.
+`QuestionActions.UPDATE_ACTIVE_QUESTION` is confirmed as the exact exported constant name, value `'question/update-active-question'` (`packages/libs/wdk-client/src/Actions/QuestionActions.ts:38`) — imported directly above rather than hardcoded, so the test can't silently drift from the real action type.
 
 - [ ] **Step 2: Run tests to verify they fail**
 
@@ -663,7 +673,12 @@ Modeled directly on `observeVariantStrainFilter` (`Record.js:329-348`) and `isGe
  * Seeds StrainSegmentsByMeta's fixed params (organism, sequence ID) from
  * whichever of Gene or Variant record is currently loaded. Both record
  * classes embed the same StrainMsaForm component and share this one epic
- * rather than each having their own, since the seeding logic is identical.
+ * rather than each having their own, since the rest of the seeding logic
+ * (search name, defaults) is identical — only the source attribute names
+ * differ per record class, since Gene and Variant do not share an
+ * attribute schema:
+ *   - Gene:    organism_full, sequence_id
+ *   - Variant: organism_text, sequence_source_id
  *
  * sequence_strand is deliberately NOT read from the record — it's a plain
  * UI control defaulting to '+' here, never resolved from a record
@@ -672,18 +687,28 @@ Modeled directly on `observeVariantStrainFilter` (`Record.js:329-348`) and `isGe
 export function observeStrainMsaFilter(action$) {
   return action$.pipe(
     filter((action) => action.type === RecordActions.RECORD_UPDATE),
-    mergeMap((action) =>
-      isGeneRecord(action.payload.record) ||
-      isVariantRecord(action.payload.record)
-        ? of(action.payload.record.attributes)
-        : EMPTY
-    ),
-    map(({ organism_full, sequence_id }) =>
+    mergeMap((action) => {
+      const { record } = action.payload;
+      if (isGeneRecord(record)) {
+        return of({
+          organismSinglePick: record.attributes.organism_full,
+          sequenceId: record.attributes.sequence_id,
+        });
+      }
+      if (isVariantRecord(record)) {
+        return of({
+          organismSinglePick: record.attributes.organism_text,
+          sequenceId: record.attributes.sequence_source_id,
+        });
+      }
+      return EMPTY;
+    }),
+    map(({ organismSinglePick, sequenceId }) =>
       QuestionActions.updateActiveQuestion({
         searchName: 'StrainSegmentsByMeta',
         initialParamData: {
-          organismSinglePick: organism_full,
-          sequenceId: sequence_id,
+          organismSinglePick,
+          sequenceId,
           sequence_strand: '+',
           variation_sample_meta: JSON.stringify({ filters: [] }),
         },
@@ -715,7 +740,7 @@ export function observe(action$, state$, services) {
 }
 ```
 
-Note: `start_point`/`end_point_segment` are intentionally **not** seeded by this epic — the design doc's `initialParamData` example includes them, but per the search's own model definition, `start_point` already defaults to `1` and `end_point_segment` has no client-known safe default without knowing the record's `start_min`/`end_max` at seed time. Task 6 (`StrainMsaForm`) reads `start_min`/`end_max` directly off `props.record.attributes` for the input defaults instead (component-level default, not epic-seeded) — see Task 6 for why.
+Note: `start_point`/`end_point_segment` are intentionally **not** seeded by this epic — the search's own model definition already defaults `start_point` to `1`, and neither param has one safe default across both record classes: Gene wants `start_min`/`end_max` directly, while Variant wants `location - 1000`/`location + 1000` (see Task 5's `deriveRegion`). Task 5 (`StrainMsaForm`) computes both, branching on `record.recordClassName`, from the `record` prop passed in at each embedding site (Tasks 7-8) — a component-level default, not epic-seeded.
 
 - [ ] **Step 4: Run tests to verify they pass**
 
@@ -742,9 +767,19 @@ git commit -m "Add observeStrainMsaFilter epic seeding StrainSegmentsByMeta from
 **Interfaces:**
 
 - Consumes: `FilterParamNew` from `@veupathdb/wdk-client/lib/Components`; `QuestionActions` from `@veupathdb/wdk-client/lib/Actions`; `RootState` from `@veupathdb/wdk-client/lib/Core/State/Types`; `isType as isFilterParamNew` from `@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/FilterParamUtils` (all already used by `VariantStrainFilter.tsx` today, same import paths).
-- Produces: `StrainMsaForm` (default export), a `connect`-wrapped React component taking no required props (reads everything from Redux, same as `VariantStrainFilter`). Task 6 adds submit handling to this same component; Task 7/8 embed it unchanged from both record classes.
+- Produces: `StrainMsaForm` (named export), a `connect`-wrapped React component taking one required prop, `record` (the WDK record object — same shape `props.record` has in `RecordAttributeSection`, e.g. `record.recordClassName`/`record.attributes`, the same way `SNPsAlignment` in `GeneRecordClasses.GeneRecordClass.jsx:741` reads `props.record.attributes` directly). `record` is how the component knows which record class it's in for the region-input branching below, without reaching into Redux for something its caller already has. Task 6 adds submit handling to this same component; Tasks 7-8 pass `record` in from each embedding site.
 
-This task builds the rendering half only — start/end/strand inputs and the metadata filter widget — deferring submit/FASTA/MSA handling to Task 6, so each task stays reviewable independently.
+This task builds the rendering half only — region-input (start/end for Gene, a single offset for Variant), strand inputs, and the metadata filter widget — deferring submit/FASTA/MSA handling to Task 6, so each task stays reviewable independently.
+
+**Region input differs by record class** (per the design doc): Gene has a natural start/end
+range (`start_min`/`end_max` attributes) and renders two editable number inputs defaulted from
+them. Variant is a single point (`location` attribute) with no range to default from, so it
+renders one editable **offset** number input (default `1000`), and `start_point`/
+`end_point_segment` are always _derived_ from `location ± offset` rather than edited directly.
+This task introduces a small `deriveRegion(record)` helper (pure, easily unit-tested in
+isolation) that branches on `record.recordClassName` and returns
+`{ kind: 'range', start, end } | { kind: 'point', location, offset }`, so the render logic
+itself just switches on `region.kind` without repeating the record-class check.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -754,19 +789,47 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { StrainMsaForm } from './StrainMsaForm';
+import { StrainMsaForm, deriveRegion } from './StrainMsaForm';
 
-function renderWithQuestionState(questionState: unknown) {
+const GENE_RECORD = {
+  recordClassName: 'GeneRecordClasses.GeneRecordClass',
+  attributes: { start_min: '100', end_max: '5000' },
+};
+
+const VARIANT_RECORD = {
+  recordClassName: 'VariantRecordClasses.VariantRecordClass',
+  attributes: { location: '2500' },
+};
+
+function renderWithQuestionState(questionState: unknown, record = GENE_RECORD) {
   const store = createStore((state = { question: { questions: {} } }) => ({
     ...state,
     question: { questions: { StrainSegmentsByMeta: questionState } },
   }));
   return render(
     <Provider store={store}>
-      <StrainMsaForm />
+      <StrainMsaForm record={record} />
     </Provider>
   );
 }
+
+describe('deriveRegion', () => {
+  it('returns a range for a Gene record, from start_min/end_max', () => {
+    expect(deriveRegion(GENE_RECORD)).toEqual({
+      kind: 'range',
+      start: '100',
+      end: '5000',
+    });
+  });
+
+  it('returns a point + default 1000 offset for a Variant record, from location', () => {
+    expect(deriveRegion(VARIANT_RECORD)).toEqual({
+      kind: 'point',
+      location: '2500',
+      offset: 1000,
+    });
+  });
+});
 
 describe('StrainMsaForm', () => {
   it('renders nothing while the question is not yet loaded', () => {
@@ -781,33 +844,64 @@ describe('StrainMsaForm', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders start/end/strand inputs and the metadata filter once loaded', () => {
+  it('renders start/end/strand inputs and the metadata filter for a Gene record', () => {
     const fakeParameter = {
       name: 'variation_sample_meta',
-      type: 'filter-param-new',
+      type: 'filter',
     };
-    renderWithQuestionState({
-      questionStatus: 'complete',
-      question: {
-        urlSegment: 'StrainSegmentsByMeta',
-        parametersByName: { variation_sample_meta: fakeParameter },
+    renderWithQuestionState(
+      {
+        questionStatus: 'complete',
+        question: {
+          urlSegment: 'StrainSegmentsByMeta',
+          parametersByName: { variation_sample_meta: fakeParameter },
+        },
+        paramValues: {
+          start_point: '100',
+          end_point_segment: '5000',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+        paramUIState: { variation_sample_meta: {} },
       },
-      paramValues: {
-        start_point: '1',
-        end_point_segment: '5000',
-        variation_sample_meta: JSON.stringify({ filters: [] }),
-      },
-      paramUIState: { variation_sample_meta: {} },
-    });
+      GENE_RECORD
+    );
 
     expect(screen.getByLabelText(/start/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/end/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/offset/i)).not.toBeInTheDocument();
     expect(screen.getByLabelText(/forward/i)).toBeChecked();
+  });
+
+  it('renders a single offset input (not start/end) for a Variant record', () => {
+    const fakeParameter = {
+      name: 'variation_sample_meta',
+      type: 'filter',
+    };
+    renderWithQuestionState(
+      {
+        questionStatus: 'complete',
+        question: {
+          urlSegment: 'StrainSegmentsByMeta',
+          parametersByName: { variation_sample_meta: fakeParameter },
+        },
+        paramValues: {
+          start_point: '1500',
+          end_point_segment: '3500',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+        paramUIState: { variation_sample_meta: {} },
+      },
+      VARIANT_RECORD
+    );
+
+    expect(screen.getByLabelText(/offset/i)).toHaveValue(1000);
+    expect(screen.queryByLabelText(/^start$/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^end$/i)).not.toBeInTheDocument();
   });
 });
 ```
 
-Note: `FilterParamNew` itself is not mocked here — since `isFilterParamNew(fakeParameter)` (the real type guard from `FilterParamUtils`) checks `parameter.type === 'filter-param-new'` (confirm the exact string against `FilterParamUtils.ts`'s `isType` implementation before trusting this fixture), the fake parameter object must satisfy that guard or the component will render `null` past that point same as `VariantStrainFilter` does today. If `FilterParamNew`'s own render throws on the minimal fake `parameter`/`uiState` shapes above (it has its own internal expectations about ontology data), wrap it in a lightweight `jest.mock('@veupathdb/wdk-client/lib/Components', ...)` that mocks out just `FilterParamNew` as a stub while leaving other named exports (if any are used later in this component) untouched — add this mock only if Step 2/4 reveals it's actually needed, don't add it speculatively.
+Note: `FilterParamNew` itself is not mocked here — `isFilterParamNew(fakeParameter)` (the real type guard, `packages/libs/wdk-client/src/Views/Question/Params/FilterParamNew/FilterParamUtils.ts:31-33`) checks `parameter.type === 'filter'` (confirmed — not `'filter-param-new'`), so the fake parameter object above satisfies that guard. If `FilterParamNew`'s own render still throws on the minimal fake `parameter`/`uiState` shapes above (it has its own internal expectations about ontology data beyond the type discriminant), wrap it in a lightweight `jest.mock('@veupathdb/wdk-client/lib/Components', ...)` that mocks out just `FilterParamNew` as a stub while leaving other named exports (if any are used later in this component) untouched — add this mock only if Step 2/4 reveals it's actually needed, don't add it speculatively.
 
 - [ ] **Step 2: Run test to verify it fails**
 
@@ -833,8 +927,41 @@ const METADATA_FILTER_PARAM = 'variation_sample_meta';
 const START_PARAM = 'start_point';
 const END_PARAM = 'end_point_segment';
 const STRAND_PARAM = 'sequence_strand';
+const DEFAULT_VARIANT_OFFSET = 1000;
+
+type WdkRecord = {
+  recordClassName: string;
+  attributes: Record<string, string | null>;
+};
+
+type Region =
+  | { kind: 'range'; start: string; end: string }
+  | { kind: 'point'; location: string; offset: number };
+
+/**
+ * Gene has a natural start/end range (start_min/end_max) to default from.
+ * Variant is a single point (location) with no range — its region input is
+ * a symmetric offset around that point instead, defaulting to 1000nt each
+ * direction. Pulled out as its own pure function so the render logic below
+ * only has to switch on `region.kind`, not repeat the record-class check.
+ */
+export function deriveRegion(record: WdkRecord): Region {
+  if (record.recordClassName === 'VariantRecordClasses.VariantRecordClass') {
+    return {
+      kind: 'point',
+      location: record.attributes.location ?? '',
+      offset: DEFAULT_VARIANT_OFFSET,
+    };
+  }
+  return {
+    kind: 'range',
+    start: record.attributes.start_min ?? '',
+    end: record.attributes.end_max ?? '',
+  };
+}
 
 type Props = {
+  record: WdkRecord;
   dispatch: DispatchAction;
   questionState: QuestionState | undefined;
 };
@@ -844,7 +971,7 @@ const enhance = connect((state: RootState) => ({
 }));
 
 export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
-  const { dispatch, questionState } = props;
+  const { record, dispatch, questionState } = props;
 
   // Renders nothing until observeStrainMsaFilter has seeded this question.
   if (questionState == null || questionState.questionStatus !== 'complete')
@@ -874,26 +1001,48 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     );
   };
 
+  const region = deriveRegion(record);
+
+  const setOffset = (offset: number) => {
+    if (region.kind !== 'point') return;
+    const location = Number(region.location);
+    updateParam(START_PARAM, String(location - offset));
+    updateParam(END_PARAM, String(location + offset));
+  };
+
   return (
     <div>
-      <div>
-        <label>
-          Start{' '}
-          <input
-            type="number"
-            value={paramValues[START_PARAM] ?? ''}
-            onChange={(e) => updateParam(START_PARAM, e.target.value)}
-          />
-        </label>
-        <label>
-          End{' '}
-          <input
-            type="number"
-            value={paramValues[END_PARAM] ?? ''}
-            onChange={(e) => updateParam(END_PARAM, e.target.value)}
-          />
-        </label>
-      </div>
+      {region.kind === 'range' ? (
+        <div>
+          <label>
+            Start{' '}
+            <input
+              type="number"
+              value={paramValues[START_PARAM] ?? ''}
+              onChange={(e) => updateParam(START_PARAM, e.target.value)}
+            />
+          </label>
+          <label>
+            End{' '}
+            <input
+              type="number"
+              value={paramValues[END_PARAM] ?? ''}
+              onChange={(e) => updateParam(END_PARAM, e.target.value)}
+            />
+          </label>
+        </div>
+      ) : (
+        <div>
+          <label>
+            Offset{' '}
+            <input
+              type="number"
+              value={region.offset}
+              onChange={(e) => setOffset(Number(e.target.value))}
+            />
+          </label>
+        </div>
+      )}
       <div>
         <label>
           <input
@@ -929,10 +1078,20 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 });
 ```
 
+Note: `region.offset` (the value shown in the offset `<input>`) is `deriveRegion`'s constant
+default (`1000`) on every render, not tracked back from `paramValues[START_PARAM]`/
+`paramValues[END_PARAM]` — i.e. the offset input's displayed value does not "round-trip" if a
+user's edit produces `start`/`end` that don't correspond to a whole-number offset. This is
+acceptable for this design (the offset control's job is only to _produce_ symmetric start/end
+values, not to reverse-derive an offset from arbitrary ones), but note it as a known limitation
+if it comes up in implementation review — the alternative (tracking offset as its own local
+`useState`, seeded once from `deriveRegion` and never resynced from `paramValues`) is a valid
+fix if this proves surprising in practice, deferred here to keep this task's first cut simple.
+
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `yarn --cwd packages/sites/genomics-site test StrainMsaForm.test.tsx`
-Expected: PASS (3 tests). If `FilterParamNew`'s render throws on the minimal fixture, apply the `jest.mock` fallback described in Step 1's note, then re-run.
+Expected: PASS (6 tests: 2 for `deriveRegion` + 4 for `StrainMsaForm`). If `FilterParamNew`'s render throws on the minimal fixture, apply the `jest.mock` fallback described in Step 1's note, then re-run.
 
 - [ ] **Step 5: Commit**
 
@@ -979,7 +1138,7 @@ function makeCompleteQuestionState(overrides = {}) {
       parametersByName: {
         variation_sample_meta: {
           name: 'variation_sample_meta',
-          type: 'filter-param-new',
+          type: 'filter',
         },
       },
     },
@@ -1099,7 +1258,8 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 
 function renderWithWdkService(
   questionState: unknown,
-  wdkServiceOverrides = {}
+  wdkServiceOverrides = {},
+  record = GENE_RECORD
 ) {
   const store = createStore((state = { question: { questions: {} } }) => ({
     ...state,
@@ -1110,12 +1270,14 @@ function renderWithWdkService(
       <WdkDependenciesContext.Provider
         value={{ wdkService: wdkServiceOverrides } as any}
       >
-        <StrainMsaForm />
+        <StrainMsaForm record={record} />
       </WdkDependenciesContext.Provider>
     </Provider>
   );
 }
 ```
+
+(`GENE_RECORD` is the same fixture defined in Task 5's test file — this task's `describe` block lives in the same file, so no new import is needed.)
 
 - [ ] **Step 2: Run tests to verify they fail**
 
@@ -1314,11 +1476,13 @@ function StrainFilterSection(props) {
       isCollapsed={props.isCollapsed}
       onCollapsedChange={props.onCollapsedChange}
     >
-      <StrainMsaForm />
+      <StrainMsaForm record={props.record} />
     </CollapsibleSection>
   );
 }
 ```
+
+Note: `props.record` here is the same WDK record object `SNPsAlignment` and other record-page components already read `.attributes` off of (`RecordAttributeSection`'s props always include the current `record`) — `StrainMsaForm` needs it to distinguish Gene from Variant and to read `location` (Variant) for its region-input defaults (see Task 5's `deriveRegion`).
 
 - [ ] **Step 2: Delete the old component**
 
@@ -1333,7 +1497,7 @@ Expected: no output (the only two references — the component's own file and th
 
 - [ ] **Step 4: Verify the file still compiles**
 
-Run: `yarn --cwd packages/sites/genomics-site tsc --noEmit` (or the site's actual type-check script — confirm the exact name in `package.json`)
+Run: `yarn --cwd packages/sites/genomics-site compile:check` (the site's own type-check script, `tsc --noEmit` under the hood — confirmed at `packages/sites/genomics-site/package.json:15`)
 Expected: no new errors.
 
 - [ ] **Step 5: Manually smoke-test the Variant record page**
@@ -1361,7 +1525,7 @@ git commit -m "Replace VariantStrainFilter with StrainMsaForm on the Variant rec
 - Consumes: `StrainMsaForm` from `./common/StrainMsaForm`... actually `../common/StrainMsaForm` (this file lives in `components/records/`, `StrainMsaForm` lives in `components/common/`, same relative path convention as Task 7's Variant file).
 - Produces: nothing new — final integration point for Gene.
 
-**Backend dependency reminder (per the design doc):** this task assumes a new gating attribute already exists on the Gene record model (mirroring Variant's `variant_strain_form`), added by the user separately. Confirm the real attribute name before writing Step 1 below — the placeholder name `strain_msa_form` used here must be replaced with whatever the backend actually names it.
+**Backend dependency (per the design doc):** this task requires a new gating attribute on the Gene record model, mirroring Variant's `variant_strain_form`. Confirmed name: **`strain_msa_form`** (same name on both Gene and Variant). The user is adding this attribute to the backend model separately — this task cannot be completed until that attribute exists and is deployed.
 
 - [ ] **Step 1: Add a new case to `RecordAttributeSection`, add the `CollapsibleSection`/`StrainMsaForm` import**
 
@@ -1379,7 +1543,7 @@ export function RecordAttributeSection(props) {
       return <AlphaFoldRecordSection {...restProps} />;
     case 'ai_expression':
       return <AiExpressionSummary {...restProps} />;
-    case 'strain_msa_form': // confirm this matches the real backend attribute name before merging
+    case 'strain_msa_form':
       return (
         <CollapsibleSection
           id={restProps.attribute.name}
@@ -1387,7 +1551,7 @@ export function RecordAttributeSection(props) {
           isCollapsed={restProps.isCollapsed}
           onCollapsedChange={restProps.onCollapsedChange}
         >
-          <StrainMsaForm />
+          <StrainMsaForm record={restProps.record} />
         </CollapsibleSection>
       );
     default:
@@ -1400,7 +1564,7 @@ export function RecordAttributeSection(props) {
 
 - [ ] **Step 2: Verify the file still compiles**
 
-Run: `yarn --cwd packages/sites/genomics-site tsc --noEmit` (or the site's actual type-check script)
+Run: `yarn --cwd packages/sites/genomics-site compile:check` (the site's own type-check script, `tsc --noEmit` under the hood — confirmed at `packages/sites/genomics-site/package.json:15`)
 Expected: no new errors.
 
 - [ ] **Step 3: Manually smoke-test the Gene record page**
@@ -1418,7 +1582,8 @@ git commit -m "Embed StrainMsaForm on the Gene record page"
 
 ## Self-Review Notes
 
-- **Spec coverage:** every section of the design doc has a corresponding task — search params/seeding (Task 4), component rendering (Task 5), FASTA path (Task 6), MSA path (Task 6), shared-piece extraction (Tasks 1-2), Orthologs refactor to consume the extraction (Task 3), both record-class embeddings (Tasks 7-8). The two "Backend dependencies" the spec calls out (Gene's gating attribute, Variant's attribute-name assumption) are called out again at their exact point of use (Task 8's reminder; Task 4's use of `organism_full`/`sequence_id` for both record classes, which the spec already flagged as an assumption to confirm).
-- **No placeholders left unresolved:** Task 8's `'strain_msa_form'` string is flagged inline as needing confirmation against the real backend attribute name — this is a genuine external dependency (not yet decided by anyone, including the user, at spec time), not a plan gap; it cannot be resolved without backend information this plan doesn't have access to. Every other value, signature, and code block is concrete.
+- **Spec coverage:** every section of the design doc has a corresponding task — search params/seeding (Task 4), component rendering (Task 5), FASTA path (Task 6), MSA path (Task 6), shared-piece extraction (Tasks 1-2), Orthologs refactor to consume the extraction (Task 3), both record-class embeddings (Tasks 7-8). The two "Backend dependencies" the spec calls out are both resolved: Gene's gating attribute is `strain_msa_form` (Task 8), and Variant's real attribute names are `organism_text`/`sequence_source_id`, distinct from Gene's `organism_full`/`sequence_id` (Task 4's epic branches on record class accordingly).
+- **No placeholders left unresolved:** all values, signatures, and code blocks are concrete, including the previously-open items: the Gene gating attribute name (`strain_msa_form`, confirmed by the user, same name used on Variant), Variant's real attribute names (`organism_text`/`sequence_source_id`, distinct from Gene's `organism_full`/`sequence_id` — Task 4's epic now branches per record class), `FilterParamNew`'s real type discriminant (`'filter'`, not the originally guessed `'filter-param-new'` — corrected in Tasks 5 and 6's test fixtures), `QuestionActions.UPDATE_ACTIVE_QUESTION`'s exact value (imported directly in Task 4's test rather than hardcoded), and the site's real type-check script name (`compile:check`, confirmed at `packages/sites/genomics-site/package.json:15`, used in Tasks 3/7/8). Task 8's only remaining precondition is that the backend attribute must actually be deployed before that task can be implemented — an external dependency, not a plan gap.
 - **Type/signature consistency check:** `submitClustalMsaJob`'s options shape (Task 2) is used identically in Task 3 (Orthologs refactor) and Task 6 (`StrainMsaForm`'s MSA path) — same field names (`api`, `sequenceType`, `features`, `msaFormat`, `resultRouteBase`, `paramsSummary`). `parseBedToFeatures`'s signature (Task 1) is unchanged from its pre-existing private implementation, so Task 6's usage matches exactly. `buildSearchParameters` (Task 6) is the single place that assembles `searchConfig.parameters`, used by both the FASTA and MSA handlers — no duplicated/divergent param-building code exists between the two paths.
 - **Fixed during self-review:** the first draft of Task 6 redefined `fetchTemporaryResultText` locally inside `StrainMsaForm.tsx` rather than reusing the copy already being extracted in Task 1 for `resolveTranscriptFeatures.ts` — a second inlined copy of exactly the kind the design doc's "Shared pieces" section warns against. Fixed by having Task 1 extract `fetchTemporaryResultText` into `msaJobSubmission.ts` alongside `parseBedToFeatures`, and having Task 6 import it instead of redefining it.
+- **Fixed after user follow-up (Variant is a point, not a range):** the original Task 4/5 draft assumed Gene and Variant share one region-input shape (start/end inputs defaulted from `start_min`/`end_max`) and that `StrainMsaForm` needed no explicit `record` prop at all (it would read only from Redux, like `VariantStrainFilter`). Neither holds: Variant has no `start_min`/`end_max` — it exposes a single `location` point — so its region control is a symmetric offset (default `1000`) instead of two independent inputs, and the component needs `record.recordClassName` to know which shape to render. Fixed by: (1) adding `deriveRegion(record)` to Task 5, a pure function branching on record class and returning a tagged `{kind: 'range'|'point', ...}` value; (2) changing `StrainMsaForm`'s `Props` to require `record`, passed in explicitly from each of the four embed/test call sites (Tasks 5-8), mirroring how `SNPsAlignment` already reads `props.record.attributes` elsewhere in `GeneRecordClasses.GeneRecordClass.jsx`, rather than reaching into Redux for something the caller already has.
