@@ -59,6 +59,7 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
+import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 
 // Old CGI form codes -> new service MsaFormat values (see design doc's
 // carried-over sequenceType/output-format table).
@@ -1674,86 +1675,59 @@ function TranscriptMsaSubmission({
   const [clustalOutFormat, setClustalOutFormat] = useState('clu');
 
   const handleConfirm = async () => {
-    // Must open synchronously, before any await, or browsers may treat
-    // this as no longer "in direct response to a user gesture" and
-    // silently block it as a popup. The tab initially loads about:blank;
-    // we navigate it to the real URL once resolve+submit finish below.
-    // resultTab is null if the browser blocks it anyway (rare, but
-    // possible under strict popup settings) — nothing more to do then.
-    const resultTab = window.open('about:blank', '_blank');
+    // sequenceTypeChoice is the radio the user picked (Protein / CDS
+    // (spliced) / Genomic). It maps to two different things that don't
+    // collapse the same way:
+    //  - the bed report's own `type` (coordinate resolution) — CDS needs
+    //    its own distinct 'spliced_genomic' value, plus splicedGenomic:
+    //    'cds' (always sent, harmless for the other two types).
+    //  - the sequenceType path segment submitJob POSTs to — CDS submits
+    //    as 'genomic' there, not as its own type.
+    const bedReportType =
+      sequenceTypeChoice === 'genomic'
+        ? 'genomic'
+        : sequenceTypeChoice === 'CDS'
+        ? 'spliced_genomic'
+        : 'protein';
+    const sequenceType =
+      sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
 
-    try {
-      // sequenceTypeChoice is the radio the user picked (Protein / CDS
-      // (spliced) / Genomic). It maps to two different things that don't
-      // collapse the same way:
-      //  - the bed report's own `type` (coordinate resolution) — CDS needs
-      //    its own distinct 'spliced_genomic' value, plus splicedGenomic:
-      //    'cds' (always sent, harmless for the other two types).
-      //  - the sequenceType path segment submitJob POSTs to — CDS submits
-      //    as 'genomic' there, not as its own type.
-      const bedReportType =
-        sequenceTypeChoice === 'genomic'
-          ? 'genomic'
-          : sequenceTypeChoice === 'CDS'
-          ? 'spliced_genomic'
-          : 'protein';
-      const sequenceType =
-        sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
+    const resolvedFeatures = await resolveTranscriptFeatures(
+      wdkService,
+      [sourceId, ...selectedTranscriptIds],
+      bedReportType,
+      sequenceTypeChoice === 'genomic'
+        ? {
+            upstream: Number(oneOffset) || 0,
+            downstream: Number(twoOffset) || 0,
+          }
+        : undefined
+    );
 
-      const resolvedFeatures = await resolveTranscriptFeatures(
-        wdkService,
-        [sourceId, ...selectedTranscriptIds],
-        bedReportType,
-        sequenceTypeChoice === 'genomic'
-          ? {
-              upstream: Number(oneOffset) || 0,
-              downstream: Number(twoOffset) || 0,
-            }
-          : undefined
-      );
+    const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
 
-      const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
+    // Protein reference sequences have no strand — the service rejects a
+    // stranded feature on an unstranded (protein) reference.
+    const features =
+      sequenceType === 'protein'
+        ? resolvedFeatures.map(({ strand, ...feature }) => feature)
+        : resolvedFeatures;
 
-      // Protein reference sequences have no strand — the service rejects a
-      // stranded feature on an unstranded (protein) reference.
-      const features =
-        sequenceType === 'protein'
-          ? resolvedFeatures.map(({ strand, ...feature }) => feature)
-          : resolvedFeatures;
+    const api = SequenceRetrievalApi.getClient(
+      SEQUENCE_RETRIEVAL_BASE_URL,
+      wdkService
+    );
 
-      const api = SequenceRetrievalApi.getClient(
-        SEQUENCE_RETRIEVAL_BASE_URL,
-        wdkService
-      );
-      const job = await api.submitJob(sequenceType, {
-        features,
-        postProcess: 'MSA',
-        msaOptions: { format: outFormat },
-      });
-
-      const paramsSummary = `${
+    await submitClustalMsaJob({
+      api,
+      sequenceType,
+      features,
+      msaFormat: outFormat,
+      resultRouteBase: `${rootUrl}/workspace/msa`,
+      paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts, ${outFormat.toUpperCase()} output format`;
-
-      // The already-open tab can't receive React Router location.state, so
-      // paramsSummary/format travel as query params instead.
-      const resultUrl = new URL(
-        `${window.location.origin}${rootUrl}/workspace/msa/result/${job.jobID}`
-      );
-      resultUrl.searchParams.set('paramsSummary', paramsSummary);
-      resultUrl.searchParams.set('format', outFormat);
-      if (resultTab) {
-        resultTab.location.replace(resultUrl.toString());
-      }
-    } catch (error) {
-      // Don't leave a dead blank tab open if resolve/submit fails —
-      // ClustalAlignmentForm's own onConfirm error handling shows the
-      // failure in the original tab.
-      if (resultTab) {
-        resultTab.close();
-      }
-      throw error;
-    }
+      } Transcripts, ${outFormat.toUpperCase()} output format`,
+    });
   };
 
   return (
