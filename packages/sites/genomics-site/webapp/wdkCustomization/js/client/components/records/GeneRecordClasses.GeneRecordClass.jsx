@@ -16,6 +16,7 @@ import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
+  CollapsibleSection,
   Dialog,
   HelpIcon,
   Loading,
@@ -50,6 +51,7 @@ import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxe
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
+import { StrainMsaForm } from '../common/StrainMsaForm';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
@@ -468,6 +470,17 @@ export function RecordAttributeSection(props) {
       return <AlphaFoldRecordSection {...restProps} />;
     case 'ai_expression':
       return <AiExpressionSummary {...restProps} />;
+    case 'strain_msa_form':
+      return (
+        <CollapsibleSection
+          id={restProps.attribute.name}
+          headerContent={restProps.attribute.displayName}
+          isCollapsed={restProps.isCollapsed}
+          onCollapsedChange={restProps.onCollapsedChange}
+        >
+          <StrainMsaForm record={restProps.record} />
+        </CollapsibleSection>
+      );
     default:
       return <DefaultComponent {...restProps} />;
   }
