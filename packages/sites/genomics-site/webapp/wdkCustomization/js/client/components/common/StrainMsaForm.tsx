@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
@@ -7,6 +7,17 @@ import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionSt
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { isType as isFilterParamNew } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
+import {
+  fetchTemporaryResultText,
+  parseBedToFeatures,
+  submitClustalMsaJob,
+} from '@veupathdb/web-common/lib/util/msaJobSubmission';
+import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
+import { rootUrl } from '../../config';
+import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
 
 const SEARCH_NAME = 'StrainSegmentsByMeta';
 const METADATA_FILTER_PARAM = 'variation_sample_meta';
@@ -14,6 +25,22 @@ const START_PARAM = 'start_point';
 const END_PARAM = 'end_point_segment';
 const STRAND_PARAM = 'sequence_strand';
 const DEFAULT_VARIANT_OFFSET = 1000;
+const SEQUENCE_TYPE = 'dnaseq';
+const MSA_FORMAT = 'clustal';
+
+// The six client-known params, in the shape StrainSegmentsByMeta's
+// searchConfig.parameters expects. eda_sample_table_suffix is deliberately
+// excluded — it is backend-set and must never be sent by the client.
+function buildSearchParameters(paramValues: Record<string, string>) {
+  return {
+    organismSinglePick: paramValues.organismSinglePick,
+    sequenceId: paramValues.sequenceId,
+    sequence_strand: paramValues.sequence_strand,
+    start_point: paramValues.start_point,
+    end_point_segment: paramValues.end_point_segment,
+    variation_sample_meta: paramValues.variation_sample_meta,
+  };
+}
 
 type WdkRecord = {
   recordClassName: string;
@@ -59,6 +86,13 @@ const enhance = connect((state: RootState) => ({
 export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   const { record, dispatch, questionState } = props;
 
+  // Hooks must run unconditionally on every render (Rules of Hooks), so they
+  // are called here, above the early returns below that gate on
+  // questionState/filterParameter — even though their results are only used
+  // once this function reaches the submit-handling logic further down.
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const [outputChoice, setOutputChoice] = useState<'fasta' | 'msa'>('msa');
+
   // Renders nothing until observeStrainMsaFilter has seeded this question.
   if (questionState == null || questionState.questionStatus !== 'complete')
     return null;
@@ -94,6 +128,48 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     const location = Number(region.location);
     updateParam(START_PARAM, String(location - offset));
     updateParam(END_PARAM, String(location + offset));
+  };
+
+  const searchConfig = { parameters: buildSearchParameters(paramValues) };
+
+  const handleFastaSubmit = async () => {
+    const resultTab = window.open('about:blank', '_blank');
+    try {
+      const path = await wdkService.getTemporaryResultPath(
+        { searchName, searchConfig },
+        'fasta',
+        {}
+      );
+      const fastaText = await fetchTemporaryResultText(path);
+      resultTab?.document?.write(`<pre>${fastaText}</pre>`);
+    } catch (error) {
+      if (resultTab) resultTab.close();
+      throw error;
+    }
+  };
+
+  const handleMsaConfirm = async () => {
+    const path = await wdkService.getTemporaryResultPath(
+      { searchName, searchConfig },
+      'bed',
+      {}
+    );
+    const bedText = await fetchTemporaryResultText(path);
+    const features = parseBedToFeatures(bedText);
+
+    const api = SequenceRetrievalApi.getClient(
+      SEQUENCE_RETRIEVAL_BASE_URL,
+      wdkService
+    );
+
+    await submitClustalMsaJob({
+      api,
+      sequenceType: SEQUENCE_TYPE,
+      features,
+      msaFormat: MSA_FORMAT,
+      resultRouteBase: `${rootUrl}/workspace/msa`,
+      paramsSummary: `Strain segments, ${MSA_FORMAT.toUpperCase()} output format`,
+    });
   };
 
   return (
@@ -159,6 +235,40 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           updateParam(METADATA_FILTER_PARAM, newValue)
         }
       />
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="output_choice"
+            checked={outputChoice === 'fasta'}
+            onChange={() => setOutputChoice('fasta')}
+          />{' '}
+          FASTA
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="output_choice"
+            checked={outputChoice === 'msa'}
+            onChange={() => setOutputChoice('msa')}
+          />{' '}
+          Multiple sequence alignment (Clustal Omega)
+        </label>
+      </div>
+      {outputChoice === 'fasta' ? (
+        <button type="button" onClick={handleFastaSubmit}>
+          Submit
+        </button>
+      ) : (
+        <ClustalAlignmentForm
+          action="about:blank"
+          sequenceCount={2}
+          sequenceType="strain segments"
+          onConfirm={handleMsaConfirm}
+        >
+          <input type="submit" value="Submit" />
+        </ClustalAlignmentForm>
+      )}
     </div>
   );
 });
