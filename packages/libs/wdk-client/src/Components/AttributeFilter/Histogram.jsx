@@ -12,7 +12,6 @@ import {
 } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { lazy } from '../../Utils/ComponentUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import DateRangeSelector from '../../Components/InputControls/DateRangeSelector';
@@ -68,6 +67,7 @@ var Histogram = (function () {
       super(props);
       this.handleResize = throttle(this.handleResize.bind(this), 100);
       this.emitStateChange = debounce(this.emitStateChange, 100);
+      this.containerRef = React.createRef();
       this.state = {
         uiState: this.getStateFromProps(props),
         showSettings:
@@ -80,7 +80,7 @@ var Histogram = (function () {
 
     componentDidMount() {
       $(window).on('resize', this.handleResize);
-      $(ReactDOM.findDOMNode(this))
+      $(this.containerRef.current)
         .on('plotselected .chart', this.handlePlotSelected.bind(this))
         .on('plotselecting .chart', this.handlePlotSelecting.bind(this))
         .on('plotunselected .chart', this.handlePlotUnselected.bind(this))
@@ -416,7 +416,7 @@ var Histogram = (function () {
 
       if (this.plot) this.plot.destroy();
 
-      this.$chart = $(ReactDOM.findDOMNode(this)).find('.chart');
+      this.$chart = $(this.containerRef.current).find('.chart');
       this.plot = $.plot(this.$chart, seriesData, plotOptions);
     }
 
@@ -656,7 +656,7 @@ var Histogram = (function () {
       );
 
       return (
-        <div className="chart-container">
+        <div ref={this.containerRef} className="chart-container">
           <div className="chart"></div>
           <div className="chart-title y-axis">
             <div>{yaxisLabel}</div>
