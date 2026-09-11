@@ -30,10 +30,11 @@ implemented and merged in #1852): selected transcript IDs are resolved to `Featu
 (`packages/libs/compute-platform-job`), and the result is shown on a polling results page at
 `/workspace/msa/result/:jobId`. This design reuses that infrastructure unchanged.
 
-This design replaces `VariantStrainFilter` with a working feature, embedded identically on
-**both** the Gene and Variant record pages: pick a genomic region (defaulted from the record,
-user-adjustable) and a metadata filter over strains, then either download the matching strain
-segments as FASTA or submit them to Clustal Omega via the existing async MSA infrastructure.
+This design replaces `VariantStrainFilter` with a working feature, embedded on **both** the
+Gene and Variant record pages (with a small region-input difference between the two — see
+below): pick a genomic region (defaulted from the record, user-adjustable) and a metadata
+filter over strains, then either download the matching strain segments as FASTA or submit them
+to Clustal Omega via the existing async MSA infrastructure.
 
 ## The `StrainSegmentsByMeta` search
 
@@ -155,7 +156,10 @@ wired, even though its name is now settled.
 
 New shared component (exact name/location TBD at planning time, e.g.
 `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/common/StrainMsaForm.tsx`),
-embedded from both record classes' `RecordAttributeSection`. Reads
+embedded from both record classes' `RecordAttributeSection`, which pass their own `record` down
+as an explicit prop (the same way `SNPsAlignment` reads `props.record.attributes` today) — this
+is how the component knows which record class it's in, for the region-input branching below,
+without reaching into Redux for something its caller already has in hand. Reads
 `state.question.questions['StrainSegmentsByMeta']` the same way `VariantStrainFilter` reads
 its question state today (`get(state.question, ['questions', 'StrainSegmentsByMeta'], undefined)`),
 rendering nothing until `questionStatus === 'complete'`.
