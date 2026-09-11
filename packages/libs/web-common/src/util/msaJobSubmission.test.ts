@@ -82,14 +82,8 @@ function makeFakeApi(job: { jobID: string }) {
 }
 
 describe('submitClustalMsaJob', () => {
-  const originalOpen = window.open;
-  afterEach(() => {
-    window.open = originalOpen;
-  });
-
-  it('opens a blank tab before submitting, then navigates it to the result URL', async () => {
+  it('navigates the passed-in tab to the result URL after submitting', async () => {
     const fakeTab = makeFakeTab();
-    window.open = jest.fn().mockReturnValue(fakeTab);
     const api = makeFakeApi({ jobID: 'abc123' });
     const features = [{ contig: 'x', start: 0, end: 10 }];
 
@@ -100,9 +94,9 @@ describe('submitClustalMsaJob', () => {
       msaFormat: 'clustal',
       resultRouteBase: '/app/workspace/msa',
       paramsSummary: '5 Strain Segments',
+      resultTab: fakeTab as unknown as Window,
     });
 
-    expect(window.open).toHaveBeenCalledWith('about:blank', '_blank');
     expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
       features,
       postProcess: 'MSA',
@@ -115,9 +109,8 @@ describe('submitClustalMsaJob', () => {
     expect(navigatedUrl).toContain('format=clustal');
   });
 
-  it('closes the tab and rethrows if submitJob rejects', async () => {
+  it('closes the passed-in tab and rethrows if submitJob rejects', async () => {
     const fakeTab = makeFakeTab();
-    window.open = jest.fn().mockReturnValue(fakeTab);
     const api = {
       submitJob: jest.fn().mockRejectedValue(new Error('service down')),
     } as any;
@@ -130,6 +123,7 @@ describe('submitClustalMsaJob', () => {
         msaFormat: 'clustal',
         resultRouteBase: '/app/workspace/msa',
         paramsSummary: '0 Strain Segments',
+        resultTab: fakeTab as unknown as Window,
       })
     ).rejects.toThrow('service down');
 
@@ -137,8 +131,7 @@ describe('submitClustalMsaJob', () => {
     expect(fakeTab.location.replace).not.toHaveBeenCalled();
   });
 
-  it('does not throw if window.open returns null (popup blocked)', async () => {
-    window.open = jest.fn().mockReturnValue(null);
+  it('does not throw if the passed-in tab is null (popup blocked)', async () => {
     const api = makeFakeApi({ jobID: 'abc123' });
 
     await expect(
@@ -149,6 +142,7 @@ describe('submitClustalMsaJob', () => {
         msaFormat: 'clustal',
         resultRouteBase: '/app/workspace/msa',
         paramsSummary: '0 Strain Segments',
+        resultTab: null,
       })
     ).resolves.toBeUndefined();
   });

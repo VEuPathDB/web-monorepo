@@ -56,6 +56,15 @@ interface SubmitClustalMsaJobOptions {
   resultRouteBase: string;
   /** Shown on the result page; e.g. "13 Transcripts, CLUSTAL output format". */
   paramsSummary: string;
+  /**
+   * A tab already opened (via `window.open`) by the caller, as the very
+   * first, synchronous statement of its click/confirm handler — before any
+   * `await`. Browsers block a popup that isn't opened synchronously within
+   * a user gesture's call stack, so this function cannot safely open the
+   * tab itself once any awaited work (e.g. resolving features from a
+   * network report) precedes the submission.
+   */
+  resultTab: Window | null;
 }
 
 /**
@@ -63,9 +72,8 @@ interface SubmitClustalMsaJobOptions {
  *
  * The tab must be opened synchronously by the caller's event handler,
  * before any await, or browsers may treat it as no longer "in direct
- * response to a user gesture" and silently block it as a popup — this
- * function itself does the opening (as its very first, synchronous
- * statement) so every caller gets that guarantee for free.
+ * response to a user gesture" and silently block it as a popup — see
+ * `resultTab` above.
  */
 export async function submitClustalMsaJob({
   api,
@@ -74,9 +82,8 @@ export async function submitClustalMsaJob({
   msaFormat,
   resultRouteBase,
   paramsSummary,
+  resultTab,
 }: SubmitClustalMsaJobOptions): Promise<void> {
-  const resultTab = window.open('about:blank', '_blank');
-
   try {
     const job = await api.submitJob(sequenceType, {
       features,

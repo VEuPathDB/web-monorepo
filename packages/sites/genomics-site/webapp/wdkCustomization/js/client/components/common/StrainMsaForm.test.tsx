@@ -221,6 +221,139 @@ function makeCompleteQuestionState(overrides = {}) {
   };
 }
 
+describe('StrainMsaForm region seeding', () => {
+  // A reducer that actually applies QuestionActions.updateParamValue to
+  // paramValues, so the effect's dispatch is observable end-to-end (through
+  // a re-render), rather than just asserting an action shape was dispatched.
+  function makeLiveStore(initialQuestionState: any) {
+    return createStore(
+      (
+        state: { question: { questions: Record<string, any> } } = {
+          question: {
+            questions: { StrainSegmentsByMeta: initialQuestionState },
+          },
+        },
+        action: any
+      ) => {
+        if (action.type === 'question/update-param-value') {
+          const current = state.question.questions.StrainSegmentsByMeta;
+          return {
+            ...state,
+            question: {
+              questions: {
+                StrainSegmentsByMeta: {
+                  ...current,
+                  paramValues: {
+                    ...current.paramValues,
+                    [action.payload.parameter.name]: action.payload.paramValue,
+                  },
+                },
+              },
+            },
+          };
+        }
+        return state;
+      }
+    );
+  }
+
+  function renderLive(questionState: unknown, record: TestRecord) {
+    const store = makeLiveStore(questionState);
+    render(
+      <Provider store={store}>
+        <WdkDependenciesContext.Provider value={{ wdkService: {} } as any}>
+          <StrainMsaForm record={record} />
+        </WdkDependenciesContext.Provider>
+      </Provider>
+    );
+    return store;
+  }
+
+  it('seeds start_point/end_point_segment from location +/- 1000 for a Variant record, without user interaction', async () => {
+    const questionState = makeCompleteQuestionState({
+      question: {
+        urlSegment: 'StrainSegmentsByMeta',
+        parametersByName: {
+          variation_sample_meta: {
+            name: 'variation_sample_meta',
+            type: 'filter',
+          },
+          start_point: { name: 'start_point' },
+          end_point_segment: { name: 'end_point_segment' },
+        },
+      },
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: '+',
+        // Deliberately NOT pre-seeded to location +/- 1000, to reproduce the
+        // gap: nothing upstream (Task 4's epic) sets these two params.
+        start_point: '',
+        end_point_segment: '',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(questionState, VARIANT_RECORD);
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('1500');
+      expect(current.paramValues.end_point_segment).toBe('3500');
+    });
+  });
+
+  it('seeds start_point/end_point_segment from start_min/end_max for a Gene record, without user interaction', async () => {
+    const questionState = makeCompleteQuestionState({
+      question: {
+        urlSegment: 'StrainSegmentsByMeta',
+        parametersByName: {
+          variation_sample_meta: {
+            name: 'variation_sample_meta',
+            type: 'filter',
+          },
+          start_point: { name: 'start_point' },
+          end_point_segment: { name: 'end_point_segment' },
+        },
+      },
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: '+',
+        start_point: '',
+        end_point_segment: '',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(questionState, GENE_RECORD);
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('100');
+      expect(current.paramValues.end_point_segment).toBe('5000');
+    });
+  });
+
+  it('does not re-dispatch once start_point/end_point_segment already reflect the derived region', async () => {
+    const questionState = makeCompleteQuestionState({
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: '+',
+        start_point: '1500',
+        end_point_segment: '3500',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(questionState, VARIANT_RECORD);
+    const dispatchSpy = jest.spyOn(store, 'dispatch');
+
+    // Give any effect a chance to run; it should see the params already
+    // match the derived region and skip dispatching.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(dispatchSpy).not.toHaveBeenCalled();
+  });
+});
+
 describe('StrainMsaForm submission', () => {
   const originalOpen = window.open;
   const originalFetch = global.fetch;
@@ -272,6 +405,45 @@ describe('StrainMsaForm submission', () => {
     expect(fakeTab.location.replace).not.toHaveBeenCalled(); // FASTA writes text directly, doesn't navigate
   });
 
+  it('FASTA radio: renders a visible error message when getTemporaryResultPath rejects', async () => {
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockRejectedValue(new Error('service unavailable'));
+
+    renderWithWdkService(makeCompleteQuestionState(), {
+      getTemporaryResultPath,
+    });
+
+    await userEvent.click(screen.getByLabelText(/fasta/i));
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'service unavailable'
+    );
+    expect(fakeTab.close).toHaveBeenCalledTimes(1);
+  });
+
+  it('FASTA radio: renders a visible error message when fetch rejects', async () => {
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockResolvedValue('/temporary-results/xyz');
+    global.fetch = jest.fn().mockRejectedValue(new Error('network down'));
+
+    renderWithWdkService(makeCompleteQuestionState(), {
+      getTemporaryResultPath,
+    });
+
+    await userEvent.click(screen.getByLabelText(/fasta/i));
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('network down');
+    expect(fakeTab.close).toHaveBeenCalledTimes(1);
+  });
+
   it('MSA radio: fetches a bed report, parses it, and submits a dnaseq/clustal job', async () => {
     const submitSpy = jest
       .spyOn(msaJobSubmission, 'submitClustalMsaJob')
@@ -282,6 +454,8 @@ describe('StrainMsaForm submission', () => {
     global.fetch = jest.fn().mockResolvedValue({
       text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
     });
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
 
     renderWithWdkService(makeCompleteQuestionState(), {
       getTemporaryResultPath,
@@ -320,8 +494,13 @@ describe('StrainMsaForm submission', () => {
             },
           ],
           msaFormat: 'clustal',
+          resultTab: fakeTab,
         })
       )
     );
+    // The tab must be opened synchronously by the click handler itself
+    // (before the awaited getTemporaryResultPath/fetch chain), not by
+    // submitClustalMsaJob — otherwise browsers may block it as a popup.
+    expect(window.open).toHaveBeenCalledWith('about:blank', '_blank');
   });
 });

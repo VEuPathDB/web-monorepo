@@ -1688,6 +1688,13 @@ function TranscriptMsaSubmission({
   const [clustalOutFormat, setClustalOutFormat] = useState('clu');
 
   const handleConfirm = async () => {
+    // Open the result tab as the very first, synchronous statement of this
+    // handler, before any await — otherwise, by the time
+    // resolveTranscriptFeatures's network round-trip resolves, we're no
+    // longer inside the user gesture's call stack and browsers may block
+    // window.open as a popup.
+    const resultTab = window.open('about:blank', '_blank');
+
     // sequenceTypeChoice is the radio the user picked (Protein / CDS
     // (spliced) / Genomic). It maps to two different things that don't
     // collapse the same way:
@@ -1740,6 +1747,7 @@ function TranscriptMsaSubmission({
       paramsSummary: `${
         selectedTranscriptIds.length + 1
       } Transcripts, ${outFormat.toUpperCase()} output format`,
+      resultTab,
     });
   };
 

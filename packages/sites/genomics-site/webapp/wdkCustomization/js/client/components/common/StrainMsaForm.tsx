@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
@@ -92,6 +92,65 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   // once this function reaches the submit-handling logic further down.
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const [outputChoice, setOutputChoice] = useState<'fasta' | 'msa'>('msa');
+  const [fastaSubmitError, setFastaSubmitError] = useState<string | null>(null);
+
+  // Task 4's Redux epic deliberately doesn't seed start_point/end_point_segment
+  // from the record (Gene's start_min/end_max, or Variant's location +/- the
+  // default offset) — that's left to this component. Seed them once real
+  // paramValues are available, guarded by this ref so it only fires once per
+  // mount/record rather than on every keystroke (which would otherwise fight
+  // the user's own edits and/or loop).
+  const hasSeededRegionRef = useRef(false);
+
+  useEffect(() => {
+    if (hasSeededRegionRef.current) return;
+    if (questionState == null || questionState.questionStatus !== 'complete')
+      return;
+
+    const { question, paramValues } = questionState;
+    const region = deriveRegion(record);
+    const [derivedStart, derivedEnd] =
+      region.kind === 'range'
+        ? [region.start, region.end]
+        : [
+            String(Number(region.location) - region.offset),
+            String(Number(region.location) + region.offset),
+          ];
+
+    if (
+      paramValues[START_PARAM] === derivedStart &&
+      paramValues[END_PARAM] === derivedEnd
+    ) {
+      hasSeededRegionRef.current = true;
+      return;
+    }
+
+    const searchName = question.urlSegment;
+    const startParameter = question.parametersByName[START_PARAM];
+    const endParameter = question.parametersByName[END_PARAM];
+    if (startParameter != null) {
+      dispatch(
+        QuestionActions.updateParamValue({
+          searchName,
+          parameter: startParameter,
+          paramValues,
+          paramValue: derivedStart,
+        })
+      );
+    }
+    if (endParameter != null) {
+      dispatch(
+        QuestionActions.updateParamValue({
+          searchName,
+          parameter: endParameter,
+          paramValues,
+          paramValue: derivedEnd,
+        })
+      );
+    }
+    hasSeededRegionRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionState]);
 
   // Renders nothing until observeStrainMsaFilter has seeded this question.
   if (questionState == null || questionState.questionStatus !== 'complete')
@@ -134,6 +193,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   const handleFastaSubmit = async () => {
     const resultTab = window.open('about:blank', '_blank');
+    setFastaSubmitError(null);
     try {
       const path = await wdkService.getTemporaryResultPath(
         { searchName, searchConfig },
@@ -144,11 +204,21 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       resultTab?.document?.write(`<pre>${fastaText}</pre>`);
     } catch (error) {
       if (resultTab) resultTab.close();
-      throw error;
+      setFastaSubmitError(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while submitting the FASTA request.'
+      );
     }
   };
 
   const handleMsaConfirm = async () => {
+    // Open the result tab as the very first, synchronous statement of this
+    // handler, before any await — otherwise, by the time the bed report
+    // fetch/parse resolves, we're no longer inside the user gesture's call
+    // stack and browsers may block window.open as a popup.
+    const resultTab = window.open('about:blank', '_blank');
+
     const path = await wdkService.getTemporaryResultPath(
       { searchName, searchConfig },
       'bed',
@@ -169,6 +239,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       msaFormat: MSA_FORMAT,
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `Strain segments, ${MSA_FORMAT.toUpperCase()} output format`,
+      resultTab,
     });
   };
 
@@ -256,9 +327,16 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         </label>
       </div>
       {outputChoice === 'fasta' ? (
-        <button type="button" onClick={handleFastaSubmit}>
-          Submit
-        </button>
+        <div>
+          <button type="button" onClick={handleFastaSubmit}>
+            Submit
+          </button>
+          {fastaSubmitError && (
+            <div role="alert" style={{ color: 'red' }}>
+              {fastaSubmitError}
+            </div>
+          )}
+        </div>
       ) : (
         <ClustalAlignmentForm
           action="about:blank"
