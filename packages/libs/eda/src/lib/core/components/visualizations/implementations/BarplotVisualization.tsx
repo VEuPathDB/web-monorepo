@@ -11,7 +11,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { Toggle } from '@veupathdb/coreui';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
@@ -53,6 +53,7 @@ import {
   hasIncompleteCases,
   assertValidInputVariables,
   substituteUnselectedToken,
+  requiredInputsAreSelected,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -85,13 +86,18 @@ import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import TruncationNotification from '../TruncationNotification';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
+  useAxisTruncationWarningEffect,
+  useConfigChangeHandlerFactory,
   useNeutralPaletteProps,
   useVizConfig,
 } from '../../../hooks/visualizations';
+import {
+  modalPlotContainerStyles,
+  usePlotContainerStyles,
+} from '../plotStyles';
 import {
   barplotDefaultDependentAxisMax,
   barplotDefaultDependentAxisMinPos,
@@ -113,21 +119,7 @@ export type BarplotDataWithStatistics = (
 ) &
   CoverageStatistics;
 
-const plotContainerStyles = {
-  height: 450,
-  width: 750,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
-
 const plotSpacingOptions = {};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
-};
 
 export const barplotVisualization = createVisualizationPlugin({
   selectorIcon: BarSVG,
@@ -199,12 +191,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   // use useVizConfig hook
@@ -258,43 +246,31 @@ function BarplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
-  // prettier-ignore
-  const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = {
-        [key]: newValue,
-        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-	      ...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
-      };
-      updateVizConfig(newPartialConfig);
-      if (resetAxisRanges)
-	setTruncatedDependentAxisWarning('');
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<BarplotConfig>(updateVizConfig);
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
-  // set checkedLegendItems: undefined for the change of showMissingness
+  // also reset checkedLegendItems for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
-    true,
-    true
+    { checkedLegendItems: undefined, dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   const getOverlayVariable = options?.getOverlayVariable;
@@ -627,13 +603,11 @@ function BarplotViz(props: VisualizationProps<Options>) {
     true // use inclusive less than equal for the range min
   );
 
-  useEffect(() => {
-    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
+  useAxisTruncationWarningEffect(
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning
+  );
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -815,21 +789,10 @@ function BarplotViz(props: VisualizationProps<Options>) {
                 vizConfig.dependentAxisValueSpec === 'Auto-zoom'
               }
             />
-            {/* truncation notification */}
-            {truncatedDependentAxisWarning ? (
-              <Notification
-                title={''}
-                text={truncatedDependentAxisWarning}
-                // this was defined as LIGHT_BLUE
-                color={'#5586BE'}
-                onAcknowledgement={() => {
-                  setTruncatedDependentAxisWarning('');
-                }}
-                showWarningIcon={true}
-                // change maxWidth
-                containerStyles={{ maxWidth: '350px' }}
-              />
-            ) : null}
+            <TruncationNotification
+              warning={truncatedDependentAxisWarning}
+              onAcknowledge={() => setTruncatedDependentAxisWarning('')}
+            />
           </LabelledGroup>
         </div>
       </div>
@@ -893,9 +856,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const areRequiredInputsSelected =
     !dataElementConstraints ||
-    Object.entries(dataElementConstraints[0])
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    requiredInputsAreSelected(dataElementConstraints, vizConfig);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
   const plotSubtitle = options?.getPlotSubtitle?.();
