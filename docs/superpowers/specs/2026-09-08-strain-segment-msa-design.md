@@ -41,15 +41,15 @@ Route: `search/strain-genomic-segment/StrainSegmentsByMeta`. Its rows are strain
 segments (intervals on a strain's genomic sequence) — not variants, not genes. Params (from
 the WDK model):
 
-| Param                                            | Source in this design                                                                  | User-editable?                          |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------- | --------------------------------------- |
-| `organismSinglePick`                             | fixed, from the record's `organism_full` attribute                                     | no                                      |
-| `sequenceId`                                     | fixed, from the record's `sequence_id` attribute                                       | no                                      |
-| `sequence_strand` (`SpanParams.sequence_strand`) | UI control, defaults to `+` (forward)                                                  | **yes**                                 |
-| `start_point`                                    | user-adjustable, defaulted from `start_min`                                            | yes                                     |
-| `end_point_segment`                              | user-adjustable, defaulted from `end_max`                                              | yes                                     |
-| `variation_sample_meta`                          | the `FilterParamNew` metadata-filter widget — this _is_ the strain-selection mechanism | yes                                     |
-| `eda_sample_table_suffix`                        | backend-set                                                                            | omitted from client submission entirely |
+| Param                                            | Source in this design                                                                                   | User-editable?                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `organismSinglePick`                             | fixed, from the record's organism attribute (Gene: `organism_full`; Variant: `organism_text`)           | no                                                  |
+| `sequenceId`                                     | fixed, from the record's sequence attribute (Gene: `sequence_id`; Variant: `sequence_source_id`)        | no                                                  |
+| `sequence_strand` (`SpanParams.sequence_strand`) | UI control, defaults to `+` (forward)                                                                   | **yes**                                             |
+| `start_point`                                    | Gene: user-adjustable, defaulted from `start_min`. Variant: computed as `location - offset` (see below) | yes (Gene directly; Variant via the offset control) |
+| `end_point_segment`                              | Gene: user-adjustable, defaulted from `end_max`. Variant: computed as `location + offset` (see below)   | yes (Gene directly; Variant via the offset control) |
+| `variation_sample_meta`                          | the `FilterParamNew` metadata-filter widget — this _is_ the strain-selection mechanism                  | yes                                                 |
+| `eda_sample_table_suffix`                        | backend-set                                                                                             | omitted from client submission entirely             |
 
 Strand is **not** read from any record attribute (no `strand_plus_minus` or similar) in either
 the Gene or Variant context — it is purely a UI control defaulting to `+`, identical in both
@@ -57,11 +57,32 @@ places. This was a deliberate pivot during design: reading a gene's real strand 
 required either a new default attribute or a `bed`-report lookup (the way Orthologs resolves a
 gene's strand), and neither is needed since the user can simply choose it.
 
-`organismSinglePick`/`sequenceId` are the only two attributes read off the record; this
-assumes the Variant record class exposes attributes with the same names/semantics
-(`organism_full`, `sequence_id`, `start_min`, `end_max`) as Gene — if Variant's actual
-attribute names differ, the per-record-class seeding step (below) uses whatever the real names
-are, but the search params and UI stay identical.
+`organismSinglePick`/`sequenceId` are the only two attributes read off the record.
+**Confirmed: Gene and Variant do not share attribute names.** Gene uses `organism_full`/
+`sequence_id`; Variant uses `organism_text`/`sequence_source_id`. The per-record-class seeding
+step (below) branches on `recordClassName` to read the correct pair — the search params
+(`organismSinglePick`, `sequenceId`) stay identical regardless, only the seeding source
+differs.
+
+### Region input differs by record class: Gene is a range, Variant is a point
+
+Gene has a natural start/end range (`start_min`/`end_max`), so its region-input UI is the two
+editable `start_point`/`end_point_segment` number inputs described in "The component" below,
+defaulted from those two attributes.
+
+Variant has no range — it is a single point on the genome, exposed via a `location` attribute.
+There is nothing for a Gene-style start/end pair to default from. Instead, Variant's region
+input is a single **offset** number control, defaulting to **1000**, applied symmetrically
+around `location` to derive the same two search params Gene uses directly:
+
+- `start_point = location - offset`
+- `end_point_segment = location + offset`
+
+This is a genuine UI difference between the two embeddings, not just a different attribute
+name to read — `StrainMsaForm` renders a different region-input control depending on which
+record class embeds it (Gene: two inputs, start and end; Variant: one input, the offset),
+while everything downstream of that (`sequence_strand`, the metadata filter, the FASTA/MSA
+radio, submission) is identical between the two.
 
 ## What's genuinely new vs. what the Orthologs flow already solved
 
@@ -96,19 +117,19 @@ deliberately avoided:
 Modeled directly on the existing `observeVariantStrainFilter` epic
 (`packages/sites/genomics-site/webapp/wdkCustomization/js/client/storeModules/Record.js:329`),
 which today seeds `VariantAlignmentForm`'s one param (`organismSinglePick`) from
-`record.attributes.organism_text` whenever a Variant record loads. This design needs one such
-epic per record class this feature is embedded in (Gene and Variant), each keyed on
-`RECORD_UPDATE` for its own `recordClassName`, dispatching:
+`record.attributes.organism_text` whenever a Variant record loads. This design uses a single
+epic covering both record classes (since the seeding logic is otherwise identical), branching
+on `recordClassName` to pick the right attribute names — Gene's `organism_full`/`sequence_id`
+or Variant's `organism_text`/`sequence_source_id` — then dispatching the same shape of action
+either way:
 
 ```js
 QuestionActions.updateActiveQuestion({
   searchName: 'StrainSegmentsByMeta',
   initialParamData: {
-    organismSinglePick: record.attributes.organism_full,
-    sequenceId: record.attributes.sequence_id,
+    organismSinglePick,
+    sequenceId,
     sequence_strand: '+',
-    start_point: record.attributes.start_min,
-    end_point_segment: record.attributes.end_max,
     variation_sample_meta: JSON.stringify({ filters: [] }),
   },
 });
@@ -125,25 +146,27 @@ component to embed from. `VariantRecordClasses.VariantRecordClass.jsx:5-24`'s ex
 inner component (see below) instead of `VariantStrainFilter`. `GeneRecordClasses.GeneRecordClass.jsx:463`'s
 `RecordAttributeSection` gets a new, analogous case added — it has no strain-related case
 today — gated on a new WDK-model attribute on the Gene record class, mirroring Variant's own
-`variant_strain_form` gate. **This is a backend dependency**: the attribute does not exist yet
-and must be added to the Gene record model before the client-side gating case can be wired
-(exact attribute name TBD; confirm it against the backend change before implementing this
-case).
+`variant_strain_form` gate. Confirmed name: **`strain_msa_form`** (the same name is used on
+both Gene and Variant). **This remains a backend dependency**: the attribute does not exist yet
+on Gene and must be added to the Gene record model before the client-side gating case can be
+wired, even though its name is now settled.
 
 ## The component (replaces `VariantStrainFilter`)
 
 New shared component (exact name/location TBD at planning time, e.g.
 `packages/sites/genomics-site/webapp/wdkCustomization/js/client/components/common/StrainMsaForm.tsx`),
-embedded identically from both record classes' `RecordAttributeSection`. Reads
+embedded from both record classes' `RecordAttributeSection`. Reads
 `state.question.questions['StrainSegmentsByMeta']` the same way `VariantStrainFilter` reads
 its question state today (`get(state.question, ['questions', 'StrainSegmentsByMeta'], undefined)`),
 rendering nothing until `questionStatus === 'complete'`.
 
 Renders:
 
-- Editable `start_point` / `end_point_segment` number inputs, dispatching
-  `QuestionActions.updateParamValue` on change (mirrors `VariantStrainFilter`'s existing
-  `onParamValueChange` wiring, just for two more params).
+- **Region input, which differs by record class** (see above): on Gene, editable `start_point`/
+  `end_point_segment` number inputs; on Variant, a single editable offset number input
+  (default `1000`) that computes `start_point`/`end_point_segment` from the record's `location`
+  attribute. Either way, dispatching `QuestionActions.updateParamValue` on change to update the
+  same two underlying search params.
 - A `sequence_strand` +/- radio or toggle, default `+`, same dispatch pattern.
 - The `FilterParamNew` widget bound to `variation_sample_meta` — this part is a direct carry
   from today's `VariantStrainFilter`, just retargeted at the new search/param name.
@@ -250,13 +273,16 @@ Explicitly **not** shared, because the mechanisms are genuinely different:
 - **No changes to `compute-platform-job`, `ClustalAlignmentForm`, or any Orthologs code path**
   beyond extracting the two shared pieces above into a shared location.
 
-## Backend dependencies (block implementation until resolved)
+## Backend dependencies
 
 - **A new gating attribute on the Gene record model**, mirroring Variant's
   `variant_strain_form`, needed for `GeneRecordClasses.GeneRecordClass.jsx`'s
-  `RecordAttributeSection` to know when to render the new section. Does not exist yet — the
-  user will add it. Exact name TBD.
-- **Confirming Variant record attribute names.** This design assumes Variant exposes
-  `organism_full`/`sequence_id`/`start_min`/`end_max` with the same meaning Gene does;
-  implementation must confirm this (or substitute the real names) before wiring the Variant
-  epic.
+  `RecordAttributeSection` to know when to render the new section. Confirmed name:
+  **`strain_msa_form`** (the same name is used on both Gene and Variant). Does not exist yet on
+  Gene — the user is adding it to the backend model separately; this remains a blocking
+  dependency for the Gene-embedding task specifically, even though the name is now settled.
+- **Variant record attribute names, confirmed.** Variant does **not** expose the same attribute
+  names as Gene. Gene uses `organism_full`/`sequence_id`; Variant uses
+  `organism_text`/`sequence_source_id`. The per-record-class seeding epic (see Param seeding)
+  must read the correct pair for whichever record class fired it — it cannot use one shared
+  attribute-name pair for both.
