@@ -1,17 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
-
-const containerStyle = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  borderLeft: '.2em solid #79a3d7',
-  borderRight: '.2em solid #79a3d7',
-  padding: '.5em 1em',
-  background: '#ebf4ff',
-  gap: '1em',
-  marginBottom: '1em',
-};
+import { NoteBox } from '@veupathdb/coreui';
 
 function RecordTableDescription(props) {
   const { description } = props.table;
@@ -21,7 +11,7 @@ function RecordTableDescription(props) {
   if (!description) return null;
 
   return (
-    <div style={containerStyle}>
+    <NoteBox type="info">
       {safeHtml(
         description,
         {
@@ -30,7 +20,7 @@ function RecordTableDescription(props) {
               return;
             }
             if (
-              el.clientWidth >= el.scrollWidth ||
+              el.clientWidth >= el.scrollWidth &&
               el.clientHeight >= el.scrollHeight
             ) {
               setIsOverflowing(false);
@@ -51,15 +41,23 @@ function RecordTableDescription(props) {
         'div'
       )}
       {isOverflowing && (
-        <button
-          type="button"
-          className="link"
-          onClick={() => setIsExpanded((value) => !value)}
-        >
-          {isExpanded ? 'Read less' : 'Read more'}
-        </button>
+        <>
+          <button
+            type="button"
+            style={{
+              border: 'none',
+              padding: 0,
+              margin: '1ex 0 0 0',
+              background: 'transparent',
+              color: '#069',
+            }}
+            onClick={() => setIsExpanded((value) => !value)}
+          >
+            {isExpanded ? 'Read less' : 'Read more'}
+          </button>
+        </>
       )}
-    </div>
+    </NoteBox>
   );
 }
 
