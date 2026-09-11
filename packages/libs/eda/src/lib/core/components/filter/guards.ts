@@ -1,10 +1,12 @@
-import { VariableTreeNode } from '../../types/study';
+import { LongitudeVariable, VariableTreeNode } from '../../types/study';
 import {
   HistogramVariable,
   TableVariable,
   ScatterplotVariable,
   MosaicVariable,
   TwoByTwoVariable,
+  LatitudeVariable,
+  GeoCoordVariable,
 } from './types';
 
 export function isHistogramVariable(
@@ -84,4 +86,25 @@ export function isTwoByTwoVariable(
   variable: VariableTreeNode
 ): variable is TwoByTwoVariable {
   return isMosaicVariable(variable) && variable.dataShape === 'binary';
+}
+
+export function isLatitudeVariable(
+  variable: VariableTreeNode
+): variable is LatitudeVariable {
+  return (
+    variable.displayType === 'latitude' &&
+    (variable.type === 'number' || variable.type === 'integer')
+  );
+}
+
+export function isLongitudeVariable(
+  variable: VariableTreeNode
+): variable is LongitudeVariable {
+  return variable.type === 'longitude';
+}
+
+export function isGeoCoordVariable(
+  variable: VariableTreeNode
+): variable is GeoCoordVariable {
+  return isLatitudeVariable(variable) || isLongitudeVariable(variable);
 }

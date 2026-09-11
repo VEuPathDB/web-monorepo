@@ -127,6 +127,8 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
         ? filter[filter.type].map((d) => d.replace('T00:00:00', ''))
         : filter.type === 'stringSet'
         ? filter[filter.type]
+        : filter.type === 'stringPrefixSet'
+        ? filter.prefixSet
         : filter.type === 'multiFilter'
         ? {
             filters: filter.subFilters.map((subFilter) =>
