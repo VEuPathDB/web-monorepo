@@ -1,12 +1,16 @@
 import { of } from 'rxjs';
 import { toArray } from 'rxjs/operators';
+import { AnyAction } from 'redux';
 import {
   RecordActions,
   QuestionActions,
 } from '@veupathdb/wdk-client/lib/Actions';
 import { observeStrainMsaFilter } from './Record';
 
-function makeRecordUpdateAction(recordClassName, attributes) {
+function makeRecordUpdateAction(
+  recordClassName: string,
+  attributes: Record<string, string>
+) {
   return {
     type: RecordActions.RECORD_UPDATE,
     payload: {
@@ -29,7 +33,7 @@ describe('observeStrainMsaFilter', () => {
 
     observeStrainMsaFilter(action$)
       .pipe(toArray())
-      .subscribe((actions) => {
+      .subscribe((actions: AnyAction[]) => {
         expect(actions).toHaveLength(1);
         expect(actions[0]).toEqual({
           type: QuestionActions.UPDATE_ACTIVE_QUESTION,
@@ -57,7 +61,7 @@ describe('observeStrainMsaFilter', () => {
 
     observeStrainMsaFilter(action$)
       .pipe(toArray())
-      .subscribe((actions) => {
+      .subscribe((actions: AnyAction[]) => {
         expect(actions).toHaveLength(1);
         expect(actions[0].payload.searchName).toBe('StrainSegmentsByMeta');
         expect(actions[0].payload.initialParamData).toEqual(
@@ -77,7 +81,7 @@ describe('observeStrainMsaFilter', () => {
 
     observeStrainMsaFilter(action$)
       .pipe(toArray())
-      .subscribe((actions) => {
+      .subscribe((actions: AnyAction[]) => {
         expect(actions).toHaveLength(0);
         done();
       });
@@ -88,7 +92,7 @@ describe('observeStrainMsaFilter', () => {
 
     observeStrainMsaFilter(action$)
       .pipe(toArray())
-      .subscribe((actions) => {
+      .subscribe((actions: AnyAction[]) => {
         expect(actions).toHaveLength(0);
         done();
       });
