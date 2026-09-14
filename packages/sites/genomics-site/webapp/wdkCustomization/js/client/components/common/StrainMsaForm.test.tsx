@@ -400,7 +400,7 @@ describe('StrainMsaForm submission', () => {
             }),
           }),
         }),
-        'fasta',
+        'sequence',
         expect.anything()
       )
     );

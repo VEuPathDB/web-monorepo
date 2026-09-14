@@ -227,7 +227,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     try {
       const path = await wdkService.getTemporaryResultPath(
         { searchName, searchConfig },
-        'fasta',
+        'sequence',
         {}
       );
       const fastaText = await fetchTemporaryResultText(path);
@@ -274,39 +274,41 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   };
 
   return (
-    <div>
-      {region.kind === 'range' ? (
-        <div>
-          <label>
-            Start{' '}
-            <input
-              type="number"
-              value={paramValues[START_PARAM] ?? ''}
-              onChange={(e) => updateParam(START_PARAM, e.target.value)}
-            />
-          </label>
-          <label>
-            End{' '}
-            <input
-              type="number"
-              value={paramValues[END_PARAM] ?? ''}
-              onChange={(e) => updateParam(END_PARAM, e.target.value)}
-            />
-          </label>
-        </div>
-      ) : (
-        <div>
-          <label>
-            Offset{' '}
-            <input
-              type="number"
-              value={region.offset}
-              onChange={(e) => setOffset(Number(e.target.value))}
-            />
-          </label>
-        </div>
-      )}
-      <div>
+    <div style={{ padding: '15px' }}>
+      <div style={{ marginBottom: '15px' }}>
+        {region.kind === 'range' ? (
+          <div>
+            <label>
+              Start{' '}
+              <input
+                type="number"
+                value={paramValues[START_PARAM] ?? ''}
+                onChange={(e) => updateParam(START_PARAM, e.target.value)}
+              />
+            </label>{' '}
+            <label>
+              End{' '}
+              <input
+                type="number"
+                value={paramValues[END_PARAM] ?? ''}
+                onChange={(e) => updateParam(END_PARAM, e.target.value)}
+              />
+            </label>
+          </div>
+        ) : (
+          <div>
+            <label>
+              Offset{' '}
+              <input
+                type="number"
+                value={region.offset}
+                onChange={(e) => setOffset(Number(e.target.value))}
+              />
+            </label>
+          </div>
+        )}
+      </div>
+      <div style={{ marginBottom: '15px' }}>
         <label>
           <input
             type="radio"
@@ -315,7 +317,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             onChange={() => updateParam(STRAND_PARAM, 'f')}
           />{' '}
           Forward (+)
-        </label>
+        </label>{' '}
         <label>
           <input
             type="radio"
@@ -326,17 +328,19 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           Reverse (-)
         </label>
       </div>
-      <FilterParamNew
-        ctx={{ searchName, parameter: filterParameter, paramValues }}
-        parameter={filterParameter}
-        value={filterValue}
-        uiState={filterUiState}
-        dispatch={dispatch}
-        onParamValueChange={(newValue) =>
-          updateParam(METADATA_FILTER_PARAM, newValue)
-        }
-      />
-      <div>
+      <div style={{ marginBottom: '15px' }}>
+        <FilterParamNew
+          ctx={{ searchName, parameter: filterParameter, paramValues }}
+          parameter={filterParameter}
+          value={filterValue}
+          uiState={filterUiState}
+          dispatch={dispatch}
+          onParamValueChange={(newValue) =>
+            updateParam(METADATA_FILTER_PARAM, newValue)
+          }
+        />
+      </div>
+      <div style={{ marginBottom: '15px' }}>
         <label>
           <input
             type="radio"
@@ -345,7 +349,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             onChange={() => setOutputChoice('fasta')}
           />{' '}
           FASTA
-        </label>
+        </label>{' '}
         <label>
           <input
             type="radio"
@@ -356,27 +360,31 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           Multiple sequence alignment (Clustal Omega)
         </label>
       </div>
-      {outputChoice === 'fasta' ? (
-        <div>
-          <button type="button" onClick={handleFastaSubmit}>
-            Submit
-          </button>
-          {fastaSubmitError && (
-            <div role="alert" style={{ color: 'red' }}>
-              {fastaSubmitError}
-            </div>
-          )}
-        </div>
-      ) : (
-        <ClustalAlignmentForm
-          action="about:blank"
-          sequenceCount={2}
-          sequenceType="strain segments"
-          onConfirm={handleMsaConfirm}
-        >
-          <input type="submit" value="Submit" />
-        </ClustalAlignmentForm>
-      )}
+      <div style={{ minHeight: '38px' }}>
+        {outputChoice === 'fasta' ? (
+          <div>
+            <button type="button" className="btn" onClick={handleFastaSubmit}>
+              Submit
+            </button>
+            {fastaSubmitError && (
+              <div role="alert" style={{ color: 'red', marginTop: '10px' }}>
+                {fastaSubmitError}
+              </div>
+            )}
+          </div>
+        ) : (
+          <ClustalAlignmentForm
+            action="about:blank"
+            sequenceCount={2}
+            sequenceType="strain segments"
+            onConfirm={handleMsaConfirm}
+          >
+            <button type="submit" className="btn">
+              Submit
+            </button>
+          </ClustalAlignmentForm>
+        )}
+      </div>
     </div>
   );
 });
