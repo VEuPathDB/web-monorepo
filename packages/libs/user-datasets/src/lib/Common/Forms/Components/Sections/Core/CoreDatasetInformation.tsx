@@ -5,9 +5,9 @@ import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
-import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { PublicationsSection } from './Publications/PublicationsSection';
+import { ExperimentalOrganisms } from './ExperimentalOrganisms';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -43,19 +43,15 @@ export function CoreDatasetInformation({
           formProps={formConfig.datasetCharacteristics}
           datasetMeta={datasetMeta}
           setDatasetMeta={setDatasetMeta}
-          pathBuilder={jsonPath.append<PartialDatasetDetails>(
-            'datasetCharacteristics'
-          )}
+          pathBuilder={jsonPath.append<PartialDatasetDetails>('datasetCharacteristics')}
         />
       )}
 
       {formConfig.enableExperimentalOrganism && (
-        <ExperimentalOrganism
+        <ExperimentalOrganisms
           setDatasetDetails={setDatasetMeta}
           datasetMeta={datasetMeta}
-          jsonPath={jsonPath.append<PartialDatasetDetails>(
-            'experimentalOrganism'
-          )}
+          jsonPath={jsonPath.append<PartialDatasetDetails>('experimentalOrganisms')}
         />
       )}
 

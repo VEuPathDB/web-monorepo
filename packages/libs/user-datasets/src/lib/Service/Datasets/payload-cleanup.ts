@@ -33,9 +33,10 @@ export function cleanDatasetDetails(
     funding: ifDefined(details.funding, removeEmpties),
     linkedDatasets: ifDefined(details.linkedDatasets, removeEmpties),
     publications: ifDefined(details.publications, prunePublications),
-    experimentalOrganism: ifDefined(
-      details.experimentalOrganism,
-      cleanSimpleObject
+
+    experimentalOrganisms: ifDefined(
+      details.experimentalOrganisms,
+      pruneSimpleRecords,
     ),
 
     externalIdentifiers: ifDefined(

@@ -25,7 +25,7 @@ export type PartialDatasetDetails = Readonly<
       DatasetMetaBase,
       | 'datasetCharacteristics'
       | 'datasetSources'
-      | 'experimentalOrganism'
+      | 'experimentalOrganisms'
       | 'hostOrganism'
       | 'publications'
       | 'contacts'
@@ -38,7 +38,7 @@ export type PartialDatasetDetails = Readonly<
   readonly visibility?: DatasetVisibility;
   readonly datasetCharacteristics?: PartialCharacteristics;
   readonly datasetSources?: readonly PostDatasetSource[];
-  readonly experimentalOrganism?: PartialOrganism;
+  readonly experimentalOrganisms?: readonly PartialOrganism[];
   readonly hostOrganism?: PartialOrganism;
   readonly publications?: readonly PartialDatasetPublication[];
   readonly contacts?: readonly PartialDatasetContact[];
@@ -93,7 +93,7 @@ export interface DatasetPatchRequest {
   readonly projectName?: OptionalValuePatch<string>;
   readonly programName?: OptionalValuePatch<string>;
   readonly linkedDatasets?: OptionalValuePatch<Array<vdi.LinkedDataset>>;
-  readonly experimentalOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
+  readonly experimentalOrganisms?: OptionalValuePatch<vdi.DatasetOrganism>;
   readonly hostOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
   readonly studyCharacteristics?: DatasetCharacteristicsPatch;
   readonly externalIdentifiers?: ExternalIdentifiersPatch;

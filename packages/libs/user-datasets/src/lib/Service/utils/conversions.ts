@@ -24,7 +24,7 @@ export function convertDetailsToMeta(
       projectName: meta.projectName,
       programName: meta.programName,
       linkedDatasets: meta.linkedDatasets,
-      experimentalOrganism: meta.experimentalOrganism,
+      experimentalOrganisms: meta.experimentalOrganisms,
       hostOrganism: meta.hostOrganism,
       datasetCharacteristics: meta.datasetCharacteristics,
       externalIdentifiers: meta.externalIdentifiers,
