@@ -83,6 +83,16 @@
     color: var(--coreui-gray-900);
   }
 
+  p.subsection-description {
+    font-style: italic;
+    margin: -1em 0 1.3em 0;
+    h5 {
+      font-size: 1em;
+      margin: 0.25em 0 -0.5em 0;
+      font-style: normal;
+    }
+  }
+
   p.section-description {
     margin: -1em 4em 1.3em 4em;
   }

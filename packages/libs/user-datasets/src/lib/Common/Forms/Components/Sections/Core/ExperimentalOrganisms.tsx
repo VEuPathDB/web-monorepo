@@ -53,17 +53,6 @@ export function ExperimentalOrganisms(
   return (
     <>
       <InputBlock header="Organism Details">
-        <p className="section-description">
-          Indicate the species and strain of each organism represented by
-          biological data in this dataset. Organisms may include
-          {!isGenomics &&
-            ' the study population species in field studies or clinical trials and, where applicable,'}
-          {' '}pathogens, vectors, symbionts, or other organisms represented directly or
-          indirectly by the data.
-          {isGenomics &&
-            ' The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.'}
-        </p>
-
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
@@ -77,6 +66,18 @@ export function ExperimentalOrganisms(
           }}
           className="field-grid"
         >
+          <p className="subsection-description span-2">
+            <h5>Pathogen or microorganism</h5><br/>
+            Indicate the species and strain of each organism represented by
+            biological data in this dataset. Organisms may include
+            {!isGenomics &&
+              ' the study population species in field studies or clinical trials and, where applicable,'}
+            {' '}pathogens, vectors, symbionts, or other organisms represented directly or
+            indirectly by the data.
+            {isGenomics &&
+              ' The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.'}
+          </p>
+
           <OrganismDetailsContent
             organisms={safeOrgList}
             setOrganism={arrayCallback}
