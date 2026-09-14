@@ -30,6 +30,19 @@ const DEFAULT_VARIANT_OFFSET = 1000;
 const SEQUENCE_TYPE = 'dnaseq';
 const MSA_FORMAT = 'clustal';
 
+// Same defaults SequenceFormFactory.jsx uses for the 'sequence' reporter
+// (packages/libs/web-common/src/components/reporters/SequenceFormFactory.jsx)
+// elsewhere in this codebase — this reporter requires all of these fields
+// (e.g. rejects a request missing sequenceFormat), and there's no
+// interactive form here to let the user choose them.
+const SEQUENCE_REPORT_CONFIG = {
+  attachmentType: 'plain',
+  deflineType: 'full',
+  deflineFields: ['gene_id'],
+  sequenceFormat: 'fixed_width',
+  basesPerLine: 60,
+};
+
 /**
  * eda_sample_table_suffix is a vocab param with exactly one valid term,
  * determined by the organism param (organismSinglePick) it depends on —
@@ -228,7 +241,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       const path = await wdkService.getTemporaryResultPath(
         { searchName, searchConfig },
         'sequence',
-        {}
+        SEQUENCE_REPORT_CONFIG
       );
       const fastaText = await fetchTemporaryResultText(path);
       resultTab?.document?.write(`<pre>${fastaText}</pre>`);

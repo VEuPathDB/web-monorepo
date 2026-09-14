@@ -401,7 +401,10 @@ describe('StrainMsaForm submission', () => {
           }),
         }),
         'sequence',
-        expect.anything()
+        expect.objectContaining({
+          sequenceFormat: 'fixed_width',
+          attachmentType: 'plain',
+        })
       )
     );
     expect(
