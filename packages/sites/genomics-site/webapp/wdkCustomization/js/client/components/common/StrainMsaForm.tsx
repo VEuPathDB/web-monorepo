@@ -7,6 +7,7 @@ import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionSt
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { isType as isFilterParamNew } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
@@ -24,14 +25,40 @@ const METADATA_FILTER_PARAM = 'variation_sample_meta';
 const START_PARAM = 'start_point';
 const END_PARAM = 'end_point_segment';
 const STRAND_PARAM = 'sequence_strand';
+const EDA_SAMPLE_TABLE_SUFFIX_PARAM = 'eda_sample_table_suffix';
 const DEFAULT_VARIANT_OFFSET = 1000;
 const SEQUENCE_TYPE = 'dnaseq';
 const MSA_FORMAT = 'clustal';
 
-// The six client-known params, in the shape StrainSegmentsByMeta's
-// searchConfig.parameters expects. eda_sample_table_suffix is deliberately
-// excluded — it is backend-set and must never be sent by the client.
-function buildSearchParameters(paramValues: Record<string, string>) {
+/**
+ * eda_sample_table_suffix is a vocab param with exactly one valid term,
+ * determined by the organism param (organismSinglePick) it depends on —
+ * never a UI control, never user-editable, but its single term must still
+ * be sent to the backend (unlike organismSinglePick/sequenceId, which the
+ * backend already has via the record; this one the backend cannot derive
+ * on its own). The WDK question flow refreshes this param's vocabulary
+ * automatically whenever organismSinglePick changes (UPDATE_DEPENDENT_PARAMS),
+ * so by submit time question.parametersByName reflects the correct,
+ * organism-specific single-element vocabulary.
+ */
+function getEdaSampleTableSuffixTerm(
+  parametersByName: Record<string, Parameter>
+): string {
+  const parameter = parametersByName[EDA_SAMPLE_TABLE_SUFFIX_PARAM];
+  if (parameter == null || !('vocabulary' in parameter)) return '';
+  const vocabulary = parameter.vocabulary;
+  if (!Array.isArray(vocabulary) || vocabulary.length === 0) return '';
+  const [term] = vocabulary[0];
+  return term;
+}
+
+// The six client-known params plus eda_sample_table_suffix's single
+// resolved vocab term, in the shape StrainSegmentsByMeta's
+// searchConfig.parameters expects.
+function buildSearchParameters(
+  paramValues: Record<string, string>,
+  parametersByName: Record<string, Parameter>
+) {
   return {
     organismSinglePick: paramValues.organismSinglePick,
     sequenceId: paramValues.sequenceId,
@@ -39,6 +66,7 @@ function buildSearchParameters(paramValues: Record<string, string>) {
     start_point: paramValues.start_point,
     end_point_segment: paramValues.end_point_segment,
     variation_sample_meta: paramValues.variation_sample_meta,
+    eda_sample_table_suffix: getEdaSampleTableSuffixTerm(parametersByName),
   };
 }
 
@@ -189,7 +217,9 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     updateParam(END_PARAM, String(location + offset));
   };
 
-  const searchConfig = { parameters: buildSearchParameters(paramValues) };
+  const searchConfig = {
+    parameters: buildSearchParameters(paramValues, question.parametersByName),
+  };
 
   const handleFastaSubmit = async () => {
     const resultTab = window.open('about:blank', '_blank');

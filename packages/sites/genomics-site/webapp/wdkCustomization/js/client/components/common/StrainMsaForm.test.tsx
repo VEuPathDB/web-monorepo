@@ -206,6 +206,11 @@ function makeCompleteQuestionState(overrides = {}) {
           name: 'variation_sample_meta',
           type: 'filter',
         },
+        eda_sample_table_suffix: {
+          name: 'eda_sample_table_suffix',
+          type: 'single-pick-vocabulary',
+          vocabulary: [['pf3d7_v68', 'pf3d7_v68', null]],
+        },
       },
     },
     paramValues: {
@@ -401,7 +406,7 @@ describe('StrainMsaForm submission', () => {
     );
     expect(
       getTemporaryResultPath.mock.calls[0][0].searchConfig.parameters
-    ).not.toHaveProperty('eda_sample_table_suffix');
+    ).toHaveProperty('eda_sample_table_suffix', 'pf3d7_v68');
     expect(fakeTab.location.replace).not.toHaveBeenCalled(); // FASTA writes text directly, doesn't navigate
   });
 
