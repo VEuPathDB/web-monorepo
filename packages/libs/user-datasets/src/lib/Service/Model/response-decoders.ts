@@ -294,7 +294,7 @@ export const datasetMetaBase = io.intersection([
     projectName: io.string,
     programName: io.string,
     linkedDatasets: io.array(linkedDataset),
-    experimentalOrganism: datasetOrganism,
+    experimentalOrganisms: io.array(datasetOrganism),
     hostOrganism: datasetOrganism,
     datasetCharacteristics: datasetCharacteristics,
     externalIdentifiers: externalIdentifiers,

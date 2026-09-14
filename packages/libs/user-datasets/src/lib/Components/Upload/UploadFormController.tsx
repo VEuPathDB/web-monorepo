@@ -276,7 +276,7 @@ function filterDetails({ datasetDetails }: DatasetFormState): PartialDatasetDeta
   if (!datasetDetails.metadataContentFlags?.hasPublications)
     delete filtered['publications'];
   if (!datasetDetails.metadataContentFlags?.hasOrganismData)
-    delete filtered['experimentalOrganism'];
+    delete filtered['experimentalOrganisms'];
 
   // `samplesDescription` is a client-only field: its content is turned into
   // the `sample-info.txt` upload by `prepareDataFiles` (which reads it from

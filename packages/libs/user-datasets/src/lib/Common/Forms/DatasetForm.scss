@@ -244,7 +244,8 @@
     }
   }
 
-  .contact-block > .field-grid {
+  .contact-block > .field-grid,
+  .organism-row.field-grid {
     grid-template-columns: 1fr 6fr;
   }
 
