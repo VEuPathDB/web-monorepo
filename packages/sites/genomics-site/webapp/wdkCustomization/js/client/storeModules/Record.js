@@ -360,8 +360,8 @@ function observeVariantStrainFilter(action$) {
  *   - Variant: organism_text, sequence_source_id
  *
  * sequence_strand is deliberately NOT read from the record — it's a plain
- * UI control defaulting to '+' here, never resolved from a record
- * attribute (see the design doc's Non-goals).
+ * UI control defaulting to 'f' here (the model's forward-strand value),
+ * never resolved from a record attribute (see the design doc's Non-goals).
  */
 export function observeStrainMsaFilter(action$) {
   return action$.pipe(
@@ -388,7 +388,7 @@ export function observeStrainMsaFilter(action$) {
         initialParamData: {
           organismSinglePick,
           sequenceId,
-          sequence_strand: '+',
+          sequence_strand: 'f',
           variation_sample_meta: JSON.stringify({ filters: [] }),
         },
       })

@@ -42,7 +42,7 @@ describe('observeStrainMsaFilter', () => {
             initialParamData: {
               organismSinglePick: 'Plasmodium falciparum 3D7',
               sequenceId: 'Pf3D7_11_v3',
-              sequence_strand: '+',
+              sequence_strand: 'f',
               variation_sample_meta: JSON.stringify({ filters: [] }),
             },
           },

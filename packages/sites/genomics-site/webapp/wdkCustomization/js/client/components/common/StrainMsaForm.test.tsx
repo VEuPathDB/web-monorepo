@@ -211,7 +211,7 @@ function makeCompleteQuestionState(overrides = {}) {
     paramValues: {
       organismSinglePick: 'Plasmodium falciparum 3D7',
       sequenceId: 'Pf3D7_11_v3',
-      sequence_strand: '+',
+      sequence_strand: 'f',
       start_point: '1',
       end_point_segment: '5000',
       variation_sample_meta: JSON.stringify({ filters: [] }),
@@ -285,7 +285,7 @@ describe('StrainMsaForm region seeding', () => {
       paramValues: {
         organismSinglePick: 'Plasmodium falciparum 3D7',
         sequenceId: 'Pf3D7_11_v3',
-        sequence_strand: '+',
+        sequence_strand: 'f',
         // Deliberately NOT pre-seeded to location +/- 1000, to reproduce the
         // gap: nothing upstream (Task 4's epic) sets these two params.
         start_point: '',
@@ -318,7 +318,7 @@ describe('StrainMsaForm region seeding', () => {
       paramValues: {
         organismSinglePick: 'Plasmodium falciparum 3D7',
         sequenceId: 'Pf3D7_11_v3',
-        sequence_strand: '+',
+        sequence_strand: 'f',
         start_point: '',
         end_point_segment: '',
         variation_sample_meta: JSON.stringify({ filters: [] }),
@@ -338,7 +338,7 @@ describe('StrainMsaForm region seeding', () => {
       paramValues: {
         organismSinglePick: 'Plasmodium falciparum 3D7',
         sequenceId: 'Pf3D7_11_v3',
-        sequence_strand: '+',
+        sequence_strand: 'f',
         start_point: '1500',
         end_point_segment: '3500',
         variation_sample_meta: JSON.stringify({ filters: [] }),
@@ -389,7 +389,7 @@ describe('StrainMsaForm submission', () => {
             parameters: expect.objectContaining({
               organismSinglePick: 'Plasmodium falciparum 3D7',
               sequenceId: 'Pf3D7_11_v3',
-              sequence_strand: '+',
+              sequence_strand: 'f',
               start_point: '1',
               end_point_segment: '5000',
             }),

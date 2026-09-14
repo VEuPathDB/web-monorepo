@@ -281,8 +281,8 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           <input
             type="radio"
             name="sequence_strand"
-            checked={(paramValues[STRAND_PARAM] ?? '+') === '+'}
-            onChange={() => updateParam(STRAND_PARAM, '+')}
+            checked={(paramValues[STRAND_PARAM] ?? 'f') === 'f'}
+            onChange={() => updateParam(STRAND_PARAM, 'f')}
           />{' '}
           Forward (+)
         </label>
@@ -290,8 +290,8 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           <input
             type="radio"
             name="sequence_strand"
-            checked={paramValues[STRAND_PARAM] === '-'}
-            onChange={() => updateParam(STRAND_PARAM, '-')}
+            checked={paramValues[STRAND_PARAM] === 'r'}
+            onChange={() => updateParam(STRAND_PARAM, 'r')}
           />{' '}
           Reverse (-)
         </label>
