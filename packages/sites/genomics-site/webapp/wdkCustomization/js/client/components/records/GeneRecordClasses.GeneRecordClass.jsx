@@ -470,7 +470,7 @@ export function RecordAttributeSection(props) {
       return <AlphaFoldRecordSection {...restProps} />;
     case 'ai_expression':
       return <AiExpressionSummary {...restProps} />;
-    case 'strain_msa_form':
+    case 'variant_strain_form':
       return (
         <CollapsibleSection
           id={restProps.attribute.name}
