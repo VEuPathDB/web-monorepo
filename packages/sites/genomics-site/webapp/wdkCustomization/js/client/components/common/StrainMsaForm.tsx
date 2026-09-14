@@ -35,6 +35,21 @@ const MSA_FORMAT = 'clustal';
 // them no horizontal space beyond the label's own text.
 const RADIO_ROW_STYLE = { display: 'flex', gap: '20px' };
 
+// A <button> and an <input type="submit"> both match this site's shared
+// .btn styling (eupathdb-Buttons.scss), but browsers apply their own,
+// different UA-default font/line-height to each element type underneath
+// it — AllSites.scss's general <input> reset explicitly excludes
+// type='submit', so it's never normalized to match <button>'s font.
+// Pin the values .btn itself declares as inline styles (which win over
+// any stylesheet regardless of that gap) so both submit paths render at
+// an identical size no matter which native element backs them.
+const SUBMIT_BUTTON_STYLE = {
+  padding: '8px 12px',
+  fontSize: '1em',
+  lineHeight: '1em',
+  fontFamily: 'inherit',
+};
+
 // Same defaults SequenceFormFactory.jsx uses for the 'sequence' reporter
 // (packages/libs/web-common/src/components/reporters/SequenceFormFactory.jsx)
 // elsewhere in this codebase — this reporter requires all of these fields
@@ -381,7 +396,12 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       <div style={{ minHeight: '38px' }}>
         {outputChoice === 'fasta' ? (
           <div>
-            <button type="button" className="btn" onClick={handleFastaSubmit}>
+            <button
+              type="button"
+              className="btn"
+              style={SUBMIT_BUTTON_STYLE}
+              onClick={handleFastaSubmit}
+            >
               Submit
             </button>
             {fastaSubmitError && (
@@ -397,7 +417,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             sequenceType="strain segments"
             onConfirm={handleMsaConfirm}
           >
-            <input type="submit" value="Submit" />
+            <input type="submit" value="Submit" style={SUBMIT_BUTTON_STYLE} />
           </ClustalAlignmentForm>
         )}
       </div>
