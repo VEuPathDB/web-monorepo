@@ -30,6 +30,11 @@ const DEFAULT_VARIANT_OFFSET = 1000;
 const SEQUENCE_TYPE = 'dnaseq';
 const MSA_FORMAT = 'clustal';
 
+// Adjacent radio/number-input labels are rendered as siblings with no
+// wrapping element of their own; without an explicit gap, browsers give
+// them no horizontal space beyond the label's own text.
+const RADIO_ROW_STYLE = { display: 'flex', gap: '20px' };
+
 // Same defaults SequenceFormFactory.jsx uses for the 'sequence' reporter
 // (packages/libs/web-common/src/components/reporters/SequenceFormFactory.jsx)
 // elsewhere in this codebase — this reporter requires all of these fields
@@ -290,7 +295,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     <div style={{ padding: '15px' }}>
       <div style={{ marginBottom: '15px' }}>
         {region.kind === 'range' ? (
-          <div>
+          <div style={RADIO_ROW_STYLE}>
             <label>
               Start{' '}
               <input
@@ -298,7 +303,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
                 value={paramValues[START_PARAM] ?? ''}
                 onChange={(e) => updateParam(START_PARAM, e.target.value)}
               />
-            </label>{' '}
+            </label>
             <label>
               End{' '}
               <input
@@ -321,7 +326,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           </div>
         )}
       </div>
-      <div style={{ marginBottom: '15px' }}>
+      <div style={{ ...RADIO_ROW_STYLE, marginBottom: '15px' }}>
         <label>
           <input
             type="radio"
@@ -330,7 +335,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             onChange={() => updateParam(STRAND_PARAM, 'f')}
           />{' '}
           Forward (+)
-        </label>{' '}
+        </label>
         <label>
           <input
             type="radio"
@@ -353,7 +358,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           }
         />
       </div>
-      <div style={{ marginBottom: '15px' }}>
+      <div style={{ ...RADIO_ROW_STYLE, marginBottom: '15px' }}>
         <label>
           <input
             type="radio"
@@ -362,7 +367,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             onChange={() => setOutputChoice('fasta')}
           />{' '}
           FASTA
-        </label>{' '}
+        </label>
         <label>
           <input
             type="radio"
@@ -392,9 +397,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             sequenceType="strain segments"
             onConfirm={handleMsaConfirm}
           >
-            <button type="submit" className="btn">
-              Submit
-            </button>
+            <input type="submit" value="Submit" />
           </ClustalAlignmentForm>
         )}
       </div>
