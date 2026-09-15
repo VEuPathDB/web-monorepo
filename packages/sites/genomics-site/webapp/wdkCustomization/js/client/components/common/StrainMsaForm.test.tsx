@@ -324,6 +324,57 @@ describe('StrainMsaForm region seeding', () => {
     });
   });
 
+  it('applies a user edit to the offset input and does not revert it back to the default', async () => {
+    const questionState = makeCompleteQuestionState({
+      question: {
+        urlSegment: 'StrainSegmentsByMeta',
+        parametersByName: {
+          variation_sample_meta: {
+            name: 'variation_sample_meta',
+            type: 'filter',
+          },
+          start_point: { name: 'start_point' },
+          end_point_segment: { name: 'end_point_segment' },
+        },
+      },
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: 'f',
+        start_point: '',
+        end_point_segment: '',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(questionState, VARIANT_RECORD);
+
+    // Wait for the initial seed (location +/- the default 1000 offset) to
+    // land before editing, matching how a real user would encounter it.
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('1500');
+      expect(current.paramValues.end_point_segment).toBe('3500');
+    });
+
+    const offsetInput = screen.getByLabelText(/offset/i);
+    await userEvent.clear(offsetInput);
+    await userEvent.type(offsetInput, '200');
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('2300');
+      expect(current.paramValues.end_point_segment).toBe('2700');
+    });
+
+    // Give the seeding effect a chance to re-run (it re-runs whenever
+    // questionState changes, which the user's own edit above just caused) —
+    // it must not revert the edit back to location +/- the default offset.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const current = store.getState().question.questions.StrainSegmentsByMeta;
+    expect(current.paramValues.start_point).toBe('2300');
+    expect(current.paramValues.end_point_segment).toBe('2700');
+  });
+
   it('seeds start_point/end_point_segment from start_min/end_max for a Gene record, without user interaction', async () => {
     const questionState = makeCompleteQuestionState({
       question: {
@@ -396,11 +447,27 @@ describe('StrainMsaForm region seeding', () => {
     // Simulate the second RECORD_UPDATE's loadQuestion resolving: the
     // question state is replaced wholesale with fresh, bare-default
     // paramValues (start_point defaults to '1' in the real WDK model).
+    // The real QUESTION_LOADED reducer (QuestionStoreModule.ts) always
+    // constructs a brand-new `question` object via normalizeQuestion(...)
+    // — a fresh object literal here (not a reference to
+    // seededQuestionState.question) reproduces that, since the fix relies
+    // on the `question` object's identity changing to detect a genuine
+    // reload.
     store.dispatch({
       type: 'test/reload-question',
       payload: {
         questionState: makeCompleteQuestionState({
-          question: seededQuestionState.question,
+          question: {
+            urlSegment: 'StrainSegmentsByMeta',
+            parametersByName: {
+              variation_sample_meta: {
+                name: 'variation_sample_meta',
+                type: 'filter',
+              },
+              start_point: { name: 'start_point' },
+              end_point_segment: { name: 'end_point_segment' },
+            },
+          },
           paramValues: {
             organismSinglePick: 'Plasmodium falciparum 3D7',
             sequenceId: 'Pf3D7_11_v3',

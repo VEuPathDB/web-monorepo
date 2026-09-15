@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
@@ -154,28 +154,41 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const [outputChoice, setOutputChoice] = useState<'fasta' | 'msa'>('msa');
   const [fastaSubmitError, setFastaSubmitError] = useState<string | null>(null);
+  // The user-editable offset for a Variant record's point region (unused
+  // for Gene, which edits start/end directly instead). Seeded once from
+  // deriveRegion's default below, then driven entirely by the user's own
+  // edits — never recomputed from the record after that, so a keystroke
+  // here is never fought or reverted.
+  const [offset, setOffset] = useState(() => {
+    const region = deriveRegion(record);
+    return region.kind === 'point' ? region.offset : DEFAULT_VARIANT_OFFSET;
+  });
 
   // Task 4's Redux epic deliberately doesn't seed start_point/end_point_segment
   // from the record (Gene's start_min/end_max, or Variant's location +/- the
-  // default offset) — that's left to this component. Seed them any time real
-  // paramValues are available and don't already match the derived region.
+  // offset above) — that's left to this component. Seed them once per
+  // question load, not once per paramValues change — dispatching
+  // updateParamValue for the user's own offset edits changes paramValues,
+  // and a guard keyed on paramValues (or on questionState as a whole, which
+  // changes reference whenever paramValues does) would re-fire this effect
+  // on that same dispatch and clobber the edit right back to the default.
   //
   // observeStrainMsaFilter (the epic) re-dispatches updateActiveQuestion on
   // every RECORD_UPDATE, and a WDK record page's attributes/tables can load
   // in more than one batch — each RECORD_UPDATE restarts loadQuestion, which
   // resets paramValues to the bare model defaults (start_point defaults to
-  // '1') until this effect re-seeds them. A "seed once, never again" ref
-  // guard here previously meant a later RECORD_UPDATE's question reload
-  // would silently clobber the correct value with those bare defaults after
-  // this effect had already run once and stopped — the value would flash
-  // correct, then revert. The paramValues comparison below is itself a
-  // sufficient guard against redundant dispatches (it only ever dispatches
-  // when the values don't already match), so no separate "already ran" ref
-  // is needed — nor would fighting a user's own edits be a concern, since
-  // updateParamValue's dispatch immediately makes paramValues match the
-  // derived value, so this effect is a no-op on every subsequent render
-  // until questionState changes again.
+  // '1') and replaces questionState.question with a new object
+  // (QUESTION_LOADED in QuestionStoreModule.ts) — unlike a plain
+  // updateParamValue dispatch (UPDATE_PARAM_VALUE), which only ever changes
+  // paramValues, leaving the same question object in place. Guarding on
+  // `question`'s object identity therefore re-seeds exactly on a genuine
+  // question (re)load, and never on a paramValues-only change from either
+  // this component's own dispatches or the user's edits.
+  const loadedQuestion = questionState?.question;
+  const seededQuestionRef = useRef<typeof loadedQuestion>(undefined);
+
   useEffect(() => {
+    if (seededQuestionRef.current === loadedQuestion) return;
     if (questionState == null || questionState.questionStatus !== 'complete')
       return;
 
@@ -185,9 +198,11 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       region.kind === 'range'
         ? [region.start, region.end]
         : [
-            String(Number(region.location) - region.offset),
-            String(Number(region.location) + region.offset),
+            String(Number(region.location) - offset),
+            String(Number(region.location) + offset),
           ];
+
+    seededQuestionRef.current = loadedQuestion;
 
     if (
       paramValues[START_PARAM] === derivedStart &&
@@ -220,7 +235,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questionState]);
+  }, [loadedQuestion, questionState]);
 
   // Renders nothing until observeStrainMsaFilter has seeded this question.
   if (questionState == null || questionState.questionStatus !== 'complete')
@@ -252,11 +267,12 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   const region = deriveRegion(record);
 
-  const setOffset = (offset: number) => {
+  const handleOffsetChange = (newOffset: number) => {
     if (region.kind !== 'point') return;
+    setOffset(newOffset);
     const location = Number(region.location);
-    updateParam(START_PARAM, String(location - offset));
-    updateParam(END_PARAM, String(location + offset));
+    updateParam(START_PARAM, String(location - newOffset));
+    updateParam(END_PARAM, String(location + newOffset));
   };
 
   const searchConfig = {
@@ -359,8 +375,8 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               Offset{' '}
               <input
                 type="number"
-                value={region.offset}
-                onChange={(e) => setOffset(Number(e.target.value))}
+                value={offset}
+                onChange={(e) => handleOffsetChange(Number(e.target.value))}
               />
             </label>
           </div>
