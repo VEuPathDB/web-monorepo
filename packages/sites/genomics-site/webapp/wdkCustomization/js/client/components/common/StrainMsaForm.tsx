@@ -35,7 +35,7 @@ const MAX_SEGMENT_LENGTH = 150000;
 // Adjacent radio/number-input labels are rendered as siblings with no
 // wrapping element of their own; without an explicit gap, browsers give
 // them no horizontal space beyond the label's own text.
-const RADIO_ROW_STYLE = { display: 'flex', gap: '20px' };
+const RADIO_ROW_STYLE = { display: 'flex', gap: '20px', alignItems: 'center' };
 
 // A <button> and an <input type="submit"> both match this site's shared
 // .btn styling (eupathdb-Buttons.scss), but browsers apply their own,
