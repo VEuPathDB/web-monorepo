@@ -1694,6 +1694,12 @@ function TranscriptMsaSubmission({
     // longer inside the user gesture's call stack and browsers may block
     // window.open as a popup.
     const resultTab = window.open('about:blank', '_blank');
+    // The tab sits blank for several seconds while transcript features are
+    // resolved and the job is submitted (all awaited below, in series) —
+    // write a placeholder so it isn't literally empty in the meantime.
+    // submitClustalMsaJob replaces this entirely once the job is submitted
+    // and it navigates to the real result page.
+    resultTab?.document?.write('<p>Preparing your alignment…</p>');
 
     // sequenceTypeChoice is the radio the user picked (Protein / CDS
     // (spliced) / Genomic). It maps to two different things that don't
