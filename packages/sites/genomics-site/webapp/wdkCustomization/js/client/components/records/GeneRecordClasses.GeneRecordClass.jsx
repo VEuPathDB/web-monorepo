@@ -1756,7 +1756,6 @@ function TranscriptMsaSubmission({
       action="/cgi-bin/isolateAlignment"
       sequenceCount={selectedTranscriptIds.length + 1}
       sequenceType="genes"
-      warnThreshold={() => (sequenceTypeChoice === 'genomic' ? 10 : 1000)}
       blockThreshold={() => (sequenceTypeChoice === 'genomic' ? 50 : 1000)}
       onConfirm={handleConfirm}
     >

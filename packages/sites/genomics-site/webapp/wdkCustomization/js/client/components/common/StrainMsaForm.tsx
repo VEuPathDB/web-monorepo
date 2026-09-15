@@ -317,7 +317,9 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         features,
         msaFormat: MSA_FORMAT,
         resultRouteBase: `${rootUrl}/workspace/msa`,
-        paramsSummary: `Strain segments, ${MSA_FORMAT.toUpperCase()} output format`,
+        paramsSummary: `${
+          features.length
+        } Strain segments. ${MSA_FORMAT.toUpperCase()} output format`,
         resultTab,
       });
     } catch (error) {

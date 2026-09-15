@@ -24,8 +24,9 @@ jest.mock(
 // `Dialog` is also stubbed here (not imported directly by StrainMsaForm, but
 // transitively required by `ClustalAlignmentForm`, which reads it from this
 // same barrel) — mirroring its one rendering-relevant behavior (`open` gates
-// whether `children` renders at all) is enough for the submission tests below
-// to find the "Continue Alignment" button once the dialog opens.
+// whether `children` renders at all) is enough for the block/error dialog
+// tests below (the confirm dialog only opens when sequenceCount exceeds
+// ClustalAlignmentForm's block threshold, or after a submission failure).
 jest.mock('@veupathdb/wdk-client/lib/Components', () => ({
   FilterParamNew: () => <div data-testid="filter-param-new-stub" />,
   Dialog: ({
@@ -550,15 +551,13 @@ describe('StrainMsaForm submission', () => {
       getTemporaryResultPath,
     });
 
-    // MSA is the default radio selection; ClustalAlignmentForm's own confirm
-    // dialog sits between the submit click and the actual job submission —
-    // click submit, then confirm.
+    // MSA is the default radio selection; ClustalAlignmentForm's confirm
+    // dialog only interposes when sequenceCount exceeds its block threshold
+    // (2, here, is always below the default of 1000), so a single submit
+    // click proceeds directly with no confirm step.
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));
-    await userEvent.click(
-      screen.getByRole('button', { name: /continue alignment/i })
-    );
 
-    // The confirm click kicks off a multi-hop async chain (getTemporaryResultPath
+    // The submit click kicks off a multi-hop async chain (getTemporaryResultPath
     // -> fetch -> parseBedToFeatures -> submitClustalMsaJob); user-event v12's
     // click() doesn't wait for it to fully settle, so assert via waitFor rather
     // than immediately after the click.
@@ -583,6 +582,7 @@ describe('StrainMsaForm submission', () => {
             },
           ],
           msaFormat: 'clustal',
+          paramsSummary: '1 Strain segments. CLUSTAL output format',
           resultTab: fakeTab,
         })
       )
@@ -609,9 +609,6 @@ describe('StrainMsaForm submission', () => {
     });
 
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));
-    await userEvent.click(
-      screen.getByRole('button', { name: /continue alignment/i })
-    );
 
     await waitFor(() => expect(fakeTab.close).toHaveBeenCalledTimes(1));
     expect(fakeTab.location.replace).not.toHaveBeenCalled();
