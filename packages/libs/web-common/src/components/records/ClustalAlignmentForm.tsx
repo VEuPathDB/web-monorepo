@@ -154,20 +154,6 @@ export default function ClustalAlignmentForm({
               }}
             />
           )}
-          {!isBlocked && (
-            <>
-              <p style={{ marginTop: '0px' }}>
-                The alignment results will open in a new browser tab.
-              </p>
-              <p>The tab may appear empty while the alignment is running.</p>
-              <p>
-                <strong>
-                  Please be patient and avoid resubmitting - multiple requests
-                  will not make it faster and can overload our servers.
-                </strong>
-              </p>
-            </>
-          )}
           <div
             style={{
               marginTop: '20px',

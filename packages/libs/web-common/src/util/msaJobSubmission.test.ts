@@ -107,6 +107,7 @@ describe('submitClustalMsaJob', () => {
     expect(navigatedUrl).toContain('/app/workspace/msa/result/abc123');
     expect(navigatedUrl).toContain('paramsSummary=');
     expect(navigatedUrl).toContain('format=clustal');
+    expect(navigatedUrl).toContain('sequenceCount=1');
   });
 
   it('closes the passed-in tab and rethrows if submitJob rejects', async () => {

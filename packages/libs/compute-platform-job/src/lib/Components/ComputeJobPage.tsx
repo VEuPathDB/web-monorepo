@@ -21,7 +21,13 @@ interface ComputeJobPageProps {
   paramsSummary?: string;
   /** The MsaFormat value the job was submitted with, e.g. 'clustal_dnd'. */
   format?: string;
+  /** Number of sequences submitted to the job, if known. */
+  sequenceCount?: number;
 }
+
+// Below this many sequences, job time is short enough that the warning
+// isn't worth showing.
+const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
 
 // The /files/{name} endpoint always returns Content-Type: text/plain
 // regardless of the actual content, so an HTML-producing format (only
@@ -67,6 +73,7 @@ export function ComputeJobPage({
   api,
   paramsSummary,
   format,
+  sequenceCount,
 }: ComputeJobPageProps) {
   const [status, setStatus] = useState<JobStatus>('queued');
 
@@ -99,14 +106,25 @@ export function ComputeJobPage({
       <div style={{ fontSize: '1.5em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
-          <p className="Status">
-            <Icon
-              className="ComputeJobPage-StatusIcon"
-              fa="circle-o-notch"
-              style={{ marginRight: '0.3em' }}
-            />
-            Status: {status}
-          </p>
+          <>
+            <p className="Status">
+              <Icon
+                className="ComputeJobPage-StatusIcon"
+                fa="circle-o-notch"
+                style={{ marginRight: '0.3em' }}
+              />
+              Status: {status}
+            </p>
+            {sequenceCount != null &&
+              sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
+                <p className="ComputeJobPage-DurationWarning">
+                  <Icon fa="warning" style={{ marginRight: '0.3em' }} />
+                  Job time can range from seconds to many minutes, depending on
+                  the number and length of sequences. You submitted{' '}
+                  {sequenceCount} sequences.
+                </p>
+              )}
+          </>
         ) : null}
         {status === 'failed' && (
           <p className="DeadEnd">

@@ -47,6 +47,45 @@ describe('ComputeJobPage', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows a duration warning while queued when sequenceCount exceeds the threshold', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} sequenceCount={11} />);
+
+    expect(
+      await screen.findByText(/job time can range from seconds/i)
+    ).toBeInTheDocument();
+    expect(screen.getByText(/you submitted 11 sequences/i)).toBeInTheDocument();
+  });
+
+  it('does not show a duration warning while queued when sequenceCount is at or below the threshold', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} sequenceCount={10} />);
+
+    await screen.findByText('Clustal Omega Job Status');
+    expect(
+      screen.queryByText(/job time can range from seconds/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not show a duration warning when sequenceCount is not provided', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    await screen.findByText('Clustal Omega Job Status');
+    expect(
+      screen.queryByText(/job time can range from seconds/i)
+    ).not.toBeInTheDocument();
+  });
+
   // showResultDocument (invoked on complete) mutates the live `document` in
   // place — for a non-HTML format that's just document.body.textContent,
   // safe to let run for real in JSDOM. The HTML-format branch replaces

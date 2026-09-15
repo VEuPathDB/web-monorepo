@@ -92,12 +92,13 @@ export async function submitClustalMsaJob({
     });
 
     // The already-open tab can't receive React Router location.state, so
-    // paramsSummary/format travel as query params instead.
+    // paramsSummary/format/sequenceCount travel as query params instead.
     const resultUrl = new URL(
       `${window.location.origin}${resultRouteBase}/result/${job.jobID}`
     );
     resultUrl.searchParams.set('paramsSummary', paramsSummary);
     resultUrl.searchParams.set('format', msaFormat);
+    resultUrl.searchParams.set('sequenceCount', String(features.length));
     if (resultTab) {
       resultTab.location.replace(resultUrl.toString());
     }

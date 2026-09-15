@@ -54,6 +54,19 @@ describe('ComputeJobRouter', () => {
     ).toBeInTheDocument();
   });
 
+  it('forwards sequenceCount from the query string to ComputeJobPage', async () => {
+    render(
+      <MemoryRouter initialEntries={['/result/abc123?sequenceCount=25']}>
+        <ComputeJobRouter api={makeFakeApi()} />
+      </MemoryRouter>
+    );
+
+    expect(
+      await screen.findByText(/job time can range from seconds/i)
+    ).toBeInTheDocument();
+    expect(screen.getByText(/you submitted 25 sequences/i)).toBeInTheDocument();
+  });
+
   it('does not throw when the query string is missing (e.g. bookmarked URL)', async () => {
     render(
       <MemoryRouter initialEntries={['/result/abc123']}>
