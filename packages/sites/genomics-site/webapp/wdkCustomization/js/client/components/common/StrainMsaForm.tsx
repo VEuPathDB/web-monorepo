@@ -281,29 +281,43 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     // fetch/parse resolves, we're no longer inside the user gesture's call
     // stack and browsers may block window.open as a popup.
     const resultTab = window.open('about:blank', '_blank');
+    // The tab sits blank for several seconds while the bed report is
+    // fetched/parsed and the job is submitted (all awaited below, in
+    // series) — write a placeholder so it isn't literally empty in the
+    // meantime. submitClustalMsaJob replaces this entirely once the job
+    // is submitted and it navigates to the real result page.
+    resultTab?.document?.write('<p>Preparing your alignment…</p>');
 
-    const path = await wdkService.getTemporaryResultPath(
-      { searchName, searchConfig },
-      'bed',
-      {}
-    );
-    const bedText = await fetchTemporaryResultText(path);
-    const features = parseBedToFeatures(bedText);
+    try {
+      const path = await wdkService.getTemporaryResultPath(
+        { searchName, searchConfig },
+        'bed',
+        {}
+      );
+      const bedText = await fetchTemporaryResultText(path);
+      const features = parseBedToFeatures(bedText);
 
-    const api = SequenceRetrievalApi.getClient(
-      SEQUENCE_RETRIEVAL_BASE_URL,
-      wdkService
-    );
+      const api = SequenceRetrievalApi.getClient(
+        SEQUENCE_RETRIEVAL_BASE_URL,
+        wdkService
+      );
 
-    await submitClustalMsaJob({
-      api,
-      sequenceType: SEQUENCE_TYPE,
-      features,
-      msaFormat: MSA_FORMAT,
-      resultRouteBase: `${rootUrl}/workspace/msa`,
-      paramsSummary: `Strain segments, ${MSA_FORMAT.toUpperCase()} output format`,
-      resultTab,
-    });
+      await submitClustalMsaJob({
+        api,
+        sequenceType: SEQUENCE_TYPE,
+        features,
+        msaFormat: MSA_FORMAT,
+        resultRouteBase: `${rootUrl}/workspace/msa`,
+        paramsSummary: `Strain segments, ${MSA_FORMAT.toUpperCase()} output format`,
+        resultTab,
+      });
+    } catch (error) {
+      // Only this function's own steps (bed-report fetch/parse) need
+      // closing here — submitClustalMsaJob already closes resultTab itself
+      // on its own failure (e.g. the actual job submission rejecting).
+      if (resultTab && !resultTab.closed) resultTab.close();
+      throw error;
+    }
   };
 
   return (

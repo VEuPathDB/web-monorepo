@@ -511,4 +511,28 @@ describe('StrainMsaForm submission', () => {
     // submitClustalMsaJob — otherwise browsers may block it as a popup.
     expect(window.open).toHaveBeenCalledWith('about:blank', '_blank');
   });
+
+  it('MSA radio: closes the pre-opened tab if the bed report fetch fails', async () => {
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockRejectedValue(new Error('bed report unavailable'));
+    const fakeTab = {
+      location: { replace: jest.fn() },
+      close: jest.fn(),
+      closed: false,
+    };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+
+    renderWithWdkService(makeCompleteQuestionState(), {
+      getTemporaryResultPath,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+    await userEvent.click(
+      screen.getByRole('button', { name: /continue alignment/i })
+    );
+
+    await waitFor(() => expect(fakeTab.close).toHaveBeenCalledTimes(1));
+    expect(fakeTab.location.replace).not.toHaveBeenCalled();
+  });
 });
