@@ -46,8 +46,19 @@ function showResultDocument(content: string, format: string | undefined) {
       document.documentElement
     );
   } else {
+    // Plain-text formats (clustal, fasta, phylip, stockholm, vienna, msf,
+    // selex) rely on fixed-width alignment and real line breaks to be
+    // readable — document.body.textContent alone renders them with the
+    // browser's default white-space handling, which collapses newlines
+    // and reads as one flat run of characters. A <pre> element preserves
+    // whitespace/line breaks and uses a monospace font by default, the
+    // same fix already applied to this site's synchronous FASTA download
+    // (which wraps its own plain-text result in <pre> before writing it).
     document.title = 'Multiple Sequence Alignment';
-    document.body.textContent = content;
+    const pre = document.createElement('pre');
+    pre.textContent = content;
+    document.body.textContent = '';
+    document.body.appendChild(pre);
   }
 }
 

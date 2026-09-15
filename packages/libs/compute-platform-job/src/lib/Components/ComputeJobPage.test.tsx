@@ -71,6 +71,24 @@ describe('ComputeJobPage', () => {
     expect(api.fetchJobFile).toHaveBeenCalledWith('abc', 'output');
   });
 
+  it('wraps plain-text results in a <pre> element so alignment whitespace/line breaks render, not collapse', async () => {
+    const alignmentText = 'seq1  ACGTACGT\nseq2  ACGTACGT\n      ********';
+    const api = makeFakeApi({
+      fetchJob: jest
+        .fn()
+        .mockResolvedValue({ jobID: 'abc', status: 'complete' }),
+      fetchJobFile: jest.fn().mockResolvedValue(alignmentText),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    await waitFor(() => {
+      const pre = document.body.querySelector('pre');
+      expect(pre).not.toBeNull();
+      expect(pre?.textContent).toBe(alignmentText);
+    });
+  });
+
   it('parses and swaps in the full document for the clustal_dnd format', async () => {
     const api = makeFakeApi({
       fetchJob: jest
