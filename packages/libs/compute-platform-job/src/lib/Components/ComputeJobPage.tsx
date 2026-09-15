@@ -120,7 +120,17 @@ export function ComputeJobPage({
                 <>
                   <br />
                   <p className="ComputeJobPage-DurationWarning">
-                    <Icon fa="warning" style={{ marginRight: '0.3em' }} />
+                    <Icon
+                      fa="exclamation-triangle"
+                      style={{
+                        marginRight: '0.3em',
+                        // coreui's warning[600] (packages/libs/coreui/src/definitions/colors.ts)
+                        // — this package has no dependency on coreui, so the
+                        // value is inlined rather than imported.
+                        color: '#BD8C0F',
+                        fontSize: '1.5em',
+                      }}
+                    />
                     Job time can range from seconds to many minutes, depending
                     on the number and length of sequences.
                   </p>
