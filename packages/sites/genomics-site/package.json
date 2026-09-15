@@ -36,6 +36,8 @@
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@tanstack/react-query": "^4.33.0",
+    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "12.1.2",
     "@types/cytoscape": "^3.14.7",
     "@types/jest": "^26.0.24",
     "@types/jqueryui": "^1.12.16",
@@ -113,6 +115,9 @@
     "setupFiles": [
       "<rootDir>/jest.setup.js"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup-after-env.js"
+    ],
     "testRegex": "(\\.|/)test\\.tsx?$",
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
@@ -126,11 +131,16 @@
       "json",
       "node"
     ],
+    "moduleNameMapper": {
+      "\\.(css|scss)$": "<rootDir>/jest.style-mock.js",
+      "\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/jest.style-mock.js",
+      "^jquery$": "<rootDir>/jest.jquery-mock.js"
+    },
     "transform": {
       "^.+\\.(t|j)sx?$": "<rootDir>/jest.babel-transform.js"
     },
     "transformIgnorePatterns": [
-      "/node_modules/(?!@veupathdb/web-common/lib/)"
+      "/node_modules/(?!@veupathdb/web-common/lib/|spin\\.js/)"
     ]
   },
   "files": [
