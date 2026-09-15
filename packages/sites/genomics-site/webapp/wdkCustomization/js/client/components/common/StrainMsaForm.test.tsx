@@ -739,4 +739,64 @@ describe('StrainMsaForm validation', () => {
     ).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled();
   });
+
+  it('shows the segment length in bp next to Start/End for a Gene record', () => {
+    renderWithWdkService(
+      makeCompleteQuestionState({
+        paramValues: {
+          organismSinglePick: 'Plasmodium falciparum 3D7',
+          sequenceId: 'Pf3D7_11_v3',
+          sequence_strand: 'f',
+          start_point: '100',
+          end_point_segment: '1099',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+      }),
+      {},
+      GENE_RECORD
+    );
+
+    // Inclusive range: 1099 - 100 + 1 = 1000bp.
+    expect(screen.getByText('(1000bp)')).toBeInTheDocument();
+  });
+
+  it('shows the segment length in bp next to Offset for a Variant record', () => {
+    renderWithWdkService(makeCompleteQuestionState(), {}, VARIANT_RECORD);
+
+    // Default offset is 1000, symmetric around location: 2 * 1000 = 2000bp.
+    expect(screen.getByText('(2000bp)')).toBeInTheDocument();
+  });
+
+  it('shows an error and disables submit when the segment is shorter than the minimum', () => {
+    renderWithWdkService(
+      makeCompleteQuestionState({
+        paramValues: {
+          organismSinglePick: 'Plasmodium falciparum 3D7',
+          sequenceId: 'Pf3D7_11_v3',
+          sequence_strand: 'f',
+          start_point: '100',
+          end_point_segment: '105',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+      }),
+      {},
+      GENE_RECORD
+    );
+
+    // 105 - 100 + 1 = 6bp, below the 10bp minimum.
+    expect(screen.getByText(/at least 10bp/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
+
+  it('shows an error and disables submit when the segment exceeds the maximum', async () => {
+    renderWithWdkService(makeCompleteQuestionState(), {}, VARIANT_RECORD);
+
+    const offsetInput = screen.getByLabelText(/offset/i);
+    await userEvent.clear(offsetInput);
+    await userEvent.type(offsetInput, '100000');
+
+    // 2 * 100000 = 200000bp, above the 150000bp maximum.
+    expect(screen.getByText(/no more than 150000bp/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
 });

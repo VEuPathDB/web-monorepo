@@ -29,6 +29,8 @@ const EDA_SAMPLE_TABLE_SUFFIX_PARAM = 'eda_sample_table_suffix';
 const DEFAULT_VARIANT_OFFSET = 1000;
 const SEQUENCE_TYPE = 'dnaseq';
 const MSA_FORMAT = 'clustal';
+const MIN_SEGMENT_LENGTH = 10;
+const MAX_SEGMENT_LENGTH = 150000;
 
 // Adjacent radio/number-input labels are rendered as siblings with no
 // wrapping element of their own; without an explicit gap, browsers give
@@ -277,22 +279,37 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   // Basic sanity guards — not a substitute for the backend's own
   // validation, just enough to catch obviously-nonsensical input (a
-  // negative/zero offset, or a start/end range that's backwards) before
-  // it's ever submitted. Start/End can briefly be empty strings on the
-  // render right after questionStatus first becomes 'complete', before the
-  // region-seeding effect above has run — treated as "not yet seeded",
-  // not "invalid", so no spurious error flashes during that one render.
+  // negative/zero offset, a start/end range that's backwards, or a segment
+  // length outside [MIN_SEGMENT_LENGTH, MAX_SEGMENT_LENGTH]) before it's
+  // ever submitted. Start/End can briefly be empty strings on the render
+  // right after questionStatus first becomes 'complete', before the
+  // region-seeding effect above has run — treated as "not yet seeded", not
+  // "invalid", so no spurious error flashes during that one render.
   const startValue = Number(paramValues[START_PARAM]);
   const endValue = Number(paramValues[END_PARAM]);
-  const regionValidationError =
+  const hasSeededRange =
+    region.kind === 'range' &&
+    paramValues[START_PARAM] &&
+    paramValues[END_PARAM];
+  // end_point_segment/start_point are both inclusive, so the segment is
+  // (end - start + 1) bases long; the offset control produces a segment
+  // symmetric around the point, 2 * offset bases long.
+  const segmentLength =
     region.kind === 'point'
-      ? offset <= 0
-        ? 'Offset must be greater than 0.'
-        : null
-      : paramValues[START_PARAM] &&
-        paramValues[END_PARAM] &&
-        startValue >= endValue
+      ? 2 * offset
+      : hasSeededRange
+      ? endValue - startValue + 1
+      : null;
+
+  const regionValidationError =
+    region.kind === 'point' && offset <= 0
+      ? 'Offset must be greater than 0.'
+      : region.kind === 'range' && hasSeededRange && startValue >= endValue
       ? 'Start must be less than End.'
+      : segmentLength != null && segmentLength < MIN_SEGMENT_LENGTH
+      ? `Segment must be at least ${MIN_SEGMENT_LENGTH}bp.`
+      : segmentLength != null && segmentLength > MAX_SEGMENT_LENGTH
+      ? `Segment must be no more than ${MAX_SEGMENT_LENGTH}bp.`
       : null;
 
   const searchConfig = {
@@ -390,9 +407,10 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
                 onChange={(e) => updateParam(END_PARAM, e.target.value)}
               />
             </label>
+            {segmentLength != null && <span>({segmentLength}bp)</span>}
           </div>
         ) : (
-          <div>
+          <div style={RADIO_ROW_STYLE}>
             <label>
               Offset{' '}
               <input
@@ -402,6 +420,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
                 onChange={(e) => handleOffsetChange(Number(e.target.value))}
               />
             </label>
+            {segmentLength != null && <span>({segmentLength}bp)</span>}
           </div>
         )}
         {regionValidationError && (
