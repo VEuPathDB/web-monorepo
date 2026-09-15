@@ -124,10 +124,12 @@ export function ComputeJobPage({
                       fa="exclamation-triangle"
                       style={{
                         marginRight: '0.3em',
-                        // coreui's warning[600] (packages/libs/coreui/src/definitions/colors.ts)
-                        // — this package has no dependency on coreui, so the
-                        // value is inlined rather than imported.
-                        color: '#BD8C0F',
+                        // coreui's warning[500] (packages/libs/coreui/src/definitions/colors.ts)
+                        // — brighter than the warning[600] existing plain-triangle
+                        // icons elsewhere use (UserFormContainer), chosen for
+                        // this usage specifically; inlined as a literal hex
+                        // value since this package has no dependency on coreui.
+                        color: '#ECAE13',
                         fontSize: '1.5em',
                       }}
                     />
