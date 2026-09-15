@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
@@ -157,14 +157,25 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   // Task 4's Redux epic deliberately doesn't seed start_point/end_point_segment
   // from the record (Gene's start_min/end_max, or Variant's location +/- the
-  // default offset) — that's left to this component. Seed them once real
-  // paramValues are available, guarded by this ref so it only fires once per
-  // mount/record rather than on every keystroke (which would otherwise fight
-  // the user's own edits and/or loop).
-  const hasSeededRegionRef = useRef(false);
-
+  // default offset) — that's left to this component. Seed them any time real
+  // paramValues are available and don't already match the derived region.
+  //
+  // observeStrainMsaFilter (the epic) re-dispatches updateActiveQuestion on
+  // every RECORD_UPDATE, and a WDK record page's attributes/tables can load
+  // in more than one batch — each RECORD_UPDATE restarts loadQuestion, which
+  // resets paramValues to the bare model defaults (start_point defaults to
+  // '1') until this effect re-seeds them. A "seed once, never again" ref
+  // guard here previously meant a later RECORD_UPDATE's question reload
+  // would silently clobber the correct value with those bare defaults after
+  // this effect had already run once and stopped — the value would flash
+  // correct, then revert. The paramValues comparison below is itself a
+  // sufficient guard against redundant dispatches (it only ever dispatches
+  // when the values don't already match), so no separate "already ran" ref
+  // is needed — nor would fighting a user's own edits be a concern, since
+  // updateParamValue's dispatch immediately makes paramValues match the
+  // derived value, so this effect is a no-op on every subsequent render
+  // until questionState changes again.
   useEffect(() => {
-    if (hasSeededRegionRef.current) return;
     if (questionState == null || questionState.questionStatus !== 'complete')
       return;
 
@@ -182,7 +193,6 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       paramValues[START_PARAM] === derivedStart &&
       paramValues[END_PARAM] === derivedEnd
     ) {
-      hasSeededRegionRef.current = true;
       return;
     }
 
@@ -209,7 +219,6 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         })
       );
     }
-    hasSeededRegionRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionState]);
 

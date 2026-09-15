@@ -257,6 +257,22 @@ describe('StrainMsaForm region seeding', () => {
             },
           };
         }
+        // Test-only synthetic action simulating a second RECORD_UPDATE
+        // restarting loadQuestion (a real WDK record page can dispatch
+        // RECORD_UPDATE more than once as attributes/tables load in
+        // batches) — a fresh question load resets paramValues to the bare
+        // model defaults, independent of anything this component dispatched
+        // for the prior load.
+        if (action.type === 'test/reload-question') {
+          return {
+            ...state,
+            question: {
+              questions: {
+                StrainSegmentsByMeta: action.payload.questionState,
+              },
+            },
+          };
+        }
         return state;
       }
     );
@@ -330,6 +346,71 @@ describe('StrainMsaForm region seeding', () => {
       },
     });
     const store = renderLive(questionState, GENE_RECORD);
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('100');
+      expect(current.paramValues.end_point_segment).toBe('5000');
+    });
+  });
+
+  it('re-seeds start_point/end_point_segment if a later question reload resets them to bare defaults', async () => {
+    // Reproduces: a WDK record page's attributes/tables can load in more
+    // than one batch, each dispatching its own RECORD_UPDATE.
+    // observeStrainMsaFilter (Task 4's epic) re-dispatches
+    // updateActiveQuestion on every RECORD_UPDATE, so a second, later-
+    // resolving loadQuestion call can reset paramValues back to the bare
+    // model defaults after this component already seeded the correct
+    // region once — the value should flash correct, then get re-seeded
+    // again, not get stuck at the reset default.
+    const seededQuestionState = makeCompleteQuestionState({
+      question: {
+        urlSegment: 'StrainSegmentsByMeta',
+        parametersByName: {
+          variation_sample_meta: {
+            name: 'variation_sample_meta',
+            type: 'filter',
+          },
+          start_point: { name: 'start_point' },
+          end_point_segment: { name: 'end_point_segment' },
+        },
+      },
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: 'f',
+        start_point: '100',
+        end_point_segment: '5000',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(seededQuestionState, GENE_RECORD);
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('100');
+      expect(current.paramValues.end_point_segment).toBe('5000');
+    });
+
+    // Simulate the second RECORD_UPDATE's loadQuestion resolving: the
+    // question state is replaced wholesale with fresh, bare-default
+    // paramValues (start_point defaults to '1' in the real WDK model).
+    store.dispatch({
+      type: 'test/reload-question',
+      payload: {
+        questionState: makeCompleteQuestionState({
+          question: seededQuestionState.question,
+          paramValues: {
+            organismSinglePick: 'Plasmodium falciparum 3D7',
+            sequenceId: 'Pf3D7_11_v3',
+            sequence_strand: 'f',
+            start_point: '1',
+            end_point_segment: '100',
+            variation_sample_meta: JSON.stringify({ filters: [] }),
+          },
+        }),
+      },
+    });
 
     await waitFor(() => {
       const current = store.getState().question.questions.StrainSegmentsByMeta;
