@@ -64,7 +64,6 @@ describe('ComputeJobRouter', () => {
     expect(
       await screen.findByText(/job time can range from seconds/i)
     ).toBeInTheDocument();
-    expect(screen.getByText(/you submitted 25 sequences/i)).toBeInTheDocument();
   });
 
   it('does not throw when the query string is missing (e.g. bookmarked URL)', async () => {

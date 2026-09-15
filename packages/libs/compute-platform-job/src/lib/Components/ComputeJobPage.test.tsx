@@ -57,7 +57,6 @@ describe('ComputeJobPage', () => {
     expect(
       await screen.findByText(/job time can range from seconds/i)
     ).toBeInTheDocument();
-    expect(screen.getByText(/you submitted 11 sequences/i)).toBeInTheDocument();
   });
 
   it('does not show a duration warning while queued when sequenceCount is at or below the threshold', async () => {

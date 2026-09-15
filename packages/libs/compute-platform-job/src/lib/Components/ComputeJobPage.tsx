@@ -117,12 +117,14 @@ export function ComputeJobPage({
             </p>
             {sequenceCount != null &&
               sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
-                <p className="ComputeJobPage-DurationWarning">
-                  <Icon fa="warning" style={{ marginRight: '0.3em' }} />
-                  Job time can range from seconds to many minutes, depending on
-                  the number and length of sequences. You submitted{' '}
-                  {sequenceCount} sequences.
-                </p>
+                <>
+                  <br />
+                  <p className="ComputeJobPage-DurationWarning">
+                    <Icon fa="warning" style={{ marginRight: '0.3em' }} />
+                    Job time can range from seconds to many minutes, depending
+                    on the number and length of sequences.
+                  </p>
+                </>
               )}
           </>
         ) : null}
