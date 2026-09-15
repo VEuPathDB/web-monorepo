@@ -275,6 +275,26 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     updateParam(END_PARAM, String(location + newOffset));
   };
 
+  // Basic sanity guards — not a substitute for the backend's own
+  // validation, just enough to catch obviously-nonsensical input (a
+  // negative/zero offset, or a start/end range that's backwards) before
+  // it's ever submitted. Start/End can briefly be empty strings on the
+  // render right after questionStatus first becomes 'complete', before the
+  // region-seeding effect above has run — treated as "not yet seeded",
+  // not "invalid", so no spurious error flashes during that one render.
+  const startValue = Number(paramValues[START_PARAM]);
+  const endValue = Number(paramValues[END_PARAM]);
+  const regionValidationError =
+    region.kind === 'point'
+      ? offset <= 0
+        ? 'Offset must be greater than 0.'
+        : null
+      : paramValues[START_PARAM] &&
+        paramValues[END_PARAM] &&
+        startValue >= endValue
+      ? 'Start must be less than End.'
+      : null;
+
   const searchConfig = {
     parameters: buildSearchParameters(paramValues, question.parametersByName),
   };
@@ -356,6 +376,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               Start{' '}
               <input
                 type="number"
+                min="1"
                 value={paramValues[START_PARAM] ?? ''}
                 onChange={(e) => updateParam(START_PARAM, e.target.value)}
               />
@@ -364,6 +385,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               End{' '}
               <input
                 type="number"
+                min="1"
                 value={paramValues[END_PARAM] ?? ''}
                 onChange={(e) => updateParam(END_PARAM, e.target.value)}
               />
@@ -375,10 +397,16 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               Offset{' '}
               <input
                 type="number"
+                min="1"
                 value={offset}
                 onChange={(e) => handleOffsetChange(Number(e.target.value))}
               />
             </label>
+          </div>
+        )}
+        {regionValidationError && (
+          <div role="alert" style={{ color: 'red', marginTop: '5px' }}>
+            {regionValidationError}
           </div>
         )}
       </div>
@@ -441,6 +469,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               type="button"
               className="btn"
               style={SUBMIT_BUTTON_STYLE}
+              disabled={regionValidationError != null}
               onClick={handleFastaSubmit}
             >
               Submit
@@ -458,7 +487,12 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             sequenceType="strain segments"
             onConfirm={handleMsaConfirm}
           >
-            <input type="submit" value="Submit" style={SUBMIT_BUTTON_STYLE} />
+            <input
+              type="submit"
+              value="Submit"
+              style={SUBMIT_BUTTON_STYLE}
+              disabled={regionValidationError != null}
+            />
           </ClustalAlignmentForm>
         )}
       </div>

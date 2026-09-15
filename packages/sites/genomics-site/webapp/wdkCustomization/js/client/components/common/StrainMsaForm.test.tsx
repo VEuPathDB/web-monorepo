@@ -681,3 +681,62 @@ describe('StrainMsaForm submission', () => {
     expect(fakeTab.location.replace).not.toHaveBeenCalled();
   });
 });
+
+describe('StrainMsaForm validation', () => {
+  it('shows an error and disables submit for a Gene record when Start >= End', () => {
+    renderWithWdkService(
+      makeCompleteQuestionState({
+        paramValues: {
+          organismSinglePick: 'Plasmodium falciparum 3D7',
+          sequenceId: 'Pf3D7_11_v3',
+          sequence_strand: 'f',
+          start_point: '5000',
+          end_point_segment: '100',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+      }),
+      {},
+      GENE_RECORD
+    );
+
+    expect(
+      screen.getByText(/start must be less than end/i)
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
+
+  it('shows an error and disables submit for a Variant record when the offset is 0', async () => {
+    renderWithWdkService(
+      makeCompleteQuestionState({
+        paramValues: {
+          organismSinglePick: 'Plasmodium falciparum 3D7',
+          sequenceId: 'Pf3D7_11_v3',
+          sequence_strand: 'f',
+          start_point: '1500',
+          end_point_segment: '3500',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+      }),
+      {},
+      VARIANT_RECORD
+    );
+
+    const offsetInput = screen.getByLabelText(/offset/i);
+    await userEvent.clear(offsetInput);
+    await userEvent.type(offsetInput, '0');
+
+    expect(
+      screen.getByText(/offset must be greater than 0/i)
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
+
+  it('does not show an error for a valid Gene start/end range', () => {
+    renderWithWdkService(makeCompleteQuestionState(), {}, GENE_RECORD);
+
+    expect(
+      screen.queryByText(/start must be less than end/i)
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled();
+  });
+});
