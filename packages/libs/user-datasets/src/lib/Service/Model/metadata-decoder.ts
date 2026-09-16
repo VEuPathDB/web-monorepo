@@ -72,7 +72,7 @@ export const datasetMetadata = io.intersection([
         sharesRecords: io.boolean,
       })
     ),
-    experimentalOrganism: datasetOrganism,
+    experimentalOrganisms: io.array(datasetOrganism),
     hostOrganism: datasetOrganism,
     datasetCharacteristics: io.partial({
       studyDesign: io.string,

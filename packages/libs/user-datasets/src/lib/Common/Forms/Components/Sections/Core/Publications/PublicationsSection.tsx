@@ -65,8 +65,9 @@ export function PublicationsSection(
           setEnabled: setEnabled,
           fieldName: 'enable-publications',
           required: props.isRequired,
-          helpText:
-            'Whether the data underlying this dataset have been described in a published manuscript, journal article, or preprint.',
+          helpText: 'Whether the data underlying this dataset have been'
+            + ' described in a published manuscript, journal article, or'
+            + ' preprint.',
         }}
         className="field-grid"
       >

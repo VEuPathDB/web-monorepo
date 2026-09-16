@@ -174,7 +174,7 @@ function applyMetadata(
   setMetadata(out, 'projectName', rawMeta.projectName);
   setMetadata(out, 'programName', rawMeta.programName);
   setMetadata(out, 'linkedDatasets', rawMeta.linkedDatasets);
-  setMetadata(out, 'experimentalOrganism', rawMeta.experimentalOrganism);
+  setMetadata(out, 'experimentalOrganisms', rawMeta.experimentalOrganisms);
   setMetadata(out, 'hostOrganism', rawMeta.hostOrganism);
   setMetadata(out, 'datasetCharacteristics', rawMeta.datasetCharacteristics);
   setMetadata(out, 'externalIdentifiers', rawMeta.externalIdentifiers);

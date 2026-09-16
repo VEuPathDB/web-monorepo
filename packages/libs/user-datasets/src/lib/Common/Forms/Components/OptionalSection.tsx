@@ -10,6 +10,12 @@ export interface OptionalSectionToggleProps {
 
   readonly enabled: boolean | null;
   readonly setEnabled: Consumer<boolean>;
+
+  /**
+   * Whether the "yes"/"no" toggle should be hidden.  Useful for sections that
+   * are always assumed enabled on certain sites.
+   */
+  readonly hideToggle?: boolean;
 }
 
 export interface OptionalSectionProps {
@@ -31,18 +37,23 @@ export function OptionalSection({
 
   return (
     <div className={className}>
-      <label className={'not-disabled' + (toggle.required ? ' required' : '')}>
-        {toggle.label}
-      </label>
-      <YesNoToggle
-        value={toggle.enabled}
-        setValue={toggle.setEnabled}
-        fieldName={toggle.fieldName}
-        className="not-disabled"
-        required={toggle.required}
-        disableRequiredStyling={true}
-        helpText={toggle.helpText}
-      />
+      {!toggle.hideToggle
+        ? <>
+          <label className={'not-disabled' + (toggle.required ? ' required' : '')}>
+            {toggle.label}
+          </label>
+          <YesNoToggle
+            value={toggle.enabled}
+            setValue={toggle.setEnabled}
+            fieldName={toggle.fieldName}
+            className="not-disabled"
+            required={toggle.required}
+            disableRequiredStyling={true}
+            helpText={toggle.helpText}
+          />
+        </>
+        : null
+      }
 
       {children}
     </div>
