@@ -32,6 +32,18 @@ const MSA_FORMAT = 'clustal';
 const MIN_SEGMENT_LENGTH = 10;
 const MAX_SEGMENT_LENGTH = 150000;
 
+// Clustal Omega's runtime on this data is roughly linear in both sequence
+// count and segment length (same-locus strain segments are near-identical
+// apart from SNPs/small indels, so profile-profile merges stay close to
+// diagonal rather than the O(L^2) worst case) — so budget a roughly
+// constant sequenceCount * segmentLength product rather than gating on
+// sequenceCount alone. PLACEHOLDER: not yet calibrated against real
+// Clustal Omega run times; adjust once we have timings.
+const MSA_RUNTIME_BUDGET_BASES = 50_000_000;
+// Never let a very long segment drive the allowed sequence count below
+// what's needed to make an alignment meaningful at all.
+const MIN_BLOCK_THRESHOLD = 2;
+
 // Adjacent radio/number-input labels are rendered as siblings with no
 // wrapping element of their own; without an explicit gap, browsers give
 // them no horizontal space beyond the label's own text.
@@ -312,6 +324,16 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       ? `Segment must be no more than ${MAX_SEGMENT_LENGTH}bp.`
       : null;
 
+  // Undefined (segment length not yet known) falls back to
+  // ClustalAlignmentForm's own DEFAULT_BLOCK_THRESHOLD.
+  const dynamicBlockThreshold =
+    segmentLength == null
+      ? undefined
+      : Math.max(
+          MIN_BLOCK_THRESHOLD,
+          Math.floor(MSA_RUNTIME_BUDGET_BASES / segmentLength)
+        );
+
   const searchConfig = {
     parameters: buildSearchParameters(paramValues, question.parametersByName),
   };
@@ -502,9 +524,10 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         ) : (
           <ClustalAlignmentForm
             action="about:blank"
-            sequenceCount={2}
+            sequenceCount={filterUiState?.filteredCount ?? 0}
             sequenceType="strain segments"
             onConfirm={handleMsaConfirm}
+            blockThreshold={dynamicBlockThreshold}
           >
             <input
               type="submit"
