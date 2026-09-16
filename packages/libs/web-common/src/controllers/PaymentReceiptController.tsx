@@ -116,7 +116,10 @@ export default function PaymentReceiptController({ referenceNumber }: Props) {
   return (
     <div className="payment-container payment-receipt">
       <h1>Payment Receipt</h1>
-      <p>Thank you for your payment to VEuPathDB.</p>
+      <p>
+        Thank you for your payment to VEuPathDB. You can bookmark this page for
+        future reference.
+      </p>
       <p>
         For questions about this payment or your subscription, contact{' '}
         <a href="mailto:subscriptions@VEuPathDB.org">
