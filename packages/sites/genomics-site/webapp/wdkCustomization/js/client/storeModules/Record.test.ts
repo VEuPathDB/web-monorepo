@@ -7,12 +7,12 @@ import {
 } from '@veupathdb/wdk-client/lib/Actions';
 import { observeStrainMsaFilter } from './Record';
 
-function makeRecordUpdateAction(
+function makeRecordReceivedAction(
   recordClassName: string,
   attributes: Record<string, string>
 ) {
   return {
-    type: RecordActions.RECORD_UPDATE,
+    type: RecordActions.RECORD_RECEIVED,
     payload: {
       record: {
         recordClassName,
@@ -25,7 +25,7 @@ function makeRecordUpdateAction(
 describe('observeStrainMsaFilter', () => {
   it('seeds StrainSegmentsByMeta from a Gene record', (done) => {
     const action$ = of(
-      makeRecordUpdateAction('GeneRecordClasses.GeneRecordClass', {
+      makeRecordReceivedAction('GeneRecordClasses.GeneRecordClass', {
         organism_full: 'Plasmodium falciparum 3D7',
         sequence_id: 'Pf3D7_11_v3',
       })
@@ -53,7 +53,7 @@ describe('observeStrainMsaFilter', () => {
 
   it('seeds StrainSegmentsByMeta from a Variant record, using Variant-specific attribute names', (done) => {
     const action$ = of(
-      makeRecordUpdateAction('VariantRecordClasses.VariantRecordClass', {
+      makeRecordReceivedAction('VariantRecordClasses.VariantRecordClass', {
         organism_text: 'Plasmodium falciparum 3D7',
         sequence_source_id: 'Pf3D7_11_v3',
       })
@@ -76,7 +76,7 @@ describe('observeStrainMsaFilter', () => {
 
   it('emits nothing for an unrelated record class', (done) => {
     const action$ = of(
-      makeRecordUpdateAction('PathwayRecordClasses.PathwayRecordClass', {})
+      makeRecordReceivedAction('PathwayRecordClasses.PathwayRecordClass', {})
     );
 
     observeStrainMsaFilter(action$)
@@ -87,7 +87,7 @@ describe('observeStrainMsaFilter', () => {
       });
   });
 
-  it('emits nothing for actions that are not RECORD_UPDATE', (done) => {
+  it('emits nothing for actions that are not RECORD_RECEIVED', (done) => {
     const action$ = of({ type: 'some/other-action' });
 
     observeStrainMsaFilter(action$)
