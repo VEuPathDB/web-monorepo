@@ -365,7 +365,7 @@ function observeVariantStrainFilter(action$) {
  */
 export function observeStrainMsaFilter(action$) {
   return action$.pipe(
-    filter((action) => action.type === RecordActions.RECORD_UPDATE),
+    filter((action) => action.type === RecordActions.RECORD_RECEIVED),
     mergeMap((action) => {
       const { record } = action.payload;
       if (isGeneRecord(record)) {
