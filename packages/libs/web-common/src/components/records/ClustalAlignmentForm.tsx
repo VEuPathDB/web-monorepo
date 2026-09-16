@@ -8,6 +8,17 @@ interface ClustalAlignmentFormProps {
   children: React.ReactNode;
   sequenceType?: string;
   blockThreshold?: number | ((form: HTMLFormElement) => number);
+  /**
+   * The current region length (bp) and the region length that would fit at
+   * the current sequenceCount, purely for display in the block dialog — this
+   * component has no opinion on how they relate to sequenceCount/blockThreshold.
+   * Provide both to have the dialog explain both ways to get under the
+   * limit (fewer sequences, or a shorter region); omit both when sequence
+   * count is the only axis that applies (e.g. protein alignment, with no
+   * region-length concept).
+   */
+  segmentLength?: number;
+  maxSegmentLength?: number;
   /** If provided, called instead of submitting the form on confirm. */
   onConfirm?: () => void | Promise<void>;
 }
@@ -20,6 +31,8 @@ export default function ClustalAlignmentForm({
   children,
   sequenceType = 'sequences',
   blockThreshold,
+  segmentLength,
+  maxSegmentLength,
   onConfirm,
 }: ClustalAlignmentFormProps) {
   const [showModal, setShowModal] = useState(false);
@@ -111,18 +124,43 @@ export default function ClustalAlignmentForm({
             <Banner
               banner={{
                 type: 'error',
-                message: (
-                  <>
-                    You have selected{' '}
-                    <strong>
-                      {sequenceCount} {sequenceType}
-                    </strong>
-                    , which exceeds the maximum limit.
-                    <br />
-                    Please reduce your selection to fewer than{' '}
-                    {evaluatedBlockThreshold} {sequenceType} to proceed.
-                  </>
-                ),
+                message:
+                  segmentLength != null && maxSegmentLength != null ? (
+                    <>
+                      You have selected{' '}
+                      <strong>
+                        {sequenceCount} {sequenceType}
+                      </strong>{' '}
+                      across a <strong>{segmentLength}bp</strong> region, which
+                      exceeds the maximum limit.
+                      <br />
+                      <br />
+                      Please either:
+                      <ul style={{ margin: '5px 0 0', paddingLeft: '20px' }}>
+                        <li>
+                          reduce your selection to fewer than{' '}
+                          {evaluatedBlockThreshold} {sequenceType} for this
+                          region length, or
+                        </li>
+                        <li>
+                          reduce your region to fewer than {maxSegmentLength}
+                          bp for this many {sequenceType}.
+                        </li>
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      You have selected{' '}
+                      <strong>
+                        {sequenceCount} {sequenceType}
+                      </strong>
+                      , which exceeds the maximum limit.
+                      <br />
+                      <br />
+                      Please reduce your selection to fewer than{' '}
+                      {evaluatedBlockThreshold} {sequenceType} to proceed.
+                    </>
+                  ),
               }}
             />
           )}

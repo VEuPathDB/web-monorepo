@@ -334,6 +334,17 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           Math.floor(MSA_RUNTIME_BUDGET_BASES / segmentLength)
         );
 
+  const sequenceCount = filterUiState?.filteredCount ?? 0;
+  // The mirror image of dynamicBlockThreshold: the region length that would
+  // fit under the same budget at the current sequenceCount, purely for
+  // display in ClustalAlignmentForm's block dialog. Undefined when
+  // sequenceCount isn't yet known (0), matching dynamicBlockThreshold's own
+  // "not yet known" convention.
+  const maxSegmentLengthForCount =
+    sequenceCount > 0
+      ? Math.floor(MSA_RUNTIME_BUDGET_BASES / sequenceCount)
+      : undefined;
+
   const searchConfig = {
     parameters: buildSearchParameters(paramValues, question.parametersByName),
   };
@@ -524,10 +535,12 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         ) : (
           <ClustalAlignmentForm
             action="about:blank"
-            sequenceCount={filterUiState?.filteredCount ?? 0}
+            sequenceCount={sequenceCount}
             sequenceType="strain segments"
             onConfirm={handleMsaConfirm}
             blockThreshold={dynamicBlockThreshold}
+            segmentLength={segmentLength ?? undefined}
+            maxSegmentLength={maxSegmentLengthForCount}
           >
             <input
               type="submit"
