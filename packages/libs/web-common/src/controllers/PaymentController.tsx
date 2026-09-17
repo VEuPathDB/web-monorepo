@@ -10,6 +10,7 @@ const CHECKOUT_CONTAINER_ID = 'unified-checkout-container';
 
 declare global {
   interface Window {
+    // VAS is a CyberSource JS object (Visa Acceptance Solutions)
     VAS?: {
       UnifiedCheckout: (
         captureContext: string
