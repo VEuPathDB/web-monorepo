@@ -14,7 +14,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: set-matrix
         run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
 
@@ -32,19 +32,17 @@ jobs:
       matrix:
         dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          path: ~/.nx
+          key: ${{ runner.os }}-nx-${{ matrix.dir }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-nx-${{ matrix.dir }}-
       - run: yarn
         # Use development mode for pre-release tags so dev-only UI (e.g. "Open all sections") is included
       - run: |
@@ -85,22 +83,14 @@ jobs:
     name: Generate test reports
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - run: yarn
       - run: ./tools/scripts/test-report
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Test report
           path: ${{ github.workspace }}/test-report

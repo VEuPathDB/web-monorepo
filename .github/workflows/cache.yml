@@ -1,6 +1,7 @@
 # NOTE: This workflow is largely legacy/redundant now that all workflows (including pr-check.yml)
-# automatically cache dependencies. Since PR caches are accessible to the main branch and vice versa,
-# this explicit pre-warming step is no longer strictly necessary.
+# automatically cache dependencies via actions/setup-node's built-in package-manager caching.
+# Since PR caches are accessible to the main branch and vice versa, this explicit pre-warming
+# step is no longer strictly necessary.
 #
 # We're keeping it for now because:
 # 1. It ensures main always has a "canonical" cache after yarn.lock changes
@@ -18,23 +19,15 @@ on:
       - yarn.lock
 jobs:
   # Cache yarn install command
-  # See https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#example-using-the-cache-action
+  # actions/setup-node caches automatically based on the packageManager field in package.json
   cache-yarn:
     name: Generate yarn cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - run: yarn
 
