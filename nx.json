@@ -1,12 +1,4 @@
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build-npm-modules"]
-      }
-    }
-  },
   "extends": "nx/presets/npm.json",
   "workspaceLayout": {
     "appsDir": "packages/sites",
@@ -17,6 +9,7 @@
   },
   "targetDefaults": {
     "build-npm-modules": {
+      "cache": true,
       "dependsOn": ["^build-npm-modules"],
       "inputs": ["srcFiles", "^srcFiles"],
       "outputs": ["{projectRoot}/lib"]
@@ -25,13 +18,21 @@
       "dependsOn": ["^build-npm-modules"]
     },
     "compile:check": {
-      "dependsOn": ["^build-npm-modules"]
+      "cache": true,
+      "dependsOn": ["^build-npm-modules"],
+      "inputs": ["srcFiles", "^srcFiles"]
     },
     "bundle:dev": {
-      "dependsOn": ["^build-npm-modules"]
+      "cache": true,
+      "dependsOn": ["^build-npm-modules"],
+      "inputs": ["srcFiles", "^srcFiles"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "bundle:npm": {
-      "dependsOn": ["^build-npm-modules"]
+      "cache": true,
+      "dependsOn": ["^build-npm-modules"],
+      "inputs": ["srcFiles", "^srcFiles"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "bundle:analyze": {
       "dependsOn": ["^build-npm-modules"]
