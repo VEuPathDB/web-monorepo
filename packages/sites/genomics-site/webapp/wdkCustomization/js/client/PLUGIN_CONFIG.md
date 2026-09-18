@@ -696,7 +696,7 @@ The genomics site includes multiple fold change search forms:
 
 ### EDA Integration
 
-Multiple EDA integrations:
+Multiple EDA (Exploratory Data Analysis) integrations:
 
 - **GenesByPhenotypeUserDataset**: User dataset phenotype queries
 - **EdaSubsetParameter**: Custom EDA subset parameter
