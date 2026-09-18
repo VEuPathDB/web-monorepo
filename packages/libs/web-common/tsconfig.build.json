@@ -4,7 +4,10 @@
     "src"
   ],
   "exclude": [
-    "**/__test__/**"
+    "**/__test__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/setupTests.ts"
   ],
   "compilerOptions": {
     "noEmit": false,

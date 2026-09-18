@@ -4,7 +4,10 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 // the same way web-common deep-imports into eda's and user-datasets' src/lib.
 import { Feature } from '@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes';
 
-import { endpoint } from '@veupathdb/web-common/lib/config';
+import {
+  fetchTemporaryResultText,
+  parseBedToFeatures,
+} from '@veupathdb/web-common/lib/util/msaJobSubmission';
 
 const TRANSCRIPT_ID_LIST_SEARCH = 'GeneByLocusTag';
 const TRANSCRIPT_ID_PARAM = 'ds_gene_ids';
@@ -91,39 +94,4 @@ export async function resolveTranscriptFeatures(
   const bedText = await fetchTemporaryResultText(temporaryResultPath);
 
   return parseBedToFeatures(bedText);
-}
-
-// Temporary-result paths are plain GET-able URLs relative to the WDK
-// service base (the same base the site's own WDK requests use), exactly as
-// gene-list-export-utils.tsx's getGeneListTemporaryResultUrl constructs for
-// attributesTabular. That base comes from the site's build-time config
-// (window.__SITE_CONFIG__), not from WdkService#getConfig() — the latter's
-// ServiceConfig has no service-base-URL field.
-async function fetchTemporaryResultText(
-  temporaryResultPath: string
-): Promise<string> {
-  const response = await fetch(`${endpoint}${temporaryResultPath}`);
-  return response.text();
-}
-
-function parseBedToFeatures(bedText: string): Feature[] {
-  return bedText
-    .split('\n')
-    .filter((line) => line.trim().length > 0)
-    .map((line) => {
-      const [chrom, chromStart, chromEnd, name, , strandSymbol] =
-        line.split('\t');
-      return {
-        contig: chrom,
-        start: Number(chromStart),
-        end: Number(chromEnd),
-        query: name,
-        strand:
-          strandSymbol === '+'
-            ? 'POSITIVE'
-            : strandSymbol === '-'
-            ? 'NEGATIVE'
-            : 'NONE',
-      };
-    });
 }
