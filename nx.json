@@ -3,9 +3,7 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build-npm-modules"
-        ]
+        "cacheableOperations": ["build-npm-modules"]
       }
     }
   },
@@ -15,56 +13,36 @@
     "libsDir": "packages/libs"
   },
   "namedInputs": {
-    "srcFiles": [
-      "!{projectRoot}/{lib,dist}/**/*"
-    ]
+    "srcFiles": ["!{projectRoot}/{lib,dist}/**/*"]
   },
   "targetDefaults": {
     "build-npm-modules": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ],
-      "inputs": [
-        "srcFiles",
-        "^srcFiles"
-      ],
-      "outputs": [
-        "{projectRoot}/lib"
-      ]
+      "dependsOn": ["^build-npm-modules"],
+      "inputs": ["srcFiles", "^srcFiles"],
+      "outputs": ["{projectRoot}/lib"]
     },
     "start": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ]
+      "dependsOn": ["^build-npm-modules"]
     },
     "compile:check": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ]
+      "dependsOn": ["^build-npm-modules"]
     },
     "bundle:dev": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ]
+      "dependsOn": ["^build-npm-modules"]
     },
     "bundle:npm": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ]
+      "dependsOn": ["^build-npm-modules"]
     },
     "bundle:analyze": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ]
+      "dependsOn": ["^build-npm-modules"]
     },
     "storybook": {
-      "dependsOn": [
-        "^build-npm-modules"
-      ]
+      "dependsOn": ["^build-npm-modules"]
     }
   },
   "affected": {
     "defaultBase": "main"
   },
-  "$schema": "./node_modules/nx/schemas/nx-schema.json"
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "analytics": false
 }
