@@ -37,12 +37,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - uses: actions/cache@v5
-        with:
-          path: ~/.nx
-          key: ${{ runner.os }}-nx-${{ matrix.dir }}-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-nx-${{ matrix.dir }}-
+      # No nx cache here: this workflow only runs on tag pushes, and GitHub Actions cache
+      # access explicitly forbids sharing a cache between different tag names, so a cache
+      # saved by one release tag could never be restored by the next one anyway. See
+      # https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache
       - run: yarn
         # Use development mode for pre-release tags so dev-only UI (e.g. "Open all sections") is included
       - run: |
