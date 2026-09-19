@@ -25,14 +25,19 @@ const VALID_FILENAME_PATTERN = /\.(fastq|fq)(\.gz)?$/i;
 /**
  * Renders a `StrainCall` verdict as a natural-language sentence for display.
  */
-function describeStrainCall(call: StrainCall): string {
+function describeStrainCall(call: StrainCall): React.ReactNode {
   switch (call.verdict) {
     case 'strain':
       return `Most likely strain: ${call.strain}`;
     case 'mixed':
       return 'This sample looks like a mix of more than one lab strain.';
     case 'notLabStrain':
-      return 'This sample does not look like a known P. falciparum lab strain.';
+      return (
+        <>
+          This sample does not look like a known <i>P. falciparum</i> lab
+          strain.
+        </>
+      );
   }
 }
 
@@ -191,6 +196,13 @@ export function PlasmoFast() {
           )}
         >
           {describeStrainCall(strainCall)}
+          {isRunning && (
+            <span className={cx('--Preliminary')}>
+              {' '}
+              (Preliminary &mdash; for the definitive result, wait for
+              processing to finish.)
+            </span>
+          )}
         </p>
       )}
 
