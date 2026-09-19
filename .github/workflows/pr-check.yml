@@ -11,21 +11,19 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          path: ~/.nx
+          key: ${{ runner.os }}-nx-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
-      - uses: nrwl/nx-set-shas@v4
+            ${{ runner.os }}-nx-
+      - uses: nrwl/nx-set-shas@v5
       - run: yarn
       - run: yarn nx affected --target=compile:check
