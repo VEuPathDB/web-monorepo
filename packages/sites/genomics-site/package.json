@@ -53,7 +53,7 @@
     "@veupathdb/eslint-config": "workspace:^",
     "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/multi-blast": "workspace:^",
-    "@veupathdb/plasmofast": "0.2.2",
+    "@veupathdb/plasmofast": "0.3.0",
     "@veupathdb/preferred-organisms": "workspace:^",
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/site-babel-config": "workspace:^",

@@ -1,7 +1,11 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { analyze } from '@veupathdb/plasmofast';
-import { AnalysisResult, ProgressEvent } from '@veupathdb/plasmofast';
+import { analyze, callStrain } from '@veupathdb/plasmofast';
+import {
+  AnalysisResult,
+  ProgressEvent,
+  StrainCall,
+} from '@veupathdb/plasmofast';
 
 import FileInput from '@veupathdb/wdk-client/lib/Components/InputControls/FileInput';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -19,19 +23,17 @@ type Progress = {
 const VALID_FILENAME_PATTERN = /\.(fastq|fq)(\.gz)?$/i;
 
 /**
- * Determine the most likely strain: the one with the highest `specific` count.
- * Returns null if no strain has any specific hits (no confident call).
+ * Renders a `StrainCall` verdict as a natural-language sentence for display.
  */
-function getTopStrain(result: AnalysisResult): string | null {
-  let topStrain: string | null = null;
-  let topCount = 0;
-  for (const [strain, counts] of Object.entries(result)) {
-    if (counts.specific > topCount) {
-      topCount = counts.specific;
-      topStrain = strain;
-    }
+function describeStrainCall(call: StrainCall): string {
+  switch (call.verdict) {
+    case 'strain':
+      return `Most likely strain: ${call.strain}`;
+    case 'mixed':
+      return 'This sample looks like a mix of more than one lab strain.';
+    case 'notLabStrain':
+      return 'This sample does not look like a known P. falciparum lab strain.';
   }
-  return topStrain;
 }
 
 export function PlasmoFast() {
@@ -47,8 +49,8 @@ export function PlasmoFast() {
 
   const controllerRef = useRef<AbortController | null>(null);
 
-  const topStrain = useMemo(
-    () => (result ? getTopStrain(result) : null),
+  const strainCall = useMemo(
+    () => (result ? callStrain(result) : null),
     [result]
   );
 
@@ -181,12 +183,15 @@ export function PlasmoFast() {
 
       {error && <div className={cx('--Error')}>{error}</div>}
 
-      {topStrain != null ? (
-        <p className={cx('--Call')}>
-          Most likely strain: <strong>{topStrain}</strong>
+      {strainCall && (
+        <p
+          className={cx(
+            '--Call',
+            strainCall.verdict !== 'strain' ? 'no-call' : undefined
+          )}
+        >
+          {describeStrainCall(strainCall)}
         </p>
-      ) : (
-        result && <p className={cx('--Call', 'no-call')}>No confident call</p>
       )}
 
       {result && (
@@ -204,7 +209,12 @@ export function PlasmoFast() {
             {Object.entries(result).map(([strain, counts]) => (
               <tr
                 key={strain}
-                className={strain === topStrain ? cx('--TopRow') : undefined}
+                className={
+                  strainCall?.verdict === 'strain' &&
+                  strain === strainCall.strain
+                    ? cx('--TopRow')
+                    : undefined
+                }
               >
                 <td>{strain}</td>
                 <td>{counts.specific}</td>
@@ -234,8 +244,9 @@ export function PlasmoFast() {
         For each candidate strain, the table reports how many diagnostic k-mers
         were found that are <em>specific</em> to that strain,{' '}
         <em>nonspecific</em> (shared with others), <em>mixed</em>, or seen at{' '}
-        <em>low coverage</em>. The strain with the most specific matches is
-        highlighted as the most likely call.
+        <em>low coverage</em>. A strain is only called when every strain has
+        enough covered positions to be confident; otherwise the sample is
+        reported as a mix of strains or not a known lab strain.
       </p>
 
       <p>
