@@ -306,7 +306,7 @@ h2.wdk-RecordNavigationSectionHeader {
  * parent category, instead of all rendering at the same size.
  */
 .wdk-RecordMain h3.wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
-  font-size: 1.5em;
+  font-size: 1.33em;
 }
 
 .wdk-RecordMain h4.wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
