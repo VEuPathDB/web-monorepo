@@ -175,15 +175,19 @@ export function reduce(state: State = {} as State, action: Action): State {
     }
 
     /**
-     * Update visibility of all record fields (tables and attributes).
-     * Category section collapsed state will be preserved.
+     * Update visibility of all record fields (tables and attributes), and
+     * of "leaf" categories (see getAllLeafCategories) -- categories that
+     * contain no nested subcategories, only fields. Non-leaf category
+     * sections are never collapsed, so the section hierarchy remains
+     * visible.
      */
     case ALL_FIELD_VISIBILITY: {
+      const sections = [...getAllFields(state), ...getAllLeafCategories(state)];
       return {
         ...state,
         collapsedSections: action.payload.isVisible
-          ? difference(state.collapsedSections, getAllFields(state))
-          : union(state.collapsedSections, getAllFields(state)),
+          ? difference(state.collapsedSections, sections)
+          : union(state.collapsedSections, sections),
       };
     }
 
@@ -280,6 +284,27 @@ export function getAllFields(state: State) {
 function isFieldNode(node: CategoryTreeNode) {
   let targetType = getTargetType(node);
   return targetType === 'attribute' || targetType === 'table';
+}
+
+/**
+ * Get ids of "leaf" categories: category sections whose children are all
+ * individual fields (attributes/tables), i.e. sections with no nested
+ * subcategories. Collapsing these sections hides their field content
+ * without ever hiding a subcategory, so the section hierarchy stays
+ * visible.
+ */
+export function getAllLeafCategories(state: State) {
+  return filterNodes<CategoryTreeNode>(isLeafCategory, state.categoryTree).map(
+    getId
+  );
+}
+
+/** Test if node is a category with children, none of which are categories */
+function isLeafCategory(node: CategoryTreeNode) {
+  return (
+    node.children.length > 0 &&
+    node.children.every((child) => child.children.length === 0)
+  );
 }
 
 type RecordOptions = {
