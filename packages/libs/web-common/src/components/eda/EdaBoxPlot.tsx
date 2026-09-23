@@ -61,21 +61,23 @@ function BoxPlotAdapter(props: AdapterProps) {
   const findEntityAndVariable = useFindEntityAndVariable();
   const entities = useStudyEntities();
 
-  // Both entities below are derived from the study metadata rather than
-  // configured per dataset: they are facts about the study's entity tree, and a
-  // stale or mistyped id would silently produce a plot of the wrong rows.
-  const resolvedGeneDisplaySpec = resolveGeneDisplaySpec(
-    geneDisplaySpec,
-    entities
-  );
-  // The output entity is the leaf-most of the two axes, so an ancestor-entity
-  // variable is inherited down rather than the descendant aggregated up.
+  // The output entity is derived from the study metadata rather than configured
+  // per dataset: it is a fact about the study's entity tree, and a stale or
+  // mistyped id would silently produce a plot of the wrong rows. It is the
+  // leaf-most of the two axes' entities, so an ancestor-entity variable is
+  // inherited down rather than the descendant aggregated up.
   const outputEntityId =
     leastAncestralVariable([xAxisVariable, yAxisVariable], entities)
       ?.entityId ?? yAxisVariable.entityId;
 
   const data = useCachedPromise(
     async function getData() {
+      // Resolved in here so that an ambiguous gene id variable surfaces as this
+      // plot's error rather than breaking the whole page.
+      const resolvedGeneDisplaySpec = resolveGeneDisplaySpec(
+        geneDisplaySpec,
+        entities
+      );
       // Unlike the scatter plot, a box plot has no per-point identity, so there
       // is nothing to highlight within it: a box of every gene's values says
       // nothing about the gene whose record page this is. Both display modes
@@ -112,7 +114,7 @@ function BoxPlotAdapter(props: AdapterProps) {
       studyId,
       xAxisVariable,
       yAxisVariable,
-      resolvedGeneDisplaySpec,
+      geneDisplaySpec,
       outputEntityId,
     ]
   );
