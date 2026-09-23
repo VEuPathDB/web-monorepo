@@ -341,14 +341,21 @@ const storageItems: Record<string, StorageDescriptor> = {
     path: 'tableStates',
     isRecordScoped: true,
   },
-  collapsedSections: {
-    path: 'collapsedSections',
-    isRecordScoped: false,
-  },
   expandedSections: {
     path: 'expandedSections',
     getValue: (state) =>
       difference(getAllFields(state), state.collapsedSections),
+    isRecordScoped: false,
+  },
+  // Leaf categories (see getAllLeafCategories) are persisted separately
+  // from fields, since they are collapsed/expanded independently (e.g. by
+  // ALL_FIELD_VISIBILITY) and have their own default (fully expanded,
+  // regardless of any site-provided defaultExpandedSections, which only
+  // applies to fields).
+  expandedLeafCategories: {
+    path: 'expandedLeafCategories',
+    getValue: (state) =>
+      difference(getAllLeafCategories(state), state.collapsedSections),
     isRecordScoped: false,
   },
   navigationVisible: {
@@ -428,6 +435,7 @@ function observeUserSettings(
     switchMap((action) => {
       let state = state$.value[key];
       let allFields = getAllFields(state);
+      let allLeafCategories = getAllLeafCategories(state);
 
       /** Show navigation for records with at least 5 categories */
       let navigationVisible = getStateFromStorage(
@@ -443,9 +451,17 @@ function observeUserSettings(
         action.payload.defaultExpandedSections ?? allFields
       );
 
-      let collapsedSections = expandedSections
-        ? difference(allFields, expandedSections)
-        : state.collapsedSections;
+      /** merge stored expanded leaf categories (see getAllLeafCategories) */
+      let expandedLeafCategories = getStateFromStorage(
+        storageItems.expandedLeafCategories,
+        state,
+        allLeafCategories
+      );
+
+      let collapsedSections = [
+        ...difference(allFields, expandedSections),
+        ...difference(allLeafCategories, expandedLeafCategories),
+      ];
 
       let tableStates = getStateFromStorage(
         storageItems.tables,
@@ -470,6 +486,10 @@ function observeUserSettings(
               case ALL_FIELD_VISIBILITY:
                 setStateInStorage(
                   storageItems.expandedSections,
+                  state$.value[key]
+                );
+                setStateInStorage(
+                  storageItems.expandedLeafCategories,
                   state$.value[key]
                 );
                 break;
