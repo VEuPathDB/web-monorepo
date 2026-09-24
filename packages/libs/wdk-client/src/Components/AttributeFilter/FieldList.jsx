@@ -1,7 +1,6 @@
 import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useLayoutEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
 import { scrollIntoViewIfNeeded } from '../../Utils/DomUtils';
 import { Seq } from '../../Utils/IterableUtils';
 import { areTermsInString, makeSearchHelpText } from '../../Utils/SearchUtils';
@@ -64,8 +63,8 @@ export default class FieldList extends React.Component {
     }
   }
 
-  handleCheckboxTreeRef(component) {
-    this.treeDomNode = ReactDOM.findDOMNode(component);
+  handleCheckboxTreeRef(node) {
+    this.treeDomNode = node;
   }
 
   handleExpansionChange(expandedNodes) {
