@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { webAppUrl } from '../config';
 
 import '../styles/PaymentReceipt.scss';
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
 // Shape returned by GET /service/payment/{referenceNumber} (format=JSON, the
 // default) -- mirrors the fields persisted by the backend's Payment class.
@@ -23,10 +25,9 @@ interface PaymentReceipt {
   email?: string;
 }
 
-type Stage =
-  | { name: 'loading' }
-  | { name: 'loaded'; payment: PaymentReceipt }
-  | { name: 'error' };
+type FetchResult =
+  | { status: 'loaded'; payment: PaymentReceipt }
+  | { status: 'error' };
 
 interface Props {
   referenceNumber: string;
@@ -45,24 +46,16 @@ async function fetchPaymentReceipt(
 }
 
 export default function PaymentReceiptController({ referenceNumber }: Props) {
-  const [stage, setStage] = useState<Stage>({ name: 'loading' });
+  useSetDocumentTitle('Payment Receipt');
 
-  useEffect(() => {
-    let cancelled = false;
-    setStage({ name: 'loading' });
-
-    fetchPaymentReceipt(referenceNumber)
-      .then((payment) => {
-        if (!cancelled) setStage({ name: 'loaded', payment });
-      })
-      .catch((error) => {
-        console.error(error);
-        if (!cancelled) setStage({ name: 'error' });
-      });
-
-    return () => {
-      cancelled = true;
-    };
+  const { value } = usePromise<FetchResult>(async () => {
+    try {
+      const payment = await fetchPaymentReceipt(referenceNumber);
+      return { status: 'loaded', payment };
+    } catch (error) {
+      console.error(error);
+      return { status: 'error' };
+    }
   }, [referenceNumber]);
 
   const downloadUrl =
@@ -71,7 +64,7 @@ export default function PaymentReceiptController({ referenceNumber }: Props) {
     encodeURIComponent(referenceNumber) +
     '?format=PDF';
 
-  if (stage.name === 'loading') {
+  if (value == null) {
     return (
       <div className="payment-container payment-receipt">
         <Loading />
@@ -79,7 +72,7 @@ export default function PaymentReceiptController({ referenceNumber }: Props) {
     );
   }
 
-  if (stage.name === 'error') {
+  if (value.status === 'error') {
     return (
       <div className="payment-container payment-receipt">
         <h1>Payment Receipt</h1>
@@ -95,7 +88,7 @@ export default function PaymentReceiptController({ referenceNumber }: Props) {
     );
   }
 
-  const { payment } = stage;
+  const { payment } = value;
   const fullName = [payment.firstName, payment.lastName]
     .filter(Boolean)
     .join(' ');
