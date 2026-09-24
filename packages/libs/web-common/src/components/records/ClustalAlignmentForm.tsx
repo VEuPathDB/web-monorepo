@@ -1,20 +1,28 @@
 import React, { useRef, useState, FormEvent } from 'react';
 import { Dialog } from '@veupathdb/wdk-client/lib/Components';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 
 interface ClustalAlignmentFormProps {
   action: string;
   sequenceCount: number;
   children: React.ReactNode;
   sequenceType?: string;
-  warnThreshold?: number | ((form: HTMLFormElement) => number);
   blockThreshold?: number | ((form: HTMLFormElement) => number);
+  /**
+   * The current region length (bp) and the region length that would fit at
+   * the current sequenceCount, purely for display in the block dialog — this
+   * component has no opinion on how they relate to sequenceCount/blockThreshold.
+   * Provide both to have the dialog explain both ways to get under the
+   * limit (fewer sequences, or a shorter region); omit both when sequence
+   * count is the only axis that applies (e.g. protein alignment, with no
+   * region-length concept).
+   */
+  segmentLength?: number;
+  maxSegmentLength?: number;
   /** If provided, called instead of submitting the form on confirm. */
   onConfirm?: () => void | Promise<void>;
 }
 
-const DEFAULT_WARN_THRESHOLD = 50;
 const DEFAULT_BLOCK_THRESHOLD = 1000;
 
 export default function ClustalAlignmentForm({
@@ -22,31 +30,40 @@ export default function ClustalAlignmentForm({
   sequenceCount,
   children,
   sequenceType = 'sequences',
-  warnThreshold,
   blockThreshold,
+  segmentLength,
+  maxSegmentLength,
   onConfirm,
 }: ClustalAlignmentFormProps) {
-  const theme = useUITheme();
   const [showModal, setShowModal] = useState(false);
-  const [evaluatedWarnThreshold, setEvaluatedWarnThreshold] = useState<
-    number | null
-  >(null);
   const [evaluatedBlockThreshold, setEvaluatedBlockThreshold] = useState<
     number | null
   >(null);
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const submitDirectly = async () => {
+    if (onConfirm) {
+      try {
+        await onConfirm();
+      } catch {
+        // No banner to show the error in once the confirm dialog is no
+        // longer interposed — surface it as a modal instead, since that's
+        // still the only UI this component has for reporting a failure.
+        setError(
+          'Something went wrong submitting your request. Please try again.'
+        );
+        setShowModal(true);
+      }
+    } else if (formRef.current) {
+      formRef.current.submit();
+    }
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Evaluate thresholds dynamically if they're functions
-    const actualWarn =
-      typeof warnThreshold === 'function'
-        ? formRef.current
-          ? warnThreshold(formRef.current)
-          : DEFAULT_WARN_THRESHOLD
-        : warnThreshold ?? DEFAULT_WARN_THRESHOLD;
     const actualBlock =
       typeof blockThreshold === 'function'
         ? formRef.current
@@ -54,28 +71,18 @@ export default function ClustalAlignmentForm({
           : DEFAULT_BLOCK_THRESHOLD
         : blockThreshold ?? DEFAULT_BLOCK_THRESHOLD;
 
-    setEvaluatedWarnThreshold(actualWarn);
     setEvaluatedBlockThreshold(actualBlock);
     setError(null);
-    setShowModal(true);
-  };
 
-  const handleConfirm = async () => {
-    if (onConfirm) {
-      try {
-        await onConfirm();
-        setShowModal(false);
-      } catch {
-        setError(
-          'Something went wrong submitting your request. Please try again.'
-        );
-      }
-    } else {
-      setShowModal(false);
-      if (formRef.current) {
-        formRef.current.submit();
-      }
+    // Only interpose the confirm dialog when there's actually something to
+    // say (the sequence count exceeds the hard limit) — otherwise submit
+    // directly, with no confirm step at all.
+    if (sequenceCount > actualBlock) {
+      setShowModal(true);
+      return;
     }
+
+    submitDirectly();
   };
 
   const handleCancel = () => {
@@ -85,11 +92,6 @@ export default function ClustalAlignmentForm({
 
   const isBlocked =
     evaluatedBlockThreshold !== null && sequenceCount > evaluatedBlockThreshold;
-  const showWarning =
-    evaluatedWarnThreshold !== null &&
-    evaluatedBlockThreshold !== null &&
-    sequenceCount > evaluatedWarnThreshold &&
-    sequenceCount <= evaluatedBlockThreshold;
 
   return (
     <>
@@ -118,55 +120,49 @@ export default function ClustalAlignmentForm({
               }}
             />
           )}
-          {showWarning && (
-            <Banner
-              banner={{
-                type: 'warning',
-                message: (
-                  <>
-                    You have selected{' '}
-                    <strong>
-                      {sequenceCount} {sequenceType}
-                    </strong>
-                    . Aligning this many {sequenceType} may take several minutes
-                    to complete.
-                  </>
-                ),
-              }}
-            />
-          )}
           {isBlocked && (
             <Banner
               banner={{
                 type: 'error',
-                message: (
-                  <>
-                    You have selected{' '}
-                    <strong>
-                      {sequenceCount} {sequenceType}
-                    </strong>
-                    , which exceeds the maximum limit.
-                    <br />
-                    Please reduce your selection to fewer than{' '}
-                    {evaluatedBlockThreshold} {sequenceType} to proceed.
-                  </>
-                ),
+                message:
+                  segmentLength != null && maxSegmentLength != null ? (
+                    <>
+                      You have selected{' '}
+                      <strong>
+                        {sequenceCount} {sequenceType}
+                      </strong>{' '}
+                      across a <strong>{segmentLength}bp</strong> region, which
+                      exceeds the maximum limit.
+                      <br />
+                      <br />
+                      Please either:
+                      <ul style={{ margin: '5px 0 0', paddingLeft: '20px' }}>
+                        <li>
+                          reduce your selection to fewer than{' '}
+                          {evaluatedBlockThreshold} {sequenceType} for this
+                          region length, or
+                        </li>
+                        <li>
+                          reduce your region to fewer than {maxSegmentLength}
+                          bp for this many {sequenceType}.
+                        </li>
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      You have selected{' '}
+                      <strong>
+                        {sequenceCount} {sequenceType}
+                      </strong>
+                      , which exceeds the maximum limit.
+                      <br />
+                      <br />
+                      Please reduce your selection to fewer than{' '}
+                      {evaluatedBlockThreshold} {sequenceType} to proceed.
+                    </>
+                  ),
               }}
             />
-          )}
-          {!isBlocked && (
-            <>
-              <p style={{ marginTop: '0px' }}>
-                The alignment results will open in a new browser tab.
-              </p>
-              <p>The tab may appear empty while the alignment is running.</p>
-              <p>
-                <strong>
-                  Please be patient and avoid resubmitting - multiple requests
-                  will not make it faster and can overload our servers.
-                </strong>
-              </p>
-            </>
           )}
           <div
             style={{
@@ -177,24 +173,8 @@ export default function ClustalAlignmentForm({
             }}
           >
             <button type="button" className="btn" onClick={handleCancel}>
-              {isBlocked ? 'OK' : 'Cancel'}
+              OK
             </button>
-            {!isBlocked && (
-              <button
-                type="button"
-                className="btn"
-                onClick={handleConfirm}
-                style={{
-                  backgroundColor: theme
-                    ? theme.palette.primary.hue[theme.palette.primary.level]
-                    : '#4D4D4D',
-                  color: 'white',
-                  fontWeight: 600,
-                }}
-              >
-                Continue Alignment
-              </button>
-            )}
           </div>
         </div>
       </Dialog>

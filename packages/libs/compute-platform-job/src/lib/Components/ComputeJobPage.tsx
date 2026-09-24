@@ -21,7 +21,13 @@ interface ComputeJobPageProps {
   paramsSummary?: string;
   /** The MsaFormat value the job was submitted with, e.g. 'clustal_dnd'. */
   format?: string;
+  /** Number of sequences submitted to the job, if known. */
+  sequenceCount?: number;
 }
+
+// Below this many sequences, job time is short enough that the warning
+// isn't worth showing.
+const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
 
 // The /files/{name} endpoint always returns Content-Type: text/plain
 // regardless of the actual content, so an HTML-producing format (only
@@ -46,8 +52,19 @@ function showResultDocument(content: string, format: string | undefined) {
       document.documentElement
     );
   } else {
+    // Plain-text formats (clustal, fasta, phylip, stockholm, vienna, msf,
+    // selex) rely on fixed-width alignment and real line breaks to be
+    // readable — document.body.textContent alone renders them with the
+    // browser's default white-space handling, which collapses newlines
+    // and reads as one flat run of characters. A <pre> element preserves
+    // whitespace/line breaks and uses a monospace font by default, the
+    // same fix already applied to this site's synchronous FASTA download
+    // (which wraps its own plain-text result in <pre> before writing it).
     document.title = 'Multiple Sequence Alignment';
-    document.body.textContent = content;
+    const pre = document.createElement('pre');
+    pre.textContent = content;
+    document.body.textContent = '';
+    document.body.appendChild(pre);
   }
 }
 
@@ -56,6 +73,7 @@ export function ComputeJobPage({
   api,
   paramsSummary,
   format,
+  sequenceCount,
 }: ComputeJobPageProps) {
   const [status, setStatus] = useState<JobStatus>('queued');
 
@@ -88,14 +106,39 @@ export function ComputeJobPage({
       <div style={{ fontSize: '1.5em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
-          <p className="Status">
-            <Icon
-              className="ComputeJobPage-StatusIcon"
-              fa="circle-o-notch"
-              style={{ marginRight: '0.3em' }}
-            />
-            Status: {status}
-          </p>
+          <>
+            <p className="Status">
+              <Icon
+                className="ComputeJobPage-StatusIcon"
+                fa="circle-o-notch"
+                style={{ marginRight: '0.3em' }}
+              />
+              Status: {status}
+            </p>
+            {sequenceCount != null &&
+              sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
+                <>
+                  <br />
+                  <p className="ComputeJobPage-DurationWarning">
+                    <Icon
+                      fa="exclamation-triangle"
+                      style={{
+                        marginRight: '0.3em',
+                        // coreui's warning[500] (packages/libs/coreui/src/definitions/colors.ts)
+                        // — brighter than the warning[600] existing plain-triangle
+                        // icons elsewhere use (UserFormContainer), chosen for
+                        // this usage specifically; inlined as a literal hex
+                        // value since this package has no dependency on coreui.
+                        color: '#ECAE13',
+                        fontSize: '1.5em',
+                      }}
+                    />
+                    Job time can range from seconds to many minutes, depending
+                    on the number and length of sequences.
+                  </p>
+                </>
+              )}
+          </>
         ) : null}
         {status === 'failed' && (
           <p className="DeadEnd">

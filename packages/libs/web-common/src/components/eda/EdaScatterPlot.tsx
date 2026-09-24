@@ -3,6 +3,7 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
   useDataClient,
   useFindEntityAndVariable,
+  useStudyEntities,
   useStudyMetadata,
   useSubsettingClient,
 } from '@veupathdb/eda/lib/core';
@@ -14,7 +15,11 @@ import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContai
 import { edaServiceUrl } from '../../config';
 import { HighlightedPointsDetails } from '@veupathdb/components/src/types/general';
 import pluralize from 'pluralize';
-import { filtersFromGeneDisplaySpec, GeneDisplaySpec } from './geneDisplaySpec';
+import {
+  filtersFromGeneDisplaySpec,
+  resolveGeneDisplaySpec,
+  GeneDisplaySpec,
+} from './geneDisplaySpec';
 
 interface Props {
   datasetId: string;
@@ -57,9 +62,16 @@ function ScatterPlotAdapter(props: AdapterProps) {
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
   const findEntityAndVariable = useFindEntityAndVariable();
+  const entities = useStudyEntities();
   const data = useCachedPromise(
     async function getData() {
-      const filters = filtersFromGeneDisplaySpec(geneDisplaySpec);
+      // Resolved in here so that an ambiguous gene id variable surfaces as this
+      // plot's error rather than breaking the whole page.
+      const resolvedGeneDisplaySpec = resolveGeneDisplaySpec(
+        geneDisplaySpec,
+        entities
+      );
+      const filters = filtersFromGeneDisplaySpec(resolvedGeneDisplaySpec);
 
       const scatterplotDataResponse$ = dataClient.getScatterplot(
         'xyrelationships',
@@ -78,33 +90,38 @@ function ScatterPlotAdapter(props: AdapterProps) {
 
       // Get highlight data only if in highlight mode
       const highlightDataResponse$ =
-        geneDisplaySpec?.mode === 'highlight' && geneDisplaySpec.ids.length > 0
-          ? subsettingClient.getTabularData(studyId, geneDisplaySpec.entityId, {
-              filters: [
-                {
-                  type: 'stringSet',
-                  entityId: geneDisplaySpec.entityId,
-                  variableId: geneDisplaySpec.variableId,
-                  stringSet: geneDisplaySpec.ids,
-                },
-              ],
-              outputVariableIds: [geneDisplaySpec.variableId],
-            })
+        resolvedGeneDisplaySpec?.mode === 'highlight' &&
+        resolvedGeneDisplaySpec.ids.length > 0
+          ? subsettingClient.getTabularData(
+              studyId,
+              resolvedGeneDisplaySpec.entityId,
+              {
+                filters: [
+                  {
+                    type: 'stringSet',
+                    entityId: resolvedGeneDisplaySpec.entityId,
+                    variableId: resolvedGeneDisplaySpec.variableId,
+                    stringSet: resolvedGeneDisplaySpec.ids,
+                  },
+                ],
+                outputVariableIds: [resolvedGeneDisplaySpec.variableId],
+              }
+            )
           : undefined;
 
       const [scatterplotDataResponse, highlightDataResponse] =
         await Promise.all([scatterplotDataResponse$, highlightDataResponse$]);
 
       const highlightVar = findEntityAndVariable({
-        variableId: geneDisplaySpec?.variableId || '',
-        entityId: geneDisplaySpec?.entityId || '',
+        variableId: resolvedGeneDisplaySpec?.variableId || '',
+        entityId: resolvedGeneDisplaySpec?.entityId || '',
       });
 
       const highlightIds = highlightDataResponse?.slice(1).map((row) => row[0]);
 
       const highlightedPointsDetails: HighlightedPointsDetails = {
         pointIds: highlightIds ?? [],
-        highlightTraceName: geneDisplaySpec?.traceName,
+        highlightTraceName: resolvedGeneDisplaySpec?.traceName,
         nonHighlightTraceName: highlightVar
           ? `All ${pluralize(
               highlightVar?.variable.displayName.toLowerCase(),
@@ -126,7 +143,7 @@ function ScatterPlotAdapter(props: AdapterProps) {
         undefined,
         undefined,
         // Pass highlight details only in highlight mode
-        geneDisplaySpec?.mode === 'highlight' && highlightIds
+        resolvedGeneDisplaySpec?.mode === 'highlight' && highlightIds
           ? highlightedPointsDetails
           : undefined
       ).dataSetProcess;
