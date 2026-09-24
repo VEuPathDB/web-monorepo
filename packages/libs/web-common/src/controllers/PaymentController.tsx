@@ -55,6 +55,12 @@ interface PaymentResultResponse {
 // successfully authorized (and, per completeMandate.type=CAPTURE, captured) sale.
 const SUCCESS_STATUSES = ['AUTHORIZED', 'PARTIAL_AUTHORIZED'];
 
+// The status CyberSource returns for an actual card decline. Every other
+// non-success status (pending review, authentication required, a gateway or
+// processor error, etc.) is a real outcome too, but isn't a decline -- so it
+// shouldn't be reported to the payer as "your card was declined."
+const DECLINE_STATUSES = ['DECLINED'];
+
 type Stage =
   | { name: 'entry' }
   | { name: 'loading-checkout' }
@@ -62,7 +68,12 @@ type Stage =
   | { name: 'processing' }
   | { name: 'success'; result: PaymentResultResponse }
   | { name: 'declined'; result: PaymentResultResponse }
-  | { name: 'error'; message: ReactNode };
+  // `retryable` is false once submitPayment() has actually been called: if
+  // that request fails without a clear response (e.g. the connection drops),
+  // we can't tell whether the backend already authorized/captured the
+  // charge, so we must not let the payer blindly start a new attempt (which
+  // would submit a second, independent charge for the same amount).
+  | { name: 'error'; message: ReactNode; retryable: boolean };
 
 async function fetchCaptureContext(
   amount: string
@@ -99,33 +110,46 @@ async function submitPayment(
 // attribute and `crossorigin="anonymous"`, or the browser will refuse to
 // execute the script:
 // https://developer.cybersource.com/docs/cybs/en-us/unified-checkout/developer/all/rest/unified-checkout/uc-getting-started-cs-setup-intro/uc-getting-started-cs-js-library-intro.html
+// Caches the in-flight load promise per scriptUrl so concurrent/duplicate
+// calls share one <script> tag instead of racing to add more, and so a
+// retry after a failed load always attaches its listeners to a script tag
+// whose 'load'/'error' event hasn't fired yet (a plain DOM query for an
+// "existing" tag can't tell whether that tag already finished loading or
+// erroring, which left retries hanging forever).
+const scriptLoadPromises = new Map<string, Promise<void>>();
+
 function loadUnifiedCheckoutScript(
   scriptUrl: string,
   scriptIntegrity: string | null
 ): Promise<void> {
-  const existing = document.querySelector(
-    `script[src="${scriptUrl}"]`
-  ) as HTMLScriptElement | null;
-  if (existing != null) {
-    if (window.VAS != null) return Promise.resolve();
-    return new Promise((resolve, reject) => {
-      existing.addEventListener('load', () => resolve());
-      existing.addEventListener('error', () =>
-        reject(new Error('Failed to load Unified Checkout script'))
-      );
-    });
-  }
-  return new Promise((resolve, reject) => {
+  if (window.VAS != null) return Promise.resolve();
+
+  const cached = scriptLoadPromises.get(scriptUrl);
+  if (cached != null) return cached;
+
+  const promise = new Promise<void>((resolve, reject) => {
+    document
+      .querySelectorAll(`script[src="${scriptUrl}"]`)
+      .forEach((node) => node.remove());
+
     const script = document.createElement('script');
     script.src = scriptUrl;
     script.async = true;
     script.crossOrigin = 'anonymous';
     if (scriptIntegrity) script.integrity = scriptIntegrity;
     script.onload = () => resolve();
-    script.onerror = () =>
+    script.onerror = () => {
+      script.remove();
       reject(new Error('Failed to load Unified Checkout script'));
+    };
     document.body.appendChild(script);
   });
+
+  // Don't cache a failed load: the next attempt should get a fresh tag.
+  promise.catch(() => scriptLoadPromises.delete(scriptUrl));
+  scriptLoadPromises.set(scriptUrl, promise);
+
+  return promise;
 }
 
 // wrap functional payment controller in a class component to support title method API
@@ -181,6 +205,10 @@ function PaymentControllerFunction() {
   useEffect(() => {
     if (captureContext == null) return;
     let cancelled = false;
+    // Becomes true once submitPayment() has been called; from that point on
+    // a failure is ambiguous (the charge may have gone through) and must not
+    // be silently retried. See the `retryable` comment on the 'error' stage.
+    let paymentSubmitted = false;
 
     (async () => {
       try {
@@ -190,13 +218,20 @@ function PaymentControllerFunction() {
           captureContext.scriptUrl,
           captureContext.scriptIntegrity
         );
+        // A back-button reset (see handlePageShow above) can fire while any
+        // of these SDK calls is in flight, tearing down the
+        // #unified-checkout-container div. Re-check `cancelled` at each step
+        // so we never hand the SDK a selector that's already been unmounted.
+        if (cancelled) return;
         if (window.VAS == null)
           throw new Error('Unified Checkout failed to load');
 
         const client = await window.VAS.UnifiedCheckout(
           captureContext.captureContext
         );
+        if (cancelled) return;
         const checkout = await client.createCheckout({ autoProcessing: false });
+        if (cancelled) return;
         const transientToken = await checkout.mount(
           `#${CHECKOUT_CONTAINER_ID}`
         );
@@ -204,6 +239,7 @@ function PaymentControllerFunction() {
         if (cancelled) return;
         setStage({ name: 'processing' });
 
+        paymentSubmitted = true;
         const result = await submitPayment(
           transientToken,
           captureContext.referenceNumber,
@@ -211,17 +247,49 @@ function PaymentControllerFunction() {
         );
 
         if (cancelled) return;
-        setStage(
-          SUCCESS_STATUSES.includes(result.status)
-            ? { name: 'success', result }
-            : { name: 'declined', result }
-        );
+        if (SUCCESS_STATUSES.includes(result.status)) {
+          setStage({ name: 'success', result });
+        } else if (DECLINE_STATUSES.includes(result.status)) {
+          setStage({ name: 'declined', result });
+        } else {
+          // A definitive, non-ambiguous outcome came back from the backend
+          // (unlike the catch block below), so it's safe to let the payer
+          // retry -- we just don't have a specific, accurate message for
+          // this status, so avoid implying it was a card-level decline.
+          setStage({
+            name: 'error',
+            retryable: true,
+            message: (
+              <>
+                Your payment could not be completed (status: {result.status},
+                reference number {result.referenceNumber}). <br />
+                Please{' '}
+                <Link to="/contact-us" target="_blank">
+                  contact us
+                </Link>{' '}
+                for help completing your payment.
+              </>
+            ),
+          });
+        }
       } catch (error) {
         if (cancelled) return;
         console.error(error);
         setStage({
           name: 'error',
-          message: (
+          retryable: !paymentSubmitted,
+          message: paymentSubmitted ? (
+            <>
+              We couldn't confirm whether your payment went through (reference
+              number {captureContext.referenceNumber}). <br />
+              Please{' '}
+              <Link to="/contact-us" target="_blank">
+                contact us
+              </Link>{' '}
+              to check your payment status before trying again, so you aren't
+              charged twice.
+            </>
+          ) : (
             <>
               Something went wrong processing your payment. <br />
               Please{' '}
@@ -244,7 +312,9 @@ function PaymentControllerFunction() {
   // receipt page instead of showing a one-off inline message.
   useEffect(() => {
     if (stage.name !== 'success') return;
-    history.push('/payment/' + stage.result.referenceNumber);
+    history.push(
+      '/payment/' + encodeURIComponent(stage.result.referenceNumber)
+    );
   }, [stage, history]);
 
   const handleUserSubmit = () => {
@@ -314,9 +384,11 @@ function PaymentControllerFunction() {
       <div className="payment-container">
         <h1>Payment Error</h1>
         <p id="warning">{stage.message}</p>
-        <div className="button">
-          <input type="button" value="Try Again" onClick={resetToEntry} />
-        </div>
+        {stage.retryable && (
+          <div className="button">
+            <input type="button" value="Try Again" onClick={resetToEntry} />
+          </div>
+        )}
       </div>
     );
   }
