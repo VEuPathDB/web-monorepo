@@ -1,6 +1,7 @@
 import { Image } from '@material-ui/icons';
 import { colors, SingleSelect, Warning } from '@veupathdb/coreui';
 import { CSSProperties, useState } from 'react';
+import domtoimage from 'dom-to-image';
 
 interface ToImageOpts {
   height: number;
@@ -63,11 +64,34 @@ export function ExportPlotToImageButton(props: Props) {
           if (format) {
             setSawError(false);
             try {
-              await downloadImage(toImage, filename, {
+              const options = {
                 format,
                 height: imageHeight,
                 width: imageWidth,
-              });
+              };
+              const legendStyles = {
+                style: {
+                  width: '400px',
+                  backgroundColor: '#fff',
+                },
+              };
+
+              // export plotly plot
+              await downloadImage(toImage, filename, options);
+
+              // export legend
+              if (format === 'svg')
+                await domtoimage
+                  .toSvg(document.getElementById('plotLegend')!, legendStyles)
+                  .then((dataUrl) => {
+                    saveImage(dataUrl, filename, options, true);
+                  });
+              else if (format === 'png')
+                await domtoimage
+                  .toPng(document.getElementById('plotLegend')!, legendStyles)
+                  .then((dataUrl) => {
+                    saveImage(dataUrl, filename, options, true);
+                  });
             } catch (error) {
               setSawError(true);
               console.error(error);
@@ -102,9 +126,19 @@ async function downloadImage(
   options: ToImageOpts
 ) {
   const imgUrl = await toImage(options);
+  saveImage(imgUrl, filename, options);
+}
+
+function saveImage(
+  imgUrl: string,
+  filename: string,
+  options: ToImageOpts,
+  isLegend: boolean = false
+) {
   const downloadLink = document.createElement('a');
   downloadLink.href = imgUrl;
-  downloadLink.download = filename + '.' + options.format;
+  downloadLink.download =
+    filename + (isLegend ? 'Legend' : '') + '.' + options.format;
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);

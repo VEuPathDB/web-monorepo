@@ -34,6 +34,8 @@ export default function PlotLegend({
         type === 'colorscale' ||
         type === 'bubble') && (
         <div
+          // set id for export legend
+          id="plotLegend"
           style={{
             display: 'inline-block', // for general usage (e.g., story)
             border: '1px solid #dedede',
