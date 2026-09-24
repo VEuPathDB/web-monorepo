@@ -137,3 +137,6 @@ dist
 # AI
 .claude
 /workspace/
+
+# Nx cache
+/.nx/

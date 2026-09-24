@@ -158,9 +158,10 @@ export function EdaDatasetGraph(props: Props) {
               const geneDisplaySpec = graphIds && {
                 ids: graphIds,
                 variableId: plotConfig.displaySpecVariableId,
-                // A starting point only: the adapters correct this to whichever
-                // entity actually declares the variable, which is the x-axis
-                // entity only when both axes share one.
+                // A guess: the plot config names the gene id variable but not
+                // its entity. Each plot adapter replaces this with the entity
+                // that declares the variable (see resolveGeneDisplaySpec). The
+                // guess is right only when both axes are from the same entity.
                 entityId: plotConfig.xAxisEntityId,
                 traceName: source_id,
                 mode: plotConfig.displayMode,

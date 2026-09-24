@@ -73,7 +73,7 @@ export async function submitUpdate(
     !submission.updated.metadataContentFlags?.hasOrganismData &&
     !isGenomicsProjectId(projectId)
   ) {
-    mutableSubmission.experimentalOrganism = undefined;
+    mutableSubmission.experimentalOrganisms = undefined;
   }
 
   if (!submission.updated.metadataContentFlags?.hasDatasetCharacteristics) {
@@ -257,7 +257,7 @@ function convertMetaToPatch(
       case 'funding':
       case 'linkedDatasets':
       case 'publications':
-      case 'experimentalOrganism':
+      case 'experimentalOrganisms':
       case 'hostOrganism':
         patch = isEqual(original[key], updated[key])
           ? null
