@@ -175,15 +175,20 @@ export function reduce(state: State = {} as State, action: Action): State {
     }
 
     /**
-     * Update visibility of all record fields (tables and attributes).
-     * Category section collapsed state will be preserved.
+     * Update visibility of all record fields (tables and attributes), and
+     * of "leaf" categories (see getAllLeafCategories) -- categories with
+     * no nested subcategories or tables, only attribute fields. Every
+     * other category (containing a subcategory and/or a table) is never
+     * collapsed, so the section hierarchy -- and each table's own
+     * heading -- always remains visible.
      */
     case ALL_FIELD_VISIBILITY: {
+      const sections = [...getAllFields(state), ...getAllLeafCategories(state)];
       return {
         ...state,
         collapsedSections: action.payload.isVisible
-          ? difference(state.collapsedSections, getAllFields(state))
-          : union(state.collapsedSections, getAllFields(state)),
+          ? difference(state.collapsedSections, sections)
+          : union(state.collapsedSections, sections),
       };
     }
 
@@ -282,6 +287,42 @@ function isFieldNode(node: CategoryTreeNode) {
   return targetType === 'attribute' || targetType === 'table';
 }
 
+/** Test if node is a table node */
+function isTableNode(node: CategoryTreeNode) {
+  let targetType = getTargetType(node);
+  return targetType === 'table';
+}
+
+/**
+ * Get ids of "leaf" categories: category sections with no nested
+ * subcategories or tables, only individual attribute fields. Collapsing
+ * these sections hides their field content without ever hiding a
+ * subcategory, so the section hierarchy stays visible.
+ *
+ * Tables are excluded (i.e. a category made up of only tables, like
+ * "Metabolic pathways", is not considered a leaf) because
+ * RecordTableSection is always individually collapsible already -- see
+ * getAllFields. Attribute values, on the other hand, render inline with
+ * no collapse affordance of their own when short -- see
+ * InlineRecordAttributeSection -- so a wrapping category is the only way
+ * to hide them.
+ */
+export function getAllLeafCategories(state: State) {
+  return filterNodes<CategoryTreeNode>(isLeafCategory, state.categoryTree).map(
+    getId
+  );
+}
+
+/** Test if node is a category with children, none of which are subcategories or tables */
+function isLeafCategory(node: CategoryTreeNode) {
+  return (
+    node.children.length > 0 &&
+    node.children.every(
+      (child) => !isTableNode(child) && child.children.length === 0
+    )
+  );
+}
+
 type RecordOptions = {
   attributes: string[];
   tables: string[];
@@ -300,14 +341,21 @@ const storageItems: Record<string, StorageDescriptor> = {
     path: 'tableStates',
     isRecordScoped: true,
   },
-  collapsedSections: {
-    path: 'collapsedSections',
-    isRecordScoped: false,
-  },
   expandedSections: {
     path: 'expandedSections',
     getValue: (state) =>
       difference(getAllFields(state), state.collapsedSections),
+    isRecordScoped: false,
+  },
+  // Leaf categories (see getAllLeafCategories) are persisted separately
+  // from fields, since they are collapsed/expanded independently (e.g. by
+  // ALL_FIELD_VISIBILITY) and have their own default (fully expanded,
+  // regardless of any site-provided defaultExpandedSections, which only
+  // applies to fields).
+  expandedLeafCategories: {
+    path: 'expandedLeafCategories',
+    getValue: (state) =>
+      difference(getAllLeafCategories(state), state.collapsedSections),
     isRecordScoped: false,
   },
   navigationVisible: {
@@ -387,6 +435,7 @@ function observeUserSettings(
     switchMap((action) => {
       let state = state$.value[key];
       let allFields = getAllFields(state);
+      let allLeafCategories = getAllLeafCategories(state);
 
       /** Show navigation for records with at least 5 categories */
       let navigationVisible = getStateFromStorage(
@@ -402,9 +451,17 @@ function observeUserSettings(
         action.payload.defaultExpandedSections ?? allFields
       );
 
-      let collapsedSections = expandedSections
-        ? difference(allFields, expandedSections)
-        : state.collapsedSections;
+      /** merge stored expanded leaf categories (see getAllLeafCategories) */
+      let expandedLeafCategories = getStateFromStorage(
+        storageItems.expandedLeafCategories,
+        state,
+        allLeafCategories
+      );
+
+      let collapsedSections = [
+        ...difference(allFields, expandedSections),
+        ...difference(allLeafCategories, expandedLeafCategories),
+      ];
 
       let tableStates = getStateFromStorage(
         storageItems.tables,
@@ -429,6 +486,10 @@ function observeUserSettings(
               case ALL_FIELD_VISIBILITY:
                 setStateInStorage(
                   storageItems.expandedSections,
+                  state$.value[key]
+                );
+                setStateInStorage(
+                  storageItems.expandedLeafCategories,
                   state$.value[key]
                 );
                 break;

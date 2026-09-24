@@ -297,8 +297,25 @@ h2.wdk-RecordNavigationSectionHeader {
   border-bottom-right-radius: var(--border-radius);
 }
 
-.wdk-RecordMain .wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
-  font-size: 1.5em;
+/*
+ * Subsection headers are rendered with an increasingly deep heading tag
+ * (h3, h4, h5, h6) as category nesting gets deeper -- see the `Header`
+ * variable in RecordMainCategorySection.jsx. Scale the font size down at
+ * each level so that nested subsections (e.g. DNA polymorphism's Sample
+ * Basis, Variant Counts, etc.) are visually distinguishable from their
+ * parent category, instead of all rendering at the same size.
+ */
+.wdk-RecordMain h3.wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
+  font-size: 1.33em;
+}
+
+.wdk-RecordMain h4.wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
+  font-size: 1.25em;
+}
+
+.wdk-RecordMain h5.wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader,
+.wdk-RecordMain h6.wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
+  font-size: 1.1em;
 }
 
 .wdk-RecordTableContainerContent .wdk-DataTableContainer {
