@@ -123,6 +123,9 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                 displayLegend={false}
                 interactive={false}
                 title={label}
+                // render a compact export button per facet; the expanded
+                // modal plot keeps the default (medium) size
+                exportButtonSize="small"
               />
             </div>
           );
@@ -155,8 +158,10 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
 const makeFacetedPlotComponent = memoize(function <D, P extends PlotProps<D>>(
   UnfacetedPlotComponent: ComponentWithPlotRef<P>
 ) {
-  const FacetedPlotComponent =
-    forwardRef<FacetedPlotRef, FacetedPlotProps<D, P>>(renderFacetedPlot);
+  const FacetedPlotComponent = forwardRef<
+    FacetedPlotRef,
+    FacetedPlotProps<D, P>
+  >(renderFacetedPlot);
 
   FacetedPlotComponent.displayName = `FacetedPlotComponent(${
     UnfacetedPlotComponent.displayName || UnfacetedPlotComponent.name
