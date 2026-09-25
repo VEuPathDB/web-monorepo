@@ -1,5 +1,6 @@
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import {
+  DeflineFormat,
   Feature,
   MsaFormat,
   SequenceType,
@@ -65,6 +66,7 @@ interface SubmitClustalMsaJobOptions {
    * network report) precedes the submission.
    */
   resultTab: Window | null;
+  percentActg?: number;
 }
 
 /**
@@ -83,12 +85,13 @@ export async function submitClustalMsaJob({
   resultRouteBase,
   paramsSummary,
   resultTab,
+  percentActg,
 }: SubmitClustalMsaJobOptions): Promise<void> {
   try {
     const job = await api.submitJob(sequenceType, {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: msaFormat },
+      msaOptions: { format: msaFormat, percentActg },
     });
 
     // The already-open tab can't receive React Router location.state, so
@@ -110,4 +113,34 @@ export async function submitClustalMsaJob({
     }
     throw error;
   }
+}
+
+interface SubmitSyncFastaRequestOptions {
+  api: SequenceRetrievalApi;
+  sequenceType: SequenceType;
+  features: Feature[];
+  deflineFormat?: DeflineFormat;
+  basesPerLine?: number;
+  percentActg?: number;
+}
+
+/**
+ * Fetches FASTA text synchronously (no job/polling) and returns it directly,
+ * unlike submitClustalMsaJob's async job + tab-navigation flow. The caller
+ * writes the returned text into its own pre-opened tab.
+ */
+export async function submitSyncFastaRequest({
+  api,
+  sequenceType,
+  features,
+  deflineFormat,
+  basesPerLine,
+  percentActg,
+}: SubmitSyncFastaRequestOptions): Promise<string> {
+  return api.fetchSequencesSync(sequenceType, {
+    features,
+    deflineFormat,
+    basesPerLine,
+    percentActg,
+  });
 }

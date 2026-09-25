@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
-import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
+import { FilterParamNew, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { QuestionActions } from '@veupathdb/wdk-client/lib/Actions';
 import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
@@ -15,6 +15,7 @@ import {
   fetchTemporaryResultText,
   parseBedToFeatures,
   submitClustalMsaJob,
+  submitSyncFastaRequest,
 } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { rootUrl } from '../../config';
@@ -31,6 +32,10 @@ const SEQUENCE_TYPE = 'dnaseq';
 const MSA_FORMAT = 'clustal';
 const MIN_SEGMENT_LENGTH = 10;
 const MAX_SEGMENT_LENGTH = 150000;
+const DEFAULT_PERCENT_ACTG = 90;
+const MIN_PERCENT_ACTG = 10;
+const SYNC_FASTA_DEFLINE_FORMAT = 'QUERYANDREGION';
+const SYNC_FASTA_BASES_PER_LINE = 60;
 
 // Clustal Omega's runtime on this data is roughly linear in both sequence
 // count and segment length (same-locus strain segments are near-identical
@@ -62,19 +67,6 @@ const SUBMIT_BUTTON_STYLE = {
   fontSize: '1em',
   lineHeight: '1em',
   fontFamily: 'inherit',
-};
-
-// Same defaults SequenceFormFactory.jsx uses for the 'sequence' reporter
-// (packages/libs/web-common/src/components/reporters/SequenceFormFactory.jsx)
-// elsewhere in this codebase — this reporter requires all of these fields
-// (e.g. rejects a request missing sequenceFormat), and there's no
-// interactive form here to let the user choose them.
-const SEQUENCE_REPORT_CONFIG = {
-  attachmentType: 'plain',
-  deflineType: 'full',
-  deflineFields: ['gene_id'],
-  sequenceFormat: 'fixed_width',
-  basesPerLine: 60,
 };
 
 /**
@@ -126,6 +118,10 @@ type Region =
   | { kind: 'range'; start: string; end: string }
   | { kind: 'point'; location: string; offset: number };
 
+export function isVariantRecord(record: WdkRecord): boolean {
+  return record.recordClassName === 'VariantRecordClasses.VariantRecordClass';
+}
+
 /**
  * Gene has a natural start/end range (start_min/end_max) to default from.
  * Variant is a single point (location) with no range — its region input is
@@ -134,7 +130,7 @@ type Region =
  * only has to switch on `region.kind`, not repeat the record-class check.
  */
 export function deriveRegion(record: WdkRecord): Region {
-  if (record.recordClassName === 'VariantRecordClasses.VariantRecordClass') {
+  if (isVariantRecord(record)) {
     return {
       kind: 'point',
       location: record.attributes.location ?? '',
@@ -168,6 +164,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const [outputChoice, setOutputChoice] = useState<'fasta' | 'msa'>('msa');
   const [fastaSubmitError, setFastaSubmitError] = useState<string | null>(null);
+  const [percentActg, setPercentActg] = useState(DEFAULT_PERCENT_ACTG);
   // The user-editable offset for a Variant record's point region (unused
   // for Gene, which edits start/end directly instead). Seeded once from
   // deriveRegion's default below, then driven entirely by the user's own
@@ -280,6 +277,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   };
 
   const region = deriveRegion(record);
+  const isVariant = isVariantRecord(record);
 
   const handleOffsetChange = (newOffset: number) => {
     if (region.kind !== 'point') return;
@@ -324,6 +322,14 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       ? `Segment must be no more than ${MAX_SEGMENT_LENGTH}bp.`
       : null;
 
+  const percentActgError =
+    isVariant && percentActg < MIN_PERCENT_ACTG
+      ? `Minimum percent ACTG must be at least ${MIN_PERCENT_ACTG}.`
+      : null;
+
+  const hasValidationError =
+    regionValidationError != null || percentActgError != null;
+
   // Undefined (segment length not yet known) falls back to
   // ClustalAlignmentForm's own DEFAULT_BLOCK_THRESHOLD.
   const dynamicBlockThreshold =
@@ -350,15 +356,33 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   };
 
   const handleFastaSubmit = async () => {
+    // Opened as the very first, synchronous statement of this handler, for
+    // the same reason as handleMsaConfirm's resultTab below — see its
+    // comment.
     const resultTab = window.open('about:blank', '_blank');
     setFastaSubmitError(null);
     try {
       const path = await wdkService.getTemporaryResultPath(
         { searchName, searchConfig },
-        'sequence',
-        SEQUENCE_REPORT_CONFIG
+        'bed',
+        {}
       );
-      const fastaText = await fetchTemporaryResultText(path);
+      const bedText = await fetchTemporaryResultText(path);
+      const features = parseBedToFeatures(bedText);
+
+      const api = SequenceRetrievalApi.getClient(
+        SEQUENCE_RETRIEVAL_BASE_URL,
+        wdkService
+      );
+
+      const fastaText = await submitSyncFastaRequest({
+        api,
+        sequenceType: SEQUENCE_TYPE,
+        features,
+        deflineFormat: SYNC_FASTA_DEFLINE_FORMAT,
+        basesPerLine: SYNC_FASTA_BASES_PER_LINE,
+        percentActg: isVariant ? percentActg : undefined,
+      });
       resultTab?.document?.write(`<pre>${fastaText}</pre>`);
     } catch (error) {
       if (resultTab) resultTab.close();
@@ -407,6 +431,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           features.length
         } Strain segments. ${MSA_FORMAT.toUpperCase()} output format`,
         resultTab,
+        percentActg: isVariant ? percentActg : undefined,
       });
     } catch (error) {
       // Only this function's own steps (bed-report fetch/parse) need
@@ -419,6 +444,43 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   return (
     <div style={{ padding: '15px' }}>
+      <div style={{ marginBottom: '15px' }}>
+        <FilterParamNew
+          ctx={{ searchName, parameter: filterParameter, paramValues }}
+          parameter={filterParameter}
+          value={filterValue}
+          uiState={filterUiState}
+          dispatch={dispatch}
+          onParamValueChange={(newValue) =>
+            updateParam(METADATA_FILTER_PARAM, newValue)
+          }
+        />
+      </div>
+      <div style={{ marginBottom: '15px' }}>
+        <strong style={{ fontSize: '1.2em' }}>
+          View {sequenceCount} sample sequences
+        </strong>
+      </div>
+      <div style={{ ...RADIO_ROW_STYLE, marginBottom: '15px' }}>
+        <label>
+          <input
+            type="radio"
+            name="output_choice"
+            checked={outputChoice === 'fasta'}
+            onChange={() => setOutputChoice('fasta')}
+          />{' '}
+          FASTA
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="output_choice"
+            checked={outputChoice === 'msa'}
+            onChange={() => setOutputChoice('msa')}
+          />{' '}
+          Multiple sequence alignment (Clustal Omega)
+        </label>
+      </div>
       <div style={{ marginBottom: '15px' }}>
         {region.kind === 'range' ? (
           <div style={RADIO_ROW_STYLE}>
@@ -482,38 +544,30 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           Reverse (-)
         </label>
       </div>
-      <div style={{ marginBottom: '15px' }}>
-        <FilterParamNew
-          ctx={{ searchName, parameter: filterParameter, paramValues }}
-          parameter={filterParameter}
-          value={filterValue}
-          uiState={filterUiState}
-          dispatch={dispatch}
-          onParamValueChange={(newValue) =>
-            updateParam(METADATA_FILTER_PARAM, newValue)
-          }
-        />
-      </div>
-      <div style={{ ...RADIO_ROW_STYLE, marginBottom: '15px' }}>
-        <label>
-          <input
-            type="radio"
-            name="output_choice"
-            checked={outputChoice === 'fasta'}
-            onChange={() => setOutputChoice('fasta')}
-          />{' '}
-          FASTA
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="output_choice"
-            checked={outputChoice === 'msa'}
-            onChange={() => setOutputChoice('msa')}
-          />{' '}
-          Multiple sequence alignment (Clustal Omega)
-        </label>
-      </div>
+      {isVariant && (
+        <div style={{ marginBottom: '15px' }}>
+          <label>
+            Minimum percent ACTG:{' '}
+            <input
+              type="number"
+              min={MIN_PERCENT_ACTG}
+              max={100}
+              value={percentActg}
+              onChange={(e) => setPercentActg(Number(e.target.value))}
+            />
+          </label>{' '}
+          <HelpIcon>
+            Exclude sequences (eg, heavily masked) that are below this percent
+            of A/C/T/G nucleotide values. Such sequences can disrupt the
+            alignment
+          </HelpIcon>
+          {percentActgError && (
+            <div role="alert" style={{ color: 'red', marginTop: '5px' }}>
+              {percentActgError}
+            </div>
+          )}
+        </div>
+      )}
       <div style={{ minHeight: '38px' }}>
         {outputChoice === 'fasta' ? (
           <div>
@@ -521,7 +575,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               type="button"
               className="btn"
               style={SUBMIT_BUTTON_STYLE}
-              disabled={regionValidationError != null}
+              disabled={hasValidationError}
               onClick={handleFastaSubmit}
             >
               Submit
@@ -546,7 +600,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
               type="submit"
               value="Submit"
               style={SUBMIT_BUTTON_STYLE}
-              disabled={regionValidationError != null}
+              disabled={hasValidationError}
             />
           </ClustalAlignmentForm>
         )}
