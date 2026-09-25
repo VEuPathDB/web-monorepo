@@ -5,7 +5,12 @@ import {
   FetchClientWithCredentials,
 } from '@veupathdb/http-utils';
 
-import { JobResponse, SequenceType, SubmitJobRequest } from './ServiceTypes';
+import {
+  JobResponse,
+  SequenceType,
+  SubmitJobRequest,
+  SyncSequenceRequest,
+} from './ServiceTypes';
 
 const JOBS_PATH = '/jobs';
 
@@ -24,6 +29,20 @@ export class SequenceRetrievalApi extends FetchClientWithCredentials {
         method: 'POST',
         body: request,
         transformResponse: async (body) => body as JobResponse,
+      })
+    );
+  }
+
+  fetchSequencesSync(
+    sequenceType: SequenceType,
+    request: SyncSequenceRequest
+  ): Promise<string> {
+    return this.fetch(
+      createJsonRequest({
+        path: `/sequences/${sequenceType}`,
+        method: 'POST',
+        body: request,
+        transformResponse: async (body) => body as string,
       })
     );
   }
