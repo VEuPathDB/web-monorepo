@@ -874,13 +874,13 @@ __metadata:
   linkType: hard
 
 "@babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8":
-  version: 7.29.9
-  resolution: "@babel/parser@npm:7.29.9"
+  version: 7.29.8
+  resolution: "@babel/parser@npm:7.29.8"
   dependencies:
     "@babel/types": "npm:^7.29.8"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 10/b8d6acda3fc7405c497b839b0b6d46cbd309d81bdb310c349e5760ecd689c3641925e1184574106161ce2c78cf5c09d22544a0b3e4d5f002e3b78c263c6f11e6
+  checksum: 10/dbd14ebbba0fa3019acd2712b0db3ffd594d0850d4fc487667287b5702893f54a7911570ea842f0cff4dc492a2412e3287dfabfe00c6b78efa7becb1255f3f86
   languageName: node
   linkType: hard
 
@@ -1897,8 +1897,8 @@ __metadata:
   linkType: hard
 
 "@babel/plugin-transform-typescript@npm:^7.29.7":
-  version: 7.29.9
-  resolution: "@babel/plugin-transform-typescript@npm:7.29.9"
+  version: 7.29.7
+  resolution: "@babel/plugin-transform-typescript@npm:7.29.7"
   dependencies:
     "@babel/helper-annotate-as-pure": "npm:^7.29.7"
     "@babel/helper-create-class-features-plugin": "npm:^7.29.7"
@@ -1907,7 +1907,7 @@ __metadata:
     "@babel/plugin-syntax-typescript": "npm:^7.29.7"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 10/b80da0cf3e36965d5f94ee103b8942f33ad38db60d0f112a6b48dc2355b482c14c094a57f75e99d1cc1ace64eaf979dbedec978e64c5166f020c8be552c1a515
+  checksum: 10/88d39bcdfee418795ad65097fff88f491e87793b958fe334273a20f74693b64369456a6d666eb0f1e98c9ecb633c99bcccf90562593e64eb92cc9dd040f25c1c
   languageName: node
   linkType: hard
 
