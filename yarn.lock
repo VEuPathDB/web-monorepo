@@ -874,13 +874,13 @@ __metadata:
   linkType: hard
 
 "@babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8":
-  version: 7.29.8
-  resolution: "@babel/parser@npm:7.29.8"
+  version: 7.29.9
+  resolution: "@babel/parser@npm:7.29.9"
   dependencies:
     "@babel/types": "npm:^7.29.8"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 10/dbd14ebbba0fa3019acd2712b0db3ffd594d0850d4fc487667287b5702893f54a7911570ea842f0cff4dc492a2412e3287dfabfe00c6b78efa7becb1255f3f86
+  checksum: 10/b8d6acda3fc7405c497b839b0b6d46cbd309d81bdb310c349e5760ecd689c3641925e1184574106161ce2c78cf5c09d22544a0b3e4d5f002e3b78c263c6f11e6
   languageName: node
   linkType: hard
 
@@ -1897,8 +1897,8 @@ __metadata:
   linkType: hard
 
 "@babel/plugin-transform-typescript@npm:^7.29.7":
-  version: 7.29.7
-  resolution: "@babel/plugin-transform-typescript@npm:7.29.7"
+  version: 7.29.9
+  resolution: "@babel/plugin-transform-typescript@npm:7.29.9"
   dependencies:
     "@babel/helper-annotate-as-pure": "npm:^7.29.7"
     "@babel/helper-create-class-features-plugin": "npm:^7.29.7"
@@ -1907,7 +1907,7 @@ __metadata:
     "@babel/plugin-syntax-typescript": "npm:^7.29.7"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 10/88d39bcdfee418795ad65097fff88f491e87793b958fe334273a20f74693b64369456a6d666eb0f1e98c9ecb633c99bcccf90562593e64eb92cc9dd040f25c1c
+  checksum: 10/b80da0cf3e36965d5f94ee103b8942f33ad38db60d0f112a6b48dc2355b482c14c094a57f75e99d1cc1ace64eaf979dbedec978e64c5166f020c8be552c1a515
   languageName: node
   linkType: hard
 
@@ -9285,6 +9285,7 @@ __metadata:
     "@veupathdb/preferred-organisms": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/site-babel-config": "workspace:^"
+    "@veupathdb/site-jest-config": "workspace:^"
     "@veupathdb/site-tsconfig": "workspace:^"
     "@veupathdb/site-webpack-config": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
@@ -9519,7 +9520,6 @@ __metadata:
     "@material-ui/lab": "npm:^4.0.0-alpha.61"
     "@tanstack/react-query": "npm:^4.33.0"
     "@testing-library/jest-dom": "npm:5.16.5"
-    "@testing-library/react": "npm:12.1.2"
     "@types/cytoscape": "npm:^3.14.7"
     "@types/cytoscape-fcose": "npm:^2.1.0"
     "@types/jest": "npm:^26.0.24"
@@ -9539,6 +9539,7 @@ __metadata:
     "@veupathdb/preferred-organisms": "workspace:^"
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/site-babel-config": "workspace:^"
+    "@veupathdb/site-jest-config": "workspace:^"
     "@veupathdb/site-tsconfig": "workspace:^"
     "@veupathdb/site-webpack-config": "workspace:^"
     "@veupathdb/study-data-access": "workspace:^"
@@ -9696,6 +9697,21 @@ __metadata:
     "@babel/preset-env": ^7.16.11
     "@babel/preset-react": ^7.14.5
     core-js: ^3.21.1
+  languageName: unknown
+  linkType: soft
+
+"@veupathdb/site-jest-config@workspace:^, @veupathdb/site-jest-config@workspace:packages/configs/site-jest-config":
+  version: 0.0.0-use.local
+  resolution: "@veupathdb/site-jest-config@workspace:packages/configs/site-jest-config"
+  peerDependencies:
+    "@babel/preset-env": ^7.16.11
+    "@babel/preset-react": ^7.14.5
+    "@babel/preset-typescript": ^7.21.0
+    "@testing-library/jest-dom": 5.16.5
+    babel-jest: ^27.5.1
+    jest: ^27.5.1
+    jest-config: ^27.5.1
+    jest-environment-jsdom: ^27.5.1
   languageName: unknown
   linkType: soft
 

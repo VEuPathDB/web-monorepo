@@ -37,7 +37,6 @@
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@tanstack/react-query": "^4.33.0",
     "@testing-library/jest-dom": "5.16.5",
-    "@testing-library/react": "12.1.2",
     "@types/cytoscape": "^3.14.7",
     "@types/cytoscape-fcose": "^2.1.0",
     "@types/jest": "^26.0.24",
@@ -57,6 +56,7 @@
     "@veupathdb/preferred-organisms": "workspace:^",
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/site-babel-config": "workspace:^",
+    "@veupathdb/site-jest-config": "workspace:^",
     "@veupathdb/site-tsconfig": "workspace:^",
     "@veupathdb/site-webpack-config": "workspace:^",
     "@veupathdb/study-data-access": "workspace:^",
@@ -109,36 +109,6 @@
     "dist"
   ],
   "jest": {
-    "testEnvironment": "jsdom",
-    "setupFiles": [
-      "<rootDir>/jest.setup.js"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest.setup-after-env.js"
-    ],
-    "testRegex": "(\\.|/)test\\.tsx?$",
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/dist/"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ],
-    "moduleNameMapper": {
-      "\\.(css|scss)$": "<rootDir>/jest.style-mock.js",
-      "\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/jest.style-mock.js",
-      "^jquery$": "<rootDir>/jest.jquery-mock.js"
-    },
-    "transform": {
-      "^.+\\.(t|j)sx?$": "<rootDir>/jest.babel-transform.js"
-    },
-    "transformIgnorePatterns": [
-      "/node_modules/(?!@veupathdb/web-common/lib/|spin\\.js/)"
-    ]
+    "preset": "@veupathdb/site-jest-config"
   }
 }
