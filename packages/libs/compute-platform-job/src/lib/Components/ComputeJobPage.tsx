@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 import { SequenceRetrievalApi } from '../Service/SequenceRetrievalApi';
-import { JobStatus } from '../Service/ServiceTypes';
+import { JobResponse, JobStatus } from '../Service/ServiceTypes';
 import { useJobPolling } from '../Hooks/useJobPolling';
 
 // Same icon/animation as user-datasets' UserDatasetStatus.tsx polling
@@ -21,7 +21,13 @@ interface ComputeJobPageProps {
   paramsSummary?: string;
   /** The MsaFormat value the job was submitted with, e.g. 'clustal_dnd'. */
   format?: string;
+  /** Number of sequences submitted to the job, if known. */
+  sequenceCount?: number;
 }
+
+// Below this many sequences, job time is short enough that the warning
+// isn't worth showing.
+const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
 
 // The /files/{name} endpoint always returns Content-Type: text/plain
 // regardless of the actual content, so an HTML-producing format (only
@@ -29,6 +35,10 @@ interface ComputeJobPageProps {
 // client-side — otherwise the browser (or React) would just show the raw
 // markup as literal text.
 const HTML_MSA_FORMATS = new Set(['clustal_dnd']);
+
+function formatLocalTime(isoTimestamp: string): string {
+  return new Date(isoTimestamp).toLocaleTimeString();
+}
 
 // Swaps the live document in place with the fetched result, same URL, no
 // navigation — same as visiting a static result page directly (matching
@@ -46,8 +56,19 @@ function showResultDocument(content: string, format: string | undefined) {
       document.documentElement
     );
   } else {
+    // Plain-text formats (clustal, fasta, phylip, stockholm, vienna, msf,
+    // selex) rely on fixed-width alignment and real line breaks to be
+    // readable — document.body.textContent alone renders them with the
+    // browser's default white-space handling, which collapses newlines
+    // and reads as one flat run of characters. A <pre> element preserves
+    // whitespace/line breaks and uses a monospace font by default, the
+    // same fix already applied to this site's synchronous FASTA download
+    // (which wraps its own plain-text result in <pre> before writing it).
     document.title = 'Multiple Sequence Alignment';
-    document.body.textContent = content;
+    const pre = document.createElement('pre');
+    pre.textContent = content;
+    document.body.textContent = '';
+    document.body.appendChild(pre);
   }
 }
 
@@ -56,12 +77,15 @@ export function ComputeJobPage({
   api,
   paramsSummary,
   format,
+  sequenceCount,
 }: ComputeJobPageProps) {
   const [status, setStatus] = useState<JobStatus>('queued');
+  const [job, setJob] = useState<Partial<JobResponse>>({});
 
   const onPoll = useCallback(async () => {
     const job = await api.fetchJob(jobId);
     setStatus(job.status);
+    setJob(job);
   }, [api, jobId]);
 
   useJobPolling({ status, onPoll });
@@ -88,14 +112,50 @@ export function ComputeJobPage({
       <div style={{ fontSize: '1.5em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
-          <p className="Status">
-            <Icon
-              className="ComputeJobPage-StatusIcon"
-              fa="circle-o-notch"
-              style={{ marginRight: '0.3em' }}
-            />
-            Status: {status}
-          </p>
+          <>
+            <p className="Status">
+              <Icon
+                className="ComputeJobPage-StatusIcon"
+                fa="circle-o-notch"
+                style={{ marginRight: '0.3em' }}
+              />
+              {status === 'queued' &&
+                (job.queuePosition != null
+                  ? `Position ${job.queuePosition} in queue.`
+                  : 'Queued.')}
+              {status === 'queued' && job.created != null && (
+                <i> (Queued at {formatLocalTime(job.created)})</i>
+              )}
+              {status === 'in-progress' && 'In progress.'}
+              {status === 'in-progress' && job.started != null && (
+                <i>(Started running at {formatLocalTime(job.started)})</i>
+              )}
+            </p>
+            {sequenceCount != null &&
+              sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
+                <>
+                  <br />
+                  <p className="ComputeJobPage-DurationWarning">
+                    <Icon
+                      fa="exclamation-triangle"
+                      style={{
+                        marginRight: '0.3em',
+                        // coreui's warning[500] (packages/libs/coreui/src/definitions/colors.ts)
+                        // — brighter than the warning[600] existing plain-triangle
+                        // icons elsewhere use (UserFormContainer), chosen for
+                        // this usage specifically; inlined as a literal hex
+                        // value since this package has no dependency on coreui.
+                        color: '#ECAE13',
+                        fontSize: '1.5em',
+                      }}
+                    />
+                    <b>Jobs can take 10+ minutes.</b> Once running, an MSA job
+                    typically finishes in under 10 minutes, but time in the
+                    queue depends on how busy the system is.
+                  </p>
+                </>
+              )}
+          </>
         ) : null}
         {status === 'failed' && (
           <p className="DeadEnd">

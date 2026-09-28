@@ -47,6 +47,90 @@ describe('ComputeJobPage', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows the queue position and queued time while queued', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({
+        jobID: 'abc',
+        status: 'queued',
+        created: '2026-09-27T12:00:00.000Z',
+        queuePosition: 3,
+      }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    expect(await screen.findByText(/position 3 on queue/i)).toBeInTheDocument();
+    expect(screen.getByText(/queued at/i)).toBeInTheDocument();
+  });
+
+  it('shows just "Queued." when queuePosition is not provided', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({
+        jobID: 'abc',
+        status: 'queued',
+        created: '2026-09-27T12:00:00.000Z',
+      }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    expect(await screen.findByText('Queued.')).toBeInTheDocument();
+    expect(screen.queryByText(/position/i)).not.toBeInTheDocument();
+  });
+
+  it('shows in-progress status and started time', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({
+        jobID: 'abc',
+        status: 'in-progress',
+        started: '2026-09-27T12:05:00.000Z',
+      }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    expect(await screen.findByText(/in progress/i)).toBeInTheDocument();
+    expect(screen.getByText(/started running at/i)).toBeInTheDocument();
+  });
+
+  it('shows a duration warning while queued when sequenceCount exceeds the threshold', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} sequenceCount={11} />);
+
+    expect(
+      await screen.findByText(/job time can range from seconds/i)
+    ).toBeInTheDocument();
+  });
+
+  it('does not show a duration warning while queued when sequenceCount is at or below the threshold', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} sequenceCount={10} />);
+
+    await screen.findByText('Clustal Omega Job Status');
+    expect(
+      screen.queryByText(/job time can range from seconds/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not show a duration warning when sequenceCount is not provided', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    await screen.findByText('Clustal Omega Job Status');
+    expect(
+      screen.queryByText(/job time can range from seconds/i)
+    ).not.toBeInTheDocument();
+  });
+
   // showResultDocument (invoked on complete) mutates the live `document` in
   // place — for a non-HTML format that's just document.body.textContent,
   // safe to let run for real in JSDOM. The HTML-format branch replaces
@@ -69,6 +153,24 @@ describe('ComputeJobPage', () => {
     });
 
     expect(api.fetchJobFile).toHaveBeenCalledWith('abc', 'output');
+  });
+
+  it('wraps plain-text results in a <pre> element so alignment whitespace/line breaks render, not collapse', async () => {
+    const alignmentText = 'seq1  ACGTACGT\nseq2  ACGTACGT\n      ********';
+    const api = makeFakeApi({
+      fetchJob: jest
+        .fn()
+        .mockResolvedValue({ jobID: 'abc', status: 'complete' }),
+      fetchJobFile: jest.fn().mockResolvedValue(alignmentText),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    await waitFor(() => {
+      const pre = document.body.querySelector('pre');
+      expect(pre).not.toBeNull();
+      expect(pre?.textContent).toBe(alignmentText);
+    });
   });
 
   it('parses and swaps in the full document for the clustal_dnd format', async () => {

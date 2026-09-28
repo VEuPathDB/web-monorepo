@@ -1,6 +1,6 @@
 import React from 'react';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
-import { VariantStrainFilter } from '../common/VariantStrainFilter';
+import { StrainMsaForm } from '../common/StrainMsaForm';
 
 export function RecordAttributeSection(props) {
   return props.attribute.name === 'variant_strain_form' ? (
@@ -18,7 +18,7 @@ function StrainFilterSection(props) {
       isCollapsed={props.isCollapsed}
       onCollapsedChange={props.onCollapsedChange}
     >
-      <VariantStrainFilter />
+      <StrainMsaForm record={props.record} />
     </CollapsibleSection>
   );
 }

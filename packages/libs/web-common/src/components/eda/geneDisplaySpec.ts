@@ -9,27 +9,41 @@ export interface GeneDisplaySpec {
 }
 
 /**
- * The spec's entity, corrected to the entity that actually declares its
+ * The spec with its `entityId` replaced by the entity that declares its
  * variable.
  *
- * The caller derives `entityId` from the plot's x-axis, which is only the right
- * entity when both axes share one. A plot whose axes span two entities (a gene
- * measurement against a sample-level covariate, say) carries the gene id
- * variable on just one of them, and filtering on the other silently matches
- * nothing. The study metadata already knows where the variable lives, so ask it
- * rather than trusting the axis. Falls back to the given entity when the
- * variable cannot be found.
+ * The plot configs name the gene id variable but not its entity, so the caller
+ * fills `entityId` with the x-axis entity as a guess. That guess is only right
+ * when both axes are from the same entity. When they are from different
+ * entities (a gene measurement against a sample-level covariate, say), the gene
+ * id variable may be on the other one, and filtering on the wrong entity
+ * silently matches nothing.
+ *
+ * So we look the variable up by id in the study metadata instead. EDA does not
+ * require variable ids to be unique across entities, so this lookup is only
+ * sound when exactly one entity declares the variable. If several do, we cannot
+ * tell which one was meant and throw rather than pick one arbitrarily. If none
+ * do, the caller's guess is returned unchanged.
  */
 export function resolveGeneDisplaySpec(
   geneDisplaySpec: GeneDisplaySpec | undefined,
   entities: StudyEntity[]
 ): GeneDisplaySpec | undefined {
   if (geneDisplaySpec == null) return undefined;
-  const declaringEntity = entities.find((entity) =>
+  const declaringEntities = entities.filter((entity) =>
     entity.variables.some(
       (variable) => variable.id === geneDisplaySpec.variableId
     )
   );
+  if (declaringEntities.length > 1) {
+    throw new Error(
+      `Gene id variable "${geneDisplaySpec.variableId}" is declared on ` +
+        `more than one entity (${declaringEntities
+          .map((entity) => entity.id)
+          .join(', ')}); cannot tell which one to filter on.`
+    );
+  }
+  const [declaringEntity] = declaringEntities;
   return declaringEntity == null ||
     declaringEntity.id === geneDisplaySpec.entityId
     ? geneDisplaySpec
