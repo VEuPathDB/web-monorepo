@@ -59,5 +59,8 @@ export type JobStatus =
 export interface JobResponse {
   jobID: string;
   status: JobStatus;
+  created?: string;
   queuePosition?: number;
+  started?: string;
+  finished?: string;
 }
