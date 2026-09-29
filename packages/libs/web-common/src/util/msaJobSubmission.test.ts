@@ -101,7 +101,8 @@ describe('submitClustalMsaJob', () => {
     expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: 'clustal', percentActg: undefined },
+      msaOptions: { format: 'clustal' },
+      percentActg: undefined,
     });
     expect(fakeTab.location.replace).toHaveBeenCalledTimes(1);
     const [navigatedUrl] = fakeTab.location.replace.mock.calls[0];
@@ -149,7 +150,7 @@ describe('submitClustalMsaJob', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('forwards percentActg into msaOptions when provided', async () => {
+  it('forwards percentActg as a top-level submitJob field when provided', async () => {
     const fakeTab = makeFakeTab();
     const api = makeFakeApi({ jobID: 'abc123' });
     const features = [{ contig: 'x', start: 0, end: 10 }];
@@ -168,7 +169,8 @@ describe('submitClustalMsaJob', () => {
     expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: 'clustal', percentActg: 90 },
+      msaOptions: { format: 'clustal' },
+      percentActg: 90,
     });
   });
 });

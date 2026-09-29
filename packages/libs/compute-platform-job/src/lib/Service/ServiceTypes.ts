@@ -27,7 +27,6 @@ export type MsaFormat =
 export interface MsaOptions {
   format: MsaFormat;
   metadataUrl?: string;
-  percentActg?: number;
 }
 
 /** A deployment-configured reference-set key, e.g. "genomic" or "protein" — not a WDK project ID. */
@@ -39,6 +38,7 @@ export interface SubmitJobRequest {
   basesPerLine?: number;
   postProcess?: 'MSA';
   msaOptions?: MsaOptions;
+  percentActg?: number;
 }
 
 /** Request body for the synchronous /sequences/{sequenceType} endpoint. */
