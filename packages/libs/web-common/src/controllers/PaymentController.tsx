@@ -4,7 +4,7 @@ import { webAppUrl } from '../config';
 
 import '../styles/Payment.scss';
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
-import PageController from '@veupathdb/wdk-client/lib/Core/Controllers/PageController';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 const CHECKOUT_CONTAINER_ID = 'unified-checkout-container';
 
@@ -152,18 +152,9 @@ function loadUnifiedCheckoutScript(
   return promise;
 }
 
-// wrap functional payment controller in a class component to support title method API
-export default class PaymentController extends PageController {
-  getTitle() {
-    return 'Submit Payment';
-  }
+export default function PaymentController() {
+  useSetDocumentTitle('Submit Payment');
 
-  renderView() {
-    return <PaymentControllerFunction {...this.props} />;
-  }
-}
-
-function PaymentControllerFunction() {
   const history = useHistory();
   const [stage, setStage] = useState<Stage>({ name: 'entry' });
   const [amount, setAmount] = useState('0.00');
