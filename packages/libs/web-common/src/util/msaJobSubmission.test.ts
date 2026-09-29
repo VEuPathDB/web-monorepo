@@ -2,6 +2,7 @@ import {
   fetchTemporaryResultText,
   parseBedToFeatures,
   submitClustalMsaJob,
+  submitSyncFastaRequest,
 } from './msaJobSubmission';
 
 describe('parseBedToFeatures', () => {
@@ -100,7 +101,7 @@ describe('submitClustalMsaJob', () => {
     expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: 'clustal' },
+      msaOptions: { format: 'clustal', percentActg: undefined },
     });
     expect(fakeTab.location.replace).toHaveBeenCalledTimes(1);
     const [navigatedUrl] = fakeTab.location.replace.mock.calls[0];
@@ -146,5 +147,78 @@ describe('submitClustalMsaJob', () => {
         resultTab: null,
       })
     ).resolves.toBeUndefined();
+  });
+
+  it('forwards percentActg into msaOptions when provided', async () => {
+    const fakeTab = makeFakeTab();
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+
+    await submitClustalMsaJob({
+      api,
+      sequenceType: 'dnaseq',
+      features,
+      msaFormat: 'clustal',
+      resultRouteBase: '/app/workspace/msa',
+      paramsSummary: '5 Strain Segments',
+      resultTab: fakeTab as unknown as Window,
+      percentActg: 90,
+    });
+
+    expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
+      features,
+      postProcess: 'MSA',
+      msaOptions: { format: 'clustal', percentActg: 90 },
+    });
+  });
+});
+
+function makeFakeSyncApi(fastaText: string) {
+  return {
+    fetchSequencesSync: jest.fn().mockResolvedValue(fastaText),
+  } as any;
+}
+
+describe('submitSyncFastaRequest', () => {
+  it('returns the FASTA text fetched from the sync endpoint', async () => {
+    const api = makeFakeSyncApi('>seq1\nACGT\n');
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+
+    const fastaText = await submitSyncFastaRequest({
+      api,
+      sequenceType: 'dnaseq',
+      features,
+      deflineFormat: 'QUERYANDREGION',
+      basesPerLine: 60,
+      percentActg: 90,
+    });
+
+    expect(fastaText).toBe('>seq1\nACGT\n');
+    expect(api.fetchSequencesSync).toHaveBeenCalledWith('dnaseq', {
+      features,
+      deflineFormat: 'QUERYANDREGION',
+      basesPerLine: 60,
+      percentActg: 90,
+    });
+  });
+
+  it('omits percentActg from the request when not provided', async () => {
+    const api = makeFakeSyncApi('>seq1\nACGT\n');
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+
+    await submitSyncFastaRequest({
+      api,
+      sequenceType: 'dnaseq',
+      features,
+      deflineFormat: 'QUERYANDREGION',
+      basesPerLine: 60,
+    });
+
+    expect(api.fetchSequencesSync).toHaveBeenCalledWith('dnaseq', {
+      features,
+      deflineFormat: 'QUERYANDREGION',
+      basesPerLine: 60,
+      percentActg: undefined,
+    });
   });
 });

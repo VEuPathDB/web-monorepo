@@ -29,6 +29,9 @@ jest.mock(
 // ClustalAlignmentForm's block threshold, or after a submission failure).
 jest.mock('@veupathdb/wdk-client/lib/Components', () => ({
   FilterParamNew: () => <div data-testid="filter-param-new-stub" />,
+  HelpIcon: ({ children }: { children: React.ReactNode }) => (
+    <span data-testid="help-icon">{children}</span>
+  ),
   Dialog: ({
     open,
     title,
@@ -194,6 +197,18 @@ describe('StrainMsaForm', () => {
     expect(screen.getByLabelText(/offset/i)).toHaveValue(1000);
     expect(screen.queryByLabelText(/^start$/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/^end$/i)).not.toBeInTheDocument();
+  });
+
+  it('shows the filtered sample count in a heading above the output controls', () => {
+    renderWithWdkService(
+      makeCompleteQuestionState({
+        paramUIState: {
+          variation_sample_meta: { filteredCount: 26 },
+        },
+      })
+    );
+
+    expect(screen.getByText('View 26 sample sequences')).toBeInTheDocument();
   });
 });
 
@@ -518,15 +533,18 @@ describe('StrainMsaForm submission', () => {
     jest.restoreAllMocks();
   });
 
-  it('FASTA radio: fetches a fasta report and writes it into a pre-opened tab', async () => {
+  it('FASTA radio: fetches a bed report, parses it, and writes the sync FASTA response into a pre-opened tab', async () => {
+    const submitSpy = jest
+      .spyOn(msaJobSubmission, 'submitSyncFastaRequest')
+      .mockResolvedValue('>seq1\nACGT\n');
     const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
     window.open = jest.fn().mockReturnValue(fakeTab);
     const getTemporaryResultPath = jest
       .fn()
       .mockResolvedValue('/temporary-results/xyz');
-    global.fetch = jest
-      .fn()
-      .mockResolvedValue({ text: () => Promise.resolve('>seq1\nACGT\n') });
+    global.fetch = jest.fn().mockResolvedValue({
+      text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
+    });
 
     renderWithWdkService(makeCompleteQuestionState(), {
       getTemporaryResultPath,
@@ -549,16 +567,32 @@ describe('StrainMsaForm submission', () => {
             }),
           }),
         }),
-        'sequence',
-        expect.objectContaining({
-          sequenceFormat: 'fixed_width',
-          attachmentType: 'plain',
-        })
+        'bed',
+        expect.anything()
       )
     );
     expect(
       getTemporaryResultPath.mock.calls[0][0].searchConfig.parameters
     ).toHaveProperty('eda_sample_table_suffix', 'pf3d7_v68');
+
+    await waitFor(() =>
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sequenceType: 'dnaseq',
+          features: [
+            {
+              contig: 'Pf3D7_11_v3',
+              start: 100,
+              end: 500,
+              query: 'strain_1',
+              strand: 'POSITIVE',
+            },
+          ],
+          deflineFormat: 'QUERYANDREGION',
+          basesPerLine: 60,
+        })
+      )
+    );
     expect(fakeTab.location.replace).not.toHaveBeenCalled(); // FASTA writes text directly, doesn't navigate
   });
 
@@ -582,13 +616,18 @@ describe('StrainMsaForm submission', () => {
     expect(fakeTab.close).toHaveBeenCalledTimes(1);
   });
 
-  it('FASTA radio: renders a visible error message when fetch rejects', async () => {
+  it('FASTA radio: renders a visible error message when the sync FASTA request rejects', async () => {
+    jest
+      .spyOn(msaJobSubmission, 'submitSyncFastaRequest')
+      .mockRejectedValue(new Error('network down'));
     const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
     window.open = jest.fn().mockReturnValue(fakeTab);
     const getTemporaryResultPath = jest
       .fn()
       .mockResolvedValue('/temporary-results/xyz');
-    global.fetch = jest.fn().mockRejectedValue(new Error('network down'));
+    global.fetch = jest.fn().mockResolvedValue({
+      text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
+    });
 
     renderWithWdkService(makeCompleteQuestionState(), {
       getTemporaryResultPath,
@@ -651,6 +690,7 @@ describe('StrainMsaForm submission', () => {
           msaFormat: 'clustal',
           paramsSummary: '1 Strain segments. CLUSTAL output format',
           resultTab: fakeTab,
+          percentActg: undefined, // Gene record: no percentActg field is rendered
         })
       )
     );
@@ -798,5 +838,89 @@ describe('StrainMsaForm validation', () => {
     // 2 * 100000 = 200000bp, above the 150000bp maximum.
     expect(screen.getByText(/no more than 150000bp/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
+});
+
+describe('StrainMsaForm percentActg field', () => {
+  it('renders the field with a default value of 90 for a Variant record', () => {
+    renderWithWdkService(makeCompleteQuestionState(), {}, VARIANT_RECORD);
+
+    expect(screen.getByLabelText(/minimum percent actg/i)).toHaveValue(90);
+  });
+
+  it('does not render the field for a Gene record', () => {
+    renderWithWdkService(makeCompleteQuestionState(), {}, GENE_RECORD);
+
+    expect(
+      screen.queryByLabelText(/minimum percent actg/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows an error and disables submit when percentActg is below 10', async () => {
+    renderWithWdkService(makeCompleteQuestionState(), {}, VARIANT_RECORD);
+
+    const percentActgInput = screen.getByLabelText(/minimum percent actg/i);
+    await userEvent.clear(percentActgInput);
+    await userEvent.type(percentActgInput, '5');
+
+    expect(screen.getByText(/must be at least 10/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
+  });
+
+  it('includes percentActg in the sync FASTA request for a Variant record', async () => {
+    const submitSpy = jest
+      .spyOn(msaJobSubmission, 'submitSyncFastaRequest')
+      .mockResolvedValue('>seq1\nACGT\n');
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockResolvedValue('/temporary-results/xyz');
+    global.fetch = jest.fn().mockResolvedValue({
+      text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
+    });
+
+    renderWithWdkService(
+      makeCompleteQuestionState(),
+      { getTemporaryResultPath },
+      VARIANT_RECORD
+    );
+
+    await userEvent.click(screen.getByLabelText(/fasta/i));
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() =>
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ percentActg: 90 })
+      )
+    );
+  });
+
+  it('includes percentActg in the MSA job submission for a Variant record', async () => {
+    const submitSpy = jest
+      .spyOn(msaJobSubmission, 'submitClustalMsaJob')
+      .mockResolvedValue(undefined);
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockResolvedValue('/temporary-results/xyz');
+    global.fetch = jest.fn().mockResolvedValue({
+      text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
+    });
+
+    renderWithWdkService(
+      makeCompleteQuestionState(),
+      { getTemporaryResultPath },
+      VARIANT_RECORD
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() =>
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ percentActg: 90 })
+      )
+    );
   });
 });
