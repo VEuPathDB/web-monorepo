@@ -27,6 +27,7 @@ export type MsaFormat =
 export interface MsaOptions {
   format: MsaFormat;
   metadataUrl?: string;
+  percentActg?: number;
 }
 
 /** A deployment-configured reference-set key, e.g. "genomic" or "protein" — not a WDK project ID. */
@@ -40,6 +41,14 @@ export interface SubmitJobRequest {
   msaOptions?: MsaOptions;
 }
 
+/** Request body for the synchronous /sequences/{sequenceType} endpoint. */
+export interface SyncSequenceRequest {
+  features: Feature[];
+  deflineFormat?: DeflineFormat;
+  basesPerLine?: number;
+  percentActg?: number;
+}
+
 export type JobStatus =
   | 'queued'
   | 'in-progress'
@@ -50,5 +59,8 @@ export type JobStatus =
 export interface JobResponse {
   jobID: string;
   status: JobStatus;
+  created?: string;
   queuePosition?: number;
+  started?: string;
+  finished?: string;
 }
