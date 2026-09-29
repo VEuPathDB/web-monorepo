@@ -159,7 +159,8 @@ export function ComputeJobPage({
         ) : null}
         {status === 'failed' && (
           <p className="DeadEnd">
-            This job failed. Please go back and resubmit your request.
+            This job failed with a server error. Please contact VEuPathDB
+            support.
           </p>
         )}
         {status === 'expired' && (
