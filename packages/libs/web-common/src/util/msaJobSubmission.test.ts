@@ -327,4 +327,53 @@ describe('openTabAndSubmitMsaJob', () => {
       })
     ).resolves.toBeUndefined();
   });
+
+  it('forwards percentActg through to the submitted job when provided', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+    const resolveFeatures = jest.fn().mockResolvedValue(features);
+
+    await openTabAndSubmitMsaJob({
+      api,
+      resolveFeatures,
+      sequenceType: 'dnaseq',
+      msaFormat: 'clustal',
+      resultRouteBase: '/workspace/msa',
+      paramsSummary: '1 Strain segment',
+      percentActg: 90,
+    });
+
+    expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
+      features,
+      postProcess: 'MSA',
+      msaOptions: { format: 'clustal', percentActg: 90 },
+    });
+  });
+
+  it('accepts paramsSummary as a function of the resolved features, called after resolution', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [
+      { contig: 'x', start: 0, end: 10 },
+      { contig: 'y', start: 0, end: 20 },
+    ];
+    const resolveFeatures = jest.fn().mockResolvedValue(features);
+    const paramsSummary = jest.fn(
+      (resolved: typeof features) => `${resolved.length} Strain segments`
+    );
+
+    await openTabAndSubmitMsaJob({
+      api,
+      resolveFeatures,
+      sequenceType: 'dnaseq',
+      msaFormat: 'clustal',
+      resultRouteBase: '/workspace/msa',
+      paramsSummary,
+    });
+
+    expect(paramsSummary).toHaveBeenCalledWith(features);
+
+    const [navigatedUrl] = fakeTab.location.replace.mock.calls[0];
+    const params = new URL(navigatedUrl).searchParams;
+    expect(params.get('paramsSummary')).toBe('2 Strain segments');
+  });
 });

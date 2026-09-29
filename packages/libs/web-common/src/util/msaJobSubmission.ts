@@ -77,8 +77,15 @@ interface OpenTabAndSubmitMsaJobOptions {
   msaFormat: MsaFormat;
   /** e.g. "/workspace/msa" — the result path is `${resultRouteBase}/result/${jobID}`. */
   resultRouteBase: string;
-  /** Shown on the result page; e.g. "13 Transcripts, CLUSTAL output format". */
-  paramsSummary: string;
+  /**
+   * Shown on the result page; e.g. "13 Transcripts, CLUSTAL output format".
+   * A function receives the resolved Feature[] — for callers whose sequence
+   * count is only known accurately after resolveFeatures runs (e.g. a bed
+   * report's actual row count, vs. an upstream filter's pre-submission
+   * estimate).
+   */
+  paramsSummary: string | ((features: Feature[]) => string);
+  percentActg?: number;
 }
 
 /**
@@ -100,6 +107,7 @@ export async function openTabAndSubmitMsaJob({
   msaFormat,
   resultRouteBase,
   paramsSummary,
+  percentActg,
 }: OpenTabAndSubmitMsaJobOptions): Promise<void> {
   const resultTab = window.open('about:blank', '_blank');
   // The tab sits blank for several seconds while features are resolved and
@@ -118,8 +126,12 @@ export async function openTabAndSubmitMsaJob({
       features,
       msaFormat,
       resultRouteBase,
-      paramsSummary,
+      paramsSummary:
+        typeof paramsSummary === 'function'
+          ? paramsSummary(features)
+          : paramsSummary,
       resultTab,
+      percentActg,
     });
   } catch (error) {
     // submitClustalMsaJob already closes resultTab on its own failure
