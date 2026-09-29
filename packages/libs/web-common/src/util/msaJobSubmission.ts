@@ -91,7 +91,8 @@ export async function submitClustalMsaJob({
     const job = await api.submitJob(sequenceType, {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: msaFormat, percentActg },
+      msaOptions: { format: msaFormat },
+      percentActg,
     });
 
     // The already-open tab can't receive React Router location.state, so
