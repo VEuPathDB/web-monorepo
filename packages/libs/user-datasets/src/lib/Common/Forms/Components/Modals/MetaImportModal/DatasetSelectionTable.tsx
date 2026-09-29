@@ -6,71 +6,65 @@ import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
 import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
-import {
-  DatasetId,
-  DatasetListEntry as Dataset,
-  VdiServiceConfig
-} from '../../../../../Service';
+import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalController';
+
+import { DatasetId, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import * as util from '../../../../../Utils';
-import { ifDefined, Nullable, Possible, SimpleState } from '../../../../../Utils';
+import {
+  ifDefined,
+  Nullable,
+  Possible,
+  SimpleState,
+} from '../../../../../Utils';
 
 // FIXME: help text values are to be shared with all tables having these columns
 const DatasetColumns = {
-  DatasetName: [
-    'name',
-    'Dataset Name',
-    '',
-  ],
+  DatasetName: ['name', 'Dataset Name', ''],
   DatasetID: [
     'datasetId',
     'VEuPathDB ID',
-    'A stable, unique identifier assigned by VEuPathDB and that be used to'
-    + ' reference or cite this dataset.',
+    'A stable, unique identifier assigned by VEuPathDB and that be used to' +
+      ' reference or cite this dataset.',
   ],
-  Summary: [
-    'summary',
-    'Summary',
-    'A short description of the dataset.'
-  ],
+  Summary: ['summary', 'Summary', 'A short description of the dataset.'],
   Category: [
     'type',
     'Category',
-    'Dataset classification, according to the biological characteristics and'
-    + ' structure of the data it contains.',
+    'Dataset classification, according to the biological characteristics and' +
+      ' structure of the data it contains.',
   ],
   Project: [
     'installTargets',
     'VEuPathDB Project',
-    'VEuPathDB component website (ex: PlasmoDB, FungiDB, ToxoDB, etc.) where'
-    + ' the dataset was integrated.',
+    'VEuPathDB component website (ex: PlasmoDB, FungiDB, ToxoDB, etc.) where' +
+      ' the dataset was integrated.',
   ],
   Uploader: [
     'owner',
     'Uploaded By',
-    'The person or organization who uploaded this dataset through the User'
-    + 'Datasets workflow.'
+    'The person or organization who uploaded this dataset through the User' +
+      ' Datasets workflow.',
   ],
   Shares: [
     'shares',
     'Shared With',
-    'Names of collaborators the owner has explicitly invited to discover,'
-    + ' explore, and download this dataset.'
+    'Names of collaborators the owner has explicitly invited to discover,' +
+      ' explore, and download this dataset.',
   ],
   Visibility: [
     'visibility',
     'Visibility',
-    'Public datasets can be discovered and explored by the research community.'
-    + ' Private datasets can only be discovered and explored by the uploader'
-    + ' and collaborators the uploader has explicitly invited.'
+    'Public datasets can be discovered and explored by the research community.' +
+      ' Private datasets can only be discovered and explored by the uploader' +
+      ' and collaborators the uploader has explicitly invited.',
   ],
   Version: [
     'created',
     'Date & Version',
-    'The date and version of the dataset as it currently appears.'
+    'The date and version of the dataset as it currently appears.',
   ],
 } as const;
-
 
 export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
@@ -84,8 +78,11 @@ export interface MetadataImportTableProps {
   readonly selection: SimpleState<Possible<DatasetId>>;
 }
 
-type TableColumn<K extends keyof Dataset> =
-  mesa.MesaColumn<Dataset, K, Dataset[K]>;
+type TableColumn<K extends keyof Dataset> = mesa.MesaColumn<
+  Dataset,
+  K,
+  Dataset[K]
+>;
 
 type TableCellProps = mesa.CellProps<Dataset>;
 
@@ -103,7 +100,7 @@ export function DatasetSelectionTable(
   const [onlyThisSite, setOnlyThisSite] = useState(false);
   const [sortBy, setSortBy] = useState<MesaSortObject<keyof Dataset>>({
     columnKey: 'created',
-    direction: 'desc'
+    direction: 'desc',
   });
 
   useEffect(() => {
@@ -124,7 +121,7 @@ export function DatasetSelectionTable(
     sortBy,
     props.userId,
     props.datasets,
-  ])
+  ]);
 
   return (
     <Mesa
@@ -144,14 +141,21 @@ export function DatasetSelectionTable(
           isRowSelected: (row) => row.datasetId === props.selection.get(),
         },
         eventHandlers: {
-          onRowSelect: it => props.selection.set(it.datasetId),
-          onRowDeselect: _ => props.selection.set(undefined),
+          onRowSelect: (it) => props.selection.set(it.datasetId),
+          onRowDeselect: (_) => props.selection.set(undefined),
           onSearch: setFilterString,
-          onSort: ({ key: columnKey }, direction) => setSortBy({ columnKey, direction }),
+          onSort: ({ key: columnKey }, direction) =>
+            setSortBy({ columnKey, direction }),
         },
         actions: [
           { element: onlyMyDatasetsToggle(onlyMyDatasets, setOnlyMyDatasets) },
-          { element: onlyThisSiteToggle(onlyThisSite, setOnlyThisSite, props.siteDisplayName) },
+          {
+            element: onlyThisSiteToggle(
+              onlyThisSite,
+              setOnlyThisSite,
+              props.siteDisplayName
+            ),
+          },
         ],
       }}
     >
@@ -191,7 +195,7 @@ function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
 }
 
 function column<K extends keyof Dataset>(
-  [ key, name, helpText ]: readonly [K, string, string],
+  [key, name, helpText]: readonly [K, string, string],
   sortable: boolean,
   renderCell: util.Function<TableCellProps, ReactNode> = defaultColumn(key),
   getValue?: util.Function<TableRowProps, Dataset[K]>
@@ -263,7 +267,10 @@ function renderVersion({ row }: TableCellProps): string {
 
 // region Sorting
 
-function sortDatasets(rows: readonly Dataset[], by: MesaSortObject<keyof Dataset>): Dataset[] {
+function sortDatasets(
+  rows: readonly Dataset[],
+  by: MesaSortObject<keyof Dataset>
+): Dataset[] {
   const valueFn: util.Function<Dataset, any> = (row) => {
     switch (by.columnKey) {
       case 'type':
@@ -328,20 +335,27 @@ function filterDatasets(
 }
 
 function matchesQuery(dataset: Dataset, query: string): boolean {
-  return dataset.datasetId === query
-    || dataset.name.indexOf(query) > -1;
-}
-
-function isAlwaysVisibleTo(dataset: Dataset, userId: number): boolean {
+  query = query.toLowerCase();
   return (
-    dataset.owner.userId === userId ||
-    (Array.isArray(dataset.shares) &&
-      dataset.shares.some((it) => it.userId === userId))
+    dataset.datasetId === query ||
+    dataset.name.toLowerCase().indexOf(query) > -1 ||
+    dataset.summary.toLowerCase().indexOf(query) > -1 ||
+    dataset.type.category.toLowerCase().indexOf(query) > -1 ||
+    (dataset.owner.firstName?.toLowerCase()?.indexOf(query) ?? -1) > -1 ||
+    (dataset.owner.lastName?.toLowerCase()?.indexOf(query) ?? -1) > -1
   );
 }
 
+function isAlwaysVisibleTo(dataset: Dataset, userId: number): boolean {
+  return dataset.owner.userId === userId || !dataset.isCommunity;
+}
+
 function rowCounts(total: number, current: number): ReactElement {
-  return <span className="row-count">Showing {current} of {total} datasets</span>;
+  return (
+    <span className="row-count">
+      Showing {current} of {total} datasets
+    </span>
+  );
 }
 
 function onlyMyDatasetsToggle(
@@ -366,19 +380,21 @@ function onlyMyDatasetsToggle(
 function onlyThisSiteToggle(
   value: boolean,
   setValue: util.Consumer<boolean>,
-  siteName: string,
+  siteName: string
 ): ReactElement {
-  return <>
-    <input
-      id="meta-import-modal-otst"
-      type="checkbox"
-      checked={value}
-      onChange={(e) => ifDefined(e.target?.checked, setValue)}
-    />{' '}
-    <label htmlFor="meta-import-modal-otst">
-      Only show datasets uploaded to <strong>{siteName}</strong>
-    </label>
-  </>;
+  return (
+    <>
+      <input
+        id="meta-import-modal-otst"
+        type="checkbox"
+        checked={value}
+        onChange={(e) => ifDefined(e.target?.checked, setValue)}
+      />{' '}
+      <label htmlFor="meta-import-modal-otst">
+        Only show datasets uploaded to <strong>{siteName}</strong>
+      </label>
+    </>
+  );
 }
 
 // endregion Toolbar
