@@ -56,7 +56,7 @@ export function ExperimentalOrganisms(
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
-            enabled: hasOrganismData ?? null,
+            enabled: !disabled,
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
             required: isPublic,
@@ -67,7 +67,7 @@ export function ExperimentalOrganisms(
           className="field-grid"
         >
           <p className="subsection-description span-2">
-            <h5>Pathogen or microorganism</h5><br/>
+            <h5>Organism(s)</h5><br/>
             Indicate the species and strain of each organism represented by
             biological data in this dataset. Organisms may include
             {!isGenomics &&
@@ -93,7 +93,7 @@ export function ExperimentalOrganisms(
               experimentalOrganisms: [ ...safeOrgList, {} ],
             })}
           >
-            + Additional pathogen or microorganism
+            + Additional organism
           </AddRowButton>
         </OptionalSection>
       </InputBlock>
