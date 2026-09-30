@@ -1588,7 +1588,7 @@ function OrthologsFormContainer(props) {
     : '#4D4D4D';
 
   const [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene] =
-    useState(false);
+    useState(true);
 
   const transcriptFilter = useMemo(
     () => (
@@ -1752,7 +1752,7 @@ function TranscriptMsaSubmission({
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts, ${outFormat.toUpperCase()} output format`,
+      } Genes, ${outFormat.toUpperCase()} output format`,
       resultTab,
     });
   };
