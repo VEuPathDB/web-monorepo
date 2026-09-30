@@ -690,7 +690,7 @@ describe('StrainMsaForm submission', () => {
           msaFormat: 'clustal',
           paramsSummary: '1 Strain segments. CLUSTAL output format',
           resultTab: fakeTab,
-          percentActg: undefined, // Gene record: no percentActg field is rendered
+          percentActg: 90, // applies to Gene records too, using the default
         })
       )
     );
@@ -848,12 +848,10 @@ describe('StrainMsaForm percentActg field', () => {
     expect(screen.getByLabelText(/minimum percent actg/i)).toHaveValue(90);
   });
 
-  it('does not render the field for a Gene record', () => {
+  it('also renders the field with a default value of 90 for a Gene record', () => {
     renderWithWdkService(makeCompleteQuestionState(), {}, GENE_RECORD);
 
-    expect(
-      screen.queryByLabelText(/minimum percent actg/i)
-    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/minimum percent actg/i)).toHaveValue(90);
   });
 
   it('shows an error and disables submit when percentActg is below 10', async () => {
@@ -913,6 +911,63 @@ describe('StrainMsaForm percentActg field', () => {
       makeCompleteQuestionState(),
       { getTemporaryResultPath },
       VARIANT_RECORD
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() =>
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ percentActg: 90 })
+      )
+    );
+  });
+
+  it('includes percentActg in the sync FASTA request for a Gene record', async () => {
+    const submitSpy = jest
+      .spyOn(msaJobSubmission, 'submitSyncFastaRequest')
+      .mockResolvedValue('>seq1\nACGT\n');
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockResolvedValue('/temporary-results/xyz');
+    global.fetch = jest.fn().mockResolvedValue({
+      text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
+    });
+
+    renderWithWdkService(
+      makeCompleteQuestionState(),
+      { getTemporaryResultPath },
+      GENE_RECORD
+    );
+
+    await userEvent.click(screen.getByLabelText(/fasta/i));
+    await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+    await waitFor(() =>
+      expect(submitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ percentActg: 90 })
+      )
+    );
+  });
+
+  it('includes percentActg in the MSA job submission for a Gene record', async () => {
+    const submitSpy = jest
+      .spyOn(msaJobSubmission, 'submitClustalMsaJob')
+      .mockResolvedValue(undefined);
+    const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
+    window.open = jest.fn().mockReturnValue(fakeTab);
+    const getTemporaryResultPath = jest
+      .fn()
+      .mockResolvedValue('/temporary-results/xyz');
+    global.fetch = jest.fn().mockResolvedValue({
+      text: () => Promise.resolve('Pf3D7_11_v3\t100\t500\tstrain_1\t0\t+\n'),
+    });
+
+    renderWithWdkService(
+      makeCompleteQuestionState(),
+      { getTemporaryResultPath },
+      GENE_RECORD
     );
 
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));

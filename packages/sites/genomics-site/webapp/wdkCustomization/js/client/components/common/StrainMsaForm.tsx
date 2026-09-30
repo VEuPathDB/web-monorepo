@@ -277,7 +277,6 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   };
 
   const region = deriveRegion(record);
-  const isVariant = isVariantRecord(record);
 
   const handleOffsetChange = (newOffset: number) => {
     if (region.kind !== 'point') return;
@@ -323,7 +322,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       : null;
 
   const percentActgError =
-    isVariant && percentActg < MIN_PERCENT_ACTG
+    percentActg < MIN_PERCENT_ACTG
       ? `Minimum percent ACTG must be at least ${MIN_PERCENT_ACTG}.`
       : null;
 
@@ -381,7 +380,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         features,
         deflineFormat: SYNC_FASTA_DEFLINE_FORMAT,
         basesPerLine: SYNC_FASTA_BASES_PER_LINE,
-        percentActg: isVariant ? percentActg : undefined,
+        percentActg,
       });
       resultTab?.document?.write(`<pre>${fastaText}</pre>`);
     } catch (error) {
@@ -431,7 +430,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           features.length
         } Strain segments. ${MSA_FORMAT.toUpperCase()} output format`,
         resultTab,
-        percentActg: isVariant ? percentActg : undefined,
+        percentActg,
       });
     } catch (error) {
       // Only this function's own steps (bed-report fetch/parse) need
@@ -544,30 +543,27 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
           Reverse (-)
         </label>
       </div>
-      {isVariant && (
-        <div style={{ marginBottom: '15px' }}>
-          <label>
-            Minimum percent ACTG:{' '}
-            <input
-              type="number"
-              min={MIN_PERCENT_ACTG}
-              max={100}
-              value={percentActg}
-              onChange={(e) => setPercentActg(Number(e.target.value))}
-            />
-          </label>{' '}
-          <HelpIcon>
-            Exclude sequences (eg, heavily masked) that are below this percent
-            of A/C/T/G nucleotide values. Such sequences can disrupt the
-            alignment
-          </HelpIcon>
-          {percentActgError && (
-            <div role="alert" style={{ color: 'red', marginTop: '5px' }}>
-              {percentActgError}
-            </div>
-          )}
-        </div>
-      )}
+      <div style={{ marginBottom: '15px' }}>
+        <label>
+          Minimum percent ACTG:{' '}
+          <input
+            type="number"
+            min={MIN_PERCENT_ACTG}
+            max={100}
+            value={percentActg}
+            onChange={(e) => setPercentActg(Number(e.target.value))}
+          />
+        </label>{' '}
+        <HelpIcon>
+          Exclude sequences (eg, heavily masked) that are below this percent of
+          A/C/T/G nucleotide values. Such sequences can disrupt the alignment
+        </HelpIcon>
+        {percentActgError && (
+          <div role="alert" style={{ color: 'red', marginTop: '5px' }}>
+            {percentActgError}
+          </div>
+        )}
+      </div>
       <div style={{ minHeight: '38px' }}>
         {outputChoice === 'fasta' ? (
           <div>
