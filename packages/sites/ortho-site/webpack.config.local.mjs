@@ -23,6 +23,7 @@ export default configure({
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,
       [process.env.CGI_BIN_ENDPOINT]: process.env.CGI_BIN_URL,
+      [process.env.SEQUENCE_RETRIEVAL_ENDPOINT]: process.env.SEQUENCE_RETRIEVAL_URL,
     },
     legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
     legacyWebAppUrl: process.env.LEGACY_WEB_APP_URL,
