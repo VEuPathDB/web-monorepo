@@ -80,6 +80,12 @@
     }
   }
 
+  &--Preliminary {
+    font-size: 0.75em;
+    font-style: italic;
+    color: #555;
+  }
+
   &--Results {
     border-collapse: collapse;
     width: 100%;
