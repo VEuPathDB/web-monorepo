@@ -97,6 +97,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 const DefaultFormTitle = 'Upload Dataset';
 
 const StudyDesignVocab: readonly [string, string][] = [
+  // Alphabetical Order
   ['Case history', 'Observational'],
   ['Case series study', 'Observational'],
   ['Case-control study', 'Observational'],
@@ -105,11 +106,13 @@ const StudyDesignVocab: readonly [string, string][] = [
   ['Cross-sectional study', 'Observational'],
   ['Ecological study', 'Observational'],
   ['Meta-analysis', 'Review'],
-  ['Other', 'n/a'],
   ['Panel study', 'Observational'],
   ['Quasi-experimental study', 'Experimental'],
   ['Randomized controlled/clinical trial', 'Experimental'],
   ['Surveillance study', 'Observational'],
+
+  // Other goes last
+  ['Other', 'n/a'],
 ];
 
 const wranglerDataHelp = (

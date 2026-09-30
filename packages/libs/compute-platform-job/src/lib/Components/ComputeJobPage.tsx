@@ -150,8 +150,8 @@ export function ComputeJobPage({
                       }}
                     />
                     <b>Jobs can take 10+ minutes.</b> Once running, an MSA job
-                    typically finishes in under 10 minutes, but time in the
-                    queue depends on how busy the system is.
+                    typically finishes in under 10 minutes. Time in the queue
+                    depends on how busy the system is.
                   </p>
                 </>
               )}
@@ -159,7 +159,8 @@ export function ComputeJobPage({
         ) : null}
         {status === 'failed' && (
           <p className="DeadEnd">
-            This job failed. Please go back and resubmit your request.
+            This job failed with a server error. Please contact VEuPathDB
+            support.
           </p>
         )}
         {status === 'expired' && (

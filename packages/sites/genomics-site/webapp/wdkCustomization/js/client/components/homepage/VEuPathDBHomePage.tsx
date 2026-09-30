@@ -746,6 +746,15 @@ const useHeaderMenuItems = (
           url: '/search/dataset/AllDatasets/result',
         },
         {
+          key: 'upload2',
+          display: 'Upload my dataset',
+          type: 'reactRoute',
+          url: '/workspace/datasets/new',
+          metadata: {
+            test: () => Boolean(useUserDatasetsWorkspace),
+          },
+        },
+        {
           key: 'data-files-eupathdb-beta',
           display: <>Download data</>,
           type: 'reactRoute',
