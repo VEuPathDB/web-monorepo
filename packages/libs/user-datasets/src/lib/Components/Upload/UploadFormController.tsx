@@ -36,6 +36,8 @@ import {
   hasAllowedExtension,
   hasTabInName,
 } from '../../Service/utils/rnaseq-rc-data-files';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { projectId } from '../../config';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -273,7 +275,7 @@ function filterDetails({ datasetDetails }: DatasetFormState): PartialDatasetDeta
     delete filtered['dataDisclaimer'];
   if (!datasetDetails.metadataContentFlags?.hasDatasetSources)
     delete filtered['datasetSources'];
-  if (!datasetDetails.metadataContentFlags?.hasPublications)
+  if (!datasetDetails.metadataContentFlags?.hasPublications && !isGenomicsProjectId(projectId))
     delete filtered['publications'];
   if (!datasetDetails.metadataContentFlags?.hasOrganismData)
     delete filtered['experimentalOrganisms'];
