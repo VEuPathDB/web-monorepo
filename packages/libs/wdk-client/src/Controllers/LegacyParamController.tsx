@@ -1,6 +1,5 @@
 import { debounce, get } from 'lodash';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import {
   updateActiveQuestion,
@@ -48,6 +47,7 @@ class LegacyParamController extends ViewController<Props> {
   static readonly PARAM_INVALID_EVENT = 'param-invalid';
 
   paramModules = ParamModules;
+  private containerRef = React.createRef<HTMLDivElement>();
 
   componentWillUnmount() {
     const { searchName } = this.props.own;
@@ -93,7 +93,7 @@ class LegacyParamController extends ViewController<Props> {
       });
     }
 
-    const node = ReactDOM.findDOMNode(this);
+    const node = this.containerRef.current;
 
     // Trigger event in case of question error
     if (
@@ -165,16 +165,17 @@ class LegacyParamController extends ViewController<Props> {
         : '');
 
     return (
-      <div>
+      <div ref={this.containerRef}>
         <div style={{ color: 'red', fontSize: '1.4em', fontWeight: 500 }}>
           {errorMessage}
         </div>
 
         {isProbablyRevise && [
-          <div style={{ fontWeight: 'bold', padding: '1em 0' }}>
+          <div key="label" style={{ fontWeight: 'bold', padding: '1em 0' }}>
             Current value:
           </div>,
           <div
+            key="value"
             style={{ maxHeight: 300, overflow: 'auto', background: '#f3f3f3' }}
           >
             <pre>
@@ -197,7 +198,7 @@ class LegacyParamController extends ViewController<Props> {
 
     if (this.props.mapped.paramErrors[parameter.name]) {
       return (
-        <div>
+        <div ref={this.containerRef}>
           <div
             style={{
               color: 'red',
@@ -231,7 +232,7 @@ class LegacyParamController extends ViewController<Props> {
     );
 
     return (
-      <div>
+      <div ref={this.containerRef}>
         <this.paramModules.ParamComponent
           ctx={ctx}
           parameter={parameter}
