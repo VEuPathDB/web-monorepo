@@ -342,6 +342,10 @@ function getColumns({
       helpText: attribute.help,
       htmlHelp: attribute.htmlHelp,
       name: attribute.displayName,
+      ...(attribute.columnDataType === 'NUMBER' && {
+        style: { textAlign: 'right' as const },
+        headingStyle: { textAlign: 'right' as const },
+      }),
       renderCell: ({ row, key }: { row: RecordInstance; key: string }) =>
         key === recordClass.recordIdAttributeName ? (
           <PrimaryKeyCell recordClass={recordClass} recordInstance={row} />
