@@ -1,5 +1,6 @@
 import {
   fetchTemporaryResultText,
+  openTabAndSubmitMsaJob,
   parseBedToFeatures,
   submitClustalMsaJob,
   submitSyncFastaRequest,
@@ -75,7 +76,14 @@ describe('fetchTemporaryResultText', () => {
 });
 
 function makeFakeTab() {
-  return { location: { replace: jest.fn() }, close: jest.fn() };
+  const tab = {
+    location: { replace: jest.fn() },
+    closed: false,
+    close: jest.fn(() => {
+      tab.closed = true;
+    }),
+  };
+  return tab;
 }
 
 function makeFakeApi(job: { jobID: string }) {
@@ -222,5 +230,152 @@ describe('submitSyncFastaRequest', () => {
       basesPerLine: 60,
       percentActg: undefined,
     });
+  });
+});
+
+describe('openTabAndSubmitMsaJob', () => {
+  const originalOpen = window.open;
+  let fakeTab: ReturnType<typeof makeFakeTab>;
+
+  beforeEach(() => {
+    fakeTab = makeFakeTab();
+    window.open = jest.fn().mockReturnValue(fakeTab);
+  });
+
+  afterEach(() => {
+    window.open = originalOpen;
+  });
+
+  it('opens a blank tab before resolving features, then submits and navigates it', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+    const resolveFeatures = jest.fn().mockResolvedValue(features);
+
+    await openTabAndSubmitMsaJob({
+      api,
+      resolveFeatures,
+      sequenceType: 'protein',
+      msaFormat: 'clustal',
+      resultRouteBase: '/workspace/msa',
+      paramsSummary: '1 Protein',
+    });
+
+    expect(window.open).toHaveBeenCalledWith('about:blank', '_blank');
+    expect(resolveFeatures).toHaveBeenCalledTimes(1);
+    expect(api.submitJob).toHaveBeenCalledWith('protein', {
+      features,
+      postProcess: 'MSA',
+      msaOptions: { format: 'clustal' },
+    });
+    expect(fakeTab.location.replace).toHaveBeenCalledTimes(1);
+    const [navigatedUrl] = fakeTab.location.replace.mock.calls[0];
+    expect(navigatedUrl).toContain('/workspace/msa/result/abc123');
+  });
+
+  it('closes the opened tab and rethrows if resolveFeatures rejects', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const resolveFeatures = jest
+      .fn()
+      .mockRejectedValue(new Error('resolution failed'));
+
+    await expect(
+      openTabAndSubmitMsaJob({
+        api,
+        resolveFeatures,
+        sequenceType: 'protein',
+        msaFormat: 'clustal',
+        resultRouteBase: '/workspace/msa',
+        paramsSummary: '1 Protein',
+      })
+    ).rejects.toThrow('resolution failed');
+
+    expect(fakeTab.close).toHaveBeenCalledTimes(1);
+    expect(api.submitJob).not.toHaveBeenCalled();
+  });
+
+  it('closes the opened tab and rethrows if submitJob rejects', async () => {
+    const api = {
+      submitJob: jest.fn().mockRejectedValue(new Error('service down')),
+    } as any;
+    const resolveFeatures = jest.fn().mockResolvedValue([]);
+
+    await expect(
+      openTabAndSubmitMsaJob({
+        api,
+        resolveFeatures,
+        sequenceType: 'protein',
+        msaFormat: 'clustal',
+        resultRouteBase: '/workspace/msa',
+        paramsSummary: '0 Proteins',
+      })
+    ).rejects.toThrow('service down');
+
+    expect(fakeTab.close).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not throw if window.open returns null (popup blocked)', async () => {
+    window.open = jest.fn().mockReturnValue(null);
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const resolveFeatures = jest.fn().mockResolvedValue([]);
+
+    await expect(
+      openTabAndSubmitMsaJob({
+        api,
+        resolveFeatures,
+        sequenceType: 'protein',
+        msaFormat: 'clustal',
+        resultRouteBase: '/workspace/msa',
+        paramsSummary: '0 Proteins',
+      })
+    ).resolves.toBeUndefined();
+  });
+
+  it('forwards percentActg through to the submitted job when provided', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+    const resolveFeatures = jest.fn().mockResolvedValue(features);
+
+    await openTabAndSubmitMsaJob({
+      api,
+      resolveFeatures,
+      sequenceType: 'dnaseq',
+      msaFormat: 'clustal',
+      resultRouteBase: '/workspace/msa',
+      paramsSummary: '1 Strain segment',
+      percentActg: 90,
+    });
+
+    expect(api.submitJob).toHaveBeenCalledWith('dnaseq', {
+      features,
+      postProcess: 'MSA',
+      msaOptions: { format: 'clustal', percentActg: 90 },
+    });
+  });
+
+  it('accepts paramsSummary as a function of the resolved features, called after resolution', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [
+      { contig: 'x', start: 0, end: 10 },
+      { contig: 'y', start: 0, end: 20 },
+    ];
+    const resolveFeatures = jest.fn().mockResolvedValue(features);
+    const paramsSummary = jest.fn(
+      (resolved: typeof features) => `${resolved.length} Strain segments`
+    );
+
+    await openTabAndSubmitMsaJob({
+      api,
+      resolveFeatures,
+      sequenceType: 'dnaseq',
+      msaFormat: 'clustal',
+      resultRouteBase: '/workspace/msa',
+      paramsSummary,
+    });
+
+    expect(paramsSummary).toHaveBeenCalledWith(features);
+
+    const [navigatedUrl] = fakeTab.location.replace.mock.calls[0];
+    const params = new URL(navigatedUrl).searchParams;
+    expect(params.get('paramsSummary')).toBe('2 Strain segments');
   });
 });

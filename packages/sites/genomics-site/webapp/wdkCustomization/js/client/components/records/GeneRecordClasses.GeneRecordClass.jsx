@@ -61,17 +61,7 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
-import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
-
-// Old CGI form codes -> new service MsaFormat values (see design doc's
-// carried-over sequenceType/output-format table).
-const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
-  clu: 'clustal_dnd',
-  fasta: 'fasta',
-  phy: 'phylip',
-  st: 'stockholm',
-  vie: 'vienna',
-};
+import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1685,22 +1675,9 @@ function TranscriptMsaSubmission({
   );
   const [oneOffset, setOneOffset] = useState('');
   const [twoOffset, setTwoOffset] = useState('');
-  const [clustalOutFormat, setClustalOutFormat] = useState('clu');
+  const [clustalOutFormat, setClustalOutFormat] = useState('clustal_dnd');
 
-  const handleConfirm = async () => {
-    // Open the result tab as the very first, synchronous statement of this
-    // handler, before any await — otherwise, by the time
-    // resolveTranscriptFeatures's network round-trip resolves, we're no
-    // longer inside the user gesture's call stack and browsers may block
-    // window.open as a popup.
-    const resultTab = window.open('about:blank', '_blank');
-    // The tab sits blank for several seconds while transcript features are
-    // resolved and the job is submitted (all awaited below, in series) —
-    // write a placeholder so it isn't literally empty in the meantime.
-    // submitClustalMsaJob replaces this entirely once the job is submitted
-    // and it navigates to the real result page.
-    resultTab?.document?.write('<p>Preparing your alignment…</p>');
-
+  const handleConfirm = () => {
     // sequenceTypeChoice is the radio the user picked (Protein / CDS
     // (spliced) / Genomic). It maps to two different things that don't
     // collapse the same way:
@@ -1718,42 +1695,36 @@ function TranscriptMsaSubmission({
     const sequenceType =
       sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
 
-    const resolvedFeatures = await resolveTranscriptFeatures(
-      wdkService,
-      [sourceId, ...selectedTranscriptIds],
-      bedReportType,
-      sequenceTypeChoice === 'genomic'
-        ? {
-            upstream: Number(oneOffset) || 0,
-            downstream: Number(twoOffset) || 0,
-          }
-        : undefined
-    );
+    return openTabAndSubmitMsaJob({
+      api: SequenceRetrievalApi.getClient(
+        SEQUENCE_RETRIEVAL_BASE_URL,
+        wdkService
+      ),
+      resolveFeatures: async () => {
+        const resolvedFeatures = await resolveTranscriptFeatures(
+          wdkService,
+          [sourceId, ...selectedTranscriptIds],
+          bedReportType,
+          sequenceTypeChoice === 'genomic'
+            ? {
+                upstream: Number(oneOffset) || 0,
+                downstream: Number(twoOffset) || 0,
+              }
+            : undefined
+        );
 
-    const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
-
-    // Protein reference sequences have no strand — the service rejects a
-    // stranded feature on an unstranded (protein) reference.
-    const features =
-      sequenceType === 'protein'
-        ? resolvedFeatures.map(({ strand, ...feature }) => feature)
-        : resolvedFeatures;
-
-    const api = SequenceRetrievalApi.getClient(
-      SEQUENCE_RETRIEVAL_BASE_URL,
-      wdkService
-    );
-
-    await submitClustalMsaJob({
-      api,
+        // Protein reference sequences have no strand — the service rejects
+        // a stranded feature on an unstranded (protein) reference.
+        return sequenceType === 'protein'
+          ? resolvedFeatures.map(({ strand, ...feature }) => feature)
+          : resolvedFeatures;
+      },
       sequenceType,
-      features,
-      msaFormat: outFormat,
+      msaFormat: clustalOutFormat,
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts, ${outFormat.toUpperCase()} output format`,
-      resultTab,
+      } Transcripts, ${clustalOutFormat.toUpperCase()} output format`,
     });
   };
 
@@ -1838,11 +1809,11 @@ function TranscriptMsaSubmission({
             value={clustalOutFormat}
             onChange={(e) => setClustalOutFormat(e.target.value)}
           >
-            <option value="clu">Mismatches highlighted</option>
+            <option value="clustal_dnd">Mismatches highlighted</option>
             <option value="fasta">FASTA</option>
-            <option value="phy">PHYLIP</option>
-            <option value="st">STOCKHOLM</option>
-            <option value="vie">VIENNA</option>
+            <option value="phylip">PHYLIP</option>
+            <option value="stockholm">STOCKHOLM</option>
+            <option value="vienna">VIENNA</option>
           </select>
         </p>
         <input
