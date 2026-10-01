@@ -23,7 +23,11 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 
 // concerning axis range control
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useAxisTruncationWarningEffect,
+  useVizConfig,
+} from '../../../hooks/visualizations';
+import { usePlotContainerStyles } from '../plotStyles';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
@@ -65,8 +69,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import TruncationNotification from '../TruncationNotification';
 import PluginError from '../PluginError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 type EnqueueSnackbar = ReturnType<typeof useSnackbar>['enqueueSnackbar'];
@@ -85,13 +88,6 @@ const EMPTY_VIZ_AXIS_RANGES = {
   dependentAxisRange: { min: -1, max: 9 },
 };
 
-const plotContainerStyles = {
-  width: 750,
-  height: 450,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
 
 const VolcanoComputationConfig = t.union([
   DifferentialAbundanceConfig,
@@ -191,12 +187,8 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
   )
     ? computation.descriptor.configuration
     : undefined;
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -565,39 +557,20 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     }
   }, [data.value?.effectSizeLabel, vizConfig.effectSizeLabel, updateVizConfig]);
 
-  // set useEffect for changing truncation warning message
-  useEffect(() => {
-    if (
-      truncationConfigIndependentAxisMin ||
-      truncationConfigIndependentAxisMax
-    ) {
-      setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-      // add else for the case when changing inputVariable
-    } else {
-      setTruncatedIndependentAxisWarning('');
-    }
-  }, [
+  // clearWhenNotTruncated handles the case when changing inputVariable
+  useAxisTruncationWarningEffect(
     truncationConfigIndependentAxisMin,
     truncationConfigIndependentAxisMax,
     setTruncatedIndependentAxisWarning,
-  ]);
+    true
+  );
 
-  useEffect(() => {
-    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-      // add else for the case when changing inputVariable
-    } else {
-      setTruncatedDependentAxisWarning('');
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
     setTruncatedDependentAxisWarning,
-  ]);
+    true
+  );
 
   const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
@@ -677,20 +650,10 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
             }}
             step={0.01}
           />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning && data.value != null ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{
-                maxWidth: '350px',
-              }}
+          {data.value != null ? (
+            <TruncationNotification
+              warning={truncatedIndependentAxisWarning}
+              onAcknowledge={() => setTruncatedIndependentAxisWarning('')}
             />
           ) : null}
         </div>
@@ -743,22 +706,10 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
             }}
             step={0.01}
           />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{
-                maxWidth: '350px',
-              }}
-            />
-          ) : null}
+          <TruncationNotification
+            warning={truncatedDependentAxisWarning}
+            onAcknowledge={() => setTruncatedDependentAxisWarning('')}
+          />
         </div>
       </div>
     </div>

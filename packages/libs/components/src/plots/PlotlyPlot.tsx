@@ -28,7 +28,10 @@ import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
 import { removeHtmlTags } from '../utils/removeHtmlTags';
-import { ExportPlotToImageButton } from './ExportPlotToImageButton';
+import {
+  ExportPlotToImageButton,
+  ExportButtonSize,
+} from './ExportPlotToImageButton';
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -55,6 +58,9 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   showExportButton?: boolean;
   /** Filename of exported file, without extension. */
   exportFileName?: string;
+  /** Visual size of the export button. 'small' renders a compact button, e.g.
+   * for faceted plots. Passed through to ExportPlotToImageButton. */
+  exportButtonSize?: ExportButtonSize;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
   /** legend title */
@@ -105,6 +111,7 @@ function PlotlyPlot<T>(
     showNoDataOverlay,
     showExportButton,
     exportFileName,
+    exportButtonSize,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = DEFAULT_MAX_LEGEND_TEXT_LENGTH,
     // expose data for applying legend ellipsis
@@ -467,7 +474,11 @@ function PlotlyPlot<T>(
         {showSpinner && <Spinner />}
       </div>
       {showExportButton && (
-        <ExportPlotToImageButton toImage={toImage} filename={exportFileName} />
+        <ExportPlotToImageButton
+          toImage={toImage}
+          filename={exportFileName}
+          size={exportButtonSize}
+        />
       )}
     </Suspense>
   );
