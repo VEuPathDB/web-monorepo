@@ -7,6 +7,7 @@ import { formatFilterValue } from '../utils/filter-display';
 import { ReactNode } from 'react';
 import { VariableLink, VariableLinkConfig } from './VariableLink';
 import { colors, Warning } from '@veupathdb/coreui';
+import { isLatitudeVariable, isLongitudeVariable } from './filter/guards';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -51,6 +52,59 @@ export default function FilterChipList(props: Props) {
             findEntityAndVariable(props.entities, filter) ?? {};
 
           if (entity && variable) {
+            // A stringPrefixSet filter on a geoaggregator variable is the
+            // GeoCoordFilter's lasso selection: show it as a single
+            // "Geographic area" chip linking to the latitude variable
+            // (which is where the map filter lives in the variable tree).
+            if (
+              filter.type === 'stringPrefixSet' &&
+              variable.displayType === 'geoaggregator'
+            ) {
+              const latitudeVariable =
+                entity.variables.find(isLatitudeVariable);
+              const longitudeVariable =
+                entity.variables.find(isLongitudeVariable);
+              const tooltipText = (
+                <>
+                  <div
+                    style={{
+                      fontSize: '1.05em',
+                      fontWeight: 700,
+                      marginBottom: '.75em',
+                    }}
+                  >
+                    {entity.displayName}: Geographic area
+                  </div>
+                  <div>
+                    Lasso selection covering {filter.prefixSet.length} geohash{' '}
+                    {filter.prefixSet.length === 1 ? 'prefix' : 'prefixes'}
+                  </div>
+                </>
+              );
+              return (
+                <FilterChip
+                  tooltipText={tooltipText}
+                  isActive={
+                    entity.id === selectedEntityId &&
+                    (variable.id === selectedVariableId ||
+                      latitudeVariable?.id === selectedVariableId ||
+                      longitudeVariable?.id === selectedVariableId)
+                  }
+                  onDelete={() => removeFilter(filter)}
+                  key={`filter-chip-geo-${entity.id}`}
+                >
+                  <VariableLink
+                    entityId={entity.id}
+                    variableId={latitudeVariable?.id ?? variable.id}
+                    replace={true}
+                    linkConfig={variableLinkConfig}
+                  >
+                    Geographic area
+                  </VariableLink>
+                </FilterChip>
+              );
+            }
+
             const filterValueDisplay: ReactNode = formatFilterValue(
               filter,
               props.entities

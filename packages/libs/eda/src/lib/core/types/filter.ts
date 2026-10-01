@@ -15,6 +15,23 @@ export const StringSetFilter = t.intersection([
   }),
 ]);
 
+/**
+ * Keeps entities whose (string) variable value starts with ANY of the
+ * prefixes — i.e. the union of the prefix matches. Designed for
+ * multi-scale geohash filtering of arbitrary (e.g. lasso-selected)
+ * geographic shapes, applied to an entity's finest-grained geohash
+ * variable. NOTE: requires EDA subsetting service with
+ * lib eda-subsetting >= 7.2.0.
+ */
+export type StringPrefixSetFilter = t.TypeOf<typeof StringPrefixSetFilter>;
+export const StringPrefixSetFilter = t.intersection([
+  _FilterBase,
+  t.type({
+    type: t.literal('stringPrefixSet'),
+    prefixSet: t.array(t.string),
+  }),
+]);
+
 export type NumberSetFilter = t.TypeOf<typeof NumberSetFilter>;
 export const NumberSetFilter = t.intersection([
   _FilterBase,
@@ -84,6 +101,7 @@ export const MultiFilter = t.intersection([
 export type Filter = t.TypeOf<typeof Filter>;
 export const Filter = t.union([
   StringSetFilter,
+  StringPrefixSetFilter,
   NumberSetFilter,
   DateSetFilter,
   NumberRangeFilter,
