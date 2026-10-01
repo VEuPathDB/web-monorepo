@@ -49,6 +49,63 @@ function ignoreError(message: string): boolean {
   );
 }
 
+/**
+ * Checks if an error originates from a browser extension or third-party script.
+ * Returns true if the error should be filtered out (not reported).
+ */
+function isThirdPartyError(error: Error | string, filename?: string): boolean {
+  // Extension URL patterns
+  const extensionProtocols = [
+    'chrome-extension://',
+    'moz-extension://',
+    'safari-extension://',
+    'safari-web-extension://',
+  ];
+
+  // Check if filename contains extension protocol
+  if (filename) {
+    if (extensionProtocols.some((protocol) => filename.includes(protocol))) {
+      return true;
+    }
+    // Filter errors from non-same-origin sources
+    // Errors from our app should have relative paths or our domain
+    if (
+      filename.startsWith('http') &&
+      !filename.includes(window.location.hostname)
+    ) {
+      return true;
+    }
+  }
+
+  // Check error stack trace for extension URLs
+  if (error instanceof Error && error.stack) {
+    if (
+      extensionProtocols.some((protocol) => error.stack!.includes(protocol))
+    ) {
+      return true;
+    }
+  }
+
+  // Check error message for extension-related patterns
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  if (extensionProtocols.some((protocol) => errorMessage.includes(protocol))) {
+    return true;
+  }
+
+  // Common patterns from browser extensions
+  const extensionPatterns = [
+    '__firefox__',
+    '__chrome__',
+    '__safari__',
+    'webkit-masked-url',
+  ];
+  if (extensionPatterns.some((pattern) => errorMessage.includes(pattern))) {
+    return true;
+  }
+
+  return false;
+}
+
 export function observe(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
@@ -61,7 +118,9 @@ export function observe(
   ).pipe(
     filter((event: PromiseRejectionEvent) => {
       return (
-        !ignoreError(String(event.reason)) && !wdkService.getIsInvalidating()
+        !ignoreError(String(event.reason)) &&
+        !isThirdPartyError(event.reason) &&
+        !wdkService.getIsInvalidating()
       );
     }),
     map((event: PromiseRejectionEvent) => notifyUnhandledError(event.reason))
@@ -72,7 +131,11 @@ export function observe(
     'error'
   ).pipe(
     filter((event: ErrorEvent) => {
-      return !ignoreError(event.message) && !wdkService.getIsInvalidating();
+      return (
+        !ignoreError(event.message) &&
+        !isThirdPartyError(event.error ?? event.message, event.filename) &&
+        !wdkService.getIsInvalidating()
+      );
     }),
     map((event: ErrorEvent) => {
       return notifyUnhandledError(event.error ?? event.message);
