@@ -275,8 +275,13 @@ function filterDetails({ datasetDetails }: DatasetFormState): PartialDatasetDeta
     delete filtered['dataDisclaimer'];
   if (!datasetDetails.metadataContentFlags?.hasDatasetSources)
     delete filtered['datasetSources'];
+
+  // Only prune the publications array on non-genomics.  The genomics ud form
+  // does not allow users to disable the section, nor does it show the
+  // `hasPublications` radio options.
   if (!datasetDetails.metadataContentFlags?.hasPublications && !isGenomicsProjectId(projectId))
     delete filtered['publications'];
+
   if (!datasetDetails.metadataContentFlags?.hasOrganismData)
     delete filtered['experimentalOrganisms'];
 
