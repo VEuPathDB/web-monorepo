@@ -1754,6 +1754,7 @@ function TranscriptMsaSubmission({
         selectedTranscriptIds.length + 1
       } Genes, ${outFormat.toUpperCase()} output format`,
       resultTab,
+      deflineFormat: 'QUERYONLY',
     });
   };
 

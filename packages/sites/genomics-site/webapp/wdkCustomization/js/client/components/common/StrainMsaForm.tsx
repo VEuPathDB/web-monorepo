@@ -34,6 +34,7 @@ const MIN_SEGMENT_LENGTH = 10;
 const MAX_SEGMENT_LENGTH = 150000;
 const DEFAULT_PERCENT_ACTG = 90;
 const MIN_PERCENT_ACTG = 10;
+const MSA_DEFLINE_FORMAT = 'QUERYONLY';
 const SYNC_FASTA_DEFLINE_FORMAT = 'QUERYANDREGION';
 const SYNC_FASTA_BASES_PER_LINE = 60;
 
@@ -431,6 +432,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         } Strain segments. ${MSA_FORMAT.toUpperCase()} output format`,
         resultTab,
         percentActg,
+        deflineFormat: MSA_DEFLINE_FORMAT,
       });
     } catch (error) {
       // Only this function's own steps (bed-report fetch/parse) need
