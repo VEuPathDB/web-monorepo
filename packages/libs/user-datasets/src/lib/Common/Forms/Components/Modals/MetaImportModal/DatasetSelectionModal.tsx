@@ -7,7 +7,7 @@ import {
 } from './DatasetSelectionTable';
 import { SecondaryButton } from '../../SecondaryButton';
 
-import "./MetadataImportModal.scss";
+import './MetadataImportModal.scss';
 
 export interface MetadataImportModalProps extends MetadataImportTableProps {
   readonly closeAction: Runnable;
@@ -26,6 +26,7 @@ export function DatasetSelectionModal({
       visible={true}
       closeOnEsc={true}
       includeCloseButton={true}
+      styleOverrides={{ content: { overflow: { y: undefined } } }}
     >
       <div id="ud-meta-selection-modal">
         <h2>

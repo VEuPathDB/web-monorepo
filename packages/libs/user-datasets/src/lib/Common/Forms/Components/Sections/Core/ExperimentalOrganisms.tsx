@@ -56,7 +56,7 @@ export function ExperimentalOrganisms(
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
-            enabled: hasOrganismData ?? null,
+            enabled: !disabled,
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
             required: isPublic,
@@ -67,7 +67,7 @@ export function ExperimentalOrganisms(
           className="field-grid"
         >
           <p className="subsection-description span-2">
-            <h5>Pathogen or microorganism</h5><br/>
+            <h5>Organism(s)</h5><br/>
             Indicate the species and strain of each organism represented by
             biological data in this dataset. Organisms may include
             {!isGenomics &&
@@ -93,7 +93,7 @@ export function ExperimentalOrganisms(
               experimentalOrganisms: [ ...safeOrgList, {} ],
             })}
           >
-            + Additional pathogen or microorganism
+            + Additional organism
           </AddRowButton>
         </OptionalSection>
       </InputBlock>
@@ -141,39 +141,43 @@ function OrganismDetailsRow({
 }: DatasetOrganismRow): ReactElement {
   const hasContent = isNonBlankString(organism.species) ||  isNonBlankString(organism.strain);
   return (
-    <li className="field-grid">
-      <InputPair<PartialOrganism>
-        label="Species"
-        type="text"
-        fieldName="species"
-        onChange={v => setOrganism({ ...organism, species: v }, index)}
-        value={organism.species}
-        required={required || hasContent}
-        minLength={3}
-        maxLength={128}
-        disabled={disabled}
-      />
-      <FieldHelpText>
-        Scientific name of the pathogen or microorganism that was detected,
-        measured, characterized, or otherwise investigated (e.g., Plasmodium
-        falciparum).
-      </FieldHelpText>
+    <li className="field-grid non-bold-labels">
+      <span className="multi-input-label">Organism {index + 1}</span>
 
-      <InputPair<PartialOrganism>
-        label="Strain"
-        type="text"
-        fieldName="strain"
-        onChange={v => setOrganism({ ...organism, strain: v }, index)}
-        value={organism.strain}
-        required={required || hasContent}
-        minLength={3}
-        maxLength={128}
-        disabled={disabled}
-      />
-      <FieldHelpText>
-        For field-collected organisms without a defined strain, enter "field
-        isolates" or "field samples".
-      </FieldHelpText>
+      <div className="column-2 field-grid">
+        <InputPair<PartialOrganism>
+          label="Species"
+          type="text"
+          fieldName="species"
+          onChange={v => setOrganism({ ...organism, species: v }, index)}
+          value={organism.species}
+          required={required || hasContent}
+          minLength={3}
+          maxLength={128}
+          disabled={disabled}
+        />
+        <FieldHelpText>
+          Scientific name of the pathogen or microorganism that was detected,
+          measured, characterized, or otherwise investigated (e.g., Plasmodium
+          falciparum).
+        </FieldHelpText>
+
+        <InputPair<PartialOrganism>
+          label="Strain"
+          type="text"
+          fieldName="strain"
+          onChange={v => setOrganism({ ...organism, strain: v }, index)}
+          value={organism.strain}
+          required={required || hasContent}
+          minLength={3}
+          maxLength={128}
+          disabled={disabled}
+        />
+        <FieldHelpText>
+          For field-collected organisms without a defined strain, enter "field
+          isolates" or "field samples".
+        </FieldHelpText>
+      </div>
     </li>
   );
 }

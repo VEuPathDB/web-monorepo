@@ -16,6 +16,7 @@ import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
+  CollapsibleSection,
   Dialog,
   HelpIcon,
   Loading,
@@ -50,6 +51,7 @@ import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxe
 import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
+import { StrainMsaForm } from '../common/StrainMsaForm';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
@@ -59,6 +61,7 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
+import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 
 // Old CGI form codes -> new service MsaFormat values (see design doc's
 // carried-over sequenceType/output-format table).
@@ -467,6 +470,17 @@ export function RecordAttributeSection(props) {
       return <AlphaFoldRecordSection {...restProps} />;
     case 'ai_expression':
       return <AiExpressionSummary {...restProps} />;
+    case 'variant_strain_form':
+      return (
+        <CollapsibleSection
+          id={restProps.attribute.name}
+          headerContent={restProps.attribute.displayName}
+          isCollapsed={restProps.isCollapsed}
+          onCollapsedChange={restProps.onCollapsedChange}
+        >
+          <StrainMsaForm record={restProps.record} />
+        </CollapsibleSection>
+      );
     default:
       return <DefaultComponent {...restProps} />;
   }
@@ -1674,86 +1688,73 @@ function TranscriptMsaSubmission({
   const [clustalOutFormat, setClustalOutFormat] = useState('clu');
 
   const handleConfirm = async () => {
-    // Must open synchronously, before any await, or browsers may treat
-    // this as no longer "in direct response to a user gesture" and
-    // silently block it as a popup. The tab initially loads about:blank;
-    // we navigate it to the real URL once resolve+submit finish below.
-    // resultTab is null if the browser blocks it anyway (rare, but
-    // possible under strict popup settings) — nothing more to do then.
+    // Open the result tab as the very first, synchronous statement of this
+    // handler, before any await — otherwise, by the time
+    // resolveTranscriptFeatures's network round-trip resolves, we're no
+    // longer inside the user gesture's call stack and browsers may block
+    // window.open as a popup.
     const resultTab = window.open('about:blank', '_blank');
+    // The tab sits blank for several seconds while transcript features are
+    // resolved and the job is submitted (all awaited below, in series) —
+    // write a placeholder so it isn't literally empty in the meantime.
+    // submitClustalMsaJob replaces this entirely once the job is submitted
+    // and it navigates to the real result page.
+    resultTab?.document?.write('<p>Preparing your alignment…</p>');
 
-    try {
-      // sequenceTypeChoice is the radio the user picked (Protein / CDS
-      // (spliced) / Genomic). It maps to two different things that don't
-      // collapse the same way:
-      //  - the bed report's own `type` (coordinate resolution) — CDS needs
-      //    its own distinct 'spliced_genomic' value, plus splicedGenomic:
-      //    'cds' (always sent, harmless for the other two types).
-      //  - the sequenceType path segment submitJob POSTs to — CDS submits
-      //    as 'genomic' there, not as its own type.
-      const bedReportType =
-        sequenceTypeChoice === 'genomic'
-          ? 'genomic'
-          : sequenceTypeChoice === 'CDS'
-          ? 'spliced_genomic'
-          : 'protein';
-      const sequenceType =
-        sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
+    // sequenceTypeChoice is the radio the user picked (Protein / CDS
+    // (spliced) / Genomic). It maps to two different things that don't
+    // collapse the same way:
+    //  - the bed report's own `type` (coordinate resolution) — CDS needs
+    //    its own distinct 'spliced_genomic' value, plus splicedGenomic:
+    //    'cds' (always sent, harmless for the other two types).
+    //  - the sequenceType path segment submitJob POSTs to — CDS submits
+    //    as 'genomic' there, not as its own type.
+    const bedReportType =
+      sequenceTypeChoice === 'genomic'
+        ? 'genomic'
+        : sequenceTypeChoice === 'CDS'
+        ? 'spliced_genomic'
+        : 'protein';
+    const sequenceType =
+      sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
 
-      const resolvedFeatures = await resolveTranscriptFeatures(
-        wdkService,
-        [sourceId, ...selectedTranscriptIds],
-        bedReportType,
-        sequenceTypeChoice === 'genomic'
-          ? {
-              upstream: Number(oneOffset) || 0,
-              downstream: Number(twoOffset) || 0,
-            }
-          : undefined
-      );
+    const resolvedFeatures = await resolveTranscriptFeatures(
+      wdkService,
+      [sourceId, ...selectedTranscriptIds],
+      bedReportType,
+      sequenceTypeChoice === 'genomic'
+        ? {
+            upstream: Number(oneOffset) || 0,
+            downstream: Number(twoOffset) || 0,
+          }
+        : undefined
+    );
 
-      const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
+    const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
 
-      // Protein reference sequences have no strand — the service rejects a
-      // stranded feature on an unstranded (protein) reference.
-      const features =
-        sequenceType === 'protein'
-          ? resolvedFeatures.map(({ strand, ...feature }) => feature)
-          : resolvedFeatures;
+    // Protein reference sequences have no strand — the service rejects a
+    // stranded feature on an unstranded (protein) reference.
+    const features =
+      sequenceType === 'protein'
+        ? resolvedFeatures.map(({ strand, ...feature }) => feature)
+        : resolvedFeatures;
 
-      const api = SequenceRetrievalApi.getClient(
-        SEQUENCE_RETRIEVAL_BASE_URL,
-        wdkService
-      );
-      const job = await api.submitJob(sequenceType, {
-        features,
-        postProcess: 'MSA',
-        msaOptions: { format: outFormat },
-      });
+    const api = SequenceRetrievalApi.getClient(
+      SEQUENCE_RETRIEVAL_BASE_URL,
+      wdkService
+    );
 
-      const paramsSummary = `${
+    await submitClustalMsaJob({
+      api,
+      sequenceType,
+      features,
+      msaFormat: outFormat,
+      resultRouteBase: `${rootUrl}/workspace/msa`,
+      paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts, ${outFormat.toUpperCase()} output format`;
-
-      // The already-open tab can't receive React Router location.state, so
-      // paramsSummary/format travel as query params instead.
-      const resultUrl = new URL(
-        `${window.location.origin}${rootUrl}/workspace/msa/result/${job.jobID}`
-      );
-      resultUrl.searchParams.set('paramsSummary', paramsSummary);
-      resultUrl.searchParams.set('format', outFormat);
-      if (resultTab) {
-        resultTab.location.replace(resultUrl.toString());
-      }
-    } catch (error) {
-      // Don't leave a dead blank tab open if resolve/submit fails —
-      // ClustalAlignmentForm's own onConfirm error handling shows the
-      // failure in the original tab.
-      if (resultTab) {
-        resultTab.close();
-      }
-      throw error;
-    }
+      } Transcripts, ${outFormat.toUpperCase()} output format`,
+      resultTab,
+    });
   };
 
   return (
@@ -1761,7 +1762,6 @@ function TranscriptMsaSubmission({
       action="/cgi-bin/isolateAlignment"
       sequenceCount={selectedTranscriptIds.length + 1}
       sequenceType="genes"
-      warnThreshold={() => (sequenceTypeChoice === 'genomic' ? 10 : 1000)}
       blockThreshold={() => (sequenceTypeChoice === 'genomic' ? 50 : 1000)}
       onConfirm={handleConfirm}
     >

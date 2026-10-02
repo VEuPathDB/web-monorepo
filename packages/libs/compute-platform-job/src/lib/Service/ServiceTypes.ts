@@ -38,6 +38,15 @@ export interface SubmitJobRequest {
   basesPerLine?: number;
   postProcess?: 'MSA';
   msaOptions?: MsaOptions;
+  percentActg?: number;
+}
+
+/** Request body for the synchronous /sequences/{sequenceType} endpoint. */
+export interface SyncSequenceRequest {
+  features: Feature[];
+  deflineFormat?: DeflineFormat;
+  basesPerLine?: number;
+  percentActg?: number;
 }
 
 export type JobStatus =
@@ -50,5 +59,8 @@ export type JobStatus =
 export interface JobResponse {
   jobID: string;
   status: JobStatus;
+  created?: string;
   queuePosition?: number;
+  started?: string;
+  finished?: string;
 }
