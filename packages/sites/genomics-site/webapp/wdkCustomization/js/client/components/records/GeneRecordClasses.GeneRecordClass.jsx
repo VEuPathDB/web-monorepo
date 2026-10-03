@@ -17,7 +17,6 @@ import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
   CollapsibleSection,
-  Dialog,
   HelpIcon,
   Loading,
   RecordTable as WdkRecordTable,
@@ -48,7 +47,6 @@ import {
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
 import { StrainMsaForm } from '../common/StrainMsaForm';
@@ -1582,11 +1580,6 @@ function OrthologsFormContainer(props) {
 
   const [preferredOrganisms] = usePreferredOrganismsState();
 
-  const theme = useUITheme();
-  const primaryButtonColor = theme
-    ? theme.palette.primary.hue[theme.palette.primary.level]
-    : '#4D4D4D';
-
   const [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene] =
     useState(false);
 
@@ -1662,8 +1655,6 @@ function OrthologsFormContainer(props) {
       value={transcriptFilterAwareValues}
       transcriptFilter={transcriptFilter}
       showLongestTranscriptPerGene={showLongestTranscriptPerGene}
-      setShowLongestTranscriptPerGene={setShowLongestTranscriptPerGene}
-      primaryButtonColor={primaryButtonColor}
     />
   );
 }
@@ -1752,8 +1743,9 @@ function TranscriptMsaSubmission({
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts, ${outFormat.toUpperCase()} output format`,
+      } Transcripts: ${sequenceTypeChoice} sequence. Output format: ${outFormat}`,
       resultTab,
+      deflineFormat: 'QUERYONLY',
     });
   };
 
@@ -1866,35 +1858,19 @@ class OrthologsForm extends SortKeyTable {
     this.state = {
       selectedRowIds: [],
       groupBySelected: false,
-      showSelectGateDialog: false,
     };
     this.isRowSelected = this.isRowSelected.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
     this.onRowDeselect = this.onRowDeselect.bind(this);
     this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
     this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
-    this.closeSelectGateDialog = this.closeSelectGateDialog.bind(this);
-    this.viewOneTranscriptPerGene = this.viewOneTranscriptPerGene.bind(this);
   }
 
   isRowSelected({ ortho_source_id }) {
     return this.state.selectedRowIds.includes(ortho_source_id);
   }
 
-  closeSelectGateDialog() {
-    this.setState({ showSelectGateDialog: false });
-  }
-
-  viewOneTranscriptPerGene() {
-    this.props.setShowLongestTranscriptPerGene(true);
-    this.setState({ showSelectGateDialog: false });
-  }
-
   onRowSelect({ ortho_source_id }) {
-    if (!this.props.showLongestTranscriptPerGene) {
-      this.setState({ showSelectGateDialog: true });
-      return;
-    }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(ortho_source_id),
@@ -1902,10 +1878,6 @@ class OrthologsForm extends SortKeyTable {
   }
 
   onRowDeselect({ ortho_source_id }) {
-    // Deselecting is always allowed, regardless of the toggle — the gate is
-    // only on adding new selections (see design doc: "existing selections
-    // are left alone; only new checkbox clicks are blocked while the toggle
-    // is off").
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter(
@@ -1915,10 +1887,6 @@ class OrthologsForm extends SortKeyTable {
   }
 
   onMultipleRowSelect(rows) {
-    if (!this.props.showLongestTranscriptPerGene) {
-      this.setState({ showSelectGateDialog: true });
-      return;
-    }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(
@@ -1997,47 +1965,6 @@ class OrthologsForm extends SortKeyTable {
             value={this.sortValue(this.props.value)}
             childProps={this.props}
           />
-          <Dialog
-            open={this.state.showSelectGateDialog}
-            modal
-            title="MSA Requirements"
-            onClose={this.closeSelectGateDialog}
-          >
-            <div style={{ padding: '10px', width: '400px' }}>
-              <p>
-                MSA of orthologs must use the longest transcript per gene.
-                OrthoMCL orthology is based on that.
-              </p>
-              <div
-                style={{
-                  marginTop: '20px',
-                  display: 'flex',
-                  gap: '10px',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={this.closeSelectGateDialog}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={this.viewOneTranscriptPerGene}
-                  style={{
-                    backgroundColor: this.props.primaryButtonColor,
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                >
-                  View only longest transcripts
-                </button>
-              </div>
-            </div>
-          </Dialog>
         </>
       );
     }
