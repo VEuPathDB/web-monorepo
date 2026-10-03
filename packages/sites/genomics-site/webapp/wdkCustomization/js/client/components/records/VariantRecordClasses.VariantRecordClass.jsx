@@ -2,6 +2,9 @@ import React from 'react';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 import { StrainMsaForm } from '../common/StrainMsaForm';
 
+// Tables that should be collapsed by default when a variant record page loads.
+export const defaultCollapsedTableNames = ['VariantStrains'];
+
 export function RecordAttributeSection(props) {
   return props.attribute.name === 'variant_strain_form' ? (
     <StrainFilterSection {...props} />
