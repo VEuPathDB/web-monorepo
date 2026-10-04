@@ -20,6 +20,7 @@ import {
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { rootUrl } from '../../config';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
+import { sanitizeFlankInput } from './flankInput';
 
 const SEARCH_NAME = 'StrainSegmentsByMeta';
 const METADATA_FILTER_PARAM = 'variation_sample_meta';
@@ -27,7 +28,8 @@ const START_PARAM = 'start_point';
 const END_PARAM = 'end_point_segment';
 const STRAND_PARAM = 'sequence_strand';
 const EDA_SAMPLE_TABLE_SUFFIX_PARAM = 'eda_sample_table_suffix';
-const DEFAULT_VARIANT_OFFSET = 1000;
+const DEFAULT_GENE_FLANK = 0;
+const DEFAULT_VARIANT_FLANK = 1000;
 const SEQUENCE_TYPE = 'dnaseq';
 const MSA_FORMAT = 'clustal_guidetree';
 const MSA_ALIGNER = 'mafft';
@@ -116,18 +118,22 @@ type WdkRecord = {
   attributes: Record<string, string | null>;
 };
 
+// `flank` is the default number of bases to extend on each side of the
+// region's anchor: the gene's start/end for a range, the variant's location
+// for a point.
 type Region =
-  | { kind: 'range'; start: string; end: string }
-  | { kind: 'point'; location: string; offset: number };
+  | { kind: 'range'; start: string; end: string; flank: number }
+  | { kind: 'point'; location: string; flank: number };
 
 export function isVariantRecord(record: WdkRecord): boolean {
   return record.recordClassName === 'VariantRecordClasses.VariantRecordClass';
 }
 
 /**
- * Gene has a natural start/end range (start_min/end_max) to default from.
+ * Gene has a natural start/end range (start_min/end_max); its region input
+ * is a flank extending that range on both sides, defaulting to none.
  * Variant is a single point (location) with no range — its region input is
- * a symmetric offset around that point instead, defaulting to 1000nt each
+ * likewise a flank, symmetric around that point, defaulting to 1000nt each
  * direction. Pulled out as its own pure function so the render logic below
  * only has to switch on `region.kind`, not repeat the record-class check.
  */
@@ -136,14 +142,29 @@ export function deriveRegion(record: WdkRecord): Region {
     return {
       kind: 'point',
       location: record.attributes.location ?? '',
-      offset: DEFAULT_VARIANT_OFFSET,
+      flank: DEFAULT_VARIANT_FLANK,
     };
   }
   return {
     kind: 'range',
     start: record.attributes.start_min ?? '',
     end: record.attributes.end_max ?? '',
+    flank: DEFAULT_GENE_FLANK,
   };
+}
+
+/** The [start, end] (inclusive) the region covers once `flank` is applied. */
+function regionBounds(region: Region, flank: number): [string, string] {
+  if (region.kind === 'range') {
+    // start_min/end_max are empty until the record has loaded.
+    if (region.start === '' || region.end === '') return ['', ''];
+    return [
+      String(Math.max(1, Number(region.start) - flank)),
+      String(Number(region.end) + flank),
+    ];
+  }
+  const location = Number(region.location);
+  return [String(Math.max(1, location - flank)), String(location + flank)];
 }
 
 type Props = {
@@ -167,21 +188,20 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
   const [outputChoice, setOutputChoice] = useState<'fasta' | 'msa'>('msa');
   const [fastaSubmitError, setFastaSubmitError] = useState<string | null>(null);
   const [percentActg, setPercentActg] = useState(DEFAULT_PERCENT_ACTG);
-  // The user-editable offset for a Variant record's point region (unused
-  // for Gene, which edits start/end directly instead). Seeded once from
-  // deriveRegion's default below, then driven entirely by the user's own
-  // edits — never recomputed from the record after that, so a keystroke
-  // here is never fought or reverted.
-  const [offset, setOffset] = useState(() => {
-    const region = deriveRegion(record);
-    return region.kind === 'point' ? region.offset : DEFAULT_VARIANT_OFFSET;
-  });
+  // The user-editable flank, in bases on each side of the region's anchor
+  // (see Region). Seeded once from deriveRegion's default below, then driven
+  // entirely by the user's own edits — never recomputed from the record
+  // after that, so a keystroke here is never fought or reverted.
+  const [flank, setFlank] = useState(() => deriveRegion(record).flank);
+  // The raw text of the flank box, so it can be cleared (an empty box
+  // counts as a flank of 0).
+  const [flankText, setFlankText] = useState(() => String(flank));
 
   // Task 4's Redux epic deliberately doesn't seed start_point/end_point_segment
-  // from the record (Gene's start_min/end_max, or Variant's location +/- the
-  // offset above) — that's left to this component. Seed them once per
+  // from the record (Gene's start_min/end_max, or Variant's location, each
+  // +/- the flank above) — that's left to this component. Seed them once per
   // question load, not once per paramValues change — dispatching
-  // updateParamValue for the user's own offset edits changes paramValues,
+  // updateParamValue for the user's own flank edits changes paramValues,
   // and a guard keyed on paramValues (or on questionState as a whole, which
   // changes reference whenever paramValues does) would re-fire this effect
   // on that same dispatch and clobber the edit right back to the default.
@@ -207,13 +227,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
     const { question, paramValues } = questionState;
     const region = deriveRegion(record);
-    const [derivedStart, derivedEnd] =
-      region.kind === 'range'
-        ? [region.start, region.end]
-        : [
-            String(Number(region.location) - offset),
-            String(Number(region.location) + offset),
-          ];
+    const [derivedStart, derivedEnd] = regionBounds(region, flank);
 
     seededQuestionRef.current = loadedQuestion;
 
@@ -280,19 +294,18 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   const region = deriveRegion(record);
 
-  const handleOffsetChange = (newOffset: number) => {
-    if (region.kind !== 'point') return;
-    setOffset(newOffset);
-    const location = Number(region.location);
-    updateParam(START_PARAM, String(location - newOffset));
-    updateParam(END_PARAM, String(location + newOffset));
+  const handleFlankChange = (newFlank: number) => {
+    setFlank(newFlank);
+    const [start, end] = regionBounds(region, newFlank);
+    updateParam(START_PARAM, start);
+    updateParam(END_PARAM, end);
   };
 
   // Basic sanity guards — not a substitute for the backend's own
   // validation, just enough to catch obviously-nonsensical input (a
-  // negative/zero offset, a start/end range that's backwards, or a segment
-  // length outside [MIN_SEGMENT_LENGTH, MAX_SEGMENT_LENGTH]) before it's
-  // ever submitted. Start/End can briefly be empty strings on the render
+  // negative flank, or a segment length outside [MIN_SEGMENT_LENGTH,
+  // MAX_SEGMENT_LENGTH]) before it's ever submitted. Start/End can briefly
+  // be empty strings on the render
   // right after questionStatus first becomes 'complete', before the
   // region-seeding effect above has run — treated as "not yet seeded", not
   // "invalid", so no spurious error flashes during that one render.
@@ -303,20 +316,18 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     paramValues[START_PARAM] &&
     paramValues[END_PARAM];
   // end_point_segment/start_point are both inclusive, so the segment is
-  // (end - start + 1) bases long; the offset control produces a segment
-  // symmetric around the point, 2 * offset bases long.
+  // (end - start + 1) bases long; the flank control produces a segment
+  // symmetric around the point, 2 * flank bases long.
   const segmentLength =
     region.kind === 'point'
-      ? 2 * offset
+      ? 2 * flank
       : hasSeededRange
       ? endValue - startValue + 1
       : null;
 
   const regionValidationError =
-    region.kind === 'point' && offset <= 0
-      ? 'Offset must be greater than 0.'
-      : region.kind === 'range' && hasSeededRange && startValue >= endValue
-      ? 'Start must be less than End.'
+    flank < 0
+      ? 'Flank must be 0 or greater.'
       : segmentLength != null && segmentLength < MIN_SEGMENT_LENGTH
       ? `Segment must be at least ${MIN_SEGMENT_LENGTH}bp.`
       : segmentLength != null && segmentLength > MAX_SEGMENT_LENGTH
@@ -483,42 +494,24 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         </label>
       </div>
       <div style={{ marginBottom: '15px' }}>
-        {region.kind === 'range' ? (
-          <div style={RADIO_ROW_STYLE}>
-            <label>
-              Start{' '}
-              <input
-                type="number"
-                min="1"
-                value={paramValues[START_PARAM] ?? ''}
-                onChange={(e) => updateParam(START_PARAM, e.target.value)}
-              />
-            </label>
-            <label>
-              End{' '}
-              <input
-                type="number"
-                min="1"
-                value={paramValues[END_PARAM] ?? ''}
-                onChange={(e) => updateParam(END_PARAM, e.target.value)}
-              />
-            </label>
-            {segmentLength != null && <span>({segmentLength}bp)</span>}
-          </div>
-        ) : (
-          <div style={RADIO_ROW_STYLE}>
-            <label>
-              Offset{' '}
-              <input
-                type="number"
-                min="1"
-                value={offset}
-                onChange={(e) => handleOffsetChange(Number(e.target.value))}
-              />
-            </label>
-            {segmentLength != null && <span>({segmentLength}bp)</span>}
-          </div>
-        )}
+        <div style={RADIO_ROW_STYLE}>
+          <label>
+            Flank (nt){' '}
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={5}
+              style={{ width: '8ch', marginLeft: '1em' }}
+              value={flankText}
+              onChange={(e) => {
+                const text = sanitizeFlankInput(e.target.value);
+                setFlankText(text);
+                handleFlankChange(Number(text));
+              }}
+            />
+          </label>
+          {segmentLength != null && <span>({segmentLength}nt)</span>}
+        </div>
         {regionValidationError && (
           <div role="alert" style={{ color: 'red', marginTop: '5px' }}>
             {regionValidationError}

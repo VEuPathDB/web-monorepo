@@ -59,6 +59,7 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
+import { sanitizeFlankInput } from '../common/flankInput';
 import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 
 // Old CGI form codes -> new service MsaFormat values (see design doc's
@@ -1683,8 +1684,8 @@ function TranscriptMsaSubmission({
   const [sequenceTypeChoice, setSequenceTypeChoice] = useState(
     isProtein ? 'protein' : 'genomic'
   );
-  const [oneOffset, setOneOffset] = useState('');
-  const [twoOffset, setTwoOffset] = useState('');
+  const [oneOffset, setOneOffset] = useState('0');
+  const [twoOffset, setTwoOffset] = useState('0');
   const [selectedOutFormat, setSelectedOutFormat] = useState('clu');
 
   const useMafft = sequenceTypeChoice !== 'protein';
@@ -1821,27 +1822,23 @@ function TranscriptMsaSubmission({
         Genomic
         <span className="genomic">
           <input
-            type="number"
-            placeholder="0"
-            size="4"
-            pattern="[0-9]+"
-            min="0"
-            max="2500"
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
             value={oneOffset}
-            onChange={(e) => setOneOffset(e.target.value)}
+            onChange={(e) => setOneOffset(sanitizeFlankInput(e.target.value))}
           />{' '}
-          nt upstream (max 2500)
+          nt upstream
           <input
-            type="number"
-            placeholder="0"
-            size="4"
-            pattern="[0-9]+"
-            min="0"
-            max="2500"
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
             value={twoOffset}
-            onChange={(e) => setTwoOffset(e.target.value)}
+            onChange={(e) => setTwoOffset(sanitizeFlankInput(e.target.value))}
           />{' '}
-          nt downstream (max 2500)
+          nt downstream
         </span>
         <p>
           Output format: &nbsp;
