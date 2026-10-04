@@ -34,7 +34,7 @@ describe('ComputeJobRouter', () => {
     );
 
     expect(
-      await screen.findByText('Clustal Omega Job Status')
+      await screen.findByText('Multiple Sequence Alignment Job Status')
     ).toBeInTheDocument();
   });
 
@@ -74,7 +74,7 @@ describe('ComputeJobRouter', () => {
     );
 
     expect(
-      await screen.findByText('Clustal Omega Job Status')
+      await screen.findByText('Multiple Sequence Alignment Job Status')
     ).toBeInTheDocument();
   });
 });

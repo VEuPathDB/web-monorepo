@@ -83,6 +83,29 @@ function makeFakeApi(job: { jobID: string }) {
 }
 
 describe('submitClustalMsaJob', () => {
+  it('passes the chosen aligner through in msaOptions', async () => {
+    const api = makeFakeApi({ jobID: 'abc123' });
+    const features = [{ contig: 'x', start: 0, end: 10 }];
+
+    await submitClustalMsaJob({
+      api,
+      sequenceType: 'genomic',
+      features,
+      msaFormat: 'clustal_guidetree',
+      aligner: 'mafft',
+      resultRouteBase: '/app/workspace/msa',
+      paramsSummary: '2 Transcripts',
+      resultTab: makeFakeTab() as unknown as Window,
+    });
+
+    expect(api.submitJob).toHaveBeenCalledWith(
+      'genomic',
+      expect.objectContaining({
+        msaOptions: { format: 'clustal_guidetree', aligner: 'mafft' },
+      })
+    );
+  });
+
   it('navigates the passed-in tab to the result URL after submitting', async () => {
     const fakeTab = makeFakeTab();
     const api = makeFakeApi({ jobID: 'abc123' });

@@ -18,13 +18,17 @@ export type MsaFormat =
   | 'fasta'
   | 'clustal'
   | 'clustal_dnd'
+  | 'clustal_guidetree'
   | 'msf'
   | 'phylip'
   | 'selex'
   | 'stockholm'
   | 'vienna';
 
+export type Aligner = 'clustalo' | 'mafft';
+
 export interface MsaOptions {
+  aligner?: Aligner;
   format: MsaFormat;
   metadataUrl?: string;
 }

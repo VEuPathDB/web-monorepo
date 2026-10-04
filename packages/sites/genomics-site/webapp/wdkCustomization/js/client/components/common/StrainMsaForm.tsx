@@ -29,7 +29,8 @@ const STRAND_PARAM = 'sequence_strand';
 const EDA_SAMPLE_TABLE_SUFFIX_PARAM = 'eda_sample_table_suffix';
 const DEFAULT_VARIANT_OFFSET = 1000;
 const SEQUENCE_TYPE = 'dnaseq';
-const MSA_FORMAT = 'clustal';
+const MSA_FORMAT = 'clustal_guidetree';
+const MSA_ALIGNER = 'mafft';
 const MIN_SEGMENT_LENGTH = 10;
 const MAX_SEGMENT_LENGTH = 150000;
 const DEFAULT_PERCENT_ACTG = 90;
@@ -426,10 +427,9 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         sequenceType: SEQUENCE_TYPE,
         features,
         msaFormat: MSA_FORMAT,
+        aligner: MSA_ALIGNER,
         resultRouteBase: `${rootUrl}/workspace/msa`,
-        paramsSummary: `${
-          features.length
-        } Strain segments. ${MSA_FORMAT.toUpperCase()} output format`,
+        paramsSummary: `${features.length} Strain segments. Aligner: MAFFT. Output format: clustal`,
         resultTab,
         percentActg,
         deflineFormat: MSA_DEFLINE_FORMAT,
@@ -479,7 +479,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
             checked={outputChoice === 'msa'}
             onChange={() => setOutputChoice('msa')}
           />{' '}
-          Multiple sequence alignment (Clustal Omega)
+          Multiple sequence alignment (MAFFT)
         </label>
       </div>
       <div style={{ marginBottom: '15px' }}>

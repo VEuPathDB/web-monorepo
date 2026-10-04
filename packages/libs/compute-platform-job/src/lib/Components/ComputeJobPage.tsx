@@ -31,10 +31,10 @@ const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
 
 // The /files/{name} endpoint always returns Content-Type: text/plain
 // regardless of the actual content, so an HTML-producing format (only
-// clustal_dnd today) needs to be recognized and rendered as real HTML
+// clustal_dnd and clustal_guidetree today) needs to be recognized and rendered as real HTML
 // client-side — otherwise the browser (or React) would just show the raw
 // markup as literal text.
-const HTML_MSA_FORMATS = new Set(['clustal_dnd']);
+const HTML_MSA_FORMATS = new Set(['clustal_dnd', 'clustal_guidetree']);
 
 function formatLocalTime(isoTimestamp: string): string {
   return new Date(isoTimestamp).toLocaleTimeString();
@@ -108,7 +108,7 @@ export function ComputeJobPage({
 
   return (
     <div className="ComputeJobPage">
-      <h1>Clustal Omega Job Status</h1>
+      <h1>Multiple Sequence Alignment Job Status</h1>
       <div style={{ fontSize: '1.5em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (

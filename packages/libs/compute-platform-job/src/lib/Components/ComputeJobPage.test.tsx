@@ -40,7 +40,7 @@ describe('ComputeJobPage', () => {
     );
 
     expect(
-      await screen.findByText('Clustal Omega Job Status')
+      await screen.findByText('Multiple Sequence Alignment Job Status')
     ).toBeInTheDocument();
     expect(
       screen.getByText('13 Transcripts, FASTA output format')
@@ -112,7 +112,7 @@ describe('ComputeJobPage', () => {
 
     render(<ComputeJobPage jobId="abc" api={api} sequenceCount={10} />);
 
-    await screen.findByText('Clustal Omega Job Status');
+    await screen.findByText('Multiple Sequence Alignment Job Status');
     expect(
       screen.queryByText(/job time can range from seconds/i)
     ).not.toBeInTheDocument();
@@ -125,7 +125,7 @@ describe('ComputeJobPage', () => {
 
     render(<ComputeJobPage jobId="abc" api={api} />);
 
-    await screen.findByText('Clustal Omega Job Status');
+    await screen.findByText('Multiple Sequence Alignment Job Status');
     expect(
       screen.queryByText(/job time can range from seconds/i)
     ).not.toBeInTheDocument();

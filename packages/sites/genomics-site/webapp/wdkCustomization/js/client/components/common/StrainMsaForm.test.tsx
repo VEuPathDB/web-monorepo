@@ -687,8 +687,10 @@ describe('StrainMsaForm submission', () => {
               strand: 'POSITIVE',
             },
           ],
-          msaFormat: 'clustal',
-          paramsSummary: '1 Strain segments. CLUSTAL output format',
+          msaFormat: 'clustal_guidetree',
+          aligner: 'mafft',
+          paramsSummary:
+            '1 Strain segments. Aligner: MAFFT. Output format: clustal',
           resultTab: fakeTab,
           percentActg: 90, // applies to Gene records too, using the default
         })
