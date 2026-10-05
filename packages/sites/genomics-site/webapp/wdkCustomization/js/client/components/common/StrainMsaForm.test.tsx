@@ -119,14 +119,15 @@ describe('deriveRegion', () => {
       kind: 'range',
       start: '100',
       end: '5000',
+      flank: 0,
     });
   });
 
-  it('returns a point + default 1000 offset for a Variant record, from location', () => {
+  it('returns a point + default 1000 flank for a Variant record, from location', () => {
     expect(deriveRegion(VARIANT_RECORD)).toEqual({
       kind: 'point',
       location: '2500',
-      offset: 1000,
+      flank: 1000,
     });
   });
 });
@@ -166,13 +167,44 @@ describe('StrainMsaForm', () => {
       GENE_RECORD
     );
 
-    expect(screen.getByLabelText(/start/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/end/i)).toBeInTheDocument();
-    expect(screen.queryByLabelText(/offset/i)).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/flank/i)).toHaveValue('0');
+    expect(screen.queryByLabelText(/^start$/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^end$/i)).not.toBeInTheDocument();
     expect(screen.getByLabelText(/forward/i)).toBeChecked();
   });
 
-  it('renders a single offset input (not start/end) for a Variant record', () => {
+  it('lets the flank box be cleared, and bounces values over 10000 back to 10000', async () => {
+    renderWithQuestionState(
+      {
+        questionStatus: 'complete',
+        question: {
+          urlSegment: 'StrainSegmentsByMeta',
+          parametersByName: {
+            variation_sample_meta: {
+              name: 'variation_sample_meta',
+              type: 'filter',
+            },
+          },
+        },
+        paramValues: {
+          start_point: '1500',
+          end_point_segment: '3500',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+        paramUIState: { variation_sample_meta: {} },
+      },
+      VARIANT_RECORD
+    );
+
+    const flankInput = screen.getByLabelText(/flank/i);
+    await userEvent.clear(flankInput);
+    expect(flankInput).toHaveValue('');
+
+    await userEvent.type(flankInput, '12345');
+    expect(flankInput).toHaveValue('10000');
+  });
+
+  it('renders a single flank input (not start/end) for a Variant record', () => {
     const fakeParameter = {
       name: 'variation_sample_meta',
       type: 'filter',
@@ -194,7 +226,7 @@ describe('StrainMsaForm', () => {
       VARIANT_RECORD
     );
 
-    expect(screen.getByLabelText(/offset/i)).toHaveValue(1000);
+    expect(screen.getByLabelText(/flank/i)).toHaveValue('1000');
     expect(screen.queryByLabelText(/^start$/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/^end$/i)).not.toBeInTheDocument();
   });
@@ -339,7 +371,7 @@ describe('StrainMsaForm region seeding', () => {
     });
   });
 
-  it('applies a user edit to the offset input and does not revert it back to the default', async () => {
+  it('applies a user edit to the flank input and does not revert it back to the default', async () => {
     const questionState = makeCompleteQuestionState({
       question: {
         urlSegment: 'StrainSegmentsByMeta',
@@ -363,7 +395,7 @@ describe('StrainMsaForm region seeding', () => {
     });
     const store = renderLive(questionState, VARIANT_RECORD);
 
-    // Wait for the initial seed (location +/- the default 1000 offset) to
+    // Wait for the initial seed (location +/- the default 1000 flank) to
     // land before editing, matching how a real user would encounter it.
     await waitFor(() => {
       const current = store.getState().question.questions.StrainSegmentsByMeta;
@@ -371,9 +403,9 @@ describe('StrainMsaForm region seeding', () => {
       expect(current.paramValues.end_point_segment).toBe('3500');
     });
 
-    const offsetInput = screen.getByLabelText(/offset/i);
-    await userEvent.clear(offsetInput);
-    await userEvent.type(offsetInput, '200');
+    const flankInput = screen.getByLabelText(/flank/i);
+    await userEvent.clear(flankInput);
+    await userEvent.type(flankInput, '200');
 
     await waitFor(() => {
       const current = store.getState().question.questions.StrainSegmentsByMeta;
@@ -383,7 +415,7 @@ describe('StrainMsaForm region seeding', () => {
 
     // Give the seeding effect a chance to re-run (it re-runs whenever
     // questionState changes, which the user's own edit above just caused) —
-    // it must not revert the edit back to location +/- the default offset.
+    // it must not revert the edit back to location +/- the default flank.
     await new Promise((resolve) => setTimeout(resolve, 0));
     const current = store.getState().question.questions.StrainSegmentsByMeta;
     expect(current.paramValues.start_point).toBe('2300');
@@ -418,6 +450,86 @@ describe('StrainMsaForm region seeding', () => {
       const current = store.getState().question.questions.StrainSegmentsByMeta;
       expect(current.paramValues.start_point).toBe('100');
       expect(current.paramValues.end_point_segment).toBe('5000');
+    });
+  });
+
+  it('extends the Gene range by the flank on both sides when the flank is edited', async () => {
+    const questionState = makeCompleteQuestionState({
+      question: {
+        urlSegment: 'StrainSegmentsByMeta',
+        parametersByName: {
+          variation_sample_meta: {
+            name: 'variation_sample_meta',
+            type: 'filter',
+          },
+          start_point: { name: 'start_point' },
+          end_point_segment: { name: 'end_point_segment' },
+        },
+      },
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: 'f',
+        start_point: '',
+        end_point_segment: '',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(questionState, GENE_RECORD);
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('100');
+    });
+
+    const flankInput = screen.getByLabelText(/flank/i);
+    await userEvent.clear(flankInput);
+    await userEvent.type(flankInput, '50');
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('50');
+      expect(current.paramValues.end_point_segment).toBe('5050');
+    });
+  });
+
+  it('clamps the flanked start to 1', async () => {
+    const questionState = makeCompleteQuestionState({
+      question: {
+        urlSegment: 'StrainSegmentsByMeta',
+        parametersByName: {
+          variation_sample_meta: {
+            name: 'variation_sample_meta',
+            type: 'filter',
+          },
+          start_point: { name: 'start_point' },
+          end_point_segment: { name: 'end_point_segment' },
+        },
+      },
+      paramValues: {
+        organismSinglePick: 'Plasmodium falciparum 3D7',
+        sequenceId: 'Pf3D7_11_v3',
+        sequence_strand: 'f',
+        start_point: '',
+        end_point_segment: '',
+        variation_sample_meta: JSON.stringify({ filters: [] }),
+      },
+    });
+    const store = renderLive(questionState, GENE_RECORD);
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('100');
+    });
+
+    const flankInput = screen.getByLabelText(/flank/i);
+    await userEvent.clear(flankInput);
+    await userEvent.type(flankInput, '500');
+
+    await waitFor(() => {
+      const current = store.getState().question.questions.StrainSegmentsByMeta;
+      expect(current.paramValues.start_point).toBe('1');
+      expect(current.paramValues.end_point_segment).toBe('5500');
     });
   });
 
@@ -574,6 +686,9 @@ describe('StrainMsaForm submission', () => {
     expect(
       getTemporaryResultPath.mock.calls[0][0].searchConfig.parameters
     ).toHaveProperty('eda_sample_table_suffix', 'pf3d7_v68');
+    expect(getTemporaryResultPath.mock.calls[0][2]).not.toHaveProperty(
+      'strainNamesUnique'
+    );
 
     await waitFor(() =>
       expect(submitSpy).toHaveBeenCalledWith(
@@ -671,7 +786,7 @@ describe('StrainMsaForm submission', () => {
       expect(getTemporaryResultPath).toHaveBeenCalledWith(
         expect.anything(),
         'bed',
-        expect.anything()
+        { strainNamesUnique: true }
       )
     );
     await waitFor(() =>
@@ -687,8 +802,10 @@ describe('StrainMsaForm submission', () => {
               strand: 'POSITIVE',
             },
           ],
-          msaFormat: 'clustal',
-          paramsSummary: '1 Strain segments. CLUSTAL output format',
+          msaFormat: 'clustal_guidetree',
+          aligner: 'mafft',
+          paramsSummary:
+            '1 Strain segments. Aligner: MAFFT. Output format: clustal',
           resultTab: fakeTab,
           percentActg: 90, // applies to Gene records too, using the default
         })
@@ -723,29 +840,7 @@ describe('StrainMsaForm submission', () => {
 });
 
 describe('StrainMsaForm validation', () => {
-  it('shows an error and disables submit for a Gene record when Start >= End', () => {
-    renderWithWdkService(
-      makeCompleteQuestionState({
-        paramValues: {
-          organismSinglePick: 'Plasmodium falciparum 3D7',
-          sequenceId: 'Pf3D7_11_v3',
-          sequence_strand: 'f',
-          start_point: '5000',
-          end_point_segment: '100',
-          variation_sample_meta: JSON.stringify({ filters: [] }),
-        },
-      }),
-      {},
-      GENE_RECORD
-    );
-
-    expect(
-      screen.getByText(/start must be less than end/i)
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
-  });
-
-  it('shows an error and disables submit for a Variant record when the offset is 0', async () => {
+  it('shows an error and disables submit for a Variant record when the flank is 0', async () => {
     renderWithWdkService(
       makeCompleteQuestionState({
         paramValues: {
@@ -761,26 +856,22 @@ describe('StrainMsaForm validation', () => {
       VARIANT_RECORD
     );
 
-    const offsetInput = screen.getByLabelText(/offset/i);
-    await userEvent.clear(offsetInput);
-    await userEvent.type(offsetInput, '0');
+    const flankInput = screen.getByLabelText(/flank/i);
+    await userEvent.clear(flankInput);
+    await userEvent.type(flankInput, '0');
 
-    expect(
-      screen.getByText(/offset must be greater than 0/i)
-    ).toBeInTheDocument();
+    // 2 * 0 = 0bp, below the minimum segment length.
+    expect(screen.getByText(/at least 10bp/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
   });
 
-  it('does not show an error for a valid Gene start/end range', () => {
+  it('does not show an error for a valid Gene region', () => {
     renderWithWdkService(makeCompleteQuestionState(), {}, GENE_RECORD);
 
-    expect(
-      screen.queryByText(/start must be less than end/i)
-    ).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled();
   });
 
-  it('shows the segment length in bp next to Start/End for a Gene record', () => {
+  it('shows the segment length in bp next to Flank for a Gene record', () => {
     renderWithWdkService(
       makeCompleteQuestionState({
         paramValues: {
@@ -797,14 +888,14 @@ describe('StrainMsaForm validation', () => {
     );
 
     // Inclusive range: 1099 - 100 + 1 = 1000bp.
-    expect(screen.getByText('(1000bp)')).toBeInTheDocument();
+    expect(screen.getByText('(1000nt)')).toBeInTheDocument();
   });
 
-  it('shows the segment length in bp next to Offset for a Variant record', () => {
+  it('shows the segment length in bp next to Flank for a Variant record', () => {
     renderWithWdkService(makeCompleteQuestionState(), {}, VARIANT_RECORD);
 
-    // Default offset is 1000, symmetric around location: 2 * 1000 = 2000bp.
-    expect(screen.getByText('(2000bp)')).toBeInTheDocument();
+    // Default flank is 1000, symmetric around location: 2 * 1000 = 2000bp.
+    expect(screen.getByText('(2000nt)')).toBeInTheDocument();
   });
 
   it('shows an error and disables submit when the segment is shorter than the minimum', () => {
@@ -829,13 +920,21 @@ describe('StrainMsaForm validation', () => {
   });
 
   it('shows an error and disables submit when the segment exceeds the maximum', async () => {
-    renderWithWdkService(makeCompleteQuestionState(), {}, VARIANT_RECORD);
+    // The flank is capped at 10000nt, so only a very long gene range can
+    // exceed the maximum segment length.
+    const questionState = makeCompleteQuestionState();
+    renderWithWdkService(
+      {
+        ...questionState,
+        paramValues: {
+          ...questionState.paramValues,
+          end_point_segment: '200000',
+        },
+      },
+      {},
+      GENE_RECORD
+    );
 
-    const offsetInput = screen.getByLabelText(/offset/i);
-    await userEvent.clear(offsetInput);
-    await userEvent.type(offsetInput, '100000');
-
-    // 2 * 100000 = 200000bp, above the 150000bp maximum.
     expect(screen.getByText(/no more than 150000bp/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
   });

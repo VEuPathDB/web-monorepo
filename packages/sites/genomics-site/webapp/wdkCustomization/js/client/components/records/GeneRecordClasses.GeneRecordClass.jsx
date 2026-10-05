@@ -59,16 +59,26 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
+import { sanitizeFlankInput } from '../common/flankInput';
 import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 
 // Old CGI form codes -> new service MsaFormat values (see design doc's
 // carried-over sequenceType/output-format table).
 const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
-  clu: 'clustal_dnd',
+  clu: 'clustal_guidetree',
   fasta: 'fasta',
   phy: 'phylip',
   st: 'stockholm',
   vie: 'vienna',
+};
+
+// MAFFT (used for CDS and genomic) supports only a subset of the formats
+// Clustal Omega does, and its clustal output with guide tree is a distinct
+// format value.
+const MAFFT_OUT_FORMAT_TO_MSA_FORMAT = {
+  clu: 'clustal_guidetree',
+  fasta: 'fasta',
+  phy: 'phylip',
 };
 
 /**
@@ -1674,9 +1684,20 @@ function TranscriptMsaSubmission({
   const [sequenceTypeChoice, setSequenceTypeChoice] = useState(
     isProtein ? 'protein' : 'genomic'
   );
-  const [oneOffset, setOneOffset] = useState('');
-  const [twoOffset, setTwoOffset] = useState('');
-  const [clustalOutFormat, setClustalOutFormat] = useState('clu');
+  const [oneOffset, setOneOffset] = useState('0');
+  const [twoOffset, setTwoOffset] = useState('0');
+  const [selectedOutFormat, setSelectedOutFormat] = useState('clu');
+
+  const useMafft = sequenceTypeChoice !== 'protein';
+  const aligner = useMafft ? 'mafft' : 'clustalo';
+  const alignerLabel = useMafft ? 'MAFFT' : 'Clustal Omega';
+  const outFormatToMsaFormat = useMafft
+    ? MAFFT_OUT_FORMAT_TO_MSA_FORMAT
+    : CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT;
+  // The previously chosen format may not be offered by the newly selected
+  // aligner (e.g. STOCKHOLM, after switching from protein to CDS).
+  const clustalOutFormat =
+    selectedOutFormat in outFormatToMsaFormat ? selectedOutFormat : 'clu';
 
   const handleConfirm = async () => {
     // Open the result tab as the very first, synchronous statement of this
@@ -1721,7 +1742,7 @@ function TranscriptMsaSubmission({
         : undefined
     );
 
-    const outFormat = CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT[clustalOutFormat];
+    const outFormat = outFormatToMsaFormat[clustalOutFormat];
 
     // Protein reference sequences have no strand — the service rejects a
     // stranded feature on an unstranded (protein) reference.
@@ -1740,10 +1761,11 @@ function TranscriptMsaSubmission({
       sequenceType,
       features,
       msaFormat: outFormat,
+      aligner,
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts: ${sequenceTypeChoice} sequence. Output format: ${outFormat}`,
+      } Transcripts: ${sequenceTypeChoice} sequence. Aligner: ${alignerLabel}. Output format: ${outFormat}`,
       resultTab,
       deflineFormat: 'QUERYONLY',
     });
@@ -1754,7 +1776,7 @@ function TranscriptMsaSubmission({
       action="/cgi-bin/isolateAlignment"
       sequenceCount={selectedTranscriptIds.length + 1}
       sequenceType="genes"
-      blockThreshold={() => (sequenceTypeChoice === 'genomic' ? 50 : 1000)}
+      blockThreshold={1000}
       onConfirm={handleConfirm}
     >
       {transcriptFilter}
@@ -1764,9 +1786,7 @@ function TranscriptMsaSubmission({
         orthoTableProps={orthoTableProps}
       />
       <p>
-        <b>
-          Select sequence type for Clustal Omega multiple sequence alignment:
-        </b>
+        <b>Select sequence type for multiple sequence alignment:</b>
       </p>
       <div id="userOptions">
         {isProtein && (
@@ -1775,6 +1795,7 @@ function TranscriptMsaSubmission({
             <input
               type="radio"
               name="sequence_Type"
+              value="protein"
               checked={sequenceTypeChoice === 'protein'}
               onChange={() => setSequenceTypeChoice('protein')}
             />{' '}
@@ -1787,6 +1808,7 @@ function TranscriptMsaSubmission({
             <input
               type="radio"
               name="sequence_Type"
+              value="CDS"
               checked={sequenceTypeChoice === 'CDS'}
               onChange={() => setSequenceTypeChoice('CDS')}
             />{' '}
@@ -1796,50 +1818,51 @@ function TranscriptMsaSubmission({
         <input
           type="radio"
           name="sequence_Type"
+          value="genomic"
           checked={sequenceTypeChoice === 'genomic'}
           onChange={() => setSequenceTypeChoice('genomic')}
         />{' '}
         Genomic
         <span className="genomic">
           <input
-            type="number"
-            placeholder="0"
-            size="4"
-            pattern="[0-9]+"
-            min="0"
-            max="2500"
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
             value={oneOffset}
-            onChange={(e) => setOneOffset(e.target.value)}
+            onChange={(e) => setOneOffset(sanitizeFlankInput(e.target.value))}
           />{' '}
-          nt upstream (max 2500)
+          nt upstream
           <input
-            type="number"
-            placeholder="0"
-            size="4"
-            pattern="[0-9]+"
-            min="0"
-            max="2500"
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
             value={twoOffset}
-            onChange={(e) => setTwoOffset(e.target.value)}
+            onChange={(e) => setTwoOffset(sanitizeFlankInput(e.target.value))}
           />{' '}
-          nt downstream (max 2500)
+          nt downstream
         </span>
         <p>
           Output format: &nbsp;
           <select
             value={clustalOutFormat}
-            onChange={(e) => setClustalOutFormat(e.target.value)}
+            onChange={(e) => setSelectedOutFormat(e.target.value)}
           >
             <option value="clu">Mismatches highlighted</option>
             <option value="fasta">FASTA</option>
             <option value="phy">PHYLIP</option>
-            <option value="st">STOCKHOLM</option>
-            <option value="vie">VIENNA</option>
+            {!useMafft && (
+              <>
+                <option value="st">STOCKHOLM</option>
+                <option value="vie">VIENNA</option>
+              </>
+            )}
           </select>
         </p>
         <input
           type="submit"
-          value="Run Clustal Omega for selected genes"
+          value={`Run ${alignerLabel} for selected genes`}
           disabled={selectedTranscriptIds.length < 2}
           title={
             selectedTranscriptIds.length < 2

@@ -1,5 +1,6 @@
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import {
+  Aligner,
   DeflineFormat,
   Feature,
   MsaFormat,
@@ -53,9 +54,11 @@ interface SubmitClustalMsaJobOptions {
   sequenceType: SequenceType;
   features: Feature[];
   msaFormat: MsaFormat;
+  /** Omit to let the service pick its default aligner. */
+  aligner?: Aligner;
   /** e.g. "/app/workspace/msa" — the result path is `${resultRouteBase}/result/${jobID}`. */
   resultRouteBase: string;
-  /** Shown on the result page; e.g. "13 Transcripts, CLUSTAL output format". */
+  /** Shown on the result page; e.g. "13 Transcripts. Aligner: MAFFT. Output format: clustal". */
   paramsSummary: string;
   /**
    * A tab already opened (via `window.open`) by the caller, as the very
@@ -83,6 +86,7 @@ export async function submitClustalMsaJob({
   sequenceType,
   features,
   msaFormat,
+  aligner,
   resultRouteBase,
   paramsSummary,
   resultTab,
@@ -93,7 +97,7 @@ export async function submitClustalMsaJob({
     const job = await api.submitJob(sequenceType, {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: msaFormat },
+      msaOptions: { format: msaFormat, aligner },
       percentActg,
       deflineFormat,
     });

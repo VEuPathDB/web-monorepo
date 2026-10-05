@@ -108,7 +108,7 @@ export default function ClustalAlignmentForm({
       <Dialog
         open={showModal}
         modal
-        title="Run Clustal Omega Alignment"
+        title="Run Multiple Sequence Alignment"
         onClose={handleCancel}
       >
         <div style={{ padding: '10px', width: '500px' }}>
