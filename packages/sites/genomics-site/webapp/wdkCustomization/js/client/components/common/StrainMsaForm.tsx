@@ -423,7 +423,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
       const path = await wdkService.getTemporaryResultPath(
         { searchName, searchConfig },
         'bed',
-        {}
+        { strainNamesUnique: true }
       );
       const bedText = await fetchTemporaryResultText(path);
       const features = parseBedToFeatures(bedText);

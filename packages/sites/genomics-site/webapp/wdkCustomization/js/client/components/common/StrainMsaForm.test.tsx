@@ -686,6 +686,9 @@ describe('StrainMsaForm submission', () => {
     expect(
       getTemporaryResultPath.mock.calls[0][0].searchConfig.parameters
     ).toHaveProperty('eda_sample_table_suffix', 'pf3d7_v68');
+    expect(getTemporaryResultPath.mock.calls[0][2]).not.toHaveProperty(
+      'strainNamesUnique'
+    );
 
     await waitFor(() =>
       expect(submitSpy).toHaveBeenCalledWith(
@@ -783,7 +786,7 @@ describe('StrainMsaForm submission', () => {
       expect(getTemporaryResultPath).toHaveBeenCalledWith(
         expect.anything(),
         'bed',
-        expect.anything()
+        { strainNamesUnique: true }
       )
     );
     await waitFor(() =>
