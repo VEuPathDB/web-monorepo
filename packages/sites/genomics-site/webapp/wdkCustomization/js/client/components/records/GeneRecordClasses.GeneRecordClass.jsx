@@ -65,7 +65,7 @@ import { submitClustalMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmis
 // Old CGI form codes -> new service MsaFormat values (see design doc's
 // carried-over sequenceType/output-format table).
 const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
-  clu: 'clustal_dnd',
+  clu: 'clustal_guidetree',
   fasta: 'fasta',
   phy: 'phylip',
   st: 'stockholm',
@@ -1795,6 +1795,7 @@ function TranscriptMsaSubmission({
             <input
               type="radio"
               name="sequence_Type"
+              value="protein"
               checked={sequenceTypeChoice === 'protein'}
               onChange={() => setSequenceTypeChoice('protein')}
             />{' '}
@@ -1807,6 +1808,7 @@ function TranscriptMsaSubmission({
             <input
               type="radio"
               name="sequence_Type"
+              value="CDS"
               checked={sequenceTypeChoice === 'CDS'}
               onChange={() => setSequenceTypeChoice('CDS')}
             />{' '}
@@ -1816,6 +1818,7 @@ function TranscriptMsaSubmission({
         <input
           type="radio"
           name="sequence_Type"
+          value="genomic"
           checked={sequenceTypeChoice === 'genomic'}
           onChange={() => setSequenceTypeChoice('genomic')}
         />{' '}

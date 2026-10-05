@@ -17,7 +17,6 @@ export type DeflineFormat = 'QUERYONLY' | 'REGIONONLY' | 'QUERYANDREGION';
 export type MsaFormat =
   | 'fasta'
   | 'clustal'
-  | 'clustal_dnd'
   | 'clustal_guidetree'
   | 'msf'
   | 'phylip'

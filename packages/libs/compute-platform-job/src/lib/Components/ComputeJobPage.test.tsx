@@ -173,7 +173,7 @@ describe('ComputeJobPage', () => {
     });
   });
 
-  it('parses and swaps in the full document for the clustal_dnd format', async () => {
+  it('parses and swaps in the full document for the clustal_guidetree format', async () => {
     const api = makeFakeApi({
       fetchJob: jest
         .fn()
@@ -191,7 +191,9 @@ describe('ComputeJobPage', () => {
       .mockImplementation((node) => node);
 
     try {
-      render(<ComputeJobPage jobId="abc" api={api} format="clustal_dnd" />);
+      render(
+        <ComputeJobPage jobId="abc" api={api} format="clustal_guidetree" />
+      );
 
       await waitFor(() => {
         expect(replaceChild).toHaveBeenCalled();
