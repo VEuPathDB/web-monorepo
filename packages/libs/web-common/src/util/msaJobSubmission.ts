@@ -1,5 +1,6 @@
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import {
+  Aligner,
   DeflineFormat,
   Feature,
   MsaFormat,
@@ -53,9 +54,11 @@ interface SubmitClustalMsaJobOptions {
   sequenceType: SequenceType;
   features: Feature[];
   msaFormat: MsaFormat;
+  /** Omit to let the service pick its default aligner. */
+  aligner?: Aligner;
   /** e.g. "/app/workspace/msa" — the result path is `${resultRouteBase}/result/${jobID}`. */
   resultRouteBase: string;
-  /** Shown on the result page; e.g. "13 Transcripts, CLUSTAL output format". */
+  /** Shown on the result page; e.g. "13 Transcripts. Aligner: MAFFT. Output format: clustal". */
   paramsSummary: string;
   /**
    * A tab already opened (via `window.open`) by the caller, as the very
@@ -67,6 +70,7 @@ interface SubmitClustalMsaJobOptions {
    */
   resultTab: Window | null;
   percentActg?: number;
+  deflineFormat?: DeflineFormat;
 }
 
 interface OpenTabAndSubmitMsaJobOptions {
@@ -75,6 +79,8 @@ interface OpenTabAndSubmitMsaJobOptions {
   resolveFeatures: () => Promise<Feature[]>;
   sequenceType: SequenceType;
   msaFormat: MsaFormat;
+  /** Omit to let the service pick its default aligner. */
+  aligner?: Aligner;
   /** e.g. "/workspace/msa" — the result path is `${resultRouteBase}/result/${jobID}`. */
   resultRouteBase: string;
   /**
@@ -86,6 +92,7 @@ interface OpenTabAndSubmitMsaJobOptions {
    */
   paramsSummary: string | ((features: Feature[]) => string);
   percentActg?: number;
+  deflineFormat?: DeflineFormat;
 }
 
 /**
@@ -105,9 +112,11 @@ export async function openTabAndSubmitMsaJob({
   resolveFeatures,
   sequenceType,
   msaFormat,
+  aligner,
   resultRouteBase,
   paramsSummary,
   percentActg,
+  deflineFormat,
 }: OpenTabAndSubmitMsaJobOptions): Promise<void> {
   const resultTab = window.open('about:blank', '_blank');
   // The tab sits blank for several seconds while features are resolved and
@@ -125,6 +134,7 @@ export async function openTabAndSubmitMsaJob({
       sequenceType,
       features,
       msaFormat,
+      aligner,
       resultRouteBase,
       paramsSummary:
         typeof paramsSummary === 'function'
@@ -132,6 +142,7 @@ export async function openTabAndSubmitMsaJob({
           : paramsSummary,
       resultTab,
       percentActg,
+      deflineFormat,
     });
   } catch (error) {
     // submitClustalMsaJob already closes resultTab on its own failure
@@ -158,17 +169,20 @@ export async function submitClustalMsaJob({
   sequenceType,
   features,
   msaFormat,
+  aligner,
   resultRouteBase,
   paramsSummary,
   resultTab,
   percentActg,
+  deflineFormat,
 }: SubmitClustalMsaJobOptions): Promise<void> {
   try {
     const job = await api.submitJob(sequenceType, {
       features,
       postProcess: 'MSA',
-      msaOptions: { format: msaFormat },
+      msaOptions: { format: msaFormat, aligner },
       percentActg,
+      deflineFormat,
     });
 
     // The already-open tab can't receive React Router location.state, so

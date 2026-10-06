@@ -17,7 +17,6 @@ import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
   CollapsibleSection,
-  Dialog,
   HelpIcon,
   Loading,
   RecordTable as WdkRecordTable,
@@ -48,7 +47,6 @@ import {
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
 import { StrainMsaForm } from '../common/StrainMsaForm';
@@ -62,6 +60,26 @@ import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Se
 import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
 import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
 import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
+import { sanitizeFlankInput } from '../common/flankInput';
+
+// Old CGI form codes -> new service MsaFormat values (see design doc's
+// carried-over sequenceType/output-format table).
+const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
+  clu: 'clustal_guidetree',
+  fasta: 'fasta',
+  phy: 'phylip',
+  st: 'stockholm',
+  vie: 'vienna',
+};
+
+// MAFFT (used for CDS and genomic) supports only a subset of the formats
+// Clustal Omega does, and its clustal output with guide tree is a distinct
+// format value.
+const MAFFT_OUT_FORMAT_TO_MSA_FORMAT = {
+  clu: 'clustal_guidetree',
+  fasta: 'fasta',
+  phy: 'phylip',
+};
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -1572,11 +1590,6 @@ function OrthologsFormContainer(props) {
 
   const [preferredOrganisms] = usePreferredOrganismsState();
 
-  const theme = useUITheme();
-  const primaryButtonColor = theme
-    ? theme.palette.primary.hue[theme.palette.primary.level]
-    : '#4D4D4D';
-
   const [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene] =
     useState(false);
 
@@ -1652,8 +1665,6 @@ function OrthologsFormContainer(props) {
       value={transcriptFilterAwareValues}
       transcriptFilter={transcriptFilter}
       showLongestTranscriptPerGene={showLongestTranscriptPerGene}
-      setShowLongestTranscriptPerGene={setShowLongestTranscriptPerGene}
-      primaryButtonColor={primaryButtonColor}
     />
   );
 }
@@ -1673,9 +1684,20 @@ function TranscriptMsaSubmission({
   const [sequenceTypeChoice, setSequenceTypeChoice] = useState(
     isProtein ? 'protein' : 'genomic'
   );
-  const [oneOffset, setOneOffset] = useState('');
-  const [twoOffset, setTwoOffset] = useState('');
-  const [clustalOutFormat, setClustalOutFormat] = useState('clustal_dnd');
+  const [oneOffset, setOneOffset] = useState('0');
+  const [twoOffset, setTwoOffset] = useState('0');
+  const [selectedOutFormat, setSelectedOutFormat] = useState('clu');
+
+  const useMafft = sequenceTypeChoice !== 'protein';
+  const aligner = useMafft ? 'mafft' : 'clustalo';
+  const alignerLabel = useMafft ? 'MAFFT' : 'Clustal Omega';
+  const outFormatToMsaFormat = useMafft
+    ? MAFFT_OUT_FORMAT_TO_MSA_FORMAT
+    : CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT;
+  // The previously chosen format may not be offered by the newly selected
+  // aligner (e.g. STOCKHOLM, after switching from protein to CDS).
+  const clustalOutFormat =
+    selectedOutFormat in outFormatToMsaFormat ? selectedOutFormat : 'clu';
 
   const handleConfirm = () => {
     // sequenceTypeChoice is the radio the user picked (Protein / CDS
@@ -1720,11 +1742,15 @@ function TranscriptMsaSubmission({
           : resolvedFeatures;
       },
       sequenceType,
-      msaFormat: clustalOutFormat,
+      msaFormat: outFormatToMsaFormat[clustalOutFormat],
+      aligner,
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts, ${clustalOutFormat.toUpperCase()} output format`,
+      } Transcripts: ${sequenceTypeChoice} sequence.  Aligner: ${alignerLabel}.  Output format: ${
+        outFormatToMsaFormat[clustalOutFormat]
+      }`,
+      deflineFormat: 'QUERYONLY',
     });
   };
 
@@ -1733,7 +1759,7 @@ function TranscriptMsaSubmission({
       action="/cgi-bin/isolateAlignment"
       sequenceCount={selectedTranscriptIds.length + 1}
       sequenceType="genes"
-      blockThreshold={() => (sequenceTypeChoice === 'genomic' ? 50 : 1000)}
+      blockThreshold={1000}
       onConfirm={handleConfirm}
     >
       {transcriptFilter}
@@ -1743,9 +1769,7 @@ function TranscriptMsaSubmission({
         orthoTableProps={orthoTableProps}
       />
       <p>
-        <b>
-          Select sequence type for Clustal Omega multiple sequence alignment:
-        </b>
+        <b>Select sequence type for multiple sequence alignment:</b>
       </p>
       <div id="userOptions">
         {isProtein && (
@@ -1754,6 +1778,7 @@ function TranscriptMsaSubmission({
             <input
               type="radio"
               name="sequence_Type"
+              value="protein"
               checked={sequenceTypeChoice === 'protein'}
               onChange={() => setSequenceTypeChoice('protein')}
             />{' '}
@@ -1766,6 +1791,7 @@ function TranscriptMsaSubmission({
             <input
               type="radio"
               name="sequence_Type"
+              value="CDS"
               checked={sequenceTypeChoice === 'CDS'}
               onChange={() => setSequenceTypeChoice('CDS')}
             />{' '}
@@ -1775,50 +1801,51 @@ function TranscriptMsaSubmission({
         <input
           type="radio"
           name="sequence_Type"
+          value="genomic"
           checked={sequenceTypeChoice === 'genomic'}
           onChange={() => setSequenceTypeChoice('genomic')}
         />{' '}
         Genomic
         <span className="genomic">
           <input
-            type="number"
-            placeholder="0"
-            size="4"
-            pattern="[0-9]+"
-            min="0"
-            max="2500"
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
             value={oneOffset}
-            onChange={(e) => setOneOffset(e.target.value)}
+            onChange={(e) => setOneOffset(sanitizeFlankInput(e.target.value))}
           />{' '}
-          nt upstream (max 2500)
+          nt upstream
           <input
-            type="number"
-            placeholder="0"
-            size="4"
-            pattern="[0-9]+"
-            min="0"
-            max="2500"
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
             value={twoOffset}
-            onChange={(e) => setTwoOffset(e.target.value)}
+            onChange={(e) => setTwoOffset(sanitizeFlankInput(e.target.value))}
           />{' '}
-          nt downstream (max 2500)
+          nt downstream
         </span>
         <p>
           Output format: &nbsp;
           <select
             value={clustalOutFormat}
-            onChange={(e) => setClustalOutFormat(e.target.value)}
+            onChange={(e) => setSelectedOutFormat(e.target.value)}
           >
-            <option value="clustal_dnd">Mismatches highlighted</option>
+            <option value="clu">Mismatches highlighted</option>
             <option value="fasta">FASTA</option>
-            <option value="phylip">PHYLIP</option>
-            <option value="stockholm">STOCKHOLM</option>
-            <option value="vienna">VIENNA</option>
+            <option value="phy">PHYLIP</option>
+            {!useMafft && (
+              <>
+                <option value="st">STOCKHOLM</option>
+                <option value="vie">VIENNA</option>
+              </>
+            )}
           </select>
         </p>
         <input
           type="submit"
-          value="Run Clustal Omega for selected genes"
+          value={`Run ${alignerLabel} for selected genes`}
           disabled={selectedTranscriptIds.length < 2}
           title={
             selectedTranscriptIds.length < 2
@@ -1837,35 +1864,19 @@ class OrthologsForm extends SortKeyTable {
     this.state = {
       selectedRowIds: [],
       groupBySelected: false,
-      showSelectGateDialog: false,
     };
     this.isRowSelected = this.isRowSelected.bind(this);
     this.onRowSelect = this.onRowSelect.bind(this);
     this.onRowDeselect = this.onRowDeselect.bind(this);
     this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
     this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
-    this.closeSelectGateDialog = this.closeSelectGateDialog.bind(this);
-    this.viewOneTranscriptPerGene = this.viewOneTranscriptPerGene.bind(this);
   }
 
   isRowSelected({ ortho_source_id }) {
     return this.state.selectedRowIds.includes(ortho_source_id);
   }
 
-  closeSelectGateDialog() {
-    this.setState({ showSelectGateDialog: false });
-  }
-
-  viewOneTranscriptPerGene() {
-    this.props.setShowLongestTranscriptPerGene(true);
-    this.setState({ showSelectGateDialog: false });
-  }
-
   onRowSelect({ ortho_source_id }) {
-    if (!this.props.showLongestTranscriptPerGene) {
-      this.setState({ showSelectGateDialog: true });
-      return;
-    }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(ortho_source_id),
@@ -1873,10 +1884,6 @@ class OrthologsForm extends SortKeyTable {
   }
 
   onRowDeselect({ ortho_source_id }) {
-    // Deselecting is always allowed, regardless of the toggle — the gate is
-    // only on adding new selections (see design doc: "existing selections
-    // are left alone; only new checkbox clicks are blocked while the toggle
-    // is off").
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter(
@@ -1886,10 +1893,6 @@ class OrthologsForm extends SortKeyTable {
   }
 
   onMultipleRowSelect(rows) {
-    if (!this.props.showLongestTranscriptPerGene) {
-      this.setState({ showSelectGateDialog: true });
-      return;
-    }
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(
@@ -1968,47 +1971,6 @@ class OrthologsForm extends SortKeyTable {
             value={this.sortValue(this.props.value)}
             childProps={this.props}
           />
-          <Dialog
-            open={this.state.showSelectGateDialog}
-            modal
-            title="MSA Requirements"
-            onClose={this.closeSelectGateDialog}
-          >
-            <div style={{ padding: '10px', width: '400px' }}>
-              <p>
-                MSA of orthologs must use the longest transcript per gene.
-                OrthoMCL orthology is based on that.
-              </p>
-              <div
-                style={{
-                  marginTop: '20px',
-                  display: 'flex',
-                  gap: '10px',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={this.closeSelectGateDialog}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={this.viewOneTranscriptPerGene}
-                  style={{
-                    backgroundColor: this.props.primaryButtonColor,
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                >
-                  View only longest transcripts
-                </button>
-              </div>
-            </div>
-          </Dialog>
         </>
       );
     }

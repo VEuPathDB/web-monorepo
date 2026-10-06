@@ -19,7 +19,7 @@ interface ComputeJobPageProps {
   jobId: string;
   api: SequenceRetrievalApi;
   paramsSummary?: string;
-  /** The MsaFormat value the job was submitted with, e.g. 'clustal_dnd'. */
+  /** The MsaFormat value the job was submitted with, e.g. 'clustal_guidetree'. */
   format?: string;
   /** Number of sequences submitted to the job, if known. */
   sequenceCount?: number;
@@ -31,10 +31,10 @@ const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
 
 // The /files/{name} endpoint always returns Content-Type: text/plain
 // regardless of the actual content, so an HTML-producing format (only
-// clustal_dnd today) needs to be recognized and rendered as real HTML
+// clustal_guidetree today) needs to be recognized and rendered as real HTML
 // client-side — otherwise the browser (or React) would just show the raw
 // markup as literal text.
-const HTML_MSA_FORMATS = new Set(['clustal_dnd']);
+const HTML_MSA_FORMATS = new Set(['clustal_guidetree']);
 
 function formatLocalTime(isoTimestamp: string): string {
   return new Date(isoTimestamp).toLocaleTimeString();
@@ -97,7 +97,7 @@ export function ComputeJobPage({
       const output = await api.fetchJobFile(jobId, 'output');
       if (cancelled) return;
       // The 'output' file is already the complete document for every
-      // format — for clustal_dnd it includes the guide tree as its own
+      // format — for clustal_guidetree it includes the guide tree as its own
       // section (<hr><h4>Guide Tree...) — no separate file to fetch/concat.
       showResultDocument(output, format);
     })();
@@ -108,7 +108,7 @@ export function ComputeJobPage({
 
   return (
     <div className="ComputeJobPage">
-      <h1>Clustal Omega Job Status</h1>
+      <h1>Multiple Sequence Alignment Job Status</h1>
       <div style={{ fontSize: '1.5em' }}>
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
