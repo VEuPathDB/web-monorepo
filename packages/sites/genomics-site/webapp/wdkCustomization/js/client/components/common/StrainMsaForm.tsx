@@ -440,7 +440,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
         msaFormat: MSA_FORMAT,
         aligner: MSA_ALIGNER,
         resultRouteBase: `${rootUrl}/workspace/msa`,
-        paramsSummary: `${features.length} Strain segments. Aligner: MAFFT. Output format: clustal`,
+        paramsSummary: `${features.length} Strain segments.  Aligner: MAFFT.  Output format: clustal`,
         resultTab,
         percentActg,
         deflineFormat: MSA_DEFLINE_FORMAT,

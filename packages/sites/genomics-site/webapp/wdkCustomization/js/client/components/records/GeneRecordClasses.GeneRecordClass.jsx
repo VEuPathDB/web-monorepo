@@ -1765,7 +1765,7 @@ function TranscriptMsaSubmission({
       resultRouteBase: `${rootUrl}/workspace/msa`,
       paramsSummary: `${
         selectedTranscriptIds.length + 1
-      } Transcripts: ${sequenceTypeChoice} sequence. Aligner: ${alignerLabel}. Output format: ${outFormat}`,
+      } Transcripts: ${sequenceTypeChoice} sequence.  Aligner: ${alignerLabel}.  Output format: ${outFormat}`,
       resultTab,
       deflineFormat: 'QUERYONLY',
     });
