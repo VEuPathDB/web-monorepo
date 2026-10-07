@@ -67,54 +67,12 @@ export function RecordHeading(props) {
               <dd>{primary_contact_name}</dd>
             </>
           ) : null}
-          {veupathdb_project !== 'dataExplorer' ? (
-            <>
-              <dt>Data type:</dt>
-              <dd>{category}</dd>
-            </>
-          ) : null}
-
-          <dt>Uploaded by:</dt>
-          <dd>{owner_name}</dd>
-
-          <dt>VEuPathDB Dataset ID:</dt>
-          <dd>{veupathdb_id}</dd>
-
-          <dt>Date and version:</dt>
-          <dd>{creation_date}</dd>
 
           <dt>Summary:</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
-
-          <dt>Visibility:</dt>
-          <dd>{is_public}</dd>
-          <dt>Download access:</dt>
-          <dd>
-            {accessibility}
-            {accessibility === 'Restricted' ? (
-              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-                This dataset can only be discovered, explored, and downloaded by
-                the owner and explicitly invited collaborators.
-              </div>
-            ) : (
-              <div style={{ color: '#666', fontSize: '.8em', fontWeight: 400 }}>
-                No access restrictions; anyone can download the data without
-                registering.
-              </div>
-            )}
-          </dd>
-          {type_name !== 'bigwigfiles' &&
-          veupathdb_project !== 'dataExplorer' ? (
-            <>
-              <dt>Explore:</dt>
-              <dd>
-                <Link to={search_link.url}>{search_link.displayText}</Link>
-              </dd>
-            </>
-          ) : null}
         </dl>
       </div>
     </>
