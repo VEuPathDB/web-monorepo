@@ -12,7 +12,12 @@ describe('resolveProteinFeatures', () => {
     const features = resolveProteinFeatures(['osa_Os01g0100100'], rows);
 
     expect(features).toEqual([
-      { contig: 'osa_Os01g0100100', start: 0, end: 350 },
+      {
+        contig: 'osa_Os01g0100100',
+        query: 'osa_Os01g0100100',
+        start: 0,
+        end: 350,
+      },
     ]);
   });
 
@@ -28,8 +33,18 @@ describe('resolveProteinFeatures', () => {
     );
 
     expect(features).toEqual([
-      { contig: 'atr_evm.model.AmTr_v1.1', start: 0, end: 210 },
-      { contig: 'osa_Os01g0100100', start: 0, end: 350 },
+      {
+        contig: 'atr_evm.model.AmTr_v1.1',
+        query: 'atr_evm.model.AmTr_v1.1',
+        start: 0,
+        end: 210,
+      },
+      {
+        contig: 'osa_Os01g0100100',
+        query: 'osa_Os01g0100100',
+        start: 0,
+        end: 350,
+      },
     ]);
   });
 });

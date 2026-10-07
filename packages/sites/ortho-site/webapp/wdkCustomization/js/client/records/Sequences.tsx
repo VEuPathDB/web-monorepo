@@ -11,6 +11,7 @@ import { useOrthoService } from 'ortho-client/hooks/orthoService';
 import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
+import { rootUrl } from '@veupathdb/web-common/lib/config';
 import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
@@ -94,7 +95,7 @@ export function RecordTable_Sequences(
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
   const [clustalOutFormat, setClustalOutFormat] =
-    useState<MsaFormat>('clustal_dnd');
+    useState<MsaFormat>('clustal_guidetree');
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -826,9 +827,10 @@ export function RecordTable_Sequences(
                 ),
                 resolveFeatures: async () =>
                   resolveProteinFeatures(highlightedNodes, mesaRows),
-                sequenceType: 'protein',
+                sequenceType: 'orthomcl',
                 msaFormat: clustalOutFormat,
-                resultRouteBase: '/workspace/msa',
+                resultRouteBase: `${rootUrl}/workspace/msa`,
+                deflineFormat: 'QUERYONLY',
                 paramsSummary: `${
                   highlightedNodes.length
                 } Proteins, ${clustalOutFormat.toUpperCase()} output format`,
@@ -844,7 +846,9 @@ export function RecordTable_Sequences(
                     setClustalOutFormat(e.target.value as MsaFormat)
                   }
                 >
-                  <option value="clustal_dnd">Mismatches highlighted</option>
+                  <option value="clustal_guidetree">
+                    Mismatches highlighted
+                  </option>
                   <option value="fasta">FASTA</option>
                   <option value="phylip">PHYLIP</option>
                   <option value="stockholm">STOCKHOLM</option>

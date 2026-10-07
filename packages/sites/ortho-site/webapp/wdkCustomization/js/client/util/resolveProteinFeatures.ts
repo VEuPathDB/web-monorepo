@@ -19,6 +19,7 @@ export function resolveProteinFeatures(
 
   return selectedIds.map((fullId) => ({
     contig: fullId,
+    query: fullId,
     start: 0,
     end: lengthByFullId.get(fullId) ?? 0,
   }));
