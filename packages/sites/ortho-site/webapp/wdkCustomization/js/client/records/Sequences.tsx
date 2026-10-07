@@ -837,7 +837,12 @@ export function RecordTable_Sequences(
               })
             }
           >
+            <h4>Multiple Sequence Alignment</h4>
             <div id="userOptions">
+              <p>
+                {highlightedNodes.length} out of {filteredRows.length} sequences
+                selected
+              </p>
               <p>
                 Output format: &nbsp;
                 <select
