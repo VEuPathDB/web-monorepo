@@ -266,7 +266,9 @@ function validateFormState(
   return keyedErrors;
 }
 
-function filterDetails({ datasetDetails }: DatasetFormState): PartialDatasetDetails {
+function filterDetails({
+  datasetDetails,
+}: DatasetFormState): PartialDatasetDetails {
   const filtered = { ...datasetDetails };
 
   if (!datasetDetails.metadataContentFlags?.hasDatasetCharacteristics)
@@ -279,7 +281,10 @@ function filterDetails({ datasetDetails }: DatasetFormState): PartialDatasetDeta
   // Only prune the publications array on non-genomics.  The genomics ud form
   // does not allow users to disable the section, nor does it show the
   // `hasPublications` radio options.
-  if (!datasetDetails.metadataContentFlags?.hasPublications && !isGenomicsProjectId(projectId))
+  if (
+    !datasetDetails.metadataContentFlags?.hasPublications &&
+    !isGenomicsProjectId(projectId)
+  )
     delete filtered['publications'];
 
   if (!datasetDetails.metadataContentFlags?.hasOrganismData)

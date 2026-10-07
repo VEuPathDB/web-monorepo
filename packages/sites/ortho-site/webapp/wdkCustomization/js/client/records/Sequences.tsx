@@ -11,6 +11,14 @@ import { useOrthoService } from 'ortho-client/hooks/orthoService';
 import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
+import { rootUrl } from '@veupathdb/web-common/lib/config';
+import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
+import { MsaFormat } from '@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes';
+import { resolveProteinFeatures } from '../util/resolveProteinFeatures';
+import { SEQUENCE_RETRIEVAL_BASE_URL } from '../util/computeJobConfig';
 import {
   AttributeValue,
   TableValue,
@@ -52,6 +60,7 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 1000;
+const MAX_PROTEINS_FOR_MSA = 1000;
 
 const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
 
@@ -82,6 +91,11 @@ export function RecordTable_Sequences(
     setCorePeripheralFilterValue,
     volatileCorePeripheralFilterValue,
   ] = useDeferredState<CoreOrPeripheral[]>([]);
+
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const [clustalOutFormat, setClustalOutFormat] =
+    useState<MsaFormat>('clustal_guidetree');
 
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
@@ -801,23 +815,44 @@ export function RecordTable_Sequences(
             maxColumnWidth={maxColumnWidth}
           ></TreeTable>
           <ClustalAlignmentForm
-            action="/cgi-bin/msaOrthoMCL"
+            action="/workspace/msa"
             sequenceCount={highlightedNodes.length}
             sequenceType="proteins"
+            blockThreshold={MAX_PROTEINS_FOR_MSA}
+            onConfirm={() =>
+              openTabAndSubmitMsaJob({
+                api: SequenceRetrievalApi.getClient(
+                  SEQUENCE_RETRIEVAL_BASE_URL,
+                  wdkService
+                ),
+                resolveFeatures: async () =>
+                  resolveProteinFeatures(highlightedNodes, mesaRows),
+                sequenceType: 'orthomcl',
+                msaFormat: clustalOutFormat,
+                resultRouteBase: `${rootUrl}/workspace/msa`,
+                deflineFormat: 'QUERYONLY',
+                paramsSummary: `${
+                  highlightedNodes.length
+                } Proteins, ${clustalOutFormat.toUpperCase()} output format`,
+              })
+            }
           >
-            <input type="hidden" name="project_id" value="OrthoMCL" />
-            {highlightedNodes.map((id) => (
-              <input type="hidden" name="msa_full_ids" value={id} key={id} />
-            ))}
             <div id="userOptions">
               <p>
                 Output format: &nbsp;
-                <select name="clustalOutFormat">
-                  <option value="clu">Mismatches highlighted</option>
+                <select
+                  value={clustalOutFormat}
+                  onChange={(e) =>
+                    setClustalOutFormat(e.target.value as MsaFormat)
+                  }
+                >
+                  <option value="clustal_guidetree">
+                    Mismatches highlighted
+                  </option>
                   <option value="fasta">FASTA</option>
-                  <option value="phy">PHYLIP</option>
-                  <option value="st">STOCKHOLM</option>
-                  <option value="vie">VIENNA</option>
+                  <option value="phylip">PHYLIP</option>
+                  <option value="stockholm">STOCKHOLM</option>
+                  <option value="vienna">VIENNA</option>
                 </select>
               </p>
               <div

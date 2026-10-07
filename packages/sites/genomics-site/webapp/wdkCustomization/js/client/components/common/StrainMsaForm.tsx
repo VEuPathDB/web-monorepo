@@ -13,8 +13,8 @@ import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDepen
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import {
   fetchTemporaryResultText,
+  openTabAndSubmitMsaJob,
   parseBedToFeatures,
-  submitClustalMsaJob,
   submitSyncFastaRequest,
 } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
@@ -367,6 +367,20 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     parameters: buildSearchParameters(paramValues, question.parametersByName),
   };
 
+  // Shared by both submit paths below: fetches the bed report for the
+  // current search/filter state and parses it into Feature[]. Network work
+  // only — no submission, no tab handling — so each caller stays free to
+  // wrap it in whatever open-tab/error-handling shape it needs.
+  const resolveFeatures = async (strainNamesUnique?: boolean) => {
+    const path = await wdkService.getTemporaryResultPath(
+      { searchName, searchConfig },
+      'bed',
+      strainNamesUnique ? { strainNamesUnique } : {}
+    );
+    const bedText = await fetchTemporaryResultText(path);
+    return parseBedToFeatures(bedText);
+  };
+
   const handleFastaSubmit = async () => {
     // Opened as the very first, synchronous statement of this handler, for
     // the same reason as handleMsaConfirm's resultTab below — see its
@@ -374,13 +388,7 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     const resultTab = window.open('about:blank', '_blank');
     setFastaSubmitError(null);
     try {
-      const path = await wdkService.getTemporaryResultPath(
-        { searchName, searchConfig },
-        'bed',
-        {}
-      );
-      const bedText = await fetchTemporaryResultText(path);
-      const features = parseBedToFeatures(bedText);
+      const features = await resolveFeatures();
 
       const api = SequenceRetrievalApi.getClient(
         SEQUENCE_RETRIEVAL_BASE_URL,
@@ -406,53 +414,27 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
     }
   };
 
-  const handleMsaConfirm = async () => {
-    // Open the result tab as the very first, synchronous statement of this
-    // handler, before any await — otherwise, by the time the bed report
-    // fetch/parse resolves, we're no longer inside the user gesture's call
-    // stack and browsers may block window.open as a popup.
-    const resultTab = window.open('about:blank', '_blank');
-    // The tab sits blank for several seconds while the bed report is
-    // fetched/parsed and the job is submitted (all awaited below, in
-    // series) — write a placeholder so it isn't literally empty in the
-    // meantime. submitClustalMsaJob replaces this entirely once the job
-    // is submitted and it navigates to the real result page.
-    resultTab?.document?.write('<p>Preparing your alignment…</p>');
-
-    try {
-      const path = await wdkService.getTemporaryResultPath(
-        { searchName, searchConfig },
-        'bed',
-        { strainNamesUnique: true }
-      );
-      const bedText = await fetchTemporaryResultText(path);
-      const features = parseBedToFeatures(bedText);
-
-      const api = SequenceRetrievalApi.getClient(
+  const handleMsaConfirm = () =>
+    openTabAndSubmitMsaJob({
+      api: SequenceRetrievalApi.getClient(
         SEQUENCE_RETRIEVAL_BASE_URL,
         wdkService
-      );
-
-      await submitClustalMsaJob({
-        api,
-        sequenceType: SEQUENCE_TYPE,
-        features,
-        msaFormat: MSA_FORMAT,
-        aligner: MSA_ALIGNER,
-        resultRouteBase: `${rootUrl}/workspace/msa`,
-        paramsSummary: `${features.length} Strain segments.  Aligner: MAFFT.  Output format: clustal`,
-        resultTab,
-        percentActg,
-        deflineFormat: MSA_DEFLINE_FORMAT,
-      });
-    } catch (error) {
-      // Only this function's own steps (bed-report fetch/parse) need
-      // closing here — submitClustalMsaJob already closes resultTab itself
-      // on its own failure (e.g. the actual job submission rejecting).
-      if (resultTab && !resultTab.closed) resultTab.close();
-      throw error;
-    }
-  };
+      ),
+      resolveFeatures: () => resolveFeatures(true),
+      sequenceType: SEQUENCE_TYPE,
+      msaFormat: MSA_FORMAT,
+      aligner: MSA_ALIGNER,
+      resultRouteBase: `${rootUrl}/workspace/msa`,
+      // A function, not sequenceCount directly — sequenceCount is the
+      // metadata filter's own pre-submission estimate (filterUiState.
+      // filteredCount), which can differ from the bed report's actual row
+      // count; this matches the resolved Feature[] exactly, same as the
+      // pre-refactor inline version did.
+      paramsSummary: (features) =>
+        `${features.length} Strain segments.  Aligner: MAFFT.  Output format: clustal`,
+      percentActg,
+      deflineFormat: MSA_DEFLINE_FORMAT,
+    });
 
   return (
     <div style={{ padding: '15px' }}>

@@ -1,0 +1,30 @@
+== @veupathdb/site-jest-config
+
+Jest configuration used when testing VEuPathDB websites.
+
+=== Installation
+
+Install the package with npm:
+[source, sh]
+----
+npm install --save-dev @veupathdb/site-jest-config
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D @veupathdb/site-jest-config
+----
+
+Then, add the following to the consumer's `package.json`:
+[source, json]
+----
+{
+  "jest": {
+    "preset": "@veupathdb/site-jest-config"
+  }
+}
+----
+
+==== NOTE
+This package's peer dependencies should be installed as `devDependencies` in the consumer.

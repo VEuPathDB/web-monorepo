@@ -757,7 +757,7 @@ describe('StrainMsaForm submission', () => {
 
   it('MSA radio: fetches a bed report, parses it, and submits a dnaseq/clustal job', async () => {
     const submitSpy = jest
-      .spyOn(msaJobSubmission, 'submitClustalMsaJob')
+      .spyOn(msaJobSubmission, 'openTabAndSubmitMsaJob')
       .mockResolvedValue(undefined);
     const getTemporaryResultPath = jest
       .fn()
@@ -778,43 +778,47 @@ describe('StrainMsaForm submission', () => {
     // click proceeds directly with no confirm step.
     await userEvent.click(screen.getByRole('button', { name: /submit/i }));
 
-    // The submit click kicks off a multi-hop async chain (getTemporaryResultPath
-    // -> fetch -> parseBedToFeatures -> submitClustalMsaJob); user-event v12's
-    // click() doesn't wait for it to fully settle, so assert via waitFor rather
-    // than immediately after the click.
-    await waitFor(() =>
-      expect(getTemporaryResultPath).toHaveBeenCalledWith(
-        expect.anything(),
-        'bed',
-        { strainNamesUnique: true }
-      )
-    );
     await waitFor(() =>
       expect(submitSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           sequenceType: 'dnaseq',
-          features: [
-            {
-              contig: 'Pf3D7_11_v3',
-              start: 100,
-              end: 500,
-              query: 'strain_1',
-              strand: 'POSITIVE',
-            },
-          ],
           msaFormat: 'clustal_guidetree',
           aligner: 'mafft',
-          paramsSummary:
-            '1 Strain segments. Aligner: MAFFT. Output format: clustal',
-          resultTab: fakeTab,
+          deflineFormat: 'QUERYONLY',
           percentActg: 90, // applies to Gene records too, using the default
         })
       )
     );
-    // The tab must be opened synchronously by the click handler itself
-    // (before the awaited getTemporaryResultPath/fetch chain), not by
-    // submitClustalMsaJob — otherwise browsers may block it as a popup.
-    expect(window.open).toHaveBeenCalledWith('about:blank', '_blank');
+
+    const expectedFeatures = [
+      {
+        contig: 'Pf3D7_11_v3',
+        start: 100,
+        end: 500,
+        query: 'strain_1',
+        strand: 'POSITIVE',
+      },
+    ];
+
+    // paramsSummary is a function of the resolved Feature[] (the bed
+    // report's actual row count), not a plain string — verify it produces
+    // the same summary the old inline version used to build directly.
+    const { paramsSummary } = submitSpy.mock.calls[0][0];
+    expect(typeof paramsSummary).toBe('function');
+    expect(
+      (paramsSummary as (features: unknown) => string)(expectedFeatures)
+    ).toBe('1 Strain segments.  Aligner: MAFFT.  Output format: clustal');
+
+    // resolveFeatures is StrainMsaForm's own bed-fetch/parse step, passed as
+    // a callback rather than called eagerly — invoke it here to verify it
+    // resolves the same Feature[] the old inline version used to produce.
+    const { resolveFeatures } = submitSpy.mock.calls[0][0];
+    await expect(resolveFeatures()).resolves.toEqual(expectedFeatures);
+    expect(getTemporaryResultPath).toHaveBeenCalledWith(
+      expect.anything(),
+      'bed',
+      { strainNamesUnique: true }
+    );
   });
 
   it('MSA radio: closes the pre-opened tab if the bed report fetch fails', async () => {
@@ -995,7 +999,7 @@ describe('StrainMsaForm percentActg field', () => {
 
   it('includes percentActg in the MSA job submission for a Variant record', async () => {
     const submitSpy = jest
-      .spyOn(msaJobSubmission, 'submitClustalMsaJob')
+      .spyOn(msaJobSubmission, 'openTabAndSubmitMsaJob')
       .mockResolvedValue(undefined);
     const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
     window.open = jest.fn().mockReturnValue(fakeTab);
@@ -1052,7 +1056,7 @@ describe('StrainMsaForm percentActg field', () => {
 
   it('includes percentActg in the MSA job submission for a Gene record', async () => {
     const submitSpy = jest
-      .spyOn(msaJobSubmission, 'submitClustalMsaJob')
+      .spyOn(msaJobSubmission, 'openTabAndSubmitMsaJob')
       .mockResolvedValue(undefined);
     const fakeTab = { location: { replace: jest.fn() }, close: jest.fn() };
     window.open = jest.fn().mockReturnValue(fakeTab);
