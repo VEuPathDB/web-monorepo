@@ -9,6 +9,7 @@ import React, {
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { RecentSearchesDropdown } from '../components/RecentSearchesDropdown';
 import { Branch, parseNewick } from 'patristic';
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import { rootUrl } from '@veupathdb/web-common/lib/config';
@@ -304,7 +305,8 @@ export function RecordTable_Sequences(
   ]);
 
   // The tree was built from the rows that were showing when it was
-  // requested, so it can hold fewer proteins than the table does now.
+  // requested. It is hidden, not discarded, while the table shows rows it
+  // doesn't have, so restoring that filter (e.g. from recent searches) brings it back.
   const leafIds = useMemo(
     () => new Set((leaves ?? []).map((leaf) => leaf.id)),
     [leaves]
@@ -318,6 +320,7 @@ export function RecordTable_Sequences(
   // now filter the tree if needed - takes a couple of seconds for large trees
   const filteredTree = useMemo(() => {
     if (leaves == null || tree == null || filteredRows == null) return;
+    if (treeLacksFilteredRows) return;
 
     const filteredRowIds = new Set(
       filteredRows.map(({ full_id }) => encodeTreeLabel(full_id as string))
@@ -346,7 +349,7 @@ export function RecordTable_Sequences(
     }
 
     return tree;
-  }, [tree, leaves, filteredRows]);
+  }, [tree, leaves, filteredRows, treeLacksFilteredRows]);
 
   // make a newick string from the filtered tree if needed
   const finalNewick = useMemo(() => {
@@ -679,8 +682,9 @@ export function RecordTable_Sequences(
       </span>
     ) : treeResponse != null && treeLacksFilteredRows ? (
       <span>
-        Note: The tree shows only the proteins that were in the filtered table
-        when it was built.
+        Note: The tree is hidden because the table now includes proteins it was
+        not built from. Restore the previous filter to see it again, or build a
+        new tree for these rows.
       </span>
     ) : undefined;
 
@@ -775,15 +779,24 @@ export function RecordTable_Sequences(
           justifyContent: 'space-between',
         }}
       >
-        <RecordFilter
-          key={`text-search-${resetCounter}`}
-          searchTerm={searchQuery}
-          onSearchTermChange={handleSearchQueryChange}
-          recordDisplayName="Proteins"
-          filterAttributes={filterAttributes}
-          selectedColumnFilters={volatileSelectedColumnFilters}
-          onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
-        />
+        <RecentSearchesDropdown
+          searchTerm={volatileSearchQuery}
+          onSelect={(term) => {
+            handleSearchQueryChange(term);
+            setResetCounter((n) => n + 1); // remounts the search box so it shows the term
+          }}
+        >
+          <RecordFilter
+            key={`text-search-${resetCounter}`}
+            // volatile: the box only reads this on mount, and the deferred value lags a render behind
+            searchTerm={volatileSearchQuery}
+            onSearchTermChange={handleSearchQueryChange}
+            recordDisplayName="Proteins"
+            filterAttributes={filterAttributes}
+            selectedColumnFilters={volatileSelectedColumnFilters}
+            onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
+          />
+        </RecentSearchesDropdown>
         <div className="MesaComponent" style={{ marginRight: 'auto' }}>
           <div className="TableToolbar-Info">
             <RowCounter
