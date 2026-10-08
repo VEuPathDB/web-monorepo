@@ -1,14 +1,14 @@
 import React, {
   CSSProperties,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
-import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Branch, parseNewick } from 'patristic';
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import { rootUrl } from '@veupathdb/web-common/lib/config';
@@ -18,7 +18,13 @@ import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullab
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { MsaFormat } from '@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes';
 import { resolveProteinFeatures } from '../util/resolveProteinFeatures';
-import { SEQUENCE_RETRIEVAL_BASE_URL } from '../util/computeJobConfig';
+import {
+  PROTEIN_SEQUENCE_TYPE,
+  SEQUENCE_RETRIEVAL_BASE_URL,
+} from '../util/computeJobConfig';
+import { buildGeneTreeRequest, encodeTreeLabel } from '../util/geneTree';
+import { useGeneTreeJob } from '../hooks/useGeneTreeJob';
+import { JobStatusLine } from '@veupathdb/compute-platform-job/src/lib/Components/JobStatusLine';
 import {
   AttributeValue,
   TableValue,
@@ -27,10 +33,9 @@ import {
   MesaColumn,
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { groupBy, difference } from 'lodash';
+import { groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import PopoverButton, {
   PopoverButtonHandle,
@@ -112,18 +117,26 @@ export function RecordTable_Sequences(
 
   const numSequences = mesaRows.length;
 
-  const treeResponse = useOrthoService(
-    (orthoService) => {
-      if (numSequences < MIN_SEQUENCES_FOR_TREE)
-        return Promise.resolve(undefined);
-      return orthoService.getGroupTree(groupName);
-    },
-    [groupName, numSequences]
+  const api = useMemo(
+    () =>
+      SequenceRetrievalApi.getClient(SEQUENCE_RETRIEVAL_BASE_URL, wdkService),
+    [wdkService]
   );
+  const geneTreeJob = useGeneTreeJob(api, PROTEIN_SEQUENCE_TYPE);
+  const treeResponse = geneTreeJob.newick;
 
-  const treeUrl = useOrthoService(
-    async (orthoService) => orthoService.getGroupTreeUrl(groupName),
-    [groupName]
+  const newickDownloadUrl = useMemo(
+    () =>
+      treeResponse == null
+        ? undefined
+        : URL.createObjectURL(new Blob([treeResponse])),
+    [treeResponse]
+  );
+  useEffect(
+    () => () => {
+      if (newickDownloadUrl) URL.revokeObjectURL(newickDownloadUrl);
+    },
+    [newickDownloadUrl]
   );
 
   // deal with Pfam domain architectures
@@ -290,24 +303,31 @@ export function RecordTable_Sequences(
     proteinFilterIds,
   ]);
 
+  // The tree was built from the rows that were showing when it was
+  // requested, so it can hold fewer proteins than the table does now.
+  const leafIds = useMemo(
+    () => new Set((leaves ?? []).map((leaf) => leaf.id)),
+    [leaves]
+  );
+  const treeLacksFilteredRows =
+    filteredRows != null &&
+    filteredRows.some(
+      (row) => !leafIds.has(encodeTreeLabel(row.full_id as string))
+    );
+
   // now filter the tree if needed - takes a couple of seconds for large trees
   const filteredTree = useMemo(() => {
-    if (
-      leaves == null ||
-      tree == null ||
-      filteredRows == null ||
-      filteredRows.length < MIN_SEQUENCES_FOR_TREE ||
-      filteredRows.length > MAX_SEQUENCES_FOR_TREE
-    )
-      return;
+    if (leaves == null || tree == null || filteredRows == null) return;
 
-    if (filteredRows.length < leaves.length) {
-      const filteredRowIds = new Set(
-        filteredRows.map(({ full_id }) =>
-          truncate_full_id_for_tree_comparison(full_id as string)
-        )
-      );
+    const filteredRowIds = new Set(
+      filteredRows.map(({ full_id }) => encodeTreeLabel(full_id as string))
+    );
+    const remainingLeaves = leaves.filter((leaf) =>
+      filteredRowIds.has(leaf.id)
+    );
+    if (remainingLeaves.length < MIN_SEQUENCES_FOR_TREE) return;
 
+    if (remainingLeaves.length < leaves.length) {
       // must work on a copy of the tree because it's destructive
       const treeCopy = tree.clone();
       let leavesRemoved = false;
@@ -423,7 +443,7 @@ export function RecordTable_Sequences(
       width: treeWidth,
       highlightMode: 'monophyletic' as const,
       highlightColor,
-      highlightedNodeIds: highlightedNodes,
+      highlightedNodeIds: highlightedNodes.map(encodeTreeLabel),
     }),
     [finalNewick, treeWidth, highlightColor, highlightedNodes]
   );
@@ -446,47 +466,8 @@ export function RecordTable_Sequences(
     (searchQuery !== '' &&
       selectedColumnFilters !== volatileSelectedColumnFilters);
 
-  if (
-    !mesaState ||
-    !sortedRows ||
-    (numSequences >= MIN_SEQUENCES_FOR_TREE && (!tree || !treeResponse))
-  ) {
+  if (!mesaState || !sortedRows) {
     return <Loading />;
-  }
-
-  if (
-    numSequences >= MIN_SEQUENCES_FOR_TREE &&
-    mesaRows != null &&
-    sortedRows != null &&
-    (mesaRows.length !== sortedRows.length ||
-      mesaRows.length !== leaves?.length)
-  ) {
-    console.log(
-      'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
-    );
-    logIdMismatches(
-      (leaves ?? []).map((leaf) => leaf.id),
-      mesaRows.map((row) =>
-        truncate_full_id_for_tree_comparison(row.full_id as string)
-      )
-    );
-    return (
-      <Banner
-        banner={{
-          type: 'warning',
-          message: (
-            <span>
-              A data processing error has occurred on our end. We apologize for
-              the inconvenience. If this problem persists, please{' '}
-              <Link target="_blank" to="/contact-us">
-                contact us
-              </Link>
-              .
-            </span>
-          ),
-        }}
-      />
-    );
   }
 
   const rowHeight = 45;
@@ -690,19 +671,16 @@ export function RecordTable_Sequences(
   if (filteredRows == null) return null;
 
   const warningText =
-    numSequences >= MIN_SEQUENCES_FOR_TREE &&
-    (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
-      filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
-      <span>
-        To see a phylogenetic tree please use a filter to display between{' '}
-        {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
-        {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
-      </span>
-    ) : filteredRows.length < sortedRows.length ? (
+    finalNewick != null && filteredTree !== tree ? (
       <span>
         Note: The ortholog group's phylogeny has been pruned to display only the
         currently filtered proteins. This may differ from a tree constructed{' '}
         <i>de novo</i> using only these sequences.
+      </span>
+    ) : treeResponse != null && treeLacksFilteredRows ? (
+      <span>
+        Note: The tree shows only the proteins that were in the filtered table
+        when it was built.
       </span>
     ) : undefined;
 
@@ -721,6 +699,43 @@ export function RecordTable_Sequences(
     >
       LOADING
     </span>
+  );
+
+  const treeJobBusy =
+    geneTreeJob.phase === 'submitting' || geneTreeJob.phase === 'running';
+  const tooManyForTree = filteredRows.length > MAX_SEQUENCES_FOR_TREE;
+  const tooFewForTree = filteredRows.length < MIN_SEQUENCES_FOR_TREE;
+
+  const treePanel = numSequences >= MIN_SEQUENCES_FOR_TREE && (
+    <div style={{ padding: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
+        <button
+          type="button"
+          disabled={treeJobBusy || tooManyForTree || tooFewForTree}
+          onClick={() => geneTreeJob.start(buildGeneTreeRequest(filteredRows))}
+        >
+          Show phylogenetic tree
+        </button>
+        {geneTreeJob.phase === 'submitting' && <span>Submitting…</span>}
+        {geneTreeJob.phase === 'running' && (
+          <JobStatusLine
+            status={geneTreeJob.status ?? 'queued'}
+            job={geneTreeJob.job}
+          />
+        )}
+        {geneTreeJob.phase === 'error' && (
+          <span style={{ color: 'rgb(185, 28, 28)' }}>
+            The tree could not be built: {geneTreeJob.error}
+          </span>
+        )}
+      </div>
+      <div style={{ marginTop: '.4em', opacity: 0.8 }}>
+        May take seconds to minutes, depending on the number of sequences. Use
+        the table filter to reduce the rows and speed the processing.
+        {tooManyForTree &&
+          ` Max ${MAX_SEQUENCES_FOR_TREE.toLocaleString()} proteins.`}
+      </div>
+    </div>
   );
 
   return (
@@ -748,6 +763,7 @@ export function RecordTable_Sequences(
           {warningText}
         </div>
       )}
+      {treePanel}
       <div
         style={{
           padding: '10px',
@@ -808,10 +824,7 @@ export function RecordTable_Sequences(
             rowHeight={rowHeight}
             treeProps={treeProps}
             tableProps={mesaState}
-            hideTree={
-              filteredRows?.length > MAX_SEQUENCES_FOR_TREE ||
-              filteredRows?.length < MIN_SEQUENCES_FOR_TREE
-            }
+            hideTree={finalNewick == null}
             maxColumnWidth={maxColumnWidth}
           ></TreeTable>
           <ClustalAlignmentForm
@@ -874,11 +887,13 @@ export function RecordTable_Sequences(
           </ClustalAlignmentForm>
         </Dimmable>
       )}
-      <p>
-        <a href={treeUrl}>
-          <i className="fa fa-download"></i> Download raw newick file
-        </a>
-      </p>
+      {newickDownloadUrl && (
+        <p>
+          <a href={newickDownloadUrl} download={`${groupName}.nwk`}>
+            <i className="fa fa-download"></i> Download raw newick file
+          </a>
+        </p>
+      )}
     </div>
   );
 }
@@ -911,51 +926,21 @@ function createSafeSearchRegExp(input: string): RegExp | undefined {
   return new RegExp(searchTermRegex, 'i');
 }
 
-function logIdMismatches(A: string[], B: string[]) {
-  const inAButNotB = difference(A, B);
-  const inBButNotA = difference(B, A);
-
-  console.log(`Total unique IDs in A: ${new Set(A).size}`);
-  console.log(`Total unique IDs in B: ${new Set(B).size}`);
-
-  console.log(`Number of IDs in A but not in B: ${inAButNotB.length}`);
-  console.log(
-    `First few IDs in A but not in B: ${inAButNotB.slice(0, 5).join(', ')}`
-  );
-
-  console.log(`Number of IDs in B but not in A: ${inBButNotA.length}`);
-  console.log(
-    `First few IDs in B but not in A: ${inBButNotA.slice(0, 5).join(', ')}`
-  );
-}
-
-function truncate_full_id_for_tree_comparison(full_id: string): string {
-  const truncated_id = full_id.split(':')[0];
-  return truncated_id;
-}
-
 function getLeaves(tree: Branch): Branch[] {
   return tree.getLeaves();
 }
 
+// Rows in the order of the tree's leaves, followed by any rows the tree
+// doesn't have (it was built from whatever rows were showing at the time).
 function sortRows(leaves: Branch[], mesaRows: TableValue): TableValue {
-  if (leaves == null) return mesaRows;
-
-  // Some full_ids end in :RNA
-  // However, the Newick files seem to be omitting the colon and everything following it.
-  // (Colons are part of Newick format.)
-  // So we remove anything after a ':' and hope it works!
-  // This is the only place where we use the IDs from the tree file.
-
-  // make a map for performance
   const rowMap = new Map(
-    mesaRows.map((row) => [
-      truncate_full_id_for_tree_comparison(row.full_id as string),
-      row,
-    ])
+    mesaRows.map((row) => [encodeTreeLabel(row.full_id as string), row])
   );
 
-  return leaves
+  const inTreeOrder = leaves
     .map(({ id }) => rowMap.get(id))
     .filter((row): row is RowType => row != null);
+  const inTree = new Set(inTreeOrder);
+
+  return [...inTreeOrder, ...mesaRows.filter((row) => !inTree.has(row))];
 }
