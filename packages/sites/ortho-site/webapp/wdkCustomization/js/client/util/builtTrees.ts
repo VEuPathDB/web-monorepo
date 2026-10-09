@@ -41,3 +41,28 @@ export function findBuiltTree(
   const key = treeKey(ids);
   return key === '' ? undefined : trees.find((t) => t.key === key);
 }
+
+export function serializeBuiltTrees(trees: BuiltTree[]): string {
+  return JSON.stringify(trees.map((t) => t.newick));
+}
+
+/** Stored trees that no longer parse are skipped. */
+export function deserializeBuiltTrees(raw: string): BuiltTree[] {
+  let newicks: unknown;
+  try {
+    newicks = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(newicks)) return [];
+  return newicks
+    .filter((n): n is string => typeof n === 'string')
+    .flatMap((newick) => {
+      try {
+        return [makeBuiltTree(newick)];
+      } catch {
+        return [];
+      }
+    })
+    .slice(-MAX_BUILT_TREES);
+}

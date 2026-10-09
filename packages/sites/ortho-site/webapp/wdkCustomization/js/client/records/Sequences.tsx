@@ -9,10 +9,20 @@ import React, {
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useGroupBackedDeferredState } from '../hooks/useGroupBackedDeferredState';
+import { groupCacheKey, discardStaleGroupCache } from '../util/groupCache';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import {
+  arrayOf,
+  decodeOrElse,
+  string,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
 import { RecentSearchesDropdown } from '../components/RecentSearchesDropdown';
 import { Branch } from 'patristic';
 import {
   addBuiltTree,
+  deserializeBuiltTrees,
+  serializeBuiltTrees,
   BuiltTree,
   makeBuiltTree,
   findBuiltTree,
@@ -55,7 +65,6 @@ import {
   OutlinedButton,
   SelectList,
   Undo,
-  useDeferredState,
 } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -81,34 +90,11 @@ const highlightColor50 = highlightColor + '7f';
 
 type CoreOrPeripheral = 'core' | 'peripheral';
 
+const decodeStrings = (raw: string) => decodeOrElse(arrayOf(string), [], raw);
+
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
-  const [searchQuery, setSearchQuery, volatileSearchQuery] =
-    useDeferredState('');
-
-  const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
-
-  const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
-    useDeferredState<string[]>([]);
-
-  const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
-    useDeferredState<string[]>([]);
-
-  const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
-    useDeferredState<string[]>([]);
-
-  const [
-    corePeripheralFilterValue,
-    setCorePeripheralFilterValue,
-    volatileCorePeripheralFilterValue,
-  ] = useDeferredState<CoreOrPeripheral[]>([]);
-
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-
-  const [clustalOutFormat, setClustalOutFormat] =
-    useState<MsaFormat>('clustal_guidetree');
-
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
   )?.value;
@@ -116,6 +102,97 @@ export function RecordTable_Sequences(
   if (!groupName) {
     throw new Error('groupName is required but was not found in the record.');
   }
+
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  // Cached page state is only valid for the service run that wrote it; the
+  // check has to finish before the table reads it.
+  const [checkedGroup, setCheckedGroup] = useState<string>();
+  useEffect(() => {
+    let cancelled = false;
+    wdkService
+      .getVersion()
+      .then((version) => discardStaleGroupCache(version, groupName))
+      .catch(() => undefined) // without a version, just don't trust the cache
+      .then(() => {
+        if (!cancelled) setCheckedGroup(groupName);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wdkService, groupName]);
+
+  if (checkedGroup !== groupName) return <Loading />;
+
+  // WDK reuses this component when navigating between group pages; the key
+  // gives each group its own state, filters and trees included.
+  return (
+    <GroupSequencesTable key={groupName} groupName={groupName} {...props} />
+  );
+}
+
+function GroupSequencesTable(
+  props: WrappedComponentProps<RecordTableProps> & { groupName: string }
+) {
+  const { groupName } = props;
+
+  const [searchQuery, setSearchQuery, volatileSearchQuery] =
+    useGroupBackedDeferredState(
+      groupName,
+      'search',
+      '',
+      JSON.stringify,
+      (raw) => decodeOrElse(string, '', raw)
+    );
+
+  const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
+
+  const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
+    useGroupBackedDeferredState(
+      groupName,
+      'proteins',
+      [],
+      JSON.stringify,
+      decodeStrings
+    );
+
+  const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
+    useGroupBackedDeferredState(
+      groupName,
+      'species',
+      [],
+      JSON.stringify,
+      decodeStrings
+    );
+
+  const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
+    useGroupBackedDeferredState(
+      groupName,
+      'pfams',
+      [],
+      JSON.stringify,
+      decodeStrings
+    );
+
+  const [
+    corePeripheralFilterValue,
+    setCorePeripheralFilterValue,
+    volatileCorePeripheralFilterValue,
+  ] = useGroupBackedDeferredState<CoreOrPeripheral[]>(
+    groupName,
+    'corePeripheral',
+    [],
+    JSON.stringify,
+    (raw) =>
+      decodeStrings(raw).filter(
+        (v): v is CoreOrPeripheral => v === 'core' || v === 'peripheral'
+      )
+  );
+
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const [clustalOutFormat, setClustalOutFormat] =
+    useState<MsaFormat>('clustal_guidetree');
 
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
@@ -130,14 +207,19 @@ export function RecordTable_Sequences(
     [wdkService]
   );
   const geneTreeJob = useGeneTreeJob(api, PROTEIN_SEQUENCE_TYPE);
-  const [builtTrees, setBuiltTrees] = useState<BuiltTree[]>([]);
+  const [builtTrees, setBuiltTrees] = useSessionBackedState<BuiltTree[]>(
+    [],
+    groupCacheKey(groupName, 'trees'),
+    serializeBuiltTrees,
+    deserializeBuiltTrees
+  );
   // Keep every tree built on this page, so returning to an earlier filter
   // (or clearing it) shows the matching tree again without a new job.
   useEffect(() => {
-    if (geneTreeJob.newick == null) return;
-    const built = makeBuiltTree(geneTreeJob.newick);
-    setBuiltTrees((trees) => addBuiltTree(trees, built));
-  }, [geneTreeJob.newick]);
+    const { newick } = geneTreeJob;
+    if (newick == null || builtTrees.some((t) => t.newick === newick)) return;
+    setBuiltTrees(addBuiltTree(builtTrees, makeBuiltTree(newick)));
+  }, [geneTreeJob.newick, builtTrees, setBuiltTrees]);
 
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'];
@@ -235,7 +317,13 @@ export function RecordTable_Sequences(
     selectedColumnFilters,
     setSelectedColumnFilters,
     volatileSelectedColumnFilters,
-  ] = useDeferredState<string[]>([]);
+  ] = useGroupBackedDeferredState(
+    groupName,
+    'searchColumns',
+    [],
+    JSON.stringify,
+    decodeStrings
+  );
 
   // Rows matching the filters, in the table's original order. The organism
   // filter's own counts leave out the organism selection, so that picking a

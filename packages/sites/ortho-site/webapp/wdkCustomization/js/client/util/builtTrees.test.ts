@@ -1,9 +1,11 @@
 import {
   addBuiltTree,
   BuiltTree,
+  deserializeBuiltTrees,
   findBuiltTree,
   makeBuiltTree,
   MAX_BUILT_TREES,
+  serializeBuiltTrees,
   treeKey,
 } from './builtTrees';
 
@@ -61,5 +63,22 @@ describe('findBuiltTree', () => {
 
   it('returns undefined for no proteins', () => {
     expect(findBuiltTree(trees, [])).toBeUndefined();
+  });
+});
+
+describe('serialization', () => {
+  it('round-trips trees by their newick', () => {
+    const trees = [
+      makeBuiltTree(nwk('a', 'b', 'c')),
+      makeBuiltTree(nwk('d', 'e', 'f')),
+    ];
+    const restored = deserializeBuiltTrees(serializeBuiltTrees(trees));
+    expect(restored.map((t) => t.key)).toEqual(trees.map((t) => t.key));
+  });
+
+  it('tolerates missing or malformed data', () => {
+    expect(deserializeBuiltTrees('{nope')).toEqual([]);
+    expect(deserializeBuiltTrees('{"a":1}')).toEqual([]);
+    expect(deserializeBuiltTrees('[1, null]')).toEqual([]);
   });
 });
