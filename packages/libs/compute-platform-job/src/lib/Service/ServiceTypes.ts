@@ -24,6 +24,10 @@ export type MsaFormat =
   | 'stockholm'
   | 'vienna';
 
+export interface GeneTreeOptions {
+  format: 'newick';
+}
+
 export type Aligner = 'clustalo' | 'mafft';
 
 export interface MsaOptions {
@@ -39,8 +43,9 @@ export interface SubmitJobRequest {
   features: Feature[];
   deflineFormat?: DeflineFormat;
   basesPerLine?: number;
-  postProcess?: 'MSA';
+  postProcess?: 'MSA' | 'GENETREE';
   msaOptions?: MsaOptions;
+  geneTreeOptions?: GeneTreeOptions;
   percentActg?: number;
 }
 

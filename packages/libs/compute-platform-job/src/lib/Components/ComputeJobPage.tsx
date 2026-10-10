@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 // Deep import, not the @veupathdb/wdk-client/lib/Components barrel — that
 // barrel transitively pulls in AttributeFilter/Histogram.js, which requires
@@ -6,8 +6,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 import { SequenceRetrievalApi } from '../Service/SequenceRetrievalApi';
-import { JobResponse, JobStatus } from '../Service/ServiceTypes';
-import { useJobPolling } from '../Hooks/useJobPolling';
+import { useJobStatus } from '../Hooks/useJobStatus';
+import { JobStatusLine } from './JobStatusLine';
 
 // Same icon/animation as user-datasets' UserDatasetStatus.tsx polling
 // spinner (StatusIcon--polling); the color is wdk-client's $blue, imported
@@ -35,10 +35,6 @@ const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
 // client-side — otherwise the browser (or React) would just show the raw
 // markup as literal text.
 const HTML_MSA_FORMATS = new Set(['clustal_guidetree']);
-
-function formatLocalTime(isoTimestamp: string): string {
-  return new Date(isoTimestamp).toLocaleTimeString();
-}
 
 // Swaps the live document in place with the fetched result, same URL, no
 // navigation — same as visiting a static result page directly (matching
@@ -79,16 +75,7 @@ export function ComputeJobPage({
   format,
   sequenceCount,
 }: ComputeJobPageProps) {
-  const [status, setStatus] = useState<JobStatus>('queued');
-  const [job, setJob] = useState<Partial<JobResponse>>({});
-
-  const onPoll = useCallback(async () => {
-    const job = await api.fetchJob(jobId);
-    setStatus(job.status);
-    setJob(job);
-  }, [api, jobId]);
-
-  useJobPolling({ status, onPoll });
+  const { status = 'queued', job } = useJobStatus({ api, jobId });
 
   useEffect(() => {
     if (status !== 'complete') return;
@@ -113,24 +100,7 @@ export function ComputeJobPage({
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
           <>
-            <p className="Status">
-              <Icon
-                className="ComputeJobPage-StatusIcon"
-                fa="circle-o-notch"
-                style={{ marginRight: '0.3em' }}
-              />
-              {status === 'queued' &&
-                (job.queuePosition != null
-                  ? `Position ${job.queuePosition} in queue.`
-                  : 'Queued.')}
-              {status === 'queued' && job.created != null && (
-                <i> (Queued at {formatLocalTime(job.created)})</i>
-              )}
-              {status === 'in-progress' && 'In progress.'}
-              {status === 'in-progress' && job.started != null && (
-                <i>(Started running at {formatLocalTime(job.started)})</i>
-              )}
-            </p>
+            <JobStatusLine status={status} job={job} />
             {sequenceCount != null &&
               sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
                 <>

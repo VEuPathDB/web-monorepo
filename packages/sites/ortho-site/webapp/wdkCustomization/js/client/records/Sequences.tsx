@@ -1,15 +1,32 @@
 import React, {
   CSSProperties,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
-import { useOrthoService } from 'ortho-client/hooks/orthoService';
-import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
-import { Branch, parseNewick } from 'patristic';
+import { CommonModal, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useGroupBackedDeferredState } from '../hooks/useGroupBackedDeferredState';
+import { groupCacheKey, discardStaleGroupCache } from '../util/groupCache';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import {
+  arrayOf,
+  decodeOrElse,
+  string,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
+import { RecentSearchesDropdown } from '../components/RecentSearchesDropdown';
+import { Branch } from 'patristic';
+import {
+  addBuiltTree,
+  deserializeBuiltTrees,
+  serializeBuiltTrees,
+  BuiltTree,
+  makeBuiltTree,
+  findBuiltTree,
+} from '../util/builtTrees';
 import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
 import { rootUrl } from '@veupathdb/web-common/lib/config';
 import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
@@ -18,7 +35,13 @@ import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullab
 import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
 import { MsaFormat } from '@veupathdb/compute-platform-job/src/lib/Service/ServiceTypes';
 import { resolveProteinFeatures } from '../util/resolveProteinFeatures';
-import { SEQUENCE_RETRIEVAL_BASE_URL } from '../util/computeJobConfig';
+import {
+  PROTEIN_SEQUENCE_TYPE,
+  SEQUENCE_RETRIEVAL_BASE_URL,
+} from '../util/computeJobConfig';
+import { buildGeneTreeRequest, encodeTreeLabel } from '../util/geneTree';
+import { useGeneTreeJob } from '../hooks/useGeneTreeJob';
+import { JobStatusLine } from '@veupathdb/compute-platform-job/src/lib/Components/JobStatusLine';
 import {
   AttributeValue,
   TableValue,
@@ -27,10 +50,9 @@ import {
   MesaColumn,
   MesaStateProps,
 } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { groupBy, difference } from 'lodash';
+import { countBy, groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import PopoverButton, {
   PopoverButtonHandle,
@@ -43,7 +65,6 @@ import {
   OutlinedButton,
   SelectList,
   Undo,
-  useDeferredState,
 } from '@veupathdb/coreui';
 import { RecordTable_TaxonCounts_Filter } from './RecordTable_TaxonCounts_Filter';
 import { formatAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -69,34 +90,11 @@ const highlightColor50 = highlightColor + '7f';
 
 type CoreOrPeripheral = 'core' | 'peripheral';
 
+const decodeStrings = (raw: string) => decodeOrElse(arrayOf(string), [], raw);
+
 export function RecordTable_Sequences(
   props: WrappedComponentProps<RecordTableProps>
 ) {
-  const [searchQuery, setSearchQuery, volatileSearchQuery] =
-    useDeferredState('');
-
-  const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
-
-  const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
-    useDeferredState<string[]>([]);
-
-  const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
-    useDeferredState<string[]>([]);
-
-  const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
-    useDeferredState<string[]>([]);
-
-  const [
-    corePeripheralFilterValue,
-    setCorePeripheralFilterValue,
-    volatileCorePeripheralFilterValue,
-  ] = useDeferredState<CoreOrPeripheral[]>([]);
-
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-
-  const [clustalOutFormat, setClustalOutFormat] =
-    useState<MsaFormat>('clustal_guidetree');
-
   const groupName = props.record.id.find(
     ({ name }) => name === 'group_name'
   )?.value;
@@ -105,6 +103,99 @@ export function RecordTable_Sequences(
     throw new Error('groupName is required but was not found in the record.');
   }
 
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  // Cached page state is only valid for the service run that wrote it; the
+  // check has to finish before the table reads it.
+  const [checkedGroup, setCheckedGroup] = useState<string>();
+  useEffect(() => {
+    let cancelled = false;
+    wdkService
+      .getVersion()
+      .then((version) => discardStaleGroupCache(version, groupName))
+      .catch(() => undefined) // without a version, just don't trust the cache
+      .then(() => {
+        if (!cancelled) setCheckedGroup(groupName);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [wdkService, groupName]);
+
+  if (checkedGroup !== groupName) return <Loading />;
+
+  // WDK reuses this component when navigating between group pages; the key
+  // gives each group its own state, filters and trees included.
+  return (
+    <GroupSequencesTable key={groupName} groupName={groupName} {...props} />
+  );
+}
+
+function GroupSequencesTable(
+  props: WrappedComponentProps<RecordTableProps> & { groupName: string }
+) {
+  const { groupName } = props;
+
+  const [searchQuery, setSearchQuery, volatileSearchQuery] =
+    useGroupBackedDeferredState(
+      groupName,
+      'search',
+      '',
+      JSON.stringify,
+      (raw) => decodeOrElse(string, '', raw)
+    );
+
+  const [tooManyDialogOpen, setTooManyDialogOpen] = useState(false);
+
+  const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
+
+  const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
+    useGroupBackedDeferredState(
+      groupName,
+      'proteins',
+      [],
+      JSON.stringify,
+      decodeStrings
+    );
+
+  const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
+    useGroupBackedDeferredState(
+      groupName,
+      'species',
+      [],
+      JSON.stringify,
+      decodeStrings
+    );
+
+  const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
+    useGroupBackedDeferredState(
+      groupName,
+      'pfams',
+      [],
+      JSON.stringify,
+      decodeStrings
+    );
+
+  const [
+    corePeripheralFilterValue,
+    setCorePeripheralFilterValue,
+    volatileCorePeripheralFilterValue,
+  ] = useGroupBackedDeferredState<CoreOrPeripheral[]>(
+    groupName,
+    'corePeripheral',
+    [],
+    JSON.stringify,
+    (raw) =>
+      decodeStrings(raw).filter(
+        (v): v is CoreOrPeripheral => v === 'core' || v === 'peripheral'
+      )
+  );
+
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const [clustalOutFormat, setClustalOutFormat] =
+    useState<MsaFormat>('clustal_guidetree');
+
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
   const mesaRows = props.value;
@@ -112,19 +203,25 @@ export function RecordTable_Sequences(
 
   const numSequences = mesaRows.length;
 
-  const treeResponse = useOrthoService(
-    (orthoService) => {
-      if (numSequences < MIN_SEQUENCES_FOR_TREE)
-        return Promise.resolve(undefined);
-      return orthoService.getGroupTree(groupName);
-    },
-    [groupName, numSequences]
+  const api = useMemo(
+    () =>
+      SequenceRetrievalApi.getClient(SEQUENCE_RETRIEVAL_BASE_URL, wdkService),
+    [wdkService]
   );
-
-  const treeUrl = useOrthoService(
-    async (orthoService) => orthoService.getGroupTreeUrl(groupName),
-    [groupName]
+  const geneTreeJob = useGeneTreeJob(api, PROTEIN_SEQUENCE_TYPE);
+  const [builtTrees, setBuiltTrees] = useSessionBackedState<BuiltTree[]>(
+    [],
+    groupCacheKey(groupName, 'trees'),
+    serializeBuiltTrees,
+    deserializeBuiltTrees
   );
+  // Keep every tree built on this page, so returning to an earlier filter
+  // (or clearing it) shows the matching tree again without a new job.
+  useEffect(() => {
+    const { newick } = geneTreeJob;
+    if (newick == null || builtTrees.some((t) => t.newick === newick)) return;
+    setBuiltTrees(addBuiltTree(builtTrees, makeBuiltTree(newick)));
+  }, [geneTreeJob.newick, builtTrees, setBuiltTrees]);
 
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'];
@@ -211,13 +308,6 @@ export function RecordTable_Sequences(
 
   const [tablePageNumber, setTablePageNumber] = useState(1);
 
-  const { tree, leaves, sortedRows } = useMemo(() => {
-    const tree = treeResponse == null ? undefined : parseNewick(treeResponse);
-    const leaves = tree && getLeaves(tree);
-    const sortedRows = leaves ? sortRows(leaves, mesaRows) : mesaRows;
-    return { tree, leaves, sortedRows };
-  }, [treeResponse, mesaRows]);
-
   // do some validation on the tree w.r.t. the table
 
   // filter the rows of the table based on
@@ -229,119 +319,125 @@ export function RecordTable_Sequences(
     selectedColumnFilters,
     setSelectedColumnFilters,
     volatileSelectedColumnFilters,
-  ] = useDeferredState<string[]>([]);
+  ] = useGroupBackedDeferredState(
+    groupName,
+    'searchColumns',
+    [],
+    JSON.stringify,
+    decodeStrings
+  );
 
-  const filteredRows = useMemo(() => {
-    if (
-      searchQuery != null ||
-      corePeripheralFilterValue.length > 0 ||
-      pfamFilterIds.length > 0 ||
-      selectedSpecies.length > 0 ||
-      proteinFilterIds.length > 0
-    ) {
-      // these two are likely to be selected in large numbers
-      const selectedSpeciesSet = new Set(selectedSpecies);
-      const proteinFilterIdsSet = new Set(proteinFilterIds);
-
-      const safeSearchRegexp = createSafeSearchRegExp(searchQuery);
-
-      return sortedRows?.filter((row) => {
-        const rowCorePeripheral = (
-          (row.core_peripheral as string) ?? ''
-        ).toLowerCase();
-        const rowFullId = row.full_id as string;
-        const rowTaxon = row.taxon_abbrev as string;
-        const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
-
-        const searchMatch =
-          safeSearchRegexp == null ||
-          rowMatch(row, safeSearchRegexp, selectedColumnFilters);
-        const corePeripheralMatch =
-          corePeripheralFilterValue.length === 0 ||
-          corePeripheralFilterValue.includes(
-            rowCorePeripheral.toLowerCase() as any
-          );
-        const pfamIdMatch =
-          pfamFilterIds.length === 0 ||
-          pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
-        const speciesMatch =
-          selectedSpeciesSet.size === 0 || selectedSpeciesSet.has(rowTaxon);
-        const proteinMatch =
-          proteinFilterIdsSet.size === 0 || proteinFilterIdsSet.has(rowFullId);
-
-        return (
-          searchMatch &&
-          corePeripheralMatch &&
-          pfamIdMatch &&
-          speciesMatch &&
-          proteinMatch
+  // Rows matching the filters, in the table's original order. The organism
+  // filter's own counts leave out the organism selection, so that picking a
+  // species doesn't zero out every other species.
+  const filterMesaRows = useCallback(
+    (ignoreSpecies: boolean) => {
+      if (
+        searchQuery != null ||
+        corePeripheralFilterValue.length > 0 ||
+        pfamFilterIds.length > 0 ||
+        (!ignoreSpecies && selectedSpecies.length > 0) ||
+        proteinFilterIds.length > 0
+      ) {
+        // these two are likely to be selected in large numbers
+        const selectedSpeciesSet = new Set(
+          ignoreSpecies ? [] : selectedSpecies
         );
-      });
-    }
-    return sortedRows;
-  }, [
-    selectedColumnFilters,
-    searchQuery,
-    sortedRows,
-    corePeripheralFilterValue,
-    accessionToPfamIds,
-    pfamFilterIds,
-    selectedSpecies,
-    proteinFilterIds,
-  ]);
+        const proteinFilterIdsSet = new Set(proteinFilterIds);
 
-  // now filter the tree if needed - takes a couple of seconds for large trees
-  const filteredTree = useMemo(() => {
-    if (
-      leaves == null ||
-      tree == null ||
-      filteredRows == null ||
-      filteredRows.length < MIN_SEQUENCES_FOR_TREE ||
-      filteredRows.length > MAX_SEQUENCES_FOR_TREE
-    )
-      return;
+        const safeSearchRegexp = createSafeSearchRegExp(searchQuery);
 
-    if (filteredRows.length < leaves.length) {
-      const filteredRowIds = new Set(
-        filteredRows.map(({ full_id }) =>
-          truncate_full_id_for_tree_comparison(full_id as string)
-        )
-      );
+        return mesaRows.filter((row) => {
+          const rowCorePeripheral = (
+            (row.core_peripheral as string) ?? ''
+          ).toLowerCase();
+          const rowFullId = row.full_id as string;
+          const rowTaxon = row.taxon_abbrev as string;
+          const rowPfamIdsSet = accessionToPfamIds.get(rowFullId);
 
-      // must work on a copy of the tree because it's destructive
-      const treeCopy = tree.clone();
-      let leavesRemoved = false;
-      do {
-        const leavesCopy = treeCopy.getLeaves();
-        leavesRemoved = false; // Reset flag for each iteration
+          const searchMatch =
+            safeSearchRegexp == null ||
+            rowMatch(row, safeSearchRegexp, selectedColumnFilters);
+          const corePeripheralMatch =
+            corePeripheralFilterValue.length === 0 ||
+            corePeripheralFilterValue.includes(
+              rowCorePeripheral.toLowerCase() as any
+            );
+          const pfamIdMatch =
+            pfamFilterIds.length === 0 ||
+            pfamFilterIds.some((pfamId) => rowPfamIdsSet?.has(pfamId));
+          const speciesMatch =
+            selectedSpeciesSet.size === 0 || selectedSpeciesSet.has(rowTaxon);
+          const proteinMatch =
+            proteinFilterIdsSet.size === 0 ||
+            proteinFilterIdsSet.has(rowFullId);
 
-        for (const leaf of leavesCopy) {
-          if (!filteredRowIds.has(leaf.id)) {
-            leaf.remove(true); // remove leaf and remove any dangling ancestors
-            leavesRemoved = true; // A leaf was removed, so set flag to true
-          }
-        }
-      } while (leavesRemoved); // Continue looping if any leaf was removed
-      return treeCopy;
-    }
-
-    return tree;
-  }, [tree, leaves, filteredRows]);
-
-  // make a newick string from the filtered tree if needed
-  const finalNewick = useMemo(() => {
-    if (treeResponse != null) {
-      if (filteredTree != null) {
-        if (filteredTree === tree) {
-          return treeResponse; // no filtering so return what we read from the back end
-        } else {
-          return filteredTree.toNewick(); // make new newick data from the filtered tree
-        }
+          return (
+            searchMatch &&
+            corePeripheralMatch &&
+            pfamIdMatch &&
+            speciesMatch &&
+            proteinMatch
+          );
+        });
       }
-    }
-    return;
-  }, [filteredTree, treeResponse, tree]);
+      return mesaRows;
+    },
+    [
+      selectedColumnFilters,
+      searchQuery,
+      mesaRows,
+      corePeripheralFilterValue,
+      accessionToPfamIds,
+      pfamFilterIds,
+      selectedSpecies,
+      proteinFilterIds,
+    ]
+  );
 
+  // rows matching the filters, before ordering by whichever tree is shown
+  const matchingRows = useMemo(() => filterMesaRows(false), [filterMesaRows]);
+
+  const taxonCounts = useMemo(
+    () => countBy(filterMesaRows(true), (row) => row.taxon_abbrev as string),
+    [filterMesaRows]
+  );
+
+  // The table's rows have to follow the order of the tree's leaves, so which
+  // tree is shown has to be settled before the rows are ordered.
+  const activeTree = useMemo(
+    () =>
+      findBuiltTree(
+        builtTrees,
+        matchingRows.map(({ full_id }) => encodeTreeLabel(full_id as string))
+      ),
+    [builtTrees, matchingRows]
+  );
+  const leaves = activeTree?.leaves;
+  const treeResponse = activeTree?.newick;
+
+  const sortedRows = useMemo(
+    () => (leaves ? sortRows(leaves, mesaRows) : mesaRows),
+    [leaves, mesaRows]
+  );
+  const filteredRows = useMemo(() => {
+    const matching = new Set(matchingRows);
+    return sortedRows.filter((row) => matching.has(row));
+  }, [sortedRows, matchingRows]);
+
+  const newickDownloadUrl = useMemo(
+    () =>
+      treeResponse == null
+        ? undefined
+        : URL.createObjectURL(new Blob([treeResponse])),
+    [treeResponse]
+  );
+  useEffect(
+    () => () => {
+      if (newickDownloadUrl) URL.revokeObjectURL(newickDownloadUrl);
+    },
+    [newickDownloadUrl]
+  );
   // list of column keys and display names to show in the checkbox dropdown in the table text search box (RecordFilter)
   const filterAttributes = useMemo(
     () =>
@@ -419,13 +515,13 @@ export function RecordTable_Sequences(
 
   const treeProps = useMemo(
     () => ({
-      data: finalNewick,
+      data: treeResponse,
       width: treeWidth,
       highlightMode: 'monophyletic' as const,
       highlightColor,
-      highlightedNodeIds: highlightedNodes,
+      highlightedNodeIds: highlightedNodes.map(encodeTreeLabel),
     }),
-    [finalNewick, treeWidth, highlightColor, highlightedNodes]
+    [treeResponse, treeWidth, highlightColor, highlightedNodes]
   );
 
   const proteinFilterButtonRef = useRef<PopoverButtonHandle>(null);
@@ -446,47 +542,8 @@ export function RecordTable_Sequences(
     (searchQuery !== '' &&
       selectedColumnFilters !== volatileSelectedColumnFilters);
 
-  if (
-    !mesaState ||
-    !sortedRows ||
-    (numSequences >= MIN_SEQUENCES_FOR_TREE && (!tree || !treeResponse))
-  ) {
+  if (!mesaState || !sortedRows) {
     return <Loading />;
-  }
-
-  if (
-    numSequences >= MIN_SEQUENCES_FOR_TREE &&
-    mesaRows != null &&
-    sortedRows != null &&
-    (mesaRows.length !== sortedRows.length ||
-      mesaRows.length !== leaves?.length)
-  ) {
-    console.log(
-      'Tree and protein list mismatch. A=Tree, B=Table. Summary below:'
-    );
-    logIdMismatches(
-      (leaves ?? []).map((leaf) => leaf.id),
-      mesaRows.map((row) =>
-        truncate_full_id_for_tree_comparison(row.full_id as string)
-      )
-    );
-    return (
-      <Banner
-        banner={{
-          type: 'warning',
-          message: (
-            <span>
-              A data processing error has occurred on our end. We apologize for
-              the inconvenience. If this problem persists, please{' '}
-              <Link target="_blank" to="/contact-us">
-                contact us
-              </Link>
-              .
-            </span>
-          ),
-        }}
-      />
-    );
   }
 
   const rowHeight = 45;
@@ -565,6 +622,7 @@ export function RecordTable_Sequences(
         recordClass={props.recordClass}
         table={props.recordClass.tablesMap.TaxonCounts}
         value={props.record.tables.TaxonCounts}
+        speciesCounts={taxonCounts}
         DefaultComponent={props.DefaultComponent}
         deferPopoverClosing={isFiltering}
       />
@@ -689,23 +747,6 @@ export function RecordTable_Sequences(
 
   if (filteredRows == null) return null;
 
-  const warningText =
-    numSequences >= MIN_SEQUENCES_FOR_TREE &&
-    (filteredRows.length > MAX_SEQUENCES_FOR_TREE ||
-      filteredRows.length < MIN_SEQUENCES_FOR_TREE) ? (
-      <span>
-        To see a phylogenetic tree please use a filter to display between{' '}
-        {MIN_SEQUENCES_FOR_TREE.toLocaleString()} and{' '}
-        {MAX_SEQUENCES_FOR_TREE.toLocaleString()} sequences
-      </span>
-    ) : filteredRows.length < sortedRows.length ? (
-      <span>
-        Note: The ortholog group's phylogeny has been pruned to display only the
-        currently filtered proteins. This may differ from a tree constructed{' '}
-        <i>de novo</i> using only these sequences.
-      </span>
-    ) : undefined;
-
   // We tried using a `<Loading />` spinner but its hardcoded 200ms delay
   // was causing problems. This looks great on top of the greyed out table though.
   const LOADING = (
@@ -723,6 +764,89 @@ export function RecordTable_Sequences(
     </span>
   );
 
+  const treeJobBusy =
+    geneTreeJob.phase === 'submitting' || geneTreeJob.phase === 'running';
+  const tooManyForTree = filteredRows.length > MAX_SEQUENCES_FOR_TREE;
+  const tooFewForTree = filteredRows.length < MIN_SEQUENCES_FOR_TREE;
+
+  const filtersApplied =
+    searchQuery !== '' ||
+    corePeripheralFilterValue.length > 0 ||
+    pfamFilterIds.length > 0 ||
+    selectedSpecies.length > 0 ||
+    proteinFilterIds.length > 0;
+
+  // a tree built for exactly these rows is already showing
+  const treeIsShown = treeResponse != null;
+
+  const treePanel = numSequences >= MIN_SEQUENCES_FOR_TREE && (
+    <div style={{ padding: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
+        <button
+          type="button"
+          disabled={treeJobBusy || tooFewForTree || treeIsShown}
+          onClick={() => {
+            if (tooManyForTree) {
+              setTooManyDialogOpen(true);
+            } else {
+              geneTreeJob.start(buildGeneTreeRequest(filteredRows));
+            }
+          }}
+        >
+          {filtersApplied
+            ? `Show phylogenetic tree for ${filteredRows.length} selected sequences`
+            : 'Show phylogenetic tree'}
+        </button>
+        {tooManyDialogOpen && (
+          <CommonModal
+            title="⚠️ Too many sequences"
+            onClose={() => setTooManyDialogOpen(false)}
+          >
+            <div
+              style={{
+                minWidth: '30em',
+                padding: '1em',
+                textAlign: 'center',
+                fontSize: '1.3em',
+              }}
+            >
+              More than {MAX_SEQUENCES_FOR_TREE} sequences in the table. Please
+              reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying the
+              available filters
+              <div style={{ marginTop: '1.5em' }}>
+                <button
+                  type="button"
+                  className="btn"
+                  autoFocus
+                  onClick={() => setTooManyDialogOpen(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </CommonModal>
+        )}
+        {geneTreeJob.phase === 'submitting' && <span>Submitting…</span>}
+        {geneTreeJob.phase === 'running' && (
+          <JobStatusLine
+            status={geneTreeJob.status ?? 'queued'}
+            job={geneTreeJob.job}
+          />
+        )}
+        {geneTreeJob.phase === 'error' && (
+          <span style={{ color: 'rgb(185, 28, 28)' }}>
+            The tree could not be built: {geneTreeJob.error}
+          </span>
+        )}
+      </div>
+      <div style={{ marginTop: '.4em', opacity: 0.8 }}>
+        May take seconds to minutes, depending on the number and length of
+        sequences. Use the table filters to remove sequences and speed
+        processing.
+      </div>
+    </div>
+  );
+
   return (
     <div
       style={
@@ -731,23 +855,7 @@ export function RecordTable_Sequences(
         } as CSSProperties
       }
     >
-      {warningText && (
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            borderLeft: '.2em solid rgb(225, 133, 133)',
-            borderRight: '.2em solid rgb(225, 133, 133)',
-            padding: '.5em 1em',
-            background: 'rgb(255, 228, 228)',
-            gap: '1em',
-            marginBottom: '1em',
-            fontWeight: 500,
-          }}
-        >
-          {warningText}
-        </div>
-      )}
+      {treePanel}
       <div
         style={{
           padding: '10px',
@@ -759,18 +867,28 @@ export function RecordTable_Sequences(
           justifyContent: 'space-between',
         }}
       >
-        <RecordFilter
-          key={`text-search-${resetCounter}`}
-          searchTerm={searchQuery}
-          onSearchTermChange={handleSearchQueryChange}
-          recordDisplayName="Proteins"
-          filterAttributes={filterAttributes}
-          selectedColumnFilters={volatileSelectedColumnFilters}
-          onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
-        />
+        <RecentSearchesDropdown
+          searchTerm={volatileSearchQuery}
+          onSelect={(term) => {
+            handleSearchQueryChange(term);
+            setResetCounter((n) => n + 1); // remounts the search box so it shows the term
+          }}
+        >
+          <RecordFilter
+            key={`text-search-${resetCounter}`}
+            // volatile: the box only reads this on mount, and the deferred value lags a render behind
+            searchTerm={volatileSearchQuery}
+            onSearchTermChange={handleSearchQueryChange}
+            recordDisplayName="Proteins"
+            filterAttributes={filterAttributes}
+            selectedColumnFilters={volatileSelectedColumnFilters}
+            onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
+          />
+        </RecentSearchesDropdown>
         <div className="MesaComponent" style={{ marginRight: 'auto' }}>
           <div className="TableToolbar-Info">
             <RowCounter
+              rowNoun="sequence"
               rows={sortedRows}
               uiState={{
                 filteredRowCount: numSequences - rowCount, // num rows filtered **away**
@@ -808,10 +926,7 @@ export function RecordTable_Sequences(
             rowHeight={rowHeight}
             treeProps={treeProps}
             tableProps={mesaState}
-            hideTree={
-              filteredRows?.length > MAX_SEQUENCES_FOR_TREE ||
-              filteredRows?.length < MIN_SEQUENCES_FOR_TREE
-            }
+            hideTree={treeResponse == null}
             maxColumnWidth={maxColumnWidth}
           ></TreeTable>
           <ClustalAlignmentForm
@@ -874,11 +989,13 @@ export function RecordTable_Sequences(
           </ClustalAlignmentForm>
         </Dimmable>
       )}
-      <p>
-        <a href={treeUrl}>
-          <i className="fa fa-download"></i> Download raw newick file
-        </a>
-      </p>
+      {newickDownloadUrl && (
+        <p>
+          <a href={newickDownloadUrl} download={`${groupName}.nwk`}>
+            <i className="fa fa-download"></i> Download raw newick file
+          </a>
+        </p>
+      )}
     </div>
   );
 }
@@ -911,51 +1028,17 @@ function createSafeSearchRegExp(input: string): RegExp | undefined {
   return new RegExp(searchTermRegex, 'i');
 }
 
-function logIdMismatches(A: string[], B: string[]) {
-  const inAButNotB = difference(A, B);
-  const inBButNotA = difference(B, A);
-
-  console.log(`Total unique IDs in A: ${new Set(A).size}`);
-  console.log(`Total unique IDs in B: ${new Set(B).size}`);
-
-  console.log(`Number of IDs in A but not in B: ${inAButNotB.length}`);
-  console.log(
-    `First few IDs in A but not in B: ${inAButNotB.slice(0, 5).join(', ')}`
-  );
-
-  console.log(`Number of IDs in B but not in A: ${inBButNotA.length}`);
-  console.log(
-    `First few IDs in B but not in A: ${inBButNotA.slice(0, 5).join(', ')}`
-  );
-}
-
-function truncate_full_id_for_tree_comparison(full_id: string): string {
-  const truncated_id = full_id.split(':')[0];
-  return truncated_id;
-}
-
-function getLeaves(tree: Branch): Branch[] {
-  return tree.getLeaves();
-}
-
+// Rows in the order of the tree's leaves, followed by any rows the tree
+// doesn't have (it was built from whatever rows were showing at the time).
 function sortRows(leaves: Branch[], mesaRows: TableValue): TableValue {
-  if (leaves == null) return mesaRows;
-
-  // Some full_ids end in :RNA
-  // However, the Newick files seem to be omitting the colon and everything following it.
-  // (Colons are part of Newick format.)
-  // So we remove anything after a ':' and hope it works!
-  // This is the only place where we use the IDs from the tree file.
-
-  // make a map for performance
   const rowMap = new Map(
-    mesaRows.map((row) => [
-      truncate_full_id_for_tree_comparison(row.full_id as string),
-      row,
-    ])
+    mesaRows.map((row) => [encodeTreeLabel(row.full_id as string), row])
   );
 
-  return leaves
+  const inTreeOrder = leaves
     .map(({ id }) => rowMap.get(id))
     .filter((row): row is RowType => row != null);
+  const inTree = new Set(inTreeOrder);
+
+  return [...inTreeOrder, ...mesaRows.filter((row) => !inTree.has(row))];
 }

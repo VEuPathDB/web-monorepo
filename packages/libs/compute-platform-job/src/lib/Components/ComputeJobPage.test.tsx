@@ -59,7 +59,7 @@ describe('ComputeJobPage', () => {
 
     render(<ComputeJobPage jobId="abc" api={api} />);
 
-    expect(await screen.findByText(/position 3 on queue/i)).toBeInTheDocument();
+    expect(await screen.findByText(/position 3 in queue/i)).toBeInTheDocument();
     expect(screen.getByText(/queued at/i)).toBeInTheDocument();
   });
 
@@ -101,7 +101,7 @@ describe('ComputeJobPage', () => {
     render(<ComputeJobPage jobId="abc" api={api} sequenceCount={11} />);
 
     expect(
-      await screen.findByText(/job time can range from seconds/i)
+      await screen.findByText(/jobs can take 10\+ minutes/i)
     ).toBeInTheDocument();
   });
 
@@ -114,7 +114,7 @@ describe('ComputeJobPage', () => {
 
     await screen.findByText('Multiple Sequence Alignment Job Status');
     expect(
-      screen.queryByText(/job time can range from seconds/i)
+      screen.queryByText(/jobs can take 10\+ minutes/i)
     ).not.toBeInTheDocument();
   });
 
@@ -127,7 +127,7 @@ describe('ComputeJobPage', () => {
 
     await screen.findByText('Multiple Sequence Alignment Job Status');
     expect(
-      screen.queryByText(/job time can range from seconds/i)
+      screen.queryByText(/jobs can take 10\+ minutes/i)
     ).not.toBeInTheDocument();
   });
 
