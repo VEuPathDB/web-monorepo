@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { CommonModal, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useGroupBackedDeferredState } from '../hooks/useGroupBackedDeferredState';
 import { groupCacheKey, discardStaleGroupCache } from '../util/groupCache';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
@@ -144,6 +144,8 @@ function GroupSequencesTable(
       JSON.stringify,
       (raw) => decodeOrElse(string, '', raw)
     );
+
+  const [tooManyDialogOpen, setTooManyDialogOpen] = useState(false);
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
 
@@ -745,14 +747,6 @@ function GroupSequencesTable(
 
   if (filteredRows == null) return null;
 
-  const warningText =
-    builtTrees.length > 0 && treeResponse == null ? (
-      <span>
-        Note: No tree has been built for the rows now in the table. Build one,
-        or restore an earlier filter.
-      </span>
-    ) : undefined;
-
   // We tried using a `<Loading />` spinner but its hardcoded 200ms delay
   // was causing problems. This looks great on top of the greyed out table though.
   const LOADING = (
@@ -775,16 +769,63 @@ function GroupSequencesTable(
   const tooManyForTree = filteredRows.length > MAX_SEQUENCES_FOR_TREE;
   const tooFewForTree = filteredRows.length < MIN_SEQUENCES_FOR_TREE;
 
+  const filtersApplied =
+    searchQuery !== '' ||
+    corePeripheralFilterValue.length > 0 ||
+    pfamFilterIds.length > 0 ||
+    selectedSpecies.length > 0 ||
+    proteinFilterIds.length > 0;
+
+  // a tree built for exactly these rows is already showing
+  const treeIsShown = treeResponse != null;
+
   const treePanel = numSequences >= MIN_SEQUENCES_FOR_TREE && (
     <div style={{ padding: '10px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
         <button
           type="button"
-          disabled={treeJobBusy || tooManyForTree || tooFewForTree}
-          onClick={() => geneTreeJob.start(buildGeneTreeRequest(filteredRows))}
+          disabled={treeJobBusy || tooFewForTree || treeIsShown}
+          onClick={() => {
+            if (tooManyForTree) {
+              setTooManyDialogOpen(true);
+            } else {
+              geneTreeJob.start(buildGeneTreeRequest(filteredRows));
+            }
+          }}
         >
-          Show phylogenetic tree
+          {filtersApplied
+            ? `Show phylogenetic tree for ${filteredRows.length} selected sequences`
+            : 'Show phylogenetic tree'}
         </button>
+        {tooManyDialogOpen && (
+          <CommonModal
+            title="⚠️ Too many sequences"
+            onClose={() => setTooManyDialogOpen(false)}
+          >
+            <div
+              style={{
+                minWidth: '30em',
+                padding: '1em',
+                textAlign: 'center',
+                fontSize: '1.3em',
+              }}
+            >
+              More than {MAX_SEQUENCES_FOR_TREE} sequences in the table. Please
+              reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying the
+              available filters
+              <div style={{ marginTop: '1.5em' }}>
+                <button
+                  type="button"
+                  className="btn"
+                  autoFocus
+                  onClick={() => setTooManyDialogOpen(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </CommonModal>
+        )}
         {geneTreeJob.phase === 'submitting' && <span>Submitting…</span>}
         {geneTreeJob.phase === 'running' && (
           <JobStatusLine
@@ -799,10 +840,9 @@ function GroupSequencesTable(
         )}
       </div>
       <div style={{ marginTop: '.4em', opacity: 0.8 }}>
-        May take seconds to minutes, depending on the number of sequences. Use
-        the table filter to reduce the rows and speed the processing.
-        {tooManyForTree &&
-          ` Max ${MAX_SEQUENCES_FOR_TREE.toLocaleString()} proteins.`}
+        May take seconds to minutes, depending on the number and length of
+        sequences. Use the table filters to remove sequences and speed
+        processing.
       </div>
     </div>
   );
@@ -815,23 +855,6 @@ function GroupSequencesTable(
         } as CSSProperties
       }
     >
-      {warningText && (
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            borderLeft: '.2em solid rgb(225, 133, 133)',
-            borderRight: '.2em solid rgb(225, 133, 133)',
-            padding: '.5em 1em',
-            background: 'rgb(255, 228, 228)',
-            gap: '1em',
-            marginBottom: '1em',
-            fontWeight: 500,
-          }}
-        >
-          {warningText}
-        </div>
-      )}
       {treePanel}
       <div
         style={{
@@ -865,6 +888,7 @@ function GroupSequencesTable(
         <div className="MesaComponent" style={{ marginRight: 'auto' }}>
           <div className="TableToolbar-Info">
             <RowCounter
+              rowNoun="sequence"
               rows={sortedRows}
               uiState={{
                 filteredRowCount: numSequences - rowCount, // num rows filtered **away**
