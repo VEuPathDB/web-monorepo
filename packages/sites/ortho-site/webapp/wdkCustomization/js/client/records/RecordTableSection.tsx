@@ -10,6 +10,7 @@ import { Props as RecordTableSectionProps } from '@veupathdb/wdk-client/lib/View
 import { DefaultSectionTitle } from '@veupathdb/wdk-client/lib/Views/Records/SectionTitle';
 
 import { WrappedComponentProps } from 'ortho-client/records/Types';
+import { SEQUENCES_TABLE_NAME } from 'ortho-client/records/utils';
 
 type Props = WrappedComponentProps<RecordTableSectionProps>;
 
@@ -58,7 +59,8 @@ export function RecordTableDescription(
     return (
       <>
         {links}
-        <DefaultComponent {...props} />
+        {/* the Sequences table has its own tool buttons; the model's description of them is redundant */}
+        {table.name !== SEQUENCES_TABLE_NAME && <DefaultComponent {...props} />}
       </>
     );
   };

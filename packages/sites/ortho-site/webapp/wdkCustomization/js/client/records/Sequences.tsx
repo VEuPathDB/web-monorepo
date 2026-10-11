@@ -27,7 +27,7 @@ import {
   makeBuiltTree,
   findBuiltTree,
 } from '../util/builtTrees';
-import { ClustalAlignmentForm } from '@veupathdb/web-common/lib/components';
+import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import { rootUrl } from '@veupathdb/web-common/lib/config';
 import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
@@ -53,7 +53,6 @@ import {
 import { countBy, groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 import { extractPfamDomain } from 'ortho-client/records/utils';
-import { RowCounter } from '@veupathdb/coreui/lib/components/Mesa';
 import PopoverButton, {
   PopoverButtonHandle,
 } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
@@ -81,6 +80,7 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 1000;
+const MIN_SEQUENCES_FOR_MSA = 2;
 const MAX_PROTEINS_FOR_MSA = 1000;
 
 const PFAM_ARCH_COLUMN_KEY = 'pfamArchitecture';
@@ -146,6 +146,7 @@ function GroupSequencesTable(
     );
 
   const [tooManyDialogOpen, setTooManyDialogOpen] = useState(false);
+  const [msaDialogMessage, setMsaDialogMessage] = useState<string>();
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
 
@@ -547,9 +548,6 @@ function GroupSequencesTable(
   }
 
   const rowHeight = 45;
-  const clustalDisabled =
-    highlightedNodes == null || highlightedNodes.length < 2;
-
   const rowCount = (filteredRows ?? sortedRows).length;
 
   const pfamFilter = pfamRows.length > 0 && (
@@ -839,11 +837,88 @@ function GroupSequencesTable(
           </span>
         )}
       </div>
-      <div style={{ marginTop: '.4em', opacity: 0.8 }}>
-        May take seconds to minutes, depending on the number and length of
-        sequences. Use the table filters to remove sequences and speed
-        processing.
+    </div>
+  );
+
+  const msaForm = (
+    <div style={{ padding: '10px', paddingLeft: '4em' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
+        <button
+          type="button"
+          onClick={() => {
+            if (
+              highlightedNodes.length < MIN_SEQUENCES_FOR_MSA ||
+              highlightedNodes.length > MAX_PROTEINS_FOR_MSA
+            ) {
+              setMsaDialogMessage(
+                `Please select between ${MIN_SEQUENCES_FOR_MSA} and ${MAX_PROTEINS_FOR_MSA} sequences in the table.`
+              );
+              return;
+            }
+            openTabAndSubmitMsaJob({
+              api: SequenceRetrievalApi.getClient(
+                SEQUENCE_RETRIEVAL_BASE_URL,
+                wdkService
+              ),
+              resolveFeatures: async () =>
+                resolveProteinFeatures(highlightedNodes, mesaRows),
+              sequenceType: 'orthomcl',
+              msaFormat: clustalOutFormat,
+              resultRouteBase: `${rootUrl}/workspace/msa`,
+              deflineFormat: 'QUERYONLY',
+              paramsSummary: `${
+                highlightedNodes.length
+              } Proteins, ${clustalOutFormat.toUpperCase()} output format`,
+            }).catch(() =>
+              setMsaDialogMessage(
+                'Something went wrong submitting your request. Please try again.'
+              )
+            );
+          }}
+        >
+          Run Clustal Omega for selected proteins
+        </button>
+        <label>
+          Format:{' '}
+          <select
+            value={clustalOutFormat}
+            onChange={(e) => setClustalOutFormat(e.target.value as MsaFormat)}
+          >
+            <option value="clustal_guidetree">Mismatches highlighted</option>
+            <option value="fasta">FASTA</option>
+            <option value="phylip">PHYLIP</option>
+            <option value="stockholm">STOCKHOLM</option>
+            <option value="vienna">VIENNA</option>
+          </select>
+        </label>
       </div>
+      {msaDialogMessage != null && (
+        <CommonModal
+          title="⚠️ Multiple sequence alignment"
+          onClose={() => setMsaDialogMessage(undefined)}
+        >
+          <div
+            style={{
+              minWidth: '30em',
+              padding: '1em',
+              textAlign: 'center',
+              fontSize: '1.3em',
+            }}
+          >
+            {msaDialogMessage}
+            <div style={{ marginTop: '1.5em' }}>
+              <button
+                type="button"
+                className="btn"
+                autoFocus
+                onClick={() => setMsaDialogMessage(undefined)}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </CommonModal>
+      )}
     </div>
   );
 
@@ -855,7 +930,21 @@ function GroupSequencesTable(
         } as CSSProperties
       }
     >
-      {treePanel}
+      <div style={{ padding: '10px 10px 0', opacity: 0.8 }}>
+        These tools may take seconds to minutes, depending on the number and
+        length of sequences. Use the table filters to remove sequences and speed
+        processing.
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        {treePanel}
+        {msaForm}
+      </div>
       <div
         style={{
           padding: '10px',
@@ -929,64 +1018,6 @@ function GroupSequencesTable(
             hideTree={treeResponse == null}
             maxColumnWidth={maxColumnWidth}
           ></TreeTable>
-          <ClustalAlignmentForm
-            action="/workspace/msa"
-            sequenceCount={highlightedNodes.length}
-            sequenceType="proteins"
-            blockThreshold={MAX_PROTEINS_FOR_MSA}
-            onConfirm={() =>
-              openTabAndSubmitMsaJob({
-                api: SequenceRetrievalApi.getClient(
-                  SEQUENCE_RETRIEVAL_BASE_URL,
-                  wdkService
-                ),
-                resolveFeatures: async () =>
-                  resolveProteinFeatures(highlightedNodes, mesaRows),
-                sequenceType: 'orthomcl',
-                msaFormat: clustalOutFormat,
-                resultRouteBase: `${rootUrl}/workspace/msa`,
-                deflineFormat: 'QUERYONLY',
-                paramsSummary: `${
-                  highlightedNodes.length
-                } Proteins, ${clustalOutFormat.toUpperCase()} output format`,
-              })
-            }
-          >
-            <h4>Multiple Sequence Alignment</h4>
-            <div id="userOptions">
-              <p>
-                {highlightedNodes.length} out of {filteredRows.length} sequences
-                selected
-              </p>
-              <p>
-                Output format: &nbsp;
-                <select
-                  value={clustalOutFormat}
-                  onChange={(e) =>
-                    setClustalOutFormat(e.target.value as MsaFormat)
-                  }
-                >
-                  <option value="clustal_guidetree">
-                    Mismatches highlighted
-                  </option>
-                  <option value="fasta">FASTA</option>
-                  <option value="phylip">PHYLIP</option>
-                  <option value="stockholm">STOCKHOLM</option>
-                  <option value="vienna">VIENNA</option>
-                </select>
-              </p>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-              >
-                <button type="submit" disabled={clustalDisabled}>
-                  Run Clustal Omega for selected proteins
-                </button>
-                {clustalDisabled && (
-                  <span>(You must select at least two proteins.)</span>
-                )}
-              </div>
-            </div>
-          </ClustalAlignmentForm>
         </Dimmable>
       )}
       {newickDownloadUrl && (
