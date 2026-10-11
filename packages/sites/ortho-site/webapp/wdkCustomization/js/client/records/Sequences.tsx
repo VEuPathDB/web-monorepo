@@ -39,7 +39,12 @@ import {
   PROTEIN_SEQUENCE_TYPE,
   SEQUENCE_RETRIEVAL_BASE_URL,
 } from '../util/computeJobConfig';
-import { buildGeneTreeRequest, encodeTreeLabel } from '../util/geneTree';
+import {
+  buildGeneTreeRequest,
+  encodeTreeLabel,
+  estimateTreeSeconds,
+  formatDuration,
+} from '../util/geneTree';
 import { useGeneTreeJob } from '../hooks/useGeneTreeJob';
 import { JobStatusLine } from '@veupathdb/compute-platform-job/src/lib/Components/JobStatusLine';
 import {
@@ -75,11 +80,17 @@ import {
 
 type RowType = Record<string, AttributeValue>;
 
+type TreeDialog =
+  | { kind: 'tooMany' }
+  | { kind: 'tooSlow' | 'slow'; estimatedSeconds: number };
+
 const treeWidth = 200;
 const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 1000;
+const WARN_TREE_SECONDS = 30;
+const MAX_TREE_SECONDS = 10 * 60;
 const MIN_SEQUENCES_FOR_MSA = 2;
 const MAX_PROTEINS_FOR_MSA = 1000;
 
@@ -145,7 +156,21 @@ function GroupSequencesTable(
       (raw) => decodeOrElse(string, '', raw)
     );
 
-  const [tooManyDialogOpen, setTooManyDialogOpen] = useState(false);
+  // digits only; '' means no length filter (the box then shows the group's longest)
+  const [maxLengthFilter, setMaxLengthFilter, volatileMaxLengthFilter] =
+    useGroupBackedDeferredState(
+      groupName,
+      'maxLength',
+      '',
+      JSON.stringify,
+      (raw) => decodeOrElse(string, '', raw)
+    );
+
+  // what's typed in the length box; the stored filter is '' while it's blank or at the longest
+  const [lengthDraft, setLengthDraft] = useState<string | null>(null);
+  const [treeDialog, setTreeDialog] = useState<TreeDialog>();
+  // the estimate for the running job; the filters can change while it runs
+  const [jobEstimate, setJobEstimate] = useState<number>();
   const [msaDialogMessage, setMsaDialogMessage] = useState<string>();
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
@@ -203,6 +228,17 @@ function GroupSequencesTable(
   const pfamRows = props.record.tables['PFams'];
 
   const numSequences = mesaRows.length;
+
+  const meanLength = useMemo(
+    () =>
+      numSequences === 0
+        ? 0
+        : Math.round(
+            mesaRows.reduce((sum, row) => sum + rowLength(row), 0) /
+              numSequences
+          ),
+    [mesaRows, numSequences]
+  );
 
   const api = useMemo(
     () =>
@@ -338,13 +374,16 @@ function GroupSequencesTable(
         corePeripheralFilterValue.length > 0 ||
         pfamFilterIds.length > 0 ||
         (!ignoreSpecies && selectedSpecies.length > 0) ||
-        proteinFilterIds.length > 0
+        proteinFilterIds.length > 0 ||
+        maxLengthFilter !== ''
       ) {
         // these two are likely to be selected in large numbers
         const selectedSpeciesSet = new Set(
           ignoreSpecies ? [] : selectedSpecies
         );
         const proteinFilterIdsSet = new Set(proteinFilterIds);
+        const maxLength =
+          maxLengthFilter === '' ? null : Number(maxLengthFilter);
 
         const safeSearchRegexp = createSafeSearchRegExp(searchQuery);
 
@@ -373,12 +412,15 @@ function GroupSequencesTable(
             proteinFilterIdsSet.size === 0 ||
             proteinFilterIdsSet.has(rowFullId);
 
+          const lengthMatch = maxLength == null || rowLength(row) <= maxLength;
+
           return (
             searchMatch &&
             corePeripheralMatch &&
             pfamIdMatch &&
             speciesMatch &&
-            proteinMatch
+            proteinMatch &&
+            lengthMatch
           );
         });
       }
@@ -393,6 +435,7 @@ function GroupSequencesTable(
       pfamFilterIds,
       selectedSpecies,
       proteinFilterIds,
+      maxLengthFilter,
     ]
   );
 
@@ -626,6 +669,58 @@ function GroupSequencesTable(
       />
     ) : null;
 
+  const lengthBoxValue =
+    lengthDraft ??
+    (volatileMaxLengthFilter !== ''
+      ? volatileMaxLengthFilter
+      : String(maxProteinLength));
+  const lengthBoxNumber = Number(lengthBoxValue);
+
+  const lengthFilter = (
+    <PopoverButton
+      key={`lengthFilter-${resetCounter}`}
+      buttonDisplayContent={`Length${
+        volatileMaxLengthFilter !== '' ? ` ≤ ${volatileMaxLengthFilter}` : ''
+      }`}
+      deferClosing={isFiltering}
+    >
+      <div
+        style={{
+          margin: '.4em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '.5em',
+          fontSize: '1.3em',
+        }}
+      >
+        Max length &le;
+        <input
+          type="text"
+          inputMode="numeric"
+          size={7}
+          style={{ fontSize: 'inherit' }}
+          value={lengthBoxValue}
+          onChange={(e) => {
+            const digits = e.target.value.replace(/\D/g, '');
+            setLengthDraft(digits);
+            // blank, or at/above the longest, filters nothing
+            setMaxLengthFilter(
+              digits === '' || Number(digits) >= maxProteinLength ? '' : digits
+            );
+            setTablePageNumber(1);
+          }}
+        />
+        <span style={{ opacity: 0.8 }}>
+          (
+          {meanLength > 0 && lengthBoxNumber > 0
+            ? (lengthBoxNumber / meanLength).toFixed(1)
+            : '–'}{' '}
+          x mean of {meanLength})
+        </span>
+      </div>
+    </PopoverButton>
+  );
+
   const resetProteinFilterButton = (
     <OutlinedButton
       text="Reset protein filter"
@@ -726,7 +821,9 @@ function GroupSequencesTable(
           corePeripheralFilterValue.length +
           selectedSpecies.length +
           proteinFilterIds.length ===
-          0 && searchQuery === ''
+          0 &&
+        searchQuery === '' &&
+        maxLengthFilter === ''
       }
       icon={Undo}
       size={'medium'}
@@ -737,6 +834,8 @@ function GroupSequencesTable(
         setPfamFilterIds([]);
         setCorePeripheralFilterValue([]);
         setSelectedSpecies([]);
+        setMaxLengthFilter('');
+        setLengthDraft(null);
         setResetCounter((prev) => prev + 1);
         setTablePageNumber(1);
       }}
@@ -772,22 +871,44 @@ function GroupSequencesTable(
     corePeripheralFilterValue.length > 0 ||
     pfamFilterIds.length > 0 ||
     selectedSpecies.length > 0 ||
-    proteinFilterIds.length > 0;
+    proteinFilterIds.length > 0 ||
+    maxLengthFilter !== '';
 
   // a tree built for exactly these rows is already showing
   const treeIsShown = treeResponse != null;
 
+  const estimatedSeconds = estimateTreeSeconds(
+    filteredRows.length,
+    Math.max(0, ...filteredRows.map(rowLength))
+  );
+
+  const startTree = () => {
+    setJobEstimate(estimatedSeconds);
+    geneTreeJob.start(buildGeneTreeRequest(filteredRows));
+  };
+
   const treePanel = numSequences >= MIN_SEQUENCES_FOR_TREE && (
     <div style={{ padding: '10px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          gap: '.4em',
+        }}
+      >
         <button
           type="button"
           disabled={treeJobBusy || tooFewForTree || treeIsShown}
           onClick={() => {
             if (tooManyForTree) {
-              setTooManyDialogOpen(true);
+              setTreeDialog({ kind: 'tooMany' });
+            } else if (estimatedSeconds > MAX_TREE_SECONDS) {
+              setTreeDialog({ kind: 'tooSlow', estimatedSeconds });
+            } else if (estimatedSeconds > WARN_TREE_SECONDS) {
+              setTreeDialog({ kind: 'slow', estimatedSeconds });
             } else {
-              geneTreeJob.start(buildGeneTreeRequest(filteredRows));
+              startTree();
             }
           }}
         >
@@ -795,30 +916,75 @@ function GroupSequencesTable(
             ? `Show phylogenetic tree for ${filteredRows.length} selected sequences`
             : 'Show phylogenetic tree'}
         </button>
-        {tooManyDialogOpen && (
+        {treeDialog && (
           <CommonModal
-            title="⚠️ Too many sequences"
-            onClose={() => setTooManyDialogOpen(false)}
+            title={
+              treeDialog.kind === 'tooMany'
+                ? '⚠️ Too many sequences'
+                : '⚠️ Long run time'
+            }
+            onClose={() => setTreeDialog(undefined)}
           >
             <div
               style={{
                 minWidth: '30em',
+                maxWidth: '40em',
                 padding: '1em',
                 textAlign: 'center',
                 fontSize: '1.3em',
               }}
             >
-              More than {MAX_SEQUENCES_FOR_TREE} sequences in the table. Please
-              reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying the
-              available filters
-              <div style={{ marginTop: '1.5em' }}>
+              {treeDialog.kind === 'tooMany' && (
+                <>
+                  More than {MAX_SEQUENCES_FOR_TREE} sequences in the table.
+                  Please reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying
+                  the available filters
+                </>
+              )}
+              {treeDialog.kind === 'tooSlow' && (
+                <>
+                  Run time estimate{' '}
+                  {formatDuration(treeDialog.estimatedSeconds)} is &gt;{' '}
+                  {MAX_TREE_SECONDS / 60} minutes. Remove sequences to reduce it
+                  to &lt;= {MAX_TREE_SECONDS / 60} min.
+                </>
+              )}
+              {treeDialog.kind === 'slow' && (
+                <>
+                  Run time estimate{' '}
+                  {formatDuration(treeDialog.estimatedSeconds)}. To reduce it,
+                  remove sequences with the table filters. The Length filter is
+                  the most potent, since a few very long sequences slow the
+                  whole job.
+                </>
+              )}
+              <div
+                style={{
+                  marginTop: '1.5em',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '1em',
+                }}
+              >
+                {treeDialog.kind === 'slow' && (
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      setTreeDialog(undefined);
+                      startTree();
+                    }}
+                  >
+                    Run anyway
+                  </button>
+                )}
                 <button
                   type="button"
                   className="btn"
                   autoFocus
-                  onClick={() => setTooManyDialogOpen(false)}
+                  onClick={() => setTreeDialog(undefined)}
                 >
-                  OK
+                  {treeDialog.kind === 'slow' ? 'Cancel' : 'OK'}
                 </button>
               </div>
             </div>
@@ -829,6 +995,7 @@ function GroupSequencesTable(
           <JobStatusLine
             status={geneTreeJob.status ?? 'queued'}
             job={geneTreeJob.job}
+            estimatedSeconds={jobEstimate}
           />
         )}
         {geneTreeJob.phase === 'error' && (
@@ -956,35 +1123,25 @@ function GroupSequencesTable(
           justifyContent: 'space-between',
         }}
       >
-        <RecentSearchesDropdown
-          searchTerm={volatileSearchQuery}
-          onSelect={(term) => {
-            handleSearchQueryChange(term);
-            setResetCounter((n) => n + 1); // remounts the search box so it shows the term
-          }}
-        >
-          <RecordFilter
-            key={`text-search-${resetCounter}`}
-            // volatile: the box only reads this on mount, and the deferred value lags a render behind
+        <div style={{ marginRight: 'auto' }}>
+          <RecentSearchesDropdown
             searchTerm={volatileSearchQuery}
-            onSearchTermChange={handleSearchQueryChange}
-            recordDisplayName="Proteins"
-            filterAttributes={filterAttributes}
-            selectedColumnFilters={volatileSelectedColumnFilters}
-            onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
-          />
-        </RecentSearchesDropdown>
-        <div className="MesaComponent" style={{ marginRight: 'auto' }}>
-          <div className="TableToolbar-Info">
-            <RowCounter
-              rowNoun="sequence"
-              rows={sortedRows}
-              uiState={{
-                filteredRowCount: numSequences - rowCount, // num rows filtered **away**
-              }}
-              eventHandlers={{}}
+            onSelect={(term) => {
+              handleSearchQueryChange(term);
+              setResetCounter((n) => n + 1); // remounts the search box so it shows the term
+            }}
+          >
+            <RecordFilter
+              key={`text-search-${resetCounter}`}
+              // volatile: the box only reads this on mount, and the deferred value lags a render behind
+              searchTerm={volatileSearchQuery}
+              onSearchTermChange={handleSearchQueryChange}
+              recordDisplayName="Proteins"
+              filterAttributes={filterAttributes}
+              selectedColumnFilters={volatileSelectedColumnFilters}
+              onColumnFilterChange={(keys) => setSelectedColumnFilters(keys)}
             />
-          </div>
+          </RecentSearchesDropdown>
         </div>
         <div
           style={{
@@ -999,8 +1156,21 @@ function GroupSequencesTable(
           {proteinFilter}
           {pfamFilter}
           {corePeripheralFilter}
+          {lengthFilter}
           {taxonFilter}
           {resetButton}
+        </div>
+      </div>
+      <div className="MesaComponent" style={{ padding: '0 10px' }}>
+        <div className="TableToolbar-Info">
+          <RowCounter
+            rowNoun="sequence"
+            rows={sortedRows}
+            uiState={{
+              filteredRowCount: numSequences - rowCount, // num rows filtered **away**
+            }}
+            eventHandlers={{}}
+          />
         </div>
       </div>
       {filteredRows && filteredRows?.length > Infinity ? (
@@ -1029,6 +1199,10 @@ function GroupSequencesTable(
       )}
     </div>
   );
+}
+
+function rowLength(row: RowType): number {
+  return Number(row['length']) || 0;
 }
 
 function rowMatch(row: RowType, query: RegExp, keys?: string[]): boolean {

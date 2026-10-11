@@ -60,7 +60,7 @@ describe('ComputeJobPage', () => {
     render(<ComputeJobPage jobId="abc" api={api} />);
 
     expect(await screen.findByText(/position 3 in queue/i)).toBeInTheDocument();
-    expect(screen.getByText(/queued at/i)).toBeInTheDocument();
+    expect(screen.getByText(/queued for/i)).toBeInTheDocument();
   });
 
   it('shows just "Queued." when queuePosition is not provided', async () => {
@@ -78,7 +78,7 @@ describe('ComputeJobPage', () => {
     expect(screen.queryByText(/position/i)).not.toBeInTheDocument();
   });
 
-  it('shows in-progress status and started time', async () => {
+  it('shows in-progress status and elapsed time', async () => {
     const api = makeFakeApi({
       fetchJob: jest.fn().mockResolvedValue({
         jobID: 'abc',
@@ -90,7 +90,7 @@ describe('ComputeJobPage', () => {
     render(<ComputeJobPage jobId="abc" api={api} />);
 
     expect(await screen.findByText(/in progress/i)).toBeInTheDocument();
-    expect(screen.getByText(/started running at/i)).toBeInTheDocument();
+    expect(screen.getByText(/running for/i)).toBeInTheDocument();
   });
 
   it('shows a duration warning while queued when sequenceCount exceeds the threshold', async () => {

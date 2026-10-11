@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 // Deep import, not the @veupathdb/wdk-client/lib/Components barrel — see
 // ComputeJobPage.
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
@@ -9,18 +11,39 @@ import './ComputeJobPage.scss';
 interface JobStatusLineProps {
   status: JobStatus;
   job: Partial<JobResponse>;
+  /** The caller's prediction of the run time, shown beside the status. */
+  estimatedSeconds?: number;
 }
 
-function formatLocalTime(isoTimestamp: string): string {
-  return new Date(isoTimestamp).toLocaleTimeString();
+function formatElapsed(ms: number): string {
+  const total = Math.floor(Math.max(0, ms) / 1000);
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
+/**
+ * Time since `sinceIso`, ticking every second on its own timer so it keeps
+ * moving between polls. Compares the browser's clock to the server's
+ * timestamp, which is close enough; a clock running behind is clamped to 0.
+ */
+function Elapsed({ sinceIso }: { sinceIso: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <>{formatElapsed(now - new Date(sinceIso).getTime())}</>;
 }
 
 /**
  * One line (spinner + text) saying where a not-yet-finished job is: its
- * queue position, or when it started running. Renders nothing for a
+ * queue position, or how long it has been queued or running. Renders nothing for a
  * finished job; the caller decides what a result or a failure looks like.
  */
-export function JobStatusLine({ status, job }: JobStatusLineProps) {
+export function JobStatusLine({
+  status,
+  job,
+  estimatedSeconds,
+}: JobStatusLineProps) {
   if (status !== 'queued' && status !== 'in-progress') return null;
 
   return (
@@ -35,11 +58,20 @@ export function JobStatusLine({ status, job }: JobStatusLineProps) {
           ? `Position ${job.queuePosition} in queue.`
           : 'Queued.')}
       {status === 'queued' && job.created != null && (
-        <i> (Queued at {formatLocalTime(job.created)})</i>
+        <i>
+          {' '}
+          (Queued for <Elapsed sinceIso={job.created} />)
+        </i>
       )}
       {status === 'in-progress' && 'In progress.'}
       {status === 'in-progress' && job.started != null && (
-        <i>(Started running at {formatLocalTime(job.started)})</i>
+        <i>
+          {' '}
+          (Running for <Elapsed sinceIso={job.started} />)
+        </i>
+      )}
+      {estimatedSeconds != null && (
+        <i> Estimated: {formatElapsed(estimatedSeconds * 1000)}</i>
       )}
     </p>
   );

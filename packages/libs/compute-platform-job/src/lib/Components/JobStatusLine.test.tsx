@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { JobStatusLine } from './JobStatusLine';
 
 describe('JobStatusLine', () => {
@@ -12,15 +12,42 @@ describe('JobStatusLine', () => {
     expect(screen.getByText('Queued.')).toBeInTheDocument();
   });
 
-  it('shows in-progress with the start time', () => {
-    render(
-      <JobStatusLine
-        status="in-progress"
-        job={{ started: '2026-09-27T12:00:00.000Z' }}
-      />
-    );
-    expect(screen.getByText(/in progress/i)).toBeInTheDocument();
-    expect(screen.getByText(/started running at/i)).toBeInTheDocument();
+  describe('in progress', () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    it('shows the time elapsed since the job started, ticking each second', () => {
+      jest.setSystemTime(new Date('2026-09-27T12:01:20.000Z'));
+      render(
+        <JobStatusLine
+          status="in-progress"
+          job={{ started: '2026-09-27T12:00:00.000Z' }}
+        />
+      );
+      expect(screen.getByText(/in progress/i)).toBeInTheDocument();
+      expect(screen.getByText(/running for 1:20/i)).toBeInTheDocument();
+
+      act(() => {
+        jest.advanceTimersByTime(5000);
+      });
+      expect(screen.getByText(/running for 1:25/i)).toBeInTheDocument();
+    });
+
+    it('shows 0:00 rather than a negative time when the browser clock is behind', () => {
+      jest.setSystemTime(new Date('2026-09-27T11:59:58.000Z'));
+      render(
+        <JobStatusLine
+          status="in-progress"
+          job={{ started: '2026-09-27T12:00:00.000Z' }}
+        />
+      );
+      expect(screen.getByText(/running for 0:00/i)).toBeInTheDocument();
+    });
+  });
+
+  it("shows the caller's estimate when given one", () => {
+    render(<JobStatusLine status="queued" job={{}} estimatedSeconds={261} />);
+    expect(screen.getByText(/estimated: 4:21/i)).toBeInTheDocument();
   });
 
   it.each(['complete', 'failed', 'expired'] as const)(
