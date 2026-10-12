@@ -75,7 +75,7 @@ export function ExperimentalOrganisms(
             {' '}pathogens, vectors, symbionts, or other organisms represented directly or
             indirectly by the data.
             {isGenomics &&
-              ' The organism species and strain may differ from the Reference Genome species and strain used for mapping or analysis.'}
+              ' The organism species and strain may differ from the Reference Organism species and strain used for mapping or analysis.'}
           </p>
 
           <OrganismDetailsContent
