@@ -582,6 +582,7 @@ function GroupSequencesTable(
     proteinFilterIds !== volatileProteinFilterIds ||
     corePeripheralFilterValue !== volatileCorePeripheralFilterValue ||
     selectedSpecies !== volatileSelectedSpecies ||
+    maxLengthFilter !== volatileMaxLengthFilter ||
     searchQuery !== volatileSearchQuery ||
     (searchQuery !== '' &&
       selectedColumnFilters !== volatileSelectedColumnFilters);
