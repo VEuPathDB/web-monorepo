@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
-import { CommonModal, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useGroupBackedDeferredState } from '../hooks/useGroupBackedDeferredState';
 import { groupCacheKey, discardStaleGroupCache } from '../util/groupCache';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
@@ -39,12 +39,17 @@ import {
   PROTEIN_SEQUENCE_TYPE,
   SEQUENCE_RETRIEVAL_BASE_URL,
 } from '../util/computeJobConfig';
+import { buildGeneTreeRequest, encodeTreeLabel } from '../util/geneTree';
 import {
-  buildGeneTreeRequest,
-  encodeTreeLabel,
+  MAX_JOB_SECONDS,
+  WARN_JOB_SECONDS,
+  estimateMsaSeconds,
   estimateTreeSeconds,
-  formatDuration,
-} from '../util/geneTree';
+} from '../util/runTimeEstimate';
+import {
+  JobWarningDialog,
+  RunTimeMessage,
+} from '../components/JobWarningDialog';
 import { useGeneTreeJob } from '../hooks/useGeneTreeJob';
 import { JobStatusLine } from '@veupathdb/compute-platform-job/src/lib/Components/JobStatusLine';
 import {
@@ -80,8 +85,12 @@ import {
 
 type RowType = Record<string, AttributeValue>;
 
-type TreeDialog =
+// stable identity, so memos keyed on a table that hasn't loaded yet don't rerun every render
+const NO_ROWS: RowType[] = [];
+
+type JobDialog =
   | { kind: 'tooMany' }
+  | { kind: 'message'; text: string }
   | { kind: 'tooSlow' | 'slow'; estimatedSeconds: number };
 
 const treeWidth = 200;
@@ -89,8 +98,6 @@ const maxColumnWidth = 200;
 const maxArchitectureLength = maxColumnWidth - 10 - 10 - 1; // 10px padding each side plus a 1px border
 const MIN_SEQUENCES_FOR_TREE = 3;
 const MAX_SEQUENCES_FOR_TREE = 1000;
-const WARN_TREE_SECONDS = 30;
-const MAX_TREE_SECONDS = 10 * 60;
 const MIN_SEQUENCES_FOR_MSA = 2;
 const MAX_PROTEINS_FOR_MSA = 1000;
 
@@ -168,10 +175,10 @@ function GroupSequencesTable(
 
   // what's typed in the length box; the stored filter is '' while it's blank or at the longest
   const [lengthDraft, setLengthDraft] = useState<string | null>(null);
-  const [treeDialog, setTreeDialog] = useState<TreeDialog>();
+  const [treeDialog, setTreeDialog] = useState<JobDialog>();
   // the estimate for the running job; the filters can change while it runs
   const [jobEstimate, setJobEstimate] = useState<number>();
-  const [msaDialogMessage, setMsaDialogMessage] = useState<string>();
+  const [msaDialog, setMsaDialog] = useState<JobDialog>();
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
 
@@ -225,7 +232,7 @@ function GroupSequencesTable(
   const [highlightedNodes, setHighlightedNodes] = useState<string[]>([]);
 
   const mesaRows = props.value;
-  const pfamRows = props.record.tables['PFams'];
+  const pfamRows = props.record.tables['PFams'] ?? NO_ROWS;
 
   const numSequences = mesaRows.length;
 
@@ -261,7 +268,7 @@ function GroupSequencesTable(
   }, [geneTreeJob.newick, builtTrees, setBuiltTrees]);
 
   // deal with Pfam domain architectures
-  const proteinPfams = props.record.tables['ProteinPFams'];
+  const proteinPfams = props.record.tables['ProteinPFams'] ?? NO_ROWS;
   const rowsByAccession = useMemo(
     () => groupBy(proteinPfams, 'full_id'),
     [proteinPfams]
@@ -718,6 +725,19 @@ function GroupSequencesTable(
             : '–'}{' '}
           x mean of {meanLength})
         </span>
+        <button
+          type="button"
+          className="wdk-Link"
+          style={{ fontSize: 'inherit' }}
+          disabled={lengthBoxNumber === maxProteinLength}
+          onClick={() => {
+            setLengthDraft(null);
+            setMaxLengthFilter('');
+            setTablePageNumber(1);
+          }}
+        >
+          Reset to {maxProteinLength}
+        </button>
       </div>
     </PopoverButton>
   );
@@ -904,9 +924,9 @@ function GroupSequencesTable(
           onClick={() => {
             if (tooManyForTree) {
               setTreeDialog({ kind: 'tooMany' });
-            } else if (estimatedSeconds > MAX_TREE_SECONDS) {
+            } else if (estimatedSeconds > MAX_JOB_SECONDS) {
               setTreeDialog({ kind: 'tooSlow', estimatedSeconds });
-            } else if (estimatedSeconds > WARN_TREE_SECONDS) {
+            } else if (estimatedSeconds > WARN_JOB_SECONDS) {
               setTreeDialog({ kind: 'slow', estimatedSeconds });
             } else {
               startTree();
@@ -918,78 +938,29 @@ function GroupSequencesTable(
             : 'Show phylogenetic tree'}
         </button>
         {treeDialog && (
-          <CommonModal
+          <JobWarningDialog
             title={
               treeDialog.kind === 'tooMany'
                 ? '⚠️ Too many sequences'
                 : '⚠️ Long run time'
             }
             onClose={() => setTreeDialog(undefined)}
+            onRunAnyway={treeDialog.kind === 'slow' ? startTree : undefined}
           >
-            <div
-              style={{
-                minWidth: '30em',
-                maxWidth: '40em',
-                padding: '1em',
-                textAlign: 'center',
-                fontSize: '1.3em',
-              }}
-            >
-              {treeDialog.kind === 'tooMany' && (
-                <>
-                  More than {MAX_SEQUENCES_FOR_TREE} sequences in the table.
-                  Please reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying
-                  the available filters
-                </>
-              )}
-              {treeDialog.kind === 'tooSlow' && (
-                <>
-                  Run time estimate{' '}
-                  {formatDuration(treeDialog.estimatedSeconds)} is &gt;{' '}
-                  {MAX_TREE_SECONDS / 60} minutes. Remove sequences to reduce it
-                  to &lt;= {MAX_TREE_SECONDS / 60} min.
-                </>
-              )}
-              {treeDialog.kind === 'slow' && (
-                <>
-                  Run time estimate{' '}
-                  {formatDuration(treeDialog.estimatedSeconds)}. To reduce it,
-                  remove sequences with the table filters. The Length filter is
-                  the most potent, since a few very long sequences slow the
-                  whole job.
-                </>
-              )}
-              <div
-                style={{
-                  marginTop: '1.5em',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '1em',
-                }}
-              >
-                {treeDialog.kind === 'slow' && (
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => {
-                      setTreeDialog(undefined);
-                      startTree();
-                    }}
-                  >
-                    Run anyway
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className="btn"
-                  autoFocus
-                  onClick={() => setTreeDialog(undefined)}
-                >
-                  {treeDialog.kind === 'slow' ? 'Cancel' : 'OK'}
-                </button>
-              </div>
-            </div>
-          </CommonModal>
+            {treeDialog.kind === 'tooMany' ? (
+              <>
+                More than {MAX_SEQUENCES_FOR_TREE} sequences in the table.
+                Please reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying
+                the available filters
+              </>
+            ) : (
+              treeDialog.kind !== 'message' && (
+                <RunTimeMessage
+                  estimatedSeconds={treeDialog.estimatedSeconds}
+                />
+              )
+            )}
+          </JobWarningDialog>
         )}
         {geneTreeJob.phase === 'submitting' && <span>Submitting…</span>}
         {geneTreeJob.phase === 'running' && (
@@ -1008,6 +979,29 @@ function GroupSequencesTable(
     </div>
   );
 
+  const runMsa = (estimatedSeconds: number) =>
+    openTabAndSubmitMsaJob({
+      api: SequenceRetrievalApi.getClient(
+        SEQUENCE_RETRIEVAL_BASE_URL,
+        wdkService
+      ),
+      resolveFeatures: async () =>
+        resolveProteinFeatures(highlightedNodes, mesaRows),
+      sequenceType: 'orthomcl',
+      msaFormat: clustalOutFormat,
+      resultRouteBase: `${rootUrl}/workspace/msa`,
+      deflineFormat: 'QUERYONLY',
+      paramsSummary: `${
+        highlightedNodes.length
+      } Proteins, ${clustalOutFormat.toUpperCase()} output format`,
+      estimatedSeconds,
+    }).catch(() =>
+      setMsaDialog({
+        kind: 'message',
+        text: 'Something went wrong submitting your request. Please try again.',
+      })
+    );
+
   const msaForm = (
     <div style={{ padding: '10px', paddingLeft: '4em' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
@@ -1018,30 +1012,29 @@ function GroupSequencesTable(
               highlightedNodes.length < MIN_SEQUENCES_FOR_MSA ||
               highlightedNodes.length > MAX_PROTEINS_FOR_MSA
             ) {
-              setMsaDialogMessage(
-                `Please select between ${MIN_SEQUENCES_FOR_MSA} and ${MAX_PROTEINS_FOR_MSA} sequences in the table.`
-              );
+              setMsaDialog({
+                kind: 'message',
+                text: `Please select between ${MIN_SEQUENCES_FOR_MSA} and ${MAX_PROTEINS_FOR_MSA} sequences in the table.`,
+              });
               return;
             }
-            openTabAndSubmitMsaJob({
-              api: SequenceRetrievalApi.getClient(
-                SEQUENCE_RETRIEVAL_BASE_URL,
-                wdkService
-              ),
-              resolveFeatures: async () =>
-                resolveProteinFeatures(highlightedNodes, mesaRows),
-              sequenceType: 'orthomcl',
-              msaFormat: clustalOutFormat,
-              resultRouteBase: `${rootUrl}/workspace/msa`,
-              deflineFormat: 'QUERYONLY',
-              paramsSummary: `${
-                highlightedNodes.length
-              } Proteins, ${clustalOutFormat.toUpperCase()} output format`,
-            }).catch(() =>
-              setMsaDialogMessage(
-                'Something went wrong submitting your request. Please try again.'
+            const selected = new Set(highlightedNodes);
+            const msaSeconds = estimateMsaSeconds(
+              highlightedNodes.length,
+              Math.max(
+                0,
+                ...mesaRows
+                  .filter((row) => selected.has(row.full_id as string))
+                  .map(rowLength)
               )
             );
+            if (msaSeconds > MAX_JOB_SECONDS) {
+              setMsaDialog({ kind: 'tooSlow', estimatedSeconds: msaSeconds });
+            } else if (msaSeconds > WARN_JOB_SECONDS) {
+              setMsaDialog({ kind: 'slow', estimatedSeconds: msaSeconds });
+            } else {
+              runMsa(msaSeconds);
+            }
           }}
         >
           Run Clustal Omega for selected proteins
@@ -1060,32 +1053,25 @@ function GroupSequencesTable(
           </select>
         </label>
       </div>
-      {msaDialogMessage != null && (
-        <CommonModal
-          title="⚠️ Multiple sequence alignment"
-          onClose={() => setMsaDialogMessage(undefined)}
+      {msaDialog && (
+        <JobWarningDialog
+          title={
+            msaDialog.kind === 'message'
+              ? '⚠️ Multiple sequence alignment'
+              : '⚠️ Long run time'
+          }
+          onClose={() => setMsaDialog(undefined)}
+          onRunAnyway={
+            msaDialog.kind === 'slow'
+              ? () => runMsa(msaDialog.estimatedSeconds)
+              : undefined
+          }
         >
-          <div
-            style={{
-              minWidth: '30em',
-              padding: '1em',
-              textAlign: 'center',
-              fontSize: '1.3em',
-            }}
-          >
-            {msaDialogMessage}
-            <div style={{ marginTop: '1.5em' }}>
-              <button
-                type="button"
-                className="btn"
-                autoFocus
-                onClick={() => setMsaDialogMessage(undefined)}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </CommonModal>
+          {msaDialog.kind === 'message' && msaDialog.text}
+          {(msaDialog.kind === 'slow' || msaDialog.kind === 'tooSlow') && (
+            <RunTimeMessage estimatedSeconds={msaDialog.estimatedSeconds} />
+          )}
+        </JobWarningDialog>
       )}
     </div>
   );
@@ -1098,11 +1084,6 @@ function GroupSequencesTable(
         } as CSSProperties
       }
     >
-      <div style={{ padding: '10px 10px 0', opacity: 0.8 }}>
-        These tools may take seconds to minutes, depending on the number and
-        length of sequences. Use the table filters to remove sequences and speed
-        processing.
-      </div>
       <div
         style={{
           display: 'flex',

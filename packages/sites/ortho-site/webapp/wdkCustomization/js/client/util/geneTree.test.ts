@@ -1,9 +1,4 @@
-import {
-  buildGeneTreeRequest,
-  encodeTreeLabel,
-  estimateTreeSeconds,
-  formatDuration,
-} from './geneTree';
+import { buildGeneTreeRequest, encodeTreeLabel } from './geneTree';
 
 type RowType = Record<string, string>;
 
@@ -49,35 +44,5 @@ describe('buildGeneTreeRequest', () => {
       postProcess: 'GENETREE',
       geneTreeOptions: { format: 'newick' },
     });
-  });
-});
-
-describe('estimateTreeSeconds', () => {
-  it('is zero for no sequences', () => {
-    expect(estimateTreeSeconds(0, 500)).toBe(0);
-  });
-
-  it('adds the FastTree and MAFFT terms', () => {
-    const fasttree = Math.exp(-8.229) * 100 ** 1.165 * 400 ** 0.849;
-    const mafft = Math.exp(-12.453) * 100 ** 0.618 * 400 ** 1.47;
-    expect(estimateTreeSeconds(100, 400)).toBeCloseTo(fasttree + mafft, 6);
-  });
-
-  it('grows with sequence count and with maximum length', () => {
-    expect(estimateTreeSeconds(200, 400)).toBeGreaterThan(
-      estimateTreeSeconds(100, 400)
-    );
-    expect(estimateTreeSeconds(100, 800)).toBeGreaterThan(
-      estimateTreeSeconds(100, 400)
-    );
-  });
-});
-
-describe('formatDuration', () => {
-  it('formats as m:ss', () => {
-    expect(formatDuration(0)).toBe('0:00');
-    expect(formatDuration(9.4)).toBe('0:09');
-    expect(formatDuration(261)).toBe('4:21');
-    expect(formatDuration(3725)).toBe('62:05');
   });
 });

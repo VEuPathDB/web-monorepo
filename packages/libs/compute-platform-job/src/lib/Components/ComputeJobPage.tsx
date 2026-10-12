@@ -23,6 +23,8 @@ interface ComputeJobPageProps {
   format?: string;
   /** Number of sequences submitted to the job, if known. */
   sequenceCount?: number;
+  /** The submitter's run-time prediction, shown beside the job status. */
+  estimatedSeconds?: number;
 }
 
 // Below this many sequences, job time is short enough that the warning
@@ -74,6 +76,7 @@ export function ComputeJobPage({
   paramsSummary,
   format,
   sequenceCount,
+  estimatedSeconds,
 }: ComputeJobPageProps) {
   const { status = 'queued', job } = useJobStatus({ api, jobId });
 
@@ -100,7 +103,11 @@ export function ComputeJobPage({
         {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
         {status === 'queued' || status === 'in-progress' ? (
           <>
-            <JobStatusLine status={status} job={job} />
+            <JobStatusLine
+              status={status}
+              job={job}
+              estimatedSeconds={estimatedSeconds}
+            />
             {sequenceCount != null &&
               sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
                 <>
