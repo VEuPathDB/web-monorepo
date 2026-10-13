@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { AddRowButton, FieldHelpText, InputBlock, InputPair } from '../../index';
+import { AddRowButton, InputBlock, InputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
 import {
   arrayChangeHandler,
@@ -60,23 +60,33 @@ export function ExperimentalOrganisms(
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
             required: isPublic,
-            helpText: 'Whether this dataset includes biological data'
-              + ' describing one or more organisms.',
+            helpText: 'Whether this dataset includes biological data describing one or more organisms.',
             hideToggle: isGenomics,
           }}
           className="field-grid"
         >
           <p className="subsection-description span-2">
-            <h5>Organism(s)</h5><br/>
-            Indicate the species and strain of each organism represented by
-            biological data in this dataset. Organisms may include
-            {!isGenomics &&
-              ' the study population species in field studies or clinical trials and, where applicable,'}
+            Indicate the species and strain of each organism represented by biological data in this dataset. Organisms
+            may include
+            {!isGenomics && ' the study population species in field studies or clinical trials and, where applicable,'}
             {' '}pathogens, vectors, symbionts, or other organisms represented directly or
             indirectly by the data.
-            {isGenomics &&
-              ' The organism species and strain may differ from the Reference Organism species and strain used for mapping or analysis.'}
+            {isGenomics && ' The organism species and strain may differ from the Reference Organism species and strain'
+              + ' used for mapping or analysis.'}
           </p>
+          <ul className="subsection-description span-2">
+            <li>
+              <span className="underline">Species</span>: Provide the scientific name of the organism that was detected,
+              measured, characterized, or otherwise represented in this dataset (e.g., Plasmodium falciparum).
+            </li>
+            <li>
+              <span className="underline">Strain</span>: Indicate the strain, isolate, or laboratory line of the
+              organism represented in this dataset, where applicable. For laboratory experiments, enter the specific
+              experimental strain or line, including mutant or genetically modified lines. For field-collected organisms
+              without a defined strain, enter “field isolates” or “field samples,” as appropriate. For organisms for
+              which strain is not applicable, such as human study participants, enter “N/A”.
+            </li>
+          </ul>
 
           <OrganismDetailsContent
             organisms={safeOrgList}
@@ -88,10 +98,13 @@ export function ExperimentalOrganisms(
           <AddRowButton
             title="Adds an additional contact entry."
             className="column-2"
-            onClick={() => props.setDatasetDetails({
-              ...props.datasetMeta,
-              experimentalOrganisms: [ ...safeOrgList, {} ],
-            })}
+            onClick={() => {
+              if (!disabled)
+                props.setDatasetDetails({
+                  ...props.datasetMeta,
+                  experimentalOrganisms: [ ...safeOrgList, {} ]
+                });
+            }}
           >
             + Additional organism
           </AddRowButton>
@@ -141,10 +154,10 @@ function OrganismDetailsRow({
 }: DatasetOrganismRow): ReactElement {
   const hasContent = isNonBlankString(organism.species) ||  isNonBlankString(organism.strain);
   return (
-    <li className="field-grid non-bold-labels">
+    <li className="non-bold-labels organism-row">
       <span className="multi-input-label">Organism {index + 1}</span>
 
-      <div className="column-2 field-grid">
+      <div className="column-2 field-grid organism-row">
         <InputPair<PartialOrganism>
           label="Species"
           type="text"
@@ -156,11 +169,6 @@ function OrganismDetailsRow({
           maxLength={128}
           disabled={disabled}
         />
-        <FieldHelpText>
-          Scientific name of the pathogen or microorganism that was detected,
-          measured, characterized, or otherwise investigated (e.g., Plasmodium
-          falciparum).
-        </FieldHelpText>
 
         <InputPair<PartialOrganism>
           label="Strain"
@@ -173,10 +181,6 @@ function OrganismDetailsRow({
           maxLength={128}
           disabled={disabled}
         />
-        <FieldHelpText>
-          For field-collected organisms without a defined strain, enter "field
-          isolates" or "field samples".
-        </FieldHelpText>
       </div>
     </li>
   );
