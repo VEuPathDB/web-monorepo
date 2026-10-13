@@ -27,7 +27,7 @@ import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DataNoun } from '../Utils/types';
+import { DataNoun } from '../Utils';
 
 import '../Components/UserDatasets.scss';
 import { VdiServiceConfig } from '../Service';

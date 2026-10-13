@@ -36,3 +36,12 @@ export function resemblesPublicationId(
     ? PubMedCitationQuery.resemblesPMID(id)
     : DOICitationQuery.resemblesDOI(id);
 }
+
+export function extractPublicationId(
+  id: string,
+  type: DatasetPublicationType
+): string | null {
+  return type === 'pmid'
+    ? PubMedCitationQuery.extractPMID(id)
+    : DOICitationQuery.extractDOI(id);
+}

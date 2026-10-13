@@ -97,7 +97,7 @@ const isPhenotypeSubsetSearch: ClientPluginRegistryEntry<any>['test'] = ({
   question,
 }) =>
   question?.queryName === 'GenesByEdaSubsetGeneric' ||
-  question?.queryName === 'GenesByUserDatasetEdaSubsetGeneric';
+  question?.queryName === 'GenesByPhenotypeUserDataset';
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {

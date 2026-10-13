@@ -133,8 +133,8 @@ interface UploadFieldProps {
 // region File Input Sub-Component
 
 interface FileUploadState {
-  readonly files: Nullable<FileList>;
-  readonly setFiles: Consumer<Nullable<FileList>>;
+  readonly files: Nullable<readonly File[]>;
+  readonly setFiles: Consumer<Nullable<readonly File[]>>;
   readonly vdiConfig: VdiServiceMetadata;
 }
 
@@ -159,6 +159,7 @@ function fileInput(props: FileUploadProps): ReactElement {
       dataType={props.dataType}
       required={props.required && !props.files}
       setFile={props.setFiles}
+      currentFile={props.files?.[0] ?? null}
       vdiFeatures={props.vdiConfig.features}
     />
   );

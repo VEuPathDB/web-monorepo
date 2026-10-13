@@ -4,13 +4,13 @@ import {
   DatasetCharacteristics,
   DatasetContact,
   DatasetFundingAward,
-  DatasetMetaBase,
+  DatasetMetaBase, DatasetMetadataContentFlags,
   DatasetOrganism,
   DatasetPublication,
   DatasetSource as ApiSource,
   DatasetVisibility,
   LinkedDataset,
-  SampleYearRange,
+  SampleYearRange
 } from './response-decoders';
 
 import { DatasetTypeSelection } from '../../Common/Configuration';
@@ -25,7 +25,7 @@ export type PartialDatasetDetails = Readonly<
       DatasetMetaBase,
       | 'datasetCharacteristics'
       | 'datasetSources'
-      | 'experimentalOrganism'
+      | 'experimentalOrganisms'
       | 'hostOrganism'
       | 'publications'
       | 'contacts'
@@ -38,12 +38,14 @@ export type PartialDatasetDetails = Readonly<
   readonly visibility?: DatasetVisibility;
   readonly datasetCharacteristics?: PartialCharacteristics;
   readonly datasetSources?: readonly PostDatasetSource[];
-  readonly experimentalOrganism?: PartialOrganism;
+  readonly experimentalOrganisms?: readonly PartialOrganism[];
   readonly hostOrganism?: PartialOrganism;
   readonly publications?: readonly PartialDatasetPublication[];
   readonly contacts?: readonly PartialDatasetContact[];
   readonly linkedDatasets?: readonly PartialLinkedDataset[];
   readonly funding?: readonly PartialDatasetFunding[];
+  readonly samplesDescription?: string;
+  readonly metadataContentFlags?: PartialMetadataContentFlags;
 };
 
 export type PartialOrganism = Readonly<Partial<DatasetOrganism>>;
@@ -65,6 +67,8 @@ export type PartialDatasetContact = Readonly<Partial<DatasetContact>>;
 export type PartialLinkedDataset = Readonly<Partial<LinkedDataset>>;
 
 export type PartialDatasetFunding = Readonly<Partial<DatasetFundingAward>>;
+
+export type PartialMetadataContentFlags = Readonly<Partial<DatasetMetadataContentFlags>>;
 
 // endregion CreateDataset
 
@@ -89,7 +93,7 @@ export interface DatasetPatchRequest {
   readonly projectName?: OptionalValuePatch<string>;
   readonly programName?: OptionalValuePatch<string>;
   readonly linkedDatasets?: OptionalValuePatch<Array<vdi.LinkedDataset>>;
-  readonly experimentalOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
+  readonly experimentalOrganisms?: OptionalValuePatch<vdi.DatasetOrganism>;
   readonly hostOrganism?: OptionalValuePatch<vdi.DatasetOrganism>;
   readonly studyCharacteristics?: DatasetCharacteristicsPatch;
   readonly externalIdentifiers?: ExternalIdentifiersPatch;

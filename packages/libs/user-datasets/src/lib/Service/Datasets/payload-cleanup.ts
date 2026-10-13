@@ -1,12 +1,17 @@
 import {
+  ExternalIdentifiers,
   PartialCharacteristics,
   PartialDatasetDetails,
   PartialDatasetPublication as Publication,
 } from '../Model';
-import { isEmpty } from 'lodash';
-import { isNonBlankString } from '../../Utils/value-tests';
-import { runIfDefined } from '../../Utils/ergonomics';
-import { ExternalIdentifiers } from '../Model/response-decoders';
+import {
+  isNonBlankString,
+  isNonEmpty,
+  ifDefined,
+  requireValue,
+  Possible,
+} from '../../Utils';
+import { extractPublicationId } from '../Publications';
 
 // region Full Submission Payload
 
@@ -21,23 +26,24 @@ export function cleanDatasetDetails(
   return {
     ...details,
 
-    installTargets: runIfDefined(details.installTargets, removeEmpties),
-    contacts: runIfDefined(details.contacts, pruneSimpleRecords),
-    datasetSources: runIfDefined(details.datasetSources, pruneSimpleRecords),
-    dependencies: runIfDefined(details.dependencies, removeEmpties),
-    funding: runIfDefined(details.funding, removeEmpties),
-    linkedDatasets: runIfDefined(details.linkedDatasets, removeEmpties),
-    publications: runIfDefined(details.publications, prunePublications),
-    experimentalOrganism: runIfDefined(
-      details.experimentalOrganism,
-      cleanSimpleObject
+    installTargets: ifDefined(details.installTargets, removeEmpties),
+    contacts: ifDefined(details.contacts, pruneSimpleRecords),
+    datasetSources: ifDefined(details.datasetSources, pruneSimpleRecords),
+    dependencies: ifDefined(details.dependencies, removeEmpties),
+    funding: ifDefined(details.funding, removeEmpties),
+    linkedDatasets: ifDefined(details.linkedDatasets, removeEmpties),
+    publications: ifDefined(details.publications, prunePublications),
+
+    experimentalOrganisms: ifDefined(
+      details.experimentalOrganisms,
+      pruneSimpleRecords,
     ),
 
-    externalIdentifiers: runIfDefined(
+    externalIdentifiers: ifDefined(
       details.externalIdentifiers,
       cleanExternalIdentifiers
     ),
-    datasetCharacteristics: runIfDefined(
+    datasetCharacteristics: ifDefined(
       details.datasetCharacteristics,
       cleanDatasetCharacteristics
     ),
@@ -50,17 +56,17 @@ export function cleanDatasetDetails(
 
 function cleanDatasetCharacteristics(
   dChars: PartialCharacteristics
-): PartialCharacteristics | undefined {
-  if (isEmpty(dChars)) return undefined;
-
-  return {
-    ...dChars,
-    associatedFactors: runIfDefined(dChars?.associatedFactors, removeEmpties),
-    countries: runIfDefined(dChars?.countries, removeEmpties),
-    outcomes: runIfDefined(dChars?.outcomes, removeEmpties),
-    sampleTypes: runIfDefined(dChars?.sampleTypes, removeEmpties),
-    studySpecies: runIfDefined(dChars?.studySpecies, removeEmpties),
-  };
+): Possible<PartialCharacteristics> {
+  return isNonEmpty<PartialCharacteristics>(dChars)
+    ? {
+        ...dChars,
+        associatedFactors: ifDefined(dChars?.associatedFactors, removeEmpties),
+        countries: ifDefined(dChars?.countries, removeEmpties),
+        outcomes: ifDefined(dChars?.outcomes, removeEmpties),
+        sampleTypes: ifDefined(dChars?.sampleTypes, removeEmpties),
+        studySpecies: ifDefined(dChars?.studySpecies, removeEmpties),
+      }
+    : undefined;
 }
 
 // endregion Dataset Characteristics
@@ -69,14 +75,14 @@ function cleanDatasetCharacteristics(
 
 function cleanExternalIdentifiers(
   ext: ExternalIdentifiers
-): ExternalIdentifiers | undefined {
-  if (isEmpty(ext)) return undefined;
-
-  return {
-    dois: runIfDefined(ext.dois, removeEmpties),
-    hyperlinks: runIfDefined(ext.hyperlinks, removeEmpties),
-    bioprojectIds: runIfDefined(ext.bioprojectIds, removeEmpties),
-  };
+): Possible<ExternalIdentifiers> {
+  return isNonEmpty(ext)
+    ? {
+        dois: ifDefined(ext.dois, removeEmpties),
+        hyperlinks: ifDefined(ext.hyperlinks, removeEmpties),
+        bioprojectIds: ifDefined(ext.bioprojectIds, removeEmpties),
+      }
+    : undefined;
 }
 
 // endregion External Identifiers
@@ -85,29 +91,34 @@ function cleanExternalIdentifiers(
 
 type PubList = readonly Publication[];
 
-function prunePublications(publications: PubList): PubList | undefined {
-  if (isEmpty(publications)) {
+function prunePublications(publications: PubList): Possible<PubList> {
+  if (!isNonEmpty(publications)) {
     return undefined;
   }
 
   const result: Publication[] = [];
 
   for (const pub of publications) {
-    runIfDefined(cleanPublication(pub), result.push);
+    ifDefined(ifDefined(pub, cleanPublication), (it) => result.push(it));
   }
 
   return result.length > 0 ? result : undefined;
 }
 
-function cleanPublication(pub: Publication): Publication | undefined {
-  return isNonBlankString(pub.identifier) &&
-    isNonBlankString(pub.citation) &&
-    isNonBlankString(pub.type)
+function cleanPublication({
+  identifier,
+  type,
+  isPrimary,
+  citation,
+}: Publication): Possible<Publication> {
+  return isNonBlankString(identifier) &&
+    isNonBlankString(citation) &&
+    isNonBlankString(type)
     ? {
-        type: pub.type,
-        isPrimary: pub.isPrimary,
-        identifier: pub.identifier.trim(),
-        citation: pub.citation.trim(),
+        type,
+        isPrimary,
+        identifier: requireValue(extractPublicationId(identifier, type)),
+        citation: citation.trim(),
       }
     : undefined;
 }
@@ -125,7 +136,7 @@ function cleanPublication(pub: Publication): Publication | undefined {
  */
 function pruneSimpleRecords<T extends object>(
   records: readonly T[]
-): T[] | undefined {
+): Possible<T[]> {
   if (!records) return undefined;
 
   const out: T[] = [];
@@ -137,21 +148,23 @@ function pruneSimpleRecords<T extends object>(
   return out.length > 0 ? out : undefined;
 }
 
-function removeEmpties<T>(values: readonly T[]): T[] | undefined {
-  if (isEmpty(values)) return undefined;
+function removeEmpties<T>(values: readonly T[]): Possible<T[]> {
+  if (!isNonEmpty(values)) {
+    return undefined;
+  }
 
   const out = [];
 
   for (const val of values!) {
-    if (!isEmpty(val)) out.push(val);
+    if (isNonEmpty(val)) out.push(val);
   }
 
-  return isEmpty(out) ? undefined : out;
+  return out.length > 0 ? out : undefined;
 }
 
-type SimpleObject = Record<string, string | number | undefined>;
-function cleanSimpleObject(obj: SimpleObject): SimpleObject | undefined {
-  if (!obj) {
+type SimpleObject = Record<string, Possible<string | number>>;
+function cleanSimpleObject(obj: SimpleObject): Possible<SimpleObject> {
+  if (!isNonEmpty(obj)) {
     return undefined;
   }
 
@@ -171,7 +184,7 @@ function cleanSimpleObject(obj: SimpleObject): SimpleObject | undefined {
     }
   }
 
-  return isEmpty(out) ? undefined : out;
+  return isNonEmpty(out) ? out : undefined;
 }
 
 /**

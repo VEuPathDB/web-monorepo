@@ -333,7 +333,7 @@ function useHeaderMenuItems() {
             key: 'downloads',
             display: 'Download data files',
             type: 'reactRoute',
-            url: '/downloads',
+            url: '/downloads/Current_Release',
           },
           {
             key: 'release-summary',

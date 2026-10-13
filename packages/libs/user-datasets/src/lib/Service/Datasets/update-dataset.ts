@@ -21,7 +21,6 @@ import {
   trackUploadProgress,
 } from '../../Actions/UserDatasetUploadActions';
 import { statusStringToCode } from '../utils/conversions';
-import { ClientSideUploadFormState } from '../../StoreModules';
 import { Mutable } from '../../Utils/types';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
@@ -35,7 +34,6 @@ export interface UpdateSubmission {
   readonly newFiles: DatasetUploads;
   readonly oldFiles: DatasetFileDetails[] | undefined;
   readonly dispatch: Dispatch<any, EpicDependencies>;
-  readonly formState: ClientSideUploadFormState;
 }
 
 export interface UpdateResult {
@@ -53,26 +51,32 @@ export async function submitUpdate(
     ...submission.updated,
   };
 
-  if (!submission.formState.hasExternalSources) {
+  // `samplesDescription` is a client-only field used to build the
+  // `sample-info.txt` upload; it is never a valid VDI metadata field and must
+  // never reach the outbound PATCH payload. Unlike the fields below, this is
+  // deleted unconditionally rather than gated on form meta state.
+  delete mutableSubmission.samplesDescription;
+
+  if (!submission.updated.metadataContentFlags?.hasDatasetSources) {
     mutableSubmission.datasetSources = undefined;
   }
 
-  if (!submission.formState.hasDisclaimer) {
+  if (!submission.updated.metadataContentFlags?.hasDataDisclaimer) {
     mutableSubmission.dataDisclaimer = undefined;
   }
 
-  if (!submission.formState.hasPublications) {
+  if (!submission.updated.metadataContentFlags?.hasPublications) {
     mutableSubmission.publications = undefined;
   }
 
   if (
-    !submission.formState.hasExperimentalOrganism &&
+    !submission.updated.metadataContentFlags?.hasOrganismData &&
     !isGenomicsProjectId(projectId)
   ) {
-    mutableSubmission.experimentalOrganism = undefined;
+    mutableSubmission.experimentalOrganisms = undefined;
   }
 
-  if (!submission.formState.isStudy) {
+  if (!submission.updated.metadataContentFlags?.hasDatasetCharacteristics) {
     mutableSubmission.datasetCharacteristics = undefined;
   }
 
@@ -253,7 +257,7 @@ function convertMetaToPatch(
       case 'funding':
       case 'linkedDatasets':
       case 'publications':
-      case 'experimentalOrganism':
+      case 'experimentalOrganisms':
       case 'hostOrganism':
         patch = isEqual(original[key], updated[key])
           ? null
@@ -263,6 +267,7 @@ function convertMetaToPatch(
       // complex properties with dedicated subtypes
       case 'externalIdentifiers':
       case 'datasetCharacteristics':
+      case 'metadataContentFlags':
         patch = objectPropertyDiff(original[key], updated[key]);
         break;
 

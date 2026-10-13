@@ -1,3 +1,5 @@
+export type { DatasetMetadata } from './metadata-decoder';
+
 export type {
   DatasetCharacteristicsPatch,
   DatasetPatchRequest,
@@ -34,7 +36,9 @@ export type {
   DatasetUploadStatusInfo,
   DatasetUser,
   DatasetVisibility,
+  ExternalIdentifiers,
   PluginDataType,
+  RawDatasetMetadataResponse,
   SampleYearRange,
   ServerErrorBody,
   ShareOfferAction,

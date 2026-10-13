@@ -7,6 +7,7 @@ import { EdaNotebookParameter } from './EdaNotebookParameter';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { WdkState } from '@veupathdb/eda/lib/notebook/Types';
 import { presetNotebooks } from '@veupathdb/eda/lib/notebook/NotebookPresets';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 export const EdaNotebookQuestionForm = (props: Props) => {
   const { searchName } = props;
@@ -20,6 +21,20 @@ export const EdaNotebookQuestionForm = (props: Props) => {
 
   // Start disabled only if the preset has a readiness check
   const [notebookReady, setNotebookReady] = useState(!preset?.isReady);
+
+  // Fetch dataset name for user datasets
+  const datasetId = props.state.paramValues['eda_dataset_id'];
+  const isUserDataset = datasetId?.startsWith('EDAUD_');
+
+  const datasetRecord = useWdkService(
+    async (wdkService) => {
+      if (!isUserDataset || !datasetId) return;
+      return wdkService.getRecord('userdataset', [
+        { name: 'dataset_id', value: datasetId },
+      ]);
+    },
+    [datasetId, isUserDataset]
+  );
 
   // We'll use this function throughout the notebook to update any wdk parameters.
   const updateParamValue = useCallback(
@@ -71,9 +86,27 @@ export const EdaNotebookQuestionForm = (props: Props) => {
     );
   };
 
+  // Modify props to add dataset name to question displayName for user datasets
+  const modifiedProps = useMemo(() => {
+    if (!isUserDataset || !datasetRecord) return props;
+
+    const datasetNameHtml = `<div style="font-size: 0.66em; margin: 0.5em 0 1em 0.5em;">${datasetRecord.displayName}</div>`;
+
+    return {
+      ...props,
+      state: {
+        ...props.state,
+        question: {
+          ...props.state.question,
+          displayName: `${props.state.question.displayName}${datasetNameHtml}`,
+        },
+      },
+    };
+  }, [props, isUserDataset, datasetRecord]);
+
   return (
     <DefaultQuestionForm
-      {...props}
+      {...modifiedProps}
       renderParamGroup={renderParamGroup}
       resetFormConfig={{ offered: false }}
       submissionDisabled={!notebookReady}

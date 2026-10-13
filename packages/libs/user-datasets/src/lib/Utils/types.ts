@@ -5,8 +5,12 @@ export type Function<T, R> = (value: T) => R;
 export type Runnable = () => void;
 
 export type Nullable<T> = T | null;
+export type Possible<T> = T | undefined;
+export type Optional<T> = T | null | undefined;
 
 export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
+
+export type Tuple<A, B> = [A, B];
 
 export type Mutable<T extends object> = {
   -readonly [K in keyof T]: T[K];

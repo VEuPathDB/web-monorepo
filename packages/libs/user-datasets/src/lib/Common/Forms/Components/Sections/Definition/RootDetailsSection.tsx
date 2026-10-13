@@ -7,6 +7,7 @@ import {
 } from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { InputPair, UploadButton } from '../../index';
+import { TextAreaInput } from '../../TextAreaInput';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { PartialDatasetDetails, DatasetUploads } from '../../../../../Service';
 import { isEmpty } from 'lodash';
@@ -17,6 +18,11 @@ import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
+import { DualFileInput } from './DualFileInput';
+import {
+  utf8ByteLength,
+  SAMPLE_INFO_MAX_BYTES,
+} from '../../../../../Service/utils/rnaseq-rc-data-files';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -65,21 +71,21 @@ export function RootDetailsSection(
   } = props;
 
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
+  const { datasetDetails, fileUploads } = useDatasetFormState();
 
   const nameKey = jsonPath.appendToString<PartialDatasetDetails>('name');
   const summaryKey = jsonPath.appendToString<PartialDatasetDetails>('summary');
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, fileUploads, formMetaState]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, fileUploads]
   );
 
   const setUploads = useCallback(
     (fileUploads: DatasetUploads) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, datasetDetails, formMetaState]
+      dispatch(updateFormState({ datasetDetails, fileUploads })),
+    [dispatch, datasetDetails]
   );
 
   const fileUpload = buildFileProps(props.formProps, fileUploads, setUploads);
@@ -92,6 +98,11 @@ export function RootDetailsSection(
       setDatasetDetails={setMetadata}
     />
   ) : null;
+
+  const slots = formConfig.dataInputConfig.file?.enabled
+    ? formConfig.dataInputConfig.file.slots
+    : undefined;
+  const useSlottedInputs = (slots?.length ?? 0) > 1;
 
   return (
     <section id="define-dataset">
@@ -118,6 +129,53 @@ export function RootDetailsSection(
           required={true}
         />
 
+        {formConfig.verbiage.formInputs?.samplesDescription &&
+          props.showDataInputs && (
+            <>
+              <TextAreaInput
+                label={formConfig.verbiage.formInputs.samplesDescription.label}
+                fieldName="samplesDescription"
+                value={datasetDetails.samplesDescription}
+                onChange={(v) =>
+                  setMetadata({ ...datasetDetails, samplesDescription: v })
+                }
+                required={props.showDataInputs}
+                rows={15}
+                placeholder="Describe your samples here using free text or a table. For example, you can provide the relevant Methods section from the associated paper or sample metadata from supplementary files.
+
+If the sample names in your count file headers already describe the samples (e.g. 'male_3h_rep1'), you don't need to repeat that here - though details such as time-series reference points or treatment specifics are still worth adding. But if those sample names are codes or numbers (e.g. 'S001'), each one must appear somewhere in this description, with its meaning explained.
+
+State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
+
+*This text is submitted to the VEuPathDB AI Metadata Analyzer*, which uses it to describe your samples so you can compare groups (for example, treated vs. control) in your analysis."
+                helpText={
+                  typeof formConfig.verbiage.formInputs.samplesDescription
+                    .helpText === 'function'
+                    ? formConfig.verbiage.formInputs.samplesDescription.helpText()
+                    : formConfig.verbiage.formInputs.samplesDescription.helpText
+                }
+              />
+
+              <div className="column-2" style={{ textAlign: 'right' }}>
+                <span
+                  style={{
+                    fontSize: '0.9em',
+                    color:
+                      utf8ByteLength(datasetDetails.samplesDescription ?? '') >
+                      SAMPLE_INFO_MAX_BYTES
+                        ? 'red'
+                        : '#666',
+                  }}
+                >
+                  {utf8ByteLength(
+                    datasetDetails.samplesDescription ?? ''
+                  ).toLocaleString()}{' '}
+                  / {SAMPLE_INFO_MAX_BYTES.toLocaleString()} bytes
+                </span>
+              </div>
+            </>
+          )}
+
         {referenceGenome}
 
         {props.showVisibilities && (
@@ -128,7 +186,32 @@ export function RootDetailsSection(
           />
         )}
 
-        {props.showDataInputs && (
+        {props.showDataInputs && useSlottedInputs && (
+          <>
+            <DualFileInput
+              pathBuilder={props.contentJsonPath}
+              dataType={formConfig.dataType}
+              vdiFeatures={formProps.vdiConfig.features}
+              slots={slots!}
+              files={fileUploads.dataFiles ?? []}
+              setFiles={(files) =>
+                setUploads({ ...fileUploads, dataFiles: files })
+              }
+              accept={
+                formConfig.dataInputConfig.file?.enabled
+                  ? formConfig.dataInputConfig.file.accept
+                  : undefined
+              }
+            />
+            {typeof formConfig.dataInputConfig.helpText === 'function' && (
+              <div className="column-2">
+                {formConfig.dataInputConfig.helpText()}
+              </div>
+            )}
+          </>
+        )}
+
+        {props.showDataInputs && !useSlottedInputs && (
           <RootDataInput
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}

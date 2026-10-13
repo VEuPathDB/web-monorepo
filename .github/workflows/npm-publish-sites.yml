@@ -14,7 +14,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: set-matrix
         run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
 
@@ -32,24 +32,20 @@ jobs:
       matrix:
         dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      # No nx cache here: this workflow only runs on tag pushes, and GitHub Actions cache
+      # access explicitly forbids sharing a cache between different tag names, so a cache
+      # saved by one release tag could never be restored by the next one anyway. See
+      # https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache
       - run: yarn
         # Use development mode for pre-release tags so dev-only UI (e.g. "Open all sections") is included
       - run: |
           git_tag="${GITHUB_REF_NAME#v}"
-          if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-patch([-.][0-9]+)?)?$ ]]; then
             echo "bundle_target=bundle:npm" >> $GITHUB_ENV
           else
             echo "bundle_target=bundle:dev" >> $GITHUB_ENV
@@ -65,9 +61,10 @@ jobs:
           # Check if the tag is a plain version (e.g., 1.2.3) and tag 'latest' on npm
           if [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "npm_tag=latest" >> $GITHUB_ENV
-          # else look for a word-like suffix (ignoring optional trailing .1, .2 etc) and tag with that word
+          # else look for a word-like suffix (ignoring optional trailing .1, -1, .2, -2 etc) and tag with that word
           # e.g. v.1.2.3-experimental will be tagged 'experimental' on npm
-          elif [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)(\.[0-9]+)*$ ]]; then
+          # e.g. v1.2.3-patch-2 or v1.2.3-patch.2 will be tagged 'patch' on npm
+          elif [[ "$git_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z0-9]+)([-.][0-9]+)*$ ]]; then
             npm_tag="${BASH_REMATCH[1]}"
             echo "npm_tag=$npm_tag" >> $GITHUB_ENV
           # or fall back to 'latest' just in case
@@ -84,22 +81,14 @@ jobs:
     name: Generate test reports
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - run: yarn
       - run: ./tools/scripts/test-report
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Test report
           path: ${{ github.workspace }}/test-report

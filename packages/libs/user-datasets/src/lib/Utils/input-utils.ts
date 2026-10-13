@@ -10,6 +10,26 @@ export function changeHandler<
   return (value) => then({ ...obj, [field]: value });
 }
 
+/**
+ * Creates a callback to update React state for an object of type `T` containing
+ * an array property `K` with array values of type `V` by adding or replacing
+ * array values.
+ *
+ * This function does not mutate the input, it instead calls the provided React
+ * state setter function with a new object and array constructed from the inputs
+ * at callback execution time.
+ *
+ * @param field Name of the parent object property the change handler is to
+ * update.
+ *
+ * @param obj Parent object instance that will be
+ *
+ * @param then React state setter function that will be invoked by the returned
+ * callback after the new, updated state value has been constructed.
+ *
+ * @return A callback that may be used to replace the value at a given index in
+ * the array at `K`, or add a new value at the end of that array.
+ */
 export function arrayChangeHandler<
   T extends object,
   K extends keyof T = keyof T,

@@ -5,16 +5,13 @@ import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
-import { ClientSideUploadFormState } from '../../../../../StoreModules';
-import { ExperimentalOrganism } from './ExperimentalOrganism';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { PublicationsSection } from './Publications/PublicationsSection';
+import { ExperimentalOrganisms } from './ExperimentalOrganisms';
 
 export interface CoreDatasetInformationProps {
   readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly clientSideState: ClientSideUploadFormState;
-  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
   readonly formProps: DatasetFormProps;
 }
@@ -22,8 +19,6 @@ export interface CoreDatasetInformationProps {
 export function CoreDatasetInformation({
   datasetMeta,
   setDatasetMeta,
-  clientSideState,
-  setClientSideState,
   jsonPath,
   formProps: { formConfig },
 }: CoreDatasetInformationProps): ReactElement {
@@ -48,27 +43,21 @@ export function CoreDatasetInformation({
           formProps={formConfig.datasetCharacteristics}
           datasetMeta={datasetMeta}
           setDatasetMeta={setDatasetMeta}
-          clientSideState={clientSideState}
-          setClientSideState={setClientSideState}
-          pathBuilder={jsonPath.append<PartialDatasetDetails>(
-            'datasetCharacteristics'
-          )}
+          pathBuilder={jsonPath.append<PartialDatasetDetails>('datasetCharacteristics')}
         />
       )}
 
       {formConfig.enableExperimentalOrganism && (
-        <ExperimentalOrganism
+        <ExperimentalOrganisms
           setDatasetDetails={setDatasetMeta}
           datasetMeta={datasetMeta}
-          jsonPath={jsonPath.append<PartialDatasetDetails>(
-            'experimentalOrganism'
-          )}
-          clientSideState={clientSideState}
-          setClientSideState={setClientSideState}
+          jsonPath={jsonPath.append<PartialDatasetDetails>('experimentalOrganisms')}
         />
       )}
 
       <PublicationsSection
+        datasetMeta={datasetMeta}
+        setDatasetMeta={setDatasetMeta}
         publications={datasetMeta.publications ?? []}
         setPublications={(v) =>
           setDatasetMeta({
@@ -76,8 +65,6 @@ export function CoreDatasetInformation({
             publications: v,
           })
         }
-        clientState={clientSideState}
-        setClientState={setClientSideState}
         isRequired={
           false /* TODO: when vdi backend tracks this, use that value from the metadata*/
         }
@@ -87,16 +74,12 @@ export function CoreDatasetInformation({
       <DatasetSources
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
-        clientState={clientSideState}
-        setClientState={setClientSideState}
         jsonPath={jsonPath.append<PartialDatasetDetails>('datasetSources')}
       />
 
       <DatasetUsage
         datasetMeta={datasetMeta}
         setDatasetMeta={setDatasetMeta}
-        clientSideState={clientSideState}
-        setClientSideState={setClientSideState}
         jsonPath={jsonPath}
       />
     </>

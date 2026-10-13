@@ -1,0 +1,174 @@
+import { useCallback, useEffect, useState } from 'react';
+
+// Deep import, not the @veupathdb/wdk-client/lib/Components barrel — that
+// barrel transitively pulls in AttributeFilter/Histogram.js, which requires
+// 'jquery', a dependency this package never otherwise needs.
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+
+import { SequenceRetrievalApi } from '../Service/SequenceRetrievalApi';
+import { JobResponse, JobStatus } from '../Service/ServiceTypes';
+import { useJobPolling } from '../Hooks/useJobPolling';
+
+// Same icon/animation as user-datasets' UserDatasetStatus.tsx polling
+// spinner (StatusIcon--polling); the color is wdk-client's $blue, imported
+// via Sass so it stays in sync with the shared palette rather than a
+// hardcoded copy.
+import './ComputeJobPage.scss';
+
+interface ComputeJobPageProps {
+  jobId: string;
+  api: SequenceRetrievalApi;
+  paramsSummary?: string;
+  /** The MsaFormat value the job was submitted with, e.g. 'clustal_guidetree'. */
+  format?: string;
+  /** Number of sequences submitted to the job, if known. */
+  sequenceCount?: number;
+}
+
+// Below this many sequences, job time is short enough that the warning
+// isn't worth showing.
+const SEQUENCE_COUNT_WARNING_THRESHOLD = 10;
+
+// The /files/{name} endpoint always returns Content-Type: text/plain
+// regardless of the actual content, so an HTML-producing format (only
+// clustal_guidetree today) needs to be recognized and rendered as real HTML
+// client-side — otherwise the browser (or React) would just show the raw
+// markup as literal text.
+const HTML_MSA_FORMATS = new Set(['clustal_guidetree']);
+
+function formatLocalTime(isoTimestamp: string): string {
+  return new Date(isoTimestamp).toLocaleTimeString();
+}
+
+// Swaps the live document in place with the fetched result, same URL, no
+// navigation — same as visiting a static result page directly (matching
+// the old CGI flow, which always returned a standalone document). This
+// intentionally tears down the React app on this tab: there's nothing left
+// for it to render once the real result is showing. A fresh visit/reload of
+// this URL always remounts ComputeJobPage first and re-derives status live,
+// so a bookmark still lands back on the polling UI for an incomplete job,
+// and repeats this same swap deterministically for an already-complete one.
+function showResultDocument(content: string, format: string | undefined) {
+  if (format != null && HTML_MSA_FORMATS.has(format)) {
+    const parsed = new DOMParser().parseFromString(content, 'text/html');
+    document.replaceChild(
+      document.importNode(parsed.documentElement, true),
+      document.documentElement
+    );
+  } else {
+    // Plain-text formats (clustal, fasta, phylip, stockholm, vienna, msf,
+    // selex) rely on fixed-width alignment and real line breaks to be
+    // readable — document.body.textContent alone renders them with the
+    // browser's default white-space handling, which collapses newlines
+    // and reads as one flat run of characters. A <pre> element preserves
+    // whitespace/line breaks and uses a monospace font by default, the
+    // same fix already applied to this site's synchronous FASTA download
+    // (which wraps its own plain-text result in <pre> before writing it).
+    document.title = 'Multiple Sequence Alignment';
+    const pre = document.createElement('pre');
+    pre.textContent = content;
+    document.body.textContent = '';
+    document.body.appendChild(pre);
+  }
+}
+
+export function ComputeJobPage({
+  jobId,
+  api,
+  paramsSummary,
+  format,
+  sequenceCount,
+}: ComputeJobPageProps) {
+  const [status, setStatus] = useState<JobStatus>('queued');
+  const [job, setJob] = useState<Partial<JobResponse>>({});
+
+  const onPoll = useCallback(async () => {
+    const job = await api.fetchJob(jobId);
+    setStatus(job.status);
+    setJob(job);
+  }, [api, jobId]);
+
+  useJobPolling({ status, onPoll });
+
+  useEffect(() => {
+    if (status !== 'complete') return;
+    let cancelled = false;
+    (async () => {
+      const output = await api.fetchJobFile(jobId, 'output');
+      if (cancelled) return;
+      // The 'output' file is already the complete document for every
+      // format — for clustal_guidetree it includes the guide tree as its own
+      // section (<hr><h4>Guide Tree...) — no separate file to fetch/concat.
+      showResultDocument(output, format);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [status, api, jobId, format]);
+
+  return (
+    <div className="ComputeJobPage">
+      <h1>Multiple Sequence Alignment Job Status</h1>
+      <div style={{ fontSize: '1.5em' }}>
+        {paramsSummary && <p className="ParamsSummary">{paramsSummary}</p>}
+        {status === 'queued' || status === 'in-progress' ? (
+          <>
+            <p className="Status">
+              <Icon
+                className="ComputeJobPage-StatusIcon"
+                fa="circle-o-notch"
+                style={{ marginRight: '0.3em' }}
+              />
+              {status === 'queued' &&
+                (job.queuePosition != null
+                  ? `Position ${job.queuePosition} in queue.`
+                  : 'Queued.')}
+              {status === 'queued' && job.created != null && (
+                <i> (Queued at {formatLocalTime(job.created)})</i>
+              )}
+              {status === 'in-progress' && 'In progress.'}
+              {status === 'in-progress' && job.started != null && (
+                <i>(Started running at {formatLocalTime(job.started)})</i>
+              )}
+            </p>
+            {sequenceCount != null &&
+              sequenceCount > SEQUENCE_COUNT_WARNING_THRESHOLD && (
+                <>
+                  <br />
+                  <p className="ComputeJobPage-DurationWarning">
+                    <Icon
+                      fa="exclamation-triangle"
+                      style={{
+                        marginRight: '0.3em',
+                        // coreui's warning[500] (packages/libs/coreui/src/definitions/colors.ts)
+                        // — brighter than the warning[600] existing plain-triangle
+                        // icons elsewhere use (UserFormContainer), chosen for
+                        // this usage specifically; inlined as a literal hex
+                        // value since this package has no dependency on coreui.
+                        color: '#ECAE13',
+                        fontSize: '1.5em',
+                      }}
+                    />
+                    <b>Jobs can take 10+ minutes.</b> Once running, an MSA job
+                    typically finishes in under 10 minutes. Time in the queue
+                    depends on how busy the system is.
+                  </p>
+                </>
+              )}
+          </>
+        ) : null}
+        {status === 'failed' && (
+          <p className="DeadEnd">
+            This job failed with a server error. Please contact VEuPathDB
+            support.
+          </p>
+        )}
+        {status === 'expired' && (
+          <p className="DeadEnd">
+            This job has expired. Please go back and resubmit your request.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

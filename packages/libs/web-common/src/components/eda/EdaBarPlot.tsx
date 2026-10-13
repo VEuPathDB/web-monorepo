@@ -3,6 +3,7 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import {
   useDataClient,
   useFindEntityAndVariable,
+  useStudyEntities,
   useStudyMetadata,
 } from '@veupathdb/eda/lib/core';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
@@ -11,7 +12,11 @@ import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
 import { edaServiceUrl } from '../../config';
-import { filtersFromGeneDisplaySpec, GeneDisplaySpec } from './geneDisplaySpec';
+import {
+  filtersFromGeneDisplaySpec,
+  resolveGeneDisplaySpec,
+  GeneDisplaySpec,
+} from './geneDisplaySpec';
 
 interface Props {
   datasetId: string;
@@ -53,9 +58,16 @@ function BarPlotAdapter(props: AdapterProps) {
   const { id: studyId } = useStudyMetadata();
   const dataClient = useDataClient();
   const findEntityAndVariable = useFindEntityAndVariable();
+  const entities = useStudyEntities();
   const data = useCachedPromise(
     async function getData() {
-      const filters = filtersFromGeneDisplaySpec(geneDisplaySpec);
+      // Resolved in here so that an ambiguous gene id variable surfaces as this
+      // plot's error rather than breaking the whole page.
+      const resolvedGeneDisplaySpec = resolveGeneDisplaySpec(
+        geneDisplaySpec,
+        entities
+      );
+      const filters = filtersFromGeneDisplaySpec(resolvedGeneDisplaySpec);
 
       const barplotDataResponse$ = dataClient.getBarplot('pass', {
         studyId,

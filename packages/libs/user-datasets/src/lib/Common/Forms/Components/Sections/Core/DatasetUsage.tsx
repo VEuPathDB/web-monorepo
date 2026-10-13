@@ -2,20 +2,15 @@ import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
 import { FieldHelpText, InputBlock } from '../../index';
-import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { OptionalSection } from '../../OptionalSection';
 
 export interface DatasetUsageProps {
-  readonly clientSideState: ClientSideUploadFormState;
-  readonly setClientSideState: Consumer<ClientSideUploadFormState>;
   readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function DatasetUsage({
-  clientSideState,
-  setClientSideState,
   datasetMeta,
   setDatasetMeta,
   jsonPath,
@@ -23,12 +18,16 @@ export function DatasetUsage({
   const fieldName =
     jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
 
-  const { hasDisclaimer } = clientSideState;
-
-  const disabledClass = hasDisclaimer ? '' : ' disabled-fields';
+  const hasDisclaimer = datasetMeta.metadataContentFlags?.hasDataDisclaimer;
 
   const setEnabled = (enabled: boolean) =>
-    setClientSideState({ ...clientSideState, hasDisclaimer: enabled });
+    setDatasetMeta({
+      ...datasetMeta,
+      metadataContentFlags: {
+        ...(datasetMeta.metadataContentFlags ?? {}),
+        hasDataDisclaimer: enabled,
+      },
+    });
 
   if (typeof hasDisclaimer === 'undefined' && datasetMeta.dataDisclaimer) {
     setEnabled(true);

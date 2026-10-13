@@ -1,7 +1,7 @@
 import { useOrganismTree } from './hooks/organisms';
 import { SelectTree } from '@veupathdb/coreui';
 import React, { ReactElement, useCallback, useState } from 'react';
-import { edaServiceUrl, projectId } from './config';
+import { edaServiceUrl, projectId, projectName } from './config';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -16,6 +16,7 @@ import {
   DatasetFormConfig,
   DatasetTypeConfig,
 } from '@veupathdb/user-datasets/lib/Common/Configuration';
+import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
 import { DatasetWorkspaceConfig } from '@veupathdb/user-datasets/lib/Common/Configuration/DatasetWorkspaceConfig';
@@ -31,6 +32,7 @@ const implementedUploadTypes = {
   isasimple: { name: 'isasimple', version: '1.0' },
   bigwigfiles: { name: 'bigwigfiles', version: '1.0' },
   rnaseq: { name: 'rnaseq', version: '1.0' },
+  rnaseqrc: { name: 'rnaseqrc', version: '1.0' },
   phenotype: { name: 'phenotype', version: '1.0' },
 };
 
@@ -38,27 +40,31 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
   baseDatasetTypeConfigs: [
     {
       ...implementedUploadTypes.bigwigfiles,
-      description: `Integrate your bigWig data into ${projectId}.`,
+      description: `Integrate your bigWig data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.biom,
-      description: `Integrate your BIOM study data into ${projectId}.`,
+      description: `Integrate your BIOM study data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.genelist,
-      description: `Integrate your gene list into ${projectId}.`,
+      description: `Integrate your gene list into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.isasimple,
-      description: `Explore and visualize your data table in ${projectId}`,
+      description: `Explore and visualize your data table in ${projectName}`,
     },
     {
       ...implementedUploadTypes.phenotype,
-      description: `Integrate your phenotype data into ${projectId}.`,
+      description: `Integrate your phenotype data into ${projectName}.`,
     },
     {
       ...implementedUploadTypes.rnaseq,
-      description: `Integrate your normalized RNA-Seq data into ${projectId}.`,
+      description: `Integrate your normalized RNA-Seq data into ${projectName}.`,
+    },
+    {
+      ...implementedUploadTypes.rnaseqrc,
+      description: `Integrate your RNA-Seq raw counts into ${projectName}, and perform DE analysis.`,
     },
   ],
 
@@ -80,6 +86,9 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
     // rnaseq
     [implementedUploadTypes.rnaseq, rnaseqFormConfigurator],
+
+    // rnaseqrc
+    [implementedUploadTypes.rnaseqrc, rnaseqRcFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
@@ -88,20 +97,21 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 const DefaultFormTitle = 'Upload Dataset';
 
 const StudyDesignVocab: readonly [string, string][] = [
-  ['Cluster-randomized controlled trial', 'Experimental'],
-  ['Quasi-experimental study', 'Experimental'],
-  ['Randomized controlled/clinical trial', 'Experimental'],
-
+  // Alphabetical Order
+  ['Case history', 'Observational'],
   ['Case series study', 'Observational'],
   ['Case-control study', 'Observational'],
+  ['Cluster-randomized controlled trial', 'Experimental'],
   ['Cohort study', 'Observational'],
   ['Cross-sectional study', 'Observational'],
   ['Ecological study', 'Observational'],
+  ['Meta-analysis', 'Review'],
   ['Panel study', 'Observational'],
+  ['Quasi-experimental study', 'Experimental'],
+  ['Randomized controlled/clinical trial', 'Experimental'],
   ['Surveillance study', 'Observational'],
 
-  ['Meta-analysis', 'Review'],
-
+  // Other goes last
   ['Other', 'n/a'],
 ];
 
@@ -478,6 +488,104 @@ function rnaseqFormConfigurator(
   };
 }
 
+function rnaseqRcFormConfigurator(
+  dataType: DatasetTypeConfig
+): DatasetFormConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: 'Upload an RNA-Seq Raw Counts Dataset',
+      formInputs: {
+        samplesDescription: {
+          label: (
+            <>
+              Sample Details
+              <br />
+              (for AI annotation)
+            </>
+          ),
+        },
+      },
+    },
+    dataInputConfig: {
+      file: {
+        enabled: true,
+        slots: [
+          {
+            label: 'Data file 1',
+            buttonText: 'Choose sense or unstranded file',
+            required: true,
+          },
+          {
+            label: 'Data file 2',
+            buttonText: 'Choose anti-sense file (optional)',
+            required: false,
+          },
+        ],
+      },
+      helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
+          <div className="formInfo">
+            <p>
+              Upload your RNA-Seq count data as tab- or comma-delimited files
+              (.txt, .tsv, .csv or .tab).
+            </p>
+            <p>
+              If unstranded, provide a single unstranded count file as Data file
+              1. If stranded, provide two files: sense as Data file 1 and
+              anti-sense as Data file 2.
+            </p>
+            <p>Each count file should have:</p>
+            <ul>
+              <li>
+                a first row that names all the columns. The first column must be
+                the gene ID. Its name doesn't matter. The rest of the columns
+                are the names for each sample. These names become that sample's
+                ID, and for a stranded pair the same sample names must be used,
+                in the same position, in both files;
+              </li>
+              <li>
+                one row per gene, with a gene ID in the first column and whole,
+                non-negative numbers for per sample counts (no decimals, no
+                negative numbers, no commas).
+              </li>
+            </ul>
+            <p>
+              If your pipeline gives you multiple files instead (one per
+              sample), merge them into the multi-column format first - matching
+              genes by their ID, not by row position. An AI coding assistant can
+              write this merge script for you if you ask it to join on gene ID
+              and check that no genes are lost or duplicated.
+            </p>
+            <p>
+              We use the VEuPathDB AI Metadata Analyzer to read your{' '}
+              <b>Sample Details</b> together with the sample names in your count
+              files. It automatically describes your samples to let you and
+              other users compare groups (for example, treated vs. control) in
+              your analysis.
+            </p>
+            {textFilesHelp}
+          </div>
+        </details>
+      ),
+    },
+    dependencies: {
+      required: true,
+      renderInput: ReferenceGenomeDependency,
+    },
+    enableExperimentalOrganism: true,
+    prepareDataFiles: (files, details) =>
+      buildRnaSeqRcDataFiles(
+        files,
+        details.samplesDescription,
+        dataType.vdiConfig.allowedFileExtensions
+      ),
+  };
+}
+
 function ReferenceGenomeDependency({
   dependencies,
   setDependencies,
@@ -572,7 +680,7 @@ function ReferenceGenomeDependency({
   return (
     <SelectTree
       shouldCloseOnSelection
-      buttonDisplayContent="Choose reference genome"
+      buttonDisplayContent="Choose reference organism"
       tree={organismTree}
       getNodeId={getNodeId}
       getNodeChildren={getNodeChildren}

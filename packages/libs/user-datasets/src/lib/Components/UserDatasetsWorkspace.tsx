@@ -8,7 +8,7 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import { DatasetUploadRoute } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
-import { DataNoun } from '../Utils/types';
+import { DataNoun } from '../Utils';
 import {
   DatasetTypeConfig,
   filterAvailableDataTypes,
@@ -117,6 +117,7 @@ export function UserDatasetsWorkspace(
             plugins={vdiMetadata.plugins}
             datasetTypes={datasetTypes}
             formConfigs={config.uploadFormConfigurators}
+            enablePublicDatasets={enablePublicUserDatasets}
           />
         )}
         <Redirect to={baseUrl} />

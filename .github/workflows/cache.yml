@@ -1,13 +1,12 @@
-# NOTE: This workflow is largely legacy/redundant now that all workflows (including pr-check.yml)
-# automatically cache dependencies. Since PR caches are accessible to the main branch and vice versa,
-# this explicit pre-warming step is no longer strictly necessary.
+# NOTE: All workflows (including pr-check.yml) now cache dependencies automatically via
+# actions/setup-node's built-in package-manager caching. But GitHub Actions cache access is
+# one-directional: a branch or tag can fall back to a cache created on the default branch, but
+# the default branch can never read a cache created elsewhere (and different tags can't share
+# caches with each other at all). See
+# https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache
 #
-# We're keeping it for now because:
-# 1. It ensures main always has a "canonical" cache after yarn.lock changes
-# 2. It provides explicit cache warming independent of PR activity
-# 3. It has minimal overhead and doesn't cause problems
-#
-# This could be safely removed if desired - PRs will create caches that main can use.
+# So this workflow is the *only* thing that ever populates a main-scoped cache - without it,
+# every PR would start fully cold instead of falling back to main's cache.
 
 name: Generate caches
 on:
@@ -18,23 +17,15 @@ on:
       - yarn.lock
 jobs:
   # Cache yarn install command
-  # See https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#example-using-the-cache-action
+  # actions/setup-node caches automatically based on the packageManager field in package.json
   cache-yarn:
     name: Generate yarn cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - run: corepack enable
+      - uses: actions/setup-node@v5
         with:
           node-version: '24.11.0'
-      - run: corepack enable
-      - uses: actions/cache@v4
-        with:
-          path: |
-            .yarn/cache
-            .yarn/install-state.gz
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - run: yarn
 

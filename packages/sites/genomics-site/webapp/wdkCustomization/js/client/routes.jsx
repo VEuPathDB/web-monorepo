@@ -27,6 +27,7 @@ import SampleForm from './components/samples/SampleForm';
 import { projectId, webAppUrl } from './config';
 
 import { blastRoutes } from './blastRoutes';
+import { computeJobRoutes } from './computeJobRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
@@ -175,7 +176,17 @@ export const wrapRoutes = (ebrcRoutes) => [
       />
     ),
   },
-
+  // Allow guests to access dataset record pages for SEO and public visibility
+  {
+    path: '/record/organism/:primaryKey+',
+    requiresLogin: false,
+    component: (props) => (
+      <RecordController
+        recordClass="dataset"
+        primaryKey={props.match.params.primaryKey}
+      />
+    ),
+  },
   // Allow guests to access All Datasets and All Organisms for SEO and public visibility
   {
     path: '/search/dataset/AllDatasets/result',
@@ -197,14 +208,6 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/downloads',
     component: DownloadsRouteComponent,
-  },
-
-  {
-    path: '/record/organism/:id*',
-    requiresLogin: false,
-    component: (props) => (
-      <Redirect to={`/record/dataset/${props.match.params.id}`} />
-    ),
   },
 
   {
@@ -250,6 +253,8 @@ export const wrapRoutes = (ebrcRoutes) => [
   },
 
   ...blastRoutes,
+
+  ...computeJobRoutes,
 
   ...preferredOrganismsRoutes,
 

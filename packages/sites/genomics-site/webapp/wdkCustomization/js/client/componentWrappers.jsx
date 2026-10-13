@@ -11,6 +11,12 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
 import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
+import { filterNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  getId,
+  getTargetType,
+} from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { defaultCollapsedTableNames as variantDefaultCollapsedTableNames } from './components/records/VariantRecordClasses.VariantRecordClass';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
@@ -113,9 +119,18 @@ export function RecordController(WdkRecordController) {
         },
       ];
     }
-    getDefaultExpandedSections(recordClass) {
+    getDefaultExpandedSections(recordClass, categoryTree) {
       if (recordClass.urlSegment === 'gene') {
         return ['GeneModelGbrowseUrl'];
+      }
+      if (recordClass.fullName === 'VariantRecordClasses.VariantRecordClass') {
+        let allFieldIds = filterNodes(
+          (node) => ['attribute', 'table'].includes(getTargetType(node)),
+          categoryTree
+        ).map(getId);
+        return allFieldIds.filter(
+          (id) => !variantDefaultCollapsedTableNames.includes(id)
+        );
       }
     }
     loadData(prevProps) {
@@ -239,7 +254,7 @@ export function RecordTableDescription(DefaultComponent) {
 
         let { table, record, downloadRecordTable, ontologyProperties } =
           this.props;
-        let customName = `Data Sets used to generate ${String.fromCharCode(
+        let customName = `Datasets used to generate ${String.fromCharCode(
           8220
         )}${table.displayName.replace('/', '-')}${String.fromCharCode(8221)}`;
         let callDownloadTable = (event) => {
@@ -315,7 +330,7 @@ export function RecordTableDescription(DefaultComponent) {
                   }),
                 }}
               >
-                <i className="fa fa-database" /> Data Sets
+                <i className="fa fa-database" /> Datasets
               </Link>
             )}
             {hasTaxonId == 1 && showDatasetsLink && (

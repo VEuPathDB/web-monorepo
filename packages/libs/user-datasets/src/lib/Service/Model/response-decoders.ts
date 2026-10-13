@@ -1,4 +1,5 @@
 import * as io from 'io-ts';
+import { datasetMetadata } from './metadata-decoder';
 
 export const bioprojectId = io.intersection([
   io.type({ id: io.string }),
@@ -43,11 +44,15 @@ export const datasetImportStatus = io.union([
   io.literal('invalid'),
   io.literal('failed'),
 ]);
+export type DatasetImportStatus = io.TypeOf<typeof datasetImportStatus>;
 
-export const datasetImportStatusDetails = io.intersection([
+const datasetImportStatusDetails = io.intersection([
   io.type({ status: datasetImportStatus }),
   io.partial({ messages: io.array(io.string) }),
 ]);
+export type DatasetImportStatusInfo = io.TypeOf<
+  typeof datasetImportStatusDetails
+>;
 
 export const datasetInstallStatus = io.union([
   io.literal('running'),
@@ -57,19 +62,26 @@ export const datasetInstallStatus = io.union([
   io.literal('ready-for-reinstall'),
   io.literal('missing-dependency'),
 ]);
+export type DatasetInstallStatus = io.TypeOf<typeof datasetInstallStatus>;
 
 const datasetInstallStatusEntry = io.intersection([
   io.type({ status: datasetInstallStatus }),
   io.partial({ messages: io.array(io.string) }),
 ]);
+export type DatasetInstallStatusEntry = io.TypeOf<
+  typeof datasetInstallStatusEntry
+>;
 
-export const datasetInstallStatusMap = io.intersection([
+const datasetInstallStatusMap = io.intersection([
   io.type({
     installTarget: io.string,
     meta: datasetInstallStatusEntry,
   }),
   io.partial({ data: datasetInstallStatusEntry }),
 ]);
+export type DatasetInstallStatusInfo = io.TypeOf<
+  typeof datasetInstallStatusMap
+>;
 
 export const partialUser = io.intersection([
   io.type({ userId: io.number }),
@@ -91,12 +103,13 @@ const datasetListShareUser = io.type({
 });
 export type DatasetListShareUser = io.TypeOf<typeof datasetListShareUser>;
 
-const datasetUploadStatusCode = io.union([
+export const datasetUploadStatusCode = io.union([
   io.literal('running'),
   io.literal('success'),
   io.literal('rejected'),
   io.literal('failed'),
 ]);
+export type DatasetUploadStatusCode = io.TypeOf<typeof datasetUploadStatusCode>;
 
 const datasetUploadStatusInfo = io.intersection([
   io.type({ status: datasetUploadStatusCode }),
@@ -257,6 +270,15 @@ const datasetSource = io.type({
 });
 export type DatasetSource = io.TypeOf<typeof datasetSource>;
 
+const datasetMetadataContentFlags = io.partial({
+  hasDatasetCharacteristics: io.boolean,
+  hasDataDisclaimer: io.boolean,
+  hasDatasetSources: io.boolean,
+  hasOrganismData: io.boolean,
+  hasPublications: io.boolean,
+});
+export type DatasetMetadataContentFlags = io.TypeOf<typeof datasetMetadataContentFlags>;
+
 export const datasetMetaBase = io.intersection([
   io.type({
     installTargets: io.array(io.string),
@@ -272,7 +294,7 @@ export const datasetMetaBase = io.intersection([
     projectName: io.string,
     programName: io.string,
     linkedDatasets: io.array(linkedDataset),
-    experimentalOrganism: datasetOrganism,
+    experimentalOrganisms: io.array(datasetOrganism),
     hostOrganism: datasetOrganism,
     datasetCharacteristics: datasetCharacteristics,
     externalIdentifiers: externalIdentifiers,
@@ -285,17 +307,20 @@ export const datasetMetaBase = io.intersection([
 ]);
 export type DatasetMetaBase = io.TypeOf<typeof datasetMetaBase>;
 
-const relationType = io.union([
-  io.literal('publication'),
-  io.literal('program-name'),
-  io.literal('project-name'),
-]);
+const datasetRelation = io.union([
+  io.type({
+    relationType: io.literal('publication'),
+    identifier: io.string,
+    type: datasetPublicationType,
+  }),
 
-const datasetRelation = io.type({
-  relationType: relationType,
-  identifier: io.string,
-  type: datasetPublicationType,
-});
+  io.type({
+    relationType: io.union([
+      io.literal('program-name'),
+      io.literal('project-name'),
+    ]),
+  }),
+]);
 
 const relatedDatasetInfo = io.type({
   datasetId: io.string,
@@ -497,6 +522,7 @@ export const datasetGetResponseBody = io.intersection([
     shortName: io.string,
     status: datasetStatusInfo,
     files: datasetFileListing,
+    metadataContentFlags: datasetMetadataContentFlags,
   }),
   io.partial({
     sourceUrl: io.string,
@@ -537,6 +563,13 @@ export const deleteResponse = io.union([
   ccServerErrorBody,
 ]);
 export type DatasetPropertiesDeleteResponse = io.TypeOf<typeof deleteResponse>;
+
+export const rawMetadataResponse = io.union([
+  simpleContainerCoreErrorBody,
+  ccServerErrorBody,
+  datasetMetadata,
+]);
+export type RawDatasetMetadataResponse = io.TypeOf<typeof rawMetadataResponse>;
 
 // endregion Service Responses
 

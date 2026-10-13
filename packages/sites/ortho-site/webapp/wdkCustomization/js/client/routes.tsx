@@ -11,6 +11,7 @@ import { ProteomeSummaryController } from 'ortho-client/controllers/ProteomeSumm
 import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
 
 import { blastRoutes } from './blastRoutes';
+import { computeJobRoutes } from './computeJobRoutes';
 import { proteinMappingRoutes } from './proteinMappingRoutes';
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
@@ -37,6 +38,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
       component: () => <SiteSearchController offerOrganismFilter={false} />,
     },
     ...blastRoutes,
+    ...computeJobRoutes,
     ...proteinMappingRoutes,
     ...ebrcRoutes,
   ];

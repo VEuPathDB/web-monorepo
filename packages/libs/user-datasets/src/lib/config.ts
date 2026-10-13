@@ -4,5 +4,5 @@ declare global {
   }
 }
 
-export const { projectId = '', vdiServiceUrl = '' } =
+export const { projectId = '', vdiServiceUrl = '', endpoint = '' } =
   window.__SITE_CONFIG__ ?? {};
