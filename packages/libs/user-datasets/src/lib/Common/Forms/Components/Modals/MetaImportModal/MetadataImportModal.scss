@@ -74,3 +74,11 @@
     margin-bottom: 0.5em;
   }
 }
+
+@media only screen and (max-height: 1408px) {
+  #ud-meta-selection-modal {
+    div.DataTable {
+      max-height: 350px;
+    }
+  }
+}
