@@ -8,12 +8,17 @@ import React, {
 } from 'react';
 import TreeTable from '@veupathdb/components/lib/components/tidytree/TreeTable';
 import { RecordTableProps, WrappedComponentProps } from './Types';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Checkbox,
+  HelpIcon,
+  Loading,
+} from '@veupathdb/wdk-client/lib/Components';
 import { useGroupBackedDeferredState } from '../hooks/useGroupBackedDeferredState';
 import { groupCacheKey, discardStaleGroupCache } from '../util/groupCache';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import {
   arrayOf,
+  boolean,
   decodeOrElse,
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
@@ -22,6 +27,9 @@ import { Branch } from 'patristic';
 import {
   addBuiltTree,
   deserializeBuiltTrees,
+  findEncompassingTree,
+  pruneBuiltTree,
+  withoutPrunedTrees,
   serializeBuiltTrees,
   BuiltTree,
   makeBuiltTree,
@@ -258,6 +266,12 @@ function GroupSequencesTable(
     groupCacheKey(groupName, 'trees'),
     serializeBuiltTrees,
     deserializeBuiltTrees
+  );
+  const [allowPruned, setAllowPruned] = useSessionBackedState(
+    true,
+    groupCacheKey(groupName, 'allowPruned'),
+    JSON.stringify,
+    (raw) => decodeOrElse(boolean, true, raw)
   );
   // Keep every tree built on this page, so returning to an earlier filter
   // (or clearing it) shows the matching tree again without a new job.
@@ -908,6 +922,24 @@ function GroupSequencesTable(
     geneTreeJob.start(buildGeneTreeRequest(filteredRows));
   };
 
+  // A stored tree that covers these rows can stand in for a new job. The
+  // pruned tree is stored under its own ids; the source is kept as the newest
+  // so that adding the pruned one can't push it out.
+  const showPrunedTree = (): boolean => {
+    const ids = filteredRows.map(({ full_id }) =>
+      encodeTreeLabel(full_id as string)
+    );
+    const source = findEncompassingTree(builtTrees, ids);
+    if (source == null) return false;
+    setBuiltTrees(
+      addBuiltTree(
+        addBuiltTree(builtTrees, pruneBuiltTree(source, ids)),
+        source
+      )
+    );
+    return true;
+  };
+
   const treePanel = numSequences >= MIN_SEQUENCES_FOR_TREE && (
     <div style={{ padding: '10px' }}>
       <div
@@ -918,25 +950,54 @@ function GroupSequencesTable(
           gap: '.4em',
         }}
       >
-        <button
-          type="button"
-          disabled={treeJobBusy || tooFewForTree || treeIsShown}
-          onClick={() => {
-            if (tooManyForTree) {
-              setTreeDialog({ kind: 'tooMany' });
-            } else if (estimatedSeconds > MAX_JOB_SECONDS) {
-              setTreeDialog({ kind: 'tooSlow', estimatedSeconds });
-            } else if (estimatedSeconds > WARN_JOB_SECONDS) {
-              setTreeDialog({ kind: 'slow', estimatedSeconds });
-            } else {
-              startTree();
-            }
-          }}
-        >
-          {filtersApplied
-            ? `Show phylogenetic tree for ${filteredRows.length} selected sequences`
-            : 'Show phylogenetic tree'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5em' }}>
+          <button
+            type="button"
+            disabled={treeJobBusy || tooFewForTree || treeIsShown}
+            onClick={() => {
+              if (allowPruned && showPrunedTree()) {
+                // no job needed
+              } else if (tooManyForTree) {
+                setTreeDialog({ kind: 'tooMany' });
+              } else if (estimatedSeconds > MAX_JOB_SECONDS) {
+                setTreeDialog({ kind: 'tooSlow', estimatedSeconds });
+              } else if (estimatedSeconds > WARN_JOB_SECONDS) {
+                setTreeDialog({ kind: 'slow', estimatedSeconds });
+              } else {
+                startTree();
+              }
+            }}
+          >
+            {filtersApplied
+              ? `Show tree (${filteredRows.length} sequences)`
+              : 'Show tree'}
+          </button>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '.4em' }}>
+            <Checkbox
+              value={allowPruned}
+              onChange={(allow) => {
+                setAllowPruned(allow);
+                // trees made by pruning go away when pruning is turned off
+                if (!allow) setBuiltTrees(withoutPrunedTrees(builtTrees));
+              }}
+            />
+            Allow pruned trees
+            <HelpIcon>
+              <div>
+                For speed, do not generate a new tree when a pre-existing tree
+                can be pruned to the selected proteins.
+                <ul>
+                  <li>
+                    <b>Checked:</b> Prune a pre-existing tree, if available.
+                  </li>
+                  <li>
+                    <b>Unchecked:</b> Generate a new tree.
+                  </li>
+                </ul>
+              </div>
+            </HelpIcon>
+          </label>
+        </div>
         {treeDialog && (
           <JobWarningDialog
             title={
@@ -1014,7 +1075,7 @@ function GroupSequencesTable(
             ) {
               setMsaDialog({
                 kind: 'message',
-                text: `Please select between ${MIN_SEQUENCES_FOR_MSA} and ${MAX_PROTEINS_FOR_MSA} sequences in the table.`,
+                text: `Please use checkboxes to select between ${MIN_SEQUENCES_FOR_MSA} and ${MAX_PROTEINS_FOR_MSA} sequences in the table.`,
               });
               return;
             }
@@ -1037,7 +1098,9 @@ function GroupSequencesTable(
             }
           }}
         >
-          Run Clustal Omega for selected proteins
+          {highlightedNodes.length > 0
+            ? `Run Clustal Omega (${highlightedNodes.length} sequences)`
+            : 'Run Clustal Omega'}
         </button>
         <label>
           Format:{' '}
@@ -1143,7 +1206,15 @@ function GroupSequencesTable(
           {resetButton}
         </div>
       </div>
-      <div className="MesaComponent" style={{ padding: '0 10px' }}>
+      <div
+        className="MesaComponent"
+        style={{
+          padding: '0 10px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1.5em',
+        }}
+      >
         <div className="TableToolbar-Info">
           <RowCounter
             rowNoun="sequence"
@@ -1154,6 +1225,11 @@ function GroupSequencesTable(
             eventHandlers={{}}
           />
         </div>
+        {newickDownloadUrl && (
+          <a href={newickDownloadUrl} download={`${groupName}.nwk`}>
+            <i className="fa fa-download"></i> Download newick tree
+          </a>
+        )}
       </div>
       {filteredRows && filteredRows?.length > Infinity ? (
         <div>
@@ -1171,13 +1247,6 @@ function GroupSequencesTable(
             maxColumnWidth={maxColumnWidth}
           ></TreeTable>
         </Dimmable>
-      )}
-      {newickDownloadUrl && (
-        <p>
-          <a href={newickDownloadUrl} download={`${groupName}.nwk`}>
-            <i className="fa fa-download"></i> Download raw newick file
-          </a>
-        </p>
       )}
     </div>
   );
