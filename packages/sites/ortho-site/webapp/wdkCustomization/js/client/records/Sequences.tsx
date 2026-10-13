@@ -70,7 +70,11 @@ import {
 } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { countBy, groupBy } from 'lodash';
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
-import { extractPfamDomain } from 'ortho-client/records/utils';
+import {
+  extractPfamDomain,
+  SEQUENCES_TABLE_NAME,
+} from 'ortho-client/records/utils';
+import { downloadRecordTableFactory } from 'ortho-client/records/RecordTableSection';
 import PopoverButton, {
   PopoverButtonHandle,
 } from '@veupathdb/coreui/lib/components/buttons/PopoverButton/PopoverButton';
@@ -489,6 +493,16 @@ function GroupSequencesTable(
     const matching = new Set(matchingRows);
     return sortedRows.filter((row) => matching.has(row));
   }, [sortedRows, matchingRows]);
+
+  const downloadSequencesTable = useMemo(
+    () =>
+      downloadRecordTableFactory(
+        wdkService,
+        props.record,
+        SEQUENCES_TABLE_NAME
+      ),
+    [wdkService, props.record]
+  );
 
   const newickDownloadUrl = useMemo(
     () =>
@@ -1149,6 +1163,27 @@ function GroupSequencesTable(
     >
       <div
         style={{
+          marginBottom: '1em',
+          fontSize: '.8em',
+          display: 'flex',
+          gap: '1.5em',
+        }}
+      >
+        <button
+          type="button"
+          className="wdk-Link"
+          onClick={downloadSequencesTable}
+        >
+          <i className="fa fa-download"></i> Download table
+        </button>
+        {newickDownloadUrl && (
+          <a href={newickDownloadUrl} download={`${groupName}.nwk`}>
+            <i className="fa fa-download"></i> Download newick tree
+          </a>
+        )}
+      </div>
+      <div
+        style={{
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'flex-start',
@@ -1225,11 +1260,6 @@ function GroupSequencesTable(
             eventHandlers={{}}
           />
         </div>
-        {newickDownloadUrl && (
-          <a href={newickDownloadUrl} download={`${groupName}.nwk`}>
-            <i className="fa fa-download"></i> Download newick tree
-          </a>
-        )}
       </div>
       {filteredRows && filteredRows?.length > Infinity ? (
         <div>

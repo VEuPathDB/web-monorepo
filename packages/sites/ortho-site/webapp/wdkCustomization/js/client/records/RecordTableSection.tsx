@@ -56,17 +56,20 @@ export function RecordTableDescription(
       </div>
     );
 
+    // the Sequences table has its own tool buttons and download link; the
+    // model's description of them is redundant
+    if (table.name === SEQUENCES_TABLE_NAME) return null;
+
     return (
       <>
         {links}
-        {/* the Sequences table has its own tool buttons; the model's description of them is redundant */}
-        {table.name !== SEQUENCES_TABLE_NAME && <DefaultComponent {...props} />}
+        <DefaultComponent {...props} />
       </>
     );
   };
 }
 
-function downloadRecordTableFactory(
+export function downloadRecordTableFactory(
   wdkService: WdkService | undefined,
   record: RecordInstance,
   tableName: string

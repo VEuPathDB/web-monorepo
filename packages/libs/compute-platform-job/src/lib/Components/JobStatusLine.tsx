@@ -70,7 +70,7 @@ export function JobStatusLine({
           (Running for <Elapsed sinceIso={job.started} />)
         </i>
       )}
-      {estimatedSeconds != null && (
+      {status === 'in-progress' && estimatedSeconds != null && (
         <i> Estimated: {formatElapsed(estimatedSeconds * 1000)}</i>
       )}
     </p>

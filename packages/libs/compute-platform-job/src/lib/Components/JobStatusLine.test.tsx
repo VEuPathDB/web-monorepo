@@ -45,9 +45,16 @@ describe('JobStatusLine', () => {
     });
   });
 
-  it("shows the caller's estimate when given one", () => {
-    render(<JobStatusLine status="queued" job={{}} estimatedSeconds={261} />);
+  it("shows the caller's estimate while running", () => {
+    render(
+      <JobStatusLine status="in-progress" job={{}} estimatedSeconds={261} />
+    );
     expect(screen.getByText(/estimated: 4:21/i)).toBeInTheDocument();
+  });
+
+  it('does not show the estimate while queued', () => {
+    render(<JobStatusLine status="queued" job={{}} estimatedSeconds={261} />);
+    expect(screen.queryByText(/estimated/i)).not.toBeInTheDocument();
   });
 
   it.each(['complete', 'failed', 'expired'] as const)(
