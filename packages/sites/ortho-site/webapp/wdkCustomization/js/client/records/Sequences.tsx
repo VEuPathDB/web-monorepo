@@ -983,8 +983,8 @@ function GroupSequencesTable(
             }}
           >
             {filtersApplied
-              ? `Show tree (${filteredRows.length} sequences)`
-              : 'Show tree'}
+              ? `Show phylogenetic tree (${filteredRows.length} sequences)`
+              : 'Show phylogenetic tree'}
           </button>
           <label style={{ display: 'flex', alignItems: 'center', gap: '.4em' }}>
             <Checkbox
