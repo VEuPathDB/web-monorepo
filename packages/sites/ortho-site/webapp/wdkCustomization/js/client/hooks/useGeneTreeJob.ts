@@ -10,8 +10,8 @@ import { useJobStatus } from '@veupathdb/compute-platform-job/src/lib/Hooks/useJ
 
 type Submission =
   | { kind: 'idle' }
-  | { kind: 'submitting' }
-  | { kind: 'submitted'; jobId: string }
+  | { kind: 'submitting'; estimatedSeconds?: number }
+  | { kind: 'submitted'; jobId: string; estimatedSeconds?: number }
   | { kind: 'failed'; message: string };
 
 interface JobOutput {
@@ -35,8 +35,10 @@ export interface GeneTreeJob {
   newick: string | undefined;
   /** When phase is 'error': what went wrong. */
   error: string | undefined;
+  /** The caller's prediction for the current job, as given to `start`. */
+  estimatedSeconds: number | undefined;
   /** Submits a new job, discarding whatever the previous one produced. */
-  start: (request: SubmitJobRequest) => void;
+  start: (request: SubmitJobRequest, estimatedSeconds?: number) => void;
 }
 
 function messageOf(error: unknown): string {
@@ -46,29 +48,38 @@ function messageOf(error: unknown): string {
 /**
  * Runs one gene-tree job at a time: submits it, follows its status until it
  * finishes, and fetches the resulting newick. Status lives only in this
- * hook's state, so it is gone when the component unmounts.
+ * hook's state, so it is gone when the component unmounts. `onComplete` is
+ * called once with each job's newick, so the caller can keep it.
  */
 export function useGeneTreeJob(
   api: SequenceRetrievalApi,
-  sequenceType: SequenceType
+  sequenceType: SequenceType,
+  onComplete?: (newick: string) => void
 ): GeneTreeJob {
   const [submission, setSubmission] = useState<Submission>({ kind: 'idle' });
   const [output, setOutput] = useState<JobOutput>();
   // Lets a slow submission from an earlier start() be ignored.
   const latestStart = useRef(0);
 
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
   const jobId = submission.kind === 'submitted' ? submission.jobId : undefined;
   const { status, job } = useJobStatus({ api, jobId });
 
   const start = useCallback(
-    (request: SubmitJobRequest) => {
+    (request: SubmitJobRequest, estimatedSeconds?: number) => {
       const thisStart = ++latestStart.current;
       setOutput(undefined);
-      setSubmission({ kind: 'submitting' });
+      setSubmission({ kind: 'submitting', estimatedSeconds });
       api.submitJob(sequenceType, request).then(
         (submitted) =>
           thisStart === latestStart.current &&
-          setSubmission({ kind: 'submitted', jobId: submitted.jobID }),
+          setSubmission({
+            kind: 'submitted',
+            jobId: submitted.jobID,
+            estimatedSeconds,
+          }),
         (error) =>
           thisStart === latestStart.current &&
           setSubmission({ kind: 'failed', message: messageOf(error) })
@@ -81,7 +92,11 @@ export function useGeneTreeJob(
     if (jobId == null || status !== 'complete') return;
     let cancelled = false;
     api.fetchJobFile(jobId, 'output').then(
-      (newick) => !cancelled && setOutput({ jobId, newick }),
+      (newick) => {
+        if (cancelled) return;
+        setOutput({ jobId, newick });
+        onCompleteRef.current?.(newick);
+      },
       (error) => !cancelled && setOutput({ jobId, error: messageOf(error) })
     );
     return () => {
@@ -112,6 +127,10 @@ export function useGeneTreeJob(
     job,
     newick: thisJobsOutput?.newick,
     error,
+    estimatedSeconds:
+      submission.kind === 'submitting' || submission.kind === 'submitted'
+        ? submission.estimatedSeconds
+        : undefined,
     start,
   };
 }

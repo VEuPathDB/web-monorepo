@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { CommonModal } from '@veupathdb/wdk-client/lib/Components';
-import { MAX_JOB_SECONDS, formatDuration } from '../util/runTimeEstimate';
+import { formatDuration } from '@veupathdb/compute-platform-job/src/lib/Utils/formatDuration';
+import { MAX_JOB_SECONDS, WARN_JOB_SECONDS } from '../util/runTimeEstimate';
 
 interface JobWarningDialogProps {
   title: string;
@@ -75,5 +76,47 @@ export function RunTimeMessage({
       sequences with the table filters. The Length filter is the most potent,
       since a few very long sequences slow the whole job.
     </>
+  );
+}
+
+/** A job whose estimate is long enough to warn about, or too long to run. */
+export interface SlowJobDialog {
+  kind: 'tooSlow' | 'slow';
+  estimatedSeconds: number;
+}
+
+/** The warning for an estimate, or undefined when the job can just run. */
+export function slowJobDialogFor(
+  estimatedSeconds: number
+): SlowJobDialog | undefined {
+  if (estimatedSeconds > MAX_JOB_SECONDS)
+    return { kind: 'tooSlow', estimatedSeconds };
+  if (estimatedSeconds > WARN_JOB_SECONDS)
+    return { kind: 'slow', estimatedSeconds };
+  return undefined;
+}
+
+/** Warns about a slow job; a merely slow one can be run anyway. */
+export function SlowJobWarning({
+  dialog,
+  onClose,
+  onRun,
+}: {
+  dialog: SlowJobDialog;
+  onClose: () => void;
+  onRun: (estimatedSeconds: number) => void;
+}) {
+  return (
+    <JobWarningDialog
+      title="⚠️ Long run time"
+      onClose={onClose}
+      onRunAnyway={
+        dialog.kind === 'slow'
+          ? () => onRun(dialog.estimatedSeconds)
+          : undefined
+      }
+    >
+      <RunTimeMessage estimatedSeconds={dialog.estimatedSeconds} />
+    </JobWarningDialog>
   );
 }

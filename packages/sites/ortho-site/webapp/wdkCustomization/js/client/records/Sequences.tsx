@@ -49,14 +49,14 @@ import {
 } from '../util/computeJobConfig';
 import { buildGeneTreeRequest, encodeTreeLabel } from '../util/geneTree';
 import {
-  MAX_JOB_SECONDS,
-  WARN_JOB_SECONDS,
   estimateMsaSeconds,
   estimateTreeSeconds,
 } from '../util/runTimeEstimate';
 import {
   JobWarningDialog,
-  RunTimeMessage,
+  SlowJobDialog,
+  SlowJobWarning,
+  slowJobDialogFor,
 } from '../components/JobWarningDialog';
 import { useGeneTreeJob } from '../hooks/useGeneTreeJob';
 import { JobStatusLine } from '@veupathdb/compute-platform-job/src/lib/Components/JobStatusLine';
@@ -100,10 +100,8 @@ type RowType = Record<string, AttributeValue>;
 // stable identity, so memos keyed on a table that hasn't loaded yet don't rerun every render
 const NO_ROWS: RowType[] = [];
 
-type JobDialog =
-  | { kind: 'tooMany' }
-  | { kind: 'message'; text: string }
-  | { kind: 'tooSlow' | 'slow'; estimatedSeconds: number };
+type TreeDialog = { kind: 'tooMany' } | SlowJobDialog;
+type MsaDialog = { kind: 'message'; text: string } | SlowJobDialog;
 
 const treeWidth = 200;
 const maxColumnWidth = 200;
@@ -187,12 +185,12 @@ function GroupSequencesTable(
 
   // what's typed in the length box; the stored filter is '' while it's blank or at the longest
   const [lengthDraft, setLengthDraft] = useState<string | null>(null);
-  const [treeDialog, setTreeDialog] = useState<JobDialog>();
-  // the estimate for the running job; the filters can change while it runs
-  const [jobEstimate, setJobEstimate] = useState<number>();
-  const [msaDialog, setMsaDialog] = useState<JobDialog>();
+  const [treeDialog, setTreeDialog] = useState<TreeDialog>();
+  const [msaDialog, setMsaDialog] = useState<MsaDialog>();
 
   const [resetCounter, setResetCounter] = useState(0); // used for forcing re-render of filter buttons
+  // the search box also remounts to show a term picked from the history, which shouldn't touch the filters
+  const [searchBoxCounter, setSearchBoxCounter] = useState(0);
 
   const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
     useGroupBackedDeferredState(
@@ -264,7 +262,6 @@ function GroupSequencesTable(
       SequenceRetrievalApi.getClient(SEQUENCE_RETRIEVAL_BASE_URL, wdkService),
     [wdkService]
   );
-  const geneTreeJob = useGeneTreeJob(api, PROTEIN_SEQUENCE_TYPE);
   const [builtTrees, setBuiltTrees] = useSessionBackedState<BuiltTree[]>(
     [],
     groupCacheKey(groupName, 'trees'),
@@ -279,11 +276,9 @@ function GroupSequencesTable(
   );
   // Keep every tree built on this page, so returning to an earlier filter
   // (or clearing it) shows the matching tree again without a new job.
-  useEffect(() => {
-    const { newick } = geneTreeJob;
-    if (newick == null || builtTrees.some((t) => t.newick === newick)) return;
-    setBuiltTrees(addBuiltTree(builtTrees, makeBuiltTree(newick)));
-  }, [geneTreeJob.newick, builtTrees, setBuiltTrees]);
+  const geneTreeJob = useGeneTreeJob(api, PROTEIN_SEQUENCE_TYPE, (newick) =>
+    setBuiltTrees(addBuiltTree(builtTrees, makeBuiltTree(newick)))
+  );
 
   // deal with Pfam domain architectures
   const proteinPfams = props.record.tables['ProteinPFams'] ?? NO_ROWS;
@@ -886,6 +881,7 @@ function GroupSequencesTable(
         setMaxLengthFilter('');
         setLengthDraft(null);
         setResetCounter((prev) => prev + 1);
+        setSearchBoxCounter((prev) => prev + 1);
         setTablePageNumber(1);
       }}
     />
@@ -931,10 +927,8 @@ function GroupSequencesTable(
     Math.max(0, ...filteredRows.map(rowLength))
   );
 
-  const startTree = () => {
-    setJobEstimate(estimatedSeconds);
-    geneTreeJob.start(buildGeneTreeRequest(filteredRows));
-  };
+  const startTree = (estimatedSeconds: number) =>
+    geneTreeJob.start(buildGeneTreeRequest(filteredRows), estimatedSeconds);
 
   // A stored tree that covers these rows can stand in for a new job. The
   // pruned tree is stored under its own ids; the source is kept as the newest
@@ -973,12 +967,10 @@ function GroupSequencesTable(
                 // no job needed
               } else if (tooManyForTree) {
                 setTreeDialog({ kind: 'tooMany' });
-              } else if (estimatedSeconds > MAX_JOB_SECONDS) {
-                setTreeDialog({ kind: 'tooSlow', estimatedSeconds });
-              } else if (estimatedSeconds > WARN_JOB_SECONDS) {
-                setTreeDialog({ kind: 'slow', estimatedSeconds });
               } else {
-                startTree();
+                const slow = slowJobDialogFor(estimatedSeconds);
+                if (slow) setTreeDialog(slow);
+                else startTree(estimatedSeconds);
               }
             }}
           >
@@ -1012,37 +1004,29 @@ function GroupSequencesTable(
             </HelpIcon>
           </label>
         </div>
-        {treeDialog && (
+        {treeDialog?.kind === 'tooMany' && (
           <JobWarningDialog
-            title={
-              treeDialog.kind === 'tooMany'
-                ? '⚠️ Too many sequences'
-                : '⚠️ Long run time'
-            }
+            title="⚠️ Too many sequences"
             onClose={() => setTreeDialog(undefined)}
-            onRunAnyway={treeDialog.kind === 'slow' ? startTree : undefined}
           >
-            {treeDialog.kind === 'tooMany' ? (
-              <>
-                More than {MAX_SEQUENCES_FOR_TREE} sequences in the table.
-                Please reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying
-                the available filters
-              </>
-            ) : (
-              treeDialog.kind !== 'message' && (
-                <RunTimeMessage
-                  estimatedSeconds={treeDialog.estimatedSeconds}
-                />
-              )
-            )}
+            More than {MAX_SEQUENCES_FOR_TREE} sequences in the table. Please
+            reduce to {MAX_SEQUENCES_FOR_TREE} or less by applying the available
+            filters
           </JobWarningDialog>
+        )}
+        {(treeDialog?.kind === 'slow' || treeDialog?.kind === 'tooSlow') && (
+          <SlowJobWarning
+            dialog={treeDialog}
+            onClose={() => setTreeDialog(undefined)}
+            onRun={startTree}
+          />
         )}
         {geneTreeJob.phase === 'submitting' && <span>Submitting…</span>}
         {geneTreeJob.phase === 'running' && (
           <JobStatusLine
             status={geneTreeJob.status ?? 'queued'}
             job={geneTreeJob.job}
-            estimatedSeconds={jobEstimate}
+            estimatedSeconds={geneTreeJob.estimatedSeconds}
           />
         )}
         {geneTreeJob.phase === 'error' && (
@@ -1103,13 +1087,9 @@ function GroupSequencesTable(
                   .map(rowLength)
               )
             );
-            if (msaSeconds > MAX_JOB_SECONDS) {
-              setMsaDialog({ kind: 'tooSlow', estimatedSeconds: msaSeconds });
-            } else if (msaSeconds > WARN_JOB_SECONDS) {
-              setMsaDialog({ kind: 'slow', estimatedSeconds: msaSeconds });
-            } else {
-              runMsa(msaSeconds);
-            }
+            const slow = slowJobDialogFor(msaSeconds);
+            if (slow) setMsaDialog(slow);
+            else runMsa(msaSeconds);
           }}
         >
           {highlightedNodes.length > 0
@@ -1130,25 +1110,20 @@ function GroupSequencesTable(
           </select>
         </label>
       </div>
-      {msaDialog && (
+      {msaDialog?.kind === 'message' && (
         <JobWarningDialog
-          title={
-            msaDialog.kind === 'message'
-              ? '⚠️ Multiple sequence alignment'
-              : '⚠️ Long run time'
-          }
+          title="⚠️ Multiple sequence alignment"
           onClose={() => setMsaDialog(undefined)}
-          onRunAnyway={
-            msaDialog.kind === 'slow'
-              ? () => runMsa(msaDialog.estimatedSeconds)
-              : undefined
-          }
         >
-          {msaDialog.kind === 'message' && msaDialog.text}
-          {(msaDialog.kind === 'slow' || msaDialog.kind === 'tooSlow') && (
-            <RunTimeMessage estimatedSeconds={msaDialog.estimatedSeconds} />
-          )}
+          {msaDialog.text}
         </JobWarningDialog>
+      )}
+      {(msaDialog?.kind === 'slow' || msaDialog?.kind === 'tooSlow') && (
+        <SlowJobWarning
+          dialog={msaDialog}
+          onClose={() => setMsaDialog(undefined)}
+          onRun={runMsa}
+        />
       )}
     </div>
   );
@@ -1208,11 +1183,11 @@ function GroupSequencesTable(
             searchTerm={volatileSearchQuery}
             onSelect={(term) => {
               handleSearchQueryChange(term);
-              setResetCounter((n) => n + 1); // remounts the search box so it shows the term
+              setSearchBoxCounter((n) => n + 1); // remounts the search box so it shows the term
             }}
           >
             <RecordFilter
-              key={`text-search-${resetCounter}`}
+              key={`text-search-${searchBoxCounter}`}
               // volatile: the box only reads this on mount, and the deferred value lags a render behind
               searchTerm={volatileSearchQuery}
               onSearchTermChange={handleSearchQueryChange}

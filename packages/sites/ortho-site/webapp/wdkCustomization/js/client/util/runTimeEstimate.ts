@@ -15,13 +15,6 @@ export function estimateTreeSeconds(n: number, maxLength: number): number {
   return fasttree + mafft;
 }
 
-/** Seconds as m:ss. */
-export function formatDuration(seconds: number): string {
-  const total = Math.round(seconds);
-  const ss = String(total % 60).padStart(2, '0');
-  return `${Math.floor(total / 60)}:${ss}`;
-}
-
 /**
  * Predicted seconds for a Clustal Omega protein alignment of `n` sequences
  * whose longest is `maxLength` residues. A preliminary power-law fit.

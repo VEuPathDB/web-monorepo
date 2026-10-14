@@ -81,6 +81,36 @@ describe('useGeneTreeJob', () => {
     expect(result.current.newick).toBe('(a,b);');
   });
 
+  it('calls onComplete once with the newick, and keeps the estimate with the job', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest
+        .fn()
+        .mockResolvedValue({ jobID: 'j1', status: 'complete' }),
+    });
+    const onComplete = jest.fn();
+    const { result } = renderHook(() =>
+      useGeneTreeJob(api, 'orthomcl', onComplete)
+    );
+
+    act(() => {
+      result.current.start(REQUEST, 42);
+    });
+    expect(result.current.estimatedSeconds).toBe(42);
+    await flush();
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
+    await flush();
+    await act(async () => {
+      jest.advanceTimersByTime(10000);
+    });
+    await flush();
+
+    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(onComplete).toHaveBeenCalledWith('(a,b);');
+    expect(result.current.estimatedSeconds).toBe(42);
+  });
+
   it.each(['failed', 'expired'] as const)(
     'reports a %s job as an error',
     async (status) => {

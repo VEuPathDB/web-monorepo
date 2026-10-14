@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 
 import { JobResponse, JobStatus } from '../Service/ServiceTypes';
+import { formatDuration } from '../Utils/formatDuration';
 
 import './ComputeJobPage.scss';
 
@@ -13,11 +14,6 @@ interface JobStatusLineProps {
   job: Partial<JobResponse>;
   /** The caller's prediction of the run time, shown beside the status. */
   estimatedSeconds?: number;
-}
-
-function formatElapsed(ms: number): string {
-  const total = Math.floor(Math.max(0, ms) / 1000);
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
 }
 
 /**
@@ -31,7 +27,11 @@ function Elapsed({ sinceIso }: { sinceIso: string }) {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
-  return <>{formatElapsed(now - new Date(sinceIso).getTime())}</>;
+  return (
+    <>
+      {formatDuration(Math.floor((now - new Date(sinceIso).getTime()) / 1000))}
+    </>
+  );
 }
 
 /**
@@ -71,7 +71,7 @@ export function JobStatusLine({
         </i>
       )}
       {status === 'in-progress' && estimatedSeconds != null && (
-        <i> Estimated: {formatElapsed(estimatedSeconds * 1000)}</i>
+        <i> Estimated: {formatDuration(estimatedSeconds)}</i>
       )}
     </p>
   );

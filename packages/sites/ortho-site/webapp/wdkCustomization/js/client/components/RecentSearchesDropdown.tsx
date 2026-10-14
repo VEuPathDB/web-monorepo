@@ -12,6 +12,10 @@ const STORAGE_KEY = 'ortho/table-search/history';
 const parseHistory = (value: string) =>
   decodeOrElse(arrayOf(string), [], value);
 
+// RecordFilter's column-selector checkboxes share the container's events.
+const isSearchInput = (target: EventTarget): target is HTMLInputElement =>
+  target instanceof HTMLInputElement && target.type === 'search';
+
 interface Props {
   /** The search box, which this wraps so the history can drop down beneath it. */
   children: ReactNode;
@@ -98,12 +102,16 @@ export function RecentSearchesDropdown({
       ref={containerRef}
       style={{ position: 'relative' }}
       onFocus={(e) => {
-        if (e.target instanceof HTMLInputElement) setHasFocus(true);
+        if (isSearchInput(e.target)) setHasFocus(true);
       }}
-      onChange={(e) => setTypedTerm((e.target as HTMLInputElement).value)}
-      onBlur={remember}
+      onChange={(e) => {
+        if (isSearchInput(e.target)) setTypedTerm(e.target.value);
+      }}
+      onBlur={(e) => {
+        if (isSearchInput(e.target)) remember();
+      }}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') remember();
+        if (e.key === 'Enter' && isSearchInput(e.target)) remember();
         if (e.key === 'Escape') setHasFocus(false);
         if (showHistory && e.key === 'ArrowDown') moveFocus(e, 1);
         if (e.key === 'ArrowUp' && e.target instanceof HTMLLIElement)

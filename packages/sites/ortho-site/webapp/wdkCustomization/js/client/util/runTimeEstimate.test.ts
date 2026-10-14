@@ -1,8 +1,4 @@
-import {
-  estimateMsaSeconds,
-  estimateTreeSeconds,
-  formatDuration,
-} from './runTimeEstimate';
+import { estimateMsaSeconds, estimateTreeSeconds } from './runTimeEstimate';
 
 describe('estimateTreeSeconds', () => {
   it('is zero for no sequences', () => {
@@ -22,15 +18,6 @@ describe('estimateTreeSeconds', () => {
     expect(estimateTreeSeconds(100, 800)).toBeGreaterThan(
       estimateTreeSeconds(100, 400)
     );
-  });
-});
-
-describe('formatDuration', () => {
-  it('formats as m:ss', () => {
-    expect(formatDuration(0)).toBe('0:00');
-    expect(formatDuration(9.4)).toBe('0:09');
-    expect(formatDuration(261)).toBe('4:21');
-    expect(formatDuration(3725)).toBe('62:05');
   });
 });
 
