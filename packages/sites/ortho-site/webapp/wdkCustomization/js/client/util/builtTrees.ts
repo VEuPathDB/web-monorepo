@@ -96,8 +96,20 @@ export function serializeBuiltTrees(trees: BuiltTree[]): string {
   );
 }
 
-/** Stored trees that no longer parse are skipped. */
+let lastDeserialized: { raw: string; trees: BuiltTree[] } | undefined;
+
+/**
+ * Stored trees that no longer parse are skipped. Remembers the last result
+ * because useStorageBackedState parses on every render and parsing is costly.
+ */
 export function deserializeBuiltTrees(raw: string): BuiltTree[] {
+  if (lastDeserialized?.raw !== raw) {
+    lastDeserialized = { raw, trees: parseStoredTrees(raw) };
+  }
+  return lastDeserialized.trees;
+}
+
+function parseStoredTrees(raw: string): BuiltTree[] {
   let stored: unknown;
   try {
     stored = JSON.parse(raw);

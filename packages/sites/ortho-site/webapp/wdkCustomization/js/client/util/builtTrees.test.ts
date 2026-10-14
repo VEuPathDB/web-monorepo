@@ -79,6 +79,11 @@ describe('serialization', () => {
     expect(restored.map((t) => t.key)).toEqual(trees.map((t) => t.key));
   });
 
+  it('reuses the result for the same stored string', () => {
+    const raw = serializeBuiltTrees([makeBuiltTree(nwk('a', 'b', 'c'))]);
+    expect(deserializeBuiltTrees(raw)).toBe(deserializeBuiltTrees(raw));
+  });
+
   it('tolerates missing or malformed data', () => {
     expect(deserializeBuiltTrees('{nope')).toEqual([]);
     expect(deserializeBuiltTrees('{"a":1}')).toEqual([]);
