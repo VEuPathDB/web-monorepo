@@ -6,7 +6,7 @@ class RowCounter extends React.PureComponent {
   }
 
   render() {
-    const { rows, uiState, eventHandlers } = this.props;
+    const { rows, uiState, eventHandlers, rowNoun } = this.props;
 
     const { pagination = {}, filteredRowCount = 0 } = uiState;
     const { totalRows, rowsPerPage } = pagination;
@@ -16,8 +16,9 @@ class RowCounter extends React.PureComponent {
 
     const count = totalRows ? totalRows : rows.length;
 
+    // `rowNoun` (singular) replaces both "row" and "result"
     const noun =
-      (isSearching ? 'result' : 'row') +
+      (rowNoun ?? (isSearching ? 'result' : 'row')) +
       (count - filteredRowCount === 1 ? '' : 's');
 
     const start = !isPaginated
