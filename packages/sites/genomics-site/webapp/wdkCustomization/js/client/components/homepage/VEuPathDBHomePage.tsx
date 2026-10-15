@@ -131,6 +131,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
     location.pathname.includes('workspace/analyses') ||
+    location.pathname.startsWith('/pathfinder') ||
     user == null ||
     user.isGuest;
 
