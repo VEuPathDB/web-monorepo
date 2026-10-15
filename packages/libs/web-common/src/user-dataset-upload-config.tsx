@@ -680,7 +680,7 @@ function ReferenceGenomeDependency({
   return (
     <SelectTree
       shouldCloseOnSelection
-      buttonDisplayContent="Choose reference genome"
+      buttonDisplayContent="Choose reference organism"
       tree={organismTree}
       getNodeId={getNodeId}
       getNodeChildren={getNodeChildren}

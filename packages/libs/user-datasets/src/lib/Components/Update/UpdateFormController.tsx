@@ -105,7 +105,7 @@ export function UpdateFormController(
 
       return {
         ...configureFormProps(type, props.formConfigs, vdi),
-        // Disable reference genome input for update form
+        // Disable reference organism input for update form
         dependencies: undefined,
       };
     },
