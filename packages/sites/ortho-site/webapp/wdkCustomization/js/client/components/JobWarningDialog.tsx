@@ -73,7 +73,7 @@ export function RunTimeMessage({
   ) : (
     <>
       Run time estimate {formatDuration(estimatedSeconds)}. To reduce it, remove
-      sequences with the table filters. The Length filter is the most potent,
+      sequences with the table filters. The Length filter is the most important,
       since a few very long sequences slow the whole job.
     </>
   );
