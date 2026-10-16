@@ -4,7 +4,7 @@ import LinePlot, {
 } from '@veupathdb/components/lib/plots/LinePlot';
 
 import * as t from 'io-ts';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import DataClient, {
   LineplotRequestParams,
@@ -85,6 +85,7 @@ import {
   hasIncompleteCases,
   assertValidInputVariables,
   substituteUnselectedToken,
+  requiredInputsAreSelected,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -102,9 +103,15 @@ import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/Facete
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import {
+  useAxisTruncationWarningEffect,
+  useConfigChangeHandlerFactory,
   useNeutralPaletteProps,
   useVizConfig,
 } from '../../../hooks/visualizations';
+import {
+  modalPlotContainerStyles,
+  usePlotContainerStyles,
+} from '../plotStyles';
 import { useInputStyles } from '../inputStyles';
 import { ValuePicker } from './ValuePicker';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
@@ -114,8 +121,8 @@ import { NumberOrDateRange as NumberOrDateRangeT } from '../../../types/general'
 import { padISODateTime } from '../../../utils/date-conversion';
 // reusable util for computing truncationConfig
 import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Notification from '@veupathdb/components/lib/components/widgets/Notification';
+import TruncationNotification from '../TruncationNotification';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
@@ -143,21 +150,7 @@ import {
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
 import { useCachedPromise } from '../../../hooks/cachedPromise';
 
-const plotContainerStyles = {
-  width: 750,
-  height: 450,
-  marginLeft: '0.75rem',
-  border: '1px solid #dedede',
-  boxShadow: '1px 1px 4px #00000066',
-};
-
 const plotSpacingOptions = {};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
-};
 
 const EMPTY_ARRAY: string[] = [];
 
@@ -289,12 +282,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
-  const finalPlotContainerStyles = useMemo(
-    () => ({
-      ...plotContainerStyles,
-      ...plotContainerStyleOverrides,
-    }),
-    [plotContainerStyleOverrides]
+  const finalPlotContainerStyles = usePlotContainerStyles(
+    plotContainerStyleOverrides
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -497,105 +486,53 @@ function LineplotViz(props: VisualizationProps<Options>) {
     [updateVizConfig]
   );
 
-  // prettier-ignore
-  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
-  // considering axis range control
-  const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof LineplotConfig,
-		  resetCheckedLegendItems?: boolean,
-      resetIndependentAxisLogScale?: boolean,
-      resetDependentAxisLogScale?: boolean,
-      resetBinningControl?: boolean,
-      resetErrorBarControl?: boolean,
-      resetIndependentAxisRanges?: boolean,
-      resetDependentAxisRanges?: boolean,
-      ) => (newValue?: ValueType) => {
-      const newPartialConfig = {
-        [key]: newValue,
-        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-        ...(resetIndependentAxisLogScale ? { independentAxisLogScale: false } : {}),
-        ...(resetDependentAxisLogScale ? { dependentAxisLogScale: false } : {}),
-        ...(resetBinningControl ? { useBinning: false } : {}),
-        ...(resetErrorBarControl ? { showErrorBars: false } : {}),
-        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
-        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
-      };
-      updateVizConfig(newPartialConfig);
-      if (resetIndependentAxisRanges) {
-        setTruncatedIndependentAxisWarning('');
-      }
-      if (resetDependentAxisRanges) {
-        setTruncatedDependentAxisWarning('');
-      }
-    },
-    [updateVizConfig]
-  );
+  const onChangeHandlerFactory =
+    useConfigChangeHandlerFactory<LineplotConfig>(updateVizConfig);
 
-  // set checkedLegendItems: undefined for the change of both plot options and showMissingness
+  // reset checkedLegendItems and axis ranges for the change of plot mode
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
-    true,
-    false,
-    false,
-    false,
-    false,
-    true,
-    true
+    {
+      checkedLegendItems: undefined,
+      independentAxisRange: undefined,
+      dependentAxisRange: undefined,
+    },
+    () => {
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
+    }
   );
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
-    false,
-    false,
-    false,
-    false,
-    false,
-    true,
-    false
+    { independentAxisRange: undefined },
+    () => setTruncatedIndependentAxisWarning('')
   );
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
-    true,
-    false,
-    false,
-    false,
-    false,
-    true,
-    true
+    {
+      checkedLegendItems: undefined,
+      independentAxisRange: undefined,
+      dependentAxisRange: undefined,
+    },
+    () => {
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
+    }
   );
 
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
-    true,
-    false,
-    false, // reset dependentAxisLogScale
-    false,
-    false,
-    false,
-    false
+    { checkedLegendItems: undefined }
   );
 
-  const onUseBinningChange = onChangeHandlerFactory<boolean>(
-    'useBinning',
-    false,
-    false, // reset independentAxisLogScale
-    false,
-    false,
-    false,
-    false,
-    false
-  );
+  const onUseBinningChange = onChangeHandlerFactory<boolean>('useBinning');
 
   const onNumeratorValuesChange =
     onChangeHandlerFactory<string[]>('numeratorValues');
@@ -604,24 +541,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
-    false,
-    false,
-    false,
-    false, // reset useBinning
-    false,
-    true,
-    false
+    { independentAxisRange: undefined },
+    () => setTruncatedIndependentAxisWarning('')
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
-    false,
-    false,
-    false,
-    false,
-    false, // reset showErrorBars
-    false,
-    true
+    { dependentAxisRange: undefined },
+    () => setTruncatedDependentAxisWarning('')
   );
 
   const outputEntity = useOutputEntity(
@@ -971,9 +898,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     ) {
       return false;
     }
-    return Object.entries(dataElementConstraints[0])
-      .filter((variable) => variable[1].isRequired)
-      .every((reqdVar) => !!vizConfig[reqdVar[0] as keyof LineplotConfig]);
+    return requiredInputsAreSelected(dataElementConstraints, vizConfig);
   }, [dataElementConstraints, vizConfig]);
 
   // set truncation flags: will see if this is reusable with other application
@@ -1221,38 +1146,17 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning('');
   }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
-  // set useEffect for changing truncation warning message
-  useEffect(() => {
-    if (
-      truncationConfigIndependentAxisMin ||
-      truncationConfigIndependentAxisMax
-    ) {
-      setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigIndependentAxisMin,
     truncationConfigIndependentAxisMax,
-    setTruncatedIndependentAxisWarning,
-  ]);
+    setTruncatedIndependentAxisWarning
+  );
 
-  useEffect(() => {
-    if (
-      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      // !scatterplotProps.showSpinner
-      truncationConfigDependentAxisMin ||
-      truncationConfigDependentAxisMax
-    ) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
+  useAxisTruncationWarningEffect(
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-    setTruncatedDependentAxisWarning,
-  ]);
+    setTruncatedDependentAxisWarning
+  );
 
   const controlsNode = (
     <>
@@ -1484,26 +1388,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 }
               />
               {/* truncation notification */}
-              {truncatedIndependentAxisWarning &&
-              !independentAllNegative &&
+              {!independentAllNegative &&
               !showIndependentAxisBanner &&
               !showDependentAxisBanner ? (
-                <Notification
-                  title={''}
-                  text={truncatedIndependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedIndependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  // set maxWidth per type
-                  containerStyles={{
-                    maxWidth:
-                      lineplotProps.independentValueType === 'date'
-                        ? '350px'
-                        : '350px',
-                  }}
+                <TruncationNotification
+                  warning={truncatedIndependentAxisWarning}
+                  onAcknowledge={() => setTruncatedIndependentAxisWarning('')}
                 />
               ) : null}
             </LabelledGroup>
@@ -1639,21 +1529,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 }
               />
               {/* truncation notification */}
-              {truncatedDependentAxisWarning &&
-              !dependentAllNegative &&
+              {!dependentAllNegative &&
               !showIndependentAxisBanner &&
               !showDependentAxisBanner ? (
-                <Notification
-                  title={''}
-                  text={truncatedDependentAxisWarning}
-                  // this was defined as LIGHT_BLUE
-                  color={'#5586BE'}
-                  onAcknowledgement={() => {
-                    setTruncatedDependentAxisWarning('');
-                  }}
-                  showWarningIcon={true}
-                  // change maxWidth
-                  containerStyles={{ maxWidth: '350px' }}
+                <TruncationNotification
+                  warning={truncatedDependentAxisWarning}
+                  onAcknowledge={() => setTruncatedDependentAxisWarning('')}
                 />
               ) : null}
             </LabelledGroup>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
@@ -47,6 +47,59 @@ export function useVizConfig<ConfigType>(
   );
 
   return [vizConfig, updateVizConfig];
+}
+
+/**
+ * Returns a factory for making simple config-change handlers.
+ *
+ * A handler made by the factory sets `key` in the viz config to the value it
+ * receives. Any dependent config that must be cleared at the same time (for
+ * example a custom axis range that no longer applies when the plot mode
+ * changes) is passed as `resets` and merged into the same config update.
+ * `onUpdate` runs after the update, for related side effects such as
+ * clearing a truncation warning.
+ */
+export function useConfigChangeHandlerFactory<ConfigType>(
+  updateVizConfig: (newConfig: Partial<ConfigType>) => void
+) {
+  return useCallback(
+    <ValueType,>(
+        key: keyof ConfigType,
+        resets?: Partial<ConfigType>,
+        onUpdate?: () => void
+      ) =>
+      (newValue?: ValueType) => {
+        updateVizConfig({
+          [key]: newValue,
+          ...resets,
+        } as Partial<ConfigType>);
+        onUpdate?.();
+      },
+    [updateVizConfig]
+  );
+}
+
+export const axisRangeTruncationWarning =
+  'Data may have been truncated by range selection, as indicated by the yellow shading';
+
+/**
+ * Sets the axis-truncation warning message whenever either truncation flag
+ * is set. If `clearWhenNotTruncated` is passed, the warning is also cleared
+ * when neither flag is set (e.g. after an input variable change).
+ */
+export function useAxisTruncationWarningEffect(
+  isMinTruncated: boolean | undefined,
+  isMaxTruncated: boolean | undefined,
+  setWarning: (warning: string) => void,
+  clearWhenNotTruncated: boolean = false
+) {
+  useEffect(() => {
+    if (isMinTruncated || isMaxTruncated) {
+      setWarning(axisRangeTruncationWarning);
+    } else if (clearWhenNotTruncated) {
+      setWarning('');
+    }
+  }, [isMinTruncated, isMaxTruncated, setWarning, clearWhenNotTruncated]);
 }
 
 /**
