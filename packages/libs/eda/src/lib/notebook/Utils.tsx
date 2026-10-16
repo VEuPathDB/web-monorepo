@@ -11,6 +11,7 @@ import { DifferentialExpressionConfig } from '../core/types/apps';
 import {
   VolcanoPlotConfig,
   effectDirectionLabels,
+  significanceThresholdLabel,
 } from '../core/components/visualizations/implementations/VolcanoPlotVisualization';
 import {
   entityTreeToArray,
@@ -161,7 +162,7 @@ function ComputationSummary({
         )}
         {volcanoConfig?.significanceThreshold != null && (
           <ReviewRow
-            label="p-value ≤"
+            label={significanceThresholdLabel(volcanoConfig)}
             value={String(volcanoConfig.significanceThreshold)}
           />
         )}
