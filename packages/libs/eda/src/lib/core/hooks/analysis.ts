@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { Computation, Visualization } from '../types/visualization';
 import EventEmitter from 'events';
+import { sortFilters } from '../utils/sort-filters';
 
 async function notImplemented(): Promise<any> {
   throw new Error('This function is not implemented');
@@ -406,7 +407,20 @@ export function useAnalysisState(
   );
   const setNotes = useSetter(analysisChangeHandler, analysisToNotesLens);
   const setIsPublic = useSetter(analysisChangeHandler, analysisToIsPublicLens);
-  const setFilters = useSetter(analysisChangeHandler, analysisToFiltersLens);
+  const _setFilters = useSetter(analysisChangeHandler, analysisToFiltersLens);
+  // Wrap setFilters so that set-valued filter arrays are always sorted.
+  // This stabilises the JSON sent to backend endpoints (improving cache-hit
+  // rates) and react-query serialised keys on the client.
+  const setFilters: typeof _setFilters = useCallback(
+    (update) => {
+      if (typeof update === 'function') {
+        _setFilters((prev) => sortFilters(update(prev)));
+      } else {
+        _setFilters(sortFilters(update));
+      }
+    },
+    [_setFilters]
+  );
   const setComputations = useSetter(
     analysisChangeHandler,
     analysisToComputationsLens
