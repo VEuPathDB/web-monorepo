@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { createStore } from 'redux';
 
-import { PathfinderController } from './controllers/PathfinderController';
+import { PathfinderController } from '@veupathdb/web-common/lib/controllers/PathfinderController';
 
 let mockPathfinderUrl = '/pathfinder';
 

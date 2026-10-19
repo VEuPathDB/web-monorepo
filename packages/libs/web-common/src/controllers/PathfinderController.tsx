@@ -4,9 +4,9 @@ import { RouteComponentProps } from 'react-router';
 
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { pathfinderUrl, rootUrl } from '@veupathdb/web-common/lib/config';
+import { pathfinderUrl, rootUrl } from '../config';
 
-import Pathfinder from '../Pathfinder';
+import Pathfinder from '../components/Pathfinder';
 
 type PathfinderControllerProps = RouteComponentProps<{}>;
 
