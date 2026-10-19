@@ -40,10 +40,6 @@ export function ExperimentalOrganisms(
 
   const isGenomics = isGenomicsProjectId(projectId);
 
-  // genomics should always have this set to true.
-  if (hasOrganismData === undefined && isGenomics)
-    setEnabled(true);
-
   const requireInput = !isGenomics
     ? hasOrganismData === true
     : props.datasetMeta.visibility === 'public';
@@ -60,7 +56,7 @@ export function ExperimentalOrganisms(
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
-            enabled: hasOrganismData,
+            enabled: isGenomics ? true : hasOrganismData,
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
             required: isPublic,

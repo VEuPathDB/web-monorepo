@@ -15,7 +15,7 @@ import {
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { Consumer, DataNoun } from '../../Utils';
+import { Consumer, DataNoun, ifDefined } from '../../Utils';
 import {
   clearBadUpload,
   receiveBadUpload,
@@ -38,6 +38,7 @@ import {
 } from '../../Service/utils/rnaseq-rc-data-files';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
+import { pruneSimpleRecords } from '../../Service/Datasets/payload-cleanup';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -287,8 +288,22 @@ function filterDetails({
   )
     delete filtered['publications'];
 
-  if (!datasetDetails.metadataContentFlags?.hasOrganismData)
-    delete filtered['experimentalOrganisms'];
+  if (!submission.updated.metadataContentFlags?.hasOrganismData) {
+    if (!isGenomicsProjectId(projectId)) {
+      mutableSubmission.experimentalOrganisms = undefined;
+    } else {
+      mutableSubmission.experimentalOrganisms = ifDefined(
+        mutableSubmission.experimentalOrganisms,
+        pruneSimpleRecords,
+      );
+
+      if (mutableSubmission.experimentalOrganisms)
+        mutableSubmission.metadataContentFlags = {
+          ...(mutableSubmission.metadataContentFlags ?? {}),
+          hasOrganismData: true
+        };
+    }
+  }
 
   // `samplesDescription` is a client-only field: its content is turned into
   // the `sample-info.txt` upload by `prepareDataFiles` (which reads it from

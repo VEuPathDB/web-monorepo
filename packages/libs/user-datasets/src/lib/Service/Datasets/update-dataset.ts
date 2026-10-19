@@ -24,7 +24,8 @@ import { statusStringToCode } from '../utils/conversions';
 import { Mutable } from '../../Utils/types';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
-import { cleanDatasetDetails } from './payload-cleanup';
+import { cleanDatasetDetails, pruneSimpleRecords } from './payload-cleanup';
+import { ifDefined } from '../../Utils';
 
 export interface UpdateSubmission {
   readonly vdi: VdiService;
@@ -69,11 +70,21 @@ export async function submitUpdate(
     mutableSubmission.publications = undefined;
   }
 
-  if (
-    !submission.updated.metadataContentFlags?.hasOrganismData &&
-    !isGenomicsProjectId(projectId)
-  ) {
-    mutableSubmission.experimentalOrganisms = undefined;
+  if (!submission.updated.metadataContentFlags?.hasOrganismData) {
+    if (!isGenomicsProjectId(projectId)) {
+      mutableSubmission.experimentalOrganisms = undefined;
+    } else {
+      mutableSubmission.experimentalOrganisms = ifDefined(
+        mutableSubmission.experimentalOrganisms,
+        pruneSimpleRecords,
+      );
+
+      if (mutableSubmission.experimentalOrganisms)
+        mutableSubmission.metadataContentFlags = {
+          ...(mutableSubmission.metadataContentFlags ?? {}),
+          hasOrganismData: true
+        };
+    }
   }
 
   if (!submission.updated.metadataContentFlags?.hasDatasetCharacteristics) {
