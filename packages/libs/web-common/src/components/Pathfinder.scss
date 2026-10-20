@@ -1,11 +1,14 @@
 @import '@veupathdb/web-common/lib/styles/collapsed-header-mixins.scss';
 
-body.vpdb-Body .vpdb-RootContainer__pathfinder {
-  @include collapsed-header-page-layout;
+body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__pathfinder {
+  grid-template-areas:
+    'header'
+    'banner'
+    'content'
+    'footer';
+  grid-template-rows: auto auto 1fr auto;
 
-  @media screen and (min-width: $hamburger-width + 1) {
-    grid-template-rows: $collapsed-header-height auto auto 1fr auto;
-  }
+  @include collapsed-header-page-layout;
 
   .vpdb-Main {
     margin: 0;
