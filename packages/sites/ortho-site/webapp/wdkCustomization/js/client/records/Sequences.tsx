@@ -13,9 +13,11 @@ import {
   HelpIcon,
   Loading,
 } from '@veupathdb/wdk-client/lib/Components';
-import { useGroupBackedDeferredState } from '../hooks/useGroupBackedDeferredState';
-import { groupCacheKey, discardStaleGroupCache } from '../util/groupCache';
-import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import {
+  GroupCacheGate,
+  useGroupBackedDeferredState,
+  useGroupBackedState,
+} from '../hooks/groupCache';
 import {
   arrayOf,
   boolean,
@@ -131,31 +133,10 @@ export function RecordTable_Sequences(
     throw new Error('groupName is required but was not found in the record.');
   }
 
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-
-  // Cached page state is only valid for the service run that wrote it; the
-  // check has to finish before the table reads it.
-  const [checkedGroup, setCheckedGroup] = useState<string>();
-  useEffect(() => {
-    let cancelled = false;
-    wdkService
-      .getVersion()
-      .then((version) => discardStaleGroupCache(version, groupName))
-      .catch(() => undefined) // without a version, just don't trust the cache
-      .then(() => {
-        if (!cancelled) setCheckedGroup(groupName);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [wdkService, groupName]);
-
-  if (checkedGroup !== groupName) return <Loading />;
-
-  // WDK reuses this component when navigating between group pages; the key
-  // gives each group its own state, filters and trees included.
   return (
-    <GroupSequencesTable key={groupName} groupName={groupName} {...props} />
+    <GroupCacheGate group={groupName}>
+      <GroupSequencesTable groupName={groupName} {...props} />
+    </GroupCacheGate>
   );
 }
 
@@ -165,22 +146,14 @@ function GroupSequencesTable(
   const { groupName } = props;
 
   const [searchQuery, setSearchQuery, volatileSearchQuery] =
-    useGroupBackedDeferredState(
-      groupName,
-      'search',
-      '',
-      JSON.stringify,
-      (raw) => decodeOrElse(string, '', raw)
+    useGroupBackedDeferredState('search', '', JSON.stringify, (raw) =>
+      decodeOrElse(string, '', raw)
     );
 
   // digits only; '' means no length filter (the box then shows the group's longest)
   const [maxLengthFilter, setMaxLengthFilter, volatileMaxLengthFilter] =
-    useGroupBackedDeferredState(
-      groupName,
-      'maxLength',
-      '',
-      JSON.stringify,
-      (raw) => decodeOrElse(string, '', raw)
+    useGroupBackedDeferredState('maxLength', '', JSON.stringify, (raw) =>
+      decodeOrElse(string, '', raw)
     );
 
   // what's typed in the length box; the stored filter is '' while it's blank or at the longest
@@ -193,38 +166,19 @@ function GroupSequencesTable(
   const [searchBoxCounter, setSearchBoxCounter] = useState(0);
 
   const [proteinFilterIds, setProteinFilterIds, volatileProteinFilterIds] =
-    useGroupBackedDeferredState(
-      groupName,
-      'proteins',
-      [],
-      JSON.stringify,
-      decodeStrings
-    );
+    useGroupBackedDeferredState('proteins', [], JSON.stringify, decodeStrings);
 
   const [selectedSpecies, setSelectedSpecies, volatileSelectedSpecies] =
-    useGroupBackedDeferredState(
-      groupName,
-      'species',
-      [],
-      JSON.stringify,
-      decodeStrings
-    );
+    useGroupBackedDeferredState('species', [], JSON.stringify, decodeStrings);
 
   const [pfamFilterIds, setPfamFilterIds, volatilePfamFilterIds] =
-    useGroupBackedDeferredState(
-      groupName,
-      'pfams',
-      [],
-      JSON.stringify,
-      decodeStrings
-    );
+    useGroupBackedDeferredState('pfams', [], JSON.stringify, decodeStrings);
 
   const [
     corePeripheralFilterValue,
     setCorePeripheralFilterValue,
     volatileCorePeripheralFilterValue,
   ] = useGroupBackedDeferredState<CoreOrPeripheral[]>(
-    groupName,
     'corePeripheral',
     [],
     JSON.stringify,
@@ -262,15 +216,15 @@ function GroupSequencesTable(
       SequenceRetrievalApi.getClient(SEQUENCE_RETRIEVAL_BASE_URL, wdkService),
     [wdkService]
   );
-  const [builtTrees, setBuiltTrees] = useSessionBackedState<BuiltTree[]>(
+  const [builtTrees, setBuiltTrees] = useGroupBackedState<BuiltTree[]>(
+    'trees',
     [],
-    groupCacheKey(groupName, 'trees'),
     serializeBuiltTrees,
     deserializeBuiltTrees
   );
-  const [allowPruned, setAllowPruned] = useSessionBackedState(
+  const [allowPruned, setAllowPruned] = useGroupBackedState(
+    'allowPruned',
     true,
-    groupCacheKey(groupName, 'allowPruned'),
     JSON.stringify,
     (raw) => decodeOrElse(boolean, true, raw)
   );
@@ -377,7 +331,6 @@ function GroupSequencesTable(
     setSelectedColumnFilters,
     volatileSelectedColumnFilters,
   ] = useGroupBackedDeferredState(
-    groupName,
     'searchColumns',
     [],
     JSON.stringify,
