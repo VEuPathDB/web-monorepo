@@ -7,8 +7,12 @@ import {
   useStudyMetadata,
 } from '@veupathdb/eda/lib/core';
 import { leastAncestralVariable } from '@veupathdb/eda/lib/core/utils/data-element-constraints';
+import { fixLabelsForNumberVariables } from '@veupathdb/eda/lib/core/utils/visualization';
 import { DocumentationContainer } from '@veupathdb/eda/lib/core/components/docs/DocumentationContainer';
-import { boxplotResponseToData } from '@veupathdb/eda/lib/core/components/visualizations/implementations/BoxplotVisualization';
+import {
+  boxplotResponseToData,
+  reorderData,
+} from '@veupathdb/eda/lib/core/components/visualizations/implementations/BoxplotVisualization';
 import { useCachedPromise } from '@veupathdb/eda/lib/core/hooks/cachedPromise';
 import { VariableDescriptor } from '@veupathdb/eda/lib/core/types/variable';
 import { WorkspaceContainer } from '@veupathdb/eda/lib/workspace/WorkspaceContainer';
@@ -107,7 +111,20 @@ function BoxPlotAdapter(props: AdapterProps) {
 
       // The box labels are the x-axis categories, so that is the variable
       // boxplotResponseToData needs for label formatting.
-      return boxplotResponseToData(boxplotDataResponse, xAxisVar.variable);
+      //
+      // The data service returns the categories sorted lexically ("week 10"
+      // before "week 3"), whatever the vocabulary order, so put them back in
+      // vocabulary order as BoxplotVisualization does. Categories with no data
+      // for this gene become empty slots; any label missing from the
+      // vocabulary is dropped (see reorderData).
+      const vocabulary = fixLabelsForNumberVariables(
+        xAxisVar.variable.vocabulary,
+        xAxisVar.variable
+      );
+      return reorderData(
+        boxplotResponseToData(boxplotDataResponse, xAxisVar.variable),
+        vocabulary
+      );
     },
     [
       'BoxPlotAdapter',
