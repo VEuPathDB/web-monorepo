@@ -9,6 +9,10 @@
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
+    "@geoman-io/leaflet-geoman-free": "^2.20.0",
+    "@turf/area": "^6.5.0",
+    "@turf/helpers": "^6.5.0",
+    "@turf/intersect": "^6.5.0",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
     "@veupathdb/coreui": "workspace:^",
@@ -32,6 +36,7 @@
     "eslint-plugin-react": "^7.31.11",
     "latlon-geohash": "^2.0.0",
     "leaflet": "^1.9.3",
+    "leaflet-lasso": "^2.2.13",
     "leaflet-simple-map-screenshoter": "^0.4.5",
     "luxon": "^1.25.0",
     "plotly.js": "^2.23.2",
@@ -59,6 +64,7 @@
     "build": "npm-run-all build-npm-modules",
     "build-storybook": "build-storybook -s public",
     "build-npm-modules": "veupathdb-react-scripts prepare src",
+    "test": "veupathdb-react-scripts test",
     "build-forever": "veupathdb-react-scripts build-forever src",
     "clean": "rm -rf lib"
   },
