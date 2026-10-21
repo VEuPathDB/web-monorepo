@@ -35,6 +35,7 @@ import {
   FieldState,
   MemberFieldState,
   MultiFieldState,
+  SortSpec,
   State as FilterParamState,
 } from '../../../../Views/Question/Params/FilterParamNew/State';
 import { ModuleEpic, EpicDependencies } from '../../../../Core/Store';
@@ -588,10 +589,11 @@ function updateOntologyTermSummary(
           const ontologyItem = parameter.ontology.find(
             (field) => field.term === ontologyTerm
           );
-          const sort =
-            ontologyItem?.type === 'number'
-              ? defaultMemberFieldSort_desc
-              : defaultMemberFieldSort_asc;
+          const sort: SortSpec = ontologyItem?.defaultSort
+            ? { ...ontologyItem.defaultSort, groupBySelected: false }
+            : ontologyItem?.type === 'number'
+            ? defaultMemberFieldSort_desc
+            : defaultMemberFieldSort_asc;
           const fieldState: FieldState = isMemberField(parameter, ontologyTerm)
             ? {
                 invalid: false,
