@@ -7,6 +7,7 @@ import {
 import { DerivedVariable } from '../types/analysis';
 import { Filter } from '../types/filter';
 import { VariableMapping } from './DataClient/types';
+import { sortFilters } from '../utils/sort-filters';
 
 interface ComputeSpec {
   studyId: string;
@@ -66,7 +67,7 @@ export class ComputeClient extends FetchClientWithCredentials {
       createJsonRequest({
         method: 'POST',
         path: `/computes/${computeName}/meta`,
-        body: computeSpec,
+        body: sortComputeSpecFilters(computeSpec),
         transformResponse: async (body: unknown) => {
           // The /meta endpoint may return Content-Type: text/plain,
           // so the body may arrive as a string rather than parsed JSON.
@@ -85,9 +86,18 @@ export class ComputeClient extends FetchClientWithCredentials {
       createJsonRequest({
         method: 'POST',
         path: `/computes/${computeName}?autostart=${autostart}`,
-        body: computeSpec,
+        body: sortComputeSpecFilters(computeSpec),
         transformResponse: ioTransformer(JobStatusReponse),
       })
     );
   }
+}
+
+/**
+ * Sort the filter value arrays inside a ComputeSpec so that the backend
+ * hash is stable regardless of user selection order.
+ */
+function sortComputeSpecFilters(spec: ComputeSpec): ComputeSpec {
+  if (!spec.filters?.length) return spec;
+  return { ...spec, filters: sortFilters(spec.filters) };
 }
