@@ -1,10 +1,8 @@
 import React, { ReactElement } from 'react';
-import { DatasetTypeConfig } from '../../../../Configuration';
+import { DatasetTypeConfig, FileInputConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
-import { Consumer, Nullable, Possible } from '../../../../../Utils';
-import { FileInputConfig } from '../../../../Configuration/UploadFormConfig';
-import { filterNullish } from '../../../../../Utils/miscellaneous-junk';
-import { FileInputButton } from '../../FileInputButton';
+import { Consumer, Nullable, Possible, filterNullish } from '../../../../../Utils';
+import { FileInputButton } from '../../';
 import { UploadContent } from '../../../../../Service/Model';
 import { UploadContentMap } from '../../../../../Service/Model/utility-types';
 

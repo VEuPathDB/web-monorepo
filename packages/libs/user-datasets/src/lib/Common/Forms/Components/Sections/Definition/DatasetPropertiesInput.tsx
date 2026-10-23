@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
-import { Consumer, ifDefined, Nullable, Possible } from '../../../../../Utils';
+import { filterNullish, ifDefined, Consumer, Nullable, Possible } from '../../../../../Utils';
 import { newUploadContent, UploadContent } from '../../../../../Service/Model';
-import { filterNullish } from '../../../../../Utils/miscellaneous-junk';
 
 export interface DatasetPropertiesInputProps {
   readonly label: string;
