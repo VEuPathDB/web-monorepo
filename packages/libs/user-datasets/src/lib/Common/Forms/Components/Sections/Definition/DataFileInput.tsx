@@ -17,27 +17,39 @@ export interface DataFileInputListProps {
 }
 
 export function DataFileInputList(props: DataFileInputListProps): Nullable<ReactElement> {
-  const inputs = props.inputConfigs
+  const configs: Array<DataFileInputProps> = props.inputConfigs
     .map((it, i) => {
       const fieldName: string = `${props.fieldName}[${i}]`;
 
-      return DataFileInput({
+      return {
         ...props,
         fieldName,
+        inputIndex: i,
         inputConfig: it,
         files: props.files?.[fieldName],
         setFiles: (files) => {
           props.setFiles({ ...(props.files ?? {}), [fieldName]: filterNullish(files) });
         },
-      });
+      };
     });
-  return <>{inputs}</>;
+
+  for (const config of configs) {
+    if (config.inputConfig.configOverride) {
+      configs[config.inputIndex] = config.inputConfig.configOverride(config, configs);
+    }
+  }
+
+
+  return <>{configs.map(DataFileInput)}</>;
 }
 
 export interface DataFileInputProps {
   readonly fieldName: string;
   readonly dataType: DatasetTypeConfig;
   readonly vdiFeatures: VdiServiceFeatures;
+
+  readonly inputConfigs: ReadonlyArray<FileInputConfig>;
+  readonly inputIndex: number;
 
   readonly disabled?: boolean;
 
@@ -75,6 +87,8 @@ export function DataFileInput(props: DataFileInputProps): ReactElement {
         fileSelection={props.files}
         setFileSelection={props.setFiles}
         accept={acceptValue}
+        disabled={props.disabled}
+        required={props.inputConfig.required}
       />
     </>
   );

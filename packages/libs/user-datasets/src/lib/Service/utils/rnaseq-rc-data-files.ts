@@ -11,7 +11,7 @@ import { ifNotEmpty, takeIf } from '../../Utils/ergonomics';
 import { ifDefined, Possible } from '../../Utils';
 import { omit } from 'lodash';
 import { FIELD_NAME_DATA_FILE, FIELD_NAME_SAMPLE_INFO } from '../../Common/Forms/form-constants';
-import { UploadContentMap } from '../Model/utility-types';
+import { getSamplesDescription, UploadContentMap } from '../Model/utility-types';
 
 /** Cap on sample-info size, mirroring the wrangler plugin's own check. */
 export const SAMPLE_INFO_MAX_BYTES = 100000;
@@ -71,14 +71,12 @@ export function buildRnaSeqRcDataFiles(
   if (inputFiles.length > 2)
     throw new Error('Please provide at most two count files: a sense/antisense pair, or a single unstranded file.');
 
-  const flatDataFiles = Object.values(dataFiles).flat(2);
-
   // sample-info.txt's generated name yields to the user's, since the
   // manifest carries the name-to-role mapping and nothing requires a
   // generated file to keep its preferred name. Reserve it before writing the
   // manifest so its contents and the archive agree. Comparisons are
   // case-insensitive to match how the downstream plugin locates files.
-  const taken = new Set(flatDataFiles.map((f) => f.name.toLowerCase()));
+  const taken = new Set(inputFiles.map((f) => f.name.toLowerCase()));
 
   const sampleInfoName = deCollide(SAMPLE_INFO_NAME, taken);
   taken.add(sampleInfoName.toLowerCase());
@@ -86,17 +84,11 @@ export function buildRnaSeqRcDataFiles(
   const roles = inputFiles.length === 2 ? ['sense', 'antisense'] : ['unstranded'];
 
   const manifestLines = [
-    ...flatDataFiles.map((file, i) => `${roles[i]}\t${file.name}`),
+    ...inputFiles.map((file, i) => `${roles[i]}\t${file.name}`),
     `sample-info\t${sampleInfoName}`,
   ];
 
-  const samplesDescription = (takeIf(
-    ifDefined(
-      dataFiles[SAMPLE_INFO_FIELD_NAME],
-      (files) => ifNotEmpty(files, (it) => it[0]),
-    ),
-    (it) => it?.type === 'text',
-  ) as Possible<TextUploadContent>)?.value ?? '';
+  const samplesDescription = getSamplesDescription(dataFiles)?.value ?? '';
 
   return {
     ...dataFiles,

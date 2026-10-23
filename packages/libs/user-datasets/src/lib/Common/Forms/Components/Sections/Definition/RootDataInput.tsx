@@ -139,12 +139,12 @@ function fileInput(props: FileUploadProps): ReactElement {
 
   const helpText = (
     <div className="column-2 file-input-help">
-      <i>
-        {props.helpText ??
-          'Uncompressed file cannot be greater than ' +
-            formatFileSize(props.dataType.vdiConfig.maxFileSize) +
-            '.'}
-      </i>
+      <i>{
+        props.helpText !== undefined
+          ? props.helpText
+          : 'Uncompressed file cannot be greater than ' +
+            formatFileSize(props.dataType.vdiConfig.maxFileSize) + '.'
+      }</i>
     </div>
   );
 

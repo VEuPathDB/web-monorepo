@@ -26,14 +26,13 @@ export function SamplesDescriptionInput({ formProps, formConfig, dataUploads, se
         fieldName={SAMPLE_INFO_FIELD_NAME}
         value={value}
         required={formProps.showDataInputs}
+        type="textarea"
         rows={15}
+        inputClass="samples-description"
         onChange={(v) =>
           setDataUploads({
             ...dataUploads,
-            dataFiles: {
-              ...(dataUploads.dataFiles ?? {}),
-              [SAMPLE_INFO_FIELD_NAME]: newUploadContent(v, 'samplesDescription')
-            }
+            [SAMPLE_INFO_FIELD_NAME]: [newUploadContent(v, 'sample-info.txt')],
           })
         }
         placeholder={
@@ -54,7 +53,7 @@ export function SamplesDescriptionInput({ formProps, formConfig, dataUploads, se
             : formConfig.verbiage.formInputs!.samplesDescription!.helpText
         }
       />
-      <div className="column-2" style={{ textAlign: 'right' }}>
+      <div className="column-2" style={{ textAlign: 'right', marginTop: '-1em' }}>
         <span
           style={{
             fontSize: '0.9em',

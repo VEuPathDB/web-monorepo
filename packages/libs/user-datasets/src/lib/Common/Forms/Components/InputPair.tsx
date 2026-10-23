@@ -183,11 +183,11 @@ function TextAreaInput<T extends object>(props: TextAreaProps<T>): ReactElement 
       {...baseInputProps(props)}
       className={joinClasses(props, ClassJoinType.Input)}
       onChange={(e) => props.onChange(e.currentTarget.value)}
-      value={props.value ?? ''}
       minLength={props.minLength}
       maxLength={props.maxLength}
       placeholder={props.placeholder}
-    />
+      rows={props.rows}
+    >{props.value ?? ''}</textarea>
   );
 }
 

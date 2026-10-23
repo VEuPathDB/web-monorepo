@@ -1,7 +1,6 @@
 import { DatasetFormState } from '../../StoreModules';
 import { DatasetFormConfig } from '../../Common/Configuration';
-import { TextUploadContent, VdiServiceMetadata } from '../Model';
-import { ifDefined, Possible } from '../../Utils';
+import { VdiServiceMetadata } from '../Model';
 import {
   MANIFEST_NAME,
   SAMPLE_INFO_FIELD_NAME,
@@ -9,8 +8,7 @@ import {
   utf8ByteLength
 } from '../utils/rnaseq-rc-data-files';
 import { isEmpty } from 'lodash';
-import { ifNotEmpty, takeIf } from '../../Utils/ergonomics';
-import { getSamplesDescription, UploadContentMap } from '../Model/utility-types';
+import { getSamplesDescription } from '../Model/utility-types';
 
 /**
  * Validate the upload form state, performing basic checks that the user has
@@ -66,7 +64,7 @@ export function validateFormState(
     // An empty list means the backend "can't validate" and accepts anything;
     // mirror that rather than rejecting every file (as an empty list would
     // if compared with `.some`).
-    for (const [ field, files ] of Object.entries(dataFileSelections)) {
+    for (const [field, files] of Object.entries(dataFileSelections)) {
       for (const file of files) {
         if (hasAllowedExtension(file.name, archiveTypes) || hasAllowedExtension(file.name, allowed))
           continue;

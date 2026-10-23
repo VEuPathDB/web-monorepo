@@ -1,4 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
+import { DataFileInputProps } from '../Forms/Components/Sections/Definition/DataFileInput';
 
 export interface UploadConfig {
   readonly renderOverride?: (inputField: ReactElement) => ReactNode;
@@ -14,6 +15,9 @@ export interface FileInputConfig {
 
   /** `accept` attribute override. Defaults to the data type's extensions. */
   readonly accept?: string;
+
+
+  readonly configOverride?: (config: DataFileInputProps, configs: Array<DataFileInputProps>) => DataFileInputProps;
 
   readonly helpText?: ReactNode;
 }

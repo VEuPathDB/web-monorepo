@@ -156,6 +156,17 @@
     margin-top: -1em;
   }
 
+  .file-input-button {
+    display: flex;
+    column-gap: 15px;
+    align-items: center;
+    margin-bottom: 1em;
+
+    input[type="file"] {
+      display: none;
+    }
+  }
+
   input,
   select,
   textarea,
@@ -167,6 +178,14 @@
   textarea {
     border-radius: 5px;
     padding: $inputPadding;
+
+    &::placeholder {
+      color: var(--coreui-gray-600);
+    }
+  }
+
+  .samples-description::placeholder {
+    font-style: normal;
   }
 
   ::file-selector-button {

@@ -22,6 +22,7 @@ import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/uti
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
 import { makeEdaRoute, makeMapRoute } from './routes';
+import { isEmpty } from 'lodash';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -524,8 +525,15 @@ function rnaseqRcFormConfigurator(
             label: 'Data file 2',
             buttonText: 'Choose anti-sense file (optional)',
             required: false,
+            configOverride: (it, all) => ({
+              ...it,
+              // disable field 2 if field 1 is unset
+              disabled: isEmpty(all[0].files)
+            })
           },
         ],
+        // disable default help text
+        helpText: null,
       },
       helpText: () => (
         <details>
