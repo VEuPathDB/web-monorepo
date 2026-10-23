@@ -28,6 +28,7 @@ import {
 import { Main } from '@veupathdb/web-common/lib/components/homepage/Main';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
+import { pathfinderUrl } from '@veupathdb/web-common/lib/config';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 
@@ -40,6 +41,7 @@ import {
   useSessionBackedSearchTerm,
   useSessionBackedExpandedBranches,
 } from 'ortho-client/hooks/searchCheckboxTree';
+import { pathfinderToolItems } from 'ortho-client/pathfinderRoutes';
 
 import './OrthoMCLPage.scss';
 import colors, {
@@ -289,6 +291,7 @@ function useHeaderMenuItems() {
             type: 'reactRoute',
             url: makeStaticPageRoute(`/content/OrthoMCL/webServices.html`),
           },
+          ...pathfinderToolItems(pathfinderUrl),
         ],
       },
       {
