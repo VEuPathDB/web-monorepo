@@ -4,7 +4,7 @@ import { groupCacheKey } from '../util/groupCache';
 
 /**
  * Session-backed state for one group's page, like `useDeferredState` from
- * coreui: returns the deferred value, the setter and the immediate value.
+ * coreui: returns the deferred value for improved UI responsiveness, the setter and the immediate value.
  * `decode` turns the stored string back into a value.
  */
 export function useGroupBackedDeferredState<T>(
