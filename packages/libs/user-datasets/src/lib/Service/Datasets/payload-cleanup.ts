@@ -49,10 +49,6 @@ export function cleanDatasetDetails(
     ),
   };
 
-  // `samplesDescription` is a client-only field used to build the
-  // `sample-info.txt` upload; it is not a valid VDI metadata field.
-  delete mutableDetails.samplesDescription;
-
   if (!details.metadataContentFlags?.hasDataDisclaimer)
     delete mutableDetails.dataDisclaimer
 
@@ -63,6 +59,9 @@ export function cleanDatasetDetails(
     delete mutableDetails.datasetSources;
 
   if (!details.metadataContentFlags?.hasOrganismData) {
+    // On genomics sites, this section is always enabled, but the radio option
+    // for the section is not explicitly set to "Yes".  Fill in the option for
+    // the user if they provided a value.
     if (isGenomics && mutableDetails.experimentalOrganisms != null) {
       mutableDetails.metadataContentFlags = {
         ...(mutableDetails.metadataContentFlags ?? {}),
@@ -74,6 +73,9 @@ export function cleanDatasetDetails(
   }
 
   if (!details.metadataContentFlags?.hasPublications) {
+    // On genomics sites, this section is always enabled, but the radio option
+    // for the section is not explicitly set to "Yes".  Fill in the option for
+    // the user if they provided a value.
     if (isGenomics && mutableDetails.publications != null) {
       mutableDetails.metadataContentFlags = {
         ...(mutableDetails.metadataContentFlags ?? {}),
@@ -84,8 +86,7 @@ export function cleanDatasetDetails(
     }
   }
 
-
-  return ;
+  return mutableDetails;
 }
 
 // endregion Full Submission Payload

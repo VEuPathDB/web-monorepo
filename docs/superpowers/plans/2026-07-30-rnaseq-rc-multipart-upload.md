@@ -50,7 +50,7 @@
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------ |
 | `.../Service/Model/utility-types.ts`                                     | `dataFiles` → `readonly File[]`; delete `antisenseDataFiles`       |
 | `.../Service/Datasets/create-dataset.ts`                                 | widen `appendFiles` param to `Iterable<File>`                      |
-| `.../Common/Configuration/UploadFormConfig.ts`                           | add `DataFileSlot` and `slots`                                     |
+| `.../Common/Configuration/UploadFormConfig.ts`                           | add `FileInputConfig` and `slots`                                     |
 | `.../Common/Configuration/DatasetFormConfig.ts`                          | add `prepareDataFiles`                                             |
 | `.../Common/Configuration/DatasetTypeConfig.ts`                          | remove the `rnaseq-rc`→`rnaseq` alias                              |
 | `.../Common/Forms/Components/Sections/Definition/DataFileInput.tsx`      | emit `readonly File[]`, sanitize at boundary                       |
@@ -1175,7 +1175,7 @@ if (badExtension != null) {
 }
 ```
 
-`validateFormState` currently destructures only `{ datasetDetails }` from its `DatasetFormState` argument — add `fileUploads` to that destructuring. It already receives `formConfig` as its second parameter.
+`validateFormState` currently destructures only `{ datasetDetails }` from its `DatasetFormState` argument — add `dataUploads` to that destructuring. It already receives `formConfig` as its second parameter.
 
 Note these all write to the same `'$.dataFiles'` key, so only the last matching problem shows. That is acceptable for mutually-rare input mistakes; if it proves confusing, accumulate into an array instead.
 

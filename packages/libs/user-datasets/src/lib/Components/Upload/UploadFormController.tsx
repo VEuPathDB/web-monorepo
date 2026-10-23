@@ -1,5 +1,4 @@
 import {
-  PartialDatasetDetails,
   DatasetPostResponseBody,
   VdiServiceMetadata,
 } from '../../Service';
@@ -15,7 +14,7 @@ import {
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { Consumer, DataNoun, ifDefined } from '../../Utils';
+import { Consumer, DataNoun } from '../../Utils';
 import {
   clearBadUpload,
   receiveBadUpload,
@@ -28,17 +27,9 @@ import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibili
 import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {
-  utf8ByteLength,
-  SAMPLE_INFO_MAX_BYTES,
-  findDuplicateFileName,
-  findManifestNameCollision,
-  hasAllowedExtension,
-  hasTabInName,
-} from '../../Service/utils/rnaseq-rc-data-files';
-import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
-import { projectId } from '../../config';
-import { pruneSimpleRecords } from '../../Service/Datasets/payload-cleanup';
+import { cleanDatasetDetails } from '../../Service/Datasets/payload-cleanup';
+import { newDatasetUploads } from '../../Service/Model';
+import { validateFormState } from '../../Service/Datasets/upload-validation';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
@@ -88,8 +79,6 @@ function submitAction(
   setSubmitting: Consumer<boolean>,
   baseUrl: string
 ) {
-  const { fileUploads } = formState;
-
   // Clear out previous error attempt messages.
   dispatch(clearBadUpload());
 
@@ -119,16 +108,13 @@ function submitAction(
     try {
       assertIsVdiCompatibleWdkService(wdkService);
 
-      let finalFileUploads = fileUploads;
+      let finalFileUploads = formState;
 
       if (formConfig.prepareDataFiles != null) {
         try {
           finalFileUploads = {
-            ...fileUploads,
-            dataFiles: formConfig.prepareDataFiles(
-              fileUploads.dataFiles ?? [],
-              formState.datasetDetails
-            ),
+            ...finalFileUploads,
+            dataFileSelections: formConfig.prepareDataFiles(formState.dataFileSelections),
           };
         } catch (e) {
           setSubmitting(false);
@@ -151,9 +137,9 @@ function submitAction(
             name: formConfig.dataType.name,
             version: formConfig.dataType.version,
           },
-          ...filterDetails(formState),
+          ...cleanDatasetDetails(formState.datasetDetails),
         },
-        uploads: finalFileUploads,
+        uploads: newDatasetUploads(finalFileUploads),
         onProgress: (progress: number | null) =>
           dispatch(trackUploadProgress(progress)),
         onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
@@ -174,142 +160,4 @@ function submitAction(
       ]);
     }
   });
-}
-
-/**
- * Validate the upload form state, performing basic checks that the user has
- * performed all required client-side-only form steps before attempting an
- * upload.
- */
-function validateFormState(
-  { datasetDetails, fileUploads }: DatasetFormState,
-  formConfig: DatasetFormConfig,
-  vdiConfig: VdiServiceMetadata
-): Record<string, string[]> {
-  const keyedErrors: Record<string, string[]> = {};
-
-  if (
-    formConfig.dependencies?.required === true &&
-    isEmpty(datasetDetails.dependencies)
-  ) {
-    keyedErrors['$.details.dependencies'] = ['selection is required'];
-  }
-
-  const { samplesDescription } = datasetDetails;
-
-  if (
-    samplesDescription != null &&
-    utf8ByteLength(samplesDescription) > SAMPLE_INFO_MAX_BYTES
-  ) {
-    keyedErrors['$.details.samplesDescription'] = [
-      `too long: ${utf8ByteLength(
-        samplesDescription
-      ).toLocaleString()} bytes, maximum ${SAMPLE_INFO_MAX_BYTES.toLocaleString()}`,
-    ];
-  }
-
-  const dataFiles = fileUploads.dataFiles ?? [];
-
-  const duplicate = findDuplicateFileName(dataFiles);
-  if (duplicate != null) {
-    keyedErrors['$.dataFiles'] = [
-      `two data files are both named "${duplicate}" - please rename one`,
-    ];
-  }
-
-  const tabbed = hasTabInName(dataFiles);
-  if (tabbed != null) {
-    keyedErrors['$.dataFiles'] = [
-      `the file name "${tabbed}" contains a tab character - please rename it`,
-    ];
-  }
-
-  // Only forms that generate a manifest (currently rnaseqrc, via
-  // `prepareDataFiles`) reserve this name - other dataset types have no
-  // reason to reject a file merely named "manifest.tsv".
-  if (formConfig.prepareDataFiles != null) {
-    const manifestCollision = findManifestNameCollision(dataFiles);
-    if (manifestCollision != null) {
-      keyedErrors['$.dataFiles'] = [
-        `"${manifestCollision}" is a reserved name (used internally for the manifest) - please rename your file`,
-      ];
-    }
-  }
-
-  // The `accept` attribute is advisory - some file pickers let users override
-  // it - so re-check here rather than relying on the builder's throw. This
-  // still surfaces as an unlinked entry in the top-of-form error banner
-  // (UploadErrorBanner), not inline against the field, since no element has
-  // id "$.dataFiles".
-  const allowed = formConfig.dataType.vdiConfig.allowedFileExtensions;
-  const archiveTypes = vdiConfig.features.supportedArchiveTypes;
-  const badExtension =
-    // An empty list means the backend "can't validate" and accepts anything;
-    // mirror that rather than rejecting every file (as an empty list would
-    // if compared with `.some`).
-    allowed.length === 0
-      ? undefined
-      : dataFiles.find(
-          (f) =>
-            !hasAllowedExtension(f.name, archiveTypes) &&
-            !hasAllowedExtension(f.name, allowed)
-        );
-  if (badExtension != null) {
-    keyedErrors['$.dataFiles'] = [
-      `"${
-        badExtension.name
-      }" is not an accepted file type - permitted types are ${allowed.join(
-        ', '
-      )}`,
-    ];
-  }
-
-  return keyedErrors;
-}
-
-function filterDetails({
-  datasetDetails,
-}: DatasetFormState): PartialDatasetDetails {
-  const filtered = { ...datasetDetails };
-
-  if (!datasetDetails.metadataContentFlags?.hasDatasetCharacteristics)
-    delete filtered['datasetCharacteristics'];
-  if (!datasetDetails.metadataContentFlags?.hasDataDisclaimer)
-    delete filtered['dataDisclaimer'];
-  if (!datasetDetails.metadataContentFlags?.hasDatasetSources)
-    delete filtered['datasetSources'];
-
-  // Only prune the publications array on non-genomics.  The genomics ud form
-  // does not allow users to disable the section, nor does it show the
-  // `hasPublications` radio options.
-  if (
-    !datasetDetails.metadataContentFlags?.hasPublications &&
-    !isGenomicsProjectId(projectId)
-  )
-    delete filtered['publications'];
-
-  if (!submission.updated.metadataContentFlags?.hasOrganismData) {
-    if (!isGenomicsProjectId(projectId)) {
-      mutableSubmission.experimentalOrganisms = undefined;
-    } else {
-      mutableSubmission.experimentalOrganisms = ifDefined(
-        mutableSubmission.experimentalOrganisms,
-        pruneSimpleRecords,
-      );
-
-      if (mutableSubmission.experimentalOrganisms)
-        mutableSubmission.metadataContentFlags = {
-          ...(mutableSubmission.metadataContentFlags ?? {}),
-          hasOrganismData: true
-        };
-    }
-  }
-
-  // `samplesDescription` is a client-only field: its content is turned into
-  // the `sample-info.txt` upload by `prepareDataFiles` (which reads it from
-  // `formState.datasetDetails` before this function runs). It is never a
-  // valid VDI metadata field, so it must never reach the outbound payload.
-  delete filtered['samplesDescription'];
-
-  return filtered;
 }

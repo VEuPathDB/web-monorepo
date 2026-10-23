@@ -95,7 +95,7 @@ export function DatasetFormController<
 
         dispatch(
           updateFormState({
-            fileUploads: formState.fileUploads,
+            ...formState,
             datasetDetails: applyMetadata(formState.datasetDetails, res),
           })
         );

@@ -5,12 +5,15 @@ import React, {
   ReactElement,
   ReactNode,
   RefAttributes,
-  RefObject,
+  RefObject
 } from 'react';
 import { FieldHelpText } from './FieldHelpText';
 
-interface BaseInputProps<T extends object = object> {
-  readonly label: string;
+interface BaseInputProps<
+  T extends object = object,
+  E extends HTMLElement = HTMLInputElement
+> {
+  readonly label: ReactNode;
 
   readonly fieldName: keyof T & string;
   readonly nameOverride?: string;
@@ -23,7 +26,7 @@ interface BaseInputProps<T extends object = object> {
   readonly helpText?: ReactNode;
   readonly disabled?: boolean;
   readonly required?: boolean;
-  readonly inputRef?: RefObject<HTMLInputElement>;
+  readonly inputRef?: RefObject<E>;
 
   /**
    * Whether the label should appear to the right of the input instead of the
@@ -39,6 +42,16 @@ interface TextProps<T extends object = object> extends BaseInputProps<T> {
   readonly minLength?: number;
   readonly maxLength?: number;
   readonly placeholder?: string;
+}
+
+interface TextAreaProps<T extends object = object> extends BaseInputProps<T, HTMLTextAreaElement> {
+  readonly type: 'textarea';
+  readonly onChange: Consumer<string>;
+  readonly value?: string;
+  readonly minLength?: number;
+  readonly maxLength?: number;
+  readonly placeholder?: string;
+  readonly rows?: number;
 }
 
 interface CheckboxProps<T extends object = object> extends BaseInputProps<T> {
@@ -65,6 +78,7 @@ interface NumberProps<T extends object = object> extends BaseInputProps<T> {
 
 export type InputPairProps<T extends object = object> =
   | TextProps<T>
+  | TextAreaProps<T>
   | CheckboxProps<T>
   | NumberProps<T>
   | RadioProps<T>;
@@ -92,6 +106,9 @@ export function InputPair<T extends object = object>(
       break;
     case 'radio':
       input = <RadioInput<T> {...props} />;
+      break;
+    case 'textarea':
+      input = <TextAreaInput<T> {...props} />;
       break;
     default:
       input = <TextInput<T> {...props} />;
@@ -160,6 +177,20 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
   );
 }
 
+function TextAreaInput<T extends object>(props: TextAreaProps<T>): ReactElement {
+  return (
+    <textarea
+      {...baseInputProps(props)}
+      className={joinClasses(props, ClassJoinType.Input)}
+      onChange={(e) => props.onChange(e.currentTarget.value)}
+      value={props.value ?? ''}
+      minLength={props.minLength}
+      maxLength={props.maxLength}
+      placeholder={props.placeholder}
+    />
+  );
+}
+
 function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   return (
     <input
@@ -175,9 +206,9 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   );
 }
 
-function baseInputProps(
-  props: InputPairProps<any>
-): InputHTMLAttributes<any> & RefAttributes<HTMLInputElement> {
+function baseInputProps<E extends HTMLElement>(
+  props: BaseInputProps<any, E>
+): InputHTMLAttributes<E> & RefAttributes<E> {
   return {
     ref: props.inputRef,
     id: props.idOverride ?? props.fieldName,

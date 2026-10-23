@@ -34,6 +34,7 @@ import { Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
+import { newDatasetUploads } from '../../Service/Model';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -125,7 +126,7 @@ export function UpdateFormController(
         datasetId: props.datasetId,
         original: convertDetailsToMeta(dataset!),
         updated: formState.datasetDetails,
-        newFiles: formState.fileUploads,
+        newFiles: newDatasetUploads(formState),
         oldFiles: dataset!.files.datasetProperties,
       })
         .then((res) => {

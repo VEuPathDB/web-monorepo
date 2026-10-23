@@ -6,10 +6,19 @@
  * docs/superpowers/specs/2026-07-30-rnaseq-rc-upload-contract.md.
  */
 
+import { newUploadContent, TextUploadContent, UploadContent } from '../Model';
+import { ifNotEmpty, takeIf } from '../../Utils/ergonomics';
+import { ifDefined, Possible } from '../../Utils';
+import { omit } from 'lodash';
+import { FIELD_NAME_DATA_FILE, FIELD_NAME_SAMPLE_INFO } from '../../Common/Forms/form-constants';
+import { UploadContentMap } from '../Model/utility-types';
+
 /** Cap on sample-info size, mirroring the wrangler plugin's own check. */
 export const SAMPLE_INFO_MAX_BYTES = 100000;
 
 const SAMPLE_INFO_NAME = 'sample-info.txt';
+
+export const SAMPLE_INFO_FIELD_NAME = FIELD_NAME_SAMPLE_INFO.toString();
 
 /**
  * Reserved name of the generated manifest file. Exported because callers
@@ -51,115 +60,61 @@ export function findDuplicateFileName(
   return undefined;
 }
 
-/**
- * First filename containing a tab, or undefined.
- *
- * Tabs are legal in POSIX filenames and would break the manifest's
- * tab-separated parse. In practice they cannot reach here: `sanitizeFileName`
- * runs at the input boundary and its `/\s+/g` already replaces tabs with
- * underscores. This check is defence-in-depth against a caller that bypasses
- * that boundary, not a condition this code expects to see triggered.
- */
-export function hasTabInName(files: readonly File[]): string | undefined {
-  return files.find((f) => f.name.includes('\t'))?.name;
-}
-
-/**
- * Name of a user file that collides with the manifest's own reserved name
- * (case-insensitively), or undefined.
- *
- * Unlike `sample-info.txt`, the manifest's generated name must never yield to
- * a user file: nothing in the manifest records the manifest's own filename,
- * so the plugin can only find it by the literal name `manifest.tsv`. Form
- * validation uses this to reject such a file before `buildRnaSeqRcDataFiles`
- * ever runs; the check inside `buildRnaSeqRcDataFiles` itself is
- * defence-in-depth for a caller that skips that validation.
- */
-export function findManifestNameCollision(
-  files: readonly File[]
-): string | undefined {
-  return files.find((f) => f.name.toLowerCase() === MANIFEST_NAME.toLowerCase())
-    ?.name;
-}
-
 export function buildRnaSeqRcDataFiles(
-  dataFiles: readonly File[],
-  samplesDescription: string | undefined,
-  allowedExtensions: readonly string[]
-): readonly File[] {
-  if (dataFiles.length === 0)
+  dataFiles: UploadContentMap,
+): UploadContentMap {
+  const inputFiles = Object.values<UploadContent[]>(omit(dataFiles, SAMPLE_INFO_FIELD_NAME)).flat(2);
+
+  if (inputFiles.length < 1)
     throw new Error('Please provide at least one count file.');
 
-  if (dataFiles.length > 2)
-    throw new Error(
-      'Please provide at most two count files: a sense/antisense pair, or a single unstranded file.'
-    );
+  if (inputFiles.length > 2)
+    throw new Error('Please provide at most two count files: a sense/antisense pair, or a single unstranded file.');
 
-  for (const file of dataFiles) {
-    if (!hasAllowedExtension(file.name, allowedExtensions))
-      throw new Error(
-        `Unsupported file type: ${file.name}. Permitted types are ` +
-          `${allowedExtensions.join(', ')}.`
-      );
-  }
-
-  // The manifest's name must never yield: nothing records it, so the plugin
-  // can only find it by the literal name `manifest.tsv`. Form validation
-  // should already have rejected this before calling in; this is
-  // defence-in-depth against a caller that skips that validation.
-  const manifestCollision = findManifestNameCollision(dataFiles);
-  if (manifestCollision != null)
-    throw new Error(
-      `"${manifestCollision}" is a reserved name (used internally for the ` +
-        `manifest) - please rename your file.`
-    );
+  const flatDataFiles = Object.values(dataFiles).flat(2);
 
   // sample-info.txt's generated name yields to the user's, since the
   // manifest carries the name-to-role mapping and nothing requires a
   // generated file to keep its preferred name. Reserve it before writing the
   // manifest so its contents and the archive agree. Comparisons are
   // case-insensitive to match how the downstream plugin locates files.
-  const taken = new Set(dataFiles.map((f) => f.name.toLowerCase()));
+  const taken = new Set(flatDataFiles.map((f) => f.name.toLowerCase()));
 
   const sampleInfoName = deCollide(SAMPLE_INFO_NAME, taken);
   taken.add(sampleInfoName.toLowerCase());
 
-  const manifestName = MANIFEST_NAME;
-
-  const roles =
-    dataFiles.length === 2 ? ['sense', 'antisense'] : ['unstranded'];
+  const roles = inputFiles.length === 2 ? ['sense', 'antisense'] : ['unstranded'];
 
   const manifestLines = [
-    ...dataFiles.map((file, i) => `${roles[i]}\t${file.name}`),
+    ...flatDataFiles.map((file, i) => `${roles[i]}\t${file.name}`),
     `sample-info\t${sampleInfoName}`,
   ];
 
-  return [
+  const samplesDescription = (takeIf(
+    ifDefined(
+      dataFiles[SAMPLE_INFO_FIELD_NAME],
+      (files) => ifNotEmpty(files, (it) => it[0]),
+    ),
+    (it) => it?.type === 'text',
+  ) as Possible<TextUploadContent>)?.value ?? '';
+
+  return {
     ...dataFiles,
-    textFile(sampleInfoName, samplesDescription ?? ''),
-    // Trailing newline: the manifest is a line-oriented file and R's readLines
-    // warns on an unterminated final line.
-    textFile(manifestName, manifestLines.join('\n') + '\n'),
-  ];
-}
-
-function textFile(name: string, content: string): File {
-  return new File([content], name, { type: 'text/plain' });
-}
-
-/**
- * True if `name` ends with one of `allowedExtensions`, case-insensitively.
- *
- * Exported so callers checking the same thing (form validation) share this
- * logic rather than keeping a second, independently-maintained copy that
- * could drift from this one.
- */
-export function hasAllowedExtension(
-  name: string,
-  allowedExtensions: readonly string[]
-): boolean {
-  const lower = name.toLowerCase();
-  return allowedExtensions.some((ext) => lower.endsWith(ext.toLowerCase()));
+    // Replace any existing entry for the samples description part with the new
+    // entry and corrected name.
+    [SAMPLE_INFO_FIELD_NAME]: [
+      newUploadContent(samplesDescription, sampleInfoName, 'text/plain')
+    ],
+    [FIELD_NAME_DATA_FILE.toString()]: [
+      newUploadContent(
+        // Trailing newline: the manifest is a line-oriented file and R's
+        // readLines warns on an unterminated final line.
+        manifestLines.join('\n') + '\n',
+        MANIFEST_NAME,
+        'text/plain',
+      )
+    ],
+  };
 }
 
 /**

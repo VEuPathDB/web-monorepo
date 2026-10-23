@@ -11,7 +11,7 @@ import {
   DatasetPatchRequest,
   DatasetPatchResponse,
   ExternalIdentifiersPatch,
-  OptionalValuePatch,
+  OptionalValuePatch, UploadContent
 } from '../Model';
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch } from 'redux';
@@ -51,12 +51,6 @@ export async function submitUpdate(
   const mutableSubmission: Mutable<PartialDatasetDetails> = {
     ...submission.updated,
   };
-
-  // `samplesDescription` is a client-only field used to build the
-  // `sample-info.txt` upload; it is never a valid VDI metadata field and must
-  // never reach the outbound PATCH payload. Unlike the fields below, this is
-  // deleted unconditionally rather than gated on form meta state.
-  delete mutableSubmission.samplesDescription;
 
   if (!submission.updated.metadataContentFlags?.hasDatasetSources) {
     mutableSubmission.datasetSources = undefined;
@@ -146,7 +140,8 @@ async function submitPut({
 }: UpdateSubmission): Promise<PutResult> {
   const promises: Promise<[string, number, string?]>[] = [];
 
-  for (const file of newFiles.dataPropertiesFiles!) {
+  for (const content of newFiles.dataPropertiesFiles!) {
+    const file = content.toFile();
     promises.push(
       new Promise<[string, number, string?]>((good, bad) => {
         try {
@@ -388,10 +383,18 @@ async function deleteDatasetPropertiesFile(
     );
 }
 
-function fileListContains(list: FileList, fileName: string): boolean {
-  for (const { name } of list) {
-    if (name === fileName) {
-      return true;
+function fileListContains(list: readonly UploadContent[], fileName: string): boolean {
+  for (const item of list) {
+    switch (item.type) {
+      case 'file':
+        if (item.file.name === fileName)
+          return true;
+        break;
+
+      case 'text':
+        if (item.name === fileName)
+          return true;
+        break;
     }
   }
 
