@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   Fragment,
   ReactNode,
@@ -35,20 +35,28 @@ export function GroupCacheGate({
 }) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
   const [checkedGroup, setCheckedGroup] = useState<string>();
+  const [failure, setFailure] = useState<{ error: unknown }>();
 
   useEffect(() => {
     let cancelled = false;
-    wdkService
-      .getVersion()
-      .then((version) => discardStaleGroupCache(version, group))
-      .catch(() => undefined) // without a version, just don't trust the cache
-      .then(() => {
-        if (!cancelled) setCheckedGroup(group);
-      });
+    wdkService.getVersion().then(
+      (version) => {
+        if (cancelled) return;
+        discardStaleGroupCache(version, group);
+        setCheckedGroup(group);
+      },
+      (error) => {
+        if (!cancelled) setFailure({ error });
+      }
+    );
     return () => {
       cancelled = true;
     };
   }, [wdkService, group]);
+
+  // Without the service version the cache can't be trusted, and the page
+  // can't be either; hand the error to the nearest error boundary.
+  if (failure) throw failure.error;
 
   if (checkedGroup !== group) return <Loading />;
 

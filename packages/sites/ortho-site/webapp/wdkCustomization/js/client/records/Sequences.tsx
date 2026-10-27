@@ -677,7 +677,7 @@ function GroupSequencesTable(
           fontSize: '1.3em',
         }}
       >
-        Max length &le;
+        Length &le;
         <input
           type="text"
           inputMode="numeric"
@@ -712,7 +712,7 @@ function GroupSequencesTable(
             setTablePageNumber(1);
           }}
         >
-          Reset to {maxProteinLength}
+          Reset to longest: {maxProteinLength}
         </button>
       </div>
     </PopoverButton>
