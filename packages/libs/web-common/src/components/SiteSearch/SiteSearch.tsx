@@ -1334,7 +1334,7 @@ function resultDetails(
     const [datasetId] = document.primaryKey;
     return {
       display: {
-        route: `/userdataset/${datasetId}`,
+        route: `/record/userdataset/${datasetId}`,
         text: (
           <HtmlString
             value={document.hyperlinkName || document.primaryKey.join(' - ')}
