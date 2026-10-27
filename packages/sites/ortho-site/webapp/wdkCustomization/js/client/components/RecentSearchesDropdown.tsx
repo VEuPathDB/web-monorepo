@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
+import { RecentSearchesMenu } from '@veupathdb/coreui/lib/components/inputs/RecentSearchesMenu';
 import { useStorageBackedState } from '@veupathdb/wdk-client/lib/Hooks/StorageBackedState';
 import {
   arrayOf,
@@ -137,49 +138,13 @@ export function RecentSearchesDropdown({
             overflow: 'hidden',
           }}
         >
-          <li style={{ padding: '0.2em 1em' }}>
-            <strong>Your recent searches</strong>
-          </li>
-          {recent.map((term) => (
-            <HistoryItem key={term} onActivate={() => select(term)}>
-              {term}
-            </HistoryItem>
-          ))}
-          <HistoryItem onActivate={() => setRecent([])} link>
-            Clear search history
-          </HistoryItem>
+          <RecentSearchesMenu
+            recentSearches={recent}
+            onSelect={select}
+            onClear={() => setRecent([])}
+          />
         </ul>
       )}
     </div>
-  );
-}
-
-function HistoryItem(props: {
-  children: ReactNode;
-  onActivate: () => void;
-  link?: boolean;
-}) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <li
-      tabIndex={0}
-      style={{
-        padding: '0.2em 1em',
-        cursor: 'pointer',
-        background: hovered ? '#dedede' : undefined,
-        color: props.link ? '#0b5394' : undefined,
-        textDecoration: props.link ? 'underline' : undefined,
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
-      onBlur={() => setHovered(false)}
-      onClick={props.onActivate}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') props.onActivate();
-      }}
-    >
-      {props.children}
-    </li>
   );
 }
