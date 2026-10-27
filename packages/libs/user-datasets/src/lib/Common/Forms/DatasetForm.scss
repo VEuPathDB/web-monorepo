@@ -93,6 +93,15 @@
     }
   }
 
+  ul.subsection-description {
+    font-style: italic;
+    margin-bottom: 1em;
+
+    li {
+      margin-bottom: 1em;
+    }
+  }
+
   p.section-description {
     margin: -1em 4em 1.3em 4em;
   }
@@ -251,6 +260,19 @@
     > input[type='checkbox'] {
       margin-left: 0.5ch;
       margin-right: auto;
+    }
+
+    ol.multi-input li.organism-row {
+      &:not(:first-child) {
+        padding-top: 0.8em;
+      }
+
+      &:not(:last-child) {
+        padding-bottom: 0.8em;
+        border-bottom-width: 1px;
+        border-bottom-color: #a4a4a4;
+        border-bottom-style: solid;
+      }
     }
   }
 
