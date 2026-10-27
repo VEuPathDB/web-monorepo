@@ -480,7 +480,9 @@ class DatasetManagement<
                 </ul>
               ),
             },
-        userDataset.type.name === 'isasimple' || !isInstalled
+        userDataset.type.name === 'isasimple' ||
+        userDataset.type.name === 'stf' ||
+        !isInstalled
           ? null
           : {
               attribute: 'View',
