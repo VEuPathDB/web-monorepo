@@ -1,5 +1,6 @@
 import {
   DateVariable,
+  LongitudeVariable,
   NumberVariable,
   StringVariable,
 } from '../../types/study';
@@ -23,3 +24,12 @@ export type MosaicVariable = (StringVariable | NumberVariable) & {
 export type TwoByTwoVariable = MosaicVariable & {
   dataShape: 'binary';
 };
+
+/** a latitude variable is a regular number variable annotated
+ * with displayType 'latitude' */
+export type LatitudeVariable = NumberVariable & {
+  displayType: 'latitude';
+};
+
+/** the pair of variables filtered by the GeoCoordFilter */
+export type GeoCoordVariable = LatitudeVariable | LongitudeVariable;

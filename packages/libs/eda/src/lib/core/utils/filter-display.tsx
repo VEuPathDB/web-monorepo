@@ -15,12 +15,18 @@ export function formatFilterValue(
   switch (filter.type) {
     case 'stringSet':
       return filter.stringSet.join(' | ');
+    case 'stringPrefixSet':
+      return `starts with ${filter.prefixSet.join(' | ')}`;
     case 'numberSet':
       return filter.numberSet.join(' | ');
     case 'dateSet':
       return filter.dateSet.join(' | ');
     case 'numberRange':
       return `from ${filter.min} to ${filter.max}, inclusive`;
+    case 'longitudeRange':
+      return `from ${filter.left} to ${filter.right}, inclusive${
+        filter.right < filter.left ? ' (crossing the antimeridian)' : ''
+      }`;
     case 'dateRange':
       return `from ${filter.min.split('T')[0]} to ${
         filter.max.split('T')[0]
