@@ -8,7 +8,7 @@ import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectC
 
 import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalController';
 
-import { DatasetId, VdiServiceConfig } from '../../../../../Service';
+import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import * as util from '../../../../../Utils';
 import {
@@ -236,7 +236,7 @@ function renderShares(
   { row }: TableCellProps,
   props: MetadataImportTableProps
 ): ReactNode {
-  if (row.owner.userId !== props.userId) {
+  if (row.owner.userId !== props.userId && !row.isCommunity) {
     return 'Me';
   }
 
@@ -337,13 +337,22 @@ function filterDatasets(
 function matchesQuery(dataset: Dataset, query: string): boolean {
   query = query.toLowerCase();
   return (
-    dataset.datasetId === query ||
+    dataset.datasetId.toLowerCase().indexOf(query) > -1 ||
     dataset.name.toLowerCase().indexOf(query) > -1 ||
     dataset.summary.toLowerCase().indexOf(query) > -1 ||
     dataset.type.category.toLowerCase().indexOf(query) > -1 ||
     (dataset.owner.firstName?.toLowerCase()?.indexOf(query) ?? -1) > -1 ||
-    (dataset.owner.lastName?.toLowerCase()?.indexOf(query) ?? -1) > -1
+    (dataset.owner.lastName?.toLowerCase()?.indexOf(query) ?? -1) > -1 ||
+    dataset.installTargets.some(it => it.toLowerCase().indexOf(query) > -1) ||
+    (dataset.shares?.some(it => userMatchesQuery(it, query)) === true) ||
+    dataset.visibility.toLowerCase().indexOf(query) > -1 ||
+    dataset.created.indexOf(query) > -1
   );
+}
+
+function userMatchesQuery(user: DatasetListShareUser, query: string): boolean {
+  return user.firstName.toLowerCase().indexOf(query) > -1 ||
+    user.lastName.toLowerCase().indexOf(query) > -1;
 }
 
 function isAlwaysVisibleTo(dataset: Dataset, userId: number): boolean {
