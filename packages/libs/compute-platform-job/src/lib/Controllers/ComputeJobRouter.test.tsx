@@ -62,7 +62,7 @@ describe('ComputeJobRouter', () => {
     );
 
     expect(
-      await screen.findByText(/job time can range from seconds/i)
+      await screen.findByText(/jobs can take 10\+ minutes/i)
     ).toBeInTheDocument();
   });
 

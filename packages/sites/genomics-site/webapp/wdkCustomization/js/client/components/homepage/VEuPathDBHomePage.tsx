@@ -51,6 +51,7 @@ import {
   communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
+  pathfinderUrl,
   showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
@@ -130,6 +131,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
     location.pathname.includes('workspace/analyses') ||
+    location.pathname.startsWith('/pathfinder') ||
     user == null ||
     user.isGuest;
 
@@ -592,6 +594,16 @@ const useHeaderMenuItems = (
           display: 'NCBI Primer3',
           type: 'externalLink',
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
+        },
+        {
+          key: 'pathfinder',
+          display: 'PathFinder',
+          tooltip: 'Build and refine search strategies with an AI assistant',
+          type: 'reactRoute',
+          url: '/pathfinder',
+          metadata: {
+            test: () => Boolean(pathfinderUrl),
+          },
         },
         {
           key: 'plasmofast',

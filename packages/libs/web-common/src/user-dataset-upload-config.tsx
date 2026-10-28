@@ -366,10 +366,19 @@ function phenotypeFormConfigurator(
             Instructions to upload your {dataType.vdiConfig.category} dataset
           </summary>
           <div className="formInfo">
-            <p>Upload a tab-delimited .txt file. The file should contain:</p>
+            <p>
+              Upload a single data file in .csv, .tsv, or tab-delimited .txt
+              format. The file should contain:
+            </p>
             <ul>
-              <li>a gene ID column with header "geneID", and</li>
-              <li>at least one numeric column.</li>
+              <li>
+                a gene ID column with header "gene" (this must be the first
+                column), and
+              </li>
+              <li>
+                at least one other numeric or categorical (text) column (a mix
+                is allowed).
+              </li>
             </ul>
             <p>
               The file will be rejected if there are duplicated IDs. Invalid IDs
