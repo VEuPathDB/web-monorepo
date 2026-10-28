@@ -1,4 +1,4 @@
-import { Consumer } from '../../../Utils';
+import { Consumer, ifDefined } from '../../../Utils';
 import React, {
   ChangeEvent,
   InputHTMLAttributes,
@@ -8,6 +8,7 @@ import React, {
   RefObject
 } from 'react';
 import { FieldHelpText } from './FieldHelpText';
+import { isEmpty } from 'lodash';
 
 interface BaseInputProps<
   T extends object = object,
@@ -83,35 +84,42 @@ export type InputPairProps<T extends object = object> =
   | NumberProps<T>
   | RadioProps<T>;
 
+type InputType<E> = E extends BaseInputProps<any, infer T> ? T : never;
+
 enum ClassJoinType {
   Input,
   Label,
 }
 
-export function InputPair<T extends object = object>(
-  props: InputPairProps<T>
-): ReactElement {
+export function InputPair<T extends object>(props: InputPairProps<T>): React.ReactElement {
   const helpText = props.helpText ? (
     <FieldHelpText className={props.className}>{props.helpText}</FieldHelpText>
   ) : undefined;
 
-  let input: ReactElement;
+  let input: React.ReactElement;
 
-  switch (props.type) {
+  const propsWithRef = {
+    ...props,
+    // linting disabled due to this property not being used dynamically.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    inputRef: props.inputRef ?? (React.useRef<InputType<InputPairProps<T>>>(null) as InputPairProps<T>['inputRef'])
+  } as InputPairProps<T>;
+
+  switch (propsWithRef.type) {
     case 'checkbox':
-      input = <Checkbox<T> {...props} />;
+      input = <Checkbox<T> {...propsWithRef} />;
       break;
     case 'number':
-      input = <NumberInput<T> {...props} />;
+      input = <NumberInput<T> {...propsWithRef} />;
       break;
     case 'radio':
-      input = <RadioInput<T> {...props} />;
+      input = <RadioInput<T> {...propsWithRef} />;
       break;
     case 'textarea':
-      input = <TextAreaInput<T> {...props} />;
+      input = <TextAreaInput<T> {...propsWithRef} />;
       break;
     default:
-      input = <TextInput<T> {...props} />;
+      input = <TextInput<T> {...propsWithRef} />;
       break;
   }
 
@@ -221,7 +229,9 @@ function baseInputProps<E extends HTMLElement>(
 function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
   let className = '';
 
-  if (props.className) className += props.className;
+  if (props.className) {
+    className += props.className;
+  }
 
   switch (type) {
     case ClassJoinType.Input:
@@ -229,7 +239,12 @@ function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
       break;
     case ClassJoinType.Label:
       if (props.labelClass) className += ' ' + props.labelClass;
-      if (props.required) className += ' required';
+      if (props.required) {
+        className += ' required';
+        if (props.inputRef?.current?.willValidate) {
+          className += ' filled';
+        }
+      }
       break;
   }
 
