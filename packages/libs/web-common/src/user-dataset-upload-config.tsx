@@ -53,7 +53,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     },
     {
       ...implementedUploadTypes.isasimple,
-      description: `Explore and visualize your data table in ${projectName}`,
+      description: `Explore and visualize your data table in ${projectName}.`,
     },
     {
       ...implementedUploadTypes.phenotype,
@@ -69,7 +69,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     },
     {
       ...implementedUploadTypes.stf,
-      description: `Explore and visualize your population or surveillance study in ${projectName}`,
+      description: `Explore and visualize your population or surveillance study in ${projectName}.`,
     },
   ],
 

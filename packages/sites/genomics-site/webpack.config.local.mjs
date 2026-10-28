@@ -48,6 +48,8 @@ export default configure({
         rootUrl: process.env.ROOT_URL,
         endpoint: process.env.WDK_SERVICE_ENDPOINT,
         projectId: process.env.PROJECT_ID,
+        // Display name, e.g. 'VEuPathDB' for UniDB; falls back to PROJECT_ID
+        projectName: process.env.PROJECT_NAME || process.env.PROJECT_ID,
         webAppUrl: process.env.LEGACY_WEB_APP_ENDPOINT,
         facebookUrl: process.env.FACEBOOK_URL,
         twitterUrl: process.env.TWITTER_URL,
