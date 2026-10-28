@@ -1,4 +1,4 @@
-import { Consumer, ifDefined } from '../../../Utils';
+import { Consumer } from '../../../Utils';
 import React, {
   ChangeEvent,
   InputHTMLAttributes,
@@ -8,7 +8,6 @@ import React, {
   RefObject
 } from 'react';
 import { FieldHelpText } from './FieldHelpText';
-import { isEmpty } from 'lodash';
 
 interface BaseInputProps<
   T extends object = object,
@@ -128,7 +127,7 @@ export function InputPair<T extends object>(props: InputPairProps<T>): React.Rea
       {props.flipped && input}
       <label
         htmlFor={props.idOverride ?? props.fieldName}
-        className={joinClasses(props, ClassJoinType.Label)}
+        className={joinClasses(propsWithRef, ClassJoinType.Label)}
       >
         {props.label}
       </label>
@@ -241,7 +240,7 @@ function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
       if (props.labelClass) className += ' ' + props.labelClass;
       if (props.required) {
         className += ' required';
-        if (props.inputRef?.current?.willValidate) {
+        if (props.inputRef?.current?.checkValidity?.()) {
           className += ' filled';
         }
       }
