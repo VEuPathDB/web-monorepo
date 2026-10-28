@@ -394,10 +394,6 @@ function stfFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
               </li>
             </ul>
             <p>
-              If an entity has latitude and longitude variables, map aggregation
-              will be added automatically.
-            </p>
-            <p>
               <i>All files must use UTF-8 encoding.</i>
             </p>
           </div>
