@@ -15,6 +15,7 @@ import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/N
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta-386.png';
 
 import Announcements from '@veupathdb/web-common/lib/components/Announcements';
 import CookieBanner from '@veupathdb/web-common/lib/components/CookieBanner';
@@ -27,6 +28,7 @@ import {
 import { Main } from '@veupathdb/web-common/lib/components/homepage/Main';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
+import { pathfinderUrl } from '@veupathdb/web-common/lib/config';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 
@@ -39,6 +41,7 @@ import {
   useSessionBackedSearchTerm,
   useSessionBackedExpandedBranches,
 } from 'ortho-client/hooks/searchCheckboxTree';
+import { pathfinderToolItems } from 'ortho-client/pathfinderRoutes';
 
 import './OrthoMCLPage.scss';
 import colors, {
@@ -89,6 +92,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = (props) => {
       <Link to="/">
         <div className="vpdb-HeaderBranding"></div>
       </Link>
+      <img className="BetaBadge" src={betaImage} alt="beta" />
       <div className="vpdb-HeaderBrandingSuperscript">
         {buildNumber && <span>Release {buildNumber} </span>}
         <br />
@@ -287,6 +291,7 @@ function useHeaderMenuItems() {
             type: 'reactRoute',
             url: makeStaticPageRoute(`/content/OrthoMCL/webServices.html`),
           },
+          ...pathfinderToolItems(pathfinderUrl),
         ],
       },
       {
@@ -331,7 +336,7 @@ function useHeaderMenuItems() {
             key: 'downloads',
             display: 'Download data files',
             type: 'reactRoute',
-            url: '/downloads',
+            url: '/downloads/Current_Release',
           },
           {
             key: 'release-summary',

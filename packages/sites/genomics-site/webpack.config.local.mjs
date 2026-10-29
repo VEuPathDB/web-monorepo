@@ -22,11 +22,15 @@ export default configure({
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
       [process.env.MULTI_BLAST_ENDPOINT]: process.env.MULTI_BLAST_URL,
+      [process.env.SEQUENCE_RETRIEVAL_ENDPOINT]: process.env.SEQUENCE_RETRIEVAL_URL,
       [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,
       [process.env.CGI_BIN_ENDPOINT]: process.env.CGI_BIN_URL,
       [process.env.DATAPLOTTER_ENDPOINT]: process.env.DATAPLOTTER_URL,
+      ...(process.env.PATHFINDER_ENDPOINT && {
+        [process.env.PATHFINDER_ENDPOINT]: process.env.PATHFINDER_URL,
+      }),
     },
     legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
     legacyWebAppUrl: process.env.LEGACY_WEB_APP_URL,
@@ -66,7 +70,8 @@ export default configure({
         showExtraMetadata: process.env.SHOW_EXTRA_METADATA === 'true',
 	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
 	showSubscriptionProds: process.env.SHOW_SUBSCRIPTION_PRODS === 'true',
-	allowAiAssistedCommentCreation: process.env.ALLOW_AI_ASSISTED_COMMENT_CREATION === 'true',
+	allowAiAssistedCommentCreation: process.env.ALLOW_AI_ASSISTED_COMMENT_CREATION !== 'false',
+        pathfinderUrl: process.env.PATHFINDER_ENDPOINT,
 })
     }),
     new HtmlWebpackPlugin({

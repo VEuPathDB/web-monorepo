@@ -247,6 +247,18 @@ yarn build-npm-modules
 
 _Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`) has proven inadequate in this scenario._
 
+=== Switching branches
+
+`lib` package build output (eg `packages/libs/*/lib`) is gitignored, so it is not cleaned up by git when you switch branches. Stale build artifacts left over from a previously checked-out branch can persist alongside (or instead of) the current source, which is especially dangerous for packages that glob a directory at build time (eg `require.context`) since removed/renamed files can still get bundled.
+
+If you see unexplained module resolution errors after switching branches, clean and rebuild the affected package:
+
+[source, shell]
+----
+yarn workspace <package name> clean
+yarn workspace <package name> build-npm-modules
+----
+
 == Notes on individual packages
 
 === EDA dev server

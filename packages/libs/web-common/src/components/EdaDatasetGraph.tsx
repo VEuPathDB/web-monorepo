@@ -8,6 +8,7 @@ import * as t from 'io-ts';
 import { useState } from 'react';
 import { EdaScatterPlot } from './eda/EdaScatterPlot';
 import { EdaBarPlot } from './eda/EdaBarPlot';
+import { EdaBoxPlot } from './eda/EdaBoxPlot';
 import { Link } from 'react-router-dom';
 import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
 
@@ -21,6 +22,17 @@ const PlotConfig = t.type({
   displaySpecVariableId: t.string,
   displayMode: t.union([t.literal('highlight'), t.literal('subset')]),
 });
+
+/**
+ * Plot component per `plotType`. A type with no entry here renders an explicit
+ * message rather than falling back to some other plot, so an unhandled type is
+ * visible instead of being silently drawn as the wrong chart.
+ */
+const PLOT_COMPONENTS = {
+  bar: EdaBarPlot,
+  boxplot: EdaBoxPlot,
+  scatterplot: EdaScatterPlot,
+} as const;
 
 const PlotConfigs = t.array(PlotConfig);
 
@@ -67,9 +79,11 @@ export function EdaDatasetGraph(props: Props) {
   const [selectedPlotsIndex, setSelectedPlotsIndex] = useState([0]);
   const [dataTableCollapsed, setDataTableCollapsed] = useState(false);
 
-  // simple type guarding against `AttributeValue` fields not being `string`
+  // simple type guarding against `AttributeValue` fields not being `string`.
+  // NOTE: `plot_configs_json` is intentionally NOT required here — a dataset with
+  // no configured graph has a null plot config, and we still want to render its
+  // data table below. Only the identity fields are required.
   if (
-    typeof plot_configs_json !== 'string' ||
     typeof dataset_id !== 'string' ||
     typeof source_id !== 'string' ||
     typeof graph_ids !== 'string'
@@ -78,7 +92,10 @@ export function EdaDatasetGraph(props: Props) {
     return null;
   }
 
-  const plotConfigs = parseJson(plot_configs_json);
+  const plotConfigs =
+    typeof plot_configs_json === 'string'
+      ? parseJson(plot_configs_json)
+      : undefined;
   const showGraph =
     plotConfigs != null && plotConfigs.length > 0 && has_graph_data;
 
@@ -141,14 +158,28 @@ export function EdaDatasetGraph(props: Props) {
               const geneDisplaySpec = graphIds && {
                 ids: graphIds,
                 variableId: plotConfig.displaySpecVariableId,
+                // A guess: the plot config names the gene id variable but not
+                // its entity. Each plot adapter replaces this with the entity
+                // that declares the variable (see resolveGeneDisplaySpec). The
+                // guess is right only when both axes are from the same entity.
                 entityId: plotConfig.xAxisEntityId,
                 traceName: source_id,
                 mode: plotConfig.displayMode,
               };
 
-              // Conditional rendering based on plot type
               const PlotComponent =
-                plotConfig.plotType === 'bar' ? EdaBarPlot : EdaScatterPlot;
+                PLOT_COMPONENTS[
+                  plotConfig.plotType as keyof typeof PLOT_COMPONENTS
+                ];
+
+              if (PlotComponent == null) {
+                return (
+                  <div key={plotConfig.plotName}>
+                    {plotConfig.plotName}: unsupported plot type "
+                    {plotConfig.plotType}"
+                  </div>
+                );
+              }
 
               return (
                 <div

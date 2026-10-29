@@ -1,0 +1,29 @@
+@import '@veupathdb/web-common/lib/styles/collapsed-header-mixins.scss';
+
+body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__pathfinder {
+  grid-template-areas:
+    'header'
+    'banner'
+    'content'
+    'footer';
+  grid-template-rows: auto auto 1fr auto;
+
+  @include collapsed-header-page-layout;
+
+  @media screen and (min-width: $hamburger-width + 1) {
+    grid-template-rows: auto auto 1fr auto;
+
+    .vpdb-Header {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  .vpdb-Main {
+    margin: 0;
+    padding: 0;
+    iframe {
+      border: none;
+    }
+  }
+}

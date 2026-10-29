@@ -30,14 +30,15 @@ import {
   vdiServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 import { useProjectUrls } from '@veupathdb/web-common/lib/hooks/projectUrls';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
 
 import { ExportOption } from './ResultExportSelector';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { submitNewDataset } from '@veupathdb/user-datasets/lib/Service/process/create-dataset';
 import {
   VdiCompatibleWdkService,
   wrapWdkService as addVdiService,
 } from '@veupathdb/user-datasets/lib/Service';
+import { submitNewDataset } from '@veupathdb/user-datasets/lib/Service/Datasets';
 
 const SUPPORTED_RECORD_CLASS_URL_SEGMENTS = new Set(['transcript']);
 
@@ -270,11 +271,11 @@ export function useSendGeneListToGenomicSiteStrategyConfig(
     () =>
       isGeneListStep(resultType) && projectId != null && projectUrls != null
         ? exportableProjectIds.map((id) => ({
-            value: `${id}-strategy`,
+            value: `${projectIdToDisplayName(id)}-strategy`,
             label: (
               <>
                 <IconAlt fa="code-fork fa-rotate-270 fa-fw" />{' '}
-                <span style={{ marginLeft: '0.5em' }}>{id}.org Strategy</span>
+                <span style={{ marginLeft: '0.5em' }}>{projectIdToDisplayName(id)}.org Strategy</span>
               </>
             ),
             onSelectionTask: Task.fromPromise(() =>
@@ -370,6 +371,7 @@ export async function uploadGeneListUserDataset(
         name: 'genelist',
         version: '1.0',
       },
+      origin: 'direct-upload',
       installTargets: [projectId],
       summary: `Genes from step "${step.customName}"`,
       description: datasetDescription,

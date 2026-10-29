@@ -32,8 +32,9 @@ import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormContr
 import { Modal } from '@veupathdb/coreui';
 import { Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
-import { submitUpdate } from '../../Service/process/update-dataset';
+import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
+import { newDatasetUploads } from '../../Service/Model';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -105,7 +106,7 @@ export function UpdateFormController(
 
       return {
         ...configureFormProps(type, props.formConfigs, vdi),
-        // Disable reference genome input for update form
+        // Disable reference organism input for update form
         dependencies: undefined,
       };
     },
@@ -125,9 +126,8 @@ export function UpdateFormController(
         datasetId: props.datasetId,
         original: convertDetailsToMeta(dataset!),
         updated: formState.datasetDetails,
-        newFiles: formState.fileUploads,
+        newFiles: newDatasetUploads(formState),
         oldFiles: dataset!.files.datasetProperties,
-        formState: formState.formMetaState,
       })
         .then((res) => {
           setSubmitting(false);

@@ -11,7 +11,13 @@ import AnswerTableCell from '../../Views/Answer/AnswerTableCell';
 import '../../Views/Answer/wdk-Answer.scss';
 
 function Answer(props) {
-  const { question, recordClass, displayInfo, additionalActions } = props;
+  const {
+    question,
+    recordClass,
+    displayInfo,
+    additionalActions,
+    descriptionSuffix,
+  } = props;
 
   const tableState = useTableState(props);
 
@@ -21,6 +27,8 @@ function Answer(props) {
         {displayInfo.customName || question.displayName}
       </h1>
       <div className="wdk-AnswerDescription">{recordClass.description}</div>
+      {/* Optional content rendered after the description, e.g. for additional filters */}
+      {descriptionSuffix}
       <div className="wdk-Answer">
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <AnswerFilter {...props} />
@@ -246,7 +254,7 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
   } else {
     return [
       (record) => {
-        if (record.attributes[sortingAttribute.name] === null) {
+        if (record.attributes[sortingAttribute.name] == null) {
           // return a string from the smallest UTF-16
           return String.fromCharCode(0);
         } else {

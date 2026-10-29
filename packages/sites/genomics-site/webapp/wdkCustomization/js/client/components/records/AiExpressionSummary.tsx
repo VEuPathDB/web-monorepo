@@ -89,14 +89,24 @@ function AiSummaryGate(props: Props) {
 
   const [summaryGenerationRequested, setSummaryGenerationRequested] =
     useState(false);
+  const [resubmitCounter, setResubmitCounter] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   const { data: aiExpressionSummary, status: serviceStatus } =
-    useAiExpressionSummary(geneId, summaryGenerationRequested);
+    useAiExpressionSummary(geneId, summaryGenerationRequested, resubmitCounter);
   const geneResponse = aiExpressionSummary?.[geneId];
   const completeExpressionSummary =
-    geneResponse?.resultStatus === 'present' && geneResponse?.expressionSummary
+    !isRetrying &&
+    geneResponse?.resultStatus === 'present' &&
+    geneResponse?.expressionSummary
       ? geneResponse.expressionSummary
       : undefined;
+  const basedOnIncompleteData = geneResponse?.basedOnIncompleteData ?? false;
+
+  // once fresh data arrives after a retry, stop forcing the "Summarizing..." view
+  useEffect(() => {
+    setIsRetrying(false);
+  }, [aiExpressionSummary]);
 
   const [pollingCounter, setPollingCounter] = useState(-1);
   const pollingTimeout = useRef<ReturnType<typeof setTimeout>>();
@@ -130,7 +140,15 @@ function AiSummaryGate(props: Props) {
     }
   } else if (completeExpressionSummary) {
     return (
-      <AiExpressionResult summary={completeExpressionSummary} {...props} />
+      <AiExpressionResult
+        summary={completeExpressionSummary}
+        basedOnIncompleteData={basedOnIncompleteData}
+        onRetryIncomplete={() => {
+          setIsRetrying(true);
+          setResubmitCounter((c) => c + 1);
+        }}
+        {...props}
+      />
     );
   } else if (!summaryGenerationRequested) {
     // Cache miss: render button to populate cache
@@ -172,12 +190,16 @@ type RowType = AiExpressionSummarySection & { rowId: number };
 
 type AiExpressionResultProps = Props & {
   summary: AiExpressionSummary;
+  basedOnIncompleteData: boolean;
+  onRetryIncomplete: () => void;
 };
 
 const AiExpressionResult = (props: AiExpressionResultProps) => {
   const {
     record,
     summary: { headline, one_paragraph_summary, topics },
+    basedOnIncompleteData,
+    onRetryIncomplete,
   } = props;
 
   const activeDatasetLinkRef = useRef<HTMLElement | null>(null);
@@ -380,6 +402,17 @@ const AiExpressionResult = (props: AiExpressionResultProps) => {
         <div className="ai-summary">
           {safeHtml(headline, undefined, 'h4')}
           {safeHtml(one_paragraph_summary, undefined, 'p')}
+          {basedOnIncompleteData && (
+            <p>
+              <strong>
+                ⚠️ One or more per-experiment summaries could not be generated.
+                This overall summary and its topic groupings are based on
+                incomplete data — click{' '}
+                <button onClick={onRetryIncomplete}>Retry</button> to attempt to
+                fill in the missing pieces.
+              </strong>
+            </p>
+          )}
           <p>
             <i>
               The results from {expressionGraphs.length} experiments have been
@@ -506,10 +539,13 @@ function useAiExpressionSummary(
       if (pollingCounter < 0) return undefined;
       const { projectId } = await wdkService.getConfig();
       const recordClasses = await wdkService.getRecordClasses();
-      const geneRecordHasProjectId = recordClasses.find(
-        (rc) => rc.fullName === 'GeneRecordClasses.GeneRecordClass'
-      )?.primaryKeyColumnRefs.length === 2;
-      const genePkValues = geneRecordHasProjectId ? `${geneId},${projectId}` : geneId;
+      const geneRecordHasProjectId =
+        recordClasses.find(
+          (rc) => rc.fullName === 'GeneRecordClasses.GeneRecordClass'
+        )?.primaryKeyColumnRefs.length === 2;
+      const genePkValues = geneRecordHasProjectId
+        ? `${geneId},${projectId}`
+        : geneId;
       const answerSpec = {
         searchName: 'single_record_question_GeneRecordClasses_GeneRecordClass',
         searchConfig: {

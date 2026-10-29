@@ -1,4 +1,10 @@
-import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { Refresh } from '@material-ui/icons';
 
@@ -43,15 +49,13 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
     window.location.reload();
   };
 
-  const { datasetDetails, fileUploads } = useDatasetFormState();
+  const formState = useDatasetFormState();
 
   const uploadSection = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    setFormIsValid(
-      isDatasetFormValid(datasetDetails, props.formConfig, uploadSection)
-    );
-  }, [setFormIsValid, datasetDetails, fileUploads, props]);
+  useEffect(() => setFormIsValid(
+    isDatasetFormValid(formState.datasetDetails, props.formConfig, uploadSection)
+  ), [setFormIsValid, formState, props]);
 
   return (
     <section id="dataset-upload" ref={uploadSection}>
@@ -123,7 +127,11 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
           showDataInputs={true}
         />
 
-        <MetadataSection formProps={props} jsonPath={metaPath} />
+        <MetadataSection
+          formProps={props}
+          jsonPath={metaPath}
+          openMetaImport={props.actions.openMetaImportModal}
+        />
 
         <UploadButton onClick={onSubmit} submittable={uploadSubmittable} />
       </form>

@@ -30,6 +30,17 @@ export function makeCommonDevServerConfig({
           }
         });
 
+        // Log a timestamp after each build (initial and hot rebuilds), since
+        // webpack-dev-server's default stats output doesn't include one.
+        // webpack-dev-middleware prints its own stats summary from a
+        // process.nextTick callback (see its setupHooks.js), so we defer
+        // the same way to land after it instead of before.
+        devServer.compiler.hooks.afterDone.tap('LogRebuildTimestamp', () => {
+          process.nextTick(() => {
+            console.log(`[${new Date().toLocaleTimeString()}] Build complete`);
+          });
+        });
+
         return middlewares;
       },
       client: {

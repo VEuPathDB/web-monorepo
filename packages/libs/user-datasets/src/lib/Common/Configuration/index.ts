@@ -14,6 +14,13 @@ export type {
   DependenciesConfig,
 } from './DatasetFormConfig';
 
+export type {
+  EdaStudyLinks,
+  DatasetWorkspaceConfig,
+} from './DatasetWorkspaceConfig';
+
+export type { FileInputConfig, FileUploadConfig } from './UploadFormConfig';
+
 export { type DatasetTypeSelection, findDatasetTypeConfig } from './data-types';
 
 export {

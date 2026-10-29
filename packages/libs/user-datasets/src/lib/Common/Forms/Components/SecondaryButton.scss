@@ -1,0 +1,18 @@
+button.ud-secondary-action {
+  background-color: var(--coreui-blue-200);
+  box-shadow: 4px 5px var(--coreui-blue-300);
+  padding: 0.6em 1.2ch;
+  height: fit-content;
+  border-radius: 8px;
+  font-weight: bold;
+  color: var(--coreui-gray-700);
+  border-width: 0;
+  border-style: none;
+  font-size: initial;
+
+  &:disabled {
+    background-color: var(--coreui-gray-400);
+    box-shadow: 4px 5px var(--coreui-gray-500);
+    color: var(--coreui-gray-200);
+  }
+}

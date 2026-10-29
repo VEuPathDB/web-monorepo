@@ -30,6 +30,7 @@ import {
   DatasetPutDetails,
   DatasetPutResponseBody,
   GetDatasetsQueryParamEnum,
+  RawDatasetMetadataResponse,
   ServerErrorBody,
   ShareOfferAction,
   ShareOfferListEntry,
@@ -42,6 +43,13 @@ import {
 } from './Model';
 
 import {
+  VDI_MULTIPART_DATA_FILE,
+  VDI_MULTIPART_DATA_PROP_FILE,
+  VDI_MULTIPART_DOC_FILE,
+  VDI_MULTIPART_URL
+ } from './Model/request-types';
+
+import {
   ccValidationErrorBody,
   datasetFileListing,
   datasetGetResponseBody,
@@ -49,6 +57,7 @@ import {
   datasetPatchResponse,
   datasetPostResponse,
   pluginListItem,
+  rawMetadataResponse,
   serviceMetadata,
   shareOfferListEntry,
   userMetadata,
@@ -63,13 +72,13 @@ import {
 } from './utils/async-xhr';
 
 export type DatasetUploadFileType =
-  | 'dataFile'
-  | 'docFile'
-  | 'dataPropertiesFile';
+  | typeof VDI_MULTIPART_DATA_FILE
+  | typeof VDI_MULTIPART_DOC_FILE
+  | typeof VDI_MULTIPART_DATA_PROP_FILE;
 
 export type DatasetUpload =
   | { type: DatasetUploadFileType; file: File }
-  | { type: 'url'; url: string };
+  | { type: typeof VDI_MULTIPART_URL; url: string };
 
 export class VdiService extends FetchClientWithCredentials {
   get vdiServiceUrl(): string {
@@ -103,21 +112,29 @@ export class VdiService extends FetchClientWithCredentials {
     dispatchUploadProgress?: Consumer<number>,
     dispatchPageRedirect?: Consumer<DatasetPostResponseBody>,
     dispatchBadUpload?: Consumer<BadUpload>
-  ) {
-    await this.uploadDataset<DatasetPostResponse>(
-      VdiRoutes.DatasetListPath,
-      'POST',
-      details,
-      uploads,
-      ioTransformer(datasetPostResponse),
-      dispatchUploadProgress
-    ).then((res) => {
-      if (dispatchPageRedirect && 'datasetId' in res) {
-        dispatchPageRedirect(res);
-      } else if (dispatchBadUpload && 'type' in res) {
-        dispatchBadUpload(res);
-      }
-    });
+  ): Promise<DatasetId | BadUpload> {
+    let result: DatasetPostResponse | BadUpload;
+    try {
+      result = await this.uploadDataset(
+        VdiRoutes.DatasetListPath,
+        'POST',
+        details,
+        uploads,
+        ioTransformer(datasetPostResponse),
+        dispatchUploadProgress
+      );
+    } catch (e: any) {
+      console.error('failed to submit dataset upload', e);
+      throw e;
+    }
+
+    if ('datasetId' in result) {
+      dispatchPageRedirect?.(result);
+      return result.datasetId;
+    }
+
+    dispatchBadUpload?.(result as BadUpload);
+    return result as BadUpload;
   }
 
   /**
@@ -435,6 +452,21 @@ export class VdiService extends FetchClientWithCredentials {
     );
   }
 
+  async getRawDatasetMetadata(
+    datasetId: DatasetId,
+    download: boolean
+  ): Promise<RawDatasetMetadataResponse> {
+    return this.fetch(
+      createJsonRequest({
+        path:
+          VdiRoutes.datasetStaticFileUri(datasetId, 'vdi-meta.json') +
+          `?download=${download}`,
+        method: 'GET',
+        transformResponse: ioTransformer(rawMetadataResponse),
+      })
+    );
+  }
+
   private async uploadDataset<T>(
     path: string,
     method: 'POST' | 'PUT',
@@ -454,10 +486,10 @@ export class VdiService extends FetchClientWithCredentials {
           content: details,
         },
         ...uploads.map((u): MultipartField => {
-          return u.type === 'url'
+          return u.type === VDI_MULTIPART_URL
             ? {
-                type: 'url',
-                fieldName: 'url',
+                type: VDI_MULTIPART_URL,
+                fieldName: VDI_MULTIPART_URL,
                 content: u.url,
               }
             : {
@@ -472,14 +504,24 @@ export class VdiService extends FetchClientWithCredentials {
         ? (loaded, total) => onProgress(Math.floor((loaded / total) * 100))
         : undefined,
     }).then(async (res) => {
-      let body: T;
+      // Determine the raw parsed body first, without running it through the
+      // success `decoder` - that decoder only understands the 2xx response
+      // shape, and running it unconditionally against a 400/422/5xx body
+      // (which has a different shape) throws before the status-code
+      // branches below ever get a chance to run.
+      let rawBody: unknown;
+      let bodyIsValidJson = true;
 
       switch (res.responseType) {
         case XHRResponseType.JSON:
-          body = await decoder(res.responseBody);
+          rawBody = res.responseBody;
           break;
         case XHRResponseType.Text:
-          body = await decoder(JSON.parse(res.responseBody));
+          try {
+            rawBody = JSON.parse(res.responseBody);
+          } catch (e) {
+            bodyIsValidJson = false;
+          }
           break;
         default:
           console.error('unexpected server response: ', res.response);
@@ -488,27 +530,38 @@ export class VdiService extends FetchClientWithCredentials {
           );
       }
 
-      if (res.responseCode >= 500) {
-        throw new Error(
-          (body as ServerErrorBody).message ?? 'unhandled server exception'
-        );
+      if (res.responseCode >= 200 && res.responseCode < 300) {
+        return await decoder(rawBody);
       }
 
-      if (res.responseCode >= 200 && res.responseCode < 300) {
-        return body;
+      // From here on this is a non-success response: use `rawBody` directly
+      // rather than `decoder`, since decoder expects the success shape.
+      const statusMessage = `request failed with status ${res.responseCode}`;
+
+      if (res.responseCode >= 500) {
+        throw new Error(
+          bodyIsValidJson
+            ? (rawBody as ServerErrorBody).message ??
+              'unhandled server exception'
+            : statusMessage
+        );
       }
 
       switch (res.responseCode) {
         case 400:
           return {
             type: 400,
-            message:
-              (body as SimpleServiceErrorBody).message ?? 'file upload failed',
+            message: bodyIsValidJson
+              ? (rawBody as SimpleServiceErrorBody).message ??
+                'file upload failed'
+              : statusMessage,
           };
         case 422:
           return {
             type: 422,
-            errors: (body as ValidationErrorBody).errors,
+            errors: bodyIsValidJson
+              ? (rawBody as ValidationErrorBody).errors
+              : { general: [statusMessage], byKey: {} },
           };
         default:
           console.error('unexpected server response: ', res.responseBody);

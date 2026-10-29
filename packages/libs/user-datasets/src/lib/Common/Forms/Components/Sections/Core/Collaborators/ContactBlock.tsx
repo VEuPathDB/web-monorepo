@@ -118,7 +118,7 @@ export function ContactBlock(props: ContactBlockProps): ReactElement {
         />
 
         <InputPair
-          label="Organization Name"
+          label="Affiliation"
           type="text"
           fieldName={makePath('affiliation')}
           value={props.contact.affiliation}

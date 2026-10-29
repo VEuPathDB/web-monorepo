@@ -19,7 +19,7 @@ export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
 
   return (
     <>
-      <span className="multi-input-label">Data Accessibility</span>
+      <span className="multi-input-label">Visibility</span>
       <div className="field-grid narrow-labels">
         <InputPair
           type="radio"

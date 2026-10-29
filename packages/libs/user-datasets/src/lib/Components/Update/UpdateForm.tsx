@@ -17,13 +17,8 @@ import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreMo
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isEmpty, isEqual } from 'lodash';
-import {
-  DatasetGetResponseBody,
-  DatasetUploads,
-  PartialDatasetDetails,
-} from '../../Service';
-import { hasUploads } from '../../Service/Model/utility-types';
-import { DatasetTypeConfig } from '../../Common/Configuration';
+import { DatasetGetResponseBody, PartialDatasetDetails } from '../../Service';
+import { hasUploads, newDatasetUploads } from '../../Service/Model/utility-types';
 
 export interface UpdateFormProps extends DatasetFormProps {
   readonly originalDataset: DatasetGetResponseBody;
@@ -34,15 +29,20 @@ export interface UpdateFormProps extends DatasetFormProps {
 export function UpdateForm(props: UpdateFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root;
 
-  const { datasetDetails, fileUploads } = useDatasetFormState();
+  const formState = useDatasetFormState();
+  const { datasetDetails } = formState;
+  const fileUploads = newDatasetUploads(formState);
 
   const [formIsValid, setFormIsValid] = useState<boolean>(true);
 
   const userHasChangedSomething = useMemo(
     () =>
       hasUploads(fileUploads) ||
-      !isEqual(datasetDetails, props.originalDetails),
-    [fileUploads, datasetDetails, props.originalDetails]
+      !isEqual(formState.datasetDetails, props.originalDetails),
+
+    // formState covers relevant state changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formState, props.originalDetails]
   );
 
   // Determine if the upload form should be submittable, and if not, why not.
@@ -68,15 +68,18 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
       isEmpty(fileUploads.dataPropertiesFiles) &&
       isEmpty(props.originalDataset.files.datasetProperties),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [datasetDetails, fileUploads]
+    [formState]
   );
 
-  useEffect(() => {
-    setFormIsValid(
+  useEffect(
+    () => setFormIsValid(
       isDatasetFormValid(datasetDetails, props.formConfig, updateSection) &&
         !isMissingDatasetProperties
-    );
-  }, [datasetDetails, fileUploads, props, isMissingDatasetProperties]);
+    ),
+    // formState covers relevant state changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formState, props, isMissingDatasetProperties]
+  );
 
   const onSubmit = () => {
     props.actions.submit();
@@ -102,7 +105,11 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
           requireDatasetPropertiesFile={isMissingDatasetProperties}
         />
 
-        <MetadataSection formProps={props} jsonPath={metaPath} />
+        <MetadataSection
+          formProps={props}
+          jsonPath={metaPath}
+          openMetaImport={props.actions.openMetaImportModal}
+        />
 
         <UploadButton
           onClick={onSubmit}

@@ -1,3 +1,5 @@
+export type { DatasetMetadata } from './metadata-decoder';
+
 export type {
   DatasetCharacteristicsPatch,
   DatasetPatchRequest,
@@ -7,6 +9,7 @@ export type {
   OptionalValuePatch,
   PartialCharacteristics,
   PartialDatasetDetails,
+  PartialDatasetPublication,
   PostDatasetSource,
   ShareReceiptAction,
 } from './request-types';
@@ -24,6 +27,8 @@ export type {
   DatasetPostResponse,
   DatasetPostResponseBody,
   DatasetPropertiesDeleteResponse,
+  DatasetPublication,
+  DatasetPublicationType,
   DatasetPutResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,
@@ -31,7 +36,9 @@ export type {
   DatasetUploadStatusInfo,
   DatasetUser,
   DatasetVisibility,
+  ExternalIdentifiers,
   PluginDataType,
+  RawDatasetMetadataResponse,
   SampleYearRange,
   ServerErrorBody,
   ShareOfferAction,
@@ -48,4 +55,12 @@ export type {
   VdiUserMetadata,
 } from './response-decoders';
 
+export type {
+  UploadContent,
+  FileUploadContent,
+  TextUploadContent,
+} from './upload-content';
+export { newUploadContent } from './upload-content';
+
 export type { DatasetUploads, DatasetZipType } from './utility-types';
+export { newDatasetUploads } from './utility-types';
