@@ -76,6 +76,10 @@ export interface VolcanoPlotProps {
   effectSizeThreshold: number;
   /** Set the threshold for significance. Affects point colors */
   significanceThreshold: number;
+  /** Do not draw the horizontal significance threshold line. Use when the significance threshold
+   * applies to a statistic other than the plotted (unadjusted) p-value, so the line would sit at a
+   * meaningless height. Defaults to false. */
+  hideSignificanceThresholdLine?: boolean;
   /** x-axis range  */
   independentAxisRange?: NumberRange;
   /** y-axis range */
@@ -218,6 +222,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
     independentAxisRange,
     dependentAxisRange,
     significanceThreshold,
+    hideSignificanceThresholdLine = false,
     effectSizeThreshold,
     markerBodyOpacity,
     containerClass = 'web-components-plot',
@@ -345,6 +350,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<PlotRef>) {
   const showPositiveFoldChangeThresholdLine =
     effectDirection !== 'downOnly' && effectSizeThreshold < xAxisMax;
   const showSignificanceThresholdLine =
+    !hideSignificanceThresholdLine &&
     -Math.log10(Number(significanceThreshold)) > yAxisMin &&
     -Math.log10(Number(significanceThreshold)) < yAxisMax;
 
@@ -882,8 +888,9 @@ export function assignSignificanceColor(
   effectSizeThreshold: number,
   significanceColors: SignificanceColors
 ) {
-  // Test 1. If the y value is higher than the significance threshold, just return not significant
-  if (pValue >= significanceThreshold) {
+  // Test 1. If the p value is higher than the significance threshold, just return not significant.
+  // A p value equal to the threshold is significant, matching GeneEdaVizWithComputePlugin (pValue <= threshold).
+  if (pValue > significanceThreshold) {
     return significanceColors['inconclusive'];
   }
 
