@@ -13,7 +13,7 @@
     "build": "veupathdb-react-scripts prepare src",
     "build-npm-modules": "npm-run-all build generate-icons",
     "build-forever": "veupathdb-react-scripts build-forever src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "veupathdb-react-scripts test"
   },
   "eslintConfig": {
     "extends": [

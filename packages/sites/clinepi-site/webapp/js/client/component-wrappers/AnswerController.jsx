@@ -1,28 +1,21 @@
 import React from 'react';
 
-import StudyAnswerController from '@veupathdb/web-common/lib/component-wrappers/StudyAnswerController';
-import UDAnswerController from './UDAnswerController';
-
-import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
-
-const ClinEpiStudyAnswerController = withPermissions(StudyAnswerController);
+import UDAnswerController from '@veupathdb/web-common/lib/component-wrappers/UDAnswerController';
+import { MergedDatasetsAnswer } from './AllDatasetsAnswerController';
 
 export default (AnswerController) => (props) => {
-  if (props.ownProps.recordClass === 'dataset') {
+  if (
+    props.ownProps.recordClass === 'dataset' &&
+    props.ownProps.question === 'AllDatasets'
+  ) {
     return (
-      <ClinEpiStudyAnswerController
-        {...props}
-        DefaultComponent={AnswerController}
-      />
+      <MergedDatasetsAnswer {...props} DefaultComponent={AnswerController} />
     );
   }
 
   if (props.ownProps.recordClass === 'userdataset') {
     return (
-      <UDAnswerController
-        {...props}
-        DefaultComponent={AnswerController}
-      />
+      <UDAnswerController {...props} DefaultComponent={AnswerController} />
     );
   }
 

@@ -4,6 +4,7 @@ import { DatasetTypeConfig } from './DatasetTypeConfig';
 import { DatasetFormVerbiage } from './DatasetFormVerbiage';
 import { DatasetDependency } from '../../Service';
 import { Consumer } from '../../Utils';
+import { UploadContentMap } from '../../Service/Model/utility-types';
 
 export interface DatasetFormConfig<
   T extends DatasetTypeConfig | undefined = DatasetTypeConfig
@@ -27,6 +28,18 @@ export interface DatasetFormConfig<
   readonly datasetCharacteristics?: DatasetCharacteristicsFormSectionConfig;
 
   readonly enableExperimentalOrganism?: boolean;
+
+  /**
+   * Optional hook assembling the final set of files sent to VDI as `dataFile`
+   * parts. Return value replaces `uploads.dataFiles`. Filenames arrive already
+   * sanitized.
+   *
+   * May throw, but only as a backstop: everything it rejects is also caught by
+   * the form's own validation, which reports inline against the offending
+   * field. A throw here means a validation gap and surfaces as a generic
+   * submit error.
+   */
+  readonly prepareDataFiles?: (dataFiles: UploadContentMap) => UploadContentMap;
 }
 
 export interface DatasetCharacteristicsFormSectionConfig {

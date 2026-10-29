@@ -8,10 +8,14 @@ import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSear
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
+import { PathfinderController } from '@veupathdb/web-common/lib/controllers/PathfinderController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 import { PlasmoFastController } from './components/controllers/PlasmoFastController';
 
-import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import {
+  pathfinderUrl,
+  useUserDatasetsWorkspace,
+} from '@veupathdb/web-common/lib/config';
 
 import {
   usePreferredOrganismsState,
@@ -27,6 +31,7 @@ import SampleForm from './components/samples/SampleForm';
 import { projectId, webAppUrl } from './config';
 
 import { blastRoutes } from './blastRoutes';
+import { computeJobRoutes } from './computeJobRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
@@ -175,7 +180,17 @@ export const wrapRoutes = (ebrcRoutes) => [
       />
     ),
   },
-
+  // Allow guests to access dataset record pages for SEO and public visibility
+  {
+    path: '/record/organism/:primaryKey+',
+    requiresLogin: false,
+    component: (props) => (
+      <RecordController
+        recordClass="dataset"
+        primaryKey={props.match.params.primaryKey}
+      />
+    ),
+  },
   // Allow guests to access All Datasets and All Organisms for SEO and public visibility
   {
     path: '/search/dataset/AllDatasets/result',
@@ -197,14 +212,6 @@ export const wrapRoutes = (ebrcRoutes) => [
   {
     path: '/downloads',
     component: DownloadsRouteComponent,
-  },
-
-  {
-    path: '/record/organism/:id*',
-    requiresLogin: false,
-    component: (props) => (
-      <Redirect to={`/record/dataset/${props.match.params.id}`} />
-    ),
   },
 
   {
@@ -230,6 +237,18 @@ export const wrapRoutes = (ebrcRoutes) => [
     rootClassNameModifier: 'jbrowse',
   },
 
+  ...(pathfinderUrl
+    ? [
+        {
+          path: '/pathfinder',
+          exact: false,
+          requiresLogin: true,
+          component: PathfinderController,
+          rootClassNameModifier: 'pathfinder',
+        },
+      ]
+    : []),
+
   {
     path: '/search',
     component: () => (
@@ -250,6 +269,8 @@ export const wrapRoutes = (ebrcRoutes) => [
   },
 
   ...blastRoutes,
+
+  ...computeJobRoutes,
 
   ...preferredOrganismsRoutes,
 

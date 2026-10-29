@@ -6,10 +6,11 @@ import { preorderSeq } from '../../../Utils/TreeUtils';
 
 let cx = makeClassNameHelper('wdk-RecordNavigationItem');
 
-let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
+let RecordNavigationItem = ({ node, path, activeSection, onSectionToggle }) => {
   let id = getId(node);
   let displayName = getDisplayName(node);
   let isField = node.wdkReference != null;
+  let depth = (path?.length ?? 1) - 1;
 
   let isActive = useMemo(
     () => preorderSeq(node).some((node) => getId(node) === activeSection),
@@ -37,6 +38,15 @@ let RecordNavigationItem = ({ node, activeSection, onSectionToggle }) => {
         if (isActive) {
           event.preventDefault();
           return;
+        }
+
+        // Non-top-level category sections are individually collapsible in
+        // RecordMainSection (see RecordMainCategorySection), unlike
+        // top-level (depth 0) categories, which are always rendered
+        // expanded. Expand the section being navigated to, the same way
+        // field sections are expanded above.
+        if (depth > 0) {
+          onSectionToggle(id, true);
         }
 
         const navSectionIsExpanded =

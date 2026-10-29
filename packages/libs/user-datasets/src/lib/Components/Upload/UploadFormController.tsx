@@ -1,5 +1,4 @@
 import {
-  PartialDatasetDetails,
   DatasetPostResponseBody,
   VdiServiceMetadata,
 } from '../../Service';
@@ -15,7 +14,7 @@ import {
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { Consumer } from '../../Utils';
+import { Consumer, DataNoun } from '../../Utils';
 import {
   clearBadUpload,
   receiveBadUpload,
@@ -25,15 +24,20 @@ import {
 } from '../../Actions/UserDatasetUploadActions';
 import { isEmpty } from 'lodash';
 import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibility';
-import { submitNewDataset } from '../../Service/process/create-dataset';
+import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { cleanDatasetDetails } from '../../Service/Datasets/payload-cleanup';
+import { newDatasetUploads } from '../../Service/Model';
+import { validateFormState } from '../../Service/Datasets/upload-validation';
 
 export interface UploadFormControllerProps {
   readonly baseUrl: string;
   readonly formConfig: DatasetFormConfig;
   readonly vdiConfig: VdiServiceMetadata;
   readonly urlParams: Record<string, string>;
+  readonly dataNoun: DataNoun;
+  readonly enablePublicDatasets: boolean;
 }
 
 export function UploadFormController(props: UploadFormControllerProps) {
@@ -56,6 +60,7 @@ export function UploadFormController(props: UploadFormControllerProps) {
                 dispatch,
                 formState,
                 p.formConfig,
+                p.vdiConfig,
                 p.actions.setSubmitting,
                 p.baseUrl
               ),
@@ -70,16 +75,19 @@ function submitAction(
   dispatch: Dispatch<any, EpicDependencies>,
   formState: DatasetFormState,
   formConfig: DatasetFormConfig,
+  vdiConfig: VdiServiceMetadata,
   setSubmitting: Consumer<boolean>,
   baseUrl: string
 ) {
-  const { fileUploads } = formState;
-
   // Clear out previous error attempt messages.
   dispatch(clearBadUpload());
 
   {
-    const validationErrors = validateFormState(formState, formConfig);
+    const validationErrors = validateFormState(
+      formState,
+      formConfig,
+      vdiConfig
+    );
 
     if (!isEmpty(validationErrors)) {
       dispatch(
@@ -100,6 +108,28 @@ function submitAction(
     try {
       assertIsVdiCompatibleWdkService(wdkService);
 
+      let finalFileUploads = formState;
+
+      if (formConfig.prepareDataFiles != null) {
+        try {
+          finalFileUploads = {
+            ...finalFileUploads,
+            dataFileSelections: formConfig.prepareDataFiles(formState.dataFileSelections),
+          };
+        } catch (e) {
+          setSubmitting(false);
+          return receiveBadUpload([
+            {
+              type: 400,
+              message:
+                e instanceof Error
+                  ? e.message
+                  : 'Failed to prepare upload files',
+            },
+          ]);
+        }
+      }
+
       await submitNewDataset({
         service: wdkService.vdi,
         details: {
@@ -107,9 +137,9 @@ function submitAction(
             name: formConfig.dataType.name,
             version: formConfig.dataType.version,
           },
-          ...filterDetails(formState),
+          ...cleanDatasetDetails(formState.datasetDetails),
         },
-        uploads: fileUploads,
+        uploads: newDatasetUploads(finalFileUploads),
         onProgress: (progress: number | null) =>
           dispatch(trackUploadProgress(progress)),
         onSuccess: ({ datasetId }: DatasetPostResponseBody) => {
@@ -130,50 +160,4 @@ function submitAction(
       ]);
     }
   });
-}
-
-/**
- * Validate the upload form state, performing basic checks that the user has
- * performed all required client-side-only form steps before attempting an
- * upload.
- */
-function validateFormState(
-  { datasetDetails }: DatasetFormState,
-  formConfig: DatasetFormConfig
-): Record<string, string[]> {
-  const keyedErrors: Record<string, string[]> = {};
-
-  if (
-    formConfig.dependencies?.required === true &&
-    isEmpty(datasetDetails.dependencies)
-  ) {
-    keyedErrors['$.details.dependencies'] = ['selection is required'];
-  }
-
-  /* TODO: to be re-enabled for the update form
-  const errorMessage = ['selection is required'];
-
-  // Required Client-Only Fields
-  if (clientSide.isStudy === undefined)
-    keyedErrors[FieldStudyToggleID] = errorMessage;
-  if (clientSide.hasDisclaimer === undefined)
-    keyedErrors[DatasetUsageToggleID] = errorMessage;
-  if (clientSide.hasExternalSources === undefined)
-    keyedErrors[DatasetSourcesToggleID] = errorMessage;
-   */
-
-  return keyedErrors;
-}
-
-function filterDetails({
-  formMetaState,
-  datasetDetails,
-}: DatasetFormState): PartialDatasetDetails {
-  const filtered = { ...datasetDetails };
-
-  if (!formMetaState.isStudy) delete filtered['datasetCharacteristics'];
-  if (!formMetaState.hasDisclaimer) delete filtered['dataDisclaimer'];
-  if (!formMetaState.hasExternalSources) delete filtered['datasetSources'];
-
-  return filtered;
 }

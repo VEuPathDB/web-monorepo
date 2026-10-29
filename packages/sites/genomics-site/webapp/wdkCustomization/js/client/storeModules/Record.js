@@ -40,6 +40,8 @@ export function observe(action$, state$, services) {
   return merge(
     RecordStoreModule.observe(action$, state$, services),
     observeSnpsAlignment(action$, state$, services),
+    observeVariantStrainFilter(action$, state$, services),
+    observeStrainMsaFilter(action$, state$, services),
     observeRequestedOrganisms(action$, state$, services)
   );
 }
@@ -184,7 +186,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     }
     if (index[row.target_name + '-' + row.target_type].keep) return index;
     if (
-   //   row.organisms == null ||
+      //   row.organisms == null ||
       row.organisms === record.attributes.organism_full
     ) {
       index[row.target_name + '-' + row.target_type].keep = true;
@@ -207,15 +209,21 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     if (tableName === 'UserDatasetsEdaPhenotype') return true;
 
     //  if (metaTableIndex[key] === undefined) return true;
-    if ( (metaTableIndex[key] === undefined) && (targetType == 'table') ) {
+    if (metaTableIndex[key] === undefined && targetType == 'table') {
       console.log('FILTERING OUT table (not in MetaTable):', tableName);
       return false;
     }
-    if ( (metaTableIndex[key] === undefined) && (targetType == 'attribute') ) return true;
+    if (metaTableIndex[key] === undefined && targetType == 'attribute')
+      return true;
 
     const shouldKeep = metaTableIndex[key].keep;
     if (targetType === 'table' && !shouldKeep) {
-      console.log('FILTERING OUT (in this website) table:', tableName, 'keep:', shouldKeep);
+      console.log(
+        'FILTERING OUT (in this website) table:',
+        tableName,
+        'keep:',
+        shouldKeep
+      );
     }
 
     return shouldKeep;
@@ -314,6 +322,81 @@ function observeSnpsAlignment(action$) {
 }
 
 /**
+ * Load filterParam data for the Variant record's strain filter.
+ *
+ * organismSinglePick is a depended param of the filter and a record page has no organism
+ * picker, so it is seeded from the record's own organism_text.
+ */
+function observeVariantStrainFilter(action$) {
+  return action$.pipe(
+    filter((action) => action.type === RecordActions.RECORD_UPDATE),
+    mergeMap((action) =>
+      action.payload.record.recordClassName ===
+      'VariantRecordClasses.VariantRecordClass'
+        ? of(action.payload.record.attributes.organism_text)
+        : EMPTY
+    ),
+    map((organismSinglePick) =>
+      QuestionActions.updateActiveQuestion({
+        searchName: 'VariantAlignmentForm',
+        initialParamData: {
+          organismSinglePick,
+          variant_strain_meta: JSON.stringify({ filters: [] }),
+        },
+      })
+    )
+  );
+}
+
+/**
+ * Seeds StrainSegmentsByMeta's fixed params (organism, sequence ID) from
+ * whichever of Gene or Variant record is currently loaded. Both record
+ * classes embed the same StrainMsaForm component and share this one epic
+ * rather than each having their own, since the rest of the seeding logic
+ * (search name, defaults) is identical — only the source attribute names
+ * differ per record class, since Gene and Variant do not share an
+ * attribute schema:
+ *   - Gene:    organism_full, sequence_id
+ *   - Variant: organism_text, sequence_source_id
+ *
+ * sequence_strand is deliberately NOT read from the record — it's a plain
+ * UI control defaulting to 'f' here (the model's forward-strand value),
+ * never resolved from a record attribute (see the design doc's Non-goals).
+ */
+export function observeStrainMsaFilter(action$) {
+  return action$.pipe(
+    filter((action) => action.type === RecordActions.RECORD_RECEIVED),
+    mergeMap((action) => {
+      const { record } = action.payload;
+      if (isGeneRecord(record)) {
+        return of({
+          organismSinglePick: record.attributes.organism_full,
+          sequenceId: record.attributes.sequence_id,
+        });
+      }
+      if (isVariantRecord(record)) {
+        return of({
+          organismSinglePick: record.attributes.organism_text,
+          sequenceId: record.attributes.sequence_source_id,
+        });
+      }
+      return EMPTY;
+    }),
+    map(({ organismSinglePick, sequenceId }) =>
+      QuestionActions.updateActiveQuestion({
+        searchName: 'StrainSegmentsByMeta',
+        initialParamData: {
+          organismSinglePick,
+          sequenceId,
+          sequence_strand: 'f',
+          variation_sample_meta: JSON.stringify({ filters: [] }),
+        },
+      })
+    )
+  );
+}
+
+/**
  * Whenever a gene or genomic sequence record is loaded, increment
  * the count of the associated organism.
  */
@@ -377,6 +460,10 @@ function isGeneRecord(record) {
 
 function isSnpsRecord(record) {
   return record.recordClassName === 'SnpRecordClasses.SnpRecordClass';
+}
+
+function isVariantRecord(record) {
+  return record.recordClassName === 'VariantRecordClasses.VariantRecordClass';
 }
 
 function isDatasetRecord(record) {

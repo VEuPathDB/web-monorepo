@@ -1,5 +1,6 @@
 import React, {
   FunctionComponent,
+  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -50,6 +51,7 @@ import {
   communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
+  pathfinderUrl,
   showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
@@ -58,7 +60,11 @@ import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 import { getWdkStudyRecords } from '@veupathdb/eda/lib/core/utils/study-records';
 
-import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
+const PreferredOrganismsSummary = React.lazy(() =>
+  import(
+    '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary'
+  ).then((m) => ({ default: m.PreferredOrganismsSummary }))
+);
 
 import { Props as PageProps } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
@@ -120,9 +126,14 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const [headerExpanded, setHeaderExpanded] = useState(true);
   const [footerThin, setFooterThin] = useState(true);
 
+  const user = useSelector((state: RootState) => state.globalData.user);
+
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
-    location.pathname.includes('workspace/analyses');
+    location.pathname.includes('workspace/analyses') ||
+    location.pathname.startsWith('/pathfinder') ||
+    user == null ||
+    user.isGuest;
 
   useEffect(() => {
     if (isHomePage && props.displayName) {
@@ -276,7 +287,9 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
           </ErrorBoundary>
           {!shouldHideOrgPrefsSubheader && (
             <div className={subHeaderClassName}>
-              <PreferredOrganismsSummary />
+              <Suspense fallback={null}>
+                <PreferredOrganismsSummary />
+              </Suspense>
             </div>
           )}
           <div className={vpdbCx('Announcements')}>
@@ -456,7 +469,7 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           tooltip:
             'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'https://companion.ac.uk/',
+          url: 'https://companion.gla.ac.uk/',
           metadata: {
             exclude: [VectorBase],
           },
@@ -527,6 +540,16 @@ const useHeaderMenuItems = (
             include: [TriTrypDB],
           },
         },
+        {
+          key: 'legacyvbmap',
+          display: 'MapVEu — Geolocation visualizations of field-based studies',
+          tooltip: 'Will send you to the legacy site.',
+          type: 'externalLink',
+          url: 'https://legacy.vectorbase.org//vectorbase/app/workspace/maps/DS_480c976ef9/new',
+          metadata: {
+            include: [UniDB, VectorBase],
+          },
+        },
         !showInteractiveMaps
           ? {
               type: 'custom',
@@ -573,6 +596,16 @@ const useHeaderMenuItems = (
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
         },
         {
+          key: 'pathfinder',
+          display: 'PathFinder',
+          tooltip: 'Build and refine search strategies with an AI assistant',
+          type: 'reactRoute',
+          url: '/pathfinder',
+          metadata: {
+            test: () => Boolean(pathfinderUrl),
+          },
+        },
+        {
           key: 'plasmofast',
           display: 'plasmoFAST',
           tooltip:
@@ -610,11 +643,25 @@ const useHeaderMenuItems = (
         {
           key: 'toxo-rflp',
           display: 'RFLP Genotypes',
-          type: 'reactRoute',
-          url: '/workspace/analyses/DS_6d31c76b75/new',
+          type: 'subMenu',
+          openByDefault: true,
           metadata: {
             include: [ToxoDB, UniDB],
           },
+          items: [
+            {
+              key: 'lookup',
+              display: 'ToxoDB genotype # lookup',
+              type: 'externalLink',
+              url: `https://${communitySite}/documents/Unique_RFLP_Genotypes_tutorial.pdf`,
+            },
+            {
+              key: 'genotypes',
+              display: 'T. gondii Isolate Genotypes and Metadata',
+              type: 'reactRoute',
+              url: '/workspace/analyses/DS_6d31c76b75/new/variables/RFLP_ISOLATE/VAR_998763dc',
+            },
+          ],
         },
         {
           key: 'srt',
@@ -711,12 +758,12 @@ const useHeaderMenuItems = (
           url: '/search/dataset/AllDatasets/result',
         },
         {
-          key: 'community-userdatasets',
-          display: 'User Datasets (my own and public)',
+          key: 'upload2',
+          display: 'Upload my dataset',
           type: 'reactRoute',
-          url: '/search/userdataset/AllUserDatasets/result',
+          url: '/workspace/datasets/new',
           metadata: {
-            test: () => Boolean(communityDatasetsEnabled),
+            test: () => Boolean(useUserDatasetsWorkspace),
           },
         },
         {

@@ -21,7 +21,7 @@ export function DatasetDependencies(
   return (
     <>
       <label className={props.config.required ? 'required' : ''}>
-        Reference Genome
+        Reference Organism
       </label>
       {props.config.renderInput({
         dependencies: props.datasetDetails.dependencies ?? [],

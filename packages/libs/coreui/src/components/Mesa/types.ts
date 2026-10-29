@@ -75,6 +75,11 @@ export interface MesaStateProps<
      * aligns with table rows, etc.
      */
     marginContent?: React.ReactNode;
+    /**
+     * Whether the "select all" checkbox in the selection column header
+     * should be hidden.
+     */
+    hideSelectAll?: boolean;
   };
   actions?: MesaAction<Row, Key>[];
   eventHandlers?: {

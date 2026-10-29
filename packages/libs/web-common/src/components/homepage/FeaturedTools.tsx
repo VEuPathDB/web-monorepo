@@ -382,6 +382,14 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
     setExpanded(!isExpanded);
   }, [isExpanded]);
 
+
+// the DOMPurify.sanitize function in div class 'SelectionBodyContent'
+//   breaks the embed iframe with a youtube video (in 'tour' tile)
+//   and the blue buttons in the subscribe and other tiles
+//
+//   before:  __html: DOMPurify.sanitize(entry?.output || '...'),
+//   now:     __html: entry?.output || '...',
+
   return (
     <div className={cx('SelectionBody')}>
       {isOverflowing && isExpanded && (
@@ -395,7 +403,7 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
         ref={ref}
         className={cx('SelectionBodyContent', isExpanded && 'expanded')}
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(entry?.output || '...'),
+          __html: entry?.output || '...',
         }}
       ></div>
       {isOverflowing && (

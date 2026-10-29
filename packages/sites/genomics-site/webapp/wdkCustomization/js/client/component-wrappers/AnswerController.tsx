@@ -1,5 +1,7 @@
 import React, { ComponentType, Suspense, useMemo } from 'react';
 
+import UDAnswerController from '@veupathdb/web-common/lib/component-wrappers/UDAnswerController';
+
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Controllers/AnswerController';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -14,6 +16,7 @@ import {
   isPreferredDataset,
   isPreferredOrganism,
 } from '../util/preferredOrganisms';
+import { MergedDatasetsAnswer } from './AllDatasetsAnswerController';
 
 interface RecordFilterPredicate {
   (record: RecordInstance): boolean;
@@ -25,13 +28,24 @@ export function AnswerController(
   return function (props) {
     return (
       <Suspense fallback={<PageLoading />}>
-        {props.ownProps.recordClass === 'organism' ? (
+        {props.ownProps.recordClass === 'dataset' &&
+        props.ownProps.question === 'AllDatasets' ? (
+          <MergedDatasetsAnswer
+            DefaultComponent={DefaultComponent}
+            {...props}
+          />
+        ) : props.ownProps.recordClass === 'organism' ? (
           <OrganismAnswerController
             {...props}
             DefaultComponent={DefaultComponent}
           />
         ) : props.ownProps.recordClass === 'dataset' ? (
           <DatasetAnswerController
+            {...props}
+            DefaultComponent={DefaultComponent}
+          />
+        ) : props.ownProps.recordClass === 'userdataset' ? (
+          <UDAnswerController
             {...props}
             DefaultComponent={DefaultComponent}
           />

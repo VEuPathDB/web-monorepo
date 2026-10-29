@@ -135,6 +135,8 @@ dist
 \#*\#
 
 # AI
-CLAUDE.md
 .claude
 /workspace/
+
+# Nx cache
+/.nx/

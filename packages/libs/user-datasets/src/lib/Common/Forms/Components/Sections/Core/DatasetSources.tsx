@@ -12,7 +12,6 @@ import {
   arrayChangeHandler,
 } from '../../../../../Utils';
 import { AddRowButton } from '../../index';
-import { ClientSideUploadFormState } from '../../../../../StoreModules';
 import { isEmpty } from 'lodash';
 
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
@@ -20,18 +19,19 @@ export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 export interface DatasetSourcesProps {
   readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly clientState: ClientSideUploadFormState;
-  readonly setClientState: Consumer<ClientSideUploadFormState>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function DatasetSources(props: DatasetSourcesProps): ReactElement {
-  const { hasExternalSources: enabled } = props.clientState;
+  const enabled = props.datasetMeta.metadataContentFlags?.hasDatasetSources;
 
   const setEnabled = (v: boolean) =>
-    props.setClientState({
-      ...props.clientState,
-      hasExternalSources: v,
+    props.setDatasetMeta({
+      ...props.datasetMeta,
+      metadataContentFlags: {
+        ...(props.datasetMeta.metadataContentFlags ?? {}),
+        hasDatasetSources: v,
+      },
     });
 
   if (
@@ -73,7 +73,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
   const isPublic = props.datasetMeta.visibility === 'public';
 
   return (
-    <InputBlock header="Dataset Source" isCommunityRelated={true}>
+    <InputBlock header="Dataset Source">
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}

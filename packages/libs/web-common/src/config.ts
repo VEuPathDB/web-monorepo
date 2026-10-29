@@ -16,6 +16,7 @@ export const {
   rootElement = '',
   endpoint = '',
   projectId = '',
+  projectName = '',
   webAppUrl = '',
   facebookUrl = '',
   twitterUrl = '',
@@ -39,7 +40,8 @@ export const {
   communityDatasetsEnabled = false,
   aiExpressionQualtricsId = '',
   showSubscriptionProds = false,
-  allowAiAssistedCommentCreation = false,
+  allowAiAssistedCommentCreation = true,
+  pathfinderUrl = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__

@@ -4,7 +4,7 @@ import { FieldHelpText } from './FieldHelpText';
 import { InputPair } from './InputPair';
 
 export interface YesNoToggleProps {
-  readonly value: boolean | undefined;
+  readonly value: boolean | undefined | null;
   readonly setValue: Consumer<boolean>;
   readonly fieldName: string;
   readonly helpText?: ReactNode;

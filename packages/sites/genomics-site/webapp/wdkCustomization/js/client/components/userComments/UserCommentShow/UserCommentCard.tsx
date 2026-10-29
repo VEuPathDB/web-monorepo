@@ -123,7 +123,11 @@ export function UserCommentCard({
 
       <div style={{ marginTop: '12px' }}>
         {comment.aiProvenance != null && (
-          <AiProvenanceSection aiProvenance={comment.aiProvenance} />
+          <AiProvenanceSection
+            aiProvenance={comment.aiProvenance}
+            headline={comment.headline ?? ''}
+            content={comment.content}
+          />
         )}
         <CommentReferences comment={comment} webAppUrl={webAppUrl} />
       </div>

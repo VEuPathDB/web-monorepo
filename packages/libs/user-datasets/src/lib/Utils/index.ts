@@ -1,12 +1,6 @@
-export { JsonPathBuilder } from './JsonPathBuilder';
+export { ifDefined, requireValue } from './ergonomics';
 
-export type {
-  BiConsumer,
-  Consumer,
-  Function,
-  Nullable,
-  Runnable,
-} from './types';
+export { datasetUserFullName } from './formatting';
 
 export {
   changeHandler,
@@ -15,4 +9,26 @@ export {
   replaceElement,
 } from './input-utils';
 
-export { isNonEmptyString } from './value-tests';
+export type {
+  BiConsumer,
+  Consumer,
+  Function,
+  Nullable,
+  Optional,
+  Possible,
+  Runnable,
+
+  DataNoun,
+} from './types';
+
+export {
+  filterNullish,
+  isNonBlankString,
+  isNonEmpty,
+  isNonEmptyString,
+} from './value-tests';
+
+export {} from './miscellaneous-junk'
+
+export { JsonPathBuilder } from './JsonPathBuilder';
+export { SimpleState, useSimpleState } from './SimpleState';

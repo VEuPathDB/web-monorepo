@@ -3,6 +3,7 @@ import { plugins } from '../../core/components/computations/plugins';
 import {
   VolcanoPlotConfig,
   effectDirectionLabels,
+  significanceThresholdLabel,
 } from '../../core/components/visualizations/implementations/VolcanoPlotVisualization';
 import {
   useFindEntityAndVariable,
@@ -204,7 +205,7 @@ export function DifferentialAnalysisReviewContent({
           value={String(volcanoPlotConfig?.effectSizeThreshold ?? '—')}
         />
         <ReviewRow
-          label="p-value ≤"
+          label={significanceThresholdLabel(volcanoPlotConfig)}
           value={String(volcanoPlotConfig?.significanceThreshold ?? '—')}
         />
         <ReviewRow

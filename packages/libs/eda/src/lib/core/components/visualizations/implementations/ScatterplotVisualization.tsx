@@ -98,7 +98,10 @@ import {
   DefaultNonHighlightColor,
   DefaultHighlightMarkerStyle,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import { VariablesByInputName } from '../../../utils/data-element-constraints';
+import {
+  VariablesByInputName,
+  ancestorEntitiesForEntityId,
+} from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
@@ -690,6 +693,27 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'yAxisVariable',
     metadataYAxis?.variableSpec.entityId ?? computedYAxisDetails?.entityId
   );
+
+  // Overlay/facet variables must resolve to a single value per output row, so
+  // they can only come from the output entity itself or one of its ancestors.
+  // This matters most when the axes are computed (e.g. notebook PCA plots),
+  // where there's no user-selected axis variable for the usual
+  // dataElementDependencyOrder ancestor restriction to anchor on, leaving
+  // stratification pickers otherwise unrestricted by entity (e.g. able to
+  // pick a per-module WGCNA eigengene variable, which the backend then
+  // rejects because it isn't available on the output entity).
+  const additionalDisabledVariables = useMemo(() => {
+    if (outputEntity == null) return undefined;
+    const allowedEntityIds = new Set(
+      ancestorEntitiesForEntityId(outputEntity.id, entities).map((e) => e.id)
+    );
+    const disabled = entities
+      .filter((e) => !allowedEntityIds.has(e.id))
+      .flatMap((e) =>
+        e.variables.map((v) => ({ entityId: e.id, variableId: v.id }))
+      );
+    return { overlayVariable: disabled, facetVariable: disabled };
+  }, [entities, outputEntity]);
 
   // set a condition to show log scale/plot mode related banner
   const showLogScaleBanner: boolean =
@@ -2256,6 +2280,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            additionalDisabledVariables={additionalDisabledVariables}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             enableShowMissingnessToggle={

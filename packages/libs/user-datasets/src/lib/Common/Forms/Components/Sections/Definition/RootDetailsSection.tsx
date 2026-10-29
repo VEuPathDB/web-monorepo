@@ -1,22 +1,20 @@
 import React, { ReactElement, useCallback } from 'react';
 
-import {
-  OptionalFileUploadProps,
-  OptionalUrlUploadProps,
-  RootDataInput,
-} from './RootDataInput';
+import { FileUploadProps, RootDataInput, UrlUploadProps } from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { InputPair, UploadButton } from '../../index';
-import { Consumer, JsonPathBuilder } from '../../../../../Utils';
-import { PartialDatasetDetails, DatasetUploads } from '../../../../../Service';
+import { Consumer, JsonPathBuilder, Possible } from '../../../../../Utils';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { useDatasetFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { DatasetFormState, useDatasetFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions';
 import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
+import { UploadContentMap } from '../../../../../Service/Model/utility-types';
+import { SamplesDescriptionInput } from './SamplesDescriptionInput';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -65,25 +63,50 @@ export function RootDetailsSection(
   } = props;
 
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads, formMetaState } = useDatasetFormState();
+  const formState = useDatasetFormState();
+  const { datasetDetails } = formState;
 
   const nameKey = jsonPath.appendToString<PartialDatasetDetails>('name');
   const summaryKey = jsonPath.appendToString<PartialDatasetDetails>('summary');
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, fileUploads, formMetaState]
+      dispatch(updateFormState({ ...formState, datasetDetails })),
+    [dispatch, formState]
   );
 
-  const setUploads = useCallback(
-    (fileUploads: DatasetUploads) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads, formMetaState })),
-    [dispatch, datasetDetails, formMetaState]
+  const setDataUploads = useCallback(
+    (fileUploads: UploadContentMap) =>
+      dispatch(updateFormState({ ...formState, dataFileSelections: fileUploads })),
+    [dispatch, formState]
   );
 
-  const fileUpload = buildFileProps(props.formProps, fileUploads, setUploads);
-  const urlUpload = buildUrlProps(props.formProps, fileUploads, setUploads);
+  const showDataPropsInput = formConfig.dataType.vdiConfig.usesDataProperties &&
+    formConfig.verbiage.formInputs?.datasetProperties;
+
+  const setDocUploads = useCallback(
+    (fileUploads: UploadContentMap) =>
+      dispatch(updateFormState({ ...formState, documentFileSelections: fileUploads })),
+    [dispatch, formState]
+  );
+
+  const docFieldName = showDataPropsInput
+    ? props.contentJsonPath.appendToString('dataPropertiesFile')
+    : undefined;
+
+  const setUrlUpload = useCallback(
+    (url: Possible<string>) => dispatch({ ...formState, dataFileUrl: url }),
+    [dispatch, formState],
+  );
+
+  const fileUpload = buildFileProps(
+    props.formProps,
+    props.contentJsonPath,
+    formState,
+    setDataUploads,
+  );
+
+  const urlUpload = buildUrlProps(props.formProps, props.contentJsonPath, formState.dataFileUrl, setUrlUpload);
 
   const referenceGenome = formConfig.dependencies ? (
     <DatasetDependencies
@@ -118,6 +141,16 @@ export function RootDetailsSection(
           required={true}
         />
 
+        {formConfig.verbiage.formInputs?.samplesDescription &&
+          props.showDataInputs && (
+            <SamplesDescriptionInput
+              formProps={props}
+              formConfig={formConfig}
+              dataUploads={formState.dataFileSelections}
+              setDataUploads={setDataUploads}
+            />
+          )}
+
         {referenceGenome}
 
         {props.showVisibilities && (
@@ -139,18 +172,16 @@ export function RootDetailsSection(
           />
         )}
 
-        {formConfig.dataType.vdiConfig.usesDataProperties &&
-          formConfig.verbiage.formInputs?.datasetProperties && (
+        {showDataPropsInput && (
             <DatasetPropertiesInput
               label={formConfig.verbiage.formInputs.datasetProperties.label}
-              fieldName="dataPropertiesFile"
+              fieldName={docFieldName!}
               allowedExtensions={['.txt', '.csv', '.tsv']}
-              setFiles={(files) =>
-                setUploads({
-                  ...fileUploads,
-                  dataPropertiesFiles: files ?? undefined,
-                })
-              }
+              files={formState.documentFileSelections[docFieldName!]}
+              setFiles={files => setDocUploads({
+                ...formState.documentFileSelections,
+                [docFieldName!]: files ?? [],
+              })}
               required={props.requireDatasetPropertiesFile}
               helpText={
                 formConfig.verbiage.formInputs.datasetProperties.helpText
@@ -171,42 +202,44 @@ export function RootDetailsSection(
 }
 
 function buildFileProps(
-  { formConfig: { dataInputConfig }, vdiConfig }: DatasetFormProps,
-  uploads: DatasetUploads,
-  setUploads: Consumer<DatasetUploads>
-): OptionalFileUploadProps {
-  if (dataInputConfig.file?.enabled !== true) return { enabled: false };
+  { formConfig: { dataInputConfig, dataType }, vdiConfig }: DatasetFormProps,
+  jsonPath: JsonPathBuilder,
+  formState: DatasetFormState,
+  setUploads: Consumer<UploadContentMap>
+): Possible<FileUploadProps> {
+  if (dataInputConfig.byFile == null)
+    return undefined;
 
   return {
-    ...dataInputConfig.file,
+    ...dataInputConfig.byFile ?? {},
     vdiConfig,
-    // TODO: add support multiple data files in a single upload.
-    files: isEmpty(uploads.dataFiles) ? null : uploads.dataFiles!,
-    setFiles: (value) =>
-      setUploads({
-        ...uploads,
-        dataFiles: value ?? undefined,
-      }),
+    dataType,
+    pathBuilder: jsonPath,
+    files: isEmpty(formState.dataFileSelections) ? undefined : formState.dataFileSelections!,
+    setFiles: (dataFiles) => setUploads({ ...formState.dataFileSelections, ...(dataFiles ?? {}) }),
   };
 }
 
 function buildUrlProps(
   {
     formConfig: {
-      dataInputConfig: { url },
+      dataInputConfig: { byUrl, byFile },
+      dataType,
     },
   }: DatasetFormProps,
-  uploads: DatasetUploads,
-  setUploads: Consumer<DatasetUploads>
-): OptionalUrlUploadProps {
-  if (url?.enabled !== true) return { enabled: false };
+  jsonPath: JsonPathBuilder,
+  dataFileUrl: Possible<string>,
+  setUploads: Consumer<Possible<string>>
+): Possible<UrlUploadProps> {
+  if (byUrl == null)
+    return undefined;
 
   return {
-    ...url,
-    url: uploads.url ?? '',
-    setUrl: (url) =>
-      isEmpty(url)
-        ? setUploads({ ...uploads, url: undefined })
-        : setUploads({ ...uploads, url }),
+    ...byUrl,
+    dataType,
+    pathBuilder: jsonPath,
+    url: dataFileUrl ?? '',
+    required: byFile == null,
+    setUrl: (url) => isEmpty(url) ? setUploads(undefined) : setUploads(url),
   };
 }

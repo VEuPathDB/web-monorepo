@@ -1,8 +1,11 @@
 export { AddRowButton } from './AddRowButton';
 export { FieldHelpText } from './FieldHelpText';
+export { FileInputButton } from './FileInputButton';
 export { GrowableStringList } from './GrowableStringList';
 export { InputBlock } from './InputBlock';
 export { InputPair } from './InputPair';
+export { OptionalSection } from './OptionalSection';
+export { SecondaryButton } from './SecondaryButton';
 export { SubmissionModal } from './SubmissionModal';
 export { UploadButton } from './UploadButton';
 export { UploadErrorBanner } from './UploadErrorBanner';

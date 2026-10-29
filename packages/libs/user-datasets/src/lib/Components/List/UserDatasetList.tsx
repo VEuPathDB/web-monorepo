@@ -21,7 +21,7 @@ import {
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { DataNoun } from '../../Utils/types';
+import { DataNoun } from '../../Utils';
 import {
   DatasetListEntry,
   DatasetListShareUser,
@@ -379,14 +379,6 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
           formatFileSize(size)
         ),
       },
-      // {
-      //   key: 'percentQuotaUsed',
-      //   name: 'Quota Usage',
-      //   sortable: true,
-      //   renderCell: textCell('percentQuotaUsed', (percent: number) =>
-      //     percent || percent === 0 ? `${normalizePercentage(percent)}%` : null
-      //   ),
-      // },
     ].filter((column) => column);
   }
 

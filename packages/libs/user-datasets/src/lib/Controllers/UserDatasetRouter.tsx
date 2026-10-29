@@ -11,7 +11,7 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
-import { DataNoun } from '../Utils/types';
+import { DataNoun } from '../Utils';
 
 import DatasetManagementController from '../Components/Management/DatasetManagementController';
 import { DatasetManagementProps } from '../Components/Management/DatasetManagement';

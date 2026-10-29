@@ -16,6 +16,8 @@ import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
   CategoriesCheckboxTree,
+  CollapsibleSection,
+  HelpIcon,
   Loading,
   RecordTable as WdkRecordTable,
 } from '@veupathdb/wdk-client/lib/Components';
@@ -33,7 +35,7 @@ import { ExternalResourceContainer } from '@veupathdb/web-common/lib/components/
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 import { isNodeOverflowing } from '@veupathdb/web-common/lib/util/domUtils';
 
-import { projectId, webAppUrl } from '../../config';
+import { projectId, rootUrl, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
 import { OverviewThumbnails } from '../common/OverviewThumbnails';
 import { SnpsAlignmentForm } from '../common/Snps';
@@ -47,8 +49,37 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 import { AiExpressionSummary } from './AiExpressionSummary';
+import { StrainMsaForm } from '../common/StrainMsaForm';
 import { DEFAULT_TABLE_STATE } from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { Link } from 'react-router-dom';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+// Deep import — see the note in Task 8: this package has no main/exports
+// field, matching every other in-monorepo "libs" package of this shape.
+import { SequenceRetrievalApi } from '@veupathdb/compute-platform-job/src/lib/Service/SequenceRetrievalApi';
+import { resolveTranscriptFeatures } from '../../util/resolveTranscriptFeatures';
+import { SEQUENCE_RETRIEVAL_BASE_URL } from '../../util/computeJobConfig';
+import { openTabAndSubmitMsaJob } from '@veupathdb/web-common/lib/util/msaJobSubmission';
+import { sanitizeFlankInput } from '../common/flankInput';
+
+// Old CGI form codes -> new service MsaFormat values (see design doc's
+// carried-over sequenceType/output-format table).
+const CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT = {
+  clu: 'clustal_guidetree',
+  fasta: 'fasta',
+  phy: 'phylip',
+  st: 'stockholm',
+  vie: 'vienna',
+};
+
+// MAFFT (used for CDS and genomic) supports only a subset of the formats
+// Clustal Omega does, and its clustal output with guide tree is a distinct
+// format value.
+const MAFFT_OUT_FORMAT_TO_MSA_FORMAT = {
+  clu: 'clustal_guidetree',
+  fasta: 'fasta',
+  phy: 'phylip',
+};
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -315,7 +346,7 @@ function RecordOverview(props) {
 
             <dt className="space-above">User Comments</dt>
             <dd>
-              <div data-show-num-user-comments="+1" data-label="User Comments">
+              <div data-label="User Comments">
                 <a
                   href={
                     isEmbedRecord
@@ -329,18 +360,18 @@ function RecordOverview(props) {
                       : () => handleSectionLinkClick('UserComments')
                   }
                 >
-                  View{' '}
-                  <span className="eupathdb-GeneOverviewHighlighted">
-                    {r('num_user_comments')}
-                  </span>{' '}
-                  {/*  / Add a new one  */}
+                  <span data-show-num-user-comments="+1">
+                    View{' '}
+                    <span className="eupathdb-GeneOverviewHighlighted">
+                      {r('num_user_comments')}
+                    </span>{' '}
+                    / Add a new one
+                  </span>
+                  <span data-show-num-user-comments="0">
+                    Add the first <i className="fa fa-comment"></i>
+                  </span>
                 </a>
               </div>
-              {/*  <div data-show-num-user-comments="0" data-label="User Comments">
-                <a href={record.attributes['user_comment_link_url']}>
-                  Add the first <i className="fa fa-comment"></i>
-                </a>
-              </div>  */}
             </dd>
 
             <div data-show-apollo="1">
@@ -447,6 +478,17 @@ export function RecordAttributeSection(props) {
       return <AlphaFoldRecordSection {...restProps} />;
     case 'ai_expression':
       return <AiExpressionSummary {...restProps} />;
+    case 'variant_strain_form':
+      return (
+        <CollapsibleSection
+          id={restProps.attribute.name}
+          headerContent={restProps.attribute.displayName}
+          isCollapsed={restProps.isCollapsed}
+          onCollapsedChange={restProps.onCollapsedChange}
+        >
+          <StrainMsaForm record={restProps.record} />
+        </CollapsibleSection>
+      );
     default:
       return <DefaultComponent {...restProps} />;
   }
@@ -507,6 +549,10 @@ const EdaCellularLocalizationChildRow = makeDatasetGraphChildRow({
   dataTableName: 'EdaCellularLocalizationGraphsDataTable',
   DatasetGraphComponent: EdaDatasetGraph,
 });
+const EdaAntibodyArrayChildRow = makeDatasetGraphChildRow({
+  dataTableName: 'EdaAntibodyArrayGraphsDataTable',
+  DatasetGraphComponent: EdaDatasetGraph,
+});
 const UDTranscriptomicsChildRow = makeDatasetGraphChildRow({
   dataTableName: 'UserDatasetsTranscriptomicsGraphsDataTable',
   DatasetGraphComponent: DatasetGraph,
@@ -553,6 +599,14 @@ export function RecordTable(props) {
         <props.DefaultComponent
           {...props}
           childRow={EdaCellularLocalizationChildRow}
+        />
+      );
+
+    case 'EdaAntibodyArrayDatasets':
+      return (
+        <props.DefaultComponent
+          {...props}
+          childRow={EdaAntibodyArrayChildRow}
         />
       );
 
@@ -1544,14 +1598,19 @@ function OrthologsFormContainer(props) {
       <label style={{ display: 'inline-block', margin: '0.5em 0' }}>
         <input
           type="checkbox"
+          checked={showLongestTranscriptPerGene}
           onChange={(e) => setShowLongestTranscriptPerGene(e.target.checked)}
         />{' '}
         <strong>
-          <em>Show only one transcript per gene</em>
-        </strong>
+          <em>View only longest transcript per gene</em>
+        </strong>{' '}
+        <HelpIcon>
+          The orthology relationships here were computed by OrthoMCL. OrthoMCL
+          uses the longest transcript per gene for representative proteins.
+        </HelpIcon>
       </label>
     ),
-    [setShowLongestTranscriptPerGene]
+    [showLongestTranscriptPerGene, setShowLongestTranscriptPerGene]
   );
 
   const filteredValue = useMemo(() => {
@@ -1605,7 +1664,197 @@ function OrthologsFormContainer(props) {
       {...props}
       value={transcriptFilterAwareValues}
       transcriptFilter={transcriptFilter}
+      showLongestTranscriptPerGene={showLongestTranscriptPerGene}
     />
+  );
+}
+
+function TranscriptMsaSubmission({
+  selectedTranscriptIds,
+  sourceId,
+  isProtein,
+  isNotProtein,
+  orthoTableProps,
+  transcriptFilter,
+  defaultComponent: DefaultComponent,
+  value,
+  childProps,
+}) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const [sequenceTypeChoice, setSequenceTypeChoice] = useState(
+    isProtein ? 'protein' : 'genomic'
+  );
+  const [oneOffset, setOneOffset] = useState('0');
+  const [twoOffset, setTwoOffset] = useState('0');
+  const [selectedOutFormat, setSelectedOutFormat] = useState('clu');
+
+  const useMafft = sequenceTypeChoice !== 'protein';
+  const aligner = useMafft ? 'mafft' : 'clustalo';
+  const alignerLabel = useMafft ? 'MAFFT' : 'Clustal Omega';
+  const outFormatToMsaFormat = useMafft
+    ? MAFFT_OUT_FORMAT_TO_MSA_FORMAT
+    : CLUSTAL_OUT_FORMAT_TO_MSA_FORMAT;
+  // The previously chosen format may not be offered by the newly selected
+  // aligner (e.g. STOCKHOLM, after switching from protein to CDS).
+  const clustalOutFormat =
+    selectedOutFormat in outFormatToMsaFormat ? selectedOutFormat : 'clu';
+
+  const handleConfirm = () => {
+    // sequenceTypeChoice is the radio the user picked (Protein / CDS
+    // (spliced) / Genomic). It maps to two different things that don't
+    // collapse the same way:
+    //  - the bed report's own `type` (coordinate resolution) — CDS needs
+    //    its own distinct 'spliced_genomic' value, plus splicedGenomic:
+    //    'cds' (always sent, harmless for the other two types).
+    //  - the sequenceType path segment submitJob POSTs to — CDS submits
+    //    as 'genomic' there, not as its own type.
+    const bedReportType =
+      sequenceTypeChoice === 'genomic'
+        ? 'genomic'
+        : sequenceTypeChoice === 'CDS'
+        ? 'spliced_genomic'
+        : 'protein';
+    const sequenceType =
+      sequenceTypeChoice === 'protein' ? 'protein' : 'genomic';
+
+    return openTabAndSubmitMsaJob({
+      api: SequenceRetrievalApi.getClient(
+        SEQUENCE_RETRIEVAL_BASE_URL,
+        wdkService
+      ),
+      resolveFeatures: async () => {
+        const resolvedFeatures = await resolveTranscriptFeatures(
+          wdkService,
+          [sourceId, ...selectedTranscriptIds],
+          bedReportType,
+          sequenceTypeChoice === 'genomic'
+            ? {
+                upstream: Number(oneOffset) || 0,
+                downstream: Number(twoOffset) || 0,
+              }
+            : undefined
+        );
+
+        // Protein reference sequences have no strand — the service rejects
+        // a stranded feature on an unstranded (protein) reference.
+        return sequenceType === 'protein'
+          ? resolvedFeatures.map(({ strand, ...feature }) => feature)
+          : resolvedFeatures;
+      },
+      sequenceType,
+      msaFormat: outFormatToMsaFormat[clustalOutFormat],
+      aligner,
+      resultRouteBase: `${rootUrl}/workspace/msa`,
+      paramsSummary: `${
+        selectedTranscriptIds.length + 1
+      } Transcripts: ${sequenceTypeChoice} sequence.  Aligner: ${alignerLabel}.  Output format: ${
+        outFormatToMsaFormat[clustalOutFormat]
+      }`,
+      deflineFormat: 'QUERYONLY',
+    });
+  };
+
+  return (
+    <ClustalAlignmentForm
+      action="/cgi-bin/isolateAlignment"
+      sequenceCount={selectedTranscriptIds.length + 1}
+      sequenceType="genes"
+      blockThreshold={1000}
+      onConfirm={handleConfirm}
+    >
+      {transcriptFilter}
+      <DefaultComponent
+        {...childProps}
+        value={value}
+        orthoTableProps={orthoTableProps}
+      />
+      <p>
+        <b>Select sequence type for multiple sequence alignment:</b>
+      </p>
+      <div id="userOptions">
+        {isProtein && (
+          <>
+            {' '}
+            <input
+              type="radio"
+              name="sequence_Type"
+              value="protein"
+              checked={sequenceTypeChoice === 'protein'}
+              onChange={() => setSequenceTypeChoice('protein')}
+            />{' '}
+            Protein{' '}
+          </>
+        )}
+        {isProtein && (
+          <>
+            {' '}
+            <input
+              type="radio"
+              name="sequence_Type"
+              value="CDS"
+              checked={sequenceTypeChoice === 'CDS'}
+              onChange={() => setSequenceTypeChoice('CDS')}
+            />{' '}
+            CDS (spliced){' '}
+          </>
+        )}
+        <input
+          type="radio"
+          name="sequence_Type"
+          value="genomic"
+          checked={sequenceTypeChoice === 'genomic'}
+          onChange={() => setSequenceTypeChoice('genomic')}
+        />{' '}
+        Genomic
+        <span className="genomic">
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
+            value={oneOffset}
+            onChange={(e) => setOneOffset(sanitizeFlankInput(e.target.value))}
+          />{' '}
+          nt upstream
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={5}
+            style={{ width: '8ch', marginLeft: '1em' }}
+            value={twoOffset}
+            onChange={(e) => setTwoOffset(sanitizeFlankInput(e.target.value))}
+          />{' '}
+          nt downstream
+        </span>
+        <p>
+          Output format: &nbsp;
+          <select
+            value={clustalOutFormat}
+            onChange={(e) => setSelectedOutFormat(e.target.value)}
+          >
+            <option value="clu">Mismatches highlighted</option>
+            <option value="fasta">FASTA</option>
+            <option value="phy">PHYLIP</option>
+            {!useMafft && (
+              <>
+                <option value="st">STOCKHOLM</option>
+                <option value="vie">VIENNA</option>
+              </>
+            )}
+          </select>
+        </p>
+        <input
+          type="submit"
+          value={`Run ${alignerLabel} for selected genes`}
+          disabled={selectedTranscriptIds.length < 2}
+          title={
+            selectedTranscriptIds.length < 2
+              ? 'Check two or more checkboxes in the table above to use this feature.'
+              : ''
+          }
+        />
+      </div>
+    </ClustalAlignmentForm>
   );
 }
 
@@ -1623,22 +1872,22 @@ class OrthologsForm extends SortKeyTable {
     this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
   }
 
-  isRowSelected({ ortho_gene_source_id }) {
-    return this.state.selectedRowIds.includes(ortho_gene_source_id);
+  isRowSelected({ ortho_source_id }) {
+    return this.state.selectedRowIds.includes(ortho_source_id);
   }
 
-  onRowSelect({ ortho_gene_source_id }) {
+  onRowSelect({ ortho_source_id }) {
     this.setState((state) => ({
       ...state,
-      selectedRowIds: state.selectedRowIds.concat(ortho_gene_source_id),
+      selectedRowIds: state.selectedRowIds.concat(ortho_source_id),
     }));
   }
 
-  onRowDeselect({ ortho_gene_source_id }) {
+  onRowDeselect({ ortho_source_id }) {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter(
-        (id) => id !== ortho_gene_source_id
+        (id) => id !== ortho_source_id
       ),
     }));
   }
@@ -1647,7 +1896,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.concat(
-        rows.map((row) => row['ortho_gene_source_id'])
+        rows.map((row) => row['ortho_source_id'])
       ),
     }));
   }
@@ -1656,7 +1905,7 @@ class OrthologsForm extends SortKeyTable {
     this.setState((state) => ({
       ...state,
       selectedRowIds: state.selectedRowIds.filter((row) =>
-        rows.includes(row['ortho_gene_source_id'])
+        rows.includes(row['ortho_source_id'])
       ),
     }));
   }
@@ -1710,115 +1959,19 @@ class OrthologsForm extends SortKeyTable {
       // TODO: Discuss how to retain "large flanking region" warning in the modal
       // Original message: "Please note: selecting a large flanking region or a large number of sequences will take several minutes to align."
       return (
-        <ClustalAlignmentForm
-          action="/cgi-bin/isolateAlignment"
-          sequenceCount={this.state.selectedRowIds.length + 1}
-          sequenceType="genes"
-          warnThreshold={(form) => {
-            const formData = new FormData(form);
-            return formData.get('sequence_Type') === 'genomic' ? 10 : 1000;
-          }}
-          blockThreshold={(form) => {
-            const formData = new FormData(form);
-            return formData.get('sequence_Type') === 'genomic' ? 50 : 1000;
-          }}
-        >
-          <input type="hidden" name="type" value="geneOrthologs" />
-          <input type="hidden" name="project_id" value={projectId} />
-          <input type="hidden" name="gene_ids" value={source_id} />
-          {this.state.selectedRowIds.map((sourceId) => (
-            <input
-              key={sourceId}
-              type="hidden"
-              name="gene_ids"
-              value={sourceId}
-            />
-          ))}
-          {this.props.transcriptFilter}
-          <this.props.DefaultComponent
-            {...this.props}
-            value={this.sortValue(this.props.value)}
+        <>
+          <TranscriptMsaSubmission
+            selectedTranscriptIds={this.state.selectedRowIds}
+            sourceId={source_id}
+            isProtein={is_protein}
+            isNotProtein={not_protein}
             orthoTableProps={orthoTableProps}
+            transcriptFilter={this.props.transcriptFilter}
+            defaultComponent={this.props.DefaultComponent}
+            value={this.sortValue(this.props.value)}
+            childProps={this.props}
           />
-          <p>
-            <b>
-              Select sequence type for Clustal Omega multiple sequence
-              alignment:
-            </b>
-          </p>
-          <div id="userOptions">
-            {is_protein && (
-              <>
-                {' '}
-                <input
-                  type="radio"
-                  name="sequence_Type"
-                  value="protein"
-                  defaultChecked={is_protein}
-                />{' '}
-                Protein{' '}
-              </>
-            )}
-            {is_protein && (
-              <>
-                {' '}
-                <input type="radio" name="sequence_Type" value="CDS" /> CDS
-                (spliced){' '}
-              </>
-            )}
-            <input
-              type="radio"
-              name="sequence_Type"
-              value="genomic"
-              defaultChecked={not_protein}
-            />{' '}
-            Genomic
-            <span className="genomic">
-              <input
-                type="number"
-                id="oneOffset"
-                name="oneOffset"
-                placeholder="0"
-                size="4"
-                pattern="[0-9]+"
-                min="0"
-                max="2500"
-              />{' '}
-              nt upstream (max 2500)
-              <input
-                type="number"
-                id="twoOffset"
-                name="twoOffset"
-                placeholder="0"
-                size="4"
-                pattern="[0-9]+"
-                min="0"
-                max="2500"
-              />{' '}
-              nt downstream (max 2500)
-            </span>
-            <p>
-              Output format: &nbsp;
-              <select name="clustalOutFormat">
-                <option value="clu">Mismatches highlighted</option>
-                <option value="fasta">FASTA</option>
-                <option value="phy">PHYLIP</option>
-                <option value="st">STOCKHOLM</option>
-                <option value="vie">VIENNA</option>
-              </select>
-            </p>
-            <input
-              type="submit"
-              value="Run Clustal Omega for selected genes"
-              disabled={this.state.selectedRowIds.length < 2}
-              title={
-                this.state.selectedRowIds.length < 2
-                  ? 'Check two or more checkboxes in the table above to use this feature.'
-                  : ''
-              }
-            />
-          </div>
-        </ClustalAlignmentForm>
+        </>
       );
     }
   }

@@ -32,7 +32,12 @@
     .vpdb-HeaderBranding {
       content: url('~site/images/Logos-web/orthomclDB.png');
     }
-
+    img {
+       width: 4.5em;
+       position: relative;
+       bottom: 7em;
+       left: 31em;   
+    }
     .vpdb-HeaderBrandingSuperscript {
       position: absolute;
       top: 0em;

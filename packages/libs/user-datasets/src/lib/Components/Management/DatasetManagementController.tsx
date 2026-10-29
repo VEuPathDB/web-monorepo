@@ -11,6 +11,7 @@ import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   loadUserDatasetDetail,
   loadUserDatasetDetailWithoutLoadingIndicator,
+  loadUserDatasetSearches,
   removeUserDataset,
   shareUserDatasets,
   unshareUserDataset,
@@ -25,7 +26,7 @@ import {
 } from '../../Actions/UserDatasetsActions';
 
 import { StateSlice } from '../../StoreModules/types';
-import { DataNoun } from '../../Utils/types';
+import { DataNoun } from '../../Utils';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   DatasetFormConfigurators,
@@ -46,6 +47,7 @@ const ActionCreators = {
   showLoginForm,
   loadUserDatasetDetail,
   loadUserDatasetDetailWithoutLoadingIndicator,
+  loadUserDatasetSearches,
   updateUserDatasetDetail,
   removeUserDataset,
   shareUserDatasets,
@@ -222,6 +224,7 @@ class DatasetManagementController extends PageController<MergedProps> {
     const {
       updateUserDatasetDetail,
       loadUserDatasetDetailWithoutLoadingIndicator,
+      loadUserDatasetSearches,
       shareUserDatasets,
       removeUserDataset,
       unshareUserDataset,
@@ -237,6 +240,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       user,
       updateError,
       questions,
+      userDatasetSearches,
       config,
       userDatasetUpdating,
       sharingModalOpen,
@@ -274,6 +278,8 @@ class DatasetManagementController extends PageController<MergedProps> {
       unshareUserDatasets: unshareUserDataset,
       updateUserDatasetDetail,
       loadUserDatasetDetailWithoutLoadingIndicator,
+      loadUserDatasetSearches,
+      userDatasetSearches,
       sharingModalOpen,
       sharingDatasetPending,
       sharingError,
