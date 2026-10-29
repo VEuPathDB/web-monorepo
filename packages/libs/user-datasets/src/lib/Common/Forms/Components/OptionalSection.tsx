@@ -1,5 +1,5 @@
 import { ReactElement, ReactNode } from 'react';
-import { Consumer } from '../../../Utils';
+import { Consumer, Optional } from '../../../Utils';
 import { YesNoToggle } from './YesNoToggle';
 
 export interface OptionalSectionToggleProps {
@@ -8,7 +8,7 @@ export interface OptionalSectionToggleProps {
   readonly fieldName: string;
   readonly helpText: string | null;
 
-  readonly enabled: boolean | null;
+  readonly enabled: Optional<boolean>;
   readonly setEnabled: Consumer<boolean>;
 
   /**

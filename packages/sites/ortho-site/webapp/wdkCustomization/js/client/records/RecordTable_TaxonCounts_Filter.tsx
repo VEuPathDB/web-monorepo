@@ -8,12 +8,19 @@ import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 export interface Props extends WrappedComponentProps<RecordTableProps> {
   selectedSpecies: string[];
   onSpeciesSelected: (taxons: string[]) => void;
+  /**
+   * Optional counts to display (species abbrev to count), e.g. counts that
+   * follow the table's filters. Which organisms are listed at all still
+   * comes from the group's `TaxonCounts` table in `value`.
+   */
+  speciesCounts?: Record<string, number>;
   /** Optional. When true, popover (if using) closing will be deferred until this becomes false */
   deferPopoverClosing?: boolean;
 }
 
 export function RecordTable_TaxonCounts_Filter({
   value,
+  speciesCounts: displayedCounts,
   selectedSpecies,
   onSpeciesSelected,
   deferPopoverClosing,
@@ -29,7 +36,7 @@ export function RecordTable_TaxonCounts_Filter({
     [onSpeciesSelected, selectedSpecies, deferPopoverClosing]
   );
 
-  const speciesCounts = useMemo(
+  const groupSpeciesCounts = useMemo(
     () => taxonCountsTableValueToMap(value),
     [value]
   );
@@ -41,7 +48,8 @@ export function RecordTable_TaxonCounts_Filter({
   ) : (
     <PhyleticDistributionCheckbox
       selectionConfig={selectionConfig}
-      speciesCounts={speciesCounts}
+      speciesCounts={displayedCounts ?? groupSpeciesCounts}
+      presenceCounts={groupSpeciesCounts}
       taxonTree={taxonUiMetadata.taxonTree}
     />
   );

@@ -21,7 +21,14 @@ export type {
   DataNoun,
 } from './types';
 
-export { isNonBlankString, isNonEmpty, isNonEmptyString } from './value-tests';
+export {
+  filterNullish,
+  isNonBlankString,
+  isNonEmpty,
+  isNonEmptyString,
+} from './value-tests';
+
+export {} from './miscellaneous-junk'
 
 export { JsonPathBuilder } from './JsonPathBuilder';
 export { SimpleState, useSimpleState } from './SimpleState';
