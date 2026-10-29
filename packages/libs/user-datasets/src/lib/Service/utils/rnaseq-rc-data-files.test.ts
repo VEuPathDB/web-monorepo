@@ -1,27 +1,25 @@
 import {
   buildRnaSeqRcDataFiles,
-  findDuplicateFileName,
-  findManifestNameCollision,
-  hasAllowedExtension,
-  hasTabInName,
-  MANIFEST_NAME,
-  SAMPLE_INFO_MAX_BYTES,
   utf8ByteLength,
+  SAMPLE_INFO_FIELD_NAME,
+  SAMPLE_INFO_MAX_BYTES
 } from './rnaseq-rc-data-files';
+import { newUploadContent, UploadContent } from '../Model';
+import { FIELD_NAME_DATA_FILE } from '../../Common/Forms/form-constants';
 
-const EXTS = ['.txt', '.tsv', '.csv', '.tab'];
+const file = (name: string, content = 'gene\tS1\nA\t1\n'): UploadContent =>
+  newUploadContent(new File([ content ], name, { type: 'text/plain' }));
 
-const file = (name: string, content = 'gene\tS1\nA\t1\n') =>
-  new File([content], name, { type: 'text/plain' });
+const read = (f: UploadContent) => new Response(f.toFile()).text();
 
-const read = (f: File) => new Response(f).text();
-
-const byName = (files: readonly File[], name: string) => {
+const byName = (files: readonly UploadContent[], name: string) => {
   const hit = files.find((f) => f.name === name);
   if (hit == null)
     throw new Error(`no file named ${name} in [${files.map((f) => f.name)}]`);
   return hit;
 };
+
+const DATA_FILE_FIELD_NAME = FIELD_NAME_DATA_FILE.toString();
 
 describe('utf8ByteLength', () => {
   it('counts UTF-8 bytes, not UTF-16 code units', () => {
@@ -33,13 +31,12 @@ describe('utf8ByteLength', () => {
 
 describe('buildRnaSeqRcDataFiles — unstranded', () => {
   it('returns the count file plus sample-info and manifest', () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('HTSeq_run3.txt')],
-      'notes',
-      EXTS
-    );
+    const result = buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('HTSeq_run3.txt')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    });
 
-    expect(result.map((f) => f.name).sort()).toEqual([
+    expect(Object.values(result).flat(2).map((f) => f.name).sort()).toEqual([
       'HTSeq_run3.txt',
       'manifest.tsv',
       'sample-info.txt',
@@ -47,11 +44,10 @@ describe('buildRnaSeqRcDataFiles — unstranded', () => {
   });
 
   it('writes an unstranded manifest with a trailing newline', async () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('HTSeq_run3.txt')],
-      'notes',
-      EXTS
-    );
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('HTSeq_run3.txt')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).flat(2);
 
     expect(await read(byName(result, 'manifest.tsv'))).toBe(
       'unstranded\tHTSeq_run3.txt\nsample-info\tsample-info.txt\n'
@@ -59,11 +55,10 @@ describe('buildRnaSeqRcDataFiles — unstranded', () => {
   });
 
   it('puts the description verbatim into sample-info.txt', async () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('c.tsv')],
-      'S1 infected\nS2 control',
-      EXTS
-    );
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('c.tsv')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'S1 infected\nS2 control')],
+    })).flat(2);
 
     expect(await read(byName(result, 'sample-info.txt'))).toBe(
       'S1 infected\nS2 control'
@@ -71,7 +66,9 @@ describe('buildRnaSeqRcDataFiles — unstranded', () => {
   });
 
   it('generates an empty sample-info.txt when no description is given', async () => {
-    const result = buildRnaSeqRcDataFiles([file('c.tsv')], undefined, EXTS);
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('c.tsv')],
+    })).flat(2);
 
     expect(await read(byName(result, 'sample-info.txt'))).toBe('');
   });
@@ -79,11 +76,10 @@ describe('buildRnaSeqRcDataFiles — unstranded', () => {
 
 describe('buildRnaSeqRcDataFiles — stranded', () => {
   it('writes a sense/antisense manifest in slot order', async () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('my_sense.tsv'), file('my_anti.tsv')],
-      'notes',
-      EXTS
-    );
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('my_sense.tsv'), file('my_anti.tsv')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).flat(2);
 
     expect(await read(byName(result, 'manifest.tsv'))).toBe(
       'sense\tmy_sense.tsv\nantisense\tmy_anti.tsv\nsample-info\tsample-info.txt\n'
@@ -93,11 +89,10 @@ describe('buildRnaSeqRcDataFiles — stranded', () => {
 
 describe('buildRnaSeqRcDataFiles — generated names yield on collision', () => {
   it('renames its own sample-info when the user file claims that name', async () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('sample-info.txt')],
-      'notes',
-      EXTS
-    );
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('sample-info.txt')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).flat(2);
 
     expect(result.map((f) => f.name).sort()).toEqual([
       'manifest.tsv',
@@ -110,21 +105,19 @@ describe('buildRnaSeqRcDataFiles — generated names yield on collision', () => 
   });
 
   it('keeps counting up when the first fallback is also taken', () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('sample-info.txt'), file('sample-info-1.txt')],
-      'notes',
-      EXTS
-    );
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('sample-info.txt'), file('sample-info-1.txt')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).flat(2);
 
     expect(result.map((f) => f.name)).toContain('sample-info-2.txt');
   });
 
   it('yields sample-info to a user file matching case-insensitively', () => {
-    const result = buildRnaSeqRcDataFiles(
-      [file('Sample-Info.TXT')],
-      'notes',
-      EXTS
-    );
+    const result = Object.values(buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [ file('Sample-Info.TXT') ],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).flat(2);
 
     expect(result.map((f) => f.name)).toContain('sample-info-1.txt');
   });
@@ -132,103 +125,49 @@ describe('buildRnaSeqRcDataFiles — generated names yield on collision', () => 
 
 describe('buildRnaSeqRcDataFiles — manifest name is reserved', () => {
   it('throws rather than renaming when a count file is named manifest.tsv', () => {
-    expect(() =>
-      buildRnaSeqRcDataFiles([file('manifest.tsv')], 'notes', EXTS)
-    ).toThrow(/manifest\.tsv/);
+    expect(() => buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('manifest.tsv')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).toThrow(/manifest\.tsv/);
   });
 
   it('throws when the collision only matches case-insensitively', () => {
-    expect(() =>
-      buildRnaSeqRcDataFiles([file('Manifest.TSV')], 'notes', EXTS)
-    ).toThrow(/Manifest\.TSV/);
+    expect(() => buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('Manifest.TSV')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'notes')],
+    })).toThrow(/Manifest\.TSV/);
   });
 });
 
 describe('buildRnaSeqRcDataFiles — rejections', () => {
   it('rejects a disallowed extension', () => {
-    expect(() =>
-      buildRnaSeqRcDataFiles([file('counts.xlsx')], 'n', EXTS)
-    ).toThrow(/counts\.xlsx/);
+    expect(() => buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('counts.xlsx')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'n')],
+    })).toThrow(/counts\.xlsx/);
   });
 
   it('accepts extensions case-insensitively', () => {
-    expect(() =>
-      buildRnaSeqRcDataFiles([file('Counts.CSV')], 'n', EXTS)
-    ).not.toThrow();
+    expect(() => buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [file('Counts.CSV')],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'n')],
+    })).not.toThrow();
   });
 
   it('rejects an empty file list', () => {
-    expect(() => buildRnaSeqRcDataFiles([], 'n', EXTS)).toThrow(
-      /at least one/i
-    );
+    expect(() => buildRnaSeqRcDataFiles({
+      [DATA_FILE_FIELD_NAME]: [],
+      [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'n')],
+    })).toThrow(/at least one/i);
   });
 
   it('rejects more files than there are roles', () => {
     expect(() =>
-      buildRnaSeqRcDataFiles(
-        [file('a.tsv'), file('b.tsv'), file('c.tsv')],
-        'n',
-        EXTS
-      )
+      buildRnaSeqRcDataFiles({
+        [DATA_FILE_FIELD_NAME]: [file('a.tsv'), file('b.tsv'), file('c.tsv')],
+        [SAMPLE_INFO_FIELD_NAME]: [file('sample-info.txt', 'n')],
+      })
     ).toThrow(/at most two/i);
-  });
-});
-
-describe('findDuplicateFileName', () => {
-  it('finds a repeated basename', () => {
-    expect(
-      findDuplicateFileName([file('counts.tsv'), file('counts.tsv')])
-    ).toBe('counts.tsv');
-  });
-
-  it('returns undefined when all names differ', () => {
-    expect(
-      findDuplicateFileName([file('a.tsv'), file('b.tsv')])
-    ).toBeUndefined();
-  });
-
-  it('finds a repeated basename that only matches case-insensitively', () => {
-    expect(
-      findDuplicateFileName([file('Counts.tsv'), file('counts.TSV')])
-    ).toBe('counts.TSV');
-  });
-});
-
-describe('hasTabInName', () => {
-  it('finds a tab in a filename', () => {
-    expect(hasTabInName([file('od\td.tsv')])).toBe('od\td.tsv');
-  });
-
-  it('returns undefined for clean names', () => {
-    expect(hasTabInName([file('fine.tsv')])).toBeUndefined();
-  });
-});
-
-describe('findManifestNameCollision', () => {
-  it('finds a count file named exactly manifest.tsv', () => {
-    expect(findManifestNameCollision([file(MANIFEST_NAME)])).toBe(
-      MANIFEST_NAME
-    );
-  });
-
-  it('finds a collision that only matches case-insensitively', () => {
-    expect(findManifestNameCollision([file('Manifest.TSV')])).toBe(
-      'Manifest.TSV'
-    );
-  });
-
-  it('returns undefined when no file collides', () => {
-    expect(findManifestNameCollision([file('counts.tsv')])).toBeUndefined();
-  });
-});
-
-describe('hasAllowedExtension', () => {
-  it('matches an allowed extension case-insensitively', () => {
-    expect(hasAllowedExtension('Counts.CSV', EXTS)).toBe(true);
-  });
-
-  it('rejects a name matching none of the extensions', () => {
-    expect(hasAllowedExtension('counts.xlsx', EXTS)).toBe(false);
   });
 });
 

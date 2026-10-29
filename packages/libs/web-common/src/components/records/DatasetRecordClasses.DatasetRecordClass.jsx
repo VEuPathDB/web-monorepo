@@ -115,7 +115,6 @@ export function RecordHeading(props) {
       <props.DefaultComponent {...props} />
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
         <dl>
-
           {primaryPublication && primaryPublication.pubmed_link ? (
             <>
               <dt>Primary publication</dt>
@@ -132,58 +131,11 @@ export function RecordHeading(props) {
             </>
           ) : null}
 
-          {newcategory ? (
-            <>
-              <dt>Data type</dt>
-              <dd>{newcategory}</dd>
-            </>
-          ) : null}
-
-          {organism_prefix ? (
-            <>
-              <dt>Organism(s)</dt>
-              <dd
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(organism_prefix),
-                }}
-              />
-            </>
-          ) : null}
-
-
-          {version ? (
-            <>
-              <dt>External sources</dt>
-              <dd>{renderSourceVersion(version, newcategory)}</dd>
-            </>
-          ) : null}
-
-          {eupath_release ? (
-            <>
-              <dt>Date and version</dt>
-              <dd>{eupath_release}</dd>
-            </>
-          ) : null}
-
           <dt>Summary</dt>
           <dd
             style={{ whiteSpace: 'normal' }}
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(summary) }}
           />
-
-          {megabase_pairs ? (
-            <>
-              <dt>Megabase Pairs</dt>
-              <dd>{megabase_pairs}</dd>
-            </>
-          ) : null}
-
-          {study_access ? (
-            <StudyAccessOverviewItem
-              study_access={study_access}
-              record={record}
-            />
-          ) : null}
         </dl>
       </div>
     </>

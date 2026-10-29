@@ -17,14 +17,21 @@ export type DeflineFormat = 'QUERYONLY' | 'REGIONONLY' | 'QUERYANDREGION';
 export type MsaFormat =
   | 'fasta'
   | 'clustal'
-  | 'clustal_dnd'
+  | 'clustal_guidetree'
   | 'msf'
   | 'phylip'
   | 'selex'
   | 'stockholm'
   | 'vienna';
 
+export interface GeneTreeOptions {
+  format: 'newick';
+}
+
+export type Aligner = 'clustalo' | 'mafft';
+
 export interface MsaOptions {
+  aligner?: Aligner;
   format: MsaFormat;
   metadataUrl?: string;
 }
@@ -36,8 +43,18 @@ export interface SubmitJobRequest {
   features: Feature[];
   deflineFormat?: DeflineFormat;
   basesPerLine?: number;
-  postProcess?: 'MSA';
+  postProcess?: 'MSA' | 'GENETREE';
   msaOptions?: MsaOptions;
+  geneTreeOptions?: GeneTreeOptions;
+  percentActg?: number;
+}
+
+/** Request body for the synchronous /sequences/{sequenceType} endpoint. */
+export interface SyncSequenceRequest {
+  features: Feature[];
+  deflineFormat?: DeflineFormat;
+  basesPerLine?: number;
+  percentActg?: number;
 }
 
 export type JobStatus =
@@ -50,5 +67,8 @@ export type JobStatus =
 export interface JobResponse {
   jobID: string;
   status: JobStatus;
+  created?: string;
   queuePosition?: number;
+  started?: string;
+  finished?: string;
 }

@@ -51,6 +51,7 @@ import {
   communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
+  pathfinderUrl,
   showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
@@ -130,6 +131,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
     location.pathname.includes('workspace/analyses') ||
+    location.pathname.startsWith('/pathfinder') ||
     user == null ||
     user.isGuest;
 
@@ -594,6 +596,16 @@ const useHeaderMenuItems = (
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
         },
         {
+          key: 'pathfinder',
+          display: 'PathFinder',
+          tooltip: 'Build and refine search strategies with an AI assistant',
+          type: 'reactRoute',
+          url: '/pathfinder',
+          metadata: {
+            test: () => Boolean(pathfinderUrl),
+          },
+        },
+        {
           key: 'plasmofast',
           display: 'plasmoFAST',
           tooltip:
@@ -744,6 +756,15 @@ const useHeaderMenuItems = (
           display: `Datasets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result',
+        },
+        {
+          key: 'upload2',
+          display: 'Upload my dataset',
+          type: 'reactRoute',
+          url: '/workspace/datasets/new',
+          metadata: {
+            test: () => Boolean(useUserDatasetsWorkspace),
+          },
         },
         {
           key: 'data-files-eupathdb-beta',

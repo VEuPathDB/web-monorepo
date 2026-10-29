@@ -62,7 +62,23 @@
     }
   }
 
+  div.DataTable {
+    max-height: 25vh;
+    overflow-y: scroll;
+    margin-bottom: 1em;
+    border-top: 1px solid #e2e2e2;
+    border-bottom: 1px solid #e2e2e2;
+  }
+
   .ud-secondary-action {
     margin-bottom: 0.5em;
+  }
+}
+
+@media only screen and (max-height: 1408px) {
+  #ud-meta-selection-modal {
+    div.DataTable {
+      max-height: 350px;
+    }
   }
 }

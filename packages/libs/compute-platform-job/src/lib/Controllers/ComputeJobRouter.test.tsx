@@ -34,7 +34,7 @@ describe('ComputeJobRouter', () => {
     );
 
     expect(
-      await screen.findByText('Clustal Omega Job Status')
+      await screen.findByText('Multiple Sequence Alignment Job Status')
     ).toBeInTheDocument();
   });
 
@@ -54,6 +54,18 @@ describe('ComputeJobRouter', () => {
     ).toBeInTheDocument();
   });
 
+  it('forwards sequenceCount from the query string to ComputeJobPage', async () => {
+    render(
+      <MemoryRouter initialEntries={['/result/abc123?sequenceCount=25']}>
+        <ComputeJobRouter api={makeFakeApi()} />
+      </MemoryRouter>
+    );
+
+    expect(
+      await screen.findByText(/jobs can take 10\+ minutes/i)
+    ).toBeInTheDocument();
+  });
+
   it('does not throw when the query string is missing (e.g. bookmarked URL)', async () => {
     render(
       <MemoryRouter initialEntries={['/result/abc123']}>
@@ -62,7 +74,7 @@ describe('ComputeJobRouter', () => {
     );
 
     expect(
-      await screen.findByText('Clustal Omega Job Status')
+      await screen.findByText('Multiple Sequence Alignment Job Status')
     ).toBeInTheDocument();
   });
 });

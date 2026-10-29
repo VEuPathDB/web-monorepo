@@ -1,0 +1,29 @@
+{
+  "name": "@veupathdb/site-jest-config",
+  "version": "0.1.0",
+  "main": "jest-preset.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev",
+    "directory": "packages/site-jest-config"
+  },
+  "files": [
+    "jest-preset.js",
+    "jest.setup.js",
+    "jest.setup-after-env.js",
+    "jest.babel-transform.js",
+    "jest.style-mock.js",
+    "jest.jquery-mock.js"
+  ],
+  "peerDependencies": {
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.21.0",
+    "@testing-library/jest-dom": "5.16.5",
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1",
+    "jest-config": "^27.5.1",
+    "jest-environment-jsdom": "^27.5.1"
+  }
+}

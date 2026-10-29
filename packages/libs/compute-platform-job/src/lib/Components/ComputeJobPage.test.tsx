@@ -40,11 +40,95 @@ describe('ComputeJobPage', () => {
     );
 
     expect(
-      await screen.findByText('Clustal Omega Job Status')
+      await screen.findByText('Multiple Sequence Alignment Job Status')
     ).toBeInTheDocument();
     expect(
       screen.getByText('13 Transcripts, FASTA output format')
     ).toBeInTheDocument();
+  });
+
+  it('shows the queue position and queued time while queued', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({
+        jobID: 'abc',
+        status: 'queued',
+        created: '2026-09-27T12:00:00.000Z',
+        queuePosition: 3,
+      }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    expect(await screen.findByText(/position 3 in queue/i)).toBeInTheDocument();
+    expect(screen.getByText(/queued for/i)).toBeInTheDocument();
+  });
+
+  it('shows just "Queued." when queuePosition is not provided', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({
+        jobID: 'abc',
+        status: 'queued',
+        created: '2026-09-27T12:00:00.000Z',
+      }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    expect(await screen.findByText('Queued.')).toBeInTheDocument();
+    expect(screen.queryByText(/position/i)).not.toBeInTheDocument();
+  });
+
+  it('shows in-progress status and elapsed time', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({
+        jobID: 'abc',
+        status: 'in-progress',
+        started: '2026-09-27T12:05:00.000Z',
+      }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    expect(await screen.findByText(/in progress/i)).toBeInTheDocument();
+    expect(screen.getByText(/running for/i)).toBeInTheDocument();
+  });
+
+  it('shows a duration warning while queued when sequenceCount exceeds the threshold', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} sequenceCount={11} />);
+
+    expect(
+      await screen.findByText(/jobs can take 10\+ minutes/i)
+    ).toBeInTheDocument();
+  });
+
+  it('does not show a duration warning while queued when sequenceCount is at or below the threshold', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} sequenceCount={10} />);
+
+    await screen.findByText('Multiple Sequence Alignment Job Status');
+    expect(
+      screen.queryByText(/jobs can take 10\+ minutes/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not show a duration warning when sequenceCount is not provided', async () => {
+    const api = makeFakeApi({
+      fetchJob: jest.fn().mockResolvedValue({ jobID: 'abc', status: 'queued' }),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    await screen.findByText('Multiple Sequence Alignment Job Status');
+    expect(
+      screen.queryByText(/jobs can take 10\+ minutes/i)
+    ).not.toBeInTheDocument();
   });
 
   // showResultDocument (invoked on complete) mutates the live `document` in
@@ -71,7 +155,25 @@ describe('ComputeJobPage', () => {
     expect(api.fetchJobFile).toHaveBeenCalledWith('abc', 'output');
   });
 
-  it('parses and swaps in the full document for the clustal_dnd format', async () => {
+  it('wraps plain-text results in a <pre> element so alignment whitespace/line breaks render, not collapse', async () => {
+    const alignmentText = 'seq1  ACGTACGT\nseq2  ACGTACGT\n      ********';
+    const api = makeFakeApi({
+      fetchJob: jest
+        .fn()
+        .mockResolvedValue({ jobID: 'abc', status: 'complete' }),
+      fetchJobFile: jest.fn().mockResolvedValue(alignmentText),
+    });
+
+    render(<ComputeJobPage jobId="abc" api={api} />);
+
+    await waitFor(() => {
+      const pre = document.body.querySelector('pre');
+      expect(pre).not.toBeNull();
+      expect(pre?.textContent).toBe(alignmentText);
+    });
+  });
+
+  it('parses and swaps in the full document for the clustal_guidetree format', async () => {
     const api = makeFakeApi({
       fetchJob: jest
         .fn()
@@ -89,7 +191,9 @@ describe('ComputeJobPage', () => {
       .mockImplementation((node) => node);
 
     try {
-      render(<ComputeJobPage jobId="abc" api={api} format="clustal_dnd" />);
+      render(
+        <ComputeJobPage jobId="abc" api={api} format="clustal_guidetree" />
+      );
 
       await waitFor(() => {
         expect(replaceChild).toHaveBeenCalled();

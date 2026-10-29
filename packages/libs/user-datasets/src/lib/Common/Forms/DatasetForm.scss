@@ -93,6 +93,15 @@
     }
   }
 
+  ul.subsection-description {
+    font-style: italic;
+    margin-bottom: 1em;
+
+    li {
+      margin-bottom: 1em;
+    }
+  }
+
   p.section-description {
     margin: -1em 4em 1.3em 4em;
   }
@@ -147,6 +156,17 @@
     margin-top: -1em;
   }
 
+  .file-input-button {
+    display: flex;
+    column-gap: 15px;
+    align-items: center;
+    margin-bottom: 1em;
+
+    input[type="file"] {
+      display: none;
+    }
+  }
+
   input,
   select,
   textarea,
@@ -158,6 +178,14 @@
   textarea {
     border-radius: 5px;
     padding: $inputPadding;
+
+    &::placeholder {
+      color: var(--coreui-gray-600);
+    }
+  }
+
+  .samples-description::placeholder {
+    font-style: normal;
   }
 
   ::file-selector-button {
@@ -194,7 +222,9 @@
     font-weight: bold;
 
     &.required:not(.hide-required) {
-      color: red;
+      //&:not(.filled) {
+        color: red;
+      //}
 
       &::after {
         content: '*';
@@ -251,6 +281,19 @@
     > input[type='checkbox'] {
       margin-left: 0.5ch;
       margin-right: auto;
+    }
+
+    ol.multi-input li.organism-row {
+      &:not(:first-child) {
+        padding-top: 0.8em;
+      }
+
+      &:not(:last-child) {
+        padding-bottom: 0.8em;
+        border-bottom-width: 1px;
+        border-bottom-color: #a4a4a4;
+        border-bottom-style: solid;
+      }
     }
   }
 
