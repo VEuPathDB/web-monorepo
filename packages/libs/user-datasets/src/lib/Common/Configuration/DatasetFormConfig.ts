@@ -2,8 +2,9 @@ import { ReactElement, ReactNode } from 'react';
 import { DataInputConfig } from './UploadFormConfig';
 import { DatasetTypeConfig } from './DatasetTypeConfig';
 import { DatasetFormVerbiage } from './DatasetFormVerbiage';
-import { DatasetDependency, PartialDatasetDetails } from '../../Service';
+import { DatasetDependency } from '../../Service';
 import { Consumer } from '../../Utils';
+import { UploadContentMap } from '../../Service/Model/utility-types';
 
 export interface DatasetFormConfig<
   T extends DatasetTypeConfig | undefined = DatasetTypeConfig
@@ -38,10 +39,7 @@ export interface DatasetFormConfig<
    * field. A throw here means a validation gap and surfaces as a generic
    * submit error.
    */
-  readonly prepareDataFiles?: (
-    dataFiles: readonly File[],
-    details: PartialDatasetDetails
-  ) => readonly File[];
+  readonly prepareDataFiles?: (dataFiles: UploadContentMap) => UploadContentMap;
 }
 
 export interface DatasetCharacteristicsFormSectionConfig {

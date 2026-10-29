@@ -8,20 +8,21 @@ import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
   DatasetDependency,
-  DependencyInputProps,
+  DependencyInputProps, FileInputConfig
 } from '@veupathdb/user-datasets/lib';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
 import { ButtonStateStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import {
   DatasetFormConfig,
   DatasetTypeConfig,
+  DatasetWorkspaceConfig,
+  EdaStudyLinks,
 } from '@veupathdb/user-datasets/lib/Common/Configuration';
 import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
 import { useStudyMetadata } from '@veupathdb/eda/src/lib/core/hooks/study';
-import { DatasetWorkspaceConfig } from '@veupathdb/user-datasets/lib/Common/Configuration/DatasetWorkspaceConfig';
-import { EdaStudyLinks } from '@veupathdb/user-datasets/src/lib/Common/Configuration/DatasetWorkspaceConfig';
 import { makeEdaRoute, makeMapRoute } from './routes';
+import { isEmpty } from 'lodash';
 
 /**
  * Type identifiers for dataset types that have client handling.
@@ -165,6 +166,11 @@ const textFilesHelp = (
   </p>
 );
 
+const DEFAULT_FILE_INPUT: FileInputConfig = {
+  label: 'Data File',
+  required: true,
+}
+
 function bigwigFormConfigurator(
   dataType: DatasetTypeConfig
 ): DatasetFormConfig {
@@ -174,8 +180,8 @@ function bigwigFormConfigurator(
       formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     dataInputConfig: {
-      file: {
-        enabled: true,
+      byFile: {
+        fileInputs: [DEFAULT_FILE_INPUT],
         helpText: (
           <div>Total uncompressed files cannot be greater than 1GB.</div>
         ),
@@ -215,7 +221,7 @@ function biomFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
       formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     dataInputConfig: {
-      file: { enabled: true },
+      byFile: { fileInputs: [DEFAULT_FILE_INPUT] },
       helpText: () => (
         <p className="formInfo">
           We accept any file in the{' '}
@@ -247,8 +253,8 @@ function genelistFormConfigurator(
     },
     enableExperimentalOrganism: true,
     dataInputConfig: {
-      file: { enabled: true },
-      result: {
+      byFile: { fileInputs: [DEFAULT_FILE_INPUT] },
+      byResult: {
         enabled: true,
         offerStrategyUpload: false,
         compatibleRecordTypes: {
@@ -317,7 +323,7 @@ function isasimpleFormConfigurator(
     },
     enableExperimentalOrganism: true,
     dataInputConfig: {
-      file: { enabled: true },
+      byFile: { fileInputs: [DEFAULT_FILE_INPUT] },
       helpText: () => (
         <details>
           <summary>
@@ -359,7 +365,7 @@ function phenotypeFormConfigurator(
     },
     enableExperimentalOrganism: true,
     dataInputConfig: {
-      file: { enabled: true },
+      byFile: { fileInputs: [DEFAULT_FILE_INPUT] },
       helpText: () => (
         <details>
           <summary>
@@ -407,8 +413,8 @@ function rnaseqFormConfigurator(
       formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
     },
     dataInputConfig: {
-      file: {
-        enabled: true,
+      byFile: {
+        fileInputs: [DEFAULT_FILE_INPUT],
         helpText: (
           <div>Total uncompressed files cannot be greater than 1GB.</div>
         ),
@@ -517,9 +523,8 @@ function rnaseqRcFormConfigurator(
       },
     },
     dataInputConfig: {
-      file: {
-        enabled: true,
-        slots: [
+      byFile: {
+        fileInputs: [
           {
             label: 'Data file 1',
             buttonText: 'Choose sense or unstranded file',
@@ -529,8 +534,15 @@ function rnaseqRcFormConfigurator(
             label: 'Data file 2',
             buttonText: 'Choose anti-sense file (optional)',
             required: false,
+            configOverride: (it, all) => ({
+              ...it,
+              // disable field 2 if field 1 is unset
+              disabled: isEmpty(all[0].files)
+            })
           },
         ],
+        // disable default help text
+        helpText: null,
       },
       helpText: () => (
         <details>
@@ -586,12 +598,7 @@ function rnaseqRcFormConfigurator(
       renderInput: ReferenceGenomeDependency,
     },
     enableExperimentalOrganism: true,
-    prepareDataFiles: (files, details) =>
-      buildRnaSeqRcDataFiles(
-        files,
-        details.samplesDescription,
-        dataType.vdiConfig.allowedFileExtensions
-      ),
+    prepareDataFiles: buildRnaSeqRcDataFiles,
   };
 }
 

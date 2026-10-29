@@ -12,18 +12,18 @@ import {
   Possible,
 } from '../../Utils';
 import { extractPublicationId } from '../Publications';
+import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { projectId } from '../../config';
+import { Mutable } from '../../Utils/types';
 
 // region Full Submission Payload
 
-/**
- * Remove empty values that may have been left dangling from the upload form.
- *
- * @param details
- */
 export function cleanDatasetDetails(
   details: PartialDatasetDetails
 ): PartialDatasetDetails {
-  return {
+  const isGenomics = isGenomicsProjectId(projectId);
+
+  const mutableDetails: Mutable<PartialDatasetDetails> = {
     ...details,
 
     installTargets: ifDefined(details.installTargets, removeEmpties),
@@ -48,6 +48,45 @@ export function cleanDatasetDetails(
       cleanDatasetCharacteristics
     ),
   };
+
+  if (!details.metadataContentFlags?.hasDataDisclaimer)
+    delete mutableDetails.dataDisclaimer
+
+  if (!details.metadataContentFlags?.hasDatasetCharacteristics)
+    delete mutableDetails.datasetCharacteristics;
+
+  if (!details.metadataContentFlags?.hasDatasetSources)
+    delete mutableDetails.datasetSources;
+
+  if (!details.metadataContentFlags?.hasOrganismData) {
+    // On genomics sites, this section is always enabled, but the radio option
+    // for the section is not explicitly set to "Yes".  Fill in the option for
+    // the user if they provided a value.
+    if (isGenomics && mutableDetails.experimentalOrganisms != null) {
+      mutableDetails.metadataContentFlags = {
+        ...(mutableDetails.metadataContentFlags ?? {}),
+        hasOrganismData: true,
+      };
+    } else {
+      delete mutableDetails.experimentalOrganisms;
+    }
+  }
+
+  if (!details.metadataContentFlags?.hasPublications) {
+    // On genomics sites, this section is always enabled, but the radio option
+    // for the section is not explicitly set to "Yes".  Fill in the option for
+    // the user if they provided a value.
+    if (isGenomics && mutableDetails.publications != null) {
+      mutableDetails.metadataContentFlags = {
+        ...(mutableDetails.metadataContentFlags ?? {}),
+        hasPublications: true,
+      };
+    } else {
+      delete mutableDetails.publications;
+    }
+  }
+
+  return mutableDetails;
 }
 
 // endregion Full Submission Payload
@@ -134,7 +173,7 @@ function cleanPublication({
  * If the resulting array is empty, the array itself is to be 'pruned', and
  * undefined will be returned.
  */
-function pruneSimpleRecords<T extends object>(
+export function pruneSimpleRecords<T extends object>(
   records: readonly T[]
 ): Possible<T[]> {
   if (!records) return undefined;

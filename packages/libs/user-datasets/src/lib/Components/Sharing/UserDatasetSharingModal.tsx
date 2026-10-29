@@ -17,8 +17,7 @@ import {
 } from '../../Service';
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
-import { datasetUserFullName } from '../../Utils/formatting';
-import { Consumer, DataNoun, Runnable } from '../../Utils/types';
+import { datasetUserFullName, Consumer, DataNoun, Runnable } from '../../Utils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   shareUserDatasets,

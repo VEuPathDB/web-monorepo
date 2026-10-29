@@ -23,11 +23,11 @@ export function MetadataSection({
   openMetaImport,
 }: MetadataSectionProps): ReactElement {
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads } = useDatasetFormState();
+  const { datasetDetails, ...fileUploads } = useDatasetFormState();
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads })),
+      dispatch(updateFormState({ datasetDetails, ...fileUploads })),
     [dispatch, fileUploads]
   );
 

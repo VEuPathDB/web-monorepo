@@ -11,7 +11,7 @@ import {
   DatasetPatchRequest,
   DatasetPatchResponse,
   ExternalIdentifiersPatch,
-  OptionalValuePatch,
+  OptionalValuePatch, UploadContent
 } from '../Model';
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch } from 'redux';
@@ -24,7 +24,8 @@ import { statusStringToCode } from '../utils/conversions';
 import { Mutable } from '../../Utils/types';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
-import { cleanDatasetDetails } from './payload-cleanup';
+import { cleanDatasetDetails, pruneSimpleRecords } from './payload-cleanup';
+import { ifDefined } from '../../Utils';
 
 export interface UpdateSubmission {
   readonly vdi: VdiService;
@@ -51,12 +52,6 @@ export async function submitUpdate(
     ...submission.updated,
   };
 
-  // `samplesDescription` is a client-only field used to build the
-  // `sample-info.txt` upload; it is never a valid VDI metadata field and must
-  // never reach the outbound PATCH payload. Unlike the fields below, this is
-  // deleted unconditionally rather than gated on form meta state.
-  delete mutableSubmission.samplesDescription;
-
   if (!submission.updated.metadataContentFlags?.hasDatasetSources) {
     mutableSubmission.datasetSources = undefined;
   }
@@ -69,11 +64,21 @@ export async function submitUpdate(
     mutableSubmission.publications = undefined;
   }
 
-  if (
-    !submission.updated.metadataContentFlags?.hasOrganismData &&
-    !isGenomicsProjectId(projectId)
-  ) {
-    mutableSubmission.experimentalOrganisms = undefined;
+  if (!submission.updated.metadataContentFlags?.hasOrganismData) {
+    if (!isGenomicsProjectId(projectId)) {
+      mutableSubmission.experimentalOrganisms = undefined;
+    } else {
+      mutableSubmission.experimentalOrganisms = ifDefined(
+        mutableSubmission.experimentalOrganisms,
+        pruneSimpleRecords,
+      );
+
+      if (mutableSubmission.experimentalOrganisms)
+        mutableSubmission.metadataContentFlags = {
+          ...(mutableSubmission.metadataContentFlags ?? {}),
+          hasOrganismData: true
+        };
+    }
   }
 
   if (!submission.updated.metadataContentFlags?.hasDatasetCharacteristics) {
@@ -135,7 +140,8 @@ async function submitPut({
 }: UpdateSubmission): Promise<PutResult> {
   const promises: Promise<[string, number, string?]>[] = [];
 
-  for (const file of newFiles.dataPropertiesFiles!) {
+  for (const content of newFiles.dataPropertiesFiles!) {
+    const file = content.toFile();
     promises.push(
       new Promise<[string, number, string?]>((good, bad) => {
         try {
@@ -377,10 +383,18 @@ async function deleteDatasetPropertiesFile(
     );
 }
 
-function fileListContains(list: FileList, fileName: string): boolean {
-  for (const { name } of list) {
-    if (name === fileName) {
-      return true;
+function fileListContains(list: readonly UploadContent[], fileName: string): boolean {
+  for (const item of list) {
+    switch (item.type) {
+      case 'file':
+        if (item.file.name === fileName)
+          return true;
+        break;
+
+      case 'text':
+        if (item.name === fileName)
+          return true;
+        break;
     }
   }
 

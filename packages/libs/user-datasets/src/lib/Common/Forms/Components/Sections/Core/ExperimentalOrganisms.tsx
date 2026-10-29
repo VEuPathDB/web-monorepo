@@ -56,7 +56,7 @@ export function ExperimentalOrganisms(
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
-            enabled: !disabled,
+            enabled: isGenomics ? true : hasOrganismData,
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
             required: isPublic,
