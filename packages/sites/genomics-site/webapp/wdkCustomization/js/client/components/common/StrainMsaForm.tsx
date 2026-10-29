@@ -7,6 +7,7 @@ import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionSt
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { isType as isFilterParamNew } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
@@ -438,6 +439,9 @@ export const StrainMsaForm = enhance(function StrainMsaForm(props: Props) {
 
   return (
     <div style={{ padding: '15px' }}>
+      <div style={{ marginBottom: '15px', fontSize: '1.2em' }}>
+        {safeHtml(filterParameter.help)}
+      </div>
       <div style={{ marginBottom: '15px' }}>
         <FilterParamNew
           ctx={{ searchName, parameter: filterParameter, paramValues }}
