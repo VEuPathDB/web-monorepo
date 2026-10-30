@@ -565,6 +565,8 @@ export function Page() {
 
 export { AnswerController } from './component-wrappers/AnswerController';
 
+export { AttributeCell } from './component-wrappers/AttributeCell';
+
 export { SiteSearchInput };
 
 // export { QuestionController } from './component-wrappers/QuestionController';
