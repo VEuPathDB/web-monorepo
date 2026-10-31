@@ -189,6 +189,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       case 'rnaseq':
         return RnaSeqDatasetManagement;
       case 'isasimple':
+      case 'stf':
         return EdaDatasetManagement;
       default:
         return DatasetManagement;
