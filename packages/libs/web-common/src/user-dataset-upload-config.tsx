@@ -8,7 +8,8 @@ import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
   DatasetDependency,
-  DependencyInputProps, FileInputConfig
+  DependencyInputProps,
+  FileInputConfig,
 } from '@veupathdb/user-datasets/lib';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
 import { ButtonStateStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
@@ -177,7 +178,7 @@ const textFilesHelp = (
 const DEFAULT_FILE_INPUT: FileInputConfig = {
   label: 'Data File',
   required: true,
-}
+};
 
 function bigwigFormConfigurator(
   dataType: DatasetTypeConfig
@@ -367,7 +368,7 @@ function stfFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
     },
     enableExperimentalOrganism: true,
     dataInputConfig: {
-      file: { enabled: true },
+      byFile: { fileInputs: [DEFAULT_FILE_INPUT] },
       helpText: () => (
         <details>
           <summary>
@@ -599,8 +600,8 @@ function rnaseqRcFormConfigurator(
             configOverride: (it, all) => ({
               ...it,
               // disable field 2 if field 1 is unset
-              disabled: isEmpty(all[0].files)
-            })
+              disabled: isEmpty(all[0].files),
+            }),
           },
         ],
         // disable default help text
