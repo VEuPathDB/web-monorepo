@@ -204,3 +204,11 @@ body.vpdb-Body .PreferredOrganismsConfig {
     right: 3.48em;
   }
 }
+
+// temporary until we generate a proper logo for helminthdb
+.vpdb-RootContainer.HelminthDB .vpdb-Header .vpdb-HeaderBranding {
+  font-size: 4em;
+  color: white;
+  height: 2em;
+  content: '';
+}
