@@ -20,6 +20,7 @@ import {
   SampleYearRange,
 } from '../../../../../Service';
 import {
+  FieldHelpText,
   GrowableStringList,
   InputBlock,
   InputPair,
@@ -277,7 +278,13 @@ function StudyDesign({
       >
         {options}
       </select>
-      {help != null && <p className="study-design-help">{help}</p>}
+      {selection == null ? (
+        <FieldHelpText>
+          Select a study design to see a short description of it.
+        </FieldHelpText>
+      ) : (
+        help != null && <FieldHelpText>{help}</FieldHelpText>
+      )}
     </>
   );
 }
