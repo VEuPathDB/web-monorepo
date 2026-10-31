@@ -12,6 +12,7 @@ export const GENOMICS_PROJECTS: readonly ProjectConstants[] = [
   newProjectConstants('FungiDB'),
   newProjectConstants('GiardiaDB'),
   newProjectConstants('HostDB'),
+  newProjectConstants('HelminthDB'),
   newProjectConstants('MicrosporidiaDB'),
   newProjectConstants('PiroplasmaDB'),
   newProjectConstants('PlasmoDB'),
