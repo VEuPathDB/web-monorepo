@@ -12,7 +12,7 @@ import {
   Consumer,
   JsonPathBuilder,
   Possible,
-  changeHandler
+  changeHandler,
 } from '../../../../../Utils';
 import {
   PartialDatasetDetails,
@@ -25,7 +25,10 @@ import {
   InputPair,
   YesNoToggle,
 } from '../../index';
-import { DatasetCharacteristicsFormSectionConfig } from '../../../../Configuration/DatasetFormConfig';
+import {
+  DatasetCharacteristicsFormSectionConfig,
+  StudyDesignOption,
+} from '../../../../Configuration/DatasetFormConfig';
 
 export const FieldStudyToggleID = 'field-study-toggle';
 
@@ -49,8 +52,9 @@ export function CharacteristicsSection({
       ...datasetMeta,
       metadataContentFlags: {
         ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetCharacteristics: enabled
-      } });
+        hasDatasetCharacteristics: enabled,
+      },
+    });
 
   useEffect(
     () => {
@@ -219,7 +223,7 @@ export function CharacteristicsSection({
 // region Study Design
 
 interface StudyDesignProps {
-  readonly vocab: readonly [string, string][];
+  readonly vocab: readonly StudyDesignOption[];
   readonly onChange: BiConsumer<string, string>;
   readonly enabled: boolean;
   readonly required: boolean;
@@ -238,37 +242,42 @@ function StudyDesign({
       Select a study design
     </option>,
 
-    ...vocab.map(([v, _], i) => (
-      <option key={i} value={i} selected={selection === v}>
-        {v}
+    ...vocab.map(({ design }, i) => (
+      <option key={i} value={i} selected={selection === design}>
+        {design}
       </option>
-    ))
+    )),
   ];
+
+  const help = vocab.find(({ design }) => design === selection)?.help;
 
   let className: Possible<string> = undefined;
 
   if (required) {
-    className = selection == null
-      ? "required invalid"
-      : "required";
+    className = selection == null ? 'required invalid' : 'required';
   }
 
   return (
     <>
-      <label htmlFor="meta.studyCharacteristics.studyDesign" className={className}>
+      <label
+        htmlFor="meta.studyCharacteristics.studyDesign"
+        className={className}
+      >
         Study Design
       </label>
       <select
         id="meta.studyCharacteristics.studyDesign"
         onChange={(e) => {
-          const [design, type] = vocab[parseInt(e.currentTarget.value ?? '0')];
-          onChange(design, type);
+          const { design, studyType } =
+            vocab[parseInt(e.currentTarget.value ?? '0')];
+          onChange(design, studyType);
         }}
         disabled={!enabled}
         required={required}
       >
         {options}
       </select>
+      {help != null && <p className="study-design-help">{help}</p>}
     </>
   );
 }
@@ -310,16 +319,16 @@ function YearsInputs({
         ref.current?.classList?.remove('invalid');
 
         if (!v) {
-          const { [k]: ignored, ...trimmed } = safeYears
-          setYears(trimmed)
+          const { [k]: ignored, ...trimmed } = safeYears;
+          setYears(trimmed);
           return;
         }
 
         const parsed = parseInt(v);
 
         if (isNaN(parsed)) {
-          const { [k]: ignored, ...trimmed } = safeYears
-          setYears(trimmed)
+          const { [k]: ignored, ...trimmed } = safeYears;
+          setYears(trimmed);
           return;
         }
 

@@ -8,7 +8,8 @@ import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
   DatasetDependency,
-  DependencyInputProps, FileInputConfig
+  DependencyInputProps,
+  FileInputConfig,
 } from '@veupathdb/user-datasets/lib';
 import { SelectTreeStyleSpec } from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
 import { ButtonStateStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
@@ -17,6 +18,7 @@ import {
   DatasetTypeConfig,
   DatasetWorkspaceConfig,
   EdaStudyLinks,
+  StudyDesignOption,
 } from '@veupathdb/user-datasets/lib/Common/Configuration';
 import { buildRnaSeqRcDataFiles } from '@veupathdb/user-datasets/lib/Service/utils/rnaseq-rc-data-files';
 import { useConfiguredSubsettingClient } from '@veupathdb/eda/src/lib/core/hooks/client';
@@ -97,23 +99,72 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
 const DefaultFormTitle = 'Upload Dataset';
 
-const StudyDesignVocab: readonly [string, string][] = [
+// TODO: placeholder help strings (LLM-generated); replace with reviewed text
+const StudyDesignVocab: readonly StudyDesignOption[] = [
   // Alphabetical Order
-  ['Case history', 'Observational'],
-  ['Case series study', 'Observational'],
-  ['Case-control study', 'Observational'],
-  ['Cluster-randomized controlled trial', 'Experimental'],
-  ['Cohort study', 'Observational'],
-  ['Cross-sectional study', 'Observational'],
-  ['Ecological study', 'Observational'],
-  ['Meta-analysis', 'Review'],
-  ['Panel study', 'Observational'],
-  ['Quasi-experimental study', 'Experimental'],
-  ['Randomized controlled/clinical trial', 'Experimental'],
-  ['Surveillance study', 'Observational'],
+  {
+    design: 'Case history',
+    studyType: 'Observational',
+    help: 'A detailed report of the history and outcome of a single individual.',
+  },
+  {
+    design: 'Case series study',
+    studyType: 'Observational',
+    help: 'A descriptive report of a small group of individuals with a shared condition or exposure, with no comparison group.',
+  },
+  {
+    design: 'Case-control study',
+    studyType: 'Observational',
+    help: 'Compares individuals who have a condition (cases) with similar individuals who do not (controls) to look for differences in past exposures.',
+  },
+  {
+    design: 'Cluster-randomized controlled trial',
+    studyType: 'Experimental',
+    help: 'Groups of individuals (e.g. villages or schools), rather than individuals, are randomly assigned to an intervention or control.',
+  },
+  {
+    design: 'Cohort study',
+    studyType: 'Observational',
+    help: 'Follows a group of individuals over time to see how exposures relate to later outcomes.',
+  },
+  {
+    design: 'Cross-sectional study',
+    studyType: 'Observational',
+    help: 'Measures exposures and outcomes in a population at a single point in time.',
+  },
+  {
+    design: 'Ecological study',
+    studyType: 'Observational',
+    help: 'Compares outcomes and exposures across whole populations or regions rather than individuals.',
+  },
+  {
+    design: 'Meta-analysis',
+    studyType: 'Review',
+    help: 'Statistically combines results from several previously published studies.',
+  },
+  {
+    design: 'Panel study',
+    studyType: 'Observational',
+    help: 'Repeatedly measures the same set of individuals at multiple time points.',
+  },
+  {
+    design: 'Quasi-experimental study',
+    studyType: 'Experimental',
+    help: 'Tests an intervention, but participants are not randomly assigned to groups.',
+  },
+  {
+    design: 'Randomized controlled/clinical trial',
+    studyType: 'Experimental',
+    help: 'Individuals are randomly assigned to an intervention or a control group and outcomes are compared.',
+  },
+  {
+    design: 'Surveillance study',
+    studyType: 'Observational',
+    help: 'Ongoing, systematic collection of data on the occurrence of a disease or health-related event in a population.',
+  },
 
   // Other goes last
-  ['Other', 'n/a'],
+  { design: 'Other', studyType: 'n/a' },
 ];
 
 const wranglerDataHelp = (
@@ -169,7 +220,7 @@ const textFilesHelp = (
 const DEFAULT_FILE_INPUT: FileInputConfig = {
   label: 'Data File',
   required: true,
-}
+};
 
 function bigwigFormConfigurator(
   dataType: DatasetTypeConfig
@@ -537,8 +588,8 @@ function rnaseqRcFormConfigurator(
             configOverride: (it, all) => ({
               ...it,
               // disable field 2 if field 1 is unset
-              disabled: isEmpty(all[0].files)
-            })
+              disabled: isEmpty(all[0].files),
+            }),
           },
         ],
         // disable default help text
