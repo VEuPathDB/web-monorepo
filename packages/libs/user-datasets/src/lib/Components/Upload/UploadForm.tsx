@@ -49,15 +49,13 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
     window.location.reload();
   };
 
-  const { datasetDetails, fileUploads } = useDatasetFormState();
+  const formState = useDatasetFormState();
 
   const uploadSection = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    setFormIsValid(
-      isDatasetFormValid(datasetDetails, props.formConfig, uploadSection)
-    );
-  }, [setFormIsValid, datasetDetails, fileUploads, props]);
+  useEffect(() => setFormIsValid(
+    isDatasetFormValid(formState.datasetDetails, props.formConfig, uploadSection)
+  ), [setFormIsValid, formState, props]);
 
   return (
     <section id="dataset-upload" ref={uploadSection}>

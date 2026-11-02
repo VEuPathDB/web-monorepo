@@ -71,6 +71,8 @@ interface SubmitClustalMsaJobOptions {
   resultTab: Window | null;
   percentActg?: number;
   deflineFormat?: DeflineFormat;
+  /** The caller's run-time prediction, shown on the result page's status line. */
+  estimatedSeconds?: number;
 }
 
 interface OpenTabAndSubmitMsaJobOptions {
@@ -93,6 +95,8 @@ interface OpenTabAndSubmitMsaJobOptions {
   paramsSummary: string | ((features: Feature[]) => string);
   percentActg?: number;
   deflineFormat?: DeflineFormat;
+  /** The caller's run-time prediction, shown on the result page's status line. */
+  estimatedSeconds?: number;
 }
 
 /**
@@ -117,6 +121,7 @@ export async function openTabAndSubmitMsaJob({
   paramsSummary,
   percentActg,
   deflineFormat,
+  estimatedSeconds,
 }: OpenTabAndSubmitMsaJobOptions): Promise<void> {
   const resultTab = window.open('about:blank', '_blank');
   // The tab sits blank for several seconds while features are resolved and
@@ -143,6 +148,7 @@ export async function openTabAndSubmitMsaJob({
       resultTab,
       percentActg,
       deflineFormat,
+      estimatedSeconds,
     });
   } catch (error) {
     // submitClustalMsaJob already closes resultTab on its own failure
@@ -175,6 +181,7 @@ export async function submitClustalMsaJob({
   resultTab,
   percentActg,
   deflineFormat,
+  estimatedSeconds,
 }: SubmitClustalMsaJobOptions): Promise<void> {
   try {
     const job = await api.submitJob(sequenceType, {
@@ -193,6 +200,9 @@ export async function submitClustalMsaJob({
     resultUrl.searchParams.set('paramsSummary', paramsSummary);
     resultUrl.searchParams.set('format', msaFormat);
     resultUrl.searchParams.set('sequenceCount', String(features.length));
+    if (estimatedSeconds != null) {
+      resultUrl.searchParams.set('estimatedSeconds', String(estimatedSeconds));
+    }
     if (resultTab) {
       resultTab.location.replace(resultUrl.toString());
     }

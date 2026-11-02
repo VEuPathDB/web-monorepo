@@ -37,6 +37,7 @@ export {
 export { default as SingleSelect } from './components/inputs/SingleSelect';
 export { default as SelectList } from './components/inputs/SelectList';
 export { default as SelectTree } from './components/inputs/SelectTree/SelectTree';
+export { RecentSearchesMenu } from './components/inputs/RecentSearchesMenu';
 export { default as SearchBox } from './components/inputs/SearchBox/SearchBox';
 export { default as CheckboxList } from './components/inputs/checkboxes/CheckboxList';
 export { default as CheckboxTree } from './components/inputs/checkboxes/CheckboxTree/CheckboxTree';

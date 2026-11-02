@@ -48,6 +48,8 @@ import {
   DifferentialExpressionConfig,
 } from '../../../types/apps';
 import { yellow } from '@material-ui/core/colors';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { significanceColors } from '@veupathdb/components/lib/types/plots';
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
@@ -104,10 +106,26 @@ export const volcanoPlotVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
+/**
+ * The p-value the significance threshold is compared against. Points lacking an adjusted p-value
+ * can never be significant when thresholding on it (Infinity), mirroring the server-side filter.
+ */
+function getThresholdedPValue(
+  point: VolcanoPlotDataPoint,
+  useAdjustedPValue: boolean | undefined
+): number {
+  if (!useAdjustedPValue) return Number(point.pValue);
+  const adjusted = Number(point.adjustedPValue);
+  return point.adjustedPValue == null || Number.isNaN(adjusted)
+    ? Infinity
+    : adjusted;
+}
+
 function createDefaultConfig(): VolcanoPlotConfig {
   return {
     effectSizeThreshold: DEFAULT_ES_THRESHOLD,
     significanceThreshold: DEFAULT_SIG_THRESHOLD,
+    useAdjustedPValue: false,
     markerBodyOpacity: DEFAULT_MARKER_OPACITY,
     independentAxisRange: undefined,
     dependentAxisRange: undefined,
@@ -119,6 +137,9 @@ export type VolcanoPlotConfig = t.TypeOf<typeof VolcanoPlotConfig>;
 export const VolcanoPlotConfig = t.partial({
   effectSizeThreshold: t.number,
   significanceThreshold: t.number,
+  /** If true, the significance threshold applies to the adjusted p-value rather than the (plotted) raw p-value.
+   * Absent (older analyses) means false. Also read by GeneEdaVizWithComputePlugin on the server. */
+  useAdjustedPValue: t.boolean,
   markerBodyOpacity: t.number,
   independentAxisRange: NumberRange,
   dependentAxisRange: NumberRange,
@@ -145,6 +166,15 @@ export const effectDirectionLabels: Record<
   upOnly: 'Up-regulated only',
   downOnly: 'Down-regulated only',
 };
+
+/** Row label for the significance threshold, naming which p-value it applies to. */
+export function significanceThresholdLabel(
+  config: Pick<VolcanoPlotConfig, 'useAdjustedPValue'> | undefined
+): string {
+  return config?.useAdjustedPValue
+    ? 'Adjusted p-value ≤'
+    : 'Unadjusted p-value ≤';
+}
 
 export interface VolcanoPlotOptions
   extends LayoutOptions,
@@ -356,7 +386,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
             );
           let sigColor = assignSignificanceColor(
             Number(d.effectSize),
-            Number(d.pValue),
+            getThresholdedPValue(d, vizConfig.useAdjustedPValue),
             significanceThreshold,
             effectSizeThreshold,
             significanceColors
@@ -428,6 +458,7 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
     effectSizeThreshold,
     entities,
     vizConfig.effectDirection,
+    vizConfig.useAdjustedPValue,
   ]);
 
   // For the legend, we need the counts of the data
@@ -502,6 +533,8 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
      */
     data: finalData ?? undefined,
     significanceThreshold,
+    // The plot always shows the raw p-value, so an adjusted p-value threshold has no meaningful line to draw
+    hideSignificanceThresholdLine: !!vizConfig.useAdjustedPValue,
     effectSizeThreshold,
     /**
      * Since we are rendering a single point in order to display an empty viz, let's hide the data point
@@ -781,6 +814,10 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
 
   const effectDirection = vizConfig.effectDirection ?? 'upAndDown';
 
+  const hasAdjustedPValues = !!data.value?.statistics.some(
+    (d) => d.adjustedPValue != null
+  );
+
   const legendNode = finalData && countsData && (
     <PlotLegend
       type="list"
@@ -882,9 +919,25 @@ function VolcanoPlotViz(props: VisualizationProps<VolcanoPlotOptions>) {
               value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
               step={0.001}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  size="small"
+                  checked={!!vizConfig.useAdjustedPValue}
+                  disabled={!hasAdjustedPValues}
+                  onChange={(event) =>
+                    updateVizConfig({ useAdjustedPValue: event.target.checked })
+                  }
+                />
+              }
+              label="Use adjusted p-value"
+            />
             <div>
               <i>
-                Threshold uses raw p-value. Adjusted p-value shown in tooltips.
+                {hasAdjustedPValues
+                  ? 'The plot always shows the unadjusted p-value. For technical reasons, no horizontal threshold line can be drawn when the threshold applies to the adjusted p-value, but points will still be highlighted and genes will still be filtered by it.'
+                  : 'This analysis has no adjusted p-values, so the threshold uses the unadjusted p-value.'}
               </i>
             </div>
           </div>

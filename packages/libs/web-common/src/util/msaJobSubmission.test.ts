@@ -143,6 +143,26 @@ describe('submitClustalMsaJob', () => {
     expect(navigatedUrl).toContain('sequenceCount=1');
   });
 
+  it("passes the caller's run-time estimate to the result page", async () => {
+    const fakeTab = makeFakeTab();
+    const api = makeFakeApi({ jobID: 'abc123' });
+
+    await submitClustalMsaJob({
+      api,
+      sequenceType: 'dnaseq',
+      features: [{ contig: 'x', start: 0, end: 10 }],
+      msaFormat: 'clustal',
+      resultRouteBase: '/app/workspace/msa',
+      paramsSummary: '1 Strain Segment',
+      resultTab: fakeTab as unknown as Window,
+      estimatedSeconds: 261.4,
+    });
+
+    expect(fakeTab.location.replace.mock.calls[0][0]).toContain(
+      'estimatedSeconds=261.4'
+    );
+  });
+
   it('closes the passed-in tab and rethrows if submitJob rejects', async () => {
     const fakeTab = makeFakeTab();
     const api = {

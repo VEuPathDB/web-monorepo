@@ -1,4 +1,5 @@
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { selectDatasetSearches } from './DatasetManagement';
 
 // DatasetManagement transitively imports the Sharing components, which pull
 // in @veupathdb/wdk-client/lib/Components (a barrel that includes
@@ -7,7 +8,6 @@ import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 // barrel out; selectDatasetSearches is a pure function and needs no UI.
 jest.mock('@veupathdb/wdk-client/lib/Components', () => ({}));
 
-import { selectDatasetSearches } from './DatasetManagement';
 
 function makeQuestion(fullName: string, userDatasetType?: string): Question {
   return {

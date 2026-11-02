@@ -136,6 +136,13 @@ export const datasetMetadata = io.intersection([
         version: io.string,
       })
     ),
+    metadataContentFlags: io.partial({
+      hasDatasetCharacteristics: io.union([io.null, io.boolean]),
+      hasDatasetSources: io.union([io.null, io.boolean]),
+      hasDataDisclaimer: io.union([io.null, io.boolean]),
+      hasPublications: io.union([io.null, io.boolean]),
+      hasOrganismData: io.union([io.null, io.boolean]),
+    }),
   }),
 ]);
 export type DatasetMetadata = io.TypeOf<typeof datasetMetadata>;

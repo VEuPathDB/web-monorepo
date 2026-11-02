@@ -9,7 +9,7 @@ interface Props {
 
 // The result page opens in a new browser tab (window.open at submit time),
 // which has no access to the submitting tab's React Router location.state —
-// so paramsSummary/format/sequenceCount travel as query params instead.
+// so paramsSummary/format/sequenceCount/estimatedSeconds travel as query params instead.
 export function ComputeJobRouter({ api }: Props) {
   const { path } = useRouteMatch();
   const location = useLocation();
@@ -19,6 +19,9 @@ export function ComputeJobRouter({ api }: Props) {
   const sequenceCountParam = searchParams.get('sequenceCount');
   const sequenceCount =
     sequenceCountParam == null ? undefined : Number(sequenceCountParam);
+  const estimatedSecondsParam = searchParams.get('estimatedSeconds');
+  const estimatedSeconds =
+    estimatedSecondsParam == null ? undefined : Number(estimatedSecondsParam);
 
   return (
     <Switch>
@@ -32,6 +35,7 @@ export function ComputeJobRouter({ api }: Props) {
             paramsSummary={paramsSummary}
             format={format}
             sequenceCount={sequenceCount}
+            estimatedSeconds={estimatedSeconds}
           />
         )}
       />

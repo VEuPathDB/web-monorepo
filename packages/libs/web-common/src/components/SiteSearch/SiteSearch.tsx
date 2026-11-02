@@ -1329,6 +1329,22 @@ function resultDetails(
     };
   }
 
+  // user datasets
+  if (documentType.id === 'userdataset') {
+    const [datasetId] = document.primaryKey;
+    return {
+      display: {
+        route: `/record/userdataset/${datasetId}`,
+        text: (
+          <HtmlString
+            value={document.hyperlinkName || document.primaryKey.join(' - ')}
+          />
+        ),
+      },
+      summary: makeGenericSummary(document, documentType),
+    };
+  }
+
   // mapveu
   if (documentType.id === 'popbio-sample') {
     // although it's named project_ids plural, the data has since been recurated so

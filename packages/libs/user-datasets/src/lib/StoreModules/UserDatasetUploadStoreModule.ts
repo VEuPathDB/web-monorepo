@@ -11,24 +11,45 @@ import {
 import { UserDatasetUpload } from '../Utils/types';
 import {
   PartialDatasetDetails,
-  DatasetUploads,
   ValidationErrors,
 } from '../Service';
 import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
 import { defaultDatasetDetails } from '../Service/Model/constructors';
+import { UploadContent } from '../Service/Model';
 
 export const key = 'userDatasetUpload';
 
 export interface DatasetFormState {
   readonly datasetDetails: PartialDatasetDetails;
-  readonly fileUploads: DatasetUploads;
+
+  readonly dataFileUrl?: string;
+
+  /**
+   * Index of data files that the user has selected keyed on the field name that
+   * represents the file selection input.
+   */
+  readonly dataFileSelections: Readonly<Record<string, ReadonlyArray<UploadContent>>>;
+
+  /**
+   * Index of documentation files that the user has selected keyed on the field
+   * name that represents the file selection input.
+   */
+  readonly documentFileSelections: Readonly<Record<string, ReadonlyArray<UploadContent>>>;
+
+  /**
+   * Index of data properties files that the user has selected keyed on the
+   * field name that represents the file selection input.
+   */
+  readonly dataPropertiesFileSelections: Readonly<Record<string, ReadonlyArray<UploadContent>>>;
 }
 
 export const DefaultDatasetFormState: DatasetFormState = {
   datasetDetails: defaultDatasetDetails(),
-  fileUploads: {},
+  dataFileSelections: {},
+  documentFileSelections: {},
+  dataPropertiesFileSelections: {},
 };
 
 export function useDatasetFormState(): DatasetFormState {

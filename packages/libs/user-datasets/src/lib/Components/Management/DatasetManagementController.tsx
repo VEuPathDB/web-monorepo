@@ -26,7 +26,7 @@ import {
 } from '../../Actions/UserDatasetsActions';
 
 import { StateSlice } from '../../StoreModules/types';
-import { DataNoun } from '../../Utils/types';
+import { DataNoun } from '../../Utils';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   DatasetFormConfigurators,

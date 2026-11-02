@@ -1,7 +1,8 @@
 import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import PopoverButton from '../../buttons/PopoverButton/PopoverButton';
 import CheckboxTree, {
-  CheckboxTreeProps, CheckboxTreeStyleSpec,
+  CheckboxTreeProps,
+  CheckboxTreeStyleSpec,
   LinksPosition,
 } from '../checkboxes/CheckboxTree/CheckboxTree';
 import { PartialButtonStyleSpec } from '../../buttons';
@@ -43,11 +44,6 @@ export interface SelectTreeStyleSpec extends CheckboxTreeStyleSpec {
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
-  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
-    props.currentList && props.currentList.length
-      ? props.currentList.join(', ')
-      : props.buttonDisplayContent
-  );
   const {
     selectedList,
     onSelectionChange,
@@ -58,6 +54,17 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
     deferPopoverClosing = false,
     styleOverrides,
   } = props;
+
+  // A selection that is already there on mount (e.g. restored after a page
+  // reload) has to show on the button too, not only after the popover closes.
+  const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
+    () =>
+      selectedList?.length
+        ? truncatedButtonContent(selectedList)
+        : props.currentList && props.currentList.length
+        ? props.currentList.join(', ')
+        : props.buttonDisplayContent
+  );
 
   // This local state is updated whenever a checkbox is clicked in the species tree.
   // When `instantUpdate` is false, pass the final value to `onSelectionChange` when the popover closes.
@@ -80,21 +87,18 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
   }, [onSelectionChange, localSelectedList]);
 
   function truncatedButtonContent(selectedList: string[]) {
-    const styling: CSSProperties = (styleOverrides?.truncateSelection ?? true)
-      ? {
-        // this styling is copied from SelectList!
-        maxWidth: styleOverrides?.truncateSelectionWidth ?? '300px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      }
-      : {};
+    const styling: CSSProperties =
+      styleOverrides?.truncateSelection ?? true
+        ? {
+            // this styling is copied from SelectList!
+            maxWidth: styleOverrides?.truncateSelectionWidth ?? '300px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }
+        : {};
 
-    return (
-      <span style={styling}>
-        {selectedList.join(', ')}
-      </span>
-    );
+    return <span style={styling}>{selectedList.join(', ')}</span>;
   }
 
   const onClose = () => {

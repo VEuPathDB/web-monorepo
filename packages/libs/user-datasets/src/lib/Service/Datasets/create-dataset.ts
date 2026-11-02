@@ -1,7 +1,7 @@
 import {
   PartialDatasetDetails,
   DatasetPostResponseBody,
-  DatasetUploads,
+  DatasetUploads, UploadContent
 } from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
 import { BadUpload } from '../../StoreModules';
@@ -53,7 +53,7 @@ export async function submitNewDataset({
 }
 
 function appendFiles(
-  fileList: Iterable<File> | undefined,
+  fileList: Iterable<UploadContent> | undefined,
   converter: Function<File, DatasetUpload>,
   combinedUploads: DatasetUpload[]
 ) {
@@ -62,7 +62,7 @@ function appendFiles(
   }
 
   for (const file of fileList) {
-    combinedUploads.push(converter(sanitizeFileName(file)));
+    combinedUploads.push(converter(sanitizeFileName(file.toFile())));
   }
 }
 

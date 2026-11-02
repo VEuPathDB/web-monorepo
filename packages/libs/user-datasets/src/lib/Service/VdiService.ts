@@ -43,6 +43,13 @@ import {
 } from './Model';
 
 import {
+  VDI_MULTIPART_DATA_FILE,
+  VDI_MULTIPART_DATA_PROP_FILE,
+  VDI_MULTIPART_DOC_FILE,
+  VDI_MULTIPART_URL
+ } from './Model/request-types';
+
+import {
   ccValidationErrorBody,
   datasetFileListing,
   datasetGetResponseBody,
@@ -65,13 +72,13 @@ import {
 } from './utils/async-xhr';
 
 export type DatasetUploadFileType =
-  | 'dataFile'
-  | 'docFile'
-  | 'dataPropertiesFile';
+  | typeof VDI_MULTIPART_DATA_FILE
+  | typeof VDI_MULTIPART_DOC_FILE
+  | typeof VDI_MULTIPART_DATA_PROP_FILE;
 
 export type DatasetUpload =
   | { type: DatasetUploadFileType; file: File }
-  | { type: 'url'; url: string };
+  | { type: typeof VDI_MULTIPART_URL; url: string };
 
 export class VdiService extends FetchClientWithCredentials {
   get vdiServiceUrl(): string {
@@ -479,10 +486,10 @@ export class VdiService extends FetchClientWithCredentials {
           content: details,
         },
         ...uploads.map((u): MultipartField => {
-          return u.type === 'url'
+          return u.type === VDI_MULTIPART_URL
             ? {
-                type: 'url',
-                fieldName: 'url',
+                type: VDI_MULTIPART_URL,
+                fieldName: VDI_MULTIPART_URL,
                 content: u.url,
               }
             : {

@@ -9,6 +9,7 @@ import {
   ioTransformer,
 } from '@veupathdb/http-utils';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
+import { RecentSearchesMenu } from '@veupathdb/coreui/lib/components/inputs/RecentSearchesMenu';
 
 // region Keyboard
 
@@ -59,7 +60,7 @@ const kbIsTab = (e: React.KeyboardEvent<any>) =>
  * `false`.
  */
 const kbIsSpace = (e: React.KeyboardEvent<any>) =>
-  e.key === ' ' || e.key === "Spacebar" || e.keyCode === 32;
+  e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32;
 
 /**
  * Tests whether the keyboard event was for an "ArrowRight" key press.
@@ -116,7 +117,6 @@ const kbIsEnter = (e: React.KeyboardEvent<any>) =>
 const kbIsEscape = (e: React.KeyboardEvent<any>) =>
   e.key === 'Escape' || e.keyCode === 27;
 // endregion Keyboard
-
 
 // region Strings
 
@@ -318,16 +318,16 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
         }
       }
 
-        // If the event was anything other than a <Shift>+<Tab> and had one or
+      // If the event was anything other than a <Shift>+<Tab> and had one or
       // more modifier keys pressed, then we will disregard it.
       else {
         return;
       }
     }
 
-      // If the event was a <Space> or <ArrowRight> key press then select the hint
-      // that was the source of the event.  Additionally, prevent the default
-      // behavior of the action as otherwise we will create an extra space
+    // If the event was a <Space> or <ArrowRight> key press then select the hint
+    // that was the source of the event.  Additionally, prevent the default
+    // behavior of the action as otherwise we will create an extra space
     // character in the user input field or scroll the page to the right.
     else if (kbIsSpace(e) || kbIsArrowRight(e)) {
       e.preventDefault();
@@ -335,20 +335,20 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       selectHint();
     }
 
-      // If the event was an <Enter> key press, then select the hint that was the
-      // source of the event.  We DO NOT prevent the default behavior here as the
-      // <Enter> key-up will cause the SiteSearch form to be submitted which is
+    // If the event was an <Enter> key press, then select the hint that was the
+    // source of the event.  We DO NOT prevent the default behavior here as the
+    // <Enter> key-up will cause the SiteSearch form to be submitted which is
     // the desired behavior.
     else if (kbIsEnter(e)) {
       selectHint();
     }
 
-      // If the event was an <ArrowUp> key press, then attempt to shift the focus
-      // to the element above the event source element.  If the event source
-      // element was the first suggestion item in the list, then the focus should
-      // be returned to the user input.
-      //
-      // Additionally, prevent the default behavior here as the up arrow will
+    // If the event was an <ArrowUp> key press, then attempt to shift the focus
+    // to the element above the event source element.  If the event source
+    // element was the first suggestion item in the list, then the focus should
+    // be returned to the user input.
+    //
+    // Additionally, prevent the default behavior here as the up arrow will
     // attempt to scroll the view up.
     else if (kbIsArrowUp(e)) {
       e.preventDefault();
@@ -362,13 +362,13 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       }
     }
 
-      // If the event was an <ArrowDown> or <Tab> key press, then attempt to shift
-      // the focus to the element below the event source element.  If the event
-      // source element was the last suggestion item in the list, then the focus
-      // should be returned to the top of the suggestion list.
-      //
-      // Additionally, prevent the default behavior here as the down arrow will
-      // attempt to scroll the view down, and the tab key will shift focus to
+    // If the event was an <ArrowDown> or <Tab> key press, then attempt to shift
+    // the focus to the element below the event source element.  If the event
+    // source element was the last suggestion item in the list, then the focus
+    // should be returned to the top of the suggestion list.
+    //
+    // Additionally, prevent the default behavior here as the down arrow will
+    // attempt to scroll the view down, and the tab key will shift focus to
     // whatever the next focus-able element on the page is.
     else if (kbIsArrowDown(e) || kbIsTab(e)) {
       e.preventDefault();
@@ -402,10 +402,10 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       return;
     }
 
-      // If the event is an <ArrowDown> key press, attempt to focus the first
-      // suggestion (if such a suggestion exists).
-      //
-      // Additionally, prevent the default behavior of the event as it will
+    // If the event is an <ArrowDown> key press, attempt to focus the first
+    // suggestion (if such a suggestion exists).
+    //
+    // Additionally, prevent the default behavior of the event as it will
     // attempt to scroll the view down.
     else if (kbIsArrowDown(e)) {
       e.preventDefault();
@@ -413,10 +413,10 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       (ulReference.current?.firstElementChild as HTMLLIElement | null)?.focus();
     }
 
-      // If the event is an <ArrowUp> key press, attempt to focus the last
-      // suggestion (if such a suggestion exists).
-      //
-      // Additionally, prevent the default behavior of the event as it will
+    // If the event is an <ArrowUp> key press, attempt to focus the last
+    // suggestion (if such a suggestion exists).
+    //
+    // Additionally, prevent the default behavior of the event as it will
     // attempt to scroll the view up.
     else if (kbIsArrowUp(e)) {
       e.preventDefault();
@@ -475,40 +475,14 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     </li>
   ));
 
-  const historyMenu = props.recentSearches.length
-    ? [
-      <li className="type-ahead-hint">
-        <strong>Your recent searches</strong>
-      </li>,
-      ...props.recentSearches.map((recentSearch) => (
-        <li
-          key={recentSearch}
-          className="type-ahead-hint"
-          tabIndex={0}
-          onClick={() => selectRecentSearch(recentSearch)}
-          onKeyDown={(e) => {
-            if (kbIsEnter(e)) {
-              selectRecentSearch(recentSearch);
-            }
-          }}
-        >
-          {recentSearch}
-        </li>
-      )),
-      <li
-        className="type-ahead-hint link"
-        tabIndex={0}
-        onClick={props.onClearRecentSearches}
-        onKeyDown={(e) => {
-          if (kbIsEnter(e)) {
-            props.onClearRecentSearches();
-          }
-        }}
-      >
-        Clear search history
-      </li>,
-    ]
-    : null;
+  const historyMenu = (
+    <RecentSearchesMenu
+      recentSearches={props.recentSearches}
+      onSelect={selectRecentSearch}
+      onClear={props.onClearRecentSearches}
+      itemClassName="type-ahead-hint"
+    />
+  );
 
   useEffect(() => {
     const clickHandler = (e: MouseEvent) => {

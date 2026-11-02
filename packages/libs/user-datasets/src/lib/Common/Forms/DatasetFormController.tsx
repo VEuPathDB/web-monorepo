@@ -22,7 +22,7 @@ import {
 import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
 import { DatasetMetadata } from '../../Service/Model';
-import { DataNoun, Nullable, useSimpleState } from '../../Utils';
+import { DataNoun, ifDefined, Nullable, useSimpleState } from '../../Utils';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { MetadataImportModalController } from './Components/Modals/MetaImportModal';
 
@@ -95,7 +95,7 @@ export function DatasetFormController<
 
         dispatch(
           updateFormState({
-            fileUploads: formState.fileUploads,
+            ...formState,
             datasetDetails: applyMetadata(formState.datasetDetails, res),
           })
         );
@@ -181,6 +181,13 @@ function applyMetadata(
   setMetadata(out, 'funding', rawMeta.funding);
   setMetadata(out, 'dataDisclaimer', rawMeta.dataDisclaimer);
   setMetadata(out, 'datasetSources', rawMeta.datasetSources);
+  setMetadata(out, 'metadataContentFlags', ifDefined(rawMeta.metadataContentFlags, it => ({
+    hasDatasetCharacteristics: it.hasDatasetCharacteristics ?? undefined,
+    hasDatasetSources: it.hasDatasetSources ?? undefined,
+    hasDataDisclaimer: it.hasDataDisclaimer ?? undefined,
+    hasOrganismData: it.hasOrganismData ?? undefined,
+    hasPublications: it.hasPublications ?? undefined,
+  })));
 
   return out as PartialDatasetDetails;
 }

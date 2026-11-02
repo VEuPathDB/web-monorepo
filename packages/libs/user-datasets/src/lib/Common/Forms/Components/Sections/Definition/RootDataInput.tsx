@@ -1,26 +1,20 @@
 import React, { ReactElement, useState } from 'react';
-import {
-  DisabledFileUploadConfig,
-  DisabledUrlUploadConfig,
-  EnabledFileUploadConfig,
-  EnabledUrlUploadConfig,
-  FileUploadConfig,
-  UrlUploadConfig,
-} from '../../../../Configuration/UploadFormConfig';
-import { Consumer, JsonPathBuilder, Nullable } from '../../../../../Utils';
+import { FileUploadConfig, UrlUploadConfig } from '../../../../Configuration/UploadFormConfig';
+import { Consumer, JsonPathBuilder, Possible } from '../../../../../Utils';
 import { RadioList } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { formatFileSize } from '../../../../../Utils/formatting';
-import { DataFileInput } from './DataFileInput';
+import { DataFileInputList } from './DataFileInput';
 import { VdiServiceMetadata } from '../../../../../Service';
+import { UploadContentMap } from '../../../../../Service/Model/utility-types';
 
 // region Root Dataset Data Input Component
 
 export interface RootDataInputProps {
   readonly vdiConfig: VdiServiceMetadata;
   readonly dataType: DatasetTypeConfig;
-  readonly fileUpload: OptionalFileUploadProps;
-  readonly urlUpload: OptionalUrlUploadProps;
+  readonly fileUpload?: FileUploadProps;
+  readonly urlUpload?: UrlUploadProps;
   readonly pathBuilder: JsonPathBuilder;
   readonly helpText?: () => ReactElement;
 }
@@ -85,15 +79,12 @@ function buildUploadInputs(
 
   const inputs: Array<[UploadType, ReactElement]> = [];
 
-  const count = (fileUpload.enabled ? 1 : 0) + (urlUpload.enabled ? 1 : 0);
-
   const fieldProps: UploadFieldProps = {
-    required: count === 1,
     dataType: props.dataType,
     pathBuilder: props.pathBuilder,
   };
 
-  if (fileUpload.enabled)
+  if (fileUpload !== undefined)
     inputs.push([
       'file',
       fileInput({
@@ -102,7 +93,7 @@ function buildUploadInputs(
       }),
     ]);
 
-  if (urlUpload.enabled)
+  if (urlUpload !== undefined)
     inputs.push([
       'url',
       urlInput({
@@ -119,67 +110,46 @@ function buildUploadInputs(
 interface UploadFieldProps {
   readonly pathBuilder: JsonPathBuilder;
 
-  /**
-   * Whether the target upload field is required.
-   *
-   * This value is typically set by the `RootDataInput` type, but may be
-   * provided an override value if necessary.
-   */
-  readonly required: boolean;
-
   readonly dataType: DatasetTypeConfig;
 }
 
 // region File Input Sub-Component
 
 interface FileUploadState {
-  readonly files: Nullable<readonly File[]>;
-  readonly setFiles: Consumer<Nullable<readonly File[]>>;
+  readonly files: Possible<UploadContentMap>;
+  readonly setFiles: Consumer<UploadContentMap>;
   readonly vdiConfig: VdiServiceMetadata;
 }
 
-type IncompleteFileUploadProps = FileUploadConfig & FileUploadState;
-type FileUploadProps = UploadFieldProps & IncompleteFileUploadProps;
-
-export type EnabledFileUploadProps = EnabledFileUploadConfig &
-  IncompleteFileUploadProps;
-export type DisabledFileUploadProps = DisabledFileUploadConfig &
-  Partial<IncompleteFileUploadProps>;
-
-export type OptionalFileUploadProps =
-  | EnabledFileUploadProps
-  | DisabledFileUploadProps;
+export type FileUploadProps = UploadFieldProps & FileUploadConfig & FileUploadState;
 
 function fileInput(props: FileUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('dataFile');
-  const className = props.required ? 'required' : undefined;
+
   const baseField = (
-    <DataFileInput
-      fieldName={fieldName}
+    <DataFileInputList
       dataType={props.dataType}
-      required={props.required && !props.files}
-      setFile={props.setFiles}
-      currentFile={props.files?.[0] ?? null}
       vdiFeatures={props.vdiConfig.features}
+      inputConfigs={props.fileInputs ?? []}
+      files={props.files}
+      setFiles={props.setFiles}
+      fieldName={fieldName}
     />
   );
 
   const helpText = (
     <div className="column-2 file-input-help">
-      <i>
-        {props.helpText ??
-          'Uncompressed file cannot be greater than ' +
-            formatFileSize(props.dataType.vdiConfig.maxFileSize) +
-            '.'}
-      </i>
+      <i>{
+        props.helpText !== undefined
+          ? props.helpText
+          : 'Uncompressed file cannot be greater than ' +
+            formatFileSize(props.dataType.vdiConfig.maxFileSize) + '.'
+      }</i>
     </div>
   );
 
   return (
     <>
-      <label className={className} htmlFor={fieldName}>
-        Data File
-      </label>
       {props.renderOverride ? props.renderOverride(baseField) : baseField}
       {helpText}
     </>
@@ -193,17 +163,12 @@ function fileInput(props: FileUploadProps): ReactElement {
 interface UrlUploadState {
   readonly url: string;
   readonly setUrl: Consumer<string>;
+  readonly required: boolean;
 }
 
-export type IncompleteUrlUploadProps = UrlUploadConfig & UrlUploadState;
-
-export type UrlUploadProps = EnabledUrlUploadConfig &
+export type UrlUploadProps = UrlUploadConfig &
   UrlUploadState &
   UploadFieldProps;
-
-export type OptionalUrlUploadProps =
-  | (EnabledUrlUploadConfig & IncompleteUrlUploadProps)
-  | (DisabledUrlUploadConfig & Partial<IncompleteUrlUploadProps>);
 
 function urlInput(props: UrlUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('url');

@@ -231,7 +231,7 @@ function StatusRowWithPolling({
     status,
     projectId,
     onPoll: async () => {
-      await loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+      loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
     },
   });
 
@@ -375,7 +375,7 @@ class DatasetManagement<
   }
 
   getAttributes(): DatasetAttribute[] {
-    const { userDataset, isOwner, questionMap, dataNoun, config } = this.props;
+    const { userDataset, isOwner, questionMap, dataNoun } = this.props;
     const isInstalled = this.isInstalled();
     // questionMap comes from globalData, which is loaded once per page and
     // so cannot contain a dataset installed during this session; see

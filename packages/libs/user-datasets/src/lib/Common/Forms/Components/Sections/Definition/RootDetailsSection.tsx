@@ -1,28 +1,20 @@
 import React, { ReactElement, useCallback } from 'react';
 
-import {
-  OptionalFileUploadProps,
-  OptionalUrlUploadProps,
-  RootDataInput,
-} from './RootDataInput';
+import { FileUploadProps, RootDataInput, UrlUploadProps } from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { InputPair, UploadButton } from '../../index';
-import { TextAreaInput } from '../../TextAreaInput';
-import { Consumer, JsonPathBuilder } from '../../../../../Utils';
-import { PartialDatasetDetails, DatasetUploads } from '../../../../../Service';
+import { Consumer, JsonPathBuilder, Possible } from '../../../../../Utils';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { useDatasetFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { DatasetFormState, useDatasetFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions';
 import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
-import { DualFileInput } from './DualFileInput';
-import {
-  utf8ByteLength,
-  SAMPLE_INFO_MAX_BYTES,
-} from '../../../../../Service/utils/rnaseq-rc-data-files';
+import { UploadContentMap } from '../../../../../Service/Model/utility-types';
+import { SamplesDescriptionInput } from './SamplesDescriptionInput';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -71,25 +63,50 @@ export function RootDetailsSection(
   } = props;
 
   const dispatch = useDispatch();
-  const { datasetDetails, fileUploads } = useDatasetFormState();
+  const formState = useDatasetFormState();
+  const { datasetDetails } = formState;
 
   const nameKey = jsonPath.appendToString<PartialDatasetDetails>('name');
   const summaryKey = jsonPath.appendToString<PartialDatasetDetails>('summary');
 
   const setMetadata = useCallback(
     (datasetDetails: PartialDatasetDetails) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads })),
-    [dispatch, fileUploads]
+      dispatch(updateFormState({ ...formState, datasetDetails })),
+    [dispatch, formState]
   );
 
-  const setUploads = useCallback(
-    (fileUploads: DatasetUploads) =>
-      dispatch(updateFormState({ datasetDetails, fileUploads })),
-    [dispatch, datasetDetails]
+  const setDataUploads = useCallback(
+    (fileUploads: UploadContentMap) =>
+      dispatch(updateFormState({ ...formState, dataFileSelections: fileUploads })),
+    [dispatch, formState]
   );
 
-  const fileUpload = buildFileProps(props.formProps, fileUploads, setUploads);
-  const urlUpload = buildUrlProps(props.formProps, fileUploads, setUploads);
+  const showDataPropsInput = formConfig.dataType.vdiConfig.usesDataProperties &&
+    formConfig.verbiage.formInputs?.datasetProperties;
+
+  const setDocUploads = useCallback(
+    (fileUploads: UploadContentMap) =>
+      dispatch(updateFormState({ ...formState, documentFileSelections: fileUploads })),
+    [dispatch, formState]
+  );
+
+  const docFieldName = showDataPropsInput
+    ? props.contentJsonPath.appendToString('dataPropertiesFile')
+    : undefined;
+
+  const setUrlUpload = useCallback(
+    (url: Possible<string>) => dispatch({ ...formState, dataFileUrl: url }),
+    [dispatch, formState],
+  );
+
+  const fileUpload = buildFileProps(
+    props.formProps,
+    props.contentJsonPath,
+    formState,
+    setDataUploads,
+  );
+
+  const urlUpload = buildUrlProps(props.formProps, props.contentJsonPath, formState.dataFileUrl, setUrlUpload);
 
   const referenceGenome = formConfig.dependencies ? (
     <DatasetDependencies
@@ -98,11 +115,6 @@ export function RootDetailsSection(
       setDatasetDetails={setMetadata}
     />
   ) : null;
-
-  const slots = formConfig.dataInputConfig.file?.enabled
-    ? formConfig.dataInputConfig.file.slots
-    : undefined;
-  const useSlottedInputs = (slots?.length ?? 0) > 1;
 
   return (
     <section id="define-dataset">
@@ -131,49 +143,12 @@ export function RootDetailsSection(
 
         {formConfig.verbiage.formInputs?.samplesDescription &&
           props.showDataInputs && (
-            <>
-              <TextAreaInput
-                label={formConfig.verbiage.formInputs.samplesDescription.label}
-                fieldName="samplesDescription"
-                value={datasetDetails.samplesDescription}
-                onChange={(v) =>
-                  setMetadata({ ...datasetDetails, samplesDescription: v })
-                }
-                required={props.showDataInputs}
-                rows={15}
-                placeholder="Describe your samples here using free text or a table. For example, you can provide the relevant Methods section from the associated paper or sample metadata from supplementary files.
-
-If the sample names in your count file headers already describe the samples (e.g. 'male_3h_rep1'), you don't need to repeat that here - though details such as time-series reference points or treatment specifics are still worth adding. But if those sample names are codes or numbers (e.g. 'S001'), each one must appear somewhere in this description, with its meaning explained.
-
-State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
-
-*This text is submitted to the VEuPathDB AI Metadata Analyzer*, which uses it to describe your samples so you can compare groups (for example, treated vs. control) in your analysis."
-                helpText={
-                  typeof formConfig.verbiage.formInputs.samplesDescription
-                    .helpText === 'function'
-                    ? formConfig.verbiage.formInputs.samplesDescription.helpText()
-                    : formConfig.verbiage.formInputs.samplesDescription.helpText
-                }
-              />
-
-              <div className="column-2" style={{ textAlign: 'right' }}>
-                <span
-                  style={{
-                    fontSize: '0.9em',
-                    color:
-                      utf8ByteLength(datasetDetails.samplesDescription ?? '') >
-                      SAMPLE_INFO_MAX_BYTES
-                        ? 'red'
-                        : '#666',
-                  }}
-                >
-                  {utf8ByteLength(
-                    datasetDetails.samplesDescription ?? ''
-                  ).toLocaleString()}{' '}
-                  / {SAMPLE_INFO_MAX_BYTES.toLocaleString()} bytes
-                </span>
-              </div>
-            </>
+            <SamplesDescriptionInput
+              formProps={props}
+              formConfig={formConfig}
+              dataUploads={formState.dataFileSelections}
+              setDataUploads={setDataUploads}
+            />
           )}
 
         {referenceGenome}
@@ -186,32 +161,7 @@ State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
           />
         )}
 
-        {props.showDataInputs && useSlottedInputs && (
-          <>
-            <DualFileInput
-              pathBuilder={props.contentJsonPath}
-              dataType={formConfig.dataType}
-              vdiFeatures={formProps.vdiConfig.features}
-              slots={slots!}
-              files={fileUploads.dataFiles ?? []}
-              setFiles={(files) =>
-                setUploads({ ...fileUploads, dataFiles: files })
-              }
-              accept={
-                formConfig.dataInputConfig.file?.enabled
-                  ? formConfig.dataInputConfig.file.accept
-                  : undefined
-              }
-            />
-            {typeof formConfig.dataInputConfig.helpText === 'function' && (
-              <div className="column-2">
-                {formConfig.dataInputConfig.helpText()}
-              </div>
-            )}
-          </>
-        )}
-
-        {props.showDataInputs && !useSlottedInputs && (
+        {props.showDataInputs && (
           <RootDataInput
             pathBuilder={props.contentJsonPath}
             dataType={formConfig.dataType}
@@ -222,18 +172,16 @@ State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
           />
         )}
 
-        {formConfig.dataType.vdiConfig.usesDataProperties &&
-          formConfig.verbiage.formInputs?.datasetProperties && (
+        {showDataPropsInput && (
             <DatasetPropertiesInput
               label={formConfig.verbiage.formInputs.datasetProperties.label}
-              fieldName="dataPropertiesFile"
+              fieldName={docFieldName!}
               allowedExtensions={['.txt', '.csv', '.tsv']}
-              setFiles={(files) =>
-                setUploads({
-                  ...fileUploads,
-                  dataPropertiesFiles: files ?? undefined,
-                })
-              }
+              files={formState.documentFileSelections[docFieldName!]}
+              setFiles={files => setDocUploads({
+                ...formState.documentFileSelections,
+                [docFieldName!]: files ?? [],
+              })}
               required={props.requireDatasetPropertiesFile}
               helpText={
                 formConfig.verbiage.formInputs.datasetProperties.helpText
@@ -254,42 +202,44 @@ State the units for any numbers you mention (e.g. 'age: 5 days', not 'age: 5').
 }
 
 function buildFileProps(
-  { formConfig: { dataInputConfig }, vdiConfig }: DatasetFormProps,
-  uploads: DatasetUploads,
-  setUploads: Consumer<DatasetUploads>
-): OptionalFileUploadProps {
-  if (dataInputConfig.file?.enabled !== true) return { enabled: false };
+  { formConfig: { dataInputConfig, dataType }, vdiConfig }: DatasetFormProps,
+  jsonPath: JsonPathBuilder,
+  formState: DatasetFormState,
+  setUploads: Consumer<UploadContentMap>
+): Possible<FileUploadProps> {
+  if (dataInputConfig.byFile == null)
+    return undefined;
 
   return {
-    ...dataInputConfig.file,
+    ...dataInputConfig.byFile ?? {},
     vdiConfig,
-    // TODO: add support multiple data files in a single upload.
-    files: isEmpty(uploads.dataFiles) ? null : uploads.dataFiles!,
-    setFiles: (value) =>
-      setUploads({
-        ...uploads,
-        dataFiles: value ?? undefined,
-      }),
+    dataType,
+    pathBuilder: jsonPath,
+    files: isEmpty(formState.dataFileSelections) ? undefined : formState.dataFileSelections!,
+    setFiles: (dataFiles) => setUploads({ ...formState.dataFileSelections, ...(dataFiles ?? {}) }),
   };
 }
 
 function buildUrlProps(
   {
     formConfig: {
-      dataInputConfig: { url },
+      dataInputConfig: { byUrl, byFile },
+      dataType,
     },
   }: DatasetFormProps,
-  uploads: DatasetUploads,
-  setUploads: Consumer<DatasetUploads>
-): OptionalUrlUploadProps {
-  if (url?.enabled !== true) return { enabled: false };
+  jsonPath: JsonPathBuilder,
+  dataFileUrl: Possible<string>,
+  setUploads: Consumer<Possible<string>>
+): Possible<UrlUploadProps> {
+  if (byUrl == null)
+    return undefined;
 
   return {
-    ...url,
-    url: uploads.url ?? '',
-    setUrl: (url) =>
-      isEmpty(url)
-        ? setUploads({ ...uploads, url: undefined })
-        : setUploads({ ...uploads, url }),
+    ...byUrl,
+    dataType,
+    pathBuilder: jsonPath,
+    url: dataFileUrl ?? '',
+    required: byFile == null,
+    setUrl: (url) => isEmpty(url) ? setUploads(undefined) : setUploads(url),
   };
 }

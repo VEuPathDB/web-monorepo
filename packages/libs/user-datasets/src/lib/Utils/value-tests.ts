@@ -1,7 +1,6 @@
 import lodash from 'lodash';
 import { Optional } from './types';
 
-// export function isNonEmpty<T extends object>(value: Optional<T>): value is T;
 export function isNonEmpty<T extends string | Array<any> | object>(
   value: any
 ): value is T {
@@ -14,4 +13,15 @@ export function isNonEmptyString(value: Optional<any>): value is string {
 
 export function isNonBlankString(value: Optional<any>): value is string {
   return typeof value === 'string' && value.trim().length > 0;
+}
+
+export function filterNullish<T>(values: Readonly<Array<Optional<T>>>): Array<T> {
+  const out: Array<T> = [];
+
+  for (const value of values) {
+    if (value !== null && value !== undefined)
+      out.push(value);
+  }
+
+  return out;
 }

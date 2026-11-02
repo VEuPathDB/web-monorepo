@@ -6,7 +6,7 @@ import './UserDatasetSharingModal.scss';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { DatasetGetResponseBody, DatasetListEntry } from '../../Service';
 import { updateDatasetCommunityVisibility } from '../../Actions/UserDatasetsActions';
-import { DataNoun } from '../../Utils/types';
+import { DataNoun } from '../../Utils';
 import { CommunityPromotionError } from './CommunityPromotionError';
 import React, { ReactElement } from 'react';
 import { UpdateErrors } from './UpdateErrors';

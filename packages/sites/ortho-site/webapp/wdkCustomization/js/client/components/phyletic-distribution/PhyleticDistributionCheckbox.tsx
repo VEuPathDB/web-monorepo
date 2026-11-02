@@ -33,6 +33,13 @@ const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 interface Props {
   selectionConfig: SelectionConfig;
   speciesCounts: Record<string, number>;
+  /**
+   * Optional. Decides which organisms count as present, for "Hide absent
+   * organisms". Defaults to `speciesCounts`. Pass the unfiltered counts when
+   * `speciesCounts` follows a filter, so organisms that were filtered away
+   * stay listed with a count of 0.
+   */
+  presenceCounts?: Record<string, number>;
   taxonTree: TaxonTree;
   styleOverrides?: CheckboxTreeStyleSpec;
 }
@@ -52,12 +59,14 @@ type SelectionConfig =
 export function PhyleticDistributionCheckbox({
   selectionConfig,
   speciesCounts,
+  presenceCounts = speciesCounts,
   taxonTree,
   styleOverrides,
 }: Props) {
   const phyleticDistributionUiTree = useMemo(
-    () => makePhyleticDistributionUiTree(speciesCounts, taxonTree),
-    [speciesCounts, taxonTree]
+    () =>
+      makePhyleticDistributionUiTree(speciesCounts, presenceCounts, taxonTree),
+    [speciesCounts, presenceCounts, taxonTree]
   );
 
   const [expandedNodes, setExpandedNodes] = useState(() =>
@@ -117,7 +126,7 @@ export function PhyleticDistributionCheckbox({
             value={hideMissingSpecies}
             onChange={setHideMissingSpecies}
           />
-          &nbsp; Hide zero counts
+          &nbsp; Hide absent organisms
         </label>,
       ]}
       styleOverrides={styleOverrides}
@@ -127,6 +136,7 @@ export function PhyleticDistributionCheckbox({
 
 function makePhyleticDistributionUiTree(
   speciesCounts: Record<string, number>,
+  presenceCounts: Record<string, number>,
   taxonTree: TaxonTree
 ) {
   return mapStructure(
@@ -137,6 +147,12 @@ function makePhyleticDistributionUiTree(
         ? speciesCounts[node.abbrev] ?? 0
         : mappedChildren.reduce(
             (memo, { speciesCount }) => memo + speciesCount,
+            0
+          ),
+      presentCount: node.species
+        ? presenceCounts[node.abbrev] ?? 0
+        : mappedChildren.reduce(
+            (memo, { presentCount }) => memo + presentCount,
             0
           ),
     }),
@@ -151,7 +167,7 @@ function filterPhyleticDistributionUiTree(
 ) {
   return hideMissingSpecies
     ? pruneDescendantNodes(
-        (node) => node.speciesCount > 0,
+        (node) => node.presentCount > 0,
         phyleticDistributionUiTree
       )
     : phyleticDistributionUiTree;

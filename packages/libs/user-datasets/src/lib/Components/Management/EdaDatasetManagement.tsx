@@ -11,7 +11,7 @@ class EdaDatasetManagement extends DatasetManagement {
   }
 
   renderEdaLinkout() {
-    const { userDataset, config, fetchEdaStudyLinks } = this.props;
+    const { userDataset, fetchEdaStudyLinks } = this.props;
 
     const wdkDatasetId = diyUserDatasetIdToWdkRecordId(userDataset.datasetId);
     const { workspaceUrl, mapUrl } = fetchEdaStudyLinks(wdkDatasetId);

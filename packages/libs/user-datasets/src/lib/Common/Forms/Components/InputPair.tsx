@@ -5,12 +5,15 @@ import React, {
   ReactElement,
   ReactNode,
   RefAttributes,
-  RefObject,
+  RefObject
 } from 'react';
 import { FieldHelpText } from './FieldHelpText';
 
-interface BaseInputProps<T extends object = object> {
-  readonly label: string;
+interface BaseInputProps<
+  T extends object = object,
+  E extends HTMLElement = HTMLInputElement
+> {
+  readonly label: ReactNode;
 
   readonly fieldName: keyof T & string;
   readonly nameOverride?: string;
@@ -23,7 +26,7 @@ interface BaseInputProps<T extends object = object> {
   readonly helpText?: ReactNode;
   readonly disabled?: boolean;
   readonly required?: boolean;
-  readonly inputRef?: RefObject<HTMLInputElement>;
+  readonly inputRef?: RefObject<E>;
 
   /**
    * Whether the label should appear to the right of the input instead of the
@@ -39,6 +42,16 @@ interface TextProps<T extends object = object> extends BaseInputProps<T> {
   readonly minLength?: number;
   readonly maxLength?: number;
   readonly placeholder?: string;
+}
+
+interface TextAreaProps<T extends object = object> extends BaseInputProps<T, HTMLTextAreaElement> {
+  readonly type: 'textarea';
+  readonly onChange: Consumer<string>;
+  readonly value?: string;
+  readonly minLength?: number;
+  readonly maxLength?: number;
+  readonly placeholder?: string;
+  readonly rows?: number;
 }
 
 interface CheckboxProps<T extends object = object> extends BaseInputProps<T> {
@@ -65,36 +78,47 @@ interface NumberProps<T extends object = object> extends BaseInputProps<T> {
 
 export type InputPairProps<T extends object = object> =
   | TextProps<T>
+  | TextAreaProps<T>
   | CheckboxProps<T>
   | NumberProps<T>
   | RadioProps<T>;
+
+type InputType<E> = E extends BaseInputProps<any, infer T> ? T : never;
 
 enum ClassJoinType {
   Input,
   Label,
 }
 
-export function InputPair<T extends object = object>(
-  props: InputPairProps<T>
-): ReactElement {
+export function InputPair<T extends object>(props: InputPairProps<T>): React.ReactElement {
   const helpText = props.helpText ? (
     <FieldHelpText className={props.className}>{props.helpText}</FieldHelpText>
   ) : undefined;
 
-  let input: ReactElement;
+  let input: React.ReactElement;
 
-  switch (props.type) {
+  const propsWithRef = {
+    ...props,
+    // linting disabled due to this property not being used dynamically.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    inputRef: props.inputRef ?? (React.useRef<InputType<InputPairProps<T>>>(null) as InputPairProps<T>['inputRef'])
+  } as InputPairProps<T>;
+
+  switch (propsWithRef.type) {
     case 'checkbox':
-      input = <Checkbox<T> {...props} />;
+      input = <Checkbox<T> {...propsWithRef} />;
       break;
     case 'number':
-      input = <NumberInput<T> {...props} />;
+      input = <NumberInput<T> {...propsWithRef} />;
       break;
     case 'radio':
-      input = <RadioInput<T> {...props} />;
+      input = <RadioInput<T> {...propsWithRef} />;
+      break;
+    case 'textarea':
+      input = <TextAreaInput<T> {...propsWithRef} />;
       break;
     default:
-      input = <TextInput<T> {...props} />;
+      input = <TextInput<T> {...propsWithRef} />;
       break;
   }
 
@@ -103,7 +127,7 @@ export function InputPair<T extends object = object>(
       {props.flipped && input}
       <label
         htmlFor={props.idOverride ?? props.fieldName}
-        className={joinClasses(props, ClassJoinType.Label)}
+        className={joinClasses(propsWithRef, ClassJoinType.Label)}
       >
         {props.label}
       </label>
@@ -160,6 +184,20 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
   );
 }
 
+function TextAreaInput<T extends object>(props: TextAreaProps<T>): ReactElement {
+  return (
+    <textarea
+      {...baseInputProps(props)}
+      className={joinClasses(props, ClassJoinType.Input)}
+      onChange={(e) => props.onChange(e.currentTarget.value)}
+      minLength={props.minLength}
+      maxLength={props.maxLength}
+      placeholder={props.placeholder}
+      rows={props.rows}
+    >{props.value ?? ''}</textarea>
+  );
+}
+
 function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   return (
     <input
@@ -175,9 +213,9 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   );
 }
 
-function baseInputProps(
-  props: InputPairProps<any>
-): InputHTMLAttributes<any> & RefAttributes<HTMLInputElement> {
+function baseInputProps<E extends HTMLElement>(
+  props: BaseInputProps<any, E>
+): InputHTMLAttributes<E> & RefAttributes<E> {
   return {
     ref: props.inputRef,
     id: props.idOverride ?? props.fieldName,
@@ -190,7 +228,9 @@ function baseInputProps(
 function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
   let className = '';
 
-  if (props.className) className += props.className;
+  if (props.className) {
+    className += props.className;
+  }
 
   switch (type) {
     case ClassJoinType.Input:
@@ -198,7 +238,12 @@ function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
       break;
     case ClassJoinType.Label:
       if (props.labelClass) className += ' ' + props.labelClass;
-      if (props.required) className += ' required';
+      if (props.required) {
+        className += ' required';
+        if (props.inputRef?.current?.checkValidity?.()) {
+          className += ' filled';
+        }
+      }
       break;
   }
 

@@ -4,7 +4,8 @@ import {
   DatasetCharacteristics,
   DatasetContact,
   DatasetFundingAward,
-  DatasetMetaBase, DatasetMetadataContentFlags,
+  DatasetMetaBase,
+  DatasetMetadataContentFlags,
   DatasetOrganism,
   DatasetPublication,
   DatasetSource as ApiSource,
@@ -16,6 +17,13 @@ import {
 import { DatasetTypeSelection } from '../../Common/Configuration';
 
 export type GetDatasetsQueryParamEnum = 'install_target' | 'ownership';
+
+export const VDI_MULTIPART_METADATA = 'details';
+export const VDI_MULTIPART_DATA_FILE = 'dataFile';
+export const VDI_MULTIPART_DOC_FILE = 'docFile';
+export const VDI_MULTIPART_DATA_PROP_FILE = 'dataPropertiesFile';
+export const VDI_MULTIPART_URL = 'url';
+
 
 // region Create Dataset
 
@@ -44,7 +52,6 @@ export type PartialDatasetDetails = Readonly<
   readonly contacts?: readonly PartialDatasetContact[];
   readonly linkedDatasets?: readonly PartialLinkedDataset[];
   readonly funding?: readonly PartialDatasetFunding[];
-  readonly samplesDescription?: string;
   readonly metadataContentFlags?: PartialMetadataContentFlags;
 };
 

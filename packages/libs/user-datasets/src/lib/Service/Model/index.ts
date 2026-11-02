@@ -55,4 +55,12 @@ export type {
   VdiUserMetadata,
 } from './response-decoders';
 
+export type {
+  UploadContent,
+  FileUploadContent,
+  TextUploadContent,
+} from './upload-content';
+export { newUploadContent } from './upload-content';
+
 export type { DatasetUploads, DatasetZipType } from './utility-types';
+export { newDatasetUploads } from './utility-types';
