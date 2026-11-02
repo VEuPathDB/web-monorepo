@@ -143,8 +143,29 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     };
   }
 
+  /**
+   * Edit / drag / remove only make sense when there is a shape to act on,
+   * so disable those toolbar buttons (and leave any active mode) while the
+   * group is empty.
+   */
+  function syncToolbar() {
+    const group = groupRef.current;
+    if (group == null || map.pm?.Toolbar == null) return;
+    const isEmpty = group.getLayers().length === 0;
+    if (isEmpty) {
+      map.pm.disableGlobalEditMode();
+      map.pm.disableGlobalDragMode();
+      map.pm.disableGlobalRemovalMode();
+    }
+    for (const name of ['editMode', 'dragMode', 'removalMode'] as const)
+      map.pm.Toolbar.setButtonDisabled(name, isEmpty);
+  }
+  const syncToolbarRef = useRef(syncToolbar);
+  syncToolbarRef.current = syncToolbar;
+
   function emitShapes() {
     refreshMirrors();
+    syncToolbar();
     setTimeout(() => {
       const group = groupRef.current;
       if (group == null) return;
@@ -201,6 +222,7 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       cutPolygon: false,
       rotateMode: false,
     });
+    syncToolbarRef.current();
 
     const handleLassoFinished = (event: any) => {
       const latLngs: L.LatLng[] = event.latLngs ?? [];
@@ -259,6 +281,7 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     group.clearLayers();
     for (const shape of shapes) addShapeLayer(group, shape, shapeCallbacks());
     refreshMirrorsRef.current();
+    syncToolbarRef.current();
     lastEmittedRef.current = serialized;
   }, [shapes]);
 
