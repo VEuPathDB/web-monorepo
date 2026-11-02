@@ -41,3 +41,18 @@ test('rejects malformed selectedShapes', () => {
   const state = { ...base, selectedShapes: [[['not-a-number', 2]]] };
   expect(isLeft(GeoCoordUIState.decode(state))).toBe(true);
 });
+
+test('round-trips resolution', () => {
+  const state = { ...base, resolution: 'high' };
+  const decoded = GeoCoordUIState.decode(state);
+  expect(isRight(decoded)).toBe(true);
+  if (isRight(decoded)) {
+    expect(GeoCoordUIState.encode(decoded.right)).toEqual(state);
+  }
+});
+
+test('rejects an unknown resolution', () => {
+  expect(isLeft(GeoCoordUIState.decode({ ...base, resolution: 'ultra' }))).toBe(
+    true
+  );
+});

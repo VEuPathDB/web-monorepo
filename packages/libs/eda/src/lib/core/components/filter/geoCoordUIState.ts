@@ -11,7 +11,15 @@ import { baseLayers } from '@veupathdb/components/lib/map/MapVEuMap';
  * `selectedShapes` holds the user's lasso shapes as-drawn ([lat, lng]
  * vertices per shape). The shapes are the editable source of the
  * derived stringPrefixSet filter, which carries only geohash prefixes.
+ *
+ * `resolution` is how closely the filter's rectangles follow the edges of
+ * the shapes (it sets the maximum number of geohash prefixes); absent
+ * means the default, "low".
  */
+export type GeoResolution = t.TypeOf<typeof GeoResolution>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const GeoResolution = t.keyof({ low: null, medium: null, high: null });
+
 export type GeoCoordUIState = t.TypeOf<typeof GeoCoordUIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GeoCoordUIState = t.intersection([
@@ -25,6 +33,7 @@ export const GeoCoordUIState = t.intersection([
   t.partial({
     baseLayer: t.keyof(baseLayers),
     selectedShapes: t.array(t.array(t.tuple([t.number, t.number]))),
+    resolution: GeoResolution,
   }),
 ]);
 

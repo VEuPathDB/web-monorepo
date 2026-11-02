@@ -16,6 +16,7 @@ import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import {
   polygonsToGeohashPrefixes,
+  DEFAULT_PREFIX_BUDGET,
   geohashCellBounds,
   LatLngShape,
 } from '@veupathdb/components/lib/map/utils/polygonsToGeohashPrefixes';
@@ -28,7 +29,11 @@ import { GeoConfig } from '../../types/geoConfig';
 import { Filter, StringPrefixSetFilter } from '../../types/filter';
 import { useDeepValue } from '../../hooks/immutability';
 import { GeoCoordVariable } from './types';
-import { GeoCoordUIState, defaultGeoCoordUIState } from './geoCoordUIState';
+import {
+  GeoCoordUIState,
+  GeoResolution,
+  defaultGeoCoordUIState,
+} from './geoCoordUIState';
 import { ResetButtonCoreUI } from '../ResetButton';
 
 type Props = {
@@ -48,6 +53,24 @@ const defaultAnimation = {
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+// user-facing "resolution" choices, as maximum numbers of prefix rectangles
+const RESOLUTION_OPTIONS: {
+  value: GeoResolution;
+  label: string;
+  budget: number;
+}[] = [
+  { value: 'low', label: 'Low', budget: DEFAULT_PREFIX_BUDGET },
+  { value: 'medium', label: 'Medium', budget: 2 * DEFAULT_PREFIX_BUDGET },
+  { value: 'high', label: 'High', budget: 4 * DEFAULT_PREFIX_BUDGET },
+];
+
+function budgetForResolution(resolution: GeoResolution): number {
+  return (
+    RESOLUTION_OPTIONS.find((option) => option.value === resolution)?.budget ??
+    DEFAULT_PREFIX_BUDGET
+  );
+}
 
 type GeohashCellsOverlayProps = { prefixes: string[] };
 
@@ -224,6 +247,15 @@ export function GeoCoordFilter(props: Props) {
       [updateUIState]
     );
 
+  // The maximum number of geohash prefixes (rectangles) used to approximate
+  // the drawn shapes, chosen by the user as a "resolution" and stored in the
+  // analysis UI state. Mirrored in a ref so handleShapesChanged (called from
+  // long-lived map handlers) always sees the latest value without changing
+  // identity.
+  const resolution = uiState.resolution ?? 'low';
+  const prefixBudgetRef = useRef(budgetForResolution(resolution));
+  prefixBudgetRef.current = budgetForResolution(resolution);
+
   // true while a shapes change is between updateUIState and setFilters
   // (i.e. while the async prefix cover is being computed)
   const pendingFilterUpdateRef = useRef(false);
@@ -244,7 +276,11 @@ export function GeoCoordFilter(props: Props) {
           setFilters(remainingFilters);
         return;
       }
-      polygonsToGeohashPrefixes(shapes, maxGeohashLevel)
+      polygonsToGeohashPrefixes(
+        shapes,
+        maxGeohashLevel,
+        prefixBudgetRef.current
+      )
         .then((prefixSet) => {
           if (seq !== updateSeqRef.current) return; // superseded
           pendingFilterUpdateRef.current = false;
@@ -275,6 +311,15 @@ export function GeoCoordFilter(props: Props) {
       maxGeohashLevel,
     ]
   );
+
+  // recompute the cover for the current shapes at the new resolution
+  const handleResolutionChange = (newResolution: GeoResolution) => {
+    // set the ref now: the UI state (and so the ref's render-time value)
+    // only updates after this event handler returns
+    prefixBudgetRef.current = budgetForResolution(newResolution);
+    updateUIState({ resolution: newResolution });
+    if (selectedShapes.length > 0) handleShapesChanged(selectedShapes);
+  };
 
   // Sync rule: the filter is the source of truth for subsetting. Clear
   // stored shapes when the filter has been removed externally (filter
@@ -357,11 +402,54 @@ export function GeoCoordFilter(props: Props) {
               Show rectangles used for filtering
             </label>
             <HelpIcon>
-              Shade the rectangular map cells that the filter actually matches.
-              They approximate your lasso shapes, so the filtered area can
-              differ slightly from what you drew.
+              <div>
+                <p>
+                  Shade the rectangular map cells that the filter actually
+                  matches. They approximate your lasso shapes, so the filtered
+                  area can differ slightly from what you drew, but the
+                  rectangles always contain the shape you drew.
+                </p>
+                <p>
+                  <b>Resolution</b> sets how finely the rectangles can follow
+                  the edges of your shapes. Higher resolution fits more closely
+                  but is slower to compute.
+                </p>
+                <p>
+                  Changing the resolution won't always change the rectangles.
+                  Small or simple shapes may already be matched as closely as
+                  possible at Low, and the rectangles get finer in steps, so a
+                  higher setting only makes a difference if it allows another
+                  step.
+                </p>
+              </div>
             </HelpIcon>
           </div>
+        )}
+        {showGeohashCells && geoFilter != null && (
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3em',
+              whiteSpace: 'nowrap',
+            }}
+            title="Higher resolution follows the edges of your shapes more closely, but is slower to compute"
+          >
+            Resolution
+            <select
+              value={resolution}
+              onChange={(event) => {
+                const { value } = event.target;
+                if (GeoResolution.is(value)) handleResolutionChange(value);
+              }}
+            >
+              {RESOLUTION_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
         )}
         {selectedShapes.length > 0 && (
           <ResetButtonCoreUI
