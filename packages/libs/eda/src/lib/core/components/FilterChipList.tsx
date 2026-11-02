@@ -76,8 +76,8 @@ export default function FilterChipList(props: Props) {
                     {entity.displayName}: Geographic area
                   </div>
                   <div>
-                    Lasso selection covering {filter.prefixSet.length} geohash{' '}
-                    {filter.prefixSet.length === 1 ? 'prefix' : 'prefixes'}
+                    Lasso selection approximated by {filter.prefixSet.length}{' '}
+                    {filter.prefixSet.length === 1 ? 'rectangle' : 'rectangles'}
                   </div>
                 </>
               );
