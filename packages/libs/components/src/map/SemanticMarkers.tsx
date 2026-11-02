@@ -30,10 +30,6 @@ export interface SemanticMarkersProps {
   selectedMarkers?: string[];
   /* selectedMarkers setState **/
   setSelectedMarkers?: (selectedMarkers: string[] | undefined) => void;
-  /** optional callback that receives the raw geographic bounds of a
-   * rectangle selection (ctrl/cmd + drag), in addition to any
-   * marker-selection behaviour configured via `setSelectedMarkers` */
-  onAreaSelected?: (bounds: Bounds | undefined) => void;
 }
 
 /**
@@ -50,7 +46,6 @@ export default function SemanticMarkers({
   flyToMarkersDelay,
   selectedMarkers,
   setSelectedMarkers,
-  onAreaSelected: onAreaSelectedProp,
 }: SemanticMarkersProps) {
   // react-leaflet v3
   const map = useMap();
@@ -250,9 +245,6 @@ export default function SemanticMarkers({
   // rectangle marker selection
   const onAreaSelected = useCallback(
     (boxCoord: Bounds | undefined) => {
-      // notify any listener of the raw selected bounds
-      if (onAreaSelectedProp != null) onAreaSelectedProp(boxCoord);
-
       if (boxCoord != null && setSelectedMarkers != null) {
         // find markers within area selection
         const boxCoordMarkers = consolidatedMarkers
@@ -275,17 +267,16 @@ export default function SemanticMarkers({
         setSelectedMarkers(Array.from(new Set(combinedMarkers)));
       }
     },
-    [
-      consolidatedMarkers,
-      selectedMarkers,
-      setSelectedMarkers,
-      onAreaSelectedProp,
-    ]
+    [consolidatedMarkers, selectedMarkers, setSelectedMarkers]
   );
 
   return (
     <>
-      {(onAreaSelectedProp != null || setSelectedMarkers != null) && (
+      {/* ctrl/cmd + drag rectangle selection is only enabled when markers
+          can be selected; maps without it (e.g. the lasso-based geo filter)
+          must not get it, as it would compete with their own selection
+          handlers */}
+      {setSelectedMarkers != null && (
         <AreaSelect onAreaSelected={onAreaSelected} />
       )}
       {refinedMarkers}
