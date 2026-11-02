@@ -37,6 +37,8 @@ const shapeStyle = {
   fillOpacity: 0.05,
   // geoman runs in opt-in mode (see below); this opts the shape in
   pmIgnore: false,
+  // hook for the cursor rules in geo-shape-select.css
+  className: 'geo-shape-select-shape',
 };
 
 // read-only copies of the shapes in the other visible world copies:
@@ -45,6 +47,7 @@ const mirrorStyle = {
   ...shapeStyle,
   pmIgnore: true,
   interactive: false,
+  className: 'geo-shape-select-mirror',
 };
 
 const NO_SHAPES_TITLE = 'Draw a lasso shape first';
@@ -325,12 +328,22 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     };
 
     map.on('lasso.finished', handleLassoFinished);
+    // lets the stylesheet show a "click to remove" cursor over shapes
+    const handleRemovalModeToggled = (event: { enabled: boolean }) => {
+      map
+        .getContainer()
+        .classList.toggle('geo-shape-select-removal-mode', event.enabled);
+    };
+
     map.on('pm:remove', handleRemove);
+    map.on('pm:globalremovalmodetoggled', handleRemovalModeToggled);
     map.on('moveend zoomend resize', handleViewChanged);
 
     return () => {
       map.off('lasso.finished', handleLassoFinished);
       map.off('pm:remove', handleRemove);
+      map.off('pm:globalremovalmodetoggled', handleRemovalModeToggled);
+      map.getContainer().classList.remove('geo-shape-select-removal-mode');
       map.off('moveend zoomend resize', handleViewChanged);
       map.pm.removeControls();
       lassoControl.remove();
