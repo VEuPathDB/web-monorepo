@@ -14,7 +14,10 @@
 import { useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
+// side-effect import (registers L.control.lasso) kept separate from the
+// type import below, which the compiler elides
 import 'leaflet-lasso';
+import { LassoHandlerFinishedEvent } from 'leaflet-lasso';
 import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import './styles/geo-shape-select.css';
@@ -91,155 +94,28 @@ function getButtonContainer(map: L.Map, name: string): HTMLElement | null {
   return null;
 }
 
+/** What the main effect exposes to the shapes-prop sync effect. */
+interface ShapesController {
+  /** replace all layers with `shapes` (no emission) */
+  setShapes: (shapes: LatLngShape[]) => void;
+}
+
 export default function GeoShapeSelect(props: GeoShapeSelectProps) {
   const { shapes } = props;
   const map = useMap();
-  const groupRef = useRef<L.FeatureGroup>();
-  // read-only copies of the shapes in the other visible world copies
-  const mirrorGroupRef = useRef<L.FeatureGroup>();
+  // set by the main effect for the lifetime of each map
+  const controllerRef = useRef<ShapesController>();
   // serialized form of the last shape-set we emitted, to distinguish the
   // parent echoing our own change back (no rebuild — geoman may be
   // mid-gesture) from a genuinely new value (rebuild the layers)
   const lastEmittedRef = useRef<string>();
 
-  // latest-value refs so leaflet handlers never capture stale closures
+  // latest-value refs: the main effect registers its leaflet handlers once
+  // per map, so it must read these props at call time, not capture them
   const onShapesChangedRef = useRef(props.onShapesChanged);
   onShapesChangedRef.current = props.onShapesChanged;
   const simplifyTolerancePxRef = useRef(props.simplifyTolerancePx ?? 8);
   simplifyTolerancePxRef.current = props.simplifyTolerancePx ?? 8;
-
-  function refreshMirrors() {
-    const group = groupRef.current;
-    const mirrorGroup = mirrorGroupRef.current;
-    if (group == null || mirrorGroup == null) return;
-    mirrorGroup.clearLayers();
-    const view = map.getBounds();
-    group.eachLayer((layer) => {
-      if (!(layer instanceof L.Polygon)) return;
-      const extent = layer.getBounds();
-      const latLngs = layer.getLatLngs() as L.LatLng[][];
-      for (const shift of worldShiftsIntoView(
-        extent.getWest(),
-        extent.getEast(),
-        view.getWest(),
-        view.getEast()
-      )) {
-        if (shift === 0) continue; // the real, editable shape
-        mirrorGroup.addLayer(
-          L.polygon(
-            latLngs.map((ring) =>
-              ring.map((ll) => L.latLng(ll.lat, ll.lng + shift))
-            ),
-            mirrorStyle
-          )
-        );
-      }
-    });
-  }
-  const refreshMirrorsRef = useRef(refreshMirrors);
-  refreshMirrorsRef.current = refreshMirrors;
-
-  // true while a vertex or whole shape is being dragged
-  const gestureActiveRef = useRef(false);
-
-  /**
-   * Silently translate each real shape by whole multiples of 360° into the
-   * world copy nearest the map centre, so the editable shape is always the
-   * one in front of the user (the others are read-only mirrors). Does not
-   * emit: the prefix cover is the same in every world copy (longitudes are
-   * wrapped by normalizeShapeLongitudes), so the filter needn't recompute.
-   */
-  function recenterShapes() {
-    const group = groupRef.current;
-    if (group == null || gestureActiveRef.current) return;
-    const centerLng = map.getCenter().lng;
-    group.eachLayer((layer) => {
-      if (!(layer instanceof L.Polygon)) return;
-      const extent = layer.getBounds();
-      const shift =
-        360 *
-        Math.round(
-          (centerLng - (extent.getWest() + extent.getEast()) / 2) / 360
-        );
-      if (shift === 0) return;
-      // geoman's edit handles don't follow setLatLngs, so reopen them
-      const wasEditing = layer.pm.enabled();
-      if (wasEditing) layer.pm.disable();
-      layer.setLatLngs(
-        (layer.getLatLngs() as L.LatLng[][]).map((ring) =>
-          ring.map((ll) => L.latLng(ll.lat, ll.lng + shift))
-        )
-      );
-      if (wasEditing) layer.pm.enable();
-    });
-  }
-
-  const recenterShapesRef = useRef(recenterShapes);
-  recenterShapesRef.current = recenterShapes;
-
-  function shapeCallbacks(): ShapeCallbacks {
-    return {
-      onEdited: () => emitShapesRef.current(),
-      onEditing: () => refreshMirrorsRef.current(),
-      onGesture: (active) => {
-        gestureActiveRef.current = active;
-      },
-    };
-  }
-
-  /**
-   * Edit / drag / remove only make sense when there is a shape to act on,
-   * so disable those toolbar buttons (and leave any active mode) while the
-   * group is empty.
-   */
-  function syncToolbar() {
-    const group = groupRef.current;
-    if (group == null || map.pm?.Toolbar == null) return;
-    const isEmpty = group.getLayers().length === 0;
-    if (isEmpty) {
-      // only disable modes that are on: geoman's disableGlobal*Mode() calls
-      // map.off('layeradd', <handler>) with a handler that only exists once
-      // the mode has been enabled, so on a never-enabled mode Leaflet logs
-      // "wrong listener type: undefined"
-      if (map.pm.globalEditModeEnabled()) map.pm.disableGlobalEditMode();
-      if (map.pm.globalDragModeEnabled()) map.pm.disableGlobalDragMode();
-      if (map.pm.globalRemovalModeEnabled()) map.pm.disableGlobalRemovalMode();
-    }
-    for (const name of ['editMode', 'dragMode', 'removalMode'] as const) {
-      map.pm.Toolbar.setButtonDisabled(name, isEmpty);
-      // geoman keeps its tooltip on the button's container element; swap in
-      // guidance while disabled and restore geoman's own text afterwards
-      const container = getButtonContainer(map, name);
-      if (container == null) continue;
-      const originalTitles = originalTitlesRef.current;
-      if (isEmpty) {
-        const current = container.getAttribute('title');
-        if (current !== NO_SHAPES_TITLE && current != null)
-          originalTitles[name] = current;
-        container.setAttribute('title', NO_SHAPES_TITLE);
-      } else if (originalTitles[name] != null) {
-        container.setAttribute('title', originalTitles[name]);
-      }
-    }
-  }
-  // geoman's own tooltip text for each button, remembered while we override it
-  const originalTitlesRef = useRef<Record<string, string>>({});
-  const syncToolbarRef = useRef(syncToolbar);
-  syncToolbarRef.current = syncToolbar;
-
-  function emitShapes() {
-    refreshMirrors();
-    syncToolbar();
-    setTimeout(() => {
-      const group = groupRef.current;
-      if (group == null) return;
-      const next = collectShapes(group);
-      lastEmittedRef.current = JSON.stringify(next);
-      onShapesChangedRef.current(next);
-    }, 0);
-  }
-  const emitShapesRef = useRef(emitShapes);
-  emitShapesRef.current = emitShapes;
 
   useEffect(() => {
     // opt-in mode: only layers explicitly created with pmIgnore: false are
@@ -255,10 +131,47 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       L.PM.reInitLayer(map as unknown as L.Layer);
     }
 
+    // read-only copies of the shapes in the other visible world copies
     const mirrorGroup = L.featureGroup().addTo(map);
-    mirrorGroupRef.current = mirrorGroup;
     const group = L.featureGroup().addTo(map);
-    groupRef.current = group;
+    // geoman's own tooltip text for each button, remembered while we override it
+    const originalTitles: Record<string, string> = {};
+    // true while a vertex or whole shape is being dragged
+    let gestureActive = false;
+    let pendingEmit: ReturnType<typeof setTimeout> | undefined;
+
+    const refresh = () => refreshMirrors(map, group, mirrorGroup);
+    const sync = () => syncToolbar(map, group, originalTitles);
+
+    const emitShapes = () => {
+      refresh();
+      sync();
+      // one pending emission is enough: it collects the shapes when it runs
+      clearTimeout(pendingEmit);
+      pendingEmit = setTimeout(() => {
+        pendingEmit = undefined;
+        const next = collectShapes(group);
+        lastEmittedRef.current = JSON.stringify(next);
+        onShapesChangedRef.current(next);
+      }, 0);
+    };
+
+    const callbacks: ShapeCallbacks = {
+      onEdited: emitShapes,
+      onEditing: refresh,
+      onGesture: (active) => {
+        gestureActive = active;
+      },
+    };
+
+    controllerRef.current = {
+      setShapes: (nextShapes) => {
+        group.clearLayers();
+        for (const shape of nextShapes) addShapeLayer(group, shape, callbacks);
+        refresh();
+        sync();
+      },
+    };
 
     const lassoControl = L.control.lasso({
       position: 'topleft',
@@ -299,9 +212,12 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       getButtonContainer(map, name)
         ?.querySelector('.action-finishMode')
         ?.setAttribute('title', title);
-    syncToolbarRef.current();
+    sync();
 
-    const handleLassoFinished = (event: any) => {
+    // Leaflet types plugin events only as the base LeafletEvent; leaflet-lasso
+    // fires 'lasso.finished' with its own payload, so narrow to that type
+    const handleLassoFinished = (leafletEvent: L.LeafletEvent) => {
+      const event = leafletEvent as LassoHandlerFinishedEvent;
       const latLngs: L.LatLng[] = event.latLngs ?? [];
       const simplified = simplifyLatLngs(
         map,
@@ -312,32 +228,33 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       addShapeLayer(
         group,
         simplified.map((ll): [number, number] => [ll.lat, ll.lng]),
-        shapeCallbacks()
+        callbacks
       );
-      emitShapesRef.current();
+      emitShapes();
     };
 
     // removal mode removes the layer from the map; also drop it from our
     // group so it no longer counts as a shape
-    const handleRemove = (event: any) => {
+    const handleRemove: L.PM.RemoveEventHandler = (event) => {
       if (group.hasLayer(event.layer)) {
         group.removeLayer(event.layer);
-        emitShapesRef.current();
+        emitShapes();
       }
     };
 
     const handleViewChanged = () => {
-      recenterShapesRef.current();
-      refreshMirrorsRef.current();
+      if (!gestureActive) recenterShapes(map, group);
+      refresh();
     };
 
     map.on('lasso.finished', handleLassoFinished);
     // lets the stylesheet show a "click to remove" cursor over shapes
-    const handleRemovalModeToggled = (event: { enabled: boolean }) => {
-      map
-        .getContainer()
-        .classList.toggle('geo-shape-select-removal-mode', event.enabled);
-    };
+    const handleRemovalModeToggled: L.PM.GlobalRemovalModeToggledEventHandler =
+      (event) => {
+        map
+          .getContainer()
+          .classList.toggle('geo-shape-select-removal-mode', event.enabled);
+      };
 
     map.on('pm:remove', handleRemove);
     map.on('pm:globalremovalmodetoggled', handleRemovalModeToggled);
@@ -353,26 +270,125 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       lassoControl.remove();
       group.remove();
       mirrorGroup.remove();
-      groupRef.current = undefined;
-      mirrorGroupRef.current = undefined;
+      clearTimeout(pendingEmit);
+      controllerRef.current = undefined;
+      // the next map's group starts empty, so the sync effect must rebuild
+      // it even if the shapes prop is unchanged
+      lastEmittedRef.current = undefined;
     };
   }, [map]);
 
   // sync layers from the shapes prop (initial mount, analysis reload,
-  // external clearing) — skipped when the prop is the echo of our own emit
+  // external clearing, a new map) — skipped when the prop is the echo of
+  // our own emit. Declared after the main effect so it runs after it.
   useEffect(() => {
-    const group = groupRef.current;
-    if (group == null) return;
+    const controller = controllerRef.current;
+    if (controller == null) return;
     const serialized = JSON.stringify(shapes);
     if (serialized === lastEmittedRef.current) return;
-    group.clearLayers();
-    for (const shape of shapes) addShapeLayer(group, shape, shapeCallbacks());
-    refreshMirrorsRef.current();
-    syncToolbarRef.current();
+    controller.setShapes(shapes);
     lastEmittedRef.current = serialized;
-  }, [shapes]);
+  }, [map, shapes]);
 
   return null;
+}
+
+function refreshMirrors(
+  map: L.Map,
+  group: L.FeatureGroup,
+  mirrorGroup: L.FeatureGroup
+) {
+  mirrorGroup.clearLayers();
+  const view = map.getBounds();
+  group.eachLayer((layer) => {
+    if (!(layer instanceof L.Polygon)) return;
+    const extent = layer.getBounds();
+    const latLngs = layer.getLatLngs() as L.LatLng[][];
+    for (const shift of worldShiftsIntoView(
+      extent.getWest(),
+      extent.getEast(),
+      view.getWest(),
+      view.getEast()
+    )) {
+      if (shift === 0) continue; // the real, editable shape
+      mirrorGroup.addLayer(
+        L.polygon(
+          latLngs.map((ring) =>
+            ring.map((ll) => L.latLng(ll.lat, ll.lng + shift))
+          ),
+          mirrorStyle
+        )
+      );
+    }
+  });
+}
+
+/**
+ * Silently translate each real shape by whole multiples of 360° into the
+ * world copy nearest the map centre, so the editable shape is always the
+ * one in front of the user (the others are read-only mirrors). Does not
+ * emit: the prefix cover is the same in every world copy (longitudes are
+ * wrapped by normalizeShapeLongitudes), so the filter needn't recompute.
+ * Callers must not call this mid-gesture.
+ */
+function recenterShapes(map: L.Map, group: L.FeatureGroup) {
+  const centerLng = map.getCenter().lng;
+  group.eachLayer((layer) => {
+    if (!(layer instanceof L.Polygon)) return;
+    const extent = layer.getBounds();
+    const shift =
+      360 *
+      Math.round((centerLng - (extent.getWest() + extent.getEast()) / 2) / 360);
+    if (shift === 0) return;
+    // geoman's edit handles don't follow setLatLngs, so reopen them
+    const wasEditing = layer.pm.enabled();
+    if (wasEditing) layer.pm.disable();
+    layer.setLatLngs(
+      (layer.getLatLngs() as L.LatLng[][]).map((ring) =>
+        ring.map((ll) => L.latLng(ll.lat, ll.lng + shift))
+      )
+    );
+    if (wasEditing) layer.pm.enable();
+  });
+}
+
+/**
+ * Edit / drag / remove only make sense when there is a shape to act on,
+ * so disable those toolbar buttons (and leave any active mode) while the
+ * group is empty. `originalTitles` remembers geoman's own tooltips while
+ * they are overridden.
+ */
+function syncToolbar(
+  map: L.Map,
+  group: L.FeatureGroup,
+  originalTitles: Record<string, string>
+) {
+  if (map.pm?.Toolbar == null) return;
+  const isEmpty = group.getLayers().length === 0;
+  if (isEmpty) {
+    // only disable modes that are on: geoman's disableGlobal*Mode() calls
+    // map.off('layeradd', <handler>) with a handler that only exists once
+    // the mode has been enabled, so on a never-enabled mode Leaflet logs
+    // "wrong listener type: undefined"
+    if (map.pm.globalEditModeEnabled()) map.pm.disableGlobalEditMode();
+    if (map.pm.globalDragModeEnabled()) map.pm.disableGlobalDragMode();
+    if (map.pm.globalRemovalModeEnabled()) map.pm.disableGlobalRemovalMode();
+  }
+  for (const name of ['editMode', 'dragMode', 'removalMode'] as const) {
+    map.pm.Toolbar.setButtonDisabled(name, isEmpty);
+    // geoman keeps its tooltip on the button's container element; swap in
+    // guidance while disabled and restore geoman's own text afterwards
+    const container = getButtonContainer(map, name);
+    if (container == null) continue;
+    if (isEmpty) {
+      const current = container.getAttribute('title');
+      if (current !== NO_SHAPES_TITLE && current != null)
+        originalTitles[name] = current;
+      container.setAttribute('title', NO_SHAPES_TITLE);
+    } else if (originalTitles[name] != null) {
+      container.setAttribute('title', originalTitles[name]);
+    }
+  }
 }
 
 function collectShapes(group: L.FeatureGroup): LatLngShape[] {
@@ -405,15 +421,22 @@ function addShapeLayer(
     shapeStyle
   );
   // commit at gesture boundaries (vertex drag end, vertex add/remove,
-  // whole-shape drag end, edit-mode close) — not continuously mid-drag
-  layer.on(
-    'pm:markerdragend pm:vertexadded pm:vertexremoved pm:dragend pm:update' as any,
-    onEdited
-  );
+  // whole-shape drag end, edit-mode close) — not continuously mid-drag.
+  // One call per event: geoman's typings only cover single event names.
+  layer.on('pm:markerdragend', onEdited);
+  layer.on('pm:vertexadded', onEdited);
+  layer.on('pm:vertexremoved', onEdited);
+  layer.on('pm:dragend', onEdited);
+  layer.on('pm:update', onEdited);
   // keep the read-only copies in step while a vertex or shape is dragged
-  layer.on('pm:markerdrag pm:drag' as any, onEditing);
-  layer.on('pm:markerdragstart pm:dragstart' as any, () => onGesture(true));
-  layer.on('pm:markerdragend pm:dragend' as any, () => onGesture(false));
+  layer.on('pm:markerdrag', onEditing);
+  layer.on('pm:drag', onEditing);
+  const gestureStarted = () => onGesture(true);
+  const gestureEnded = () => onGesture(false);
+  layer.on('pm:markerdragstart', gestureStarted);
+  layer.on('pm:dragstart', gestureStarted);
+  layer.on('pm:markerdragend', gestureEnded);
+  layer.on('pm:dragend', gestureEnded);
   group.addLayer(layer);
 }
 
