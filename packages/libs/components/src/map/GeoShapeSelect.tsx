@@ -197,9 +197,13 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     if (group == null || map.pm?.Toolbar == null) return;
     const isEmpty = group.getLayers().length === 0;
     if (isEmpty) {
-      map.pm.disableGlobalEditMode();
-      map.pm.disableGlobalDragMode();
-      map.pm.disableGlobalRemovalMode();
+      // only disable modes that are on: geoman's disableGlobal*Mode() calls
+      // map.off('layeradd', <handler>) with a handler that only exists once
+      // the mode has been enabled, so on a never-enabled mode Leaflet logs
+      // "wrong listener type: undefined"
+      if (map.pm.globalEditModeEnabled()) map.pm.disableGlobalEditMode();
+      if (map.pm.globalDragModeEnabled()) map.pm.disableGlobalDragMode();
+      if (map.pm.globalRemovalModeEnabled()) map.pm.disableGlobalRemovalMode();
     }
     for (const name of ['editMode', 'dragMode', 'removalMode'] as const) {
       map.pm.Toolbar.setButtonDisabled(name, isEmpty);
