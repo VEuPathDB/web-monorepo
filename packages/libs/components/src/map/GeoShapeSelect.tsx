@@ -47,7 +47,29 @@ const mirrorStyle = {
   interactive: false,
 };
 
-const NO_SHAPES_TITLE = 'Draw a lasso first';
+const NO_SHAPES_TITLE = 'Draw a lasso shape first';
+
+// geoman's default tooltips talk about "layers"; users think in shapes
+const buttonTitles = {
+  editButton: 'Edit shapes',
+  dragButton: 'Drag shapes',
+  deleteButton: 'Remove shapes',
+};
+
+// geoman reuses the "Finish" label as the tooltip of each mode's finish
+// action; say what finishing actually does
+const finishTitles = {
+  editMode: 'Exit shape editing mode',
+  dragMode: 'Exit shape dragging mode',
+  removalMode: 'Exit shape removal mode',
+} as const;
+
+const EDIT_HELP_TITLE = [
+  'Editing tips:',
+  '• Drag a large point to move it',
+  '• Right-click a large point to delete it',
+  '• Drag a small point (between two large ones) to add a new point',
+].join('\n');
 
 /**
  * The DOM element geoman puts a toolbar button's tooltip on. geoman's typings
@@ -233,7 +255,7 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
 
     const lassoControl = L.control.lasso({
       position: 'topleft',
-      title: 'Draw an area (lasso) to filter the data',
+      title: 'Draw one or more lasso shapes to filter the data',
     });
     lassoControl.addTo(map);
 
@@ -248,6 +270,9 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     if (lassoButton != null)
       L.DomEvent.on(lassoButton, 'click', L.DomEvent.preventDefault);
 
+    // global (geoman keeps one active language); must precede addControls
+    // so the buttons are created with our wording
+    map.pm.setLang('en', { buttonTitles }, 'en');
     map.pm.addControls({
       position: 'topleft',
       drawControls: false,
@@ -257,6 +282,16 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       cutPolygon: false,
       rotateMode: false,
     });
+    // a "?" beside Finish in the edit-mode flyout, explaining vertex gestures
+    map.pm.Toolbar.changeActionsOfControl('editMode', [
+      'finishMode',
+      { name: 'help', text: '?', title: EDIT_HELP_TITLE, onClick: () => {} },
+    ]);
+    // set the finish tooltips last: changeActionsOfControl rebuilds buttons
+    for (const [name, title] of Object.entries(finishTitles))
+      getButtonContainer(map, name)
+        ?.querySelector('.action-finishMode')
+        ?.setAttribute('title', title);
     syncToolbarRef.current();
 
     const handleLassoFinished = (event: any) => {

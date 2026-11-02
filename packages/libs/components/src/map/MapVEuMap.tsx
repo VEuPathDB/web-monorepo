@@ -464,9 +464,9 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           <a
             className="leaflet-control-zoom-out"
             href="/#"
-            title="zoom to data"
+            title="Zoom to data"
             role="button"
-            aria-label="zoom to data"
+            aria-label="Zoom to data"
             onClick={zoomToData}
           >
             <div style={{ paddingTop: '4px' }}>
