@@ -547,14 +547,21 @@ function installLeafletTeardownGuards() {
   // *after* initialize
   proto.callInitHooks = resetContainerOnFailure(originalCallInitHooks);
 
-  // if a stale stamp is encountered anyway (e.g. an orphaned map that was
-  // never removed), clean it up and proceed instead of failing forever —
-  // in this codebase every map is owned by react-leaflet, which never
-  // mounts two live maps on one element, so a stamp seen at init time is
-  // always an orphan
+  // if a stale stamp is encountered anyway, it means a second map is being
+  // created on a container that still has a live one — react-leaflet 3's
+  // init effect can do this (new `props` object every render, and its
+  // `map === null` guard only updates after a commit). Remove the orphaned
+  // map *properly* before taking over the container: just un-stamping it
+  // leaves the orphan's handlers on the container, and its map-drag
+  // listener (registered first) then claims Leaflet's global
+  // `Draggable._dragging` flag on every mousedown, so the real map can
+  // never be panned.
   proto._initContainer = function (id: string | HTMLElement) {
     try {
-      return originalInitContainer.call(this, id);
+      const result = originalInitContainer.call(this, id);
+      // remember which map owns the container, so an orphan can be found
+      this._container.__veupathdbMap = this;
+      return result;
     } catch (error) {
       const container = this._container;
       if (container != null && container._leaflet_id != null) {
@@ -562,9 +569,14 @@ function installLeafletTeardownGuards() {
           'Reinitializing a Leaflet map on a container that was not torn down cleanly:',
           error
         );
+        const orphan = container.__veupathdbMap;
+        if (orphan != null && orphan !== this) orphan.remove();
+        // fallback for an orphan we do not know about
         delete container._leaflet_id;
         delete this._containerId;
-        return originalInitContainer.call(this, id);
+        const result = originalInitContainer.call(this, id);
+        container.__veupathdbMap = this;
+        return result;
       }
       throw error;
     }
@@ -578,6 +590,18 @@ function installLeafletTeardownGuards() {
     } catch (error) {
       console.warn('Ignoring an error during Leaflet map teardown:', error);
       return this;
+    } finally {
+      // Map.remove() disables every handler, but plugin handlers can react
+      // to that by re-enabling map dragging (leaflet-lasso's does), which
+      // re-attaches this map's mousedown listener to the container. That is
+      // harmless on a detached container, but fatal if the container is
+      // shared with a newer map (see _initContainer above): the listener
+      // would fire against the removed map pane and throw. Disable it again.
+      try {
+        this.dragging?.disable();
+      } catch {
+        // already torn down
+      }
     }
   };
 
