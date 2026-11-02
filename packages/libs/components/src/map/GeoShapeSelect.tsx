@@ -161,6 +161,14 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     // touched by geoman's global edit/drag/removal modes — this keeps the
     // data markers (SemanticMarkers) out of them
     L.PM.setOptIn(true);
+    // opt-in mode is global and sticky, so a map created after the first
+    // GeoShapeSelect mounted (e.g. on returning to a geo variable) is
+    // created without `map.pm`; opt this map in explicitly
+    if (map.pm == null) {
+      map.options.pmIgnore = false;
+      // geoman's reInitLayer handles L.Map at runtime but is typed for Layer
+      L.PM.reInitLayer(map as unknown as L.Layer);
+    }
 
     const mirrorGroup = L.featureGroup().addTo(map);
     mirrorGroupRef.current = mirrorGroup;
