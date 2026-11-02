@@ -3,6 +3,7 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
 import { Pane, Rectangle } from 'react-leaflet';
+import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
 // map component related imports
 import MapVEuMap, {
@@ -48,16 +49,11 @@ const defaultAnimation = {
   duration: defaultAnimationDuration,
 };
 
-// Debugging aid: when true, a checkbox lets the user shade the geohash
-// cells that make up the current stringPrefixSet filter, to visually
-// verify the lasso-to-prefix-cover conversion. Flip to false to hide the
-// checkbox; the rendering machinery below stays for future debugging.
-const ENABLE_GEOHASH_CELL_DEBUG = true;
-
 type GeohashCellsOverlayProps = { prefixes: string[] };
 
 /**
- * Debugging overlay: shade the geohash cells the filter matches; finer
+ * Overlay (toggled by the "Show rectangles used for filtering" checkbox):
+ * shade the geohash cells the filter matches; finer
  * (longer) prefixes are shaded slightly darker so the multi-scale structure
  * of the cover is visible. Cells live in ±180° but the map repeats the
  * world, and a shape drawn across the dateline extends past ±180°, so each
@@ -303,7 +299,7 @@ export function GeoCoordFilter(props: Props) {
     }
   }, [geoFilter, selectedShapes, updateUIState]);
 
-  // debugging aid — see ENABLE_GEOHASH_CELL_DEBUG above
+  // whether to shade the cells the filter actually matches
   const [showGeohashCells, setShowGeohashCells] = useState(false);
 
   const { latitude, longitude, zoomLevel } = uiState.mapCenterAndZoom;
@@ -324,7 +320,7 @@ export function GeoCoordFilter(props: Props) {
         <div style={{ flex: 1 }}>
           {selectedShapes.length > 0 ? (
             <div>
-              <b>Selected area:</b> {selectedShapes.length}{' '}
+              {selectedShapes.length}{' '}
               {selectedShapes.length === 1 ? 'shape' : 'shapes'} drawn.{' '}
               {filteredEntityCount.toLocaleString()} of{' '}
               {totalEntityCount.toLocaleString()} {entityDisplayName} remain in
@@ -341,23 +337,31 @@ export function GeoCoordFilter(props: Props) {
             </div>
           )}
         </div>
-        {ENABLE_GEOHASH_CELL_DEBUG && geoFilter != null && (
-          <label
+        {geoFilter != null && (
+          <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.3em',
               whiteSpace: 'nowrap',
             }}
-            title="Shade the geohash cells matched by the current filter"
           >
-            <input
-              type="checkbox"
-              checked={showGeohashCells}
-              onChange={(event) => setShowGeohashCells(event.target.checked)}
-            />
-            Shade filter's geohash cells ({geoFilter.prefixSet.length})
-          </label>
+            <label
+              style={{ display: 'flex', alignItems: 'center', gap: '0.3em' }}
+            >
+              <input
+                type="checkbox"
+                checked={showGeohashCells}
+                onChange={(event) => setShowGeohashCells(event.target.checked)}
+              />
+              Show rectangles used for filtering
+            </label>
+            <HelpIcon>
+              Shade the rectangular map cells that the filter actually matches.
+              They approximate your lasso shapes, so the filtered area can
+              differ slightly from what you drew.
+            </HelpIcon>
+          </div>
         )}
         {selectedShapes.length > 0 && (
           <ResetButtonCoreUI
