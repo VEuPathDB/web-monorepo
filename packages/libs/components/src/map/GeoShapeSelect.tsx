@@ -47,6 +47,25 @@ const mirrorStyle = {
   interactive: false,
 };
 
+const NO_SHAPES_TITLE = 'Draw a lasso first';
+
+/**
+ * The DOM element geoman puts a toolbar button's tooltip on. geoman's typings
+ * expose its buttons only as L.Control, but at runtime each has a
+ * `buttonsDomNode` (the button's container element).
+ */
+function getButtonContainer(map: L.Map, name: string): HTMLElement | null {
+  const button: unknown = map.pm.Toolbar.getButtons()[name];
+  if (
+    typeof button === 'object' &&
+    button != null &&
+    'buttonsDomNode' in button &&
+    button.buttonsDomNode instanceof HTMLElement
+  )
+    return button.buttonsDomNode;
+  return null;
+}
+
 export default function GeoShapeSelect(props: GeoShapeSelectProps) {
   const { shapes } = props;
   const map = useMap();
@@ -157,9 +176,25 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       map.pm.disableGlobalDragMode();
       map.pm.disableGlobalRemovalMode();
     }
-    for (const name of ['editMode', 'dragMode', 'removalMode'] as const)
+    for (const name of ['editMode', 'dragMode', 'removalMode'] as const) {
       map.pm.Toolbar.setButtonDisabled(name, isEmpty);
+      // geoman keeps its tooltip on the button's container element; swap in
+      // guidance while disabled and restore geoman's own text afterwards
+      const container = getButtonContainer(map, name);
+      if (container == null) continue;
+      const originalTitles = originalTitlesRef.current;
+      if (isEmpty) {
+        const current = container.getAttribute('title');
+        if (current !== NO_SHAPES_TITLE && current != null)
+          originalTitles[name] = current;
+        container.setAttribute('title', NO_SHAPES_TITLE);
+      } else if (originalTitles[name] != null) {
+        container.setAttribute('title', originalTitles[name]);
+      }
+    }
   }
+  // geoman's own tooltip text for each button, remembered while we override it
+  const originalTitlesRef = useRef<Record<string, string>>({});
   const syncToolbarRef = useRef(syncToolbar);
   syncToolbarRef.current = syncToolbar;
 
