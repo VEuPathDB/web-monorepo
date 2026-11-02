@@ -95,6 +95,54 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
   const refreshMirrorsRef = useRef(refreshMirrors);
   refreshMirrorsRef.current = refreshMirrors;
 
+  // true while a vertex or whole shape is being dragged
+  const gestureActiveRef = useRef(false);
+
+  /**
+   * Silently translate each real shape by whole multiples of 360° into the
+   * world copy nearest the map centre, so the editable shape is always the
+   * one in front of the user (the others are read-only mirrors). Does not
+   * emit: the prefix cover is the same in every world copy (longitudes are
+   * wrapped by normalizeShapeLongitudes), so the filter needn't recompute.
+   */
+  function recenterShapes() {
+    const group = groupRef.current;
+    if (group == null || gestureActiveRef.current) return;
+    const centerLng = map.getCenter().lng;
+    group.eachLayer((layer) => {
+      if (!(layer instanceof L.Polygon)) return;
+      const extent = layer.getBounds();
+      const shift =
+        360 *
+        Math.round(
+          (centerLng - (extent.getWest() + extent.getEast()) / 2) / 360
+        );
+      if (shift === 0) return;
+      // geoman's edit handles don't follow setLatLngs, so reopen them
+      const wasEditing = layer.pm.enabled();
+      if (wasEditing) layer.pm.disable();
+      layer.setLatLngs(
+        (layer.getLatLngs() as L.LatLng[][]).map((ring) =>
+          ring.map((ll) => L.latLng(ll.lat, ll.lng + shift))
+        )
+      );
+      if (wasEditing) layer.pm.enable();
+    });
+  }
+
+  const recenterShapesRef = useRef(recenterShapes);
+  recenterShapesRef.current = recenterShapes;
+
+  function shapeCallbacks(): ShapeCallbacks {
+    return {
+      onEdited: () => emitShapesRef.current(),
+      onEditing: () => refreshMirrorsRef.current(),
+      onGesture: (active) => {
+        gestureActiveRef.current = active;
+      },
+    };
+  }
+
   function emitShapes() {
     refreshMirrors();
     setTimeout(() => {
@@ -157,8 +205,7 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       addShapeLayer(
         group,
         simplified.map((ll): [number, number] => [ll.lat, ll.lng]),
-        () => emitShapesRef.current(),
-        () => refreshMirrorsRef.current()
+        shapeCallbacks()
       );
       emitShapesRef.current();
     };
@@ -172,7 +219,10 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       }
     };
 
-    const handleViewChanged = () => refreshMirrorsRef.current();
+    const handleViewChanged = () => {
+      recenterShapesRef.current();
+      refreshMirrorsRef.current();
+    };
 
     map.on('lasso.finished', handleLassoFinished);
     map.on('pm:remove', handleRemove);
@@ -199,13 +249,7 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     const serialized = JSON.stringify(shapes);
     if (serialized === lastEmittedRef.current) return;
     group.clearLayers();
-    for (const shape of shapes)
-      addShapeLayer(
-        group,
-        shape,
-        () => emitShapesRef.current(),
-        () => refreshMirrorsRef.current()
-      );
+    for (const shape of shapes) addShapeLayer(group, shape, shapeCallbacks());
     refreshMirrorsRef.current();
     lastEmittedRef.current = serialized;
   }, [shapes]);
@@ -224,11 +268,19 @@ function collectShapes(group: L.FeatureGroup): LatLngShape[] {
   return result;
 }
 
+interface ShapeCallbacks {
+  /** a gesture finished: commit the new shapes */
+  onEdited: () => void;
+  /** a drag is in progress: keep the read-only copies in step */
+  onEditing: () => void;
+  /** a vertex/shape drag started (true) or ended (false) */
+  onGesture: (active: boolean) => void;
+}
+
 function addShapeLayer(
   group: L.FeatureGroup,
   shape: LatLngShape,
-  onEdited: () => void,
-  onEditing: () => void
+  { onEdited, onEditing, onGesture }: ShapeCallbacks
 ) {
   const layer = L.polygon(
     shape.map(([lat, lng]) => L.latLng(lat, lng)),
@@ -242,6 +294,8 @@ function addShapeLayer(
   );
   // keep the read-only copies in step while a vertex or shape is dragged
   layer.on('pm:markerdrag pm:drag' as any, onEditing);
+  layer.on('pm:markerdragstart pm:dragstart' as any, () => onGesture(true));
+  layer.on('pm:markerdragend pm:dragend' as any, () => onGesture(false));
   group.addLayer(layer);
 }
 
