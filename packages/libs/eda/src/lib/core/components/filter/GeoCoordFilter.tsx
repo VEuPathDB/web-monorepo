@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
-import { Pane, Rectangle, useMap, useMapEvents } from 'react-leaflet';
+import { Pane, Rectangle } from 'react-leaflet';
 
 // map component related imports
 import MapVEuMap, {
@@ -18,6 +18,7 @@ import {
   geohashCellBounds,
   LatLngShape,
 } from '@veupathdb/components/lib/map/utils/polygonsToGeohashPrefixes';
+import { useVisibleWorldOffsets } from '@veupathdb/components/lib/map/utils/worldCopies';
 
 import { AnalysisState } from '../../hooks/analysis';
 import { useMapMarkers } from '../../hooks/mapMarkers';
@@ -52,47 +53,6 @@ const defaultAnimation = {
 // verify the lasso-to-prefix-cover conversion. Flip to false to hide the
 // checkbox; the rendering machinery below stays for future debugging.
 const ENABLE_GEOHASH_CELL_DEBUG = true;
-
-/** Most world copies the debug cell overlay will be drawn in at once. */
-const MAX_WORLD_COPIES = 9;
-
-/**
- * Longitude shifts (multiples of 360) for every world copy currently
- * visible in the map, so overlays defined in ±180° can be drawn wherever
- * the user has panned. Cf. SemanticMarkers, which recentres markers the
- * same way.
- */
-function useVisibleWorldOffsets(): number[] {
-  const map = useMap();
-  const compute = useCallback(() => {
-    const { lng: west } = map.getBounds().getSouthWest();
-    const { lng: east } = map.getBounds().getNorthEast();
-    let first = Math.floor((west + 180) / 360);
-    let last = Math.floor((east + 180) / 360);
-    if (last - first + 1 > MAX_WORLD_COPIES) {
-      // zoomed out very far: keep the copies nearest the centre
-      const mid = Math.round((first + last) / 2);
-      first = mid - Math.floor(MAX_WORLD_COPIES / 2);
-      last = first + MAX_WORLD_COPIES - 1;
-    }
-    return Array.from(
-      { length: last - first + 1 },
-      (_, i) => (first + i) * 360
-    );
-  }, [map]);
-  const [offsets, setOffsets] = useState(compute);
-  useMapEvents({
-    moveend: () => setOffsets((prev) => sameOffsets(prev, compute())),
-    zoomend: () => setOffsets((prev) => sameOffsets(prev, compute())),
-    resize: () => setOffsets((prev) => sameOffsets(prev, compute())),
-  });
-  return offsets;
-}
-
-/** keep the previous array identity when nothing changed (avoids re-renders) */
-function sameOffsets(prev: number[], next: number[]): number[] {
-  return isEqual(prev, next) ? prev : next;
-}
 
 type GeohashCellsOverlayProps = { prefixes: string[] };
 

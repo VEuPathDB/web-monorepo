@@ -19,6 +19,7 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 import './styles/geo-shape-select.css';
 import { LatLngShape } from './utils/polygonsToGeohashPrefixes';
+import { worldShiftsIntoView } from './utils/worldCopies';
 
 export interface GeoShapeSelectProps {
   /** the current shapes, as [lat, lng] vertex arrays (unclosed) */
@@ -38,10 +39,20 @@ const shapeStyle = {
   pmIgnore: false,
 };
 
+// read-only copies of the shapes in the other visible world copies:
+// invisible to geoman (opt-in mode) and to mouse events
+const mirrorStyle = {
+  ...shapeStyle,
+  pmIgnore: true,
+  interactive: false,
+};
+
 export default function GeoShapeSelect(props: GeoShapeSelectProps) {
   const { shapes } = props;
   const map = useMap();
   const groupRef = useRef<L.FeatureGroup>();
+  // read-only copies of the shapes in the other visible world copies
+  const mirrorGroupRef = useRef<L.FeatureGroup>();
   // serialized form of the last shape-set we emitted, to distinguish the
   // parent echoing our own change back (no rebuild — geoman may be
   // mid-gesture) from a genuinely new value (rebuild the layers)
@@ -53,7 +64,39 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
   const simplifyTolerancePxRef = useRef(props.simplifyTolerancePx ?? 8);
   simplifyTolerancePxRef.current = props.simplifyTolerancePx ?? 8;
 
+  function refreshMirrors() {
+    const group = groupRef.current;
+    const mirrorGroup = mirrorGroupRef.current;
+    if (group == null || mirrorGroup == null) return;
+    mirrorGroup.clearLayers();
+    const view = map.getBounds();
+    group.eachLayer((layer) => {
+      if (!(layer instanceof L.Polygon)) return;
+      const extent = layer.getBounds();
+      const latLngs = layer.getLatLngs() as L.LatLng[][];
+      for (const shift of worldShiftsIntoView(
+        extent.getWest(),
+        extent.getEast(),
+        view.getWest(),
+        view.getEast()
+      )) {
+        if (shift === 0) continue; // the real, editable shape
+        mirrorGroup.addLayer(
+          L.polygon(
+            latLngs.map((ring) =>
+              ring.map((ll) => L.latLng(ll.lat, ll.lng + shift))
+            ),
+            mirrorStyle
+          )
+        );
+      }
+    });
+  }
+  const refreshMirrorsRef = useRef(refreshMirrors);
+  refreshMirrorsRef.current = refreshMirrors;
+
   function emitShapes() {
+    refreshMirrors();
     setTimeout(() => {
       const group = groupRef.current;
       if (group == null) return;
@@ -71,6 +114,8 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     // data markers (SemanticMarkers) out of them
     L.PM.setOptIn(true);
 
+    const mirrorGroup = L.featureGroup().addTo(map);
+    mirrorGroupRef.current = mirrorGroup;
     const group = L.featureGroup().addTo(map);
     groupRef.current = group;
 
@@ -112,7 +157,8 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       addShapeLayer(
         group,
         simplified.map((ll): [number, number] => [ll.lat, ll.lng]),
-        () => emitShapesRef.current()
+        () => emitShapesRef.current(),
+        () => refreshMirrorsRef.current()
       );
       emitShapesRef.current();
     };
@@ -126,16 +172,22 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
       }
     };
 
+    const handleViewChanged = () => refreshMirrorsRef.current();
+
     map.on('lasso.finished', handleLassoFinished);
     map.on('pm:remove', handleRemove);
+    map.on('moveend zoomend resize', handleViewChanged);
 
     return () => {
       map.off('lasso.finished', handleLassoFinished);
       map.off('pm:remove', handleRemove);
+      map.off('moveend zoomend resize', handleViewChanged);
       map.pm.removeControls();
       lassoControl.remove();
       group.remove();
+      mirrorGroup.remove();
       groupRef.current = undefined;
+      mirrorGroupRef.current = undefined;
     };
   }, [map]);
 
@@ -148,7 +200,13 @@ export default function GeoShapeSelect(props: GeoShapeSelectProps) {
     if (serialized === lastEmittedRef.current) return;
     group.clearLayers();
     for (const shape of shapes)
-      addShapeLayer(group, shape, () => emitShapesRef.current());
+      addShapeLayer(
+        group,
+        shape,
+        () => emitShapesRef.current(),
+        () => refreshMirrorsRef.current()
+      );
+    refreshMirrorsRef.current();
     lastEmittedRef.current = serialized;
   }, [shapes]);
 
@@ -169,7 +227,8 @@ function collectShapes(group: L.FeatureGroup): LatLngShape[] {
 function addShapeLayer(
   group: L.FeatureGroup,
   shape: LatLngShape,
-  onEdited: () => void
+  onEdited: () => void,
+  onEditing: () => void
 ) {
   const layer = L.polygon(
     shape.map(([lat, lng]) => L.latLng(lat, lng)),
@@ -181,6 +240,8 @@ function addShapeLayer(
     'pm:markerdragend pm:vertexadded pm:vertexremoved pm:dragend pm:update' as any,
     onEdited
   );
+  // keep the read-only copies in step while a vertex or shape is dragged
+  layer.on('pm:markerdrag pm:drag' as any, onEditing);
   group.addLayer(layer);
 }
 
