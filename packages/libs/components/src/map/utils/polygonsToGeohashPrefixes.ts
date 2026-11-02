@@ -128,6 +128,14 @@ const GEOHASH_BASE32 = '0123456789bcdefghjkmnpqrstuvwxyz';
  * at most `budget` prefixes, none longer than `maxLevel`. Border cells
  * are kept inclusively (partial overlap ⇒ included). Returns a sorted,
  * deduplicated list; empty only for empty/degenerate input.
+ *
+ * NOTE: this is `async` although nothing in it currently awaits: the
+ * computation is synchronous and CPU-bound, so the Promise (and the
+ * out-of-sequence `updateSeqRef` guard in GeoCoordFilter's caller) is not
+ * needed today. They are deliberate scaffolding in case we move the cover
+ * computation to a Web Worker, after testing in the browser with real data
+ * shows it blocks the main thread. If that never happens, make this
+ * synchronous and drop the guard.
  */
 export async function polygonsToGeohashPrefixes(
   shapes: LatLngShape[],
