@@ -1,22 +1,23 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { DatasetTypeConfig, FileInputConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
-import { Consumer, Nullable, Possible, filterNullish } from '../../../../../Utils';
-import { FileInputButton } from '../../';
+import { Consumer, Nullable, Possible, filterNullish, needsFile } from '../../../../../Utils';
+import { LabelInputPair } from '../../';
 import { UploadContent } from '../../../../../Service/Model';
 import { UploadContentMap } from '../../../../../Service/Model/utility-types';
+import { isEmpty } from 'lodash';
 
 export interface DataFileInputListProps {
   readonly fieldName: string;
   readonly dataType: DatasetTypeConfig;
   readonly vdiFeatures: VdiServiceFeatures;
-  readonly inputConfigs: readonly FileInputConfig[];
+  readonly inputConfigs: ReadonlyArray<FileInputConfig>;
   readonly disabled?: boolean;
   readonly setFiles: Consumer<UploadContentMap>;
   readonly files: Possible<UploadContentMap>;
 }
 
-export function DataFileInputList(props: DataFileInputListProps): Nullable<ReactElement> {
+export function DataFileInputList(props: DataFileInputListProps): Nullable<React.ReactElement> {
   const configs: Array<DataFileInputProps> = props.inputConfigs
     .map((it, i) => {
       const fieldName: string = `${props.fieldName}[${i}]`;
@@ -40,7 +41,7 @@ export function DataFileInputList(props: DataFileInputListProps): Nullable<React
   }
 
 
-  return <>{configs.map(DataFileInput)}</>;
+  return <>{configs.map((config, i) => <DataFileInput key={i} {...config} />)}</>;
 }
 
 export interface DataFileInputProps {
@@ -60,37 +61,31 @@ export interface DataFileInputProps {
 
 }
 
-export function DataFileInput(props: DataFileInputProps): ReactElement {
+export function DataFileInput(props: DataFileInputProps): React.ReactElement {
   const { inputConfig } = props;
 
-  const acceptValue =
-    inputConfig.accept ??
-    buildFileExtensionList(
+  const acceptValue = inputConfig.accept
+    ?? buildFileExtensionList(
       props.vdiFeatures.supportedArchiveTypes,
       props.dataType.vdiConfig.allowedFileExtensions
     );
 
-
-  const buttonText = inputConfig.buttonText ?? "Choose file";
-
-  const className = props.inputConfig.required ? 'required' : undefined;
+  const buttonText = inputConfig.buttonText
+    ?? (isEmpty(props.files) ? 'Choose file' : 'Change file');
 
   return (
-    <>
-      <label className={className} htmlFor={props.fieldName}>
-        {inputConfig.label ?? 'Data File'}
-      </label>
-
-      <FileInputButton
-        fieldName={props.fieldName}
-        buttonText={buttonText}
-        fileSelection={props.files}
-        setFileSelection={props.setFiles}
-        accept={acceptValue}
-        disabled={props.disabled}
-        required={props.inputConfig.required}
-      />
-    </>
+    <LabelInputPair
+      type="file"
+      label={inputConfig.label ?? 'Data File'}
+      fieldName={props.fieldName}
+      buttonText={buttonText}
+      accept={acceptValue}
+      disabled={props.disabled}
+      required={props.inputConfig.required}
+      value={props.files}
+      onChange={props.setFiles}
+      validator={needsFile}
+    />
   );
 }
 

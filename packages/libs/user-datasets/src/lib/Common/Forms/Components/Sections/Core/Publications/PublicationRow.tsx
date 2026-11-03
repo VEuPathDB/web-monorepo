@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
@@ -16,7 +16,7 @@ import {
   resemblesPublicationId,
 } from '../../../../../../Service/Publications';
 import { CitationLookupStatus, StatusTuple } from './utils';
-import { InputPair } from '../../../InputPair';
+import { LabelInputPair } from '../../../LabelInputPair';
 import { CitationLine } from './CitationLine';
 
 const DEBOUNCE_DELAY_MILLIS = 666;
@@ -38,6 +38,7 @@ export interface PublicationRowProps {
 export function PublicationRow(props: PublicationRowProps): ReactElement {
   const lookupStatus = useRef<number>(0);
   const [citationStatus, setCitationStatus] = useState<StatusTuple>([null, null]);
+  const { publication, setPublication } = props;
 
   useEffect(() => setCitationStatus([
     ifDefined(props.publication.citation, (citation) => ({
@@ -47,22 +48,26 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
     null,
   ]), [props.publication.citation]);
 
-  const updatePublication = (pub: Publication, res: CitationLookupStatus) => {
-    props.setPublication(
-      (() => {
-        switch (res?.status) {
-          case 'success':
-            return applyCitation(pub, res.citation);
-          case 'cancelled':
-            return applyCitation(pub, props.publication.citation);
-          default:
-            return applyCitation(pub, undefined);
-        }
-      })()
-    );
-  };
+  const updatePublication = useCallback(
+    (pub: Publication, res: CitationLookupStatus) => {
+      setPublication(
+        (() => {
+          switch (res?.status) {
+            case 'success':
+              return applyCitation(pub, res.citation);
+            case 'cancelled':
+              return applyCitation(pub, publication.citation);
+            default:
+              return applyCitation(pub, undefined);
+          }
+        })()
+      );
+    },
+    [publication, setPublication],
+  );
 
-  const runLookup = (pub: Publication) => {
+  const runLookup = useCallback(
+    (pub: Publication) => {
     const timestamp = Date.now();
     lookupStatus.current = timestamp;
 
@@ -95,30 +100,35 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
         setCitationStatus([res, null]);
         updatePublication(pub, res);
       });
-  };
+    },
+    [setCitationStatus, updatePublication]
+  );
 
-  const onInput = (id: string, type: PublicationType) => {
-    const newPub = {
-      ...props.publication,
-      identifier: id,
-      type: id.length > 0 ? type : undefined,
-      citation: undefined,
-    };
+  const onInput = useCallback(
+    (id: string, type: PublicationType) => {
+      const newPub = {
+        ...publication,
+        identifier: id,
+        type: id.length > 0 ? type : undefined,
+        citation: undefined,
+      };
 
-    props.setPublication(newPub);
+      setPublication(newPub);
 
-    if (!isNonBlankString(id)) {
-      setCitationStatus([null, null]);
-      debounce(() => {});
-    }
+      if (!isNonBlankString(id)) {
+        setCitationStatus([null, null]);
+        debounce(() => {});
+      }
 
-    if (!resemblesPublicationId(id, type)) {
-      return;
-    }
+      if (!resemblesPublicationId(id, type)) {
+        return;
+      }
 
-    setCitationStatus((it) => [it[0], { status: 'loading' }]);
-    debounce(runLookup, newPub);
-  };
+      setCitationStatus((it) => [it[0], { status: 'loading' }]);
+      debounce(runLookup, newPub);
+    },
+    [publication, setPublication, runLookup]
+  );
 
   return (
     <>
@@ -140,7 +150,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
             onInput={onInput}
           />
 
-          <InputPair
+          <LabelInputPair
             label="Primary publication"
             fieldName={props.jsonPath.appendToString<Publication>('isPrimary')}
             type="checkbox"
@@ -172,7 +182,7 @@ function PublicationInput(props: PublicationInputProps): ReactElement {
   const hasType = isNonBlankString(props.publication.type);
   const pubTypeIsFieldType = props.publication.type === props.fieldType;
 
-  return <InputPair
+  return <LabelInputPair
     label={props.fieldType.toUpperCase()}
     fieldName={`pub-${props.index}-${props.fieldType}`}
     required={props.isRequired && (!hasType || pubTypeIsFieldType)}

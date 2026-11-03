@@ -11,7 +11,7 @@ export type Optional<T> = T | null | undefined;
 
 export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
 
-export type Tuple<A, B> = [A, B];
+export type Tuple<A, B> = [ A, B ];
 
 export type Mutable<T extends object> = {
   -readonly [K in keyof T]: T[K];

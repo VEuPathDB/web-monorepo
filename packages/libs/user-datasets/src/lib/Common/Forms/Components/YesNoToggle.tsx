@@ -1,7 +1,7 @@
 import React, { ReactElement, ReactNode } from 'react';
 import { Consumer } from '../../../Utils';
 import { FieldHelpText } from './FieldHelpText';
-import { InputPair } from './InputPair';
+import { LabelInputPair } from './LabelInputPair';
 
 export interface YesNoToggleProps {
   readonly value: boolean | undefined | null;
@@ -41,7 +41,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
   return (
     <>
       <p className={className}>
-        <InputPair
+        <LabelInputPair
           label="Yes"
           type="radio"
           value="1"
@@ -53,7 +53,7 @@ export function YesNoToggle(props: YesNoToggleProps): ReactElement {
           flipped={true}
           onChange={(e) => props.setValue(e.currentTarget.checked)}
         />
-        <InputPair
+        <LabelInputPair
           label="No"
           type="radio"
           value="0"

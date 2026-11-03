@@ -7,7 +7,13 @@ export {
   arrayChangeHandler,
   textChange,
   replaceElement,
+  useArrayChangeHandler,
+  useChangeHandler,
 } from './input-utils';
+
+export {
+  needsFile,
+} from './input-tests';
 
 export type {
   BiConsumer,

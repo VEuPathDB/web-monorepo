@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-import { AddRowButton, InputBlock, InputPair } from '../../index';
+import React, { ReactElement, useCallback } from 'react';
+import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
 import {
   arrayChangeHandler,
@@ -13,7 +13,7 @@ import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export interface OrganismDetailsProps {
-  readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly datasetMeta: PartialDatasetDetails;
   readonly jsonPath: JsonPathBuilder;
 }
@@ -27,16 +27,23 @@ export function ExperimentalOrganisms(
     ? props.datasetMeta.experimentalOrganisms
     : [{}];
 
-  const setEnabled = (enabled: boolean) =>
-    props.setDatasetDetails({
-      ...props.datasetMeta,
+  const { datasetMeta, setDatasetMeta } = props;
+
+  const setEnabled = useCallback(
+    (enabled: boolean) => setDatasetMeta({
+      ...datasetMeta,
       metadataContentFlags: {
-        ...(props.datasetMeta.metadataContentFlags ?? {}),
+        ...(datasetMeta.metadataContentFlags ?? {}),
         hasOrganismData: enabled,
       },
-    });
+    }),
+    [datasetMeta, setDatasetMeta],
+  );
 
-  const arrayCallback = arrayChangeHandler('experimentalOrganisms', props.datasetMeta, props.setDatasetDetails);
+  const arrayCallback = useCallback(
+    arrayChangeHandler('experimentalOrganisms', datasetMeta, setDatasetMeta),
+    [datasetMeta, setDatasetMeta],
+  );
 
   const isGenomics = isGenomicsProjectId(projectId);
 
@@ -49,6 +56,7 @@ export function ExperimentalOrganisms(
     : !hasOrganismData;
 
   const isPublic = props.datasetMeta.visibility === 'public';
+  const enabled = isGenomics ? true : hasOrganismData;
 
   return (
     <>
@@ -56,10 +64,10 @@ export function ExperimentalOrganisms(
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
-            enabled: isGenomics ? true : hasOrganismData,
+            enabled: enabled,
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
-            required: isPublic,
+            required: isPublic || (enabled ?? false),
             helpText: 'Whether this dataset includes biological data describing one or more organisms.',
             hideToggle: isGenomics,
           }}
@@ -100,7 +108,7 @@ export function ExperimentalOrganisms(
             className="column-2"
             onClick={() => {
               if (!disabled)
-                props.setDatasetDetails({
+                props.setDatasetMeta({
                   ...props.datasetMeta,
                   experimentalOrganisms: [ ...safeOrgList, {} ]
                 });
@@ -126,6 +134,7 @@ function OrganismDetailsContent(props: OrganismDetailListProps): ReactElement {
     <ol className="multi-input span-2">
       {props.organisms.map((org, index) =>
         <OrganismDetailsRow
+          key={index}
           index={index}
           disabled={props.disabled}
           required={props.required && index === 0}
@@ -158,7 +167,7 @@ function OrganismDetailsRow({
       <span className="multi-input-label">Organism {index + 1}</span>
 
       <div className="column-2 field-grid organism-row">
-        <InputPair<PartialOrganism>
+        <LabelInputPair<PartialOrganism>
           label="Species"
           type="text"
           fieldName="species"
@@ -170,7 +179,7 @@ function OrganismDetailsRow({
           disabled={disabled}
         />
 
-        <InputPair<PartialOrganism>
+        <LabelInputPair<PartialOrganism>
           label="Strain"
           type="text"
           fieldName="strain"

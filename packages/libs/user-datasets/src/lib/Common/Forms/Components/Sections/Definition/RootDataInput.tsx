@@ -75,22 +75,19 @@ export function RootDataInput(props: RootDataInputProps): ReactElement {
 function buildUploadInputs(
   props: RootDataInputProps
 ): Array<[UploadType, ReactElement]> {
-  const { fileUpload, urlUpload } = props;
+  const { fileUpload, urlUpload, dataType, pathBuilder } = props;
 
   const inputs: Array<[UploadType, ReactElement]> = [];
 
   const fieldProps: UploadFieldProps = {
-    dataType: props.dataType,
-    pathBuilder: props.pathBuilder,
+    dataType: dataType,
+    pathBuilder: pathBuilder,
   };
 
   if (fileUpload !== undefined)
     inputs.push([
       'file',
-      fileInput({
-        ...fileUpload,
-        ...fieldProps,
-      }),
+      <FileInput {...fileUpload} {...fieldProps} />,
     ]);
 
   if (urlUpload !== undefined)
@@ -123,7 +120,7 @@ interface FileUploadState {
 
 export type FileUploadProps = UploadFieldProps & FileUploadConfig & FileUploadState;
 
-function fileInput(props: FileUploadProps): ReactElement {
+function FileInput(props: FileUploadProps): ReactElement {
   const fieldName = props.pathBuilder.appendToString('dataFile');
 
   const baseField = (

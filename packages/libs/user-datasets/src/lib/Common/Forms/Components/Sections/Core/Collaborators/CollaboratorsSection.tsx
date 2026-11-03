@@ -16,37 +16,43 @@ export interface CollaboratorsSectionProps {
 }
 
 export function CollaboratorsSection(
-  props: CollaboratorsSectionProps
+  { datasetMeta, setDatasetMeta, pathBuilder }: CollaboratorsSectionProps
 ): ReactElement {
-  const safeContacts = isEmpty(props.datasetMeta.contacts)
+  const safeContacts = isEmpty(datasetMeta.contacts)
     ? [{}]
-    : props.datasetMeta.contacts!;
+    : datasetMeta.contacts!;
 
   const hasPrimary = safeContacts.some((it) => it.isPrimary);
 
-  const setContacts = (contacts: Array<DatasetContact>) =>
-    props.setDatasetMeta({ ...props.datasetMeta, contacts });
+  const setContacts = React.useCallback(
+    (contacts: Array<DatasetContact>) =>
+      setDatasetMeta({ ...datasetMeta, contacts }),
+    [datasetMeta, setDatasetMeta],
+  );
 
-  const onUpdateContact = (contact: DatasetContact, index: number) => {
-    if (
-      Array.isArray(props.datasetMeta.contacts) &&
-      props.datasetMeta.contacts.length > 0
-    ) {
-      const newContacts = scrubContactPrimaries(
-        props.datasetMeta.contacts,
-        contact.isPrimary === true
-      );
-      newContacts[index] = scrubContactPrimary(contact);
-      setContacts(newContacts);
-    } else {
-      setContacts([scrubContactPrimary(contact)]);
-    }
-  };
+  const onUpdateContact = React.useCallback(
+    (contact: DatasetContact, index: number) => {
+      if (
+        Array.isArray(datasetMeta.contacts) &&
+        datasetMeta.contacts.length > 0
+      ) {
+        const newContacts = scrubContactPrimaries(
+          datasetMeta.contacts,
+          contact.isPrimary === true
+        );
+        newContacts[index] = scrubContactPrimary(contact);
+        setContacts(newContacts);
+      } else {
+        setContacts([scrubContactPrimary(contact)]);
+      }
+    },
+    [datasetMeta.contacts, setContacts],
+  );
 
-  const isPublic = props.datasetMeta.visibility === 'public';
+  const isPublic = datasetMeta.visibility === 'public';
 
   const contactBlocks = safeContacts.map((contact, index) => {
-    const path = props.pathBuilder.append(index);
+    const path = pathBuilder.append(index);
 
     return (
       <ContactBlock

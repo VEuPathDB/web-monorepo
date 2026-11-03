@@ -8,8 +8,8 @@ import {
   FetchClient,
   ioTransformer,
 } from '@veupathdb/http-utils';
-import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { RecentSearchesMenu } from '@veupathdb/coreui/lib/components/inputs/RecentSearchesMenu';
+import { isEmpty } from 'lodash';
 
 // region Keyboard
 
@@ -229,8 +229,8 @@ export interface TypeAheadInputProps {
   readonly onClearRecentSearches: () => void;
 }
 
-export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
-  const [suggestions, setSuggestions] = useState<Array<string>>([]);
+export function TypeAheadInput(props: TypeAheadInputProps): React.ReactElement {
+  const [suggestions, setSuggestions] = useState<Array<string>>();
   const [hintValue, setHintValue] = useState('');
   const [inputValue, setInputValue] = useState(props.searchString);
   // "focus" follows mouse clicks, but not tabbing
@@ -244,7 +244,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const ulReference = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const ulClassName =
-    suggestions.length === 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
+    isEmpty(suggestions) ? 'type-ahead-hints hidden' : 'type-ahead-hints';
 
   /**
    * Updates the "suggestion" input with the given hint text value.
@@ -267,7 +267,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
    */
   const resetInput = () => {
     props.inputReference.current?.focus();
-    setSuggestions([]);
+    setSuggestions(undefined);
   };
 
   /**
@@ -446,7 +446,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
 
     setInputValue(element.value);
     setHintValue(element.value);
-    setSuggestions([]);
+    setSuggestions(undefined);
 
     if (lastWordOf(element.value).length >= 3) typeAhead(() => element.value);
   };
@@ -461,7 +461,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const showHistory =
     hasFocus && (inputValue === '' || props.searchString === inputValue);
 
-  const suggestionItems = suggestions.map((suggestion) => (
+  const suggestionItems = suggestions?.map((suggestion) => (
     <li
       className="type-ahead-hint"
       tabIndex={0}
@@ -473,7 +473,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     >
       {suggestion}
     </li>
-  ));
+  )) ?? [];
 
   const historyMenu = (
     <RecentSearchesMenu
@@ -488,7 +488,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     const clickHandler = (e: MouseEvent) => {
       if (!(e.target instanceof HTMLElement)) return;
       if (e.target.parentElement !== ulReference.current) {
-        setSuggestions([]);
+        setSuggestions(undefined);
       }
       if (!containerRef.current?.contains(e.target)) {
         setHasFocus(false);

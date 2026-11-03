@@ -22,7 +22,7 @@ import {
 import {
   GrowableStringList,
   InputBlock,
-  InputPair,
+  LabelInputPair,
   YesNoToggle,
 } from '../../index';
 import { DatasetCharacteristicsFormSectionConfig } from '../../../../Configuration/DatasetFormConfig';
@@ -188,7 +188,7 @@ export function CharacteristicsSection({
           }
         />
 
-        <InputPair<PartialCharacteristics>
+        <LabelInputPair<PartialCharacteristics>
           fieldName="participantAges"
           label="Participant Ages"
           disabled={enabled !== true}
@@ -331,7 +331,7 @@ function YearsInputs({
 
   return (
     <>
-      <InputPair
+      <LabelInputPair
         label="Start Year"
         type="text"
         inputRef={startRef}
@@ -343,7 +343,7 @@ function YearsInputs({
         required={required || !!safeYears.end}
       />
 
-      <InputPair
+      <LabelInputPair
         label="End Year"
         type="text"
         inputRef={endRef}
