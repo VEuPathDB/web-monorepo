@@ -225,7 +225,7 @@ function PublicationInput(props: PublicationInputProps): ReactElement {
       required={props.isRequired && (!hasType || pubTypeIsFieldType)}
       value={pubTypeIsFieldType ? props.publication.identifier : undefined}
       onChange={(v) => props.onInput(v, props.fieldType)}
-      className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
+      // className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
       labelClass={hasType && !pubTypeIsFieldType ? 'disabled' : undefined}
       validator={pubTypeIsFieldType || !hasType ? validator : undefined}
       disabled={
