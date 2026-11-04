@@ -1,9 +1,8 @@
 import React, { ReactElement, useState } from 'react';
 import { FileUploadConfig, UrlUploadConfig } from '../../../../Configuration/UploadFormConfig';
-import { Consumer, JsonPathBuilder, Possible } from '../../../../../Utils';
+import * as util from '../../../../../Utils';
 import { RadioList } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../../../Configuration';
-import { formatFileSize } from '../../../../../Utils/formatting';
 import { DataFileInputList } from './DataFileInput';
 import { VdiServiceMetadata } from '../../../../../Service';
 import { UploadContentMap } from '../../../../../Service/Model/utility-types';
@@ -15,7 +14,7 @@ export interface RootDataInputProps {
   readonly dataType: DatasetTypeConfig;
   readonly fileUpload?: FileUploadProps;
   readonly urlUpload?: UrlUploadProps;
-  readonly pathBuilder: JsonPathBuilder;
+  readonly pathBuilder: util.JsonPathBuilder;
   readonly helpText?: () => ReactElement;
 }
 
@@ -105,7 +104,7 @@ function buildUploadInputs(
 // endregion Root Dataset Data Input Component
 
 interface UploadFieldProps {
-  readonly pathBuilder: JsonPathBuilder;
+  readonly pathBuilder: util.JsonPathBuilder;
 
   readonly dataType: DatasetTypeConfig;
 }
@@ -113,8 +112,8 @@ interface UploadFieldProps {
 // region File Input Sub-Component
 
 interface FileUploadState {
-  readonly files: Possible<UploadContentMap>;
-  readonly setFiles: Consumer<UploadContentMap>;
+  readonly files: util.Possible<UploadContentMap>;
+  readonly setFiles: util.Consumer<UploadContentMap>;
   readonly vdiConfig: VdiServiceMetadata;
 }
 
@@ -140,7 +139,7 @@ function FileInput(props: FileUploadProps): ReactElement {
         props.helpText !== undefined
           ? props.helpText
           : 'Uncompressed file cannot be greater than ' +
-            formatFileSize(props.dataType.vdiConfig.maxFileSize) + '.'
+          util.formatFileSize(props.dataType.vdiConfig.maxFileSize) + '.'
       }</i>
     </div>
   );
@@ -159,7 +158,7 @@ function FileInput(props: FileUploadProps): ReactElement {
 
 interface UrlUploadState {
   readonly url: string;
-  readonly setUrl: Consumer<string>;
+  readonly setUrl: util.Consumer<string>;
   readonly required: boolean;
 }
 

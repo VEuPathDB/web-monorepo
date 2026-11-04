@@ -114,9 +114,13 @@ function buildFileExtensionList(
 ): string {
   const joined = [];
 
-  for (const ext of dataTypeExtensions) joined.push(sanitizeFileExtension(ext));
+  for (const ext of dataTypeExtensions) {
+    joined.push(sanitizeFileExtension(ext));
+  }
 
-  for (const ext of coreExtensions) joined.push(sanitizeFileExtension(ext));
+  for (const ext of coreExtensions) {
+    joined.push(sanitizeFileExtension(ext));
+  }
 
   return joined.join(',');
 }

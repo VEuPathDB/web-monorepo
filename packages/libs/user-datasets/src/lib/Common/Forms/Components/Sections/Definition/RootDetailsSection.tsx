@@ -1,4 +1,5 @@
 import React from 'react';
+import lodash from 'lodash';
 import * as util from '../../../../../Utils';
 
 import {
@@ -9,7 +10,6 @@ import {
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { LabelInputPair, UploadButton } from '../../index';
 import { PartialDatasetDetails } from '../../../../../Service';
-import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
 import {
   DatasetFormState,
@@ -20,10 +20,9 @@ import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
-import { UploadContentMap } from '../../../../../Service/Model/utility-types';
+import { UploadContentMap } from '../../../../../Service/Model';
 import { SamplesDescriptionInput } from './SamplesDescriptionInput';
 import { FIELD_NAME_DATA_PROP_FILE } from '../../../form-constants';
-import { newTextLengthTest } from '../../../../../Utils';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -63,8 +62,8 @@ export interface RootDetailsSectionProps {
   readonly requireDatasetPropertiesFile?: boolean;
 }
 
-const TEST_NAME_LENGTH = newTextLengthTest(3, 1024);
-const TEST_SUMMARY_LENGTH = newTextLengthTest(3, 4000);
+const TEST_NAME_LENGTH = util.newTextLengthTest(3, 1024);
+const TEST_SUMMARY_LENGTH = util.newTextLengthTest(3, 4000);
 
 export function RootDetailsSection(
   props: RootDetailsSectionProps
@@ -248,7 +247,7 @@ function useFileProps(
             setFiles: (dataFiles) =>
               setUploads({ ...dataFileSelections, ...(dataFiles ?? {}) }),
             pathBuilder: jsonPath,
-            files: isEmpty(dataFileSelections)
+            files: lodash.isEmpty(dataFileSelections)
               ? undefined
               : dataFileSelections!,
           },
@@ -282,7 +281,9 @@ function useUrlProps(
             pathBuilder: jsonPath,
             url: dataFileUrl ?? '',
             required: byFile == null,
-            setUrl: (url) => (isEmpty(url) ? setUrl(undefined) : setUrl(url)),
+            setUrl: (url) => lodash.isEmpty(url)
+              ? setUrl(undefined)
+              : setUrl(url),
           },
 
     // Suppress linting: byUrl, byFile, dataType, and jsonPath are static in

@@ -1,6 +1,6 @@
-export { ifDefined, requireValue, using } from './ergonomics';
+export { ifDefined, ifNotEmpty, requireValue, takeIf, using } from './ergonomics';
 
-export { datasetUserFullName } from './formatting';
+export { datasetUserFullName, formatFileSize } from './formatting';
 
 export {
   changeHandler,

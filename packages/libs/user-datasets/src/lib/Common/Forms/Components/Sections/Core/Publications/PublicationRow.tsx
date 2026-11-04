@@ -16,7 +16,6 @@ import {
   JsonPathBuilder,
   ifDefined,
   isNonBlankString,
-  using,
 } from '../../../../../../Utils';
 import {
   CitationLookupResult,

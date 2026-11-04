@@ -21,7 +21,7 @@ import {
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { DataNoun } from '../../Utils';
+import { datasetUserFullName, formatFileSize, DataNoun } from '../../Utils';
 import {
   DatasetListEntry,
   DatasetListShareUser,
@@ -47,7 +47,6 @@ import {
   removeUserDataset,
   updateDatasetListItem,
 } from '../../Actions/UserDatasetsActions';
-import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
 import { CommunityPromotionError } from '../Sharing/CommunityPromotionError';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/src/Utils/ProjectConstants';
 

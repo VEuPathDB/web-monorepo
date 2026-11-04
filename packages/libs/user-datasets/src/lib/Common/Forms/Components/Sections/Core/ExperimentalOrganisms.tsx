@@ -2,13 +2,13 @@ import React, { ReactElement, useCallback } from 'react';
 import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
 import {
-  arrayChangeHandler,
   JsonPathBuilder,
   BiConsumer,
   Consumer,
   isNonEmpty,
   isNonBlankString,
   newTextLengthTest,
+  useArrayChangeHandler
 } from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
@@ -44,10 +44,7 @@ export function ExperimentalOrganisms(
     [datasetMeta, setDatasetMeta]
   );
 
-  const arrayCallback = useCallback(
-    arrayChangeHandler('experimentalOrganisms', datasetMeta, setDatasetMeta),
-    [datasetMeta, setDatasetMeta]
-  );
+  const arrayCallback = useArrayChangeHandler('experimentalOrganisms', datasetMeta, setDatasetMeta);
 
   const isGenomics = isGenomicsProjectId(projectId);
 

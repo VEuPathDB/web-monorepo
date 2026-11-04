@@ -2,7 +2,7 @@ import React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
 
-import { DataNoun } from '../Utils/types';
+import { DataNoun } from '../Utils';
 import {
   DatasetGetResponseBody,
   DatasetListEntry,

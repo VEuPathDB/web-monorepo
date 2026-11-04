@@ -1,11 +1,10 @@
 import React from 'react';
 import {
-  ifDefined,
   JsonPathBuilder,
   newTextLengthTest,
 } from '../../../../../../Utils';
 import { DatasetContact } from '../../../../../../Service';
-import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
+import { LabelInputPair } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {
   readonly index: number;

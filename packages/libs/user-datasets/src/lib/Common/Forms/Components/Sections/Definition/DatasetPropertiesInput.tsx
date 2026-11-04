@@ -1,6 +1,6 @@
 import React from 'react';
+import lodash from 'lodash';
 import * as util from '../../../../../Utils';
-import * as lodash from 'lodash';
 import { UploadContent } from '../../../../../Service/Model';
 import { LabelInputPair } from '../../LabelInputPair';
 

@@ -11,11 +11,11 @@ import UserDatasetListController from '../Controllers/UserDatasetListController'
 import { DataNoun } from '../Utils';
 import {
   DatasetTypeConfig,
+  DatasetWorkspaceConfig,
   filterAvailableDataTypes,
   promoteTypeConfig,
 } from '../Common/Configuration';
 import { VdiMetadata } from '../Service/utils/use-vdi';
-import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
 export interface UserDatasetWorkspaceProps {
   baseUrl: string;
