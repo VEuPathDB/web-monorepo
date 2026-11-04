@@ -196,17 +196,12 @@ interface PublicationInputProps {
 }
 
 function newPubInputTest(type: PublicationType): Predicate<TextInputProps> {
-  return ({
-    value,
-    required,
-    disabled,
-    fieldName,
-  }: TextInputProps): boolean => {
-    console.log(fieldName, value, required, disabled);
-    return disabled === true || (!required && isEmpty(value)) || type === 'pmid'
-      ? PubMedCitationQuery.resemblesPMID(value!)
-      : DOICitationQuery.resemblesDOI(value!);
-  };
+  return ({ value, required, disabled }: TextInputProps): boolean =>
+    disabled === true
+      || (!required && isEmpty(value))
+      || type === 'pmid'
+        ? PubMedCitationQuery.resemblesPMID(value!)
+        : DOICitationQuery.resemblesDOI(value!);
 }
 
 const TEST_PMID = newPubInputTest('pmid');
