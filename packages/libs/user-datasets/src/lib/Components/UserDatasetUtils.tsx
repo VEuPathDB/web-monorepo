@@ -1,5 +1,5 @@
+import React from 'react';
 import { MesaDataCellProps } from './List/UserDatasetList';
-import React, { ReactNode } from 'react';
 import { DatasetListEntry } from '../Service';
 
 export function makeClassifier(...classNames: string[]) {
@@ -15,7 +15,7 @@ export function normalizePercentage(value: number) {
 
 export function textCell<K extends keyof DatasetListEntry>(
   prop: K,
-  transform: (v: DatasetListEntry[K]) => ReactNode
+  transform: (v: DatasetListEntry[K]) => React.ReactNode
 ) {
   return ({ row }: MesaDataCellProps) =>
     prop in row ? <span>{transform(row[prop])}</span> : null;

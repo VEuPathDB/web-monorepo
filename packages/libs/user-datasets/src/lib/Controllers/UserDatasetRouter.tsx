@@ -17,12 +17,12 @@ import DatasetManagementController from '../Components/Management/DatasetManagem
 import { DatasetManagementProps } from '../Components/Management/DatasetManagement';
 import {
   DatasetTypeConfig,
+  DatasetWorkspaceConfig,
   filterAvailableDataTypes,
   promoteTypeConfig,
 } from '../Common/Configuration';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useVdiMetadata } from '../Service/utils/use-vdi';
-import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
 interface Props {
   detailsPageTitle: string;

@@ -1,7 +1,7 @@
 import { DatasetFormConfig } from '../../../../Configuration';
 import { Consumer } from '../../../../../Utils';
 import React, { ReactElement } from 'react';
-import { InputPair } from '../../InputPair';
+import { LabelInputPair } from '../../LabelInputPair';
 import {
   SAMPLE_INFO_FIELD_NAME,
   SAMPLE_INFO_MAX_BYTES,
@@ -21,7 +21,7 @@ export function SamplesDescriptionInput({ formProps, formConfig, dataUploads, se
 
   return (
     <>
-      <InputPair
+      <LabelInputPair
         label={formConfig.verbiage.formInputs!.samplesDescription!.label}
         fieldName={SAMPLE_INFO_FIELD_NAME}
         value={value}

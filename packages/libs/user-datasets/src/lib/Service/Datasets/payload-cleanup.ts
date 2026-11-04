@@ -201,31 +201,6 @@ function removeEmpties<T>(values: readonly T[]): Possible<T[]> {
   return out.length > 0 ? out : undefined;
 }
 
-type SimpleObject = Record<string, Possible<string | number>>;
-function cleanSimpleObject(obj: SimpleObject): Possible<SimpleObject> {
-  if (!isNonEmpty(obj)) {
-    return undefined;
-  }
-
-  const out: SimpleObject = {};
-
-  for (const [key, value] of Object.entries(obj)) {
-    switch (typeof value) {
-      case 'string':
-        if (value.length > 0) {
-          out[key] = value;
-        }
-        break;
-
-      case 'number':
-        out[key] = value;
-        break;
-    }
-  }
-
-  return isNonEmpty(out) ? out : undefined;
-}
-
 /**
  * Tests if a given object contains truthy values.
  */

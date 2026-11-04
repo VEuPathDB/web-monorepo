@@ -88,9 +88,11 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
 
   return (
     <section id="dataset-update" ref={updateSection}>
-      <header>
-        <UploadErrorBanner errors={props.badUploadState} />
-      </header>
+      {props.badUploadState && (
+        <header>
+          <UploadErrorBanner errors={props.badUploadState} />
+        </header>
+      )}
 
       <form>
         <RootDetailsSection

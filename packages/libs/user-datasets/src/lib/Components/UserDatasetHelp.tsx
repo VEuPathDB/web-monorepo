@@ -1,4 +1,4 @@
-import { formatFileSize } from '../Utils/formatting';
+import { formatFileSize } from '../Utils';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 import tutStep2 from './images/tut-step-2.jpg';

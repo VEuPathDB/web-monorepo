@@ -3,7 +3,7 @@ export { FieldHelpText } from './FieldHelpText';
 export { FileInputButton } from './FileInputButton';
 export { GrowableStringList } from './GrowableStringList';
 export { InputBlock } from './InputBlock';
-export { InputPair } from './InputPair';
+export { LabelInputPair } from './LabelInputPair';
 export { OptionalSection } from './OptionalSection';
 export { SecondaryButton } from './SecondaryButton';
 export { SubmissionModal } from './SubmissionModal';

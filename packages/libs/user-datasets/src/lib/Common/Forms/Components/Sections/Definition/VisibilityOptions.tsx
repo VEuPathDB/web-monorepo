@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { Consumer, JsonPathBuilder } from '../../../../../Utils';
 import { DatasetVisibility } from '../../../../../Service/Model';
-import { InputPair } from '../../InputPair';
+import { LabelInputPair } from '../../LabelInputPair';
 
 export interface VisibilityOptionProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -21,7 +21,7 @@ export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
     <>
       <span className="multi-input-label">Visibility</span>
       <div className="field-grid narrow-labels">
-        <InputPair
+        <LabelInputPair
           type="radio"
           label="Public"
           labelClass="left"
@@ -38,7 +38,7 @@ export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
             ' its data.'
           }
         />
-        <InputPair
+        <LabelInputPair
           type="radio"
           label="Private"
           labelClass="left"

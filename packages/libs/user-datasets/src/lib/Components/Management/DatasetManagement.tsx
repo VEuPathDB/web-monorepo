@@ -22,7 +22,7 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './DatasetManagement.scss';
-import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { datasetUserFullName, formatFileSize, DataNoun } from '../../Utils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -39,7 +39,6 @@ import {
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
 } from '../../Actions/UserDatasetsActions';
-import { DataNoun } from '../../Utils';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
@@ -56,11 +55,11 @@ import { UpdateFormController } from '../Update/UpdateFormController';
 import {
   DatasetFormConfigurators,
   DatasetTypeConfig,
+  EdaStudyLinks,
   findDatasetTypeConfig,
 } from '../../Common/Configuration';
 import { isEmpty } from 'lodash';
 import { History } from 'history';
-import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 import { ThemedUpdateButton } from '../ThemedUpdateButton';
 
 const classify = makeClassifier('DatasetManagement');

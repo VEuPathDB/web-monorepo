@@ -1,7 +1,6 @@
 import { TextUploadContent, UploadContent } from './upload-content';
 import { DatasetFormState } from '../../StoreModules';
-import { ifDefined, Possible } from '../../Utils';
-import { ifNotEmpty, takeIf } from '../../Utils/ergonomics';
+import { ifDefined, Possible, ifNotEmpty, takeIf } from '../../Utils';
 import { SAMPLE_INFO_FIELD_NAME } from '../utils/rnaseq-rc-data-files';
 
 export interface DatasetUploads {

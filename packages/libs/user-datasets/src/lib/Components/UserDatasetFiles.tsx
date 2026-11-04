@@ -16,7 +16,7 @@ import {
 import { DatasetFileType } from '../Utils/types';
 
 import './UserDatasetFiles.scss';
-import { formatFileSize } from '../Utils/formatting';
+import { formatFileSize } from '../Utils';
 import { isEmpty } from 'lodash';
 
 interface ZipFileRow extends DatasetFileDetails {

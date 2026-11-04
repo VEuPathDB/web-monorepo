@@ -63,4 +63,7 @@ export type {
 export { newUploadContent } from './upload-content';
 
 export type { DatasetUploads, DatasetZipType } from './utility-types';
-export { newDatasetUploads } from './utility-types';
+export {
+  newDatasetUploads,
+  type UploadContentMap,
+} from './utility-types';

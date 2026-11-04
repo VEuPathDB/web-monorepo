@@ -8,35 +8,31 @@ export interface UploadErrorBannerProps {
 }
 
 export function UploadErrorBanner(props: UploadErrorBannerProps): ReactElement {
-  if (!props.errors) return <></>;
+  if (!props.errors)
+    return <></>;
 
-  const makeBanner = (error: BadUpload, index: number) => {
-    const message = (
+  return <>{props.errors.map((it, index) => <BannerLine
+    key={`upload-error-${index}-${it.type}`}
+    error={it}
+  />)}</>;
+}
+
+interface BannerProps { readonly error: BadUpload; }
+
+function BannerLine({ error }: BannerProps): React.ReactElement {
+  const message = React.useMemo(
+    () => (
       <div style={{ lineHeight: 1.5 }}>
         <span>Could not upload dataset:&nbsp;</span>
         {makeMessage(error)}
       </div>
-    );
+    ),
+    [error],
+  );
 
-    // Keyed on the error's own content (message, or the JSON paths its
-    // validation targets) rather than just the array index, plus the index
-    // as a tiebreaker in case two errors render identical content.
-    const content =
-      error.type === 422
-        ? [...error.errors.general, ...Object.keys(error.errors.byKey)].join(
-            '|'
-          )
-        : error.message;
-
-    return (
-      <Banner
-        key={`upload-error-${index}-${error.type}-${content}`}
-        banner={{ type: 'error', message }}
-      />
-    );
-  };
-
-  return <>{props.errors.map(makeBanner)}</>;
+  return (
+    <Banner banner={{ type: 'error', message }} />
+  );
 }
 
 function makeMessage(errors: BadUpload): ReactElement {
@@ -52,18 +48,12 @@ function makeMessage(errors: BadUpload): ReactElement {
   return makeValidationErrorMessage(errors.errors);
 }
 
-function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
+function makeValidationErrorMessage(errors: ValidationErrors): React.ReactElement {
   const elements: ReactNode[] = [];
-
-  const newLI = (key: string, msg: ReactNode) => (
-    <li className="upload-error error-422 general" key={key}>
-      {msg}
-    </li>
-  );
 
   if ('general' in errors) {
     errors.general.forEach((msg, i) => {
-      elements.push(newLI(`general-${i}-${msg}`, msg));
+      elements.push(<ErrorListItem key={`general-${i}`}>{msg}</ErrorListItem>);
     });
   }
 
@@ -92,20 +82,17 @@ function makeValidationErrorMessage(errors: ValidationErrors): ReactElement {
           </button>
         );
 
-      errors.byKey[jsonPath].forEach((msg, i) => {
-        elements.push(
-          newLI(
-            `${jsonPath}-${i}-${msg}`,
-            <>
-              {link}: {msg}
-            </>
-          )
-        );
-      });
+      errors.byKey[jsonPath].forEach((msg, i) => elements.push(
+        <ErrorListItem key={`${jsonPath}-${i}`}>{link}: {msg}</ErrorListItem>
+      ));
     }
   }
 
   return <ul className="error-list">{elements}</ul>;
+}
+
+function ErrorListItem({ children }: { children: React.ReactNode }): React.ReactElement {
+  return <li className="upload-error error-422 general">{children}</li>;
 }
 
 function formatJPath(path: string): string {
