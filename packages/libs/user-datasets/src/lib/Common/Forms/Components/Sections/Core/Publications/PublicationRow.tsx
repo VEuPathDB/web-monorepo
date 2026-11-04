@@ -16,6 +16,7 @@ import {
   JsonPathBuilder,
   ifDefined,
   isNonBlankString,
+  using,
 } from '../../../../../../Utils';
 import {
   CitationLookupResult,
@@ -199,9 +200,9 @@ function newPubInputTest(type: PublicationType): Predicate<TextInputProps> {
   return ({ value, required, disabled }: TextInputProps): boolean =>
     disabled === true
       || (!required && isEmpty(value))
-      || type === 'pmid'
+      || (type === 'pmid'
         ? PubMedCitationQuery.resemblesPMID(value!)
-        : DOICitationQuery.resemblesDOI(value!);
+        : DOICitationQuery.resemblesDOI(value!));
 }
 
 const TEST_PMID = newPubInputTest('pmid');
@@ -220,7 +221,7 @@ function PublicationInput(props: PublicationInputProps): ReactElement {
       required={props.isRequired && (!hasType || pubTypeIsFieldType)}
       value={pubTypeIsFieldType ? props.publication.identifier : undefined}
       onChange={(v) => props.onInput(v, props.fieldType)}
-      // className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
+      className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
       labelClass={hasType && !pubTypeIsFieldType ? 'disabled' : undefined}
       validator={pubTypeIsFieldType || !hasType ? validator : undefined}
       disabled={
