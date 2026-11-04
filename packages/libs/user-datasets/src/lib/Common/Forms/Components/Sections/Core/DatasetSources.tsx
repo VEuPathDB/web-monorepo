@@ -1,38 +1,36 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
+import * as util from '../../../../../Utils';
+import * as vdi from '../../../../../Service';
 
-import { InputBlock, InputPair, YesNoToggle } from '../../index';
-import {
-  PartialDatasetDetails,
-  PostDatasetSource,
-} from '../../../../../Service';
-import {
-  BiConsumer,
-  Consumer,
-  JsonPathBuilder,
-  arrayChangeHandler,
-} from '../../../../../Utils';
-import { AddRowButton } from '../../index';
 import { isEmpty } from 'lodash';
+import { AddRowButton, InputBlock, LabelInputPair, YesNoToggle } from '../../';
+import { TextInputProps } from '../../LabelInputPair';
+import { testNonBlank } from '../../../../../Utils';
 
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
 export interface DatasetSourcesProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly jsonPath: JsonPathBuilder;
+  readonly datasetMeta: vdi.PartialDatasetDetails;
+  readonly setDatasetMeta: util.Consumer<vdi.PartialDatasetDetails>;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
-export function DatasetSources(props: DatasetSourcesProps): ReactElement {
+export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
   const enabled = props.datasetMeta.metadataContentFlags?.hasDatasetSources;
 
-  const setEnabled = (v: boolean) =>
-    props.setDatasetMeta({
-      ...props.datasetMeta,
-      metadataContentFlags: {
-        ...(props.datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetSources: v,
-      },
-    });
+  const { datasetMeta, setDatasetMeta } = props;
+
+  const setEnabled = React.useCallback(
+    (v: boolean) =>
+      setDatasetMeta({
+        ...datasetMeta,
+        metadataContentFlags: {
+          ...(datasetMeta.metadataContentFlags ?? {}),
+          hasDatasetSources: v,
+        },
+      }),
+    [datasetMeta, setDatasetMeta]
+  );
 
   if (
     typeof enabled === 'undefined' &&
@@ -47,12 +45,11 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
 
   const disabledClass = enabled ? '' : ' disabled-fields';
 
-  const updateSources = arrayChangeHandler<
-    PartialDatasetDetails,
-    'datasetSources'
-  >('datasetSources', props.datasetMeta, props.setDatasetMeta);
-
-  const addSource = () => updateSources({}, undefined);
+  const updateSources = util.useArrayChangeHandler(
+    'datasetSources',
+    datasetMeta,
+    setDatasetMeta
+  );
 
   const inputRows = safeSources.map((src, i) => {
     // Add the index of the current array element to the JSON path.
@@ -101,7 +98,7 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
 
         <AddRowButton
           className="column-2"
-          onClick={addSource}
+          onClick={() => updateSources({}, undefined)}
           disabled={!enabled}
         >
           + Additional External Source
@@ -113,12 +110,18 @@ export function DatasetSources(props: DatasetSourcesProps): ReactElement {
 
 interface DataSourceProps {
   readonly index: number;
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 
   readonly enabled: boolean;
 
-  readonly source: PostDatasetSource;
-  readonly setSource: BiConsumer<PostDatasetSource, number>;
+  readonly source: vdi.PostDatasetSource;
+  readonly setSource: util.BiConsumer<vdi.PostDatasetSource, number>;
+}
+
+function testUrl({ value, required, disabled }: TextInputProps): boolean {
+  if (disabled || (!required && isEmpty(value))) return true;
+
+  return /^(https?|ftp):\/\/(\w+\.)+\w+.*$/.test(value!);
 }
 
 function DataSource({
@@ -127,7 +130,7 @@ function DataSource({
   enabled,
   source,
   setSource,
-}: DataSourceProps): ReactElement {
+}: DataSourceProps): React.ReactElement {
   // Fields are required for the first entry, and for any other entries that
   // contain any truthy values
   const required =
@@ -136,28 +139,31 @@ function DataSource({
 
   return (
     <li className="field-grid">
-      <InputPair
+      <LabelInputPair
         label="Source URL"
         type="url"
-        fieldName={jsonPath.appendToString<PostDatasetSource>('url')}
+        fieldName={jsonPath.appendToString<vdi.PostDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
         disabled={!enabled}
         required={required}
         placeholder="https://data.source.org/path"
+        validator={testUrl}
         helpText={
           'The full URL where the dataset is hosted or was obtained. URLs must' +
           ' include a protocol prefix such as "https://", "ftp://", etc..'
         }
       />
 
-      <InputPair
+      <LabelInputPair
+        type="text"
         label="Source Version"
-        fieldName={jsonPath.appendToString<PostDatasetSource>('version')}
+        fieldName={jsonPath.appendToString<vdi.PostDatasetSource>('version')}
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}
         required={required}
+        validator={testNonBlank}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

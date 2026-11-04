@@ -1,0 +1,50 @@
+/*
+ * Active-state highlight for the leaflet-lasso toolbar button.
+ *
+ * While a lasso is being drawn, leaflet-lasso adds the
+ * `leaflet-lasso-active` class to the map container; the lasso control
+ * button (`.leaflet-control-lasso`) lives inside that container, so this
+ * descendant rule turns it blue for the duration of the draw and reverts
+ * automatically when the lasso finishes or is cancelled.
+ *
+ * !important is needed on the resting (non-hover) state: some other
+ * same-specificity stylesheet rule loaded after this one (Leaflet's own
+ * control CSS uses the `background` shorthand, which resets
+ * background-color) was winning the resting-state background-color, so
+ * the highlight only appeared while hovering. Without !important here,
+ * clicking the button showed no highlight until the mouse moved over it.
+ */
+.leaflet-lasso-active .leaflet-control-lasso {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+}
+
+.leaflet-lasso-active .leaflet-control-lasso:hover {
+  background-color: #1565c0 !important;
+}
+
+/*
+ * Cursors for the shape-editing modes, so each mode signals where it
+ * will act.
+ *
+ * - resting / edit mode: Leaflet's defaults apply (hand over the map and
+ *   shapes, closed fist while panning)
+ * - drag mode: geoman sets `cursor: move !important` on the shape itself
+ * - edit mode: geoman's vertex handles (large) and midpoint handles (small,
+ *   drag to insert a vertex) are `.marker-icon` elements; show the move cursor
+ * - removal mode: a red "x" cursor over a shape means "click to remove it"
+ *   (a hand is no use: the map's own grab cursor is a hand too). The cursor
+ *   is an inline SVG, hotspot at its centre; `pointer` is the fallback.
+ *
+ * Selectors are scoped under `.leaflet-container` to outrank Leaflet's own
+ * `.leaflet-interactive { cursor: pointer }`.
+ */
+.leaflet-container .marker-icon {
+  cursor: move;
+}
+
+.leaflet-container.geo-shape-select-removal-mode path.geo-shape-select-shape {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23d32f2f' stroke='white' stroke-width='2'/%3E%3Cpath d='M8 8l8 8M16 8l-8 8' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E")
+      12 12,
+    pointer;
+}

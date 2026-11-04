@@ -1,14 +1,29 @@
 import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
-import { Consumer, JsonPathBuilder, changeHandler } from '../../../../../Utils';
-import { FieldHelpText, InputBlock } from '../../index';
-import { OptionalSection } from '../../OptionalSection';
+import {
+  Consumer,
+  JsonPathBuilder,
+  newTextLengthTest,
+  useChangeHandler,
+} from '../../../../../Utils';
+import { InputBlock, LabelInputPair, OptionalSection } from '../../index';
 
 export interface DatasetUsageProps {
   readonly datasetMeta: PartialDatasetDetails;
   readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
+
+const SECTION_HELP_TEXT =
+  'Whether this dataset includes important notes, caveats, or limitations that users should' +
+  ' review before interpreting or reusing the data.';
+
+const INPUT_HELP_TEXT =
+  'Provide any important caveats or limitations users should consider when interpreting or' +
+  ' reusing this dataset, such as missing data, potential biases, changes in data collection, or other factors that' +
+  ' may affect analysis. (maximum 1000 characters).';
+
+const TEST_INPUT_LENGTH = newTextLengthTest(3, 1000);
 
 export function DatasetUsage({
   datasetMeta,
@@ -35,6 +50,12 @@ export function DatasetUsage({
 
   const isPublic = datasetMeta.visibility === 'public';
 
+  const onChange = useChangeHandler(
+    'dataDisclaimer',
+    datasetMeta,
+    setDatasetMeta
+  );
+
   return (
     <InputBlock header="Dataset Usage">
       <OptionalSection
@@ -44,39 +65,21 @@ export function DatasetUsage({
           fieldName: 'enable-disclaimer',
           enabled: hasDisclaimer ?? null,
           setEnabled: setEnabled,
-          helpText:
-            'Whether this dataset includes important notes, caveats,' +
-            ' or limitations that users should review before interpreting or' +
-            ' reusing the data.',
+          helpText: SECTION_HELP_TEXT,
         }}
         className="field-grid"
       >
-        <label
-          htmlFor={fieldName}
-          className={hasDisclaimer ? 'required' : undefined}
-        >
-          Reuse Considerations
-        </label>
-        <textarea
-          name={fieldName}
-          id={fieldName}
-          value={datasetMeta.dataDisclaimer}
-          disabled={!hasDisclaimer}
+        <LabelInputPair
+          type="textarea"
+          label="Reuse Considerations"
+          fieldName={fieldName}
           required={hasDisclaimer}
-          onChange={(e) =>
-            changeHandler(
-              'dataDisclaimer',
-              datasetMeta,
-              setDatasetMeta
-            )(e.currentTarget?.value)
-          }
+          disabled={!hasDisclaimer}
+          value={datasetMeta.dataDisclaimer}
+          onChange={onChange}
+          helpText={INPUT_HELP_TEXT}
+          validator={TEST_INPUT_LENGTH}
         />
-        <FieldHelpText>
-          Provide any important caveats or limitations users should consider
-          when interpreting or reusing this dataset, such as missing data,
-          potential biases, changes in data collection, or other factors that
-          may affect analysis. (maximum 1000 characters).
-        </FieldHelpText>
       </OptionalSection>
     </InputBlock>
   );

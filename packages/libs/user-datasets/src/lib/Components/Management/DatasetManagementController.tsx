@@ -31,6 +31,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   DatasetFormConfigurators,
   DatasetTypeConfig,
+  EdaStudyLinks
 } from '../../Common/Configuration';
 import { History } from 'history';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
@@ -40,7 +41,6 @@ import DatasetManagement, {
   DatasetManagementProps,
 } from './DatasetManagement';
 import EmptyState from '../EmptyState';
-import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 import EdaDatasetManagement from './EdaDatasetManagement';
 
 const ActionCreators = {

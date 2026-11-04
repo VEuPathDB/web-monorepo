@@ -426,8 +426,9 @@ function NewJobForm(props: NewJobFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
-  const [inputErrors, setInputErrors] =
-    useState<InputErrors | undefined>(undefined);
+  const [inputErrors, setInputErrors] = useState<InputErrors | undefined>(
+    undefined
+  );
   const dependentParamsAreUpdating = useDependentParamsAreUpdating(
     props.state.question,
     props.state.paramsUpdatingDependencies
@@ -466,6 +467,7 @@ function NewJobForm(props: NewJobFormProps) {
       }
 
       setSubmitting(true);
+      setInputErrors(undefined);
 
       const targetType =
         props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];

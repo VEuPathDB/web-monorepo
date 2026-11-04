@@ -36,13 +36,13 @@ interface InputBlockHeaderProps {
   readonly children: ReactNode;
 }
 
-function InputBlockHeader(props: InputBlockHeaderProps) {
-  const cn = 'fa ' + (props.expanded ? 'fa-chevron-down' : 'fa-chevron-right');
+function InputBlockHeader({ expanded, setExpanded, children }: InputBlockHeaderProps): React.ReactElement {
+  const cn = 'fa ' + (expanded ? 'fa-chevron-down' : 'fa-chevron-right');
 
   return (
-    <h4 onClick={() => props.setExpanded(!props.expanded)}>
+    <h4 onClick={() => setExpanded(!expanded)}>
       <i className={cn}></i>
-      {props.children}
+      {children}
     </h4>
   );
 }
