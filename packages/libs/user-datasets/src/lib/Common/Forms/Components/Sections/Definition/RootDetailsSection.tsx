@@ -1,13 +1,20 @@
 import React from 'react';
 import * as util from '../../../../../Utils';
 
-import { FileUploadProps, RootDataInput, UrlUploadProps } from './RootDataInput';
+import {
+  FileUploadProps,
+  RootDataInput,
+  UrlUploadProps,
+} from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { LabelInputPair, UploadButton } from '../../index';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { isEmpty } from 'lodash';
 import { useDispatch } from 'react-redux';
-import { DatasetFormState, useDatasetFormState } from '../../../../../StoreModules/UserDatasetUploadStoreModule';
+import {
+  DatasetFormState,
+  useDatasetFormState,
+} from '../../../../../StoreModules/UserDatasetUploadStoreModule';
 import { updateFormState } from '../../../../../Actions/UserDatasetUploadActions';
 import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
@@ -16,6 +23,7 @@ import { VisibilityOptions } from './VisibilityOptions';
 import { UploadContentMap } from '../../../../../Service/Model/utility-types';
 import { SamplesDescriptionInput } from './SamplesDescriptionInput';
 import { FIELD_NAME_DATA_PROP_FILE } from '../../../form-constants';
+import { newTextLengthTest } from '../../../../../Utils';
 
 export interface RootDetailsSectionProps {
   readonly formProps: DatasetFormProps;
@@ -55,6 +63,9 @@ export interface RootDetailsSectionProps {
   readonly requireDatasetPropertiesFile?: boolean;
 }
 
+const TEST_NAME_LENGTH = newTextLengthTest(3, 1024);
+const TEST_SUMMARY_LENGTH = newTextLengthTest(3, 4000);
+
 export function RootDetailsSection(
   props: RootDetailsSectionProps
 ): React.ReactElement {
@@ -78,16 +89,24 @@ export function RootDetailsSection(
 
   const setDataUploads = React.useCallback(
     (fileUploads: UploadContentMap) =>
-      dispatch(updateFormState({ ...formState, dataFileSelections: fileUploads })),
+      dispatch(
+        updateFormState({ ...formState, dataFileSelections: fileUploads })
+      ),
     [dispatch, formState]
   );
 
-  const showDataPropsInput = formConfig.dataType.vdiConfig.usesDataProperties &&
+  const showDataPropsInput =
+    formConfig.dataType.vdiConfig.usesDataProperties &&
     formConfig.verbiage.formInputs?.datasetProperties;
 
   const setAnnotationUploads = React.useCallback(
     (fileUploads: UploadContentMap) =>
-      dispatch(updateFormState({ ...formState, dataPropertiesFileSelections: fileUploads })),
+      dispatch(
+        updateFormState({
+          ...formState,
+          dataPropertiesFileSelections: fileUploads,
+        })
+      ),
     [dispatch, formState]
   );
 
@@ -96,18 +115,24 @@ export function RootDetailsSection(
     : undefined;
 
   const setUrlUpload = React.useCallback(
-    (url: util.Possible<string>) => dispatch({ ...formState, dataFileUrl: url }),
-    [dispatch, formState],
+    (url: util.Possible<string>) =>
+      dispatch({ ...formState, dataFileUrl: url }),
+    [dispatch, formState]
   );
 
   const fileUpload = useFileProps(
     props.formProps,
     props.contentJsonPath,
     formState,
-    setDataUploads,
+    setDataUploads
   );
 
-  const urlUpload = useUrlProps(props.formProps, props.contentJsonPath, formState.dataFileUrl, setUrlUpload);
+  const urlUpload = useUrlProps(
+    props.formProps,
+    props.contentJsonPath,
+    formState.dataFileUrl,
+    setUrlUpload
+  );
 
   const referenceGenome = formConfig.dependencies ? (
     <DatasetDependencies
@@ -123,20 +148,24 @@ export function RootDetailsSection(
 
       <div className="field-grid">
         <LabelInputPair
+          type="text"
           label="Dataset Name"
           fieldName={nameKey}
           value={datasetDetails.name}
           onChange={(v) => setMetadata({ ...datasetDetails, name: v })}
+          validator={TEST_NAME_LENGTH}
           minLength={3}
           maxLength={1024}
           required={true}
         />
 
         <LabelInputPair
+          type="text"
           label="Summary"
           fieldName={summaryKey}
           value={datasetDetails.summary}
           onChange={(v) => setMetadata({ ...datasetDetails, summary: v })}
+          validator={TEST_SUMMARY_LENGTH}
           minLength={3}
           maxLength={4000}
           required={true}
@@ -174,21 +203,21 @@ export function RootDetailsSection(
         )}
 
         {showDataPropsInput && (
-            <DatasetPropertiesInput
-              label={formConfig.verbiage.formInputs.datasetProperties.label}
-              fieldName={dataPropsFieldName!}
-              allowedExtensions={['.txt', '.csv', '.tsv']}
-              files={formState.dataPropertiesFileSelections[dataPropsFieldName!]}
-              setFiles={files => setAnnotationUploads({
+          <DatasetPropertiesInput
+            label={formConfig.verbiage.formInputs.datasetProperties.label}
+            fieldName={dataPropsFieldName!}
+            allowedExtensions={['.txt', '.csv', '.tsv']}
+            files={formState.dataPropertiesFileSelections[dataPropsFieldName!]}
+            setFiles={(files) =>
+              setAnnotationUploads({
                 ...formState.dataPropertiesFileSelections,
                 [dataPropsFieldName!]: files ?? [],
-              })}
-              required={props.requireDatasetPropertiesFile}
-              helpText={
-                formConfig.verbiage.formInputs.datasetProperties.helpText
-              }
-            />
-          )}
+              })
+            }
+            required={props.requireDatasetPropertiesFile}
+            helpText={formConfig.verbiage.formInputs.datasetProperties.helpText}
+          />
+        )}
       </div>
 
       {formConfig.verbiage.afterUploadHelpText}
@@ -209,22 +238,26 @@ function useFileProps(
   setUploads: util.Consumer<UploadContentMap>
 ): util.Possible<FileUploadProps> {
   return React.useMemo(
-    () => dataInputConfig.byFile == null
-      ? undefined
-      : ({
-        ...dataInputConfig.byFile,
-        vdiConfig,
-        dataType,
-        setFiles: dataFiles => setUploads({ ...dataFileSelections, ...(dataFiles ?? {}) }),
-        pathBuilder: jsonPath,
-        files: isEmpty(dataFileSelections) ? undefined : dataFileSelections!,
-      }),
+    () =>
+      dataInputConfig.byFile == null
+        ? undefined
+        : {
+            ...dataInputConfig.byFile,
+            vdiConfig,
+            dataType,
+            setFiles: (dataFiles) =>
+              setUploads({ ...dataFileSelections, ...(dataFiles ?? {}) }),
+            pathBuilder: jsonPath,
+            files: isEmpty(dataFileSelections)
+              ? undefined
+              : dataFileSelections!,
+          },
 
     // Suppress linting: dataInputConfig, dataType, vdiConfig, and jsonPath are
     // static in value regardless of instance equality.
     //
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataFileSelections, setUploads],
+    [dataFileSelections, setUploads]
   );
 }
 
@@ -240,21 +273,22 @@ function useUrlProps(
   setUrl: util.Consumer<util.Possible<string>>
 ): util.Possible<UrlUploadProps> {
   return React.useMemo(
-    () => byUrl == null
-      ? undefined
-      : ({
-        ...byUrl,
-        dataType,
-        pathBuilder: jsonPath,
-        url: dataFileUrl ?? '',
-        required: byFile == null,
-        setUrl: url => isEmpty(url) ? setUrl(undefined) : setUrl(url),
-      }),
+    () =>
+      byUrl == null
+        ? undefined
+        : {
+            ...byUrl,
+            dataType,
+            pathBuilder: jsonPath,
+            url: dataFileUrl ?? '',
+            required: byFile == null,
+            setUrl: (url) => (isEmpty(url) ? setUrl(undefined) : setUrl(url)),
+          },
 
     // Suppress linting: byUrl, byFile, dataType, and jsonPath are static in
     // value regardless of instance equality.
     //
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataFileUrl, setUrl],
+    [dataFileUrl, setUrl]
   );
 }

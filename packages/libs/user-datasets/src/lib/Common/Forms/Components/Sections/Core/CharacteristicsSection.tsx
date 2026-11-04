@@ -12,7 +12,7 @@ import {
   Consumer,
   JsonPathBuilder,
   Possible,
-  changeHandler
+  changeHandler,
 } from '../../../../../Utils';
 import {
   PartialDatasetDetails,
@@ -49,8 +49,9 @@ export function CharacteristicsSection({
       ...datasetMeta,
       metadataContentFlags: {
         ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetCharacteristics: enabled
-      } });
+        hasDatasetCharacteristics: enabled,
+      },
+    });
 
   useEffect(
     () => {
@@ -189,6 +190,7 @@ export function CharacteristicsSection({
         />
 
         <LabelInputPair<PartialCharacteristics>
+          type="text"
           fieldName="participantAges"
           label="Participant Ages"
           disabled={enabled !== true}
@@ -242,20 +244,21 @@ function StudyDesign({
       <option key={i} value={i} selected={selection === v}>
         {v}
       </option>
-    ))
+    )),
   ];
 
   let className: Possible<string> = undefined;
 
   if (required) {
-    className = selection == null
-      ? "required invalid"
-      : "required";
+    className = selection == null ? 'required invalid' : 'required';
   }
 
   return (
     <>
-      <label htmlFor="meta.studyCharacteristics.studyDesign" className={className}>
+      <label
+        htmlFor="meta.studyCharacteristics.studyDesign"
+        className={className}
+      >
         Study Design
       </label>
       <select
@@ -310,16 +313,16 @@ function YearsInputs({
         ref.current?.classList?.remove('invalid');
 
         if (!v) {
-          const { [k]: ignored, ...trimmed } = safeYears
-          setYears(trimmed)
+          const { [k]: ignored, ...trimmed } = safeYears;
+          setYears(trimmed);
           return;
         }
 
         const parsed = parseInt(v);
 
         if (isNaN(parsed)) {
-          const { [k]: ignored, ...trimmed } = safeYears
-          setYears(trimmed)
+          const { [k]: ignored, ...trimmed } = safeYears;
+          setYears(trimmed);
           return;
         }
 

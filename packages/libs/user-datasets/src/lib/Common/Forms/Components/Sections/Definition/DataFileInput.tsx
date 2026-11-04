@@ -1,7 +1,13 @@
 import React from 'react';
 import { DatasetTypeConfig, FileInputConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
-import { Consumer, Nullable, Possible, filterNullish, needsFile } from '../../../../../Utils';
+import {
+  Consumer,
+  Nullable,
+  Possible,
+  filterNullish,
+  testFileRequired,
+} from '../../../../../Utils';
 import { LabelInputPair } from '../../';
 import { UploadContent } from '../../../../../Service/Model';
 import { UploadContentMap } from '../../../../../Service/Model/utility-types';
@@ -17,31 +23,43 @@ export interface DataFileInputListProps {
   readonly files: Possible<UploadContentMap>;
 }
 
-export function DataFileInputList(props: DataFileInputListProps): Nullable<React.ReactElement> {
-  const configs: Array<DataFileInputProps> = props.inputConfigs
-    .map((it, i) => {
-      const fieldName: string = `${props.fieldName}[${i}]`;
+export function DataFileInputList(
+  props: DataFileInputListProps
+): Nullable<React.ReactElement> {
+  const configs: Array<DataFileInputProps> = props.inputConfigs.map((it, i) => {
+    const fieldName: string = `${props.fieldName}[${i}]`;
 
-      return {
-        ...props,
-        fieldName,
-        inputIndex: i,
-        inputConfig: it,
-        files: props.files?.[fieldName],
-        setFiles: (files) => {
-          props.setFiles({ ...(props.files ?? {}), [fieldName]: filterNullish(files) });
-        },
-      };
-    });
+    return {
+      ...props,
+      fieldName,
+      inputIndex: i,
+      inputConfig: it,
+      files: props.files?.[fieldName],
+      setFiles: (files) => {
+        props.setFiles({
+          ...(props.files ?? {}),
+          [fieldName]: filterNullish(files),
+        });
+      },
+    };
+  });
 
   for (const config of configs) {
     if (config.inputConfig.configOverride) {
-      configs[config.inputIndex] = config.inputConfig.configOverride(config, configs);
+      configs[config.inputIndex] = config.inputConfig.configOverride(
+        config,
+        configs
+      );
     }
   }
 
-
-  return <>{configs.map((config, i) => <DataFileInput key={i} {...config} />)}</>;
+  return (
+    <>
+      {configs.map((config, i) => (
+        <DataFileInput key={i} {...config} />
+      ))}
+    </>
+  );
 }
 
 export interface DataFileInputProps {
@@ -58,20 +76,21 @@ export interface DataFileInputProps {
 
   readonly setFiles: Consumer<ReadonlyArray<UploadContent>>;
   readonly files: Possible<ReadonlyArray<UploadContent>>;
-
 }
 
 export function DataFileInput(props: DataFileInputProps): React.ReactElement {
   const { inputConfig } = props;
 
-  const acceptValue = inputConfig.accept
-    ?? buildFileExtensionList(
+  const acceptValue =
+    inputConfig.accept ??
+    buildFileExtensionList(
       props.vdiFeatures.supportedArchiveTypes,
       props.dataType.vdiConfig.allowedFileExtensions
     );
 
-  const buttonText = inputConfig.buttonText
-    ?? (isEmpty(props.files) ? 'Choose file' : 'Change file');
+  const buttonText =
+    inputConfig.buttonText ??
+    (isEmpty(props.files) ? 'Choose file' : 'Change file');
 
   return (
     <LabelInputPair
@@ -84,7 +103,7 @@ export function DataFileInput(props: DataFileInputProps): React.ReactElement {
       required={props.inputConfig.required}
       value={props.files}
       onChange={props.setFiles}
-      validator={needsFile}
+      validator={testFileRequired}
     />
   );
 }

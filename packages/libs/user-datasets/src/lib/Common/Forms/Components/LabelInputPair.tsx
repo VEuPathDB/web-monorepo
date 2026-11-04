@@ -1,23 +1,31 @@
 import * as util from '../../../Utils';
 import React, {
   ChangeEvent,
+  HTMLInputTypeAttribute,
   InputHTMLAttributes,
   ReactElement,
   ReactNode,
   RefAttributes,
-  RefObject
+  RefObject,
+  useMemo,
 } from 'react';
 import { FieldHelpText } from './FieldHelpText';
 import { newUploadContent, UploadContent } from '../../../Service/Model';
 
 type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
-interface BaseInputProps<V, E extends InputElement, T extends object = object> {
+interface BaseInputProps<
+  V,
+  K extends HTMLInputTypeAttribute,
+  E extends InputElement,
+  T extends object = object
+> {
+  readonly type: K;
   readonly label: ReactNode;
 
   readonly onChange: util.Consumer<V>;
 
-  readonly fieldName: keyof T & string;
+  readonly fieldName: (keyof T & string) | string;
   readonly nameOverride?: string;
   readonly idOverride?: string;
 
@@ -36,57 +44,75 @@ interface BaseInputProps<V, E extends InputElement, T extends object = object> {
    */
   readonly flipped?: boolean;
 
-  readonly validator?: util.Function<E, boolean>;
+  readonly validator?: (props: BaseInputProps<V, K, E, T>) => boolean;
 }
 
-interface TextProps<T extends object = object> extends BaseInputProps<string, HTMLInputElement, T> {
-  readonly type?: 'text' | 'email' | 'url';
+export interface TextInputProps<T extends object = object>
+  extends BaseInputProps<
+    string,
+    'text' | 'email' | 'url',
+    HTMLInputElement,
+    T
+  > {
   readonly value?: string;
   readonly minLength?: number;
   readonly maxLength?: number;
   readonly placeholder?: string;
+  readonly validator?: (props: TextInputProps<T>) => boolean;
 }
 
-interface TextAreaProps<T extends object = object> extends BaseInputProps<string, HTMLTextAreaElement, T> {
-  readonly type: 'textarea';
+export interface TextAreaProps<T extends object = object>
+  extends BaseInputProps<string, 'textarea', HTMLTextAreaElement, T> {
   readonly value?: string;
   readonly minLength?: number;
   readonly maxLength?: number;
   readonly placeholder?: string;
   readonly rows?: number;
+  readonly validator?: (props: TextAreaProps<T>) => boolean;
 }
 
-interface CheckboxProps<T extends object = object> extends BaseInputProps<boolean, HTMLInputElement, T> {
-  readonly type: 'checkbox';
+interface CheckboxProps<T extends object = object>
+  extends BaseInputProps<boolean, 'checkbox', HTMLInputElement, T> {
   readonly checked?: boolean;
+  readonly validator?: (props: CheckboxProps<T>) => boolean;
 }
 
-interface RadioProps<T extends object = object> extends BaseInputProps<ChangeEvent<HTMLInputElement>, HTMLInputElement, T> {
-  readonly type: 'radio';
+interface RadioProps<T extends object = object>
+  extends Omit<
+    BaseInputProps<ChangeEvent<HTMLInputElement>, 'radio', HTMLInputElement, T>,
+    'validator'
+  > {
   readonly value?: string;
   readonly checked?: boolean;
 }
 
-interface NumberProps<T extends object = object> extends BaseInputProps<number, HTMLInputElement, T> {
-  readonly type: 'number';
+interface NumberProps<T extends object = object>
+  extends BaseInputProps<number, 'number', HTMLInputElement, T> {
   readonly value?: number;
   readonly showControls?: boolean;
   readonly minimum?: number;
   readonly maximum?: number;
+  readonly validator?: (props: NumberProps<T>) => boolean;
 }
 
-interface FileProps<T extends object = object> extends BaseInputProps<ReadonlyArray<UploadContent>, HTMLInputElement, T> {
-  readonly type: 'file';
-  readonly value?: ReadonlyArray<UploadContent>,
+export interface FileInputProps<T extends object = object>
+  extends BaseInputProps<
+    ReadonlyArray<UploadContent>,
+    'file',
+    HTMLInputElement,
+    T
+  > {
+  readonly value?: ReadonlyArray<UploadContent>;
   readonly buttonText?: string;
   readonly accept?: string;
   readonly multiple?: boolean;
+  readonly validator?: (props: FileInputProps<T>) => boolean;
 }
 
 export type InputPairProps<T extends object = object> =
-  | TextProps<T>
+  | TextInputProps<T>
   | TextAreaProps<T>
-  | FileProps<T>
+  | FileInputProps<T>
   | CheckboxProps<T>
   | NumberProps<T>
   | RadioProps<T>;
@@ -102,7 +128,9 @@ enum ClassJoinType {
  * Input with label and optional help text returned as individual elements with
  * no wrapping HTML element.
  */
-export function LabelInputPair<T extends object>(props: InputPairProps<T>): React.ReactElement {
+export function LabelInputPair<T extends object>(
+  props: InputPairProps<T>
+): React.ReactElement {
   const helpText = props.helpText ? (
     <FieldHelpText className={props.className}>{props.helpText}</FieldHelpText>
   ) : undefined;
@@ -116,24 +144,27 @@ export function LabelInputPair<T extends object>(props: InputPairProps<T>): Reac
     inputRef: props.inputRef ?? fallbackRef,
   } as InputPairProps<T>;
 
+  const isValid = useCustomValidator(newProps);
+  const classNames = joinClasses(newProps, ClassJoinType.Input, isValid);
+
   switch (newProps.type) {
     case 'checkbox':
-      input = <Checkbox<T> {...newProps} />;
+      input = <Checkbox<T> {...newProps} className={classNames} />;
       break;
     case 'number':
-      input = <NumberInput<T> {...newProps} />;
+      input = <NumberInput<T> {...newProps} className={classNames} />;
       break;
     case 'radio':
-      input = <RadioInput<T> {...newProps} />;
+      input = <RadioInput<T> {...newProps} className={classNames} />;
       break;
     case 'textarea':
-      input = <TextAreaInput<T> {...newProps} />;
+      input = <TextAreaInput<T> {...newProps} className={classNames} />;
       break;
     case 'file':
-      input = <FileInput<T> {...newProps} />;
+      input = <FileInput<T> {...newProps} className={classNames} />;
       break;
     default:
-      input = <TextInput<T> {...newProps} />;
+      input = <TextInput<T> {...newProps} className={classNames} />;
       break;
   }
 
@@ -142,7 +173,7 @@ export function LabelInputPair<T extends object>(props: InputPairProps<T>): Reac
       {props.flipped && input}
       <label
         htmlFor={props.idOverride ?? props.fieldName}
-        className={joinClasses(newProps, ClassJoinType.Label)}
+        className={joinClasses(newProps, ClassJoinType.Label, isValid)}
       >
         {props.label}
       </label>
@@ -152,15 +183,32 @@ export function LabelInputPair<T extends object>(props: InputPairProps<T>): Reac
   );
 }
 
-function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
-  const className = joinClasses(props, ClassJoinType.Input);
+function useCustomValidator(props: InputPairProps<any>): boolean {
+  return useMemo(() => {
+    if (props.type === 'radio' || !props.validator) return true;
 
+    switch (props.type) {
+      case 'number':
+        return props.validator(props);
+      case 'checkbox':
+        return props.validator(props);
+      case 'file':
+        return props.validator(props);
+      case 'textarea':
+        return props.validator(props);
+      default:
+        return props.validator(props);
+    }
+  }, [props]);
+}
+
+function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
   return (
-    <span className={className}>
+    <span className={props.className}>
       <input
         {...baseInputProps(props)}
         type="checkbox"
-        className={className}
+        className={props.className}
         onChange={(e) => props.onChange(e.currentTarget.checked)}
         checked={props.checked ?? false}
       />
@@ -168,10 +216,10 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
   );
 }
 
-function FileInput<T extends object>(props: FileProps<T>): React.ReactElement {
-  const fileName = props.value
-    ?.map(it => it.name)
-    ?.join(', ');
+function FileInput<T extends object>(
+  props: FileInputProps<T>
+): React.ReactElement {
+  const fileName = props.value?.map((it) => it.name)?.join(', ');
 
   return (
     <div className="file-input-button">
@@ -185,8 +233,11 @@ function FileInput<T extends object>(props: FileProps<T>): React.ReactElement {
         disabled={props.disabled}
         multiple={props.multiple}
         onChange={() => {
-          props.onChange(Array.from(props.inputRef!.current?.files ?? [])
-            .map(it => newUploadContent(it)));
+          props.onChange(
+            Array.from(props.inputRef!.current?.files ?? []).map((it) =>
+              newUploadContent(it)
+            )
+          );
         }}
       />
       <button
@@ -213,7 +264,7 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
       type="number"
       min={props.minimum}
       max={props.maximum}
-      className={joinClasses(props, ClassJoinType.Input)}
+      className={props.className}
       onChange={(e) => props.onChange(Number(e.currentTarget.value))}
       value={props.value ?? ''}
     />
@@ -221,15 +272,13 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
 }
 
 function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
-  const className = joinClasses(props, ClassJoinType.Input);
-
   return (
-    <span className={className}>
+    <span className={props.className}>
       <input
         {...baseInputProps(props)}
         type="radio"
         value={props.value}
-        className={className}
+        className={props.className}
         onChange={props.onChange}
         checked={props.checked ?? false}
       />
@@ -237,11 +286,13 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
   );
 }
 
-function TextAreaInput<T extends object>(props: TextAreaProps<T>): ReactElement {
+function TextAreaInput<T extends object>(
+  props: TextAreaProps<T>
+): ReactElement {
   return (
     <textarea
       {...baseInputProps(props)}
-      className={joinClasses(props, ClassJoinType.Input)}
+      className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}
       minLength={props.minLength}
       maxLength={props.maxLength}
@@ -252,12 +303,12 @@ function TextAreaInput<T extends object>(props: TextAreaProps<T>): ReactElement 
   );
 }
 
-function TextInput<T extends object>(props: TextProps<T>): ReactElement {
+function TextInput<T extends object>(props: TextInputProps<T>): ReactElement {
   return (
     <input
       {...baseInputProps(props)}
       type={props.type ?? 'text'}
-      className={joinClasses(props, ClassJoinType.Input)}
+      className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}
       value={props.value ?? ''}
       minLength={props.minLength}
@@ -267,8 +318,8 @@ function TextInput<T extends object>(props: TextProps<T>): ReactElement {
   );
 }
 
-function baseInputProps<V, E extends InputElement>(
-  props: BaseInputProps<V, E, any>
+function baseInputProps<T extends object, E extends InputElement>(
+  props: BaseInputProps<any, any, E, T>
 ): InputHTMLAttributes<E> & RefAttributes<E> {
   return {
     ref: props.inputRef,
@@ -279,18 +330,12 @@ function baseInputProps<V, E extends InputElement>(
   };
 }
 
-function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
+function joinClasses(
+  props: InputPairProps<any>,
+  type: ClassJoinType,
+  isValid: boolean
+): string {
   const out = props.className?.split(/\s+/) ?? [];
-
-  if (props.inputRef?.current == null) {
-    return out.join(' ');
-  }
-
-  if (props.validator != null && !(props.validator as util.Function<any, boolean>)(props.inputRef.current)) {
-    out.push('invalid');
-  } else if (!props.inputRef.current?.checkValidity()) {
-    out.push('invalid')
-  }
 
   switch (type) {
     case ClassJoinType.Input:
@@ -308,6 +353,8 @@ function joinClasses(props: InputPairProps<any>, type: ClassJoinType): string {
       }
       break;
   }
+
+  if (!isValid) out.push('invalid');
 
   return out.join(' ');
 }

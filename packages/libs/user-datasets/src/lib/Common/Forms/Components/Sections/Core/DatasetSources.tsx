@@ -4,7 +4,8 @@ import * as vdi from '../../../../../Service';
 
 import { isEmpty } from 'lodash';
 import { AddRowButton, InputBlock, LabelInputPair, YesNoToggle } from '../../';
-
+import { TextInputProps } from '../../LabelInputPair';
+import { testNonBlank } from '../../../../../Utils';
 
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
@@ -20,14 +21,15 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
   const { datasetMeta, setDatasetMeta } = props;
 
   const setEnabled = React.useCallback(
-    (v: boolean) => setDatasetMeta({
-      ...datasetMeta,
-      metadataContentFlags: {
-        ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetSources: v,
-      },
-    }),
-    [datasetMeta, setDatasetMeta],
+    (v: boolean) =>
+      setDatasetMeta({
+        ...datasetMeta,
+        metadataContentFlags: {
+          ...(datasetMeta.metadataContentFlags ?? {}),
+          hasDatasetSources: v,
+        },
+      }),
+    [datasetMeta, setDatasetMeta]
   );
 
   if (
@@ -46,7 +48,7 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
   const updateSources = util.useArrayChangeHandler(
     'datasetSources',
     datasetMeta,
-    setDatasetMeta,
+    setDatasetMeta
   );
 
   const inputRows = safeSources.map((src, i) => {
@@ -116,6 +118,12 @@ interface DataSourceProps {
   readonly setSource: util.BiConsumer<vdi.PostDatasetSource, number>;
 }
 
+function testUrl({ value, required, disabled }: TextInputProps): boolean {
+  if (disabled || (!required && isEmpty(value))) return true;
+
+  return /^(https?|ftp):\/\/(\w+\.)+\w+.*$/.test(value!);
+}
+
 function DataSource({
   index,
   jsonPath,
@@ -140,6 +148,7 @@ function DataSource({
         disabled={!enabled}
         required={required}
         placeholder="https://data.source.org/path"
+        validator={testUrl}
         helpText={
           'The full URL where the dataset is hosted or was obtained. URLs must' +
           ' include a protocol prefix such as "https://", "ftp://", etc..'
@@ -147,12 +156,14 @@ function DataSource({
       />
 
       <LabelInputPair
+        type="text"
         label="Source Version"
         fieldName={jsonPath.appendToString<vdi.PostDatasetSource>('version')}
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}
         required={required}
+        validator={testNonBlank}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

@@ -1,7 +1,11 @@
 import React from 'react';
-import { JsonPathBuilder } from '../../../../../../Utils';
+import {
+  ifDefined,
+  JsonPathBuilder,
+  newTextLengthTest,
+} from '../../../../../../Utils';
 import { DatasetContact } from '../../../../../../Service';
-import { LabelInputPair } from '../../../LabelInputPair';
+import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {
   readonly index: number;
@@ -55,6 +59,8 @@ enum Strictness {
   Primary,
 }
 
+const TEST_CONTACT_NAME = newTextLengthTest(2, 300);
+
 export function ContactBlock(props: ContactBlockProps): React.ReactElement {
   const { index, contact, updateContact } = props;
 
@@ -66,7 +72,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
   const onChangePart = React.useCallback(
     (k: keyof DatasetContact, v: DatasetContact[typeof k]) =>
       updateContact({ ...contact, [k]: v }, index),
-    [contact, updateContact, index],
+    [contact, updateContact, index]
   );
 
   const validationThreshold = determineStrictness(props);
@@ -81,10 +87,9 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           type="text"
           fieldName={makePath('firstName')}
           value={contact.firstName}
-          onChange={it => onChangePart('firstName', it)}
+          onChange={(it) => onChangePart('firstName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          minLength={2}
-          maxLength={300}
+          validator={TEST_CONTACT_NAME}
         />
 
         <LabelInputPair
@@ -92,7 +97,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           type="text"
           fieldName={makePath('middleName')}
           value={contact.middleName}
-          onChange={it => onChangePart('middleName', it)}
+          onChange={(it) => onChangePart('middleName', it)}
           required={false} // middle name is never required.
           minLength={0}
           maxLength={300}
@@ -103,10 +108,9 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           type="text"
           fieldName={makePath('lastName')}
           value={contact.lastName}
-          onChange={it => onChangePart('lastName', it)}
+          onChange={(it) => onChangePart('lastName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          minLength={2}
-          maxLength={300}
+          validator={TEST_CONTACT_NAME}
         />
 
         <LabelInputPair
@@ -114,7 +118,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           fieldName={makePath('email')}
           type="email"
           value={contact.email}
-          onChange={it => onChangePart('email', it)}
+          onChange={(it) => onChangePart('email', it)}
           required={validationThreshold >= Strictness.Primary}
           minLength={5}
           maxLength={1024}
@@ -125,7 +129,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           type="text"
           fieldName={makePath('affiliation')}
           value={contact.affiliation}
-          onChange={it => onChangePart('affiliation', it)}
+          onChange={(it) => onChangePart('affiliation', it)}
           required={validationThreshold >= Strictness.Secondary}
           minLength={3}
           maxLength={4000}
@@ -136,7 +140,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           type="text"
           fieldName={makePath('country')}
           value={contact.country}
-          onChange={it => onChangePart('country', it)}
+          onChange={(it) => onChangePart('country', it)}
           required={validationThreshold >= Strictness.Secondary}
           minLength={3}
           maxLength={200}

@@ -1,4 +1,4 @@
-export { ifDefined, requireValue } from './ergonomics';
+export { ifDefined, requireValue, using } from './ergonomics';
 
 export { datasetUserFullName } from './formatting';
 
@@ -12,7 +12,9 @@ export {
 } from './input-utils';
 
 export {
-  needsFile,
+  testFileRequired,
+  testNonBlank,
+  newTextLengthTest,
 } from './input-tests';
 
 export type {
@@ -22,8 +24,8 @@ export type {
   Nullable,
   Optional,
   Possible,
+  Predicate,
   Runnable,
-
   DataNoun,
 } from './types';
 
@@ -34,7 +36,7 @@ export {
   isNonEmptyString,
 } from './value-tests';
 
-export {} from './miscellaneous-junk'
+export {} from './miscellaneous-junk';
 
 export { JsonPathBuilder } from './JsonPathBuilder';
 export { SimpleState, useSimpleState } from './SimpleState';

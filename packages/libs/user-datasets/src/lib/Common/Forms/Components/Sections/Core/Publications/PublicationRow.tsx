@@ -1,4 +1,10 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
@@ -6,6 +12,7 @@ import {
 import {
   BiConsumer,
   Consumer,
+  Predicate,
   JsonPathBuilder,
   ifDefined,
   isNonBlankString,
@@ -16,8 +23,11 @@ import {
   resemblesPublicationId,
 } from '../../../../../../Service/Publications';
 import { CitationLookupStatus, StatusTuple } from './utils';
-import { LabelInputPair } from '../../../LabelInputPair';
+import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
 import { CitationLine } from './CitationLine';
+import { isEmpty } from 'lodash';
+import { PubMedCitationQuery } from '../../../../../../Service/Publications/PubMedCitationQuery';
+import { DOICitationQuery } from '../../../../../../Service/Publications/DOICitationQuery';
 
 const DEBOUNCE_DELAY_MILLIS = 666;
 
@@ -37,16 +47,23 @@ export interface PublicationRowProps {
 
 export function PublicationRow(props: PublicationRowProps): ReactElement {
   const lookupStatus = useRef<number>(0);
-  const [citationStatus, setCitationStatus] = useState<StatusTuple>([null, null]);
+  const [citationStatus, setCitationStatus] = useState<StatusTuple>([
+    null,
+    null,
+  ]);
   const { publication, setPublication } = props;
 
-  useEffect(() => setCitationStatus([
-    ifDefined(props.publication.citation, (citation) => ({
-      status: 'success',
-      citation,
-    })) ?? null,
-    null,
-  ]), [props.publication.citation]);
+  useEffect(
+    () =>
+      setCitationStatus([
+        ifDefined(props.publication.citation, (citation) => ({
+          status: 'success',
+          citation,
+        })) ?? null,
+        null,
+      ]),
+    [props.publication.citation]
+  );
 
   const updatePublication = useCallback(
     (pub: Publication, res: CitationLookupStatus) => {
@@ -63,43 +80,43 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
         })()
       );
     },
-    [publication, setPublication],
+    [publication, setPublication]
   );
 
   const runLookup = useCallback(
     (pub: Publication) => {
-    const timestamp = Date.now();
-    lookupStatus.current = timestamp;
+      const timestamp = Date.now();
+      lookupStatus.current = timestamp;
 
-    lookupCitation(pub.identifier!, pub.type!)
-      .then((res) => {
-        // disregard slow response, new search has been run
-        if (lookupStatus.current > timestamp) {
-          return;
-        }
+      lookupCitation(pub.identifier!, pub.type!)
+        .then((res) => {
+          // disregard slow response, new search has been run
+          if (lookupStatus.current > timestamp) {
+            return;
+          }
 
-        if (res.status === 'cancelled') {
-          setCitationStatus((it) => [it[0], null]);
-        } else {
+          if (res.status === 'cancelled') {
+            setCitationStatus((it) => [it[0], null]);
+          } else {
+            setCitationStatus([res, null]);
+          }
+
+          updatePublication(pub, res);
+        })
+        .catch((err) => {
+          // disregard slow response, new search has been run
+          if (lookupStatus.current > timestamp) {
+            return;
+          }
+
+          const res: CitationLookupResult = {
+            status: 'error',
+            error: err instanceof Error ? err : new Error(String(err)),
+          };
+
           setCitationStatus([res, null]);
-        }
-
-        updatePublication(pub, res);
-      })
-      .catch((err) => {
-        // disregard slow response, new search has been run
-        if (lookupStatus.current > timestamp) {
-          return;
-        }
-
-        const res: CitationLookupResult = {
-          status: 'error',
-          error: err instanceof Error ? err : new Error(String(err)),
-        };
-
-        setCitationStatus([res, null]);
-        updatePublication(pub, res);
-      });
+          updatePublication(pub, res);
+        });
     },
     [setCitationStatus, updatePublication]
   );
@@ -178,23 +195,45 @@ interface PublicationInputProps {
   readonly onInput: BiConsumer<string, PublicationType>;
 }
 
+function newPubInputTest(type: PublicationType): Predicate<TextInputProps> {
+  return ({
+    value,
+    required,
+    disabled,
+    fieldName,
+  }: TextInputProps): boolean => {
+    console.log(fieldName, value, required, disabled);
+    return disabled === true || (!required && isEmpty(value)) || type === 'pmid'
+      ? PubMedCitationQuery.resemblesPMID(value!)
+      : DOICitationQuery.resemblesDOI(value!);
+  };
+}
+
+const TEST_PMID = newPubInputTest('pmid');
+const TEST_DOI = newPubInputTest('doi');
+
 function PublicationInput(props: PublicationInputProps): ReactElement {
   const hasType = isNonBlankString(props.publication.type);
   const pubTypeIsFieldType = props.publication.type === props.fieldType;
+  const validator = props.fieldType === 'pmid' ? TEST_PMID : TEST_DOI;
 
-  return <LabelInputPair
-    label={props.fieldType.toUpperCase()}
-    fieldName={`pub-${props.index}-${props.fieldType}`}
-    required={props.isRequired && (!hasType || pubTypeIsFieldType)}
-    value={pubTypeIsFieldType ? props.publication.identifier : undefined}
-    onChange={(v) => props.onInput(v, props.fieldType)}
-    className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
-    labelClass={hasType && !pubTypeIsFieldType ? 'disabled' : undefined}
-    disabled={
-      props.isDisabled
-      || (isNonBlankString(props.publication.identifier) && !pubTypeIsFieldType)
-    }
-  />;
+  return (
+    <LabelInputPair
+      type="text"
+      label={props.fieldType.toUpperCase()}
+      fieldName={`pub-${props.index}-${props.fieldType}`}
+      required={props.isRequired && (!hasType || pubTypeIsFieldType)}
+      value={pubTypeIsFieldType ? props.publication.identifier : undefined}
+      onChange={(v) => props.onInput(v, props.fieldType)}
+      className={props.isInvalid && pubTypeIsFieldType ? 'invalid' : undefined}
+      labelClass={hasType && !pubTypeIsFieldType ? 'disabled' : undefined}
+      validator={pubTypeIsFieldType || !hasType ? validator : undefined}
+      disabled={
+        props.isDisabled ||
+        (isNonBlankString(props.publication.identifier) && !pubTypeIsFieldType)
+      }
+    />
+  );
 }
 
 function applyCitation(
