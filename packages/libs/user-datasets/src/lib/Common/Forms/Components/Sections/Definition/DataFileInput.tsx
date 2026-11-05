@@ -103,7 +103,7 @@ export function DataFileInput(props: DataFileInputProps): React.ReactElement {
       required={props.inputConfig.required}
       value={props.files}
       onChange={props.setFiles}
-      validator={testFileRequired}
+      validator={inputConfig.required ? testFileRequired : undefined}
     />
   );
 }
