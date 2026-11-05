@@ -61,6 +61,7 @@ import {
 import { isEmpty } from 'lodash';
 import { History } from 'history';
 import { ThemedUpdateButton } from '../ThemedUpdateButton';
+import { projectId } from '../../config';
 
 const classify = makeClassifier('DatasetManagement');
 
@@ -373,8 +374,62 @@ class DatasetManagement<
     );
   }
 
+  private getStatusRow(isInstalled: boolean): React.ReactElement {
+    const { userDataset, dataNoun, config } = this.props;
+
+    if (!userDataset.installTargets.includes(projectId)) {
+      return (
+        <span>
+          <UserDatasetStatus
+            vdiConfig={this.props.vdiConfig.configuration}
+            baseUrl={this.props.baseUrl}
+            linkToDataset={false}
+            useTooltip={false}
+            userDataset={userDataset}
+            projectId={config.projectId}
+            displayName={config.displayName}
+            dataNoun={dataNoun}
+            isPolling={false}
+          />
+        </span>
+      );
+    }
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+        <StatusRowWithPolling
+          status={userDataset.status}
+          projectId={config.projectId}
+          datasetId={userDataset.datasetId}
+          userDatasetType={userDataset.type.name}
+          isInstalled={isInstalled}
+          loadUserDatasetDetailWithoutLoadingIndicator={
+            this.props.loadUserDatasetDetailWithoutLoadingIndicator
+          }
+          loadUserDatasetSearches={this.props.loadUserDatasetSearches}
+        >
+          {(isPolling) => (
+            <span>
+              <UserDatasetStatus
+                vdiConfig={this.props.vdiConfig.configuration}
+                baseUrl={this.props.baseUrl}
+                linkToDataset={false}
+                useTooltip={false}
+                userDataset={userDataset}
+                projectId={config.projectId}
+                displayName={config.displayName}
+                dataNoun={dataNoun}
+                isPolling={isPolling}
+              />
+            </span>
+          )}
+        </StatusRowWithPolling>
+      </div>
+    );
+  }
+
   getAttributes(): DatasetAttribute[] {
-    const { userDataset, isOwner, questionMap, dataNoun } = this.props;
+    const { userDataset, isOwner, questionMap } = this.props;
     const isInstalled = this.isInstalled();
     // questionMap comes from globalData, which is loaded once per page and
     // so cannot contain a dataset installed during this session; see
@@ -399,39 +454,7 @@ class DatasetManagement<
           : null,
         {
           attribute: 'Status',
-          value: (
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
-            >
-              <StatusRowWithPolling
-                status={userDataset.status}
-                projectId={this.props.config.projectId}
-                datasetId={userDataset.datasetId}
-                userDatasetType={userDataset.type.name}
-                isInstalled={isInstalled}
-                loadUserDatasetDetailWithoutLoadingIndicator={
-                  this.props.loadUserDatasetDetailWithoutLoadingIndicator
-                }
-                loadUserDatasetSearches={this.props.loadUserDatasetSearches}
-              >
-                {(isPolling) => (
-                  <span>
-                    <UserDatasetStatus
-                      vdiConfig={this.props.vdiConfig.configuration}
-                      baseUrl={this.props.baseUrl}
-                      linkToDataset={false}
-                      useTooltip={false}
-                      userDataset={userDataset}
-                      projectId={this.props.config.projectId}
-                      displayName={this.props.config.displayName}
-                      dataNoun={dataNoun}
-                      isPolling={isPolling}
-                    />
-                  </span>
-                )}
-              </StatusRowWithPolling>
-            </div>
-          ),
+          value: this.getStatusRow(isInstalled),
         },
         !Array.isArray(questions) || !questions.length || !isInstalled
           ? null
