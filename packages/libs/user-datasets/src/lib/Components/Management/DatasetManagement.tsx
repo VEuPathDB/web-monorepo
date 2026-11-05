@@ -697,7 +697,7 @@ class DatasetManagement<
         )}
         {editable && (
           <ThemedUpdateButton
-            buttonText="Update metadata"
+            buttonText="Edit my dataset"
             onPress={() =>
               this.setState((s) => ({
                 ...s,
