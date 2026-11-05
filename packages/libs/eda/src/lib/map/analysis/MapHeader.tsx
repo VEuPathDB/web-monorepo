@@ -92,7 +92,7 @@ export function MapHeader({
             fontWeight: 500,
           }}
         >
-          <EdaIcon fill="currentColor" /> Explore in Dataset Explorer
+          <EdaIcon fill="currentColor" /> Switch to Dataset Explorer
         </Link>
       )}
       {mapTypeDetails}
