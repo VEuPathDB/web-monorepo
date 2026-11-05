@@ -309,7 +309,7 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       {
         key: 'projects',
         sortable: true,
-        name: 'VEuPathDB project',
+        name: 'VEuPathDB Resource(s)',
         renderCell(cellProps: MesaDataCellProps) {
           const newInstallTargets = cellProps.row.installTargets.map(
             projectIdToDisplayName

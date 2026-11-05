@@ -38,7 +38,7 @@ export function DatasetDependencies(
   return (
     <>
       <label className={classNames.join(' ')}>
-        Reference Organism
+        Reference organism(s)
       </label>
       {config.renderInput({
         dependencies: datasetDetails.dependencies ?? [],

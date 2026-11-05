@@ -65,7 +65,7 @@ function getStatus(
 
   if (!isTargetingCurrentSite) {
     return {
-      content: `This ${dataNoun} was uploaded and installed in a different VEuPathDB project.`,
+      content: `This ${dataNoun} was uploaded and installed in a different VEuPathDB Resource.`,
       icon: 'minus-circle',
     };
   }
