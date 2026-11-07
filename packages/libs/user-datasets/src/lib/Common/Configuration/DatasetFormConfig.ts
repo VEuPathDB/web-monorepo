@@ -42,9 +42,23 @@ export interface DatasetFormConfig<
   readonly prepareDataFiles?: (dataFiles: UploadContentMap) => UploadContentMap;
 }
 
+export interface StudyDesignOption {
+  /** Label shown in the select; stored as `studyDesign`. */
+  readonly design: string;
+
+  /**
+   * Broader category of the design; stored as `studyType`.
+   * One of `Experimental`, `Observational`, `Review` or `n/a`.
+   */
+  readonly studyType: string;
+
+  /** Short help shown to users when this design is selected. */
+  readonly help?: string;
+}
+
 export interface DatasetCharacteristicsFormSectionConfig {
   readonly enable: boolean;
-  readonly studyDesignVocab: readonly [string, string][];
+  readonly studyDesignVocab: readonly StudyDesignOption[];
 }
 
 export interface DependencyInputProps {

@@ -20,12 +20,16 @@ import {
   SampleYearRange,
 } from '../../../../../Service';
 import {
+  FieldHelpText,
   GrowableStringList,
   InputBlock,
   LabelInputPair,
   YesNoToggle,
 } from '../../index';
-import { DatasetCharacteristicsFormSectionConfig } from '../../../../Configuration/DatasetFormConfig';
+import {
+  DatasetCharacteristicsFormSectionConfig,
+  StudyDesignOption,
+} from '../../../../Configuration/DatasetFormConfig';
 
 export const FieldStudyToggleID = 'field-study-toggle';
 
@@ -221,7 +225,7 @@ export function CharacteristicsSection({
 // region Study Design
 
 interface StudyDesignProps {
-  readonly vocab: readonly [string, string][];
+  readonly vocab: readonly StudyDesignOption[];
   readonly onChange: BiConsumer<string, string>;
   readonly enabled: boolean;
   readonly required: boolean;
@@ -240,12 +244,14 @@ function StudyDesign({
       Select a study design
     </option>,
 
-    ...vocab.map(([v, _], i) => (
-      <option key={i} value={i} selected={selection === v}>
-        {v}
+    ...vocab.map(({ design }, i) => (
+      <option key={i} value={i} selected={selection === design}>
+        {design}
       </option>
     )),
   ];
+
+  const help = vocab.find(({ design }) => design === selection)?.help;
 
   let className: Possible<string> = undefined;
 
@@ -264,14 +270,22 @@ function StudyDesign({
       <select
         id="meta.studyCharacteristics.studyDesign"
         onChange={(e) => {
-          const [design, type] = vocab[parseInt(e.currentTarget.value ?? '0')];
-          onChange(design, type);
+          const { design, studyType } =
+            vocab[parseInt(e.currentTarget.value ?? '0')];
+          onChange(design, studyType);
         }}
         disabled={!enabled}
         required={required}
       >
         {options}
       </select>
+      {selection == null ? (
+        <FieldHelpText>
+          Select a study design to see a short description of it.
+        </FieldHelpText>
+      ) : (
+        help != null && <FieldHelpText>{help}</FieldHelpText>
+      )}
     </>
   );
 }

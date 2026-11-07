@@ -10,6 +10,7 @@ export {
 
 export type {
   DatasetFormConfig,
+  StudyDesignOption,
   DependencyInputProps,
   DependenciesConfig,
 } from './DatasetFormConfig';
