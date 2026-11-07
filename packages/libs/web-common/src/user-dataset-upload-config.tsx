@@ -99,72 +99,96 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
 const DefaultFormTitle = 'Upload Dataset';
 
-// TODO: placeholder help strings (LLM-generated); replace with reviewed text
+// Help text from the reviewed 'Dataset metadata controlled vocab - study design' sheet
 const StudyDesignVocab: readonly StudyDesignOption[] = [
-  // Alphabetical Order
+  // Lexicographical order (Other goes last)
   {
     design: 'Case history',
     studyType: 'Observational',
-    help: 'A detailed report of the history and outcome of a single individual.',
+    help: 'Reports the history, characteristics, and outcomes of a single individual or case.',
   },
   {
     design: 'Case series study',
     studyType: 'Observational',
-    help: 'A descriptive report of a small group of individuals with a shared condition or exposure, with no comparison group.',
+    help: 'Tracks a group of individuals sharing a condition or characteristic (ex: disease, exposure, diagnosis, or treatment) over time, without a comparison group.',
   },
   {
     design: 'Case-control study',
     studyType: 'Observational',
-    help: 'Compares individuals who have a condition (cases) with similar individuals who do not (controls) to look for differences in past exposures.',
+    help: 'Compares individuals with a particular condition or outcome (cases) to those without it (controls) to identify associated exposures or characteristics.',
   },
   {
     design: 'Cluster-randomized controlled trial',
     studyType: 'Experimental',
-    help: 'Groups of individuals (e.g. villages or schools), rather than individuals, are randomly assigned to an intervention or control.',
+    help: 'Compares outcomes between groups (e.g., villages, schools, or communities) that are randomly assigned to an intervention or control.',
   },
   {
     design: 'Cohort study',
     studyType: 'Observational',
-    help: 'Follows a group of individuals over time to see how exposures relate to later outcomes.',
+    help: 'Follows a defined group of individuals over time to examine how exposures or characteristics relate to subsequent outcomes.',
   },
   {
     design: 'Cross-sectional study',
     studyType: 'Observational',
-    help: 'Measures exposures and outcomes in a population at a single point in time.',
+    help: 'Measures characteristics, exposures, or outcomes in a population at a single point in time or during a defined sampling period.',
   },
   {
     design: 'Ecological study',
     studyType: 'Observational',
-    help: 'Compares outcomes and exposures across whole populations or regions rather than individuals.',
+    help: 'Examines relationships between exposures, characteristics, or outcomes using data aggregated at the population, community, or geographic level.',
+  },
+  {
+    design: 'Field survey',
+    studyType: 'Observational',
+    help: 'Systematically collects samples or observations from natural populations or environments to characterize their distribution, abundance, diversity, or other characteristics.',
   },
   {
     design: 'Meta-analysis',
     studyType: 'Review',
-    help: 'Statistically combines results from several previously published studies.',
+    help: 'Statistically combines results from multiple independent studies to produce a summary estimate.',
   },
   {
     design: 'Panel study',
     studyType: 'Observational',
-    help: 'Repeatedly measures the same set of individuals at multiple time points.',
+    help: 'Collects repeated measurements or observations from the same group of individuals, organisms, or sampling units at multiple time points.',
+  },
+  {
+    design: 'Pre-post study',
+    studyType: 'Experimental',
+    help: 'Compares outcomes measured before and after an intervention in the same population or setting, without necessarily including a control group.',
   },
   {
     design: 'Quasi-experimental study',
     studyType: 'Experimental',
-    help: 'Tests an intervention, but participants are not randomly assigned to groups.',
+    help: 'Evaluates the effects of an intervention without random assignment to intervention and comparison groups.',
   },
   {
-    design: 'Randomized controlled/clinical trial',
+    design: 'Randomized controlled trial',
     studyType: 'Experimental',
-    help: 'Individuals are randomly assigned to an intervention or a control group and outcomes are compared.',
+    help: 'Compares outcomes between individuals that are randomly assigned to either intervention or control groups.',
+  },
+  {
+    design: 'Repeated cross-sectional study',
+    studyType: 'Observational',
+    help: 'Repeatedly measures characteristics, exposures, or outcomes in the same population at different time points, without necessarily sampling the same individuals.',
   },
   {
     design: 'Surveillance study',
     studyType: 'Observational',
-    help: 'Ongoing, systematic collection of data on the occurrence of a disease or health-related event in a population.',
+    help: 'Systematically collects and analyzes data over time to monitor diseases, outbreaks, populations, or other characteristics of interest.',
+  },
+  {
+    design: 'Systematic review',
+    studyType: 'Review',
+    help: 'Uses predefined methods to identify, evaluate, and synthesize evidence from multiple studies.',
   },
 
   // Other goes last
-  { design: 'Other', studyType: 'n/a' },
+  {
+    design: 'Other',
+    studyType: 'n/a',
+    help: 'The study design should be described in the Dataset Information > Description section.',
+  },
 ];
 
 const wranglerDataHelp = (
