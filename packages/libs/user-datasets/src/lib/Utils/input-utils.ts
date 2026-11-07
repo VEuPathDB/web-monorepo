@@ -1,5 +1,5 @@
 import { ArrayElement, BiConsumer, Consumer } from './types';
-import { ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 import { isEmpty } from 'lodash';
 
 export function changeHandler<
@@ -8,6 +8,23 @@ export function changeHandler<
   V extends T[K] = T[K]
 >(field: K, obj: T, then: Consumer<T>): Consumer<V> {
   return (value) => then({ ...obj, [field]: value });
+}
+
+export function useChangeHandler<
+  T extends object,
+  K extends keyof T = keyof T,
+  V extends T[K] = T[K]
+>(
+  field: K,
+  obj: T,
+  then: Consumer<T>,
+  deps: ReadonlyArray<unknown> = [],
+): Consumer<V> {
+  return React.useCallback(
+    (value) => then({ ...obj, [field]: value }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [...deps, then, obj, field],
+  );
 }
 
 /**
@@ -43,6 +60,25 @@ export function arrayChangeHandler<
           ? replaceElement(obj[field] as V[], index, value)
           : [...((obj[field] as V[]) ?? []), value],
     });
+}
+
+export function useArrayChangeHandler<
+  T extends object,
+  K extends keyof T = keyof T,
+  V extends ArrayElement<T[K] & never[]> = ArrayElement<T[K] & never[]>
+>(field: K, obj: T, then: Consumer<T>, deps: Array<unknown> = []): BiConsumer<V, number | undefined> {
+  return React.useCallback(
+    (value, index) =>
+      then({
+        ...obj,
+        [field]:
+          typeof index === 'number'
+            ? replaceElement(obj[field] as V[], index, value)
+            : [...((obj[field] as V[]) ?? []), value],
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [...deps, field, obj, then],
+  )
 }
 
 export function textChange(

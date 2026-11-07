@@ -22,7 +22,7 @@ import { DateTime } from '../DateTime';
 
 import '../UserDatasets.scss';
 import './DatasetManagement.scss';
-import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { datasetUserFullName, formatFileSize, DataNoun } from '../../Utils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
@@ -39,7 +39,6 @@ import {
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
 } from '../../Actions/UserDatasetsActions';
-import { DataNoun } from '../../Utils';
 import {
   DatasetGetResponseBody,
   DatasetShareOffer,
@@ -56,12 +55,13 @@ import { UpdateFormController } from '../Update/UpdateFormController';
 import {
   DatasetFormConfigurators,
   DatasetTypeConfig,
+  EdaStudyLinks,
   findDatasetTypeConfig,
 } from '../../Common/Configuration';
 import { isEmpty } from 'lodash';
 import { History } from 'history';
-import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 import { ThemedUpdateButton } from '../ThemedUpdateButton';
+import { projectId } from '../../config';
 
 const classify = makeClassifier('DatasetManagement');
 
@@ -374,8 +374,62 @@ class DatasetManagement<
     );
   }
 
+  private getStatusRow(isInstalled: boolean): React.ReactElement {
+    const { userDataset, dataNoun, config } = this.props;
+
+    if (!userDataset.installTargets.includes(projectId)) {
+      return (
+        <span>
+          <UserDatasetStatus
+            vdiConfig={this.props.vdiConfig.configuration}
+            baseUrl={this.props.baseUrl}
+            linkToDataset={false}
+            useTooltip={false}
+            userDataset={userDataset}
+            projectId={config.projectId}
+            displayName={config.displayName}
+            dataNoun={dataNoun}
+            isPolling={false}
+          />
+        </span>
+      );
+    }
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}>
+        <StatusRowWithPolling
+          status={userDataset.status}
+          projectId={config.projectId}
+          datasetId={userDataset.datasetId}
+          userDatasetType={userDataset.type.name}
+          isInstalled={isInstalled}
+          loadUserDatasetDetailWithoutLoadingIndicator={
+            this.props.loadUserDatasetDetailWithoutLoadingIndicator
+          }
+          loadUserDatasetSearches={this.props.loadUserDatasetSearches}
+        >
+          {(isPolling) => (
+            <span>
+              <UserDatasetStatus
+                vdiConfig={this.props.vdiConfig.configuration}
+                baseUrl={this.props.baseUrl}
+                linkToDataset={false}
+                useTooltip={false}
+                userDataset={userDataset}
+                projectId={config.projectId}
+                displayName={config.displayName}
+                dataNoun={dataNoun}
+                isPolling={isPolling}
+              />
+            </span>
+          )}
+        </StatusRowWithPolling>
+      </div>
+    );
+  }
+
   getAttributes(): DatasetAttribute[] {
-    const { userDataset, isOwner, questionMap, dataNoun } = this.props;
+    const { userDataset, isOwner, questionMap } = this.props;
     const isInstalled = this.isInstalled();
     // questionMap comes from globalData, which is loaded once per page and
     // so cannot contain a dataset installed during this session; see
@@ -400,39 +454,7 @@ class DatasetManagement<
           : null,
         {
           attribute: 'Status',
-          value: (
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5em' }}
-            >
-              <StatusRowWithPolling
-                status={userDataset.status}
-                projectId={this.props.config.projectId}
-                datasetId={userDataset.datasetId}
-                userDatasetType={userDataset.type.name}
-                isInstalled={isInstalled}
-                loadUserDatasetDetailWithoutLoadingIndicator={
-                  this.props.loadUserDatasetDetailWithoutLoadingIndicator
-                }
-                loadUserDatasetSearches={this.props.loadUserDatasetSearches}
-              >
-                {(isPolling) => (
-                  <span>
-                    <UserDatasetStatus
-                      vdiConfig={this.props.vdiConfig.configuration}
-                      baseUrl={this.props.baseUrl}
-                      linkToDataset={false}
-                      useTooltip={false}
-                      userDataset={userDataset}
-                      projectId={this.props.config.projectId}
-                      displayName={this.props.config.displayName}
-                      dataNoun={dataNoun}
-                      isPolling={isPolling}
-                    />
-                  </span>
-                )}
-              </StatusRowWithPolling>
-            </div>
-          ),
+          value: this.getStatusRow(isInstalled),
         },
         !Array.isArray(questions) || !questions.length || !isInstalled
           ? null
@@ -480,7 +502,9 @@ class DatasetManagement<
                 </ul>
               ),
             },
-        userDataset.type.name === 'isasimple' || !isInstalled
+        userDataset.type.name === 'isasimple' ||
+        userDataset.type.name === 'stf' ||
+        !isInstalled
           ? null
           : {
               attribute: 'View',
@@ -673,7 +697,7 @@ class DatasetManagement<
         )}
         {editable && (
           <ThemedUpdateButton
-            buttonText="Update metadata"
+            buttonText="Edit my dataset"
             onPress={() =>
               this.setState((s) => ({
                 ...s,

@@ -1,11 +1,14 @@
-import React, { ReactElement } from 'react';
-import { AddRowButton, InputBlock, InputPair } from '../../index';
+import React, { ReactElement, useCallback } from 'react';
+import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
 import {
-  arrayChangeHandler,
   JsonPathBuilder,
   BiConsumer,
-  Consumer, isNonEmpty, isNonBlankString
+  Consumer,
+  isNonEmpty,
+  isNonBlankString,
+  newTextLengthTest,
+  useArrayChangeHandler
 } from '../../../../../Utils';
 import { PartialDatasetDetails } from '../../../../../Service';
 import { PartialOrganism } from '../../../../../Service/Model/request-types';
@@ -13,7 +16,7 @@ import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export interface OrganismDetailsProps {
-  readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
+  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly datasetMeta: PartialDatasetDetails;
   readonly jsonPath: JsonPathBuilder;
 }
@@ -27,16 +30,21 @@ export function ExperimentalOrganisms(
     ? props.datasetMeta.experimentalOrganisms
     : [{}];
 
-  const setEnabled = (enabled: boolean) =>
-    props.setDatasetDetails({
-      ...props.datasetMeta,
-      metadataContentFlags: {
-        ...(props.datasetMeta.metadataContentFlags ?? {}),
-        hasOrganismData: enabled,
-      },
-    });
+  const { datasetMeta, setDatasetMeta } = props;
 
-  const arrayCallback = arrayChangeHandler('experimentalOrganisms', props.datasetMeta, props.setDatasetDetails);
+  const setEnabled = useCallback(
+    (enabled: boolean) =>
+      setDatasetMeta({
+        ...datasetMeta,
+        metadataContentFlags: {
+          ...(datasetMeta.metadataContentFlags ?? {}),
+          hasOrganismData: enabled,
+        },
+      }),
+    [datasetMeta, setDatasetMeta]
+  );
+
+  const arrayCallback = useArrayChangeHandler('experimentalOrganisms', datasetMeta, setDatasetMeta);
 
   const isGenomics = isGenomicsProjectId(projectId);
 
@@ -44,11 +52,10 @@ export function ExperimentalOrganisms(
     ? hasOrganismData === true
     : props.datasetMeta.visibility === 'public';
 
-  const disabled = isGenomics
-    ? false
-    : !hasOrganismData;
+  const disabled = isGenomics ? false : !hasOrganismData;
 
   const isPublic = props.datasetMeta.visibility === 'public';
+  const enabled = isGenomics ? true : hasOrganismData;
 
   return (
     <>
@@ -56,35 +63,43 @@ export function ExperimentalOrganisms(
         <OptionalSection
           toggle={{
             label: 'Includes Biological Data about Organisms?',
-            enabled: isGenomics ? true : hasOrganismData,
+            enabled: enabled,
             setEnabled: setEnabled,
             fieldName: 'enable-organism-list',
-            required: isPublic,
-            helpText: 'Whether this dataset includes biological data describing one or more organisms.',
+            required: isPublic || (enabled ?? false),
+            helpText:
+              'Whether this dataset includes biological data describing one or more organisms.',
             hideToggle: isGenomics,
           }}
           className="field-grid"
         >
           <p className="subsection-description span-2">
-            Indicate the species and strain of each organism represented by biological data in this dataset. Organisms
-            may include
-            {!isGenomics && ' the study population species in field studies or clinical trials and, where applicable,'}
-            {' '}pathogens, vectors, symbionts, or other organisms represented directly or
-            indirectly by the data.
-            {isGenomics && ' The organism species and strain may differ from the Reference Organism species and strain'
-              + ' used for mapping or analysis.'}
+            Indicate the species and strain of each organism represented by
+            biological data in this dataset. Organisms may include
+            {!isGenomics &&
+              ' the study population species in field studies or clinical trials and, where applicable,'}{' '}
+            pathogens, vectors, symbionts, or other organisms represented
+            directly or indirectly by the data.
+            {isGenomics &&
+              ' The organism species and strain may differ from the Reference Organism species and strain' +
+                ' used for mapping or analysis.'}
           </p>
           <ul className="subsection-description span-2">
             <li>
-              <span className="underline">Species</span>: Provide the scientific name of the organism that was detected,
-              measured, characterized, or otherwise represented in this dataset (e.g., Plasmodium falciparum).
+              <span className="underline">Species</span>: Provide the scientific
+              name of the organism that was detected, measured, characterized,
+              or otherwise represented in this dataset (e.g., Plasmodium
+              falciparum).
             </li>
             <li>
-              <span className="underline">Strain</span>: Indicate the strain, isolate, or laboratory line of the
-              organism represented in this dataset, where applicable. For laboratory experiments, enter the specific
-              experimental strain or line, including mutant or genetically modified lines. For field-collected organisms
-              without a defined strain, enter “field isolates” or “field samples,” as appropriate. For organisms for
-              which strain is not applicable, such as human study participants, enter “N/A”.
+              <span className="underline">Strain</span>: Indicate the strain,
+              isolate, or laboratory line of the organism represented in this
+              dataset, where applicable. For laboratory experiments, enter the
+              specific experimental strain or line, including mutant or
+              genetically modified lines. For field-collected organisms without
+              a defined strain, enter “field isolates” or “field samples,” as
+              appropriate. For organisms for which strain is not applicable,
+              such as human study participants, enter “N/A”.
             </li>
           </ul>
 
@@ -100,9 +115,9 @@ export function ExperimentalOrganisms(
             className="column-2"
             onClick={() => {
               if (!disabled)
-                props.setDatasetDetails({
+                props.setDatasetMeta({
                   ...props.datasetMeta,
-                  experimentalOrganisms: [ ...safeOrgList, {} ]
+                  experimentalOrganisms: [...safeOrgList, {}],
                 });
             }}
           >
@@ -124,15 +139,16 @@ interface OrganismDetailListProps {
 function OrganismDetailsContent(props: OrganismDetailListProps): ReactElement {
   return (
     <ol className="multi-input span-2">
-      {props.organisms.map((org, index) =>
+      {props.organisms.map((org, index) => (
         <OrganismDetailsRow
+          key={index}
           index={index}
           disabled={props.disabled}
           required={props.required && index === 0}
           organism={org}
           setOrganism={props.setOrganism}
         />
-      )}
+      ))}
     </ol>
   );
 }
@@ -145,6 +161,8 @@ interface DatasetOrganismRow {
   readonly setOrganism: BiConsumer<PartialOrganism, number>;
 }
 
+const TEST_ORG_TEXT = newTextLengthTest(3, 128);
+
 function OrganismDetailsRow({
   index,
   disabled,
@@ -152,33 +170,32 @@ function OrganismDetailsRow({
   organism,
   setOrganism,
 }: DatasetOrganismRow): ReactElement {
-  const hasContent = isNonBlankString(organism.species) ||  isNonBlankString(organism.strain);
+  const hasContent =
+    isNonBlankString(organism.species) || isNonBlankString(organism.strain);
   return (
     <li className="non-bold-labels organism-row">
       <span className="multi-input-label">Organism {index + 1}</span>
 
       <div className="column-2 field-grid organism-row">
-        <InputPair<PartialOrganism>
+        <LabelInputPair<PartialOrganism>
           label="Species"
           type="text"
           fieldName="species"
-          onChange={v => setOrganism({ ...organism, species: v }, index)}
+          onChange={(v) => setOrganism({ ...organism, species: v }, index)}
           value={organism.species}
           required={required || hasContent}
-          minLength={3}
-          maxLength={128}
+          validator={TEST_ORG_TEXT}
           disabled={disabled}
         />
 
-        <InputPair<PartialOrganism>
+        <LabelInputPair<PartialOrganism>
           label="Strain"
           type="text"
           fieldName="strain"
-          onChange={v => setOrganism({ ...organism, strain: v }, index)}
+          onChange={(v) => setOrganism({ ...organism, strain: v }, index)}
           value={organism.strain}
           required={required || hasContent}
-          minLength={3}
-          maxLength={128}
+          validator={TEST_ORG_TEXT}
           disabled={disabled}
         />
       </div>

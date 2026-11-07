@@ -4,7 +4,7 @@ import { DatasetTypeConfig } from './DatasetTypeConfig';
 import { DatasetFormVerbiage } from './DatasetFormVerbiage';
 import { DatasetDependency } from '../../Service';
 import { Consumer } from '../../Utils';
-import { UploadContentMap } from '../../Service/Model/utility-types';
+import { UploadContentMap } from '../../Service/Model';
 
 export interface DatasetFormConfig<
   T extends DatasetTypeConfig | undefined = DatasetTypeConfig

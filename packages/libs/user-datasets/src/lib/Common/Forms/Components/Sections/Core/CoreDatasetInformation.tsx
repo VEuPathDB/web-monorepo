@@ -49,7 +49,7 @@ export function CoreDatasetInformation({
 
       {formConfig.enableExperimentalOrganism && (
         <ExperimentalOrganisms
-          setDatasetDetails={setDatasetMeta}
+          setDatasetMeta={setDatasetMeta}
           datasetMeta={datasetMeta}
           jsonPath={jsonPath.append<PartialDatasetDetails>('experimentalOrganisms')}
         />

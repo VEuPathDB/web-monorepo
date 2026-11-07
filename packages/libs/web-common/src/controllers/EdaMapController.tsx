@@ -25,7 +25,7 @@ export function EdaMapController() {
           siteName: projectConfig?.displayName ?? '',
         }}
         sharingUrlPrefix={'/maps'}
-        showLinkToEda={projectId === 'ClinEpiDB'}
+        showLinkToEda
         enablePublicUserDatasets={!!communityDatasetsEnabled}
       />
     </Suspense>

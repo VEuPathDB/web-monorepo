@@ -1,49 +1,44 @@
-import React, { ReactElement } from 'react';
-import { filterNullish, ifDefined, Consumer, Nullable, Possible } from '../../../../../Utils';
-import { newUploadContent, UploadContent } from '../../../../../Service/Model';
+import React from 'react';
+import lodash from 'lodash';
+import * as util from '../../../../../Utils';
+import { UploadContent } from '../../../../../Service/Model';
+import { LabelInputPair } from '../../LabelInputPair';
 
 export interface DatasetPropertiesInputProps {
   readonly label: string;
   readonly fieldName: string;
   readonly required?: boolean;
   readonly allowMultiple?: boolean;
-  readonly allowedExtensions?: readonly string[];
+  readonly allowedExtensions?: ReadonlyArray<string>;
 
-  readonly files: Possible<ReadonlyArray<UploadContent>>;
-  readonly setFiles: Consumer<Possible<ReadonlyArray<UploadContent>>>;
+  readonly files: util.Possible<ReadonlyArray<UploadContent>>;
+  readonly setFiles: util.Consumer<util.Possible<ReadonlyArray<UploadContent>>>;
 
-  readonly helpText?: () => ReactElement;
+  readonly helpText?: () => React.ReactElement;
 }
 
 export function DatasetPropertiesInput(
   props: DatasetPropertiesInputProps
-): ReactElement {
-  const helpText =
-    typeof props.helpText === 'function' ? (
-      <div className="column-2">{props.helpText()}</div>
-    ) : undefined;
+): React.ReactElement {
+  let buttonText = lodash.isEmpty(props.files)
+    ? 'Choose File'
+    : 'Change File';
 
-  const labelClass = props.required ? 'required' : undefined;
+  if (props.allowMultiple)
+    buttonText += '(s)';
 
   return (
-    <>
-      <label htmlFor={props.fieldName} className={labelClass}>
-        {props.label}
-      </label>
-      <input
-        type="file"
-        accept={props.allowedExtensions?.join(',')}
-        id={props.fieldName}
-        name={props.fieldName}
-        required={props.required === true}
-        multiple={props.allowMultiple === true}
-        onChange={(e) => props.setFiles(ifDefined(
-          e.target.files ?? undefined,
-          (it) => filterNullish(Array.from<Nullable<File>>(it))
-            .map(file => newUploadContent(file))
-        ))}
-      />
-      {helpText}
-    </>
+    <LabelInputPair
+      type="file"
+      label={props.label}
+      buttonText={buttonText}
+      fieldName={props.fieldName}
+      multiple={props.allowMultiple === true}
+      required={props.required === true}
+      accept={props.allowedExtensions?.join(',')}
+      value={props.files}
+      onChange={props.setFiles}
+      helpText={props.helpText?.()}
+    />
   );
 }

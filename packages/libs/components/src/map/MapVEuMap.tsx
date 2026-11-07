@@ -464,9 +464,9 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           <a
             className="leaflet-control-zoom-out"
             href="/#"
-            title="zoom to data"
+            title="Zoom to data"
             role="button"
-            aria-label="zoom to data"
+            aria-label="Zoom to data"
             onClick={zoomToData}
           >
             <div style={{ paddingTop: '4px' }}>
@@ -478,6 +478,150 @@ function CustomZoomControl(props: CustomZoomControlProps) {
     </div>
   );
 }
+
+/**
+ * react-leaflet v3 with React 18 has commit-phase race conditions when a map
+ * unmounts in the same React update as child layers mount or unmount:
+ *
+ * 1. `Map.remove()` can throw mid-teardown — vector layers (e.g. Rectangle)
+ *    and their SVG renderer are both plain entries of `map._layers`, and if
+ *    the renderer is removed first, the vector layer's `onRemove` crashes on
+ *    `this._renderer._removePath`. The throw aborts the rest of the teardown
+ *    and escalates into React's commit phase, where the nearest error
+ *    boundary tears down and recreates the whole tree — leaving Leaflet
+ *    half-destroyed (the classic "Map container is already initialized"
+ *    cascade).
+ * 2. A layer's mount effect can fire against a map that has already been
+ *    removed (its React context still references the dead map), crashing in
+ *    `map.addLayer`.
+ *
+ * 3. Conversely, if anything throws *during* map construction — after
+ *    Leaflet has stamped the container element with `_leaflet_id` but before
+ *    react-leaflet's `setMap` commits — react-leaflet's map state stays null
+ *    and its init effect re-runs on the next render, attempting
+ *    `new Map(sameDiv)` and now throwing "Map container is already
+ *    initialized" on every render, masking the original error.
+ *
+ * Until we can upgrade to react-leaflet v4, make every map tolerant from the
+ * moment it is constructed (react-leaflet can create and remove a map within
+ * a single React update, so per-instance patching would come too late):
+ * `remove()` becomes idempotent and never throws, `addLayer`/`removeLayer`
+ * become no-ops once the map has been removed, and a failed construction
+ * un-stamps the container so that a re-attempt can succeed instead of
+ * cascading.
+ */
+function installLeafletTeardownGuards() {
+  const proto = Map.prototype as any;
+  if (proto.__veupathdbTeardownGuards) return;
+  proto.__veupathdbTeardownGuards = true;
+
+  const originalInitialize = proto.initialize;
+  const originalInitContainer = proto._initContainer;
+  const originalCallInitHooks = proto.callInitHooks;
+  const originalRemove = proto.remove;
+  const originalAddLayer = proto.addLayer;
+  const originalRemoveLayer = proto.removeLayer;
+
+  // un-stamp the container when construction fails partway, so that the
+  // next attempt does not die on "Map container is already initialized"
+  const resetContainerOnFailure = (original: (...args: unknown[]) => unknown) =>
+    function (this: any, ...args: unknown[]) {
+      try {
+        return original.apply(this, args);
+      } catch (error) {
+        if (this._container != null && this._container._leaflet_id != null) {
+          delete this._container._leaflet_id;
+          delete this._containerId;
+          console.warn(
+            'Leaflet map construction failed; container reset for retry:',
+            error
+          );
+        }
+        throw error;
+      }
+    };
+
+  // covers throws inside Map.initialize (container/layout/setView)
+  proto.initialize = resetContainerOnFailure(originalInitialize);
+  // covers throws from plugin init hooks, which the class constructor runs
+  // *after* initialize
+  proto.callInitHooks = resetContainerOnFailure(originalCallInitHooks);
+
+  // if a stale stamp is encountered anyway, it means a second map is being
+  // created on a container that still has a live one — react-leaflet 3's
+  // init effect can do this (new `props` object every render, and its
+  // `map === null` guard only updates after a commit). Remove the orphaned
+  // map *properly* before taking over the container: just un-stamping it
+  // leaves the orphan's handlers on the container, and its map-drag
+  // listener (registered first) then claims Leaflet's global
+  // `Draggable._dragging` flag on every mousedown, so the real map can
+  // never be panned.
+  proto._initContainer = function (id: string | HTMLElement) {
+    try {
+      const result = originalInitContainer.call(this, id);
+      // remember which map owns the container, so an orphan can be found
+      this._container.__veupathdbMap = this;
+      return result;
+    } catch (error) {
+      const container = this._container;
+      if (container != null && container._leaflet_id != null) {
+        console.warn(
+          'Reinitializing a Leaflet map on a container that was not torn down cleanly:',
+          error
+        );
+        const orphan = container.__veupathdbMap;
+        if (orphan != null && orphan !== this) orphan.remove();
+        // fallback for an orphan we do not know about
+        delete container._leaflet_id;
+        delete this._containerId;
+        const result = originalInitContainer.call(this, id);
+        container.__veupathdbMap = this;
+        return result;
+      }
+      throw error;
+    }
+  };
+
+  proto.remove = function () {
+    if (this.__veupathdbRemoved) return this;
+    this.__veupathdbRemoved = true;
+    try {
+      return originalRemove.call(this);
+    } catch (error) {
+      console.warn('Ignoring an error during Leaflet map teardown:', error);
+      return this;
+    } finally {
+      // Map.remove() disables every handler, but plugin handlers can react
+      // to that by re-enabling map dragging (leaflet-lasso's does), which
+      // re-attaches this map's mousedown listener to the container. That is
+      // harmless on a detached container, but fatal if the container is
+      // shared with a newer map (see _initContainer above): the listener
+      // would fire against the removed map pane and throw. Disable it again.
+      try {
+        this.dragging?.disable();
+      } catch {
+        // already torn down
+      }
+    }
+  };
+
+  proto.addLayer = function (layer: unknown) {
+    if (this.__veupathdbRemoved) return this;
+    return originalAddLayer.call(this, layer);
+  };
+
+  proto.removeLayer = function (layer: unknown) {
+    if (this.__veupathdbRemoved) return this;
+    try {
+      return originalRemoveLayer.call(this, layer);
+    } catch (error) {
+      console.warn('Ignoring an error during Leaflet layer removal:', error);
+      return this;
+    }
+  };
+}
+
+installLeafletTeardownGuards();
 
 function boundsToGeoBBox(bounds: LatLngBounds): Bounds {
   var south = bounds.getSouth();

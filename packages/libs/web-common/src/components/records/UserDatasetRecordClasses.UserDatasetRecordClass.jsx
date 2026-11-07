@@ -153,7 +153,9 @@ export function RecordTable(props) {
         type_name === 'bigwigfiles' ||
         type_name === 'rnaseq')) ||
     (table.name === 'ExploreWebsiteSearches' &&
-      (type_name === 'isasimple' || type_name === 'bigwigfiles'))
+      (type_name === 'isasimple' ||
+        type_name === 'stf' ||
+        type_name === 'bigwigfiles'))
   ) {
     return null; //could we remove heading?
   }
@@ -199,7 +201,9 @@ export function RecordMainCategorySection(props) {
         type_name === 'bigwigfiles' ||
         type_name === 'rnaseq')) ||
     (table_name === 'ExploreWebsiteSearches' &&
-      (type_name === 'isasimple' || type_name === 'bigwigfiles'))
+      (type_name === 'isasimple' ||
+        type_name === 'stf' ||
+        type_name === 'bigwigfiles'))
   ) {
     return null; //could we remove heading?
   }
@@ -243,12 +247,17 @@ export function RecordNavigationSection(props) {
       nodesToHide.add('Variables');
     }
 
-    if (type_name === 'isasimple' || type_name === 'bigwigfiles') {
+    if (
+      type_name === 'isasimple' ||
+      type_name === 'stf' ||
+      type_name === 'bigwigfiles'
+    ) {
       nodesToHide.add('ExploreWebsiteSearches');
     }
 
     if (
       type_name === 'isasimple' ||
+      type_name === 'stf' ||
       type_name === 'phenotype' ||
       type_name === 'genelist'
     ) {

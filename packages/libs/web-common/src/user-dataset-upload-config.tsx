@@ -37,6 +37,7 @@ const implementedUploadTypes = {
   rnaseq: { name: 'rnaseq', version: '1.0' },
   rnaseqrc: { name: 'rnaseqrc', version: '1.0' },
   phenotype: { name: 'phenotype', version: '1.0' },
+  stf: { name: 'stf', version: '1.0' },
 };
 
 export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
@@ -55,7 +56,7 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     },
     {
       ...implementedUploadTypes.isasimple,
-      description: `Explore and visualize your data table in ${projectName}`,
+      description: `Explore and visualize your data table in ${projectName}.`,
     },
     {
       ...implementedUploadTypes.phenotype,
@@ -68,6 +69,10 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
     {
       ...implementedUploadTypes.rnaseqrc,
       description: `Integrate your RNA-Seq raw counts into ${projectName}, and perform DE analysis.`,
+    },
+    {
+      ...implementedUploadTypes.stf,
+      description: `Explore and visualize your population or surveillance study in ${projectName}.`,
     },
   ],
 
@@ -92,6 +97,9 @@ export const UserDatasetWorkspaceConfig: DatasetWorkspaceConfig = {
 
     // rnaseqrc
     [implementedUploadTypes.rnaseqrc, rnaseqRcFormConfigurator],
+
+    // stf
+    [implementedUploadTypes.stf, stfFormConfigurator],
   ],
 
   fetchEdaStudyMetadata: useStudyMeta,
@@ -415,6 +423,60 @@ function isasimpleFormConfigurator(
             </ul>
             {wranglerDataHelp}
             {textFilesHelp}
+          </div>
+        </details>
+      ),
+    },
+  };
+}
+
+function stfFormConfigurator(dataType: DatasetTypeConfig): DatasetFormConfig {
+  return {
+    dataType,
+    verbiage: {
+      formTitle: `Upload a ${dataType.vdiConfig.category} Dataset`,
+    },
+    datasetCharacteristics: {
+      enable: projectId === 'ClinEpiDB',
+      studyDesignVocab: StudyDesignVocab,
+    },
+    enableExperimentalOrganism: true,
+    dataInputConfig: {
+      byFile: { fileInputs: [DEFAULT_FILE_INPUT] },
+      helpText: () => (
+        <details>
+          <summary>
+            Instructions to upload your {dataType.vdiConfig.category} dataset
+          </summary>
+          <div className="formInfo">
+            <p>
+              Upload a compressed (.zip) file containing your study in{' '}
+              <a href="https://github.com/VEuPathDB/study-wrangler/blob/main/STF_documentation/Study-Transfer-Format-STF.md">
+                Study Transfer Format (STF)
+              </a>
+              . Add the files directly to the archive (do not add any folders).
+            </p>
+            <ul>
+              <li>
+                One tab-delimited <code>entity-&lt;name&gt;.tsv</code> file per
+                entity (for example, collection site, collection, sample).
+              </li>
+              <li>
+                An optional <code>entity-&lt;name&gt;.yaml</code> file per
+                entity describing its variables.
+              </li>
+              <li>
+                An optional <code>study.yaml</code> file listing the entities.
+              </li>
+              <li>
+                Optional <code>curation-notes.md</code> and{' '}
+                <code>curation-spec.json</code> files describing how the STF was
+                prepared.
+              </li>
+            </ul>
+            <p>
+              <i>All files must use UTF-8 encoding.</i>
+            </p>
           </div>
         </details>
       ),

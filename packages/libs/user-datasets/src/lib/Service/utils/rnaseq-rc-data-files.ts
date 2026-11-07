@@ -6,9 +6,7 @@
  * docs/superpowers/specs/2026-07-30-rnaseq-rc-upload-contract.md.
  */
 
-import { newUploadContent, TextUploadContent, UploadContent } from '../Model';
-import { ifNotEmpty, takeIf } from '../../Utils/ergonomics';
-import { ifDefined, Possible } from '../../Utils';
+import { newUploadContent, UploadContent } from '../Model';
 import { omit } from 'lodash';
 import { FIELD_NAME_DATA_FILE, FIELD_NAME_SAMPLE_INFO } from '../../Common/Forms/form-constants';
 import { getSamplesDescription, UploadContentMap } from '../Model/utility-types';

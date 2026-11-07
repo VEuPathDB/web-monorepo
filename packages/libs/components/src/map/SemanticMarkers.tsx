@@ -272,7 +272,13 @@ export default function SemanticMarkers({
 
   return (
     <>
-      <AreaSelect onAreaSelected={onAreaSelected} />
+      {/* ctrl/cmd + drag rectangle selection is only enabled when markers
+          can be selected; maps without it (e.g. the lasso-based geo filter)
+          must not get it, as it would compete with their own selection
+          handlers */}
+      {setSelectedMarkers != null && (
+        <AreaSelect onAreaSelected={onAreaSelected} />
+      )}
       {refinedMarkers}
     </>
   );
