@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { debounce, get, isEqual, memoize } from 'lodash';
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import { getAncestors, getId } from '../../Utils/CategoryUtils';
 import { wrappable } from '../../Utils/ComponentUtils';
 import { findAncestorNode } from '../../Utils/DomUtils';
@@ -26,12 +25,16 @@ class RecordUI extends Component {
     // We are assuming this value will not change
     this.getHeaderOffset = memoize(this.getHeaderOffset);
 
-    this.recordMainSectionNode = null;
+    this.recordMainSectionRef = React.createRef();
     this.activeSectionTop = null;
 
     this.state = {
       activeSectionId: null,
     };
+  }
+
+  get recordMainSectionNode() {
+    return this.recordMainSectionRef.current;
   }
 
   componentDidMount() {
@@ -217,7 +220,7 @@ class RecordUI extends Component {
           </div>
           <div className="wdk-RecordMain">
             <RecordMainSection
-              ref={(c) => (this.recordMainSectionNode = findDOMNode(c))}
+              ref={this.recordMainSectionRef}
               record={this.props.record}
               recordClass={this.props.recordClass}
               categories={this.props.categoryTree.children}
