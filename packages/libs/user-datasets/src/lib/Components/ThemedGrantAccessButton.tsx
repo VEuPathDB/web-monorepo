@@ -1,5 +1,5 @@
-import { MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
 import React from 'react';
+import { MesaButton, Share, SingleSelect } from '@veupathdb/coreui';
 import { useButtonTheme } from '../Utils/theming';
 
 interface Props {

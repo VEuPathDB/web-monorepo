@@ -204,7 +204,8 @@
   input[type='url'],
   input[type='text'],
   textarea {
-    &.invalid,
+    &.invalid:user-invalid,
+    &.invalid:user-valid,
     &:user-invalid {
       &:not(:focus) {
         border-color: var(--coreui-red-900);
@@ -222,9 +223,9 @@
     font-weight: bold;
 
     &.required:not(.hide-required) {
-      //&:not(.filled) {
+      &.invalid {
         color: red;
-      //}
+      }
 
       &::after {
         content: '*';

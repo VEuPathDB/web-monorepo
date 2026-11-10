@@ -1,7 +1,5 @@
 import React, {
   ReactElement,
-  useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -30,11 +28,12 @@ import {
 } from '../../Common/Configuration';
 import { DatasetFormControllerConfig } from '../../Common/Forms/DatasetFormControllerConfig';
 import { Modal } from '@veupathdb/coreui';
-import { Runnable } from '../../Utils';
+import { ifDefined, Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
-import { newDatasetUploads } from '../../Service/Model';
+import { newDatasetUploads, newUploadContent } from '../../Service/Model';
+import { FIELD_NAME_DATA_PROP_FILE } from '../../Common/Forms/form-constants';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -59,12 +58,12 @@ export function UpdateFormController(
     dispatch(clearBadUpload());
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (vdi && props.datasetId)
       (async () => setDataset(await vdi.getDatasetDetails(props.datasetId)))();
   }, [vdi, props.datasetId]);
 
-  useEffect(
+  React.useEffect(
     () => {
       let title = '';
 
@@ -81,6 +80,12 @@ export function UpdateFormController(
             datasetDetails: props.isPromotingToPublic
               ? { ...datasetMeta, visibility: 'public' }
               : datasetMeta,
+            dataPropertiesFileSelections: ifDefined(
+              dataset?.files?.datasetProperties,
+              files => ({
+                [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map(it => newUploadContent('', it.fileName, 'text/plain'))
+              })
+            ) ?? {},
           })
         );
       }
@@ -96,7 +101,7 @@ export function UpdateFormController(
     [dataset]
   );
 
-  const formConfig = useMemo(
+  const formConfig = React.useMemo(
     () => {
       if (!dataset?.type || !vdi) return null;
 

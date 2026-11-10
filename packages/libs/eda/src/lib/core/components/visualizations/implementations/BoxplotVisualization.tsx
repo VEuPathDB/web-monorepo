@@ -1250,7 +1250,7 @@ export function boxplotResponseToData(
  * NOTE: if any values are missing from the vocabulary array, then the data for that value WILL NOT BE PLOTTED
  *
  */
-function reorderData(
+export function reorderData(
   data: BoxplotDataWithCoverage | BoxplotData,
   labelVocabulary: string[] = [],
   overlayVocabulary: string[] = [],

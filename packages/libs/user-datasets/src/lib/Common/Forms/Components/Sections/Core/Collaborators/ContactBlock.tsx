@@ -1,8 +1,10 @@
-import { changeHandler, JsonPathBuilder } from '../../../../../../Utils';
+import React from 'react';
+import {
+  JsonPathBuilder,
+  newTextLengthTest,
+} from '../../../../../../Utils';
 import { DatasetContact } from '../../../../../../Service';
-import { partialRight } from 'lodash';
-import React, { ReactElement } from 'react';
-import { InputPair } from '../../../InputPair';
+import { LabelInputPair } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {
   readonly index: number;
@@ -56,108 +58,111 @@ enum Strictness {
   Primary,
 }
 
-export function ContactBlock(props: ContactBlockProps): ReactElement {
+const TEST_CONTACT_NAME = newTextLengthTest(2, 300);
+
+export function ContactBlock(props: ContactBlockProps): React.ReactElement {
+  const { index, contact, updateContact } = props;
+
   const makePath = (key: keyof DatasetContact) =>
     props.path.appendToString(key);
 
-  const onChangePart = partialRight(
-    changeHandler<DatasetContact>,
-    props.contact,
-    partialRight(props.updateContact, props.index)
+  // Disable linting for dep array: Dependencies are known.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onChangePart = React.useCallback(
+    (k: keyof DatasetContact, v: DatasetContact[typeof k]) =>
+      updateContact({ ...contact, [k]: v }, index),
+    [contact, updateContact, index]
   );
 
-  const validationThreshold = determineStrictness(props, props.contact);
+  const validationThreshold = determineStrictness(props);
 
   return (
     <li className="field-grid non-bold-labels">
-      <span className="multi-input-label">Contact {props.index + 1}</span>
+      <span className="multi-input-label">Contact {index + 1}</span>
 
       <div className="column-2 field-grid">
-        <InputPair
+        <LabelInputPair
           label="First Name"
           type="text"
           fieldName={makePath('firstName')}
-          value={props.contact.firstName}
-          onChange={onChangePart('firstName')}
+          value={contact.firstName}
+          onChange={(it) => onChangePart('firstName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          minLength={2}
-          maxLength={300}
+          validator={TEST_CONTACT_NAME}
         />
 
-        <InputPair
+        <LabelInputPair
           label="Middle Name (optional)"
           type="text"
           fieldName={makePath('middleName')}
-          value={props.contact.middleName}
-          onChange={onChangePart('middleName')}
+          value={contact.middleName}
+          onChange={(it) => onChangePart('middleName', it)}
           required={false} // middle name is never required.
           minLength={0}
           maxLength={300}
         />
 
-        <InputPair
+        <LabelInputPair
           label="Last Name"
           type="text"
           fieldName={makePath('lastName')}
-          value={props.contact.lastName}
-          onChange={onChangePart('lastName')}
+          value={contact.lastName}
+          onChange={(it) => onChangePart('lastName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          minLength={2}
-          maxLength={300}
+          validator={TEST_CONTACT_NAME}
         />
 
-        <InputPair
+        <LabelInputPair
           label="Email"
           fieldName={makePath('email')}
           type="email"
-          value={props.contact.email}
-          onChange={onChangePart('email')}
+          value={contact.email}
+          onChange={(it) => onChangePart('email', it)}
           required={validationThreshold >= Strictness.Primary}
           minLength={5}
           maxLength={1024}
         />
 
-        <InputPair
+        <LabelInputPair
           label="Affiliation"
           type="text"
           fieldName={makePath('affiliation')}
-          value={props.contact.affiliation}
-          onChange={onChangePart('affiliation')}
+          value={contact.affiliation}
+          onChange={(it) => onChangePart('affiliation', it)}
           required={validationThreshold >= Strictness.Secondary}
           minLength={3}
           maxLength={4000}
         />
 
-        <InputPair
+        <LabelInputPair
           label="Country"
           type="text"
           fieldName={makePath('country')}
-          value={props.contact.country}
-          onChange={onChangePart('country')}
+          value={contact.country}
+          onChange={(it) => onChangePart('country', it)}
           required={validationThreshold >= Strictness.Secondary}
           minLength={3}
           maxLength={200}
         />
 
-        <InputPair
+        <LabelInputPair
           label="Primary Contact"
           type="checkbox"
           fieldName={makePath('isPrimary')}
           nameOverride="isPrimaryContact"
-          checked={props.contact.isPrimary}
-          onChange={(v) => onChangePart('isPrimary')(v)}
+          checked={contact.isPrimary}
+          onChange={(v) => onChangePart('isPrimary', v)}
         />
       </div>
     </li>
   );
 }
 
-function determineStrictness(
-  props: ContactBlockProps,
-  contact: DatasetContact
-): Strictness {
+function determineStrictness(props: ContactBlockProps): Strictness {
   if (!props.isPublic)
-    return isContactEmpty(contact) ? Strictness.Disabled : Strictness.Minimum;
+    return isContactEmpty(props.contact)
+      ? Strictness.Disabled
+      : Strictness.Minimum;
 
   // The primary contact on public datasets requires extra fields, if no primary
   // has been selected, the first contact defaults to being the primary.

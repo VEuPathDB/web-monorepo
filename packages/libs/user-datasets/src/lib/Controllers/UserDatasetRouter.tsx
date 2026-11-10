@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactNode, useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 
 import {
   RouteComponentProps,
@@ -14,25 +14,20 @@ import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 import { DataNoun } from '../Utils';
 
 import DatasetManagementController from '../Components/Management/DatasetManagementController';
-import { DatasetManagementProps } from '../Components/Management/DatasetManagement';
 import {
   DatasetTypeConfig,
+  DatasetWorkspaceConfig,
   filterAvailableDataTypes,
   promoteTypeConfig,
 } from '../Common/Configuration';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useVdiMetadata } from '../Service/utils/use-vdi';
-import { DatasetWorkspaceConfig } from '../Common/Configuration/DatasetWorkspaceConfig';
 
 interface Props {
   detailsPageTitle: string;
   helpRoute: string;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
-  detailComponentsByTypeName?: Record<
-    string,
-    ComponentType<DatasetManagementProps>
-  >;
   dataNoun: DataNoun;
   enablePublicUserDatasets?: boolean;
 
@@ -51,7 +46,6 @@ export function UserDatasetRouter({
   helpRoute,
   workspaceTitle,
   helpTabContents,
-  detailComponentsByTypeName,
   dataNoun,
   enablePublicUserDatasets = false,
 }: Props) {
@@ -185,7 +179,6 @@ export function UserDatasetRouter({
               baseUrl={url}
               detailsPageTitle={detailsPageTitle}
               workspaceTitle={workspaceTitle}
-              detailComponentsByTypeName={detailComponentsByTypeName}
               dataNoun={dataNoun}
               enablePublicUserDatasets={enablePublicUserDatasets}
               datasetTypes={datasetTypes}

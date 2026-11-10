@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import React from 'react';
 
 import { connect } from 'react-redux';
 
@@ -31,6 +31,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   DatasetFormConfigurators,
   DatasetTypeConfig,
+  EdaStudyLinks
 } from '../../Common/Configuration';
 import { History } from 'history';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
@@ -40,7 +41,6 @@ import DatasetManagement, {
   DatasetManagementProps,
 } from './DatasetManagement';
 import EmptyState from '../EmptyState';
-import { EdaStudyLinks } from '../../Common/Configuration/DatasetWorkspaceConfig';
 import EdaDatasetManagement from './EdaDatasetManagement';
 
 const ActionCreators = {
@@ -68,10 +68,6 @@ type OwnProps = {
   detailsPageTitle: string;
   workspaceTitle: string;
   id: string;
-  detailComponentsByTypeName?: Record<
-    string,
-    ComponentType<DatasetManagementProps>
-  >;
   dataNoun: DataNoun;
   enablePublicUserDatasets: boolean;
   includeAllLink: boolean;
@@ -178,10 +174,6 @@ class DatasetManagementController extends PageController<MergedProps> {
   getDetailView(type: any) {
     const name: string = type && typeof type === 'object' ? type.name : null;
 
-    if (this.props.ownProps.detailComponentsByTypeName?.[name] != null) {
-      return this.props.ownProps.detailComponentsByTypeName[name];
-    }
-
     switch (name) {
       case 'bigwigs':
       case 'bigwigfiles':
@@ -189,6 +181,7 @@ class DatasetManagementController extends PageController<MergedProps> {
       case 'rnaseq':
         return RnaSeqDatasetManagement;
       case 'isasimple':
+      case 'stf':
         return EdaDatasetManagement;
       default:
         return DatasetManagement;

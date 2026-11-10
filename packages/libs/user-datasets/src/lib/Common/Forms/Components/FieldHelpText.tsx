@@ -10,5 +10,5 @@ export function FieldHelpText(props: FieldHelpTextProps): ReactElement {
     ? 'description column-2 ' + props.className
     : 'description column-2';
 
-  return <p className={className}>{props.children}</p>;
+  return <div className={className}>{props.children}</div>;
 }

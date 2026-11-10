@@ -254,7 +254,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const branding = (
     <>
       <Link to="/">
-        <div className={vpdbCx('HeaderBranding')} />
+        <div className={vpdbCx('HeaderBranding')}>{props.projectId}</div>
         {isBetaSite && (
           <img className={vpdbCx('BetaBadge')} src={betaImage} alt="beta" />
         )}
@@ -347,6 +347,7 @@ const CryptoDB = 'CryptoDB';
 const EuPathDB = 'EuPathDB';
 const FungiDB = 'FungiDB';
 const GiardiaDB = 'GiardiaDB';
+const HelminthDB = 'HelminthDB';
 const HostDB = 'HostDB';
 const MicrosporidiaDB = 'MicrosporidiaDB';
 const PiroplasmaDB = 'PiroplasmaDB';

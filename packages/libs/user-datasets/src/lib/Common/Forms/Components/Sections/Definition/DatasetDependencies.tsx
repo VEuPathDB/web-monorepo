@@ -3,7 +3,7 @@ import {
   DatasetDependency,
   PartialDatasetDetails,
 } from '../../../../../Service';
-import { Consumer } from '../../../../../Utils';
+import { Consumer, isNonEmpty } from '../../../../../Utils';
 import { DependenciesConfig } from '../../../../Configuration';
 
 export interface DatasetDependenciesProps {
@@ -13,18 +13,35 @@ export interface DatasetDependenciesProps {
 }
 
 export function DatasetDependencies(
-  props: DatasetDependenciesProps
+  { datasetDetails, setDatasetDetails, config }: DatasetDependenciesProps
 ): ReactElement {
-  const setDependencies = (deps: DatasetDependency[]) =>
-    props.setDatasetDetails({ ...props.datasetDetails, dependencies: deps });
+  const [valid, setValid] = React.useState(() => isNonEmpty(datasetDetails.dependencies));
+
+  const setDependencies = React.useCallback(
+    (deps: DatasetDependency[]) => {
+      setDatasetDetails({ ...datasetDetails, dependencies: deps });
+      setValid(isNonEmpty(deps));
+    },
+    [datasetDetails, setDatasetDetails],
+  );
+
+  const classNames: Array<string> = [];
+
+  if (config.required) {
+    classNames.push('required');
+  }
+
+  if (!valid) {
+    classNames.push('invalid');
+  }
 
   return (
     <>
-      <label className={props.config.required ? 'required' : ''}>
-        Reference Organism
+      <label className={classNames.join(' ')}>
+        Reference organism(s)
       </label>
-      {props.config.renderInput({
-        dependencies: props.datasetDetails.dependencies ?? [],
+      {config.renderInput({
+        dependencies: datasetDetails.dependencies ?? [],
         setDependencies,
       })}
     </>

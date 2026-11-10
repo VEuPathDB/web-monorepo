@@ -8,7 +8,7 @@ import React, {
 import { Link } from 'react-router-dom';
 import { Refresh } from '@material-ui/icons';
 
-import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import Banner, { BannerProps } from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
 import {
@@ -22,6 +22,31 @@ import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
+
+function InfoBanner({ baseUrl }: { baseUrl: string }): React.ReactElement {
+  const bannerConfig: BannerProps = React.useMemo(
+    () => ({
+      type: 'info',
+      message: (
+        <>
+          Before uploading your dataset, please be sure your{' '}
+          <span style={{ fontWeight: 'bold' }}>files are formatted </span>{' '}
+          according to the instructions listed in the{' '}
+          <Link
+            to={{ pathname: `${baseUrl}/help` }}
+            style={{ fontWeight: 'bold' }}
+          >
+            "My datasets help"
+          </Link>{' '}
+          tab.
+        </>
+      ),
+    }),
+    [baseUrl],
+  );
+
+  return <Banner banner={bannerConfig} />;
+}
 
 export function UploadForm(props: DatasetFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
@@ -45,10 +70,6 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
     window.scrollTo(0, 0);
   };
 
-  const onReset = () => {
-    window.location.reload();
-  };
-
   const formState = useDatasetFormState();
 
   const uploadSection = useRef<HTMLElement>(null);
@@ -60,13 +81,15 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
   return (
     <section id="dataset-upload" ref={uploadSection}>
       <header>
-        <UploadErrorBanner errors={props.badUploadState} />
+        {props.badUploadState && (
+          <UploadErrorBanner errors={props.badUploadState} />
+        )}
 
         <div className="title-with-button">
           <h2>{props.formConfig.verbiage.formTitle}</h2>
           <button
             className="btn btn-info"
-            onClick={onReset}
+            onClick={window.location.reload}
             type="button"
             style={{
               display: 'inline-flex',
@@ -95,25 +118,7 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
           </p>
         ) : null}
 
-        <Banner
-          banner={{
-            type: 'info',
-            message: (
-              <>
-                Before uploading your dataset, please be sure your{' '}
-                <span style={{ fontWeight: 'bold' }}>files are formatted </span>{' '}
-                according to the instructions listed in the{' '}
-                <Link
-                  to={{ pathname: `${props.baseUrl}/help` }}
-                  style={{ fontWeight: 'bold' }}
-                >
-                  "My datasets help"
-                </Link>{' '}
-                tab.
-              </>
-            ),
-          }}
-        />
+        <InfoBanner baseUrl={props.baseUrl} />
       </header>
 
       <form>

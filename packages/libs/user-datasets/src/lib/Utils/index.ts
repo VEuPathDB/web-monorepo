@@ -1,13 +1,21 @@
-export { ifDefined, requireValue } from './ergonomics';
+export { ifDefined, ifNotEmpty, requireValue, takeIf, using } from './ergonomics';
 
-export { datasetUserFullName } from './formatting';
+export { datasetUserFullName, formatFileSize } from './formatting';
 
 export {
   changeHandler,
   arrayChangeHandler,
   textChange,
   replaceElement,
+  useArrayChangeHandler,
+  useChangeHandler,
 } from './input-utils';
+
+export {
+  testFileRequired,
+  testNonBlank,
+  newTextLengthTest,
+} from './input-tests';
 
 export type {
   BiConsumer,
@@ -16,8 +24,8 @@ export type {
   Nullable,
   Optional,
   Possible,
+  Predicate,
   Runnable,
-
   DataNoun,
 } from './types';
 
@@ -28,7 +36,7 @@ export {
   isNonEmptyString,
 } from './value-tests';
 
-export {} from './miscellaneous-junk'
+export {} from './miscellaneous-junk';
 
 export { JsonPathBuilder } from './JsonPathBuilder';
 export { SimpleState, useSimpleState } from './SimpleState';
