@@ -139,7 +139,7 @@ export const FeaturedTools = () => {
   return (
     <div className={cx()}>
       <div className={cx('Header')}>
-        <h2>Overview of Resources and Tools</h2>
+        <h2>THIS IS A TEST EDIT</h2>
       </div>
       {!toolMetadata ? (
         <Loading />
@@ -382,13 +382,12 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
     setExpanded(!isExpanded);
   }, [isExpanded]);
 
-
-// the DOMPurify.sanitize function in div class 'SelectionBodyContent'
-//   breaks the embed iframe with a youtube video (in 'tour' tile)
-//   and the blue buttons in the subscribe and other tiles
-//
-//   before:  __html: DOMPurify.sanitize(entry?.output || '...'),
-//   now:     __html: entry?.output || '...',
+  // the DOMPurify.sanitize function in div class 'SelectionBodyContent'
+  //   breaks the embed iframe with a youtube video (in 'tour' tile)
+  //   and the blue buttons in the subscribe and other tiles
+  //
+  //   before:  __html: DOMPurify.sanitize(entry?.output || '...'),
+  //   now:     __html: entry?.output || '...',
 
   return (
     <div className={cx('SelectionBody')}>
