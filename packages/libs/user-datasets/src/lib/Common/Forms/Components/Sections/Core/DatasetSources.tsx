@@ -5,7 +5,6 @@ import * as vdi from '../../../../../Service';
 import { isEmpty } from 'lodash';
 import { AddRowButton, InputBlock, LabelInputPair, YesNoToggle } from '../../';
 import { TextInputProps } from '../../LabelInputPair';
-import { testNonBlank } from '../../../../../Utils';
 
 export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
@@ -21,14 +20,13 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
   const { datasetMeta, setDatasetMeta } = props;
 
   const setEnabled = React.useCallback(
-    (v: boolean) =>
-      setDatasetMeta({
-        ...datasetMeta,
-        metadataContentFlags: {
-          ...(datasetMeta.metadataContentFlags ?? {}),
-          hasDatasetSources: v,
-        },
-      }),
+    (v: util.Optional<boolean>) => setDatasetMeta({
+      ...datasetMeta,
+      metadataContentFlags: {
+        ...(datasetMeta.metadataContentFlags ?? {}),
+        hasDatasetSources: v ?? undefined,
+      },
+    }),
     [datasetMeta, setDatasetMeta]
   );
 
@@ -163,7 +161,7 @@ function DataSource({
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}
         required={required}
-        validator={testNonBlank}
+        validator={util.testNonBlank}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

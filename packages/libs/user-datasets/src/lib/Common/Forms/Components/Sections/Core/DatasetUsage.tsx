@@ -3,10 +3,12 @@ import { PartialDatasetDetails } from '../../../../../Service';
 import {
   Consumer,
   JsonPathBuilder,
-  newTextLengthTest,
+  Optional,
   useChangeHandler,
+  useTextLengthTest
 } from '../../../../../Utils';
 import { InputBlock, LabelInputPair, OptionalSection } from '../../index';
+import { OptionalSectionToggleProps } from '../../OptionalSection';
 
 export interface DatasetUsageProps {
   readonly datasetMeta: PartialDatasetDetails;
@@ -23,26 +25,25 @@ const INPUT_HELP_TEXT =
   ' reusing this dataset, such as missing data, potential biases, changes in data collection, or other factors that' +
   ' may affect analysis. (maximum 1000 characters).';
 
-const TEST_INPUT_LENGTH = newTextLengthTest(3, 1000);
-
 export function DatasetUsage({
   datasetMeta,
   setDatasetMeta,
   jsonPath,
 }: DatasetUsageProps): ReactElement {
-  const fieldName =
-    jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
+  const fieldName = jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
 
   const hasDisclaimer = datasetMeta.metadataContentFlags?.hasDataDisclaimer;
 
-  const setEnabled = (enabled: boolean) =>
-    setDatasetMeta({
+  const setEnabled = React.useCallback(
+    (enabled: Optional<boolean>) => setDatasetMeta({
       ...datasetMeta,
       metadataContentFlags: {
         ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDataDisclaimer: enabled,
+        hasDataDisclaimer: enabled ?? undefined,
       },
-    });
+    }),
+    [datasetMeta, setDatasetMeta]
+  );
 
   if (typeof hasDisclaimer === 'undefined' && datasetMeta.dataDisclaimer) {
     setEnabled(true);
@@ -56,29 +57,33 @@ export function DatasetUsage({
     setDatasetMeta
   );
 
+  const toggleProps = React.useMemo<OptionalSectionToggleProps>(
+    () => ({
+      label: 'Any Reuse Considerations?',
+      required: isPublic,
+      fieldName: 'enable-disclaimer',
+      enabled: hasDisclaimer ?? null,
+      setEnabled: setEnabled,
+      helpText: SECTION_HELP_TEXT,
+    }),
+    [isPublic, hasDisclaimer, setEnabled],
+  )
+
+  const testInputLength = useTextLengthTest(3, 1000);
+
   return (
     <InputBlock header="Dataset Usage">
-      <OptionalSection
-        toggle={{
-          label: 'Any Reuse Considerations?',
-          required: isPublic,
-          fieldName: 'enable-disclaimer',
-          enabled: hasDisclaimer ?? null,
-          setEnabled: setEnabled,
-          helpText: SECTION_HELP_TEXT,
-        }}
-        className="field-grid"
-      >
+      <OptionalSection toggle={toggleProps} className="field-grid">
         <LabelInputPair
           type="textarea"
           label="Reuse Considerations"
           fieldName={fieldName}
-          required={hasDisclaimer}
+          required={hasDisclaimer ?? undefined}
           disabled={!hasDisclaimer}
           value={datasetMeta.dataDisclaimer}
           onChange={onChange}
           helpText={INPUT_HELP_TEXT}
-          validator={TEST_INPUT_LENGTH}
+          validator={testInputLength}
         />
       </OptionalSection>
     </InputBlock>

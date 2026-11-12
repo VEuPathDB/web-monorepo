@@ -1,50 +1,43 @@
-import React, { ReactElement, useCallback } from 'react';
-import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
-import { OptionalSection } from '../../OptionalSection';
-import {
-  JsonPathBuilder,
-  BiConsumer,
-  Consumer,
-  isNonEmpty,
-  isNonBlankString,
-  newTextLengthTest,
-  useArrayChangeHandler
-} from '../../../../../Utils';
-import { PartialDatasetDetails } from '../../../../../Service';
-import { PartialOrganism } from '../../../../../Service/Model/request-types';
+import React from 'react';
+import * as util from '../../../../../Utils';
+import * as vdi from '../../../../../Service'
 import { projectId } from '../../../../../config';
+import { AddRowButton, InputBlock, LabelInputPair, OptionalSection } from '../../index';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export interface OrganismDetailsProps {
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly jsonPath: JsonPathBuilder;
+  readonly setDatasetMeta: util.Consumer<vdi.PartialDatasetDetails>;
+  readonly datasetMeta: vdi.PartialDatasetDetails;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function ExperimentalOrganisms(
   props: OrganismDetailsProps
-): ReactElement {
+): React.ReactElement {
   const { hasOrganismData } = props.datasetMeta.metadataContentFlags ?? {};
 
-  const safeOrgList = isNonEmpty(props.datasetMeta.experimentalOrganisms)
+  const safeOrgList = util.isNonEmpty(props.datasetMeta.experimentalOrganisms)
     ? props.datasetMeta.experimentalOrganisms
     : [{}];
 
   const { datasetMeta, setDatasetMeta } = props;
 
-  const setEnabled = useCallback(
-    (enabled: boolean) =>
-      setDatasetMeta({
-        ...datasetMeta,
-        metadataContentFlags: {
-          ...(datasetMeta.metadataContentFlags ?? {}),
-          hasOrganismData: enabled,
-        },
-      }),
+  const setEnabled = React.useCallback(
+    (enabled: util.Optional<boolean>) => setDatasetMeta({
+      ...datasetMeta,
+      metadataContentFlags: {
+        ...(datasetMeta.metadataContentFlags ?? {}),
+        hasOrganismData: enabled ?? undefined,
+      },
+    }),
     [datasetMeta, setDatasetMeta]
   );
 
-  const arrayCallback = useArrayChangeHandler('experimentalOrganisms', datasetMeta, setDatasetMeta);
+  const arrayCallback = util.useArrayChangeHandler(
+    'experimentalOrganisms',
+    datasetMeta,
+    setDatasetMeta,
+  );
 
   const isGenomics = isGenomicsProjectId(projectId);
 
@@ -130,13 +123,13 @@ export function ExperimentalOrganisms(
 }
 
 interface OrganismDetailListProps {
-  readonly organisms: readonly PartialOrganism[];
-  readonly setOrganism: BiConsumer<PartialOrganism, number>;
+  readonly organisms: ReadonlyArray<vdi.PartialOrganism>;
+  readonly setOrganism: util.BiConsumer<vdi.PartialOrganism, number>;
   readonly disabled: boolean;
   readonly required: boolean;
 }
 
-function OrganismDetailsContent(props: OrganismDetailListProps): ReactElement {
+function OrganismDetailsContent(props: OrganismDetailListProps): React.ReactElement {
   return (
     <ol className="multi-input span-2">
       {props.organisms.map((org, index) => (
@@ -157,11 +150,9 @@ interface DatasetOrganismRow {
   readonly index: number;
   readonly disabled: boolean;
   readonly required: boolean;
-  readonly organism: PartialOrganism;
-  readonly setOrganism: BiConsumer<PartialOrganism, number>;
+  readonly organism: vdi.PartialOrganism;
+  readonly setOrganism: util.BiConsumer<vdi.PartialOrganism, number>;
 }
-
-const TEST_ORG_TEXT = newTextLengthTest(3, 128);
 
 function OrganismDetailsRow({
   index,
@@ -169,33 +160,36 @@ function OrganismDetailsRow({
   required,
   organism,
   setOrganism,
-}: DatasetOrganismRow): ReactElement {
-  const hasContent =
-    isNonBlankString(organism.species) || isNonBlankString(organism.strain);
+}: DatasetOrganismRow): React.ReactElement {
+  const hasContent = util.isNonBlankString(organism.species)
+    || util.isNonBlankString(organism.strain);
+
+  const lengthTest = util.useTextLengthTest(3, 128)
+
   return (
     <li className="non-bold-labels organism-row">
       <span className="multi-input-label">Organism {index + 1}</span>
 
       <div className="column-2 field-grid organism-row">
-        <LabelInputPair<PartialOrganism>
+        <LabelInputPair<vdi.PartialOrganism>
           label="Species"
           type="text"
           fieldName="species"
           onChange={(v) => setOrganism({ ...organism, species: v }, index)}
           value={organism.species}
           required={required || hasContent}
-          validator={TEST_ORG_TEXT}
+          validator={lengthTest}
           disabled={disabled}
         />
 
-        <LabelInputPair<PartialOrganism>
+        <LabelInputPair<vdi.PartialOrganism>
           label="Strain"
           type="text"
           fieldName="strain"
           onChange={(v) => setOrganism({ ...organism, strain: v }, index)}
           value={organism.strain}
           required={required || hasContent}
-          validator={TEST_ORG_TEXT}
+          validator={lengthTest}
           disabled={disabled}
         />
       </div>

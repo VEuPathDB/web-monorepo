@@ -12,7 +12,7 @@ import {
   Consumer,
   JsonPathBuilder,
   Possible,
-  changeHandler,
+  changeHandler, Optional
 } from '../../../../../Utils';
 import {
   PartialDatasetDetails,
@@ -44,14 +44,16 @@ export function CharacteristicsSection({
 }: CharacteristicsSectionProps): ReactElement {
   const enabled = datasetMeta.metadataContentFlags?.hasDatasetCharacteristics;
 
-  const setEnabled = (enabled: boolean) =>
-    setDatasetMeta({
+  const setEnabled = React.useCallback(
+    (enabled: Optional<boolean>) => setDatasetMeta({
       ...datasetMeta,
       metadataContentFlags: {
         ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetCharacteristics: enabled,
+        hasDatasetCharacteristics: enabled ?? undefined,
       },
-    });
+    }),
+    [datasetMeta, setDatasetMeta],
+  );
 
   useEffect(
     () => {

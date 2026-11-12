@@ -5,8 +5,12 @@ export { GrowableStringList } from './GrowableStringList';
 export { InputBlock } from './InputBlock';
 export { LabelInputPair } from './LabelInputPair';
 export { OptionalSection } from './OptionalSection';
-export { SecondaryButton } from './SecondaryButton';
+export {
+  ActionKind,
+  DatasetFormButton,
+  type DatasetFormButtonProps,
+} from './DatasetFormButton';
 export { SubmissionModal } from './SubmissionModal';
-export { UploadButton } from './UploadButton';
+export { UploadButton, SubmittableState } from './UploadButton';
 export { UploadErrorBanner } from './UploadErrorBanner';
 export { YesNoToggle } from './YesNoToggle';

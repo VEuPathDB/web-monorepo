@@ -1,16 +1,16 @@
-import React, {
-  ReactElement,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Refresh } from '@material-ui/icons';
 
 import Banner, { BannerProps } from '@veupathdb/coreui/lib/components/banners/Banner';
 
-import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
+import {
+  ActionKind,
+  DatasetFormButton,
+  SubmittableState,
+  UploadButton,
+  UploadErrorBanner,
+} from '../../Common/Forms/Components';
 import {
   MetadataSection,
   RootDetailsSection,
@@ -18,7 +18,6 @@ import {
 import { JsonPathBuilder } from '../../Utils';
 
 import '../../Common/Forms/DatasetForm.scss';
-import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
@@ -48,16 +47,16 @@ function InfoBanner({ baseUrl }: { baseUrl: string }): React.ReactElement {
   return <Banner banner={bannerConfig} />;
 }
 
-export function UploadForm(props: DatasetFormProps): ReactElement {
+export function UploadForm(props: DatasetFormProps): React.ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
-  const [formIsValid, setFormIsValid] = useState<boolean>(true);
+  const [formIsValid, setFormIsValid] = React.useState<boolean>(true);
 
   // Determine if the upload form should be submittable, and if not, why not.
   // !! This is intentionally not nested ternaries!  The automated code
   // !! formatting in use by some committers makes nested ternaries
   // !! nearly incomprehensible.
-  const uploadSubmittable = useMemo(() => {
+  const uploadSubmittable = React.useMemo(() => {
     if (!formIsValid) return SubmittableState.Invalid;
 
     if (props.isSubmitting) return SubmittableState.InProgress;
@@ -72,9 +71,9 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
 
   const formState = useDatasetFormState();
 
-  const uploadSection = useRef<HTMLElement>(null);
+  const uploadSection = React.useRef<HTMLElement>(null);
 
-  useEffect(() => setFormIsValid(
+  React.useEffect(() => setFormIsValid(
     isDatasetFormValid(formState.datasetDetails, props.formConfig, uploadSection)
   ), [setFormIsValid, formState, props]);
 
@@ -87,19 +86,10 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
 
         <div className="title-with-button">
           <h2>{props.formConfig.verbiage.formTitle}</h2>
-          <button
-            className="btn btn-info"
-            onClick={window.location.reload}
-            type="button"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5ch',
-            }}
-          >
+          <DatasetFormButton onClick={window.location.reload} kind={ActionKind.Tertiary}>
             <Refresh style={{ fontSize: '1.2em' }} />
-            Reset
-          </button>
+            &nbsp;Reset
+          </DatasetFormButton>
         </div>
         <p className="section-description-h2">
           <i>Provide a home for your dataset and start exploring.</i>

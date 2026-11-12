@@ -203,6 +203,7 @@ function useCustomValidator(props: InputPairProps<any>): boolean {
 }
 
 function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
+  const checked = props.disabled ? false : (props.checked ?? false);
   return (
     <span className={props.className}>
       <input
@@ -210,7 +211,7 @@ function Checkbox<T extends object>(props: CheckboxProps<T>): ReactElement {
         type="checkbox"
         className={props.className}
         onChange={(e) => props.onChange(e.currentTarget.checked)}
-        checked={props.checked ?? false}
+        checked={checked}
       />
     </span>
   );
@@ -252,12 +253,13 @@ function FileInput<T extends object>(
       >
         {props.buttonText}
       </button>
-      {fileName && <span>{fileName}</span>}
+      {!props.disabled && fileName && <span>{fileName}</span>}
     </div>
   );
 }
 
 function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
+  const value = props.disabled ? '' : (props.value ?? '');
   return (
     <input
       {...baseInputProps(props)}
@@ -266,12 +268,13 @@ function NumberInput<T extends object>(props: NumberProps<T>): ReactElement {
       max={props.maximum}
       className={props.className}
       onChange={(e) => props.onChange(Number(e.currentTarget.value))}
-      value={props.value ?? ''}
+      value={value}
     />
   );
 }
 
 function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
+  const checked = props.disabled ? false : (props.checked ?? false);
   return (
     <span className={props.className}>
       <input
@@ -280,7 +283,7 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
         value={props.value}
         className={props.className}
         onChange={props.onChange}
-        checked={props.checked ?? false}
+        checked={checked}
       />
     </span>
   );
@@ -289,6 +292,7 @@ function RadioInput<T extends object>(props: RadioProps<T>): ReactElement {
 function TextAreaInput<T extends object>(
   props: TextAreaProps<T>
 ): ReactElement {
+  const value = props.disabled ? '' : (props.value ?? '');
   return (
     <textarea
       {...baseInputProps(props)}
@@ -298,19 +302,20 @@ function TextAreaInput<T extends object>(
       maxLength={props.maxLength}
       placeholder={props.placeholder}
       rows={props.rows}
-      value={props.value ?? ''}
+      value={value}
     />
   );
 }
 
 function TextInput<T extends object>(props: TextInputProps<T>): ReactElement {
+  const value = props.disabled ? '' : (props.value ?? '');
   return (
     <input
       {...baseInputProps(props)}
       type={props.type ?? 'text'}
       className={props.className}
       onChange={(e) => props.onChange(e.currentTarget.value)}
-      value={props.value ?? ''}
+      value={value}
       minLength={props.minLength}
       maxLength={props.maxLength}
       placeholder={props.placeholder}

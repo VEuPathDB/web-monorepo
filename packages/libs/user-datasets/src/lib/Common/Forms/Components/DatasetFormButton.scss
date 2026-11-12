@@ -1,0 +1,40 @@
+button.ud-action {
+  padding: 0.6em 1.2ch;
+  height: fit-content;
+  border-radius: 8px;
+  font-weight: bold;
+  border-width: 0;
+  border-style: none;
+  font-size: initial;
+
+  > :is(svg, img) {
+    vertical-align: center;
+  }
+
+  &.primary {
+    margin-top: 1.5em;
+    -webkit-margin-collapse: collapse;
+    padding: 0.9em 1.4em;
+    font-size: 1.2em;
+    color: white;
+  }
+
+  &.secondary {
+    background-color: var(--coreui-blue-200);
+    box-shadow: 4px 5px var(--coreui-blue-300);
+    color: var(--coreui-gray-700);
+  }
+
+  &.tertiary {
+    background-color: var(--coreui-gray-100);
+    box-shadow: 4px 5px var(--coreui-gray-200);
+    color: var(--coreui-gray-700);
+    border: 1px solid var(--coreui-gray-300);
+  }
+
+  &:disabled {
+    background-color: var(--coreui-gray-400);
+    box-shadow: 4px 5px var(--coreui-gray-500);
+    color: var(--coreui-gray-200);
+  }
+}

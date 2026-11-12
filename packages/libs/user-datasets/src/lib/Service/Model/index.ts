@@ -10,6 +10,7 @@ export type {
   PartialCharacteristics,
   PartialDatasetDetails,
   PartialDatasetPublication,
+  PartialOrganism,
   PostDatasetSource,
   ShareReceiptAction,
 } from './request-types';

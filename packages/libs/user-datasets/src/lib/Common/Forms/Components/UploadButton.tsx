@@ -1,6 +1,6 @@
-import React, { CSSProperties, ReactElement, ReactNode } from 'react';
+import React from 'react';
 import { isNonEmptyString } from '../../../Utils';
-import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
+import { DatasetFormButton } from './DatasetFormButton';
 
 export enum SubmittableState {
   Invalid,
@@ -16,16 +16,16 @@ export interface UploadButtonProps {
   readonly submittable?: SubmittableState;
 }
 
-export function UploadButton(props: UploadButtonProps): ReactElement {
-  const theme = useUITheme()?.palette?.primary;
-
+export function UploadButton(props: UploadButtonProps): React.ReactElement {
   let disabled = false;
 
   let className = 'upload-button';
 
-  let invalidFormHelp: ReactNode;
+  let invalidFormHelp: React.ReactNode;
 
-  if (isNonEmptyString(props.className)) className += ' ' + props.className;
+  if (isNonEmptyString(props.className)) {
+    className += ' ' + props.className;
+  }
 
   switch (props.submittable) {
     case SubmittableState.InProgress:
@@ -49,27 +49,19 @@ export function UploadButton(props: UploadButtonProps): ReactElement {
       );
   }
 
-  const style: CSSProperties | undefined =
-    !disabled && theme
-      ? {
-          backgroundColor: theme.hue['600'],
-          boxShadow: '4px 5px ' + theme.hue['700'],
-        }
-      : undefined;
-
-  if (disabled) className += ' disabled';
+  if (disabled) {
+    className += ' disabled';
+  }
 
   return (
     <>
-      <button
-        type="button"
+      <DatasetFormButton
         className={className}
-        onClick={disabled ? undefined : props.onClick}
+        onClick={props.onClick}
         disabled={disabled}
-        style={style}
       >
         {props.buttonText ?? 'Upload Dataset'}
-      </button>
+      </DatasetFormButton>
       {invalidFormHelp}
     </>
   );

@@ -9,7 +9,7 @@ export interface OptionalSectionToggleProps {
   readonly helpText: string | null;
 
   readonly enabled: Optional<boolean>;
-  readonly setEnabled: Consumer<boolean>;
+  readonly setEnabled: Consumer<Optional<boolean>>;
 
   /**
    * Whether the "yes"/"no" toggle should be hidden.  Useful for sections that

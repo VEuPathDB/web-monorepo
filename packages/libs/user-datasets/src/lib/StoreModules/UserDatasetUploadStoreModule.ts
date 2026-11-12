@@ -5,19 +5,21 @@ import {
   receiveBadUploadHistoryAction,
   clearBadUpload,
   updateFormState,
-  updateFormMetadata,
+  updateFormMetadata, updateDatasetPublications, updateDatasetContentFlags
 } from '../Actions/UserDatasetUploadActions';
 
-import { UserDatasetUpload } from '../Utils/types';
+import { Possible, UserDatasetUpload } from '../Utils/types';
 import {
   PartialDatasetDetails,
-  ValidationErrors,
+  PartialDatasetPublication,
+  ValidationErrors
 } from '../Service';
 import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
 import { defaultDatasetDetails } from '../Service/Model/constructors';
 import { UploadContent } from '../Service/Model';
+import { PartialMetadataContentFlags } from '../Service/Model/request-types';
 
 export const key = 'userDatasetUpload';
 
@@ -61,6 +63,20 @@ export function useDatasetFormState(): DatasetFormState {
   );
 }
 
+export function useDatasetPublications(): Possible<ReadonlyArray<PartialDatasetPublication>> {
+  return useSelector(
+    (state: StateSlice) => state.userDatasetUpload.formState?.datasetDetails?.publications,
+    isEqual
+  );
+}
+
+export function useDatasetContentFlags(): Possible<PartialMetadataContentFlags> {
+  return useSelector(
+    (state: StateSlice) => state.userDatasetUpload.formState?.datasetDetails?.metadataContentFlags,
+    isEqual
+  );
+}
+
 export interface State {
   readonly formState?: DatasetFormState;
   readonly uploads?: Array<UserDatasetUpload>;
@@ -94,6 +110,28 @@ export function reduce(state: State = {}, action: Action): State {
       };
     case updateFormState.type:
       return { ...state, formState: action.payload };
+    case updateDatasetPublications.type:
+      return {
+        ...state,
+        formState: {
+          ...state.formState!,
+          datasetDetails: {
+            ...state.formState!.datasetDetails,
+            publications: action.payload,
+          }
+        }
+      };
+    case updateDatasetContentFlags.type:
+      return {
+        ...state,
+        formState: {
+          ...state.formState!,
+          datasetDetails: {
+            ...state.formState?.datasetDetails,
+            metadataContentFlags: action.payload,
+          }
+        }
+      };
     default:
       return state;
   }

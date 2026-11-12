@@ -5,7 +5,7 @@ import {
   DatasetSelectionTable,
   MetadataImportTableProps,
 } from './DatasetSelectionTable';
-import { SecondaryButton } from '../../SecondaryButton';
+import { DatasetFormButton } from '../../DatasetFormButton';
 
 import './MetadataImportModal.scss';
 
@@ -48,12 +48,12 @@ export function DatasetSelectionModal({
 
         <DatasetSelectionTable {...tableProps} />
 
-        <SecondaryButton
+        <DatasetFormButton
           onClick={copyAction}
           disabled={tableProps.selection.isUndefined}
         >
           Copy from Selected Dataset
-        </SecondaryButton>
+        </DatasetFormButton>
       </div>
     </Modal>
   );

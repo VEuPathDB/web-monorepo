@@ -56,7 +56,7 @@
   }
 
   p.section-toggle {
-    margin: 0;
+    margin: 0 0 1em 0;
 
     label {
       padding-left: 1ch;
@@ -370,28 +370,6 @@
 
   .multi-input-label {
     font-weight: bold;
-  }
-
-  .upload-button {
-    margin-top: 1.5em;
-    -webkit-margin-collapse: collapse;
-    padding: 0.9em 1.4em;
-    border-radius: $commonRadius;
-    border: none;
-    font-weight: bold;
-    font-size: 1.2em;
-
-    &:not([disabled]) {
-      background-color: var(--coreui-gray-100);
-      box-shadow: 4px 5px var(--coreui-gray-200);
-      color: white;
-    }
-
-    &[disabled] {
-      background-color: var(--coreui-gray-300);
-      box-shadow: 4px 5px var(--coreui-gray-400);
-      color: var(--coreui-gray-100);
-    }
   }
 
   .invalid-form-help {

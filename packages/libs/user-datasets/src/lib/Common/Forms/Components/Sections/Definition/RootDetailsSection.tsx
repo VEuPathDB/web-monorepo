@@ -9,7 +9,7 @@ import {
 } from './RootDataInput';
 import { DatasetPropertiesInput } from './DatasetPropertiesInput';
 import { LabelInputPair, UploadButton } from '../../index';
-import { PartialDatasetDetails } from '../../../../../Service';
+import { PartialDatasetDetails, UploadContentMap } from '../../../../../Service';
 import { useDispatch } from 'react-redux';
 import {
   DatasetFormState,
@@ -20,7 +20,6 @@ import { SubmittableState } from '../../UploadButton';
 import { DatasetDependencies } from './DatasetDependencies';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { VisibilityOptions } from './VisibilityOptions';
-import { UploadContentMap } from '../../../../../Service/Model';
 import { SamplesDescriptionInput } from './SamplesDescriptionInput';
 import { FIELD_NAME_DATA_PROP_FILE } from '../../../form-constants';
 
@@ -206,7 +205,7 @@ export function RootDetailsSection(
             label={formConfig.verbiage.formInputs.datasetProperties.label}
             fieldName={dataPropsFieldName!}
             allowedExtensions={['.txt', '.csv', '.tsv']}
-            files={formState.dataPropertiesFileSelections[dataPropsFieldName!]}
+            files={formState.dataPropertiesFileSelections?.[dataPropsFieldName!]}
             setFiles={(files) =>
               setAnnotationUploads({
                 ...formState.dataPropertiesFileSelections,

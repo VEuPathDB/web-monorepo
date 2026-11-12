@@ -1,81 +1,98 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
+import * as util from '../../../../../../Utils';
 import { InputBlock } from '../../../InputBlock';
-import { PartialDatasetDetails, PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import {
-  Consumer, isNonBlankString,
-  JsonPathBuilder,
-  replaceElement
-} from '../../../../../../Utils';
+  PartialDatasetPublication as Publication
+} from '../../../../../../Service';
 import { isEmpty } from 'lodash';
 import { AddRowButton } from '../../../AddRowButton';
-import { OptionalSection } from '../../../OptionalSection';
-import { fixPrimaries, PublicationList } from './utils';
+import { OptionalSection, OptionalSectionToggleProps } from '../../../OptionalSection';
+import { PublicationList } from './utils';
 import { PublicationRow } from './PublicationRow';
+
+import {
+  useDatasetContentFlags,
+  useDatasetPublications
+} from '../../../../../../StoreModules/UserDatasetUploadStoreModule';
+import { useDispatch } from 'react-redux';
+import {
+  updateDatasetContentFlags,
+  updateDatasetPublications,
+} from '../../../../../../Actions/UserDatasetUploadActions';
 
 import './PublicationsSection.scss';
 
 export interface PublicationsSectionProps {
-  readonly datasetMeta: PartialDatasetDetails,
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>,
-
-  readonly publications: PublicationList;
-  readonly setPublications: Consumer<PublicationList>;
-
-  readonly isRequired: boolean;
-
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
-export function PublicationsSection(
-  props: PublicationsSectionProps
-): ReactElement {
-  const havePubs = !isEmpty(props.publications);
+export function PublicationsSection({ jsonPath }: PublicationsSectionProps): React.ReactElement {
+  const publications = useDatasetPublications();
+  const metadataContentFlags = useDatasetContentFlags();
 
-  let isEnabled = props.datasetMeta.metadataContentFlags?.hasPublications;
+  const dispatch = useDispatch();
 
-  const setEnabled = (v: boolean) =>
-    props.setDatasetMeta({
-      ...props.datasetMeta,
-      metadataContentFlags: {
-        ...(props.datasetMeta.metadataContentFlags ?? {}),
-        hasPublications: v
-      }
-    });
+  const havePubs = !isEmpty(publications);
+
+  let isEnabled = metadataContentFlags?.hasPublications;
+
+  const setEnabled = React.useCallback(
+    (v: util.Optional<boolean>) => dispatch(updateDatasetContentFlags({
+      ...metadataContentFlags,
+      hasPublications: v,
+    })),
+    [metadataContentFlags, dispatch],
+  );
+
+  const setPublications = React.useCallback(
+    (v: ReadonlyArray<Publication>) => dispatch(updateDatasetPublications(v)),
+    [dispatch],
+  );
 
   if (isEnabled === undefined && havePubs) {
-    setEnabled(true)
+    setEnabled(true);
   }
 
-  const publications: PublicationList = havePubs
-    ? props.publications
-    : [{ isPrimary: true }];
+  const safePublications: PublicationList = React.useMemo(
+    () => havePubs
+      ? publications!
+      : [{ isPrimary: true }],
+    [publications, havePubs],
+  );
 
   const calcRequired = (pub: Publication, i: number) =>
     (isEnabled ?? false) &&
-    (pub.isPrimary || (i === 0 && publications.length === 1));
+    (pub.isPrimary || (i === 0 && safePublications.length === 1));
 
   const seenIdentifiers = new Set<string>();
 
+  const toggleProps = React.useMemo<OptionalSectionToggleProps>(
+    () => ({
+      label: 'Associated Publication Available?',
+      enabled: isEnabled ?? null,
+      setEnabled: setEnabled,
+      fieldName: 'enable-publications',
+      required: false,
+      helpText: 'Whether the data underlying this dataset have been'
+        + ' described in a published manuscript, journal article, or'
+        + ' preprint.',
+    }),
+    [isEnabled, setEnabled],
+  );
+
+  const addPublication = React.useCallback(
+    () => setPublications([...safePublications, {}]),
+    [setPublications, safePublications],
+  );
+
   return (
     <InputBlock header="Publications">
-      <OptionalSection
-        toggle={{
-          label: 'Associated Publication Available?',
-          enabled: isEnabled ?? null,
-          setEnabled: setEnabled,
-          fieldName: 'enable-publications',
-          required: props.isRequired,
-          helpText: 'Whether the data underlying this dataset have been'
-            + ' described in a published manuscript, journal article, or'
-            + ' preprint.',
-        }}
-        className="field-grid"
-      >
+      <OptionalSection toggle={toggleProps} className="field-grid">
         <ol className="span-2 multi-input">
-          {publications.map((pub, index) => {
+          {safePublications.map((pub, index) => {
             let isDuplicate = false;
 
-            if (isNonBlankString(pub.identifier)) {
+            if (util.isNonBlankString(pub.identifier)) {
               if (seenIdentifiers.has(pub.identifier)) {
                 isDuplicate = true;
               } else {
@@ -88,15 +105,12 @@ export function PublicationsSection(
                 key={`pub-${index}`}
                 index={index}
                 publication={pub}
-                setPublication={makePublicationSetter(
-                  index,
-                  publications,
-                  props.setPublications
-                )}
+                publications={safePublications}
+                setPublications={setPublications}
                 isRequired={calcRequired(pub, index)}
-                isSingular={publications.length === 1}
+                isSingular={safePublications.length === 1}
                 isDisabled={!isEnabled}
-                jsonPath={props.jsonPath.append(index)}
+                jsonPath={jsonPath.append(index)}
                 isDuplicate={isDuplicate}
               />
             );
@@ -105,7 +119,7 @@ export function PublicationsSection(
 
         <AddRowButton
           disabled={!isEnabled}
-          onClick={() => props.setPublications([...publications, {}])}
+          onClick={addPublication}
           className="column-2 publication-appender"
         >
           + Additional publication
@@ -113,14 +127,4 @@ export function PublicationsSection(
       </OptionalSection>
     </InputBlock>
   );
-}
-
-function makePublicationSetter(
-  index: number,
-  pubList: PublicationList,
-  setter: Consumer<PublicationList>
-): Consumer<Publication> {
-  return (pub: Publication) => {
-    setter(fixPrimaries(replaceElement(pubList, index, pub), index));
-  }
 }

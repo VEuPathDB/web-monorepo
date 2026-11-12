@@ -271,11 +271,11 @@ const datasetSource = io.type({
 export type DatasetSource = io.TypeOf<typeof datasetSource>;
 
 const datasetMetadataContentFlags = io.partial({
-  hasDatasetCharacteristics: io.boolean,
-  hasDataDisclaimer: io.boolean,
-  hasDatasetSources: io.boolean,
-  hasOrganismData: io.boolean,
-  hasPublications: io.boolean,
+  hasDatasetCharacteristics: io.union([io.boolean, io.null]),
+  hasDataDisclaimer: io.union([io.boolean, io.null]),
+  hasDatasetSources: io.union([io.boolean, io.null]),
+  hasOrganismData: io.union([io.boolean, io.null]),
+  hasPublications: io.union([io.boolean, io.null]),
 });
 export type DatasetMetadataContentFlags = io.TypeOf<typeof datasetMetadataContentFlags>;
 

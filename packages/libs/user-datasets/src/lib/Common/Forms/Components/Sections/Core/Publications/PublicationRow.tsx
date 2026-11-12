@@ -11,18 +11,18 @@ import {
 } from '../../../../../../Service/Model';
 import {
   BiConsumer,
-  Consumer,
   Predicate,
   JsonPathBuilder,
   ifDefined,
-  isNonBlankString,
+  isNonBlankString, replaceElement
 } from '../../../../../../Utils';
+import * as util from '../../../../../../Utils';
 import {
   CitationLookupResult,
   lookupCitation,
   resemblesPublicationId,
 } from '../../../../../../Service/Publications';
-import { CitationLookupStatus, StatusTuple } from './utils';
+import { CitationLookupStatus, fixPrimaries, StatusTuple } from './utils';
 import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
 import { CitationLine } from './CitationLine';
 import { isEmpty } from 'lodash';
@@ -35,7 +35,8 @@ export interface PublicationRowProps {
   readonly index: number;
 
   readonly publication: Publication;
-  readonly setPublication: Consumer<Publication>;
+  readonly publications: ReadonlyArray<Publication>;
+  readonly setPublications: util.Consumer<ReadonlyArray<Publication>>;
 
   readonly isRequired: boolean;
   readonly isDisabled: boolean;
@@ -51,18 +52,24 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
     null,
     null,
   ]);
-  const { publication, setPublication } = props;
+  const { publication, publications, setPublications, index } = props;
+
+  const setPublication = React.useCallback(
+    (pub: Publication) =>
+      setPublications(fixPrimaries(replaceElement(publications, index, pub), index)),
+    [publications, index, setPublications],
+  );
 
   useEffect(
     () =>
       setCitationStatus([
-        ifDefined(props.publication.citation, (citation) => ({
+        ifDefined(publication.citation, (citation) => ({
           status: 'success',
           citation,
         })) ?? null,
         null,
       ]),
-    [props.publication.citation]
+    [publication.citation]
   );
 
   const updatePublication = useCallback(
@@ -174,12 +181,12 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
             disabled={props.isDisabled || props.isSingular}
             checked={props.publication.isPrimary}
             onChange={(v) =>
-              props.setPublication({ ...props.publication, isPrimary: v })
+              setPublication({ ...props.publication, isPrimary: v })
             }
           />
         </div>
 
-        <CitationLine status={citationStatus} />
+        {!props.isDisabled && (<CitationLine status={citationStatus} />)}
       </li>
     </>
   );

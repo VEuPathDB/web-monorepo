@@ -7,12 +7,11 @@ import React, {
   useState,
 } from 'react';
 import { JsonPathBuilder } from '../../Utils';
-import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
+import { UploadButton, SubmittableState, UploadErrorBanner } from '../../Common/Forms/Components';
 import {
   MetadataSection,
   RootDetailsSection,
 } from '../../Common/Forms/Components/Sections';
-import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';

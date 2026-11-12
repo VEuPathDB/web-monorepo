@@ -3,7 +3,9 @@ import {
   InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { BadUpload, DatasetFormState } from '../StoreModules';
-import { PartialDatasetDetails } from '../Service';
+import { PartialDatasetDetails, PartialDatasetPublication } from '../Service';
+import { PartialMetadataContentFlags } from '../Service/Model/request-types';
+import { Possible } from '../Utils';
 
 export const trackUploadProgress = makeActionCreator(
   'user-dataset-upload/upload-progress',
@@ -50,6 +52,16 @@ export const updateFormMetadata = makeActionCreator(
   (metadata: PartialDatasetDetails) => metadata
 );
 
+export const updateDatasetPublications = makeActionCreator(
+  'dataset-meta/publications',
+  (publications: Possible<ReadonlyArray<PartialDatasetPublication>>) => publications,
+)
+
+export const updateDatasetContentFlags = makeActionCreator(
+  'dataset-meta/content-flags',
+  (flags: Possible<PartialMetadataContentFlags>) => flags,
+);
+
 export type Action =
   | InferAction<typeof trackUploadProgress>
   | InferAction<typeof receiveBadUpload>
@@ -59,4 +71,6 @@ export type Action =
   | InferAction<typeof requestUploadMessages>
   | InferAction<typeof receiveBadUploadHistoryAction>
   | InferAction<typeof updateFormState>
-  | InferAction<typeof updateFormMetadata>;
+  | InferAction<typeof updateFormMetadata>
+  | InferAction<typeof updateDatasetPublications>
+  | InferAction<typeof updateDatasetContentFlags>;

@@ -56,18 +56,6 @@ export function CoreDatasetInformation({
       )}
 
       <PublicationsSection
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
-        publications={datasetMeta.publications ?? []}
-        setPublications={(v) =>
-          setDatasetMeta({
-            ...datasetMeta,
-            publications: v,
-          })
-        }
-        isRequired={
-          false /* TODO: when vdi backend tracks this, use that value from the metadata*/
-        }
         jsonPath={jsonPath.append<PartialDatasetDetails>('publications')}
       />
 
