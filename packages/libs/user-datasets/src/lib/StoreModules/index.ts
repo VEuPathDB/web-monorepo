@@ -1,6 +1,7 @@
 import * as userDatasetDetail from './UserDatasetDetailStoreModule';
 import * as userDatasetList from './UserDatasetListStoreModule';
 import * as userDatasetUpload from './UserDatasetUploadStoreModule';
+import * as datasetFormMeta from './DatasetMetadataFormStoreModule';
 
 export type {
   BadUpload,
@@ -16,5 +17,6 @@ export function wrapStoreModules(storeModules: WdkStoreModules) {
     userDatasetDetail,
     userDatasetList,
     userDatasetUpload,
+    datasetFormMeta,
   };
 }

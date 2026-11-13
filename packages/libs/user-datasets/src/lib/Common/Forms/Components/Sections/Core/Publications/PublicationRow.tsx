@@ -35,7 +35,7 @@ export interface PublicationRowProps {
   readonly index: number;
 
   readonly publication: Publication;
-  readonly setPublication: Consumer<Publication>;
+  readonly setPublication: BiConsumer<Publication, number>;
 
   readonly isRequired: boolean;
   readonly isDisabled: boolean;

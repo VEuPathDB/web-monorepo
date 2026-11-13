@@ -71,17 +71,8 @@ export function CoreDatasetInformation({
         jsonPath={jsonPath.append<PartialDatasetDetails>('publications')}
       />
 
-      <DatasetSources
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
-        jsonPath={jsonPath.append<PartialDatasetDetails>('datasetSources')}
-      />
-
-      <DatasetUsage
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
-        jsonPath={jsonPath}
-      />
+      <DatasetSources jsonPath={jsonPath} />
+      <DatasetUsage jsonPath={jsonPath} />
     </>
   );
 }

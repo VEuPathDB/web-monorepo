@@ -26,15 +26,19 @@ export const datasetCharacteristics = io.partial({
 });
 export type DatasetCharacteristics = io.TypeOf<typeof datasetCharacteristics>;
 
-export const datasetContact = io.partial({
-  firstName: io.string,
-  middleName: io.string,
-  lastName: io.string,
-  isPrimary: io.boolean,
-  email: io.string,
-  affiliation: io.string,
-  country: io.string,
-});
+export const datasetContact = io.intersection([
+  io.type({
+    firstName: io.string,
+    lastName: io.string,
+  }),
+  io.partial({
+    middleName: io.string,
+    isPrimary: io.boolean,
+    email: io.string,
+    affiliation: io.string,
+    country: io.string,
+  })
+]);
 export type DatasetContact = io.TypeOf<typeof datasetContact>;
 
 export const datasetImportStatus = io.union([
@@ -233,9 +237,9 @@ export const doiReference = io.intersection([
 export type DOIReference = io.TypeOf<typeof doiReference>;
 
 const externalIdentifiers = io.partial({
-  dois: io.array(doiReference),
-  hyperlinks: io.array(datasetHyperlink),
-  bioprojectIds: io.array(bioprojectId),
+  dois: io.readonlyArray(doiReference),
+  hyperlinks: io.readonlyArray(datasetHyperlink),
+  bioprojectIds: io.readonlyArray(bioprojectId),
 });
 export type ExternalIdentifiers = io.TypeOf<typeof externalIdentifiers>;
 

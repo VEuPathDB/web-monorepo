@@ -26,7 +26,7 @@ export type {
   DatasetZipType,
   PluginDataType,
   PartialCharacteristics,
-  PostDatasetSource,
+  PartialDatasetSource,
   SampleYearRange,
   ValidationErrors,
   VdiPluginConfig,

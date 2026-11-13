@@ -4,6 +4,7 @@ export type Function<T, R> = (value: T) => R;
 export type Predicate<T> = (value: T) => boolean;
 export type Producer<R> = () => R;
 export type Runnable = () => void;
+export type UnaryFunction<T> = Function<T, T>;
 
 export type Nullable<T> = T | null;
 export type Possible<T> = T | undefined;

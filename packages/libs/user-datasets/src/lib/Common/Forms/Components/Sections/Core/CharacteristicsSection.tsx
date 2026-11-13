@@ -1,21 +1,12 @@
-import React, {
-  ReactElement,
-  RefObject,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
-import { partialRight } from 'lodash';
+import React from 'react';
 
 import {
   BiConsumer,
   Consumer,
   JsonPathBuilder,
   Possible,
-  changeHandler,
 } from '../../../../../Utils';
 import {
-  PartialDatasetDetails,
   PartialCharacteristics,
   SampleYearRange,
 } from '../../../../../Service';
@@ -30,61 +21,58 @@ import {
   DatasetCharacteristicsFormSectionConfig,
   StudyDesignOption,
 } from '../../../../Configuration/DatasetFormConfig';
+import { useDispatch } from 'react-redux';
+import { useCharacteristics, useContentFlags, useDatasetVisibility } from '../../../Hooks/dataset-metadata-hooks';
+import { updateCharacteristics, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
 
 export const FieldStudyToggleID = 'field-study-toggle';
 
 export interface CharacteristicsSectionProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly pathBuilder: JsonPathBuilder;
   readonly formProps: DatasetCharacteristicsFormSectionConfig;
 }
 
 export function CharacteristicsSection({
-  datasetMeta,
-  setDatasetMeta,
   pathBuilder: jsonPath,
   formProps,
-}: CharacteristicsSectionProps): ReactElement {
-  const enabled = datasetMeta.metadataContentFlags?.hasDatasetCharacteristics;
+}: CharacteristicsSectionProps): React.ReactElement {
+  const dispatch = useDispatch();
 
-  const setEnabled = (enabled: boolean) =>
-    setDatasetMeta({
-      ...datasetMeta,
-      metadataContentFlags: {
-        ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetCharacteristics: enabled,
-      },
-    });
-
-  useEffect(
-    () => {
-      if (
-        enabled === undefined &&
-        datasetMeta.datasetCharacteristics !== undefined
-      )
-        setEnabled(true);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [enabled, datasetMeta.datasetCharacteristics]
+  const contentFlags = useContentFlags();
+  const enabled = contentFlags?.hasDatasetCharacteristics;
+  const setEnabled = React.useCallback(
+    (enabled: boolean) => dispatch(updateContentFlags({
+      ...contentFlags,
+      hasDatasetCharacteristics: enabled,
+    })),
+    [dispatch, contentFlags],
   );
 
-  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {};
-
-  const requireAll = useMemo(
-    () => enabled === true && datasetMeta.visibility === 'public',
-    [enabled, datasetMeta.visibility]
+  const characteristics = useCharacteristics();
+  const setCharacteristics = React.useCallback(
+    (characteristics: PartialCharacteristics) => dispatch(updateCharacteristics(characteristics)),
+    [dispatch],
+  );
+  const setCharacteristic = React.useCallback(
+    (key: keyof PartialCharacteristics, value: PartialCharacteristics[typeof key]) =>
+      setCharacteristics({ ...characteristics, [key]: value }),
+    [characteristics, setCharacteristics],
   );
 
-  const setRootField = partialRight(
-    changeHandler<PartialCharacteristics>,
-    safeCharacteristics,
-    (v) => setDatasetMeta({ ...datasetMeta, datasetCharacteristics: v })
+  if (enabled === undefined && characteristics !== undefined) {
+    setEnabled(true);
+  }
+
+  const safeCharacteristics = characteristics ?? {};
+
+  const isPublic = useDatasetVisibility() === 'public';
+
+  const requireAll = React.useMemo(
+    () => enabled === true && isPublic,
+    [enabled, isPublic]
   );
 
   const disabledClass = enabled ? '' : ' disabled-fields';
-
-  const isPublic = datasetMeta.visibility === 'public';
 
   return (
     <InputBlock header="Field Study or Clinical Trial Characteristics">
@@ -103,9 +91,8 @@ export function CharacteristicsSection({
           className="not-disabled"
           disableRequiredStyling={true}
           helpText={
-            'Whether the dataset or underlying samples originated from a' +
-            ' human, vector, animal, or plant population study; an' +
-            ' epidemiological or surveillance study; or a clinical trial.'
+            'Whether the dataset or underlying samples originated from a human, vector, animal, or plant population'
+            + ' study; an epidemiological or surveillance study; or a clinical trial.'
           }
         />
 
@@ -113,17 +100,10 @@ export function CharacteristicsSection({
           vocab={formProps.studyDesignVocab}
           enabled={enabled === true}
           required={requireAll}
-          selection={datasetMeta.datasetCharacteristics?.studyDesign}
-          onChange={(d, t) => {
-            setDatasetMeta({
-              ...datasetMeta,
-              datasetCharacteristics: {
-                ...safeCharacteristics,
-                studyDesign: d,
-                studyType: t,
-              },
-            });
-          }}
+          selection={characteristics?.studyDesign}
+          onChange={(studyDesign, studyType) =>
+            setCharacteristics({ ...characteristics, studyDesign, studyType })
+          }
         />
 
         <GrowableStringList
@@ -131,17 +111,15 @@ export function CharacteristicsSection({
           labelSingular="Country"
           values={safeCharacteristics.countries}
           required={requireAll}
-          setValues={setRootField('countries')}
+          setValues={it => setCharacteristic('countries', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('countries')}
           disabled={enabled !== true}
-          helpText={
-            'Country where data or samples were collected from the study population.'
-          }
+          helpText="Country where data or samples were collected from the study population."
         />
 
         <YearsInputs
           years={safeCharacteristics.years}
-          setYears={setRootField('years')}
+          setYears={it => setCharacteristic('years', it)}
           required={requireAll}
           jsonPath={jsonPath.append<PartialCharacteristics>('years')}
           disabled={enabled !== true}
@@ -152,13 +130,12 @@ export function CharacteristicsSection({
           labelSingular="Study Population Species"
           required={requireAll}
           values={safeCharacteristics.studySpecies}
-          setValues={setRootField('studySpecies')}
+          setValues={it => setCharacteristic('studySpecies', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('studySpecies')}
           disabled={enabled !== true}
           helpText={
-            'Scientific name of the population the study is based on (e.g.,' +
-            ' Homo sapiens), even if the dataset contains laboratory' +
-            ' measurements on pathogens or other organisms.'
+            'Scientific name of the population the study is based on (e.g., Homo sapiens), even if the dataset'
+            + ' contains laboratory measurements on pathogens or other organisms.'
           }
         />
 
@@ -167,12 +144,12 @@ export function CharacteristicsSection({
           labelSingular="Outcome"
           required={requireAll}
           values={safeCharacteristics.outcomes}
-          setValues={setRootField('outcomes')}
+          setValues={it => setCharacteristic('outcomes', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('outcomes')}
           disabled={enabled !== true}
           helpText={
-            'Primary disease, condition, or outcome being studied (e.g.,' +
-            ' malaria, anemia, or treatment failure). Enter ‘N/A’ if not applicable.'
+            'Primary disease, condition, or outcome being studied (e.g., malaria, anemia, or treatment failure).'
+            + ' Enter ‘N/A’ if not applicable.'
           }
         />
 
@@ -181,15 +158,14 @@ export function CharacteristicsSection({
           labelSingular="Associated Factor"
           required={requireAll}
           values={safeCharacteristics.associatedFactors}
-          setValues={setRootField('associatedFactors')}
+          setValues={it => setCharacteristic('associatedFactors', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>(
             'associatedFactors'
           )}
           disabled={enabled !== true}
           helpText={
-            'Pathogen, exposure, or risk factor associated with the outcome' +
-            ' (e.g., Plasmodium falciparum, or insecticide exposure).' +
-            ' Use scientific names for pathogens. Enter ‘N/A’ if not applicable.'
+            'Pathogen, exposure, or risk factor associated with the outcome (e.g., Plasmodium falciparum, or'
+            + ' insecticide exposure). Use scientific names for pathogens. Enter ‘N/A’ if not applicable.'
           }
         />
 
@@ -199,9 +175,12 @@ export function CharacteristicsSection({
           label="Participant Ages"
           disabled={enabled !== true}
           required={requireAll}
-          helpText="Age range(s) of participants when data were collected (e.g., '0-5 years; 18+ years'). Specify units. Enter ‘N/A’ if not applicable."
+          helpText={
+            'Age range(s) of participants when data were collected (e.g., \'0-5 years; 18+ years\'). Specify units.'
+            + ' Enter ‘N/A’ if not applicable.'
+          }
           value={safeCharacteristics.participantAges}
-          onChange={setRootField('participantAges')}
+          onChange={it => setCharacteristic('participantAges', it)}
         />
 
         <GrowableStringList
@@ -209,12 +188,11 @@ export function CharacteristicsSection({
           labelSingular="Sample Type"
           required={requireAll}
           values={safeCharacteristics.sampleTypes}
-          setValues={setRootField('sampleTypes')}
+          setValues={it => setCharacteristic('sampleTypes', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('sampleTypes')}
           disabled={enabled !== true}
           helpText={
-            'Type(s) of biological or environmental samples represented in' +
-            ' this dataset. Enter ‘N/A’ if not applicable.'
+            'Type(s) of biological or environmental samples represented in this dataset. Enter ‘N/A’ if not applicable.'
           }
         />
       </div>
@@ -238,7 +216,7 @@ function StudyDesign({
   enabled,
   required,
   selection,
-}: StudyDesignProps): ReactElement {
+}: StudyDesignProps): React.ReactElement {
   const options = [
     <option key={vocab.length} disabled selected={selection == null}>
       Select a study design
@@ -308,21 +286,21 @@ function YearsInputs({
   jsonPath,
   disabled,
   required,
-}: YearsInputsProps): ReactElement {
+}: YearsInputsProps): React.ReactElement {
   const safeYears = years ?? {};
 
   const startField = jsonPath.appendToString<SampleYearRange>('start');
   const endField = jsonPath.appendToString<SampleYearRange>('end');
 
-  const startRef = useRef<HTMLInputElement>(null);
-  const endRef = useRef<HTMLInputElement>(null);
+  const startRef = React.useRef<HTMLInputElement>(null);
+  const endRef = React.useRef<HTMLInputElement>(null);
 
   const setYear = disabled
     ? () => {}
     : (
         k: keyof SampleYearRange,
         v: string | undefined,
-        ref: RefObject<HTMLInputElement>
+        ref: React.RefObject<HTMLInputElement>
       ) => {
         ref.current?.classList?.remove('invalid');
 

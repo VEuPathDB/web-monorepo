@@ -18,6 +18,8 @@ export {
 } from './input-tests';
 
 export type {
+  DataNoun,
+
   BiConsumer,
   Consumer,
   Function,
@@ -25,8 +27,9 @@ export type {
   Optional,
   Possible,
   Predicate,
+  Producer,
   Runnable,
-  DataNoun,
+  UnaryFunction,
 } from './types';
 
 export {
