@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 
-import './Pathfinder.scss';
+import './Strategist.scss';
 
 interface Props {
   src: string;
   appBase: string;
 }
 
-export default function Pathfinder(props: Props) {
+export default function Strategist(props: Props) {
   const { appBase } = props;
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -25,7 +25,7 @@ export default function Pathfinder(props: Props) {
       window.history.replaceState(
         window.history.state,
         '',
-        appBase + '/pathfinder' + path
+        appBase + '/strategist' + path
       );
     }
     window.addEventListener('message', updateUrl);
@@ -35,8 +35,8 @@ export default function Pathfinder(props: Props) {
   return (
     <iframe
       ref={iframeRef}
-      title="PathFinder"
-      id="pathfinder_iframe"
+      title="VEuPathDB Strategist"
+      id="strategist_iframe"
       src={props.src}
       width="100%"
       height="100%"

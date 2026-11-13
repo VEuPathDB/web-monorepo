@@ -41,7 +41,7 @@ import {
   useSessionBackedSearchTerm,
   useSessionBackedExpandedBranches,
 } from 'ortho-client/hooks/searchCheckboxTree';
-import { pathfinderToolItems } from 'ortho-client/pathfinderRoutes';
+import { strategistToolItems } from 'ortho-client/strategistRoutes';
 
 import './OrthoMCLPage.scss';
 import colors, {
@@ -291,7 +291,7 @@ function useHeaderMenuItems() {
             type: 'reactRoute',
             url: makeStaticPageRoute(`/content/OrthoMCL/webServices.html`),
           },
-          ...pathfinderToolItems(pathfinderUrl),
+          ...strategistToolItems(pathfinderUrl),
         ],
       },
       {
