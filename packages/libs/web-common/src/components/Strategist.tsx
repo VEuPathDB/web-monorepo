@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 
 import './Strategist.scss';
 
+const LOCATION_TYPES = ['strategist:location', 'pathfinder:location'];
+
 interface Props {
   src: string;
   appBase: string;
@@ -17,7 +19,7 @@ export default function Strategist(props: Props) {
       if (
         event.origin !== window.location.origin ||
         event.source !== iframeRef.current?.contentWindow ||
-        type !== 'pathfinder:location' ||
+        !LOCATION_TYPES.includes(type) ||
         typeof path !== 'string' ||
         !path.startsWith('/')
       )

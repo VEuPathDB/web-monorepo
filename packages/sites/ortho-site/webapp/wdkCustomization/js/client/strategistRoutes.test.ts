@@ -7,7 +7,7 @@ import { strategistRoutes, strategistToolItems } from './strategistRoutes';
 
 describe('Strategist on OrthoMCL', () => {
   it('routes /strategist to the Strategist page behind sign-in, and /pathfinder to it, when it is configured', () => {
-    expect(strategistRoutes('/pathfinder')).toEqual([
+    expect(strategistRoutes('/strategist')).toEqual([
       {
         path: '/strategist',
         exact: false,
@@ -24,7 +24,7 @@ describe('Strategist on OrthoMCL', () => {
   });
 
   it('offers Strategist under Tools when it is configured', () => {
-    expect(strategistToolItems('/pathfinder')).toEqual([
+    expect(strategistToolItems('/strategist')).toEqual([
       {
         key: 'strategist',
         display: 'VEuPathDB Strategist',

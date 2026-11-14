@@ -4,7 +4,7 @@ import { Redirect, RouteComponentProps } from 'react-router';
 
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { pathfinderUrl, rootUrl } from '../config';
+import { strategistUrl, rootUrl } from '../config';
 
 import Strategist from '../components/Strategist';
 
@@ -16,7 +16,7 @@ export const StrategistController = (props: StrategistControllerProps) => {
   const subPath = location.pathname
     .slice(match.url.length)
     .replace(/^\/+/, '/');
-  const src = pathfinderUrl.replace(/\/+$/, '') + subPath + location.search;
+  const src = strategistUrl.replace(/\/+$/, '') + subPath + location.search;
   return <Strategist src={src} appBase={rootUrl} />;
 };
 

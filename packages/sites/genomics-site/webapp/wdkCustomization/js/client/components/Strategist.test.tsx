@@ -9,11 +9,11 @@ import {
   StrategistRedirect,
 } from '@veupathdb/web-common/lib/controllers/StrategistController';
 
-let mockPathfinderUrl = '/pathfinder';
+let mockStrategistUrl = '/strategist';
 
 jest.mock('@veupathdb/web-common/lib/config', () => ({
-  get pathfinderUrl() {
-    return mockPathfinderUrl;
+  get strategistUrl() {
+    return mockStrategistUrl;
   },
   rootUrl: '/plasmo/app',
 }));
@@ -40,7 +40,7 @@ function post(
 }
 
 afterEach(() => {
-  mockPathfinderUrl = '/pathfinder';
+  mockStrategistUrl = '/strategist';
   jest.restoreAllMocks();
   window.history.replaceState(null, '', '/');
 });
@@ -48,12 +48,12 @@ afterEach(() => {
 describe('Strategist', () => {
   it('frames the Strategist path after /strategist, in any letter case', () => {
     expect(renderAt('/Strategist/plasmodb/x?a=1').iframe.src).toBe(
-      'http://localhost/pathfinder/plasmodb/x?a=1'
+      'http://localhost/strategist/plasmodb/x?a=1'
     );
   });
 
   it('never frames a protocol-relative src', () => {
-    mockPathfinderUrl = '/';
+    mockStrategistUrl = '/';
     expect(renderAt('/strategist//evil.com/x').iframe.src).toBe(
       'http://localhost/evil.com/x'
     );
@@ -63,7 +63,7 @@ describe('Strategist', () => {
     window.history.replaceState({ key: 'abc' }, '', '/');
     const replaceState = jest.spyOn(window.history, 'replaceState');
     const { iframe } = renderAt('/strategist');
-    post(iframe, { type: 'pathfinder:location', path: '//evil.com/x' });
+    post(iframe, { type: 'strategist:location', path: '//evil.com/x' });
     expect(replaceState).toHaveBeenCalledWith(
       { key: 'abc' },
       '',
@@ -72,10 +72,22 @@ describe('Strategist', () => {
     expect(window.location.origin).toBe('http://localhost');
   });
 
+  it('writes a path reported under the former message type', () => {
+    window.history.replaceState({ key: 'abc' }, '', '/');
+    const replaceState = jest.spyOn(window.history, 'replaceState');
+    const { iframe } = renderAt('/strategist');
+    post(iframe, { type: 'pathfinder:location', path: '/plasmodb' });
+    expect(replaceState).toHaveBeenCalledWith(
+      { key: 'abc' },
+      '',
+      '/plasmo/app/strategist/plasmodb'
+    );
+  });
+
   it('ignores other origins, other windows and malformed messages', () => {
     const replaceState = jest.spyOn(window.history, 'replaceState');
     const { iframe } = renderAt('/strategist');
-    const message = { type: 'pathfinder:location', path: '/plasmodb' };
+    const message = { type: 'strategist:location', path: '/plasmodb' };
     post(iframe, message, { origin: 'https://example.org' });
     post(iframe, message, { source: window });
     post(iframe, { ...message, type: 'other' });

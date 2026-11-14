@@ -16,7 +16,7 @@ import { PlasmoApController } from './components/controllers/PlasmoApController'
 import { PlasmoFastController } from './components/controllers/PlasmoFastController';
 
 import {
-  pathfinderUrl,
+  strategistUrl,
   useUserDatasetsWorkspace,
 } from '@veupathdb/web-common/lib/config';
 
@@ -240,7 +240,7 @@ export const wrapRoutes = (ebrcRoutes) => [
     rootClassNameModifier: 'jbrowse',
   },
 
-  ...(pathfinderUrl
+  ...(strategistUrl
     ? [
         {
           path: '/strategist',

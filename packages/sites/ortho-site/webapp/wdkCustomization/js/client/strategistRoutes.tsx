@@ -5,8 +5,8 @@ import {
   StrategistRedirect,
 } from '@veupathdb/web-common/lib/controllers/StrategistController';
 
-export function strategistRoutes(pathfinderUrl: string): RouteEntry[] {
-  return pathfinderUrl
+export function strategistRoutes(strategistUrl: string): RouteEntry[] {
+  return strategistUrl
     ? [
         {
           path: '/strategist',
@@ -24,8 +24,8 @@ export function strategistRoutes(pathfinderUrl: string): RouteEntry[] {
     : [];
 }
 
-export function strategistToolItems(pathfinderUrl: string): HeaderMenuItem[] {
-  return pathfinderUrl
+export function strategistToolItems(strategistUrl: string): HeaderMenuItem[] {
+  return strategistUrl
     ? [
         {
           key: 'strategist',
