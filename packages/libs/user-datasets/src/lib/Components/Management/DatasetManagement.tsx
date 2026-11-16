@@ -244,7 +244,8 @@ function StatusRowWithPolling({
     status,
     projectId,
     onPoll: async () => {
-      loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+      // Awaited so the hook knows when the store actually has the new status.
+      await loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
     },
     refreshKey: updateCount,
   });
