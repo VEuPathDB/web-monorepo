@@ -31,7 +31,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
   DatasetFormConfigurators,
   DatasetTypeConfig,
-  EdaStudyLinks
+  EdaStudyLinks,
 } from '../../Common/Configuration';
 import { History } from 'history';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';
@@ -122,17 +122,21 @@ class DatasetManagementController extends PageController<MergedProps> {
       this.props.dispatchProps.loadVdiServiceMetadata();
     }
 
-    if (prevProps == null) {
-      if (
-        stateProps.userDatasetDetails?.resource?.datasetId === ownProps.id &&
-        ownProps.editModal?.showModal
-      ) {
-        return;
-      }
-    }
-
     if (prevProps?.ownProps?.id !== ownProps.id) {
-      this.props.dispatchProps.loadUserDatasetDetail(ownProps.id);
+      // UserDatasetRouter remounts this controller whenever the route flips
+      // between /:id and /:id/edit. If the store already holds this dataset,
+      // keep showing it and refresh quietly; a full load would blank the page
+      // behind a spinner (DETAIL_LOADING discards the cached resource).
+      if (stateProps.userDatasetDetails?.resource?.datasetId === ownProps.id) {
+        // Opening the edit modal: UpdateFormController fetches its own copy,
+        // so a refresh here would just duplicate that request.
+        if (ownProps.editModal?.showModal) return;
+        this.props.dispatchProps.loadUserDatasetDetailWithoutLoadingIndicator(
+          ownProps.id
+        );
+      } else {
+        this.props.dispatchProps.loadUserDatasetDetail(ownProps.id);
+      }
     }
   }
 
