@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Public } from '@material-ui/icons';
 
@@ -197,6 +197,8 @@ interface StatusRowWithPollingProps {
     id: string
   ) => ReturnType<typeof loadUserDatasetDetailWithoutLoadingIndicator>;
   loadUserDatasetSearches: (type: string) => unknown;
+  /** True while a dataset update is in flight; a true -> false edge re-polls. */
+  userDatasetUpdating: boolean;
   /** Renders the status row, told whether polling is currently live. */
   children: (isPolling: boolean) => ReactNode;
 }
@@ -221,8 +223,19 @@ function StatusRowWithPolling({
   isInstalled,
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
+  userDatasetUpdating,
   children,
 }: StatusRowWithPollingProps) {
+  // Counts completed updates so the polling hook can re-poll after each one.
+  const [updateCount, setUpdateCount] = useState(0);
+  const wasUpdating = useRef(userDatasetUpdating);
+  useEffect(() => {
+    if (wasUpdating.current && !userDatasetUpdating) {
+      setUpdateCount((count) => count + 1);
+    }
+    wasUpdating.current = userDatasetUpdating;
+  }, [userDatasetUpdating]);
+
   // isChecking is deliberately not consumed. Driving the icon from individual
   // requests would expose the backoff — the gap stretches from 2s to 15s, and
   // 60s while awaiting reinstall — and an indicator that visibly slows down
@@ -233,6 +246,7 @@ function StatusRowWithPolling({
     onPoll: async () => {
       loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
     },
+    refreshKey: updateCount,
   });
 
   const wasInstalled = useRef(isInstalled);
@@ -407,6 +421,7 @@ class DatasetManagement<
             this.props.loadUserDatasetDetailWithoutLoadingIndicator
           }
           loadUserDatasetSearches={this.props.loadUserDatasetSearches}
+          userDatasetUpdating={this.props.userDatasetUpdating}
         >
           {(isPolling) => (
             <span>
