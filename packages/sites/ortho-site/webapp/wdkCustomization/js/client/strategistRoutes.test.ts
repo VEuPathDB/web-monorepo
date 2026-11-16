@@ -1,12 +1,9 @@
-import {
-  StrategistController,
-  StrategistRedirect,
-} from '@veupathdb/web-common/lib/controllers/StrategistController';
+import { StrategistController } from '@veupathdb/web-common/lib/controllers/StrategistController';
 
 import { strategistRoutes, strategistToolItems } from './strategistRoutes';
 
 describe('Strategist on OrthoMCL', () => {
-  it('routes /strategist to the Strategist page behind sign-in, and /pathfinder to it, when it is configured', () => {
+  it('routes /strategist to the Strategist page behind sign-in when it is configured', () => {
     expect(strategistRoutes('/strategist')).toEqual([
       {
         path: '/strategist',
@@ -14,11 +11,6 @@ describe('Strategist on OrthoMCL', () => {
         requiresLogin: true,
         component: StrategistController,
         rootClassNameModifier: 'strategist',
-      },
-      {
-        path: '/pathfinder',
-        exact: false,
-        component: StrategistRedirect,
       },
     ]);
   });

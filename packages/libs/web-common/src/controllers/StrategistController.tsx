@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Redirect, RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -19,16 +19,6 @@ export const StrategistController = (props: StrategistControllerProps) => {
   const src = strategistUrl.replace(/\/+$/, '') + subPath + location.search;
   return <Strategist src={src} appBase={rootUrl} />;
 };
-
-export const StrategistRedirect = ({ location }: StrategistControllerProps) => (
-  <Redirect
-    to={{
-      pathname: location.pathname.replace(/^\/pathfinder/i, '/strategist'),
-      search: location.search,
-      hash: location.hash,
-    }}
-  />
-);
 
 const useStrategistDocumentTitle = () => {
   const projectDisplayName = useSelector(

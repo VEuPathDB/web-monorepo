@@ -41,12 +41,8 @@ export const {
   aiExpressionQualtricsId = '',
   showSubscriptionProds = false,
   allowAiAssistedCommentCreation = true,
+  strategistUrl = '',
 } = window.__SITE_CONFIG__;
-
-export const strategistUrl =
-  window.__SITE_CONFIG__.strategistUrl ||
-  window.__SITE_CONFIG__.pathfinderUrl ||
-  '';
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__
   .edaExampleAnalysesAuthor

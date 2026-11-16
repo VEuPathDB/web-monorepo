@@ -8,10 +8,7 @@ import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSear
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
-import {
-  StrategistController,
-  StrategistRedirect,
-} from '@veupathdb/web-common/lib/controllers/StrategistController';
+import { StrategistController } from '@veupathdb/web-common/lib/controllers/StrategistController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 import { PlasmoFastController } from './components/controllers/PlasmoFastController';
 
@@ -248,11 +245,6 @@ export const wrapRoutes = (ebrcRoutes) => [
           requiresLogin: true,
           component: StrategistController,
           rootClassNameModifier: 'strategist',
-        },
-        {
-          path: '/pathfinder',
-          exact: false,
-          component: StrategistRedirect,
         },
       ]
     : []),
