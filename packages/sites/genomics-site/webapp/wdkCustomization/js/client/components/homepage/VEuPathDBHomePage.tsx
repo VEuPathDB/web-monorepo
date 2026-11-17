@@ -131,7 +131,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
     location.pathname.includes('workspace/analyses') ||
-    location.pathname.startsWith('/pathfinder') ||
+    location.pathname.startsWith('/strategist') ||
     user == null ||
     user.isGuest;
 
@@ -598,10 +598,10 @@ const useHeaderMenuItems = (
         },
         {
           key: 'pathfinder',
-          display: 'PathFinder',
+          display: 'VEuPathDB Strategist',
           tooltip: 'Build and refine search strategies with an AI assistant',
           type: 'reactRoute',
-          url: '/pathfinder',
+          url: '/strategist',
           metadata: {
             test: () => Boolean(pathfinderUrl),
           },

@@ -13,7 +13,7 @@ import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClust
 
 import { blastRoutes } from './blastRoutes';
 import { computeJobRoutes } from './computeJobRoutes';
-import { pathfinderRoutes } from './pathfinderRoutes';
+import { strategistRoutes } from './strategistRoutes';
 import { proteinMappingRoutes } from './proteinMappingRoutes';
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
@@ -42,7 +42,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     ...blastRoutes,
     ...computeJobRoutes,
     ...proteinMappingRoutes,
-    ...pathfinderRoutes(pathfinderUrl),
+    ...strategistRoutes(pathfinderUrl),
     ...ebrcRoutes,
   ];
 }
