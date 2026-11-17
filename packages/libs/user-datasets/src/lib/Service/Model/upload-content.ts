@@ -21,24 +21,33 @@ export interface TextUploadContent extends UploadContentBase {
 
 export type UploadContent = FileUploadContent | TextUploadContent;
 
-export function newUploadContent(file: File): FileUploadContent
-export function newUploadContent(text: string, name: string, contentType?: string): TextUploadContent
+export function newUploadContent(file: File): FileUploadContent;
+export function newUploadContent(
+  text: string,
+  name: string,
+  contentType?: string
+): TextUploadContent;
 export function newUploadContent(
   content: string | File,
   name?: string,
-  contentType?: string,
+  contentType?: string
 ): UploadContent {
   return typeof content === 'string'
-    ? {
-      type: 'text',
-      value: content,
-      name,
-      toFile: () => new File([content], name!, ifDefined(contentType, (it) => ({type: it}))),
-    } as TextUploadContent
-    : {
-      type: 'file',
-      file: content,
-      name: content.name,
-      toFile: () => content,
-    } as FileUploadContent;
+    ? ({
+        type: 'text',
+        value: content,
+        name,
+        toFile: () =>
+          new File(
+            [content],
+            name!,
+            ifDefined(contentType, (it) => ({ type: it }))
+          ),
+      } as TextUploadContent)
+    : ({
+        type: 'file',
+        file: content,
+        name: content.name,
+        toFile: () => content,
+      } as FileUploadContent);
 }

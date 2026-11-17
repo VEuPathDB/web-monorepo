@@ -15,7 +15,9 @@ export function newDatasetUploads(state: DatasetFormState): DatasetUploads {
     url: state.dataFileUrl,
     dataFiles: Object.values(state.dataFileSelections).flat(2),
     documentFiles: Object.values(state.documentFileSelections).flat(2),
-    dataPropertiesFiles: Object.values(state.dataPropertiesFileSelections).flat(2),
+    dataPropertiesFiles: Object.values(state.dataPropertiesFileSelections).flat(
+      2
+    ),
   };
 }
 
@@ -36,14 +38,17 @@ export type RootDatasetFile =
   | 'vdi-meta.json'
   | 'upload-errors.json';
 
-export type UploadContentMap = Readonly<Record<string, ReadonlyArray<UploadContent>>>;
+export type UploadContentMap = Readonly<
+  Record<string, ReadonlyArray<UploadContent>>
+>;
 
-export function getSamplesDescription(dataFiles: UploadContentMap): Possible<TextUploadContent> {
+export function getSamplesDescription(
+  dataFiles: UploadContentMap
+): Possible<TextUploadContent> {
   return takeIf(
-    ifDefined(
-      dataFiles[SAMPLE_INFO_FIELD_NAME],
-      (files) => ifNotEmpty(files, (it) => it[0]),
+    ifDefined(dataFiles[SAMPLE_INFO_FIELD_NAME], (files) =>
+      ifNotEmpty(files, (it) => it[0])
     ),
-    (it) => it?.type === 'text',
+    (it) => it?.type === 'text'
   ) as Possible<TextUploadContent>;
 }

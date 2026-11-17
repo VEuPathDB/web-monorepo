@@ -1,8 +1,4 @@
-import React, {
-  ReactElement,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import {
   DatasetGetResponseBody,
   VdiServiceMetadata,
@@ -80,12 +76,12 @@ export function UpdateFormController(
             datasetDetails: props.isPromotingToPublic
               ? { ...datasetMeta, visibility: 'public' }
               : datasetMeta,
-            dataPropertiesFileSelections: ifDefined(
-              dataset?.files?.datasetProperties,
-              files => ({
-                [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map(it => newUploadContent('', it.fileName, 'text/plain'))
-              })
-            ) ?? {},
+            dataPropertiesFileSelections:
+              ifDefined(dataset?.files?.datasetProperties, (files) => ({
+                [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map((it) =>
+                  newUploadContent('', it.fileName, 'text/plain')
+                ),
+              })) ?? {},
           })
         );
       }
