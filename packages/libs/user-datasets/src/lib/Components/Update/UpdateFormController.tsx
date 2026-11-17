@@ -1,8 +1,4 @@
-import React, {
-  ReactElement,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import {
   DatasetGetResponseBody,
   VdiServiceMetadata,
@@ -32,8 +28,15 @@ import { ifDefined, Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
-import { newDatasetUploads, newUploadContent } from '../../Service/Model';
+import {
+  newExistingFilePlaceholder,
+  newUpdateUploads,
+} from '../../Service/Model';
 import { FIELD_NAME_DATA_PROP_FILE } from '../../Common/Forms/form-constants';
+import {
+  detailUpdateSuccess,
+  detailUpdating,
+} from '../../Actions/UserDatasetsActions';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -80,12 +83,12 @@ export function UpdateFormController(
             datasetDetails: props.isPromotingToPublic
               ? { ...datasetMeta, visibility: 'public' }
               : datasetMeta,
-            dataPropertiesFileSelections: ifDefined(
-              dataset?.files?.datasetProperties,
-              files => ({
-                [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map(it => newUploadContent('', it.fileName, 'text/plain'))
-              })
-            ) ?? {},
+            dataPropertiesFileSelections:
+              ifDefined(dataset?.files?.datasetProperties, (files) => ({
+                [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map((it) =>
+                  newExistingFilePlaceholder(it.fileName)
+                ),
+              })) ?? {},
           })
         );
       }
@@ -125,17 +128,27 @@ export function UpdateFormController(
     ({ actions: { setSubmitting } }: DatasetFormProps) =>
     () => {
       setSubmitting(true);
+      dispatch(detailUpdating());
+
+      // Clears userDatasetUpdating and refreshes the store with the server's
+      // current copy (a stale `dataset` would clobber the detail page's state).
+      const finishUpdating = () =>
+        vdi!
+          .getDatasetDetails(props.datasetId)
+          .then((fresh) => dispatch(detailUpdateSuccess(fresh)));
+
       submitUpdate({
         vdi: vdi!,
         dispatch: dispatch,
         datasetId: props.datasetId,
         original: convertDetailsToMeta(dataset!),
         updated: formState.datasetDetails,
-        newFiles: newDatasetUploads(formState),
+        newFiles: newUpdateUploads(formState),
         oldFiles: dataset!.files.datasetProperties,
       })
         .then((res) => {
           setSubmitting(false);
+          finishUpdating();
 
           const errors: BadUpload[] = [];
 
@@ -183,6 +196,7 @@ export function UpdateFormController(
         })
         .catch((_) => {
           setSubmitting(false);
+          finishUpdating();
 
           dispatch(
             receiveBadUpload([

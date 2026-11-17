@@ -1,4 +1,10 @@
-export { ifDefined, ifNotEmpty, requireValue, takeIf, using } from './ergonomics';
+export {
+  ifDefined,
+  ifNotEmpty,
+  requireValue,
+  takeIf,
+  using,
+} from './ergonomics';
 
 export { datasetUserFullName, formatFileSize } from './formatting';
 
@@ -40,8 +46,6 @@ export {
   isNonEmpty,
   isNonEmptyString,
 } from './value-tests';
-
-export {} from './miscellaneous-junk';
 
 export { JsonPathBuilder } from './JsonPathBuilder';
 export { SimpleState, useSimpleState } from './SimpleState';
