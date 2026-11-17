@@ -28,7 +28,10 @@ import { ifDefined, Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
-import { newDatasetUploads, newUploadContent } from '../../Service/Model';
+import {
+  newExistingFilePlaceholder,
+  newUpdateUploads,
+} from '../../Service/Model';
 import { FIELD_NAME_DATA_PROP_FILE } from '../../Common/Forms/form-constants';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
@@ -79,7 +82,7 @@ export function UpdateFormController(
             dataPropertiesFileSelections:
               ifDefined(dataset?.files?.datasetProperties, (files) => ({
                 [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map((it) =>
-                  newUploadContent('', it.fileName, 'text/plain')
+                  newExistingFilePlaceholder(it.fileName)
                 ),
               })) ?? {},
           })
@@ -127,7 +130,7 @@ export function UpdateFormController(
         datasetId: props.datasetId,
         original: convertDetailsToMeta(dataset!),
         updated: formState.datasetDetails,
-        newFiles: newDatasetUploads(formState),
+        newFiles: newUpdateUploads(formState),
         oldFiles: dataset!.files.datasetProperties,
       })
         .then((res) => {

@@ -20,7 +20,7 @@ import { isEmpty, isEqual } from 'lodash';
 import { DatasetGetResponseBody, PartialDatasetDetails } from '../../Service';
 import {
   hasUploads,
-  newDatasetUploads,
+  newUpdateUploads,
 } from '../../Service/Model/utility-types';
 
 export interface UpdateFormProps extends DatasetFormProps {
@@ -34,7 +34,7 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
 
   const formState = useDatasetFormState();
   const { datasetDetails } = formState;
-  const fileUploads = newDatasetUploads(formState);
+  const fileUploads = newUpdateUploads(formState);
 
   const [formIsValid, setFormIsValid] = useState<boolean>(true);
 

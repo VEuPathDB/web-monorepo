@@ -17,9 +17,30 @@ export interface TextUploadContent extends UploadContentBase {
   readonly name: string;
   readonly value: string;
   readonly contentType?: string;
+  /**
+   * Set only by `newExistingFilePlaceholder`. Marks an entry that stands in for
+   * a file already stored on the server, so that it is never uploaded.
+   */
+  readonly isPlaceholder?: true;
 }
 
 export type UploadContent = FileUploadContent | TextUploadContent;
+
+/**
+ * Stands in for a file that is already stored on the server, so the update
+ * form can show its name. It has no real content: it must never be uploaded
+ * (see `isPlaceholder` and `newUpdateUploads`).
+ */
+export function newExistingFilePlaceholder(name: string): TextUploadContent {
+  return {
+    ...(newUploadContent('', name, 'text/plain') as TextUploadContent),
+    isPlaceholder: true,
+  };
+}
+
+export function isPlaceholder(content: UploadContent): boolean {
+  return content.type === 'text' && content.isPlaceholder === true;
+}
 
 export function newUploadContent(file: File): FileUploadContent;
 export function newUploadContent(

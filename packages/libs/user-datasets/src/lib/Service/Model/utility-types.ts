@@ -1,4 +1,9 @@
-import { TextUploadContent, UploadContent } from './upload-content';
+import { isEmpty } from 'lodash';
+import {
+  isPlaceholder,
+  TextUploadContent,
+  UploadContent,
+} from './upload-content';
 import { DatasetFormState } from '../../StoreModules';
 import { ifDefined, Possible, ifNotEmpty, takeIf } from '../../Utils';
 import { SAMPLE_INFO_FIELD_NAME } from '../utils/rnaseq-rc-data-files';
@@ -18,6 +23,26 @@ export function newDatasetUploads(state: DatasetFormState): DatasetUploads {
     dataPropertiesFiles: Object.values(state.dataPropertiesFileSelections).flat(
       2
     ),
+  };
+}
+
+/**
+ * Like `newDatasetUploads`, but for the update form: drops the placeholders
+ * that stand in for files already on the server (they must not be re-uploaded),
+ * and leaves `dataPropertiesFiles` undefined when nothing real remains so that
+ * `submitUpdate` skips the delete/PUT steps entirely.
+ */
+export function newUpdateUploads(state: DatasetFormState): DatasetUploads {
+  const uploads = newDatasetUploads(state);
+  const dataPropertiesFiles = uploads.dataPropertiesFiles?.filter(
+    (it) => !isPlaceholder(it)
+  );
+
+  return {
+    ...uploads,
+    dataPropertiesFiles: isEmpty(dataPropertiesFiles)
+      ? undefined
+      : dataPropertiesFiles,
   };
 }
 
