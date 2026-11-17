@@ -3,14 +3,13 @@ import * as util from '../../../../../../Utils';
 import * as vdi from '../../../../../../Service';
 
 import { AddRowButton, InputBlock } from '../../../index';
-import { JsonPathBuilder } from '../../../../../../Utils';
 import { ContactBlock } from './ContactBlock';
 import { useContacts, useDatasetVisibility } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
 import { updateContacts } from '../../../../../../Actions/DatasetMetadataFormActions';
 
 export interface CollaboratorsSectionProps {
-  readonly pathBuilder: JsonPathBuilder;
+  readonly pathBuilder: util.JsonPathBuilder;
 }
 
 export function CollaboratorsSection(props: CollaboratorsSectionProps): React.ReactElement {

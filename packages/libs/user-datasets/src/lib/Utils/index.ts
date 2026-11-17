@@ -9,12 +9,8 @@ export {
 export { datasetUserFullName, formatFileSize } from './formatting';
 
 export {
-  changeHandler,
-  arrayChangeHandler,
   textChange,
   replaceElement,
-  useArrayChangeHandler,
-  useChangeHandler,
 } from './input-utils';
 
 export {

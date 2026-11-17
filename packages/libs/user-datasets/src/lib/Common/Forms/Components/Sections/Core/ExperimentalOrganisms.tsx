@@ -1,23 +1,17 @@
 import React from 'react';
+import * as util from '../../../../../Utils';
+import * as meta from '../../../Hooks/dataset-metadata-hooks';
+
 import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
-import {
-  JsonPathBuilder,
-  BiConsumer,
-  isNonEmpty,
-  isNonBlankString,
-  newTextLengthTest,
-  replaceElement
-} from '../../../../../Utils';
 import { PartialDatasetDetails, PartialOrganism } from '../../../../../Service/Model';
 import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
-import { useContentFlags, useDatasetVisibility, useExperimentalOrgs } from '../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
 import { overwriteMetaField, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
 
 export interface OrganismDetailsProps {
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function ExperimentalOrganisms(props: OrganismDetailsProps): React.ReactElement {
@@ -25,12 +19,12 @@ export function ExperimentalOrganisms(props: OrganismDetailsProps): React.ReactE
 
   const dispatch = useDispatch();
 
-  const organismList = useExperimentalOrgs();
-  const contentFlags = useContentFlags();
+  const organismList = meta.useExperimentalOrgs();
+  const contentFlags = meta.useContentFlags();
 
   const hasOrganismData = contentFlags?.hasOrganismData;
 
-  const safeOrgList = isNonEmpty(organismList) ? organismList : [{}];
+  const safeOrgList = util.isNonEmpty(organismList) ? organismList : [{}];
 
   const setEnabled = React.useCallback(
     (enabled: boolean) =>
@@ -43,14 +37,14 @@ export function ExperimentalOrganisms(props: OrganismDetailsProps): React.ReactE
 
   const setOrganism = React.useCallback(
     (org: PartialOrganism, index: number) => {
-      dispatch(overwriteMetaField('experimentalOrganisms', replaceElement(organismList, index, org)))
+      dispatch(overwriteMetaField('experimentalOrganisms', util.replaceElement(organismList, index, org)))
     },
     [dispatch, organismList]
   )
 
   const isGenomics = isGenomicsProjectId(projectId);
 
-  const isPublic = useDatasetVisibility() === 'public';
+  const isPublic = meta.useDatasetVisibility() === 'public';
 
   const requireInput = !isGenomics ? hasOrganismData === true : isPublic;
 
@@ -128,9 +122,9 @@ export function ExperimentalOrganisms(props: OrganismDetailsProps): React.ReactE
 }
 
 interface OrganismDetailListProps {
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
   readonly organisms: ReadonlyArray<PartialOrganism>;
-  readonly setOrganism: BiConsumer<PartialOrganism, number>;
+  readonly setOrganism: util.BiConsumer<PartialOrganism, number>;
   readonly disabled: boolean;
   readonly required: boolean;
 }
@@ -158,11 +152,11 @@ interface DatasetOrganismRow {
   readonly disabled: boolean;
   readonly required: boolean;
   readonly organism: PartialOrganism;
-  readonly setOrganism: BiConsumer<PartialOrganism, number>;
-  readonly jsonPath: JsonPathBuilder;
+  readonly setOrganism: util.BiConsumer<PartialOrganism, number>;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
-const TEST_ORG_TEXT = newTextLengthTest(3, 128);
+const TEST_ORG_TEXT = util.newTextLengthTest(3, 128);
 
 function OrganismDetailsRow({
   index,
@@ -172,8 +166,8 @@ function OrganismDetailsRow({
   setOrganism,
   jsonPath,
 }: DatasetOrganismRow): React.ReactElement {
-  const hasContent = isNonBlankString(organism.species)
-    || isNonBlankString(organism.strain);
+  const hasContent = util.isNonBlankString(organism.species)
+    || util.isNonBlankString(organism.strain);
 
   return (
     <li className="non-bold-labels organism-row">

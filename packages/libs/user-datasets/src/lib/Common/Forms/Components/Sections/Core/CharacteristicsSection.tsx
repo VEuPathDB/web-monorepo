@@ -1,16 +1,8 @@
 import React from 'react';
 
-import {
-  BiConsumer,
-  Consumer,
-  JsonPathBuilder,
-  Possible,
-} from '../../../../../Utils';
-import {
-  PartialCharacteristics,
-  PartialDatasetDetails,
-  SampleYearRange
-} from '../../../../../Service';
+import * as util from '../../../../../Utils';
+import * as vdi from '../../../../../Service';
+
 import {
   FieldHelpText,
   GrowableStringList,
@@ -26,10 +18,8 @@ import { useDispatch } from 'react-redux';
 import { useCharacteristics, useContentFlags, useDatasetVisibility } from '../../../Hooks/dataset-metadata-hooks';
 import { updateCharacteristics, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
 
-export const FieldStudyToggleID = 'field-study-toggle';
-
 export interface CharacteristicsSectionProps {
-  readonly pathBuilder: JsonPathBuilder;
+  readonly pathBuilder: util.JsonPathBuilder;
   readonly formProps: DatasetCharacteristicsFormSectionConfig;
 }
 
@@ -37,7 +27,7 @@ export function CharacteristicsSection({
   pathBuilder,
   formProps,
 }: CharacteristicsSectionProps): React.ReactElement {
-  const jsonPath = pathBuilder.append<PartialDatasetDetails>('datasetCharacteristics')
+  const jsonPath = pathBuilder.append<vdi.PartialDatasetDetails>('datasetCharacteristics')
 
   const dispatch = useDispatch();
 
@@ -53,11 +43,11 @@ export function CharacteristicsSection({
 
   const characteristics = useCharacteristics();
   const setCharacteristics = React.useCallback(
-    (characteristics: PartialCharacteristics) => dispatch(updateCharacteristics(characteristics)),
+    (characteristics: vdi.PartialCharacteristics) => dispatch(updateCharacteristics(characteristics)),
     [dispatch],
   );
   const setCharacteristic = React.useCallback(
-    (key: keyof PartialCharacteristics, value: PartialCharacteristics[typeof key]) =>
+    (key: keyof vdi.PartialCharacteristics, value: vdi.PartialCharacteristics[typeof key]) =>
       setCharacteristics({ ...characteristics, [key]: value }),
     [characteristics, setCharacteristics],
   );
@@ -82,7 +72,7 @@ export function CharacteristicsSection({
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}
-          id={FieldStudyToggleID}
+          id="field-study-toggle"
         >
           Field Study or Clinical Trial?
         </label>
@@ -115,7 +105,7 @@ export function CharacteristicsSection({
           values={safeCharacteristics.countries}
           required={requireAll}
           setValues={it => setCharacteristic('countries', it)}
-          jsonPath={jsonPath.append<PartialCharacteristics>('countries')}
+          jsonPath={jsonPath.append<vdi.PartialCharacteristics>('countries')}
           disabled={enabled !== true}
           helpText="Country where data or samples were collected from the study population."
         />
@@ -124,7 +114,7 @@ export function CharacteristicsSection({
           years={safeCharacteristics.years}
           setYears={it => setCharacteristic('years', it)}
           required={requireAll}
-          jsonPath={jsonPath.append<PartialCharacteristics>('years')}
+          jsonPath={jsonPath.append<vdi.PartialCharacteristics>('years')}
           disabled={enabled !== true}
         />
 
@@ -134,7 +124,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.studySpecies}
           setValues={it => setCharacteristic('studySpecies', it)}
-          jsonPath={jsonPath.append<PartialCharacteristics>('studySpecies')}
+          jsonPath={jsonPath.append<vdi.PartialCharacteristics>('studySpecies')}
           disabled={enabled !== true}
           helpText={
             'Scientific name of the population the study is based on (e.g., Homo sapiens), even if the dataset'
@@ -148,7 +138,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.outcomes}
           setValues={it => setCharacteristic('outcomes', it)}
-          jsonPath={jsonPath.append<PartialCharacteristics>('outcomes')}
+          jsonPath={jsonPath.append<vdi.PartialCharacteristics>('outcomes')}
           disabled={enabled !== true}
           helpText={
             'Primary disease, condition, or outcome being studied (e.g., malaria, anemia, or treatment failure).'
@@ -162,7 +152,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.associatedFactors}
           setValues={it => setCharacteristic('associatedFactors', it)}
-          jsonPath={jsonPath.append<PartialCharacteristics>(
+          jsonPath={jsonPath.append<vdi.PartialCharacteristics>(
             'associatedFactors'
           )}
           disabled={enabled !== true}
@@ -172,7 +162,7 @@ export function CharacteristicsSection({
           }
         />
 
-        <LabelInputPair<PartialCharacteristics>
+        <LabelInputPair<vdi.PartialCharacteristics>
           type="text"
           fieldName="participantAges"
           label="Participant Ages"
@@ -192,7 +182,7 @@ export function CharacteristicsSection({
           required={requireAll}
           values={safeCharacteristics.sampleTypes}
           setValues={it => setCharacteristic('sampleTypes', it)}
-          jsonPath={jsonPath.append<PartialCharacteristics>('sampleTypes')}
+          jsonPath={jsonPath.append<vdi.PartialCharacteristics>('sampleTypes')}
           disabled={enabled !== true}
           helpText={
             'Type(s) of biological or environmental samples represented in this dataset. Enter ‘N/A’ if not applicable.'
@@ -206,11 +196,11 @@ export function CharacteristicsSection({
 // region Study Design
 
 interface StudyDesignProps {
-  readonly vocab: readonly StudyDesignOption[];
-  readonly onChange: BiConsumer<string, string>;
+  readonly vocab: ReadonlyArray<StudyDesignOption>;
+  readonly onChange: util.BiConsumer<string, string>;
   readonly enabled: boolean;
   readonly required: boolean;
-  readonly selection?: String;
+  readonly selection?: string;
 }
 
 function StudyDesign({
@@ -234,7 +224,7 @@ function StudyDesign({
 
   const help = vocab.find(({ design }) => design === selection)?.help;
 
-  let className: Possible<string> = undefined;
+  let className: util.Possible<string> = undefined;
 
   if (required) {
     className = selection == null ? 'required invalid' : 'required';
@@ -276,9 +266,9 @@ function StudyDesign({
 // region Years
 
 interface YearsInputsProps {
-  readonly years: Partial<SampleYearRange> | undefined;
-  readonly setYears: Consumer<Partial<SampleYearRange>>;
-  readonly jsonPath: JsonPathBuilder;
+  readonly years: util.Possible<Partial<vdi.SampleYearRange>>;
+  readonly setYears: util.Consumer<Partial<vdi.SampleYearRange>>;
+  readonly jsonPath: util.JsonPathBuilder;
   readonly disabled: boolean;
   readonly required: boolean;
 }
@@ -292,8 +282,8 @@ function YearsInputs({
 }: YearsInputsProps): React.ReactElement {
   const safeYears = years ?? {};
 
-  const startField = jsonPath.appendToString<SampleYearRange>('start');
-  const endField = jsonPath.appendToString<SampleYearRange>('end');
+  const startField = jsonPath.appendToString<vdi.SampleYearRange>('start');
+  const endField = jsonPath.appendToString<vdi.SampleYearRange>('end');
 
   const startRef = React.useRef<HTMLInputElement>(null);
   const endRef = React.useRef<HTMLInputElement>(null);
@@ -301,7 +291,7 @@ function YearsInputs({
   const setYear = disabled
     ? () => {}
     : (
-        k: keyof SampleYearRange,
+        k: keyof vdi.SampleYearRange,
         v: string | undefined,
         ref: React.RefObject<HTMLInputElement>
       ) => {

@@ -5,10 +5,6 @@ import {
   DatasetPublicationType as PublicationType,
 } from '../../../../../../Service/Model';
 
-import {
-  JsonPathBuilder,
-} from '../../../../../../Utils';
-
 import * as util from '../../../../../../Utils';
 
 import {
@@ -36,7 +32,7 @@ export interface PublicationRowProps {
   readonly isSingular: boolean;
   readonly isDuplicate: boolean;
 
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function PublicationRow(props: PublicationRowProps): React.ReactElement {

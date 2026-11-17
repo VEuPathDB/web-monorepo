@@ -1,15 +1,15 @@
+import React from 'react';
 import { collapseStatus, StatusTuple } from './utils';
-import { CSSProperties, ReactElement } from 'react';
 import { CitationResult } from './CitationResult';
 
 interface CitationLineProps {
   readonly status: StatusTuple;
 }
 
-export function CitationLine(props: CitationLineProps): ReactElement {
+export function CitationLine(props: CitationLineProps): React.ReactElement {
   const result = collapseStatus(props.status);
 
-  let style: CSSProperties | undefined;
+  let style: React.CSSProperties | undefined;
   let className: string | undefined;
 
   if (result == null) {

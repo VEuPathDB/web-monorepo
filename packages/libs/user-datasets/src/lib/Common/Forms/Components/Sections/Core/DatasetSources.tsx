@@ -6,11 +6,8 @@ import * as actions from '../../../../../Actions/DatasetMetadataFormActions'
 import { isEmpty } from 'lodash';
 import { AddRowButton, InputBlock, LabelInputPair, YesNoToggle } from '../../';
 import { TextInputProps } from '../../LabelInputPair';
-import { testNonBlank } from '../../../../../Utils';
 import { useContentFlags, useDatasetSources, useDatasetVisibility } from '../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
-
-export const DatasetSourcesToggleID = 'dataset-sources-toggle';
 
 export interface DatasetSourcesProps {
   readonly jsonPath: util.JsonPathBuilder;
@@ -73,7 +70,7 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}
-          id={DatasetSourcesToggleID}
+          id="dataset-sources-toggle"
         >
           Available from External Source?
         </label>
@@ -162,7 +159,7 @@ function DataSource({
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}
         required={required}
-        validator={testNonBlank}
+        validator={util.testNonBlank}
         helpText={
           'The version number or publication date from the site where the' +
           ' data was obtained. If neither is available, the data download' +

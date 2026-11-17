@@ -3,11 +3,6 @@ import * as util from '../../../../../../Utils';
 
 import { InputBlock } from '../../../InputBlock';
 import { PartialDatasetDetails, PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
-import {
-  isNonBlankString,
-  isNonEmpty,
-  JsonPathBuilder,
-} from '../../../../../../Utils';
 import { AddRowButton } from '../../../AddRowButton';
 import { OptionalSection } from '../../../OptionalSection';
 import { fixPrimaries, PublicationList } from './utils';
@@ -20,7 +15,7 @@ import { updateContentFlags, updatePublications } from '../../../../../../Action
 import './PublicationsSection.scss';
 
 export interface PublicationsSectionProps {
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function PublicationsSection(props: PublicationsSectionProps): React.ReactElement {
@@ -35,7 +30,7 @@ export function PublicationsSection(props: PublicationsSectionProps): React.Reac
     [dispatch, publications],
   );
 
-  const havePubs = isNonEmpty(publications);
+  const havePubs = util.isNonEmpty(publications);
 
   const contentFlags = useContentFlags();
   const isEnabled = contentFlags?.hasPublications;
@@ -82,7 +77,7 @@ export function PublicationsSection(props: PublicationsSectionProps): React.Reac
           {safePubs.map((pub, index) => {
             let isDuplicate = false;
 
-            if (isNonBlankString(pub.identifier)) {
+            if (util.isNonBlankString(pub.identifier)) {
               if (seenIdentifiers.has(pub.identifier)) {
                 isDuplicate = true;
               } else {

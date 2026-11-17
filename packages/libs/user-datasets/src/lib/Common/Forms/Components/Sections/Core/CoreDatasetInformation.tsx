@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { CollaboratorsSection } from './Collaborators/CollaboratorsSection';
 import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
@@ -16,7 +16,7 @@ export interface CoreDatasetInformationProps {
 export function CoreDatasetInformation({
   jsonPath,
   formProps: { formConfig },
-}: CoreDatasetInformationProps): ReactElement {
+}: CoreDatasetInformationProps): React.ReactElement {
   return (
     <>
       <h3>Core Dataset Information</h3>
