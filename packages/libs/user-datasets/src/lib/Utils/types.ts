@@ -10,8 +10,6 @@ export type Nullable<T> = T | null;
 export type Possible<T> = T | undefined;
 export type Optional<T> = T | null | undefined;
 
-export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
-
 export type Tuple<A, B> = [ A, B ];
 
 export type Mutable<T extends object> = {
@@ -25,27 +23,6 @@ export type DatasetFileType =
   | 'datasetProperties';
 
 ////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @deprecated
- */
-export interface UserDatasetUpload {
-  id: string;
-  datasetId?: number;
-  datasetName: string;
-  summary?: string;
-  description?: string;
-  projects: string[];
-  status: string;
-  errors: string[];
-  stepPercent?: number;
-  started: string;
-  finished?: string;
-  isOngoing: boolean;
-  isCancellable: boolean;
-  isSuccessful: boolean;
-  isUserError: boolean;
-}
 
 /**
  * In EDA, data is referred to as "Study" or "Studies"
