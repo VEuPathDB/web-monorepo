@@ -20,7 +20,8 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
 
   const sources = useDatasetSources();
   const updateSources = React.useCallback(
-    (sources: ReadonlyArray<vdi.PartialDatasetSource>) => dispatch(actions.updateSources(sources)),
+    (sources: ReadonlyArray<vdi.PartialDatasetSource>) =>
+      dispatch(actions.updateSources(sources)),
     [dispatch]
   );
   const setSource = React.useCallback(

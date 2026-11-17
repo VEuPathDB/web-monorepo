@@ -162,7 +162,7 @@ export function CharacteristicsSection({
           }
         />
 
-        <LabelInputPair<vdi.PartialCharacteristics>
+        <LabelInputPair
           type="text"
           fieldName="participantAges"
           label="Participant Ages"

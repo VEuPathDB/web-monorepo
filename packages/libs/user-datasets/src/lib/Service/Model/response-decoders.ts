@@ -16,13 +16,13 @@ export type SampleYearRange = io.TypeOf<typeof sampleYearRange>;
 export const datasetCharacteristics = io.partial({
   studyDesign: io.string,
   studyType: io.string,
-  countries: io.array(io.string),
+  countries: io.readonlyArray(io.string),
   years: sampleYearRange,
-  studySpecies: io.array(io.string),
-  outcomes: io.array(io.string),
-  associatedFactors: io.array(io.string),
+  studySpecies: io.readonlyArray(io.string),
+  outcomes: io.readonlyArray(io.string),
+  associatedFactors: io.readonlyArray(io.string),
   participantAges: io.string,
-  sampleTypes: io.array(io.string),
+  sampleTypes: io.readonlyArray(io.string),
 });
 export type DatasetCharacteristics = io.TypeOf<typeof datasetCharacteristics>;
 
