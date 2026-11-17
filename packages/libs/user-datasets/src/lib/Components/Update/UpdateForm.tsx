@@ -18,7 +18,10 @@ import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isEmpty, isEqual } from 'lodash';
 import { DatasetGetResponseBody, PartialDatasetDetails } from '../../Service';
-import { hasUploads, newDatasetUploads } from '../../Service/Model/utility-types';
+import {
+  hasUploads,
+  newUpdateUploads,
+} from '../../Service/Model/utility-types';
 
 export interface UpdateFormProps extends DatasetFormProps {
   readonly originalDataset: DatasetGetResponseBody;
@@ -31,7 +34,7 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
 
   const formState = useDatasetFormState();
   const { datasetDetails } = formState;
-  const fileUploads = newDatasetUploads(formState);
+  const fileUploads = newUpdateUploads(formState);
 
   const [formIsValid, setFormIsValid] = useState<boolean>(true);
 
@@ -72,10 +75,11 @@ export function UpdateForm(props: UpdateFormProps): ReactElement {
   );
 
   useEffect(
-    () => setFormIsValid(
-      isDatasetFormValid(datasetDetails, props.formConfig, updateSection) &&
-        !isMissingDatasetProperties
-    ),
+    () =>
+      setFormIsValid(
+        isDatasetFormValid(datasetDetails, props.formConfig, updateSection) &&
+          !isMissingDatasetProperties
+      ),
     // formState covers relevant state changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [formState, props, isMissingDatasetProperties]

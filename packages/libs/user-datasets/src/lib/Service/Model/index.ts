@@ -60,10 +60,15 @@ export type {
   FileUploadContent,
   TextUploadContent,
 } from './upload-content';
-export { newUploadContent } from './upload-content';
+export {
+  newUploadContent,
+  newExistingFilePlaceholder,
+  isPlaceholder,
+} from './upload-content';
 
 export type { DatasetUploads, DatasetZipType } from './utility-types';
 export {
   newDatasetUploads,
+  newUpdateUploads,
   type UploadContentMap,
 } from './utility-types';
