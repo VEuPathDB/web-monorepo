@@ -24,7 +24,7 @@ export function DatasetInformationSection(props: DatasetInformationSectionProps)
     <InputBlock header="Dataset Information">
       <div className="field-grid">
         <LabelInputPair
-          type="text"
+          type="textarea"
           label="Description"
           fieldName={props.jsonPath.appendToString<vdi.PartialDatasetDetails>('description')}
           value={description}

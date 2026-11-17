@@ -52,13 +52,12 @@ const orderedStatuses = [
  *  install ready-for-reinstall   grey: "error on install (a bug); pls let us know"
  *  install missing-dependency    yellow: "incompatible, why"
  **/
-
 function getStatus(
   status: DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
-  projects: string[],
+  projects: ReadonlyArray<string>,
   vdiConfig: VdiReconcilerConfig
 ): { content: React.ReactNode; icon: string } {
   const isTargetingCurrentSite = projects.includes(projectId);
@@ -272,7 +271,7 @@ function getPostUploadStatus(
  * Helper function to render error messages as a bulleted list.
  * Replaces newlines with <br> tags in each message.
  */
-function renderErrorMessages(messages: string[]): React.ReactNode {
+function renderErrorMessages(messages: ReadonlyArray<string>): React.ReactNode {
   if (!messages || messages.length === 0) return null;
 
   // Always render as bulleted list with newlines as <br>

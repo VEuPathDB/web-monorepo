@@ -26,6 +26,9 @@ export type DatasetFileType =
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @deprecated
+ */
 export interface UserDatasetUpload {
   id: string;
   datasetId?: number;

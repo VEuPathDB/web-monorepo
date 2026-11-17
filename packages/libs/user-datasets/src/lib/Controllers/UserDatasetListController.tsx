@@ -81,17 +81,20 @@ class UserDatasetListController extends PageController<Props> {
   getActionCreators() {
     return ActionCreators;
   }
+
   needsUploadMessages() {
-    const { config } = this.props.stateProps.globalData;
-    const { hasDirectUpload } = this.props.ownProps;
+    const {
+      globalData: { config },
+      userDatasetUpload: { badAllUploadsActionMessage },
+    } = this.props.stateProps;
+
     if (config == null) {
       return true;
     }
-    const { uploads, badAllUploadsActionMessage } =
-      this.props.stateProps.userDatasetUpload;
-    return (
-      hasDirectUpload && uploads == null && badAllUploadsActionMessage == null
-    );
+
+    const { hasDirectUpload } = this.props.ownProps;
+
+    return hasDirectUpload && badAllUploadsActionMessage == null;
   }
 
   loadData(prevProps?: Props) {

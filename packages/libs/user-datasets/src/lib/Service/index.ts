@@ -16,6 +16,7 @@ export type {
   DatasetListEntry,
   DatasetListShareUser,
   PartialDatasetDetails,
+  DatasetMetadata,
   DatasetPostResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,

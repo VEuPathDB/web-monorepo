@@ -1,71 +1,55 @@
-import React, {
-  JSXElementConstructor,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React from 'react';
+import * as vdi from '../../Service';
+import * as util from '../../Utils';
+
 import { DatasetFormConfig } from '../Configuration';
-import {
-  DatasetId,
-  PartialDatasetDetails,
-  useVdiService,
-  VdiServiceMetadata,
-} from '../../Service';
-import { useDispatch, useSelector } from 'react-redux';
-import { StateSlice } from '../../StoreModules/types';
+
+import { useDispatch } from 'react-redux';
 import {
   clearBadUpload,
   trackUploadProgress,
-  updateFormState,
+  updateFormMetadata,
 } from '../../Actions/UserDatasetUploadActions';
 import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
-import { DatasetMetadata } from '../../Service/Model';
-import { DataNoun, ifDefined, Nullable, useSimpleState } from '../../Utils';
-import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
+import { DataNoun } from '../../Utils';
 import { MetadataImportModalController } from './Components/Modals/MetaImportModal';
 
-export interface DatasetFormControllerProps<
-  P extends DatasetFormProps = DatasetFormProps
-> {
+import { useDatasetMetadata } from './Hooks/dataset-metadata-hooks';
+import { useBadUploadMessages, useUploadProgress } from './Hooks/async-action-hooks';
+
+export interface DatasetFormControllerProps<P extends DatasetFormProps = DatasetFormProps> {
   readonly baseUrl: string;
-  readonly form: JSXElementConstructor<P>;
+  readonly form: React.JSXElementConstructor<P>;
   readonly formConfig: DatasetFormConfig;
-  readonly vdiConfig: VdiServiceMetadata;
-  readonly propFactory: (baseProps: DatasetFormProps) => P;
+  readonly vdiConfig: vdi.VdiServiceMetadata;
+  readonly propFactory: util.Function<DatasetFormProps, P>;
   readonly dataNoun: DataNoun;
   readonly enablePublicDatasets: boolean;
 }
 
 export function DatasetFormController<
   P extends DatasetFormProps = DatasetFormProps
->(props: DatasetFormControllerProps<P>): ReactElement {
+>(props: DatasetFormControllerProps<P>): React.ReactElement {
   const { form: Form } = props;
 
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
 
   const dispatch = useDispatch();
 
   // region Upload State
 
-  const badUploadState = useSelector(
-    (stateSlice: StateSlice) => stateSlice.userDatasetUpload.badUploadMessages
-  );
+  const badUploadState = useBadUploadMessages();
+  const uploadProgress = useUploadProgress();
 
-  const uploadProgress = useSelector(
-    (stateSlice: StateSlice) =>
-      stateSlice.userDatasetUpload.uploadProgress?.progress
-  );
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (badUploadState != null) {
       dispatch(trackUploadProgress(null));
       setSubmitting(false);
     }
   }, [badUploadState, dispatch]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     return () => {
       clearBadUpload();
     };
@@ -75,35 +59,27 @@ export function DatasetFormController<
 
   // region Dataset Selection Modal
 
-  const vdi = useVdiService();
-  const formState = useDatasetFormState();
+  const service = vdi.useVdiService();
 
-  const isDatasetSelectionVisible = useSimpleState(false);
+  const metadata = useDatasetMetadata();
 
-  const fetchDatasetMetadata = useCallback(
-    (id: DatasetId) => {
-      if (!vdi) {
-        return;
+  const isDatasetSelectionVisible = util.useSimpleState(false);
+
+  const fetchDatasetMetadata = React.useCallback(
+    async (id: vdi.DatasetId) => util.ifDefined(service, async (vdi) => {
+      const res = await vdi.getRawDatasetMetadata(id, false);
+
+      if ('status' in res) {
+        throw new Error(
+          `failed to fetch dataset ${id}: ${res.status} ${res.message ?? ''}`
+        );
       }
 
-      vdi.getRawDatasetMetadata(id, false).then((res) => {
-        if ('status' in res) {
-          throw new Error(
-            `failed to fetch dataset ${id}: ${res.status} ${res.message ?? ''}`
-          );
-        }
-
-        dispatch(
-          updateFormState({
-            ...formState,
-            datasetDetails: applyMetadata(formState.datasetDetails, res),
-          })
-        );
-      });
-    },
+      dispatch(updateFormMetadata(applyMetadata(metadata ?? {}, res)));
+    }),
     // the vdi instance itself doesn't matter as long as it exists
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [vdi != null, formState]
+    [service != null, metadata]
   );
 
   // endregion Dataset Selection Modal
@@ -148,22 +124,22 @@ function notImplemented() {
   throw new Error('form submission not implemented');
 }
 
-function setMetadata<K extends keyof PartialDatasetDetails>(
+function setMetadata<K extends keyof vdi.PartialDatasetDetails>(
   obj: any,
   key: K,
-  value: PartialDatasetDetails[K]
+  value: vdi.PartialDatasetDetails[K]
 ) {
   obj[key] = value;
 }
 
 function applyMetadata(
-  formMeta: Nullable<PartialDatasetDetails>,
-  rawMeta: DatasetMetadata
-): PartialDatasetDetails {
+  formMeta: util.Nullable<vdi.PartialDatasetDetails>,
+  rawMeta: vdi.DatasetMetadata
+): vdi.PartialDatasetDetails {
   const out: Record<string, any> & {
-    set?<K extends keyof PartialDatasetDetails>(
+    set?<K extends keyof vdi.PartialDatasetDetails>(
       key: K,
-      value: PartialDatasetDetails[K]
+      value: vdi.PartialDatasetDetails[K]
     ): void;
   } = { ...(formMeta ?? {}) };
 
@@ -181,13 +157,16 @@ function applyMetadata(
   setMetadata(out, 'funding', rawMeta.funding);
   setMetadata(out, 'dataDisclaimer', rawMeta.dataDisclaimer);
   setMetadata(out, 'datasetSources', rawMeta.datasetSources);
-  setMetadata(out, 'metadataContentFlags', ifDefined(rawMeta.metadataContentFlags, it => ({
-    hasDatasetCharacteristics: it.hasDatasetCharacteristics ?? undefined,
-    hasDatasetSources: it.hasDatasetSources ?? undefined,
-    hasDataDisclaimer: it.hasDataDisclaimer ?? undefined,
-    hasOrganismData: it.hasOrganismData ?? undefined,
-    hasPublications: it.hasPublications ?? undefined,
-  })));
+  setMetadata(out, 'metadataContentFlags', util.ifDefined(
+    rawMeta.metadataContentFlags,
+    it => ({
+      hasDatasetCharacteristics: it.hasDatasetCharacteristics ?? undefined,
+      hasDatasetSources: it.hasDatasetSources ?? undefined,
+      hasDataDisclaimer: it.hasDataDisclaimer ?? undefined,
+      hasOrganismData: it.hasOrganismData ?? undefined,
+      hasPublications: it.hasPublications ?? undefined,
+    }),
+  ));
 
-  return out as PartialDatasetDetails;
+  return out as vdi.PartialDatasetDetails;
 }
