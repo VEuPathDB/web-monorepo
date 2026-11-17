@@ -12,6 +12,7 @@ export type {
   PartialDatasetDetails,
   PartialDatasetPublication,
   PartialDatasetSource,
+  PartialOrganism,
   ShareReceiptAction,
 } from './request-types';
 

@@ -1,16 +1,16 @@
 import React from 'react';
 import {
   JsonPathBuilder,
-  newTextLengthTest,
+  useTextLengthTest
 } from '../../../../../../Utils';
-import { DatasetContact } from '../../../../../../Service';
 import { LabelInputPair } from '../../../LabelInputPair';
+import { PartialDatasetContact } from '../../../../../../Service';
 
 export interface ContactBlockProps {
   readonly index: number;
   readonly path: JsonPathBuilder;
-  readonly contact: DatasetContact;
-  readonly updateContact: (contact: DatasetContact, index: number) => void;
+  readonly contact: PartialDatasetContact;
+  readonly updateContact: (contact: PartialDatasetContact, index: number) => void;
 
   /**
    * Whether the dataset visibility has been set to public.
@@ -27,6 +27,8 @@ export interface ContactBlockProps {
    */
   readonly primaryExists: boolean;
 }
+
+type ContactProp = keyof PartialDatasetContact;
 
 /**
  * Validation threshold definitions for the different tiers of validation rules
@@ -58,23 +60,23 @@ enum Strictness {
   Primary,
 }
 
-const TEST_CONTACT_NAME = newTextLengthTest(2, 300);
-
 export function ContactBlock(props: ContactBlockProps): React.ReactElement {
   const { index, contact, updateContact } = props;
 
-  const makePath = (key: keyof DatasetContact) =>
+  const makePath = (key: ContactProp) =>
     props.path.appendToString(key);
 
   // Disable linting for dep array: Dependencies are known.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onChangePart = React.useCallback(
-    (k: keyof DatasetContact, v: DatasetContact[typeof k]) =>
+    (k: ContactProp, v: PartialDatasetContact[typeof k]) =>
       updateContact({ ...contact, [k]: v }, index),
     [contact, updateContact, index]
   );
 
   const validationThreshold = determineStrictness(props);
+
+  const reqNameLengthTest = useTextLengthTest(2, 300);
 
   return (
     <li className="field-grid non-bold-labels">
@@ -88,7 +90,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.firstName}
           onChange={(it) => onChangePart('firstName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          validator={TEST_CONTACT_NAME}
+          validator={reqNameLengthTest}
         />
 
         <LabelInputPair
@@ -109,7 +111,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.lastName}
           onChange={(it) => onChangePart('lastName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          validator={TEST_CONTACT_NAME}
+          validator={reqNameLengthTest}
         />
 
         <LabelInputPair
@@ -171,8 +173,8 @@ function determineStrictness(props: ContactBlockProps): Strictness {
     : Strictness.Secondary;
 }
 
-function isContactEmpty(contact: DatasetContact): boolean {
-  for (const key of Object.keys(contact) as Array<keyof DatasetContact>) {
+function isContactEmpty(contact: PartialDatasetContact): boolean {
+  for (const key of Object.keys(contact) as ReadonlyArray<ContactProp>) {
     if (key !== 'isPrimary' && contact[key]) return false;
   }
 

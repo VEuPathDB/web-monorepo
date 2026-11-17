@@ -1,24 +1,19 @@
 import React, { ReactElement } from 'react';
 import { CollaboratorsSection } from './Collaborators/CollaboratorsSection';
-import { PartialDatasetDetails } from '../../../../../Service';
 import { CharacteristicsSection } from './CharacteristicsSection';
 import { DatasetSources } from './DatasetSources';
-import { Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { JsonPathBuilder } from '../../../../../Utils';
 import { DatasetUsage } from './DatasetUsage';
 import { DatasetFormProps } from '../../../DatasetFormProps';
 import { PublicationsSection } from './Publications/PublicationsSection';
 import { ExperimentalOrganisms } from './ExperimentalOrganisms';
 
 export interface CoreDatasetInformationProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
   readonly formProps: DatasetFormProps;
 }
 
 export function CoreDatasetInformation({
-  datasetMeta,
-  setDatasetMeta,
   jsonPath,
   formProps: { formConfig },
 }: CoreDatasetInformationProps): ReactElement {
@@ -32,45 +27,20 @@ export function CoreDatasetInformation({
         and sharing with selected collaborators).
       </p>
 
-      <CollaboratorsSection
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
-        pathBuilder={jsonPath.append<PartialDatasetDetails>('contacts')}
-      />
+      <CollaboratorsSection pathBuilder={jsonPath} />
 
       {formConfig.datasetCharacteristics?.enable && (
         <CharacteristicsSection
           formProps={formConfig.datasetCharacteristics}
-          datasetMeta={datasetMeta}
-          setDatasetMeta={setDatasetMeta}
-          pathBuilder={jsonPath.append<PartialDatasetDetails>('datasetCharacteristics')}
+          pathBuilder={jsonPath}
         />
       )}
 
       {formConfig.enableExperimentalOrganism && (
-        <ExperimentalOrganisms
-          setDatasetMeta={setDatasetMeta}
-          datasetMeta={datasetMeta}
-          jsonPath={jsonPath.append<PartialDatasetDetails>('experimentalOrganisms')}
-        />
+        <ExperimentalOrganisms jsonPath={jsonPath} />
       )}
 
-      <PublicationsSection
-        datasetMeta={datasetMeta}
-        setDatasetMeta={setDatasetMeta}
-        publications={datasetMeta.publications ?? []}
-        setPublications={(v) =>
-          setDatasetMeta({
-            ...datasetMeta,
-            publications: v,
-          })
-        }
-        isRequired={
-          false /* TODO: when vdi backend tracks this, use that value from the metadata*/
-        }
-        jsonPath={jsonPath.append<PartialDatasetDetails>('publications')}
-      />
-
+      <PublicationsSection jsonPath={jsonPath}/>
       <DatasetSources jsonPath={jsonPath} />
       <DatasetUsage jsonPath={jsonPath} />
     </>

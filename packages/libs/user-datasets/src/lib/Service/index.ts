@@ -26,6 +26,7 @@ export type {
   DatasetZipType,
   PluginDataType,
   PartialCharacteristics,
+  PartialDatasetContact,
   PartialDatasetSource,
   SampleYearRange,
   ValidationErrors,

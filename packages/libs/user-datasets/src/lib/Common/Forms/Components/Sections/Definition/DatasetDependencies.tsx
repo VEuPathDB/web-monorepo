@@ -1,28 +1,27 @@
 import React, { ReactElement } from 'react';
-import {
-  DatasetDependency,
-  PartialDatasetDetails,
-} from '../../../../../Service';
-import { Consumer, isNonEmpty } from '../../../../../Utils';
+import { DatasetDependency } from '../../../../../Service';
+import { isNonEmpty } from '../../../../../Utils';
 import { DependenciesConfig } from '../../../../Configuration';
+import { useDispatch } from 'react-redux';
+import { useDependencies } from '../../../Hooks/dataset-metadata-hooks';
+import { overwriteMetaField } from '../../../../../Actions/DatasetMetadataFormActions';
 
 export interface DatasetDependenciesProps {
-  readonly datasetDetails: PartialDatasetDetails;
-  readonly setDatasetDetails: Consumer<PartialDatasetDetails>;
   readonly config: DependenciesConfig;
 }
 
 export function DatasetDependencies(
-  { datasetDetails, setDatasetDetails, config }: DatasetDependenciesProps
+  { config }: DatasetDependenciesProps
 ): ReactElement {
-  const [valid, setValid] = React.useState(() => isNonEmpty(datasetDetails.dependencies));
+  const dispatch = useDispatch();
+  const dependencies = useDependencies();
+
+  const isValid = isNonEmpty(dependencies);
 
   const setDependencies = React.useCallback(
-    (deps: DatasetDependency[]) => {
-      setDatasetDetails({ ...datasetDetails, dependencies: deps });
-      setValid(isNonEmpty(deps));
-    },
-    [datasetDetails, setDatasetDetails],
+    (deps: ReadonlyArray<DatasetDependency>) =>
+      dispatch(overwriteMetaField('dependencies', deps)),
+    [dispatch],
   );
 
   const classNames: Array<string> = [];
@@ -31,7 +30,7 @@ export function DatasetDependencies(
     classNames.push('required');
   }
 
-  if (!valid) {
+  if (!isValid) {
     classNames.push('invalid');
   }
 
@@ -41,7 +40,7 @@ export function DatasetDependencies(
         Reference organism(s)
       </label>
       {config.renderInput({
-        dependencies: datasetDetails.dependencies ?? [],
+        dependencies: dependencies ?? [],
         setDependencies,
       })}
     </>

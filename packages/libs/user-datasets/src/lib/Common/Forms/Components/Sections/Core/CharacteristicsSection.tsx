@@ -8,7 +8,8 @@ import {
 } from '../../../../../Utils';
 import {
   PartialCharacteristics,
-  SampleYearRange,
+  PartialDatasetDetails,
+  SampleYearRange
 } from '../../../../../Service';
 import {
   FieldHelpText,
@@ -33,9 +34,11 @@ export interface CharacteristicsSectionProps {
 }
 
 export function CharacteristicsSection({
-  pathBuilder: jsonPath,
+  pathBuilder,
   formProps,
 }: CharacteristicsSectionProps): React.ReactElement {
+  const jsonPath = pathBuilder.append<PartialDatasetDetails>('datasetCharacteristics')
+
   const dispatch = useDispatch();
 
   const contentFlags = useContentFlags();

@@ -1,38 +1,31 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
+import * as util from '../../../../../../Utils';
+
 import { InputBlock } from '../../../InputBlock';
 import { PartialDatasetDetails, PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import {
-  Consumer,
   isNonBlankString,
+  isNonEmpty,
   JsonPathBuilder,
 } from '../../../../../../Utils';
-import * as util from '../../../../../../Utils';
-import { isEmpty } from 'lodash';
 import { AddRowButton } from '../../../AddRowButton';
 import { OptionalSection } from '../../../OptionalSection';
 import { fixPrimaries, PublicationList } from './utils';
 import { PublicationRow } from './PublicationRow';
 
-import './PublicationsSection.scss';
-import { useContentFlags, usePublications } from '../../../../Hooks/dataset-metadata-hooks';
+import { useContentFlags, useDatasetVisibility, usePublications } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
 import { updateContentFlags, updatePublications } from '../../../../../../Actions/DatasetMetadataFormActions';
 
+import './PublicationsSection.scss';
+
 export interface PublicationsSectionProps {
-  readonly datasetMeta: PartialDatasetDetails,
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>,
-
-  readonly publications: PublicationList;
-  readonly setPublications: Consumer<PublicationList>;
-
-  readonly isRequired: boolean;
-
   readonly jsonPath: JsonPathBuilder;
 }
 
-export function PublicationsSection(
-  props: PublicationsSectionProps
-): ReactElement {
+export function PublicationsSection(props: PublicationsSectionProps): React.ReactElement {
+  const jsonPath = props.jsonPath.append<PartialDatasetDetails>('publications');
+
   const dispatch = useDispatch();
 
   const publications = usePublications();
@@ -42,7 +35,7 @@ export function PublicationsSection(
     [dispatch, publications],
   );
 
-  const havePubs = !isEmpty(publications);
+  const havePubs = isNonEmpty(publications);
 
   const contentFlags = useContentFlags();
   const isEnabled = contentFlags?.hasPublications;
@@ -55,16 +48,18 @@ export function PublicationsSection(
   );
 
   if (isEnabled === undefined && havePubs) {
-    setEnabled(true)
+    setEnabled(true);
   }
 
   const safePubs: PublicationList = havePubs
-    ? props.publications
+    ? publications
     : [{ isPrimary: true }];
 
   const calcRequired = (pub: Publication, i: number) =>
     (isEnabled ?? false) &&
     (pub.isPrimary || (i === 0 && safePubs.length === 1));
+
+  const isPublic = useDatasetVisibility() === 'public';
 
   const seenIdentifiers = new Set<string>();
 
@@ -76,7 +71,7 @@ export function PublicationsSection(
           enabled: isEnabled ?? null,
           setEnabled: setEnabled,
           fieldName: 'enable-publications',
-          required: props.isRequired,
+          required: isPublic,
           helpText: 'Whether the data underlying this dataset have been'
             + ' described in a published manuscript, journal article, or'
             + ' preprint.',
@@ -104,7 +99,7 @@ export function PublicationsSection(
                 isRequired={calcRequired(pub, index)}
                 isSingular={safePubs.length === 1}
                 isDisabled={!isEnabled}
-                jsonPath={props.jsonPath.append(index)}
+                jsonPath={jsonPath.append(index)}
                 isDuplicate={isDuplicate}
               />
             );

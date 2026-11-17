@@ -7,6 +7,7 @@ import * as util from './types';
 import * as fn from './ergonomics';
 import { isEmpty } from 'lodash';
 import { isNonBlankString } from './value-tests';
+import { useCallback } from 'react';
 
 type TextProps = TextInputProps | TextAreaProps;
 
@@ -18,6 +19,15 @@ export const newTextLengthTest = (min: number, max: number): util.Predicate<Text
     disabled === true
       || (!required && isEmpty(value))
       || fn.using(value?.length ?? 0, (it) => it >= min && it <= max);
+
+export function useTextLengthTest(min: number, max: number): util.Predicate<TextProps> {
+  return useCallback(
+    ({ value, required, disabled }) => disabled === true
+      || (!required && isEmpty(value))
+      || fn.using(value?.length ?? 0, (it) => it >= min && it <= max),
+    [min, max],
+  );
+}
 
 export const testNonBlank = ({
   value,

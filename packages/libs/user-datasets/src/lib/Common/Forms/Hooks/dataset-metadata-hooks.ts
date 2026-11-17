@@ -12,46 +12,29 @@ function useSelector<T>(fn: util.Function<vdi.PartialDatasetDetails, util.Possib
   );
 }
 
-export function useDatasetMetadata(): util.Possible<vdi.PartialDatasetDetails> {
-  return useSelector(identity);
-}
+export const useDatasetMetadata = () =>
+  useSelector<vdi.PartialDatasetDetails>(identity);
 
-export function useDatasetVisibility(): util.Possible<vdi.DatasetVisibility> {
-  return useSelector(it => it.visibility);
-}
+export const useCharacteristics = () => useSelector(it => it.datasetCharacteristics);
 
-export function useCharacteristics(): util.Possible<vdi.PartialCharacteristics> {
-  return useSelector(it => it.datasetCharacteristics);
-}
+export const useContacts = () => useSelector(it => it.contacts);
 
-export function usePublications(): util.Possible<ReadonlyArray<vdi.PartialDatasetPublication>> {
-  return useSelector(it => it.publications);
-}
+export const useContentFlags = () => useSelector(it => it.metadataContentFlags);
 
-export function useContacts(): util.Possible<ReadonlyArray<vdi.PartialDatasetContact>> {
-  return useSelector(it => it.contacts);
-}
+export const useDataDisclaimer = () => useSelector(it => it.dataDisclaimer);
 
-export function useExternalDOIs(): util.Possible<ReadonlyArray<vdi.DOIReference>> {
-  return useSelector(it => it.externalIdentifiers?.dois);
-}
+export const useDatasetSources = () => useSelector(it => it.datasetSources);
 
-export function useExternalHyperlinks(): util.Possible<ReadonlyArray<vdi.DatasetHyperlink>> {
-  return useSelector(it => it.externalIdentifiers?.hyperlinks);
-}
+export const useDatasetVisibility = () => useSelector(it => it.visibility);
 
-export function useExternalBioProjects(): util.Possible<ReadonlyArray<vdi.BioProjectId>> {
-  return useSelector(it => it.externalIdentifiers?.bioprojectIds);
-}
+export const useDependencies = () => useSelector(it => it.dependencies);
 
-export function useContentFlags(): util.Possible<vdi.DatasetMetadataContentFlags> {
-  return useSelector(it => it.metadataContentFlags);
-}
+export const useExperimentalOrgs = () => useSelector(it => it.experimentalOrganisms);
 
-export function useDataDisclaimer(): util.Possible<string> {
-  return useSelector(it => it.dataDisclaimer);
-}
+export const useExternalBioProjects = () => useSelector(it => it.externalIdentifiers?.bioprojectIds);
 
-export function useDatasetSources(): util.Possible<ReadonlyArray<vdi.PartialDatasetSource>> {
-  return useSelector(it => it.datasetSources);
-}
+export const useExternalDOIs = () => useSelector(it => it.externalIdentifiers?.dois);
+
+export const useExternalHyperlinks = () => useSelector(it => it.externalIdentifiers?.hyperlinks);
+
+export const usePublications = () => useSelector(it => it.publications);

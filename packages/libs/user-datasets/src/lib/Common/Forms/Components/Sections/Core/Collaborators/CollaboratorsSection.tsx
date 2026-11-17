@@ -1,43 +1,41 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
+import * as util from '../../../../../../Utils';
+import * as vdi from '../../../../../../Service';
 
 import { AddRowButton, InputBlock } from '../../../index';
-import { Consumer, JsonPathBuilder } from '../../../../../../Utils';
-import {
-  DatasetContact,
-  PartialDatasetDetails,
-} from '../../../../../../Service';
+import { JsonPathBuilder } from '../../../../../../Utils';
 import { ContactBlock } from './ContactBlock';
-import { isEmpty } from 'lodash';
+import { useContacts, useDatasetVisibility } from '../../../../Hooks/dataset-metadata-hooks';
+import { useDispatch } from 'react-redux';
+import { updateContacts } from '../../../../../../Actions/DatasetMetadataFormActions';
 
 export interface CollaboratorsSectionProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly pathBuilder: JsonPathBuilder;
 }
 
-export function CollaboratorsSection(
-  { datasetMeta, setDatasetMeta, pathBuilder }: CollaboratorsSectionProps
-): ReactElement {
-  const safeContacts = isEmpty(datasetMeta.contacts)
-    ? [{}]
-    : datasetMeta.contacts!;
+export function CollaboratorsSection(props: CollaboratorsSectionProps): React.ReactElement {
+  const pathBuilder = props.pathBuilder.append<vdi.PartialDatasetDetails>('contacts');
+
+  const contacts = useContacts();
+  const dispatch = useDispatch();
+
+  const safeContacts = util.isNonEmpty(contacts) ? contacts : [{}];
 
   const hasPrimary = safeContacts.some((it) => it.isPrimary);
 
   const setContacts = React.useCallback(
-    (contacts: Array<DatasetContact>) =>
-      setDatasetMeta({ ...datasetMeta, contacts }),
-    [datasetMeta, setDatasetMeta],
+    (contacts: ReadonlyArray<vdi.PartialDatasetContact>) => dispatch(updateContacts(contacts)),
+    [dispatch],
   );
 
   const onUpdateContact = React.useCallback(
-    (contact: DatasetContact, index: number) => {
+    (contact: vdi.PartialDatasetContact, index: number) => {
       if (
-        Array.isArray(datasetMeta.contacts) &&
-        datasetMeta.contacts.length > 0
+        Array.isArray(contacts) &&
+        contacts.length > 0
       ) {
         const newContacts = scrubContactPrimaries(
-          datasetMeta.contacts,
+          contacts,
           contact.isPrimary === true
         );
         newContacts[index] = scrubContactPrimary(contact);
@@ -46,10 +44,10 @@ export function CollaboratorsSection(
         setContacts([scrubContactPrimary(contact)]);
       }
     },
-    [datasetMeta.contacts, setContacts],
+    [contacts, setContacts],
   );
 
-  const isPublic = datasetMeta.visibility === 'public';
+  const isPublic = useDatasetVisibility() === 'public';
 
   const contactBlocks = safeContacts.map((contact, index) => {
     const path = pathBuilder.append(index);
@@ -87,15 +85,15 @@ export function CollaboratorsSection(
 }
 
 function scrubContactPrimaries(
-  contacts: readonly DatasetContact[],
+  contacts: ReadonlyArray<vdi.PartialDatasetContact>,
   unsetAll: boolean = false
-): DatasetContact[] {
+): Array<vdi.PartialDatasetContact> {
   return unsetAll
     ? contacts.map(({ isPrimary: _, ...contact }) => contact)
     : contacts.map(scrubContactPrimary);
 }
 
-function scrubContactPrimary(contact: DatasetContact): DatasetContact {
+function scrubContactPrimary(contact: vdi.PartialDatasetContact): vdi.PartialDatasetContact {
   if (contact.isPrimary === true) return contact;
 
   const { isPrimary: _, ...prunedContact } = contact;

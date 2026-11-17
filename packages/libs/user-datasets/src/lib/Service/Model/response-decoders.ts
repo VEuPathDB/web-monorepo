@@ -285,28 +285,28 @@ export type DatasetMetadataContentFlags = io.TypeOf<typeof datasetMetadataConten
 
 export const datasetMetaBase = io.intersection([
   io.type({
-    installTargets: io.array(io.string),
+    installTargets: io.readonlyArray(io.string),
     name: io.string,
     summary: io.string,
     origin: io.string,
-    dependencies: io.array(datasetDependency),
+    dependencies: io.readonlyArray(datasetDependency),
   }),
   io.partial({
     description: io.string,
-    publications: io.array(datasetPublication),
-    contacts: io.array(datasetContact),
+    publications: io.readonlyArray(datasetPublication),
+    contacts: io.readonlyArray(datasetContact),
     projectName: io.string,
     programName: io.string,
-    linkedDatasets: io.array(linkedDataset),
-    experimentalOrganisms: io.array(datasetOrganism),
+    linkedDatasets: io.readonlyArray(linkedDataset),
+    experimentalOrganisms: io.readonlyArray(datasetOrganism),
     hostOrganism: datasetOrganism,
     datasetCharacteristics: datasetCharacteristics,
     externalIdentifiers: externalIdentifiers,
-    funding: io.array(datasetFundingAward),
+    funding: io.readonlyArray(datasetFundingAward),
     shortAttribution: io.string,
     daysForApproval: io.number,
     dataDisclaimer: io.string,
-    datasetSources: io.array(datasetSource),
+    datasetSources: io.readonlyArray(datasetSource),
   }),
 ]);
 export type DatasetMetaBase = io.TypeOf<typeof datasetMetaBase>;

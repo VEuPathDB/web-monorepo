@@ -15,6 +15,8 @@ export {
   testFileRequired,
   testNonBlank,
   newTextLengthTest,
+
+  useTextLengthTest,
 } from './input-tests';
 
 export type {

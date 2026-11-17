@@ -1,60 +1,60 @@
-import React, { ReactElement, useCallback } from 'react';
+import React from 'react';
 import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
 import {
   JsonPathBuilder,
   BiConsumer,
-  Consumer,
   isNonEmpty,
   isNonBlankString,
   newTextLengthTest,
-  useArrayChangeHandler
+  replaceElement
 } from '../../../../../Utils';
-import { PartialDatasetDetails } from '../../../../../Service';
-import { PartialOrganism } from '../../../../../Service/Model/request-types';
+import { PartialDatasetDetails, PartialOrganism } from '../../../../../Service/Model';
 import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { useContentFlags, useDatasetVisibility, useExperimentalOrgs } from '../../../Hooks/dataset-metadata-hooks';
+import { useDispatch } from 'react-redux';
+import { overwriteMetaField, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
 
 export interface OrganismDetailsProps {
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly datasetMeta: PartialDatasetDetails;
   readonly jsonPath: JsonPathBuilder;
 }
 
-export function ExperimentalOrganisms(
-  props: OrganismDetailsProps
-): ReactElement {
-  const { hasOrganismData } = props.datasetMeta.metadataContentFlags ?? {};
+export function ExperimentalOrganisms(props: OrganismDetailsProps): React.ReactElement {
+  const jsonPath = props.jsonPath.append<PartialDatasetDetails>('experimentalOrganisms');
 
-  const safeOrgList = isNonEmpty(props.datasetMeta.experimentalOrganisms)
-    ? props.datasetMeta.experimentalOrganisms
-    : [{}];
+  const dispatch = useDispatch();
 
-  const { datasetMeta, setDatasetMeta } = props;
+  const organismList = useExperimentalOrgs();
+  const contentFlags = useContentFlags();
 
-  const setEnabled = useCallback(
+  const hasOrganismData = contentFlags?.hasOrganismData;
+
+  const safeOrgList = isNonEmpty(organismList) ? organismList : [{}];
+
+  const setEnabled = React.useCallback(
     (enabled: boolean) =>
-      setDatasetMeta({
-        ...datasetMeta,
-        metadataContentFlags: {
-          ...(datasetMeta.metadataContentFlags ?? {}),
-          hasOrganismData: enabled,
-        },
-      }),
-    [datasetMeta, setDatasetMeta]
+      dispatch(updateContentFlags({
+        ...contentFlags,
+        hasOrganismData: enabled,
+      })),
+    [dispatch, contentFlags]
   );
 
-  const arrayCallback = useArrayChangeHandler('experimentalOrganisms', datasetMeta, setDatasetMeta);
+  const setOrganism = React.useCallback(
+    (org: PartialOrganism, index: number) => {
+      dispatch(overwriteMetaField('experimentalOrganisms', replaceElement(organismList, index, org)))
+    },
+    [dispatch, organismList]
+  )
 
   const isGenomics = isGenomicsProjectId(projectId);
 
-  const requireInput = !isGenomics
-    ? hasOrganismData === true
-    : props.datasetMeta.visibility === 'public';
+  const isPublic = useDatasetVisibility() === 'public';
+
+  const requireInput = !isGenomics ? hasOrganismData === true : isPublic;
 
   const disabled = isGenomics ? false : !hasOrganismData;
-
-  const isPublic = props.datasetMeta.visibility === 'public';
   const enabled = isGenomics ? true : hasOrganismData;
 
   return (
@@ -104,8 +104,9 @@ export function ExperimentalOrganisms(
           </ul>
 
           <OrganismDetailsContent
+            jsonPath={jsonPath}
             organisms={safeOrgList}
-            setOrganism={arrayCallback}
+            setOrganism={setOrganism}
             disabled={disabled}
             required={requireInput}
           />
@@ -115,10 +116,7 @@ export function ExperimentalOrganisms(
             className="column-2"
             onClick={() => {
               if (!disabled)
-                props.setDatasetMeta({
-                  ...props.datasetMeta,
-                  experimentalOrganisms: [...safeOrgList, {}],
-                });
+                setOrganism({}, Infinity);
             }}
           >
             + Additional organism
@@ -130,19 +128,21 @@ export function ExperimentalOrganisms(
 }
 
 interface OrganismDetailListProps {
-  readonly organisms: readonly PartialOrganism[];
+  readonly jsonPath: JsonPathBuilder;
+  readonly organisms: ReadonlyArray<PartialOrganism>;
   readonly setOrganism: BiConsumer<PartialOrganism, number>;
   readonly disabled: boolean;
   readonly required: boolean;
 }
 
-function OrganismDetailsContent(props: OrganismDetailListProps): ReactElement {
+function OrganismDetailsContent(props: OrganismDetailListProps): React.ReactElement {
   return (
     <ol className="multi-input span-2">
       {props.organisms.map((org, index) => (
         <OrganismDetailsRow
           key={index}
           index={index}
+          jsonPath={props.jsonPath.append(index)}
           disabled={props.disabled}
           required={props.required && index === 0}
           organism={org}
@@ -159,6 +159,7 @@ interface DatasetOrganismRow {
   readonly required: boolean;
   readonly organism: PartialOrganism;
   readonly setOrganism: BiConsumer<PartialOrganism, number>;
+  readonly jsonPath: JsonPathBuilder;
 }
 
 const TEST_ORG_TEXT = newTextLengthTest(3, 128);
@@ -169,18 +170,20 @@ function OrganismDetailsRow({
   required,
   organism,
   setOrganism,
-}: DatasetOrganismRow): ReactElement {
-  const hasContent =
-    isNonBlankString(organism.species) || isNonBlankString(organism.strain);
+  jsonPath,
+}: DatasetOrganismRow): React.ReactElement {
+  const hasContent = isNonBlankString(organism.species)
+    || isNonBlankString(organism.strain);
+
   return (
     <li className="non-bold-labels organism-row">
       <span className="multi-input-label">Organism {index + 1}</span>
 
       <div className="column-2 field-grid organism-row">
-        <LabelInputPair<PartialOrganism>
+        <LabelInputPair
           label="Species"
           type="text"
-          fieldName="species"
+          fieldName={jsonPath.appendToString<PartialOrganism>('species')}
           onChange={(v) => setOrganism({ ...organism, species: v }, index)}
           value={organism.species}
           required={required || hasContent}
@@ -188,10 +191,10 @@ function OrganismDetailsRow({
           disabled={disabled}
         />
 
-        <LabelInputPair<PartialOrganism>
+        <LabelInputPair
           label="Strain"
           type="text"
-          fieldName="strain"
+          fieldName={jsonPath.appendToString<PartialOrganism>('strain')}
           onChange={(v) => setOrganism({ ...organism, strain: v }, index)}
           value={organism.strain}
           required={required || hasContent}
