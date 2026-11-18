@@ -1,6 +1,5 @@
-import React from 'react';
-import * as vdi from '../../../../../Service/Model';
-
+import React, { ReactElement } from 'react';
+import { PartialDatasetDetails } from '../../../../../Service';
 import { JsonPathBuilder } from '../../../../../Utils';
 import { InputBlock, LabelInputPair } from '../../index';
 import { useDatasetMetadata } from '../../../Hooks/dataset-metadata-hooks';
@@ -11,7 +10,9 @@ export interface DatasetInformationSectionProps {
   readonly jsonPath: JsonPathBuilder;
 }
 
-export function DatasetInformationSection(props: DatasetInformationSectionProps): React.ReactElement {
+export function DatasetInformationSection(
+  props: DatasetInformationSectionProps
+): ReactElement {
   const { description } = useDatasetMetadata() ?? {};
   const dispatch = useDispatch();
 
@@ -26,7 +27,7 @@ export function DatasetInformationSection(props: DatasetInformationSectionProps)
         <LabelInputPair
           type="textarea"
           label="Description"
-          fieldName={props.jsonPath.appendToString<vdi.PartialDatasetDetails>('description')}
+          fieldName={props.jsonPath.appendToString<PartialDatasetDetails>('description')}
           value={description}
           onChange={setDescription}
           helpText={

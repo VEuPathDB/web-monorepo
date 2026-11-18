@@ -5,10 +5,11 @@ import {
   PartialDatasetPublication as Publication,
 } from '../Model';
 import {
+  isNonBlank,
   isNonEmpty,
   ifDefined,
   requireValue,
-  Possible, isNonBlank
+  Possible,
 } from '../../Utils';
 import { extractPublicationId } from '../Publications';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';

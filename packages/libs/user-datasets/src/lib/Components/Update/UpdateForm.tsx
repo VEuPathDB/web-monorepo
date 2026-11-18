@@ -1,4 +1,11 @@
-import React from 'react';
+import React, {
+  ReactElement,
+  RefObject,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { ifDefined, JsonPathBuilder } from '../../Utils';
 import { UploadButton, UploadErrorBanner } from '../../Common/Forms/Components';
 import {
@@ -17,7 +24,7 @@ import { useDatasetMetadata } from '../../Common/Forms/Hooks/dataset-metadata-ho
 export interface UpdateFormProps extends DatasetFormProps {
   readonly originalDataset: DatasetGetResponseBody;
   readonly originalDetails: PartialDatasetDetails;
-  readonly scrollContainerRef: React.RefObject<HTMLElement>;
+  readonly scrollContainerRef: RefObject<HTMLElement>;
 }
 
 export function UpdateForm({
@@ -25,19 +32,19 @@ export function UpdateForm({
   originalDetails,
   scrollContainerRef,
   ...props
-}: UpdateFormProps): React.ReactElement {
+}: UpdateFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root;
 
   const formState = useDatasetFormState();
   const datasetDetails = useDatasetMetadata();
-  const fileUploads = React.useMemo(
+  const fileUploads = useMemo(
     () => newDatasetUploads(formState),
     [formState]
   );
 
-  const [formIsValid, setFormIsValid] = React.useState<boolean>(true);
+  const [formIsValid, setFormIsValid] = useState<boolean>(true);
 
-  const userHasChangedSomething = React.useMemo(
+  const userHasChangedSomething = useMemo(
     () => hasUploads(fileUploads) || !isEqual(datasetDetails, originalDetails),
     [datasetDetails, originalDetails, fileUploads]
   );
@@ -46,7 +53,7 @@ export function UpdateForm({
   // !! This is intentionally not nested ternaries!  The automated code
   // !! formatting in use by some committers makes nested ternaries
   // !! nearly incomprehensible.
-  const uploadSubmittable = React.useMemo(
+  const uploadSubmittable = useMemo(
     () => {
       if (!formIsValid) {
         return SubmittableState.Invalid;
@@ -65,9 +72,9 @@ export function UpdateForm({
     [formIsValid, props.isSubmitting, userHasChangedSomething],
   );
 
-  const updateSection = React.useRef<HTMLElement>(null);
+  const updateSection = useRef<HTMLElement>(null);
 
-  const isMissingDatasetProperties = React.useMemo(
+  const isMissingDatasetProperties = useMemo(
     () => datasetDetails?.visibility === 'public'
       && props.formConfig.dataType.vdiConfig.usesDataProperties
       && isEmpty(fileUploads.dataPropertiesFiles)
@@ -76,7 +83,7 @@ export function UpdateForm({
     [datasetDetails]
   );
 
-  React.useEffect(
+  useEffect(
     () => setFormIsValid(
       ifDefined(
         datasetDetails,

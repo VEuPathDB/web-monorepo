@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { JsonPathBuilder, Runnable } from '../../../../Utils';
 import { CoreDatasetInformation } from './Core';
 import { RecommendedInformation } from './Recommended';
@@ -15,7 +15,7 @@ export function MetadataSection({
   formProps,
   jsonPath,
   openMetaImport,
-}: MetadataSectionProps): React.ReactElement {
+}: MetadataSectionProps): ReactElement {
   return (
     <section className="relative-root">
       <div className="header-line">

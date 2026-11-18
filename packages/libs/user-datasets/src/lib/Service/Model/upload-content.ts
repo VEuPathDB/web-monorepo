@@ -52,19 +52,18 @@ export function newUploadContent(file: File): FileUploadContent;
 export function newUploadContent(
   text: string,
   name: string,
-  contentType?: string,
+  contentType?: string
 ): TextUploadContent;
 export function newUploadContent(
   content: string | File,
   name?: string,
-  contentType?: string,
+  contentType?: string
 ): UploadContent {
   return typeof content === 'string'
     ? ({
         type: 'text',
         value: content,
         name,
-        isPlaceholder,
         toFile: () =>
           new File(
             [content],

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import * as util from '../../../../../../Utils';
 
 import { InputBlock } from '../../../InputBlock';
@@ -18,7 +18,9 @@ export interface PublicationsSectionProps {
   readonly jsonPath: util.JsonPathBuilder;
 }
 
-export function PublicationsSection(props: PublicationsSectionProps): React.ReactElement {
+export function PublicationsSection(
+  props: PublicationsSectionProps
+): ReactElement {
   const jsonPath = props.jsonPath.append<PartialDatasetDetails>('publications');
 
   const dispatch = useDispatch();

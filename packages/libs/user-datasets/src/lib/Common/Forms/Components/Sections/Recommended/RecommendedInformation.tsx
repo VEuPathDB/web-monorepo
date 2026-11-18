@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { ReactElement } from 'react';
 import { JsonPathBuilder } from '../../../../../Utils';
 import { DatasetInformationSection } from './DatasetInformationSection';
 
@@ -7,7 +6,9 @@ export interface RecommendedInformationProps {
   readonly jsonPath: JsonPathBuilder;
 }
 
-export function RecommendedInformation(props: RecommendedInformationProps): React.ReactElement {
+export function RecommendedInformation(
+  props: RecommendedInformationProps
+): ReactElement {
   return (
     <>
       <h3>Recommended Information</h3>

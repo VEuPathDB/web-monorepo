@@ -1,8 +1,12 @@
-import React from 'react';
-import * as util from '../../../../../Utils';
+import React, { ReactElement } from 'react';
 import * as meta from '../../../Hooks/dataset-metadata-hooks';
 
 import { PartialDatasetDetails } from '../../../../../Service';
+import {
+  JsonPathBuilder,
+  isNonBlank,
+  newTextLengthTest,
+} from '../../../../../Utils';
 import { InputBlock, LabelInputPair, OptionalSection } from '../../index';
 import { useDispatch } from 'react-redux';
 import { overwriteMetaField, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
@@ -16,13 +20,13 @@ const INPUT_HELP_TEXT =
   ' reusing this dataset, such as missing data, potential biases, changes in data collection, or other factors that' +
   ' may affect analysis. (maximum 1000 characters).';
 
-const TEST_INPUT_LENGTH = util.newTextLengthTest(3, 1000);
+const TEST_INPUT_LENGTH = newTextLengthTest(3, 1000);
 
 export interface DatasetUsageProps {
-  readonly jsonPath: util.JsonPathBuilder;
+  readonly jsonPath: JsonPathBuilder;
 }
 
-export function DatasetUsage({ jsonPath }: DatasetUsageProps): React.ReactElement {
+export function DatasetUsage({ jsonPath }: DatasetUsageProps): ReactElement {
   const fieldName = jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
 
   const dispatch = useDispatch();
@@ -43,7 +47,7 @@ export function DatasetUsage({ jsonPath }: DatasetUsageProps): React.ReactElemen
     [dispatch]
   );
 
-  if (typeof hasDisclaimer === 'undefined' && util.isNonBlank(disclaimer)) {
+  if (typeof hasDisclaimer === 'undefined' && isNonBlank(disclaimer)) {
     setEnabled(true);
   }
 

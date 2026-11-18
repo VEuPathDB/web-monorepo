@@ -1,7 +1,7 @@
 import { PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
 import { CitationLookupResult } from '../../../../../../Service/Publications';
 
-export type PublicationList = ReadonlyArray<Publication>;
+export type PublicationList = readonly Publication[];
 
 export type CitationLookupStatus =
   | { readonly status: 'loading' }

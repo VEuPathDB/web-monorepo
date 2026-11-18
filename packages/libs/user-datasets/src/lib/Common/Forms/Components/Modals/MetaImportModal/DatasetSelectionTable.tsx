@@ -10,12 +10,9 @@ import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalCon
 
 import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
+import * as util from '../../../../../Utils';
 import {
-  datasetUserFullName,
   ifDefined,
-  isNonEmpty,
-  Consumer,
-  DataNoun,
   Possible,
 } from '../../../../../Utils';
 
@@ -71,17 +68,20 @@ export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
   readonly baseUrl: string;
   readonly vdiConfig: VdiServiceConfig;
-  readonly dataNoun: DataNoun;
+  readonly dataNoun: util.DataNoun;
   readonly userId: number;
-  readonly datasets: ReadonlyArray<Dataset>;
+  readonly datasets: Dataset[];
   readonly publicDatasetsEnabled: boolean;
 
   readonly selection: Possible<DatasetId>;
-  readonly setSelection: Consumer<Possible<DatasetId>>
+  readonly setSelection: util.Consumer<Possible<DatasetId>>;
 }
 
-type TableColumn<K extends keyof Dataset> =
-  mesa.MesaColumn<Dataset, K, Dataset[K]>;
+type TableColumn<K extends keyof Dataset> = mesa.MesaColumn<
+  Dataset,
+  K,
+  Dataset[K]
+>;
 
 type TableCellProps = mesa.CellProps<Dataset>;
 
@@ -90,15 +90,11 @@ interface TableRowProps {
   readonly index: number;
 }
 
-export function DatasetSelectionTable(props: MetadataImportTableProps): ReactElement {
-  const {
-    datasets,
-    selection,
-    setSelection
-  } = props;
-
+export function DatasetSelectionTable(
+  props: MetadataImportTableProps
+): ReactElement {
   const [filterString, setFilterString] = useState<string>();
-  const [filteredDatasets, setFilteredDatasets] = useState(datasets);
+  const [filteredDatasets, setFilteredDatasets] = useState(props.datasets);
   const [onlyMyDatasets, setOnlyMyDatasets] = useState(false);
   const [onlyThisSite, setOnlyThisSite] = useState(false);
   const [sortBy, setSortBy] = useState<MesaSortObject<keyof Dataset>>({
@@ -107,7 +103,7 @@ export function DatasetSelectionTable(props: MetadataImportTableProps): ReactEle
   });
 
   useEffect(() => {
-    let filtered = filterDatasets(datasets, {
+    let filtered = filterDatasets(props.datasets, {
       query: filterString,
       excludePublic: onlyMyDatasets,
       excludeOtherSites: onlyThisSite,
@@ -123,14 +119,14 @@ export function DatasetSelectionTable(props: MetadataImportTableProps): ReactEle
     onlyThisSite,
     sortBy,
     props.userId,
-    datasets,
+    props.datasets,
   ]);
 
   return (
     <Mesa
       state={{
-        rows: datasets as Array<Dataset>,
-        filteredRows: filteredDatasets as Array<Dataset>,
+        rows: props.datasets,
+        filteredRows: filteredDatasets,
         columns: makeTableColumns(props),
         uiState: {
           searchQuery: filterString ?? '',
@@ -141,11 +137,11 @@ export function DatasetSelectionTable(props: MetadataImportTableProps): ReactEle
           toolbar: true,
           hideSelectAll: true,
           getRowId: (row) => row.datasetId,
-          isRowSelected: (row) => row.datasetId === selection,
+          isRowSelected: (row) => row.datasetId === props.selection,
         },
         eventHandlers: {
-          onRowSelect: (it) => setSelection(it.datasetId),
-          onRowDeselect: (_) => setSelection(undefined),
+          onRowSelect: (it) => props.setSelection(it.datasetId),
+          onRowDeselect: (_) => props.setSelection(undefined),
           onSearch: setFilterString,
           onSort: ({ key: columnKey }, direction) =>
             setSortBy({ columnKey, direction }),
@@ -200,8 +196,8 @@ function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
 function column<K extends keyof Dataset>(
   [key, name, helpText]: readonly [K, string, string],
   sortable: boolean,
-  renderCell: (props: TableCellProps) => ReactNode = defaultColumn(key),
-  getValue?: (props: TableRowProps) => Dataset[K]
+  renderCell: util.Function<TableCellProps, ReactNode> = defaultColumn(key),
+  getValue?: util.Function<TableRowProps, Dataset[K]>
 ): mesa.MesaColumn<Dataset, K, Dataset[K]> {
   return {
     key,
@@ -216,7 +212,7 @@ function column<K extends keyof Dataset>(
 
 function defaultColumn(
   key: keyof Dataset
-): (props: TableCellProps) => string {
+): util.Function<TableCellProps, string> {
   return ({ row }) => String(row[key]);
 }
 
@@ -231,7 +227,7 @@ function renderUploader(
   return row.owner.userId === userId ? (
     <span className="faded">Me</span>
   ) : (
-    <span>{datasetUserFullName(row.owner)}</span>
+    <span>{util.datasetUserFullName(row.owner)}</span>
   );
 }
 
@@ -243,8 +239,8 @@ function renderShares(
     return 'Me';
   }
 
-  return isNonEmpty(row.shares) ? (
-    row.shares.map(datasetUserFullName).join(', ')
+  return util.isNonEmpty(row.shares) ? (
+    row.shares.map(util.datasetUserFullName).join(', ')
   ) : (
     <span className="faded">N/A</span>
   );
@@ -274,7 +270,7 @@ function sortDatasets(
   rows: readonly Dataset[],
   by: MesaSortObject<keyof Dataset>
 ): Dataset[] {
-  const valueFn = (row: Dataset) => {
+  const valueFn: util.Function<Dataset, any> = (row) => {
     switch (by.columnKey) {
       case 'type':
         return row.type.category;
@@ -295,14 +291,14 @@ function sortDatasets(
 // region Toolbar
 
 interface FilterOptions {
-  readonly query?: string;
+  readonly query: Possible<string>;
   readonly excludePublic: boolean;
   readonly excludeOtherSites: boolean;
   readonly userId: number;
 }
 
 function filterDatasets(
-  datasets: ReadonlyArray<Dataset>,
+  datasets: readonly Dataset[],
   filters: FilterOptions
 ): Dataset[] {
   const out: Dataset[] = [];
@@ -362,7 +358,7 @@ function isAlwaysVisibleTo(dataset: Dataset, userId: number): boolean {
   return dataset.owner.userId === userId || !dataset.isCommunity;
 }
 
-function rowCounts(total: number, current: number): React.ReactElement {
+function rowCounts(total: number, current: number): ReactElement {
   return (
     <span className="row-count">
       Showing {current} of {total} datasets
@@ -372,7 +368,7 @@ function rowCounts(total: number, current: number): React.ReactElement {
 
 function onlyMyDatasetsToggle(
   value: boolean,
-  setValue: Consumer<boolean>
+  setValue: util.Consumer<boolean>
 ): ReactElement {
   return (
     <>
@@ -391,7 +387,7 @@ function onlyMyDatasetsToggle(
 
 function onlyThisSiteToggle(
   value: boolean,
-  setValue: Consumer<boolean>,
+  setValue: util.Consumer<boolean>,
   siteName: string
 ): ReactElement {
   return (

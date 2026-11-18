@@ -81,7 +81,6 @@ class UserDatasetListController extends PageController<Props> {
   getActionCreators() {
     return ActionCreators;
   }
-
   needsUploadMessages() {
     const {
       globalData: { config },

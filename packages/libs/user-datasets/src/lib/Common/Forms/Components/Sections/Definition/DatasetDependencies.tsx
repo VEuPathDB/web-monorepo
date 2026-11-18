@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { DatasetDependency } from '../../../../../Service';
 import { isNonEmpty } from '../../../../../Utils';
 import { DependenciesConfig } from '../../../../Configuration';
@@ -10,7 +10,9 @@ export interface DatasetDependenciesProps {
   readonly config: DependenciesConfig;
 }
 
-export function DatasetDependencies({ config }: DatasetDependenciesProps): React.ReactElement {
+export function DatasetDependencies(
+  { config }: DatasetDependenciesProps
+): ReactElement {
   const dispatch = useDispatch();
   const dependencies = useDependencies();
 

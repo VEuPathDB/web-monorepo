@@ -1,5 +1,14 @@
 import * as util from '../../../Utils';
-import React from 'react';
+import React, {
+  ChangeEvent,
+  HTMLInputTypeAttribute,
+  InputHTMLAttributes,
+  ReactElement,
+  ReactNode,
+  RefAttributes,
+  RefObject,
+  useMemo,
+} from 'react';
 import { FieldHelpText } from './FieldHelpText';
 import { newUploadContent, UploadContent } from '../../../Service/Model';
 
@@ -7,11 +16,11 @@ type InputElement = HTMLInputElement | HTMLTextAreaElement;
 
 interface BaseInputProps<
   V,
-  K extends React.HTMLInputTypeAttribute,
+  K extends HTMLInputTypeAttribute,
   E extends InputElement,
 > {
   readonly type: K;
-  readonly label: React.ReactNode;
+  readonly label: ReactNode;
 
   readonly onChange: util.Consumer<V>;
 
@@ -23,10 +32,10 @@ interface BaseInputProps<
   readonly inputClass?: string;
   readonly labelClass?: string;
 
-  readonly helpText?: React.ReactNode;
+  readonly helpText?: ReactNode;
   readonly disabled?: boolean;
   readonly required?: boolean;
-  readonly inputRef?: React.RefObject<E>;
+  readonly inputRef?: RefObject<E>;
 
   /**
    * Whether the label should appear to the right of the input instead of the
@@ -68,7 +77,7 @@ interface CheckboxProps
 
 interface RadioProps
   extends Omit<
-    BaseInputProps<React.ChangeEvent<HTMLInputElement>, 'radio', HTMLInputElement>,
+    BaseInputProps<ChangeEvent<HTMLInputElement>, 'radio', HTMLInputElement>,
     'validator'
   > {
   readonly value?: string;
@@ -170,7 +179,7 @@ export function LabelInputPair(props: InputPairProps): React.ReactElement {
 }
 
 function useCustomValidator(props: InputPairProps): boolean {
-  return React.useMemo(() => {
+  return useMemo(() => {
     if (props.type === 'radio' || !props.validator) return true;
 
     switch (props.type) {
@@ -188,7 +197,7 @@ function useCustomValidator(props: InputPairProps): boolean {
   }, [props]);
 }
 
-function Checkbox(props: CheckboxProps): React.ReactElement {
+function Checkbox(props: CheckboxProps): ReactElement {
   return (
     <span className={props.className}>
       <input
@@ -243,7 +252,7 @@ function FileInput(
   );
 }
 
-function NumberInput(props: NumberProps): React.ReactElement {
+function NumberInput(props: NumberProps): ReactElement {
   return (
     <input
       {...baseInputProps(props)}
@@ -257,7 +266,7 @@ function NumberInput(props: NumberProps): React.ReactElement {
   );
 }
 
-function RadioInput(props: RadioProps): React.ReactElement {
+function RadioInput(props: RadioProps): ReactElement {
   return (
     <span className={props.className}>
       <input
@@ -272,9 +281,7 @@ function RadioInput(props: RadioProps): React.ReactElement {
   );
 }
 
-function TextAreaInput(
-  props: TextAreaProps
-): React.ReactElement {
+function TextAreaInput(props: TextAreaProps): ReactElement {
   return (
     <textarea
       {...baseInputProps(props)}
@@ -289,7 +296,7 @@ function TextAreaInput(
   );
 }
 
-function TextInput(props: TextInputProps): React.ReactElement {
+function TextInput(props: TextInputProps): ReactElement {
   return (
     <input
       {...baseInputProps(props)}
@@ -306,7 +313,7 @@ function TextInput(props: TextInputProps): React.ReactElement {
 
 function baseInputProps<E extends InputElement>(
   props: BaseInputProps<any, any, E>
-): React.InputHTMLAttributes<E> & React.RefAttributes<E> {
+): InputHTMLAttributes<E> & RefAttributes<E> {
   return {
     ref: props.inputRef,
     id: props.idOverride ?? props.fieldName,

@@ -20,7 +20,7 @@ export function MetadataImportModalController(props: MetadataImportModalProps): 
       }}
     />
     : <OverwriteWarningModal
-        onAccept={() => setShowedWarning(true)}
-        onReject={() => props.hideModal()}
-      />;
+      onAccept={() => setShowedWarning(true)}
+      onReject={props.hideModal}
+    />;
 }

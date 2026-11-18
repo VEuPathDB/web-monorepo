@@ -1,5 +1,10 @@
-import React from 'react';
-
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
@@ -35,15 +40,15 @@ export interface PublicationRowProps {
   readonly jsonPath: util.JsonPathBuilder;
 }
 
-export function PublicationRow(props: PublicationRowProps): React.ReactElement {
-  const lookupStatus = React.useRef<number>(0);
-  const [citationStatus, setCitationStatus] = React.useState<StatusTuple>([
+export function PublicationRow(props: PublicationRowProps): ReactElement {
+  const lookupStatus = useRef<number>(0);
+  const [citationStatus, setCitationStatus] = useState<StatusTuple>([
     null,
     null,
   ]);
   const { publication, setPublication } = props;
 
-  React.useEffect(
+  useEffect(
     () =>
       setCitationStatus([
         util.ifDefined(props.publication.citation, (citation) => ({
@@ -55,7 +60,7 @@ export function PublicationRow(props: PublicationRowProps): React.ReactElement {
     [props.publication.citation]
   );
 
-  const updatePublication = React.useCallback(
+  const updatePublication = useCallback(
     (pub: Publication, res: CitationLookupStatus) => {
       setPublication(
         (() => {
@@ -74,7 +79,7 @@ export function PublicationRow(props: PublicationRowProps): React.ReactElement {
     [publication, setPublication, props.index]
   );
 
-  const runLookup = React.useCallback(
+  const runLookup = useCallback(
     (pub: Publication) => {
       const timestamp = Date.now();
       lookupStatus.current = timestamp;
@@ -112,7 +117,7 @@ export function PublicationRow(props: PublicationRowProps): React.ReactElement {
     [setCitationStatus, updatePublication]
   );
 
-  const onInput = React.useCallback(
+  const onInput = useCallback(
     (id: string, type: PublicationType) => {
       const newPub = {
         ...publication,
@@ -201,7 +206,7 @@ function newPubInputTest(type: PublicationType): util.Predicate<TextInputProps> 
 const TEST_PMID = newPubInputTest('pmid');
 const TEST_DOI = newPubInputTest('doi');
 
-function PublicationInput(props: PublicationInputProps): React.ReactElement {
+function PublicationInput(props: PublicationInputProps): ReactElement {
   const hasType = util.isNonBlank(props.publication.type);
   const pubTypeIsFieldType = props.publication.type === props.fieldType;
   const validator = props.fieldType === 'pmid' ? TEST_PMID : TEST_DOI;

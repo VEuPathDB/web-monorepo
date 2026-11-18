@@ -3,8 +3,8 @@ import {
   JsonPathBuilder,
   newTextLengthTest,
 } from '../../../../../../Utils';
-import { LabelInputPair } from '../../../LabelInputPair';
 import { PartialDatasetContact } from '../../../../../../Service';
+import { LabelInputPair } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {
   readonly index: number;

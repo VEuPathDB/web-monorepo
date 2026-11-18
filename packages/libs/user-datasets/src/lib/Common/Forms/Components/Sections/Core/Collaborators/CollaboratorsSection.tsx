@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import { AddRowButton, InputBlock } from '../../../index';
+import { JsonPathBuilder, isNonEmpty } from '../../../../../../Utils';
 import {
   PartialDatasetContact,
   PartialDatasetDetails,
 } from '../../../../../../Service';
-import { JsonPathBuilder, isNonEmpty } from '../../../../../../Utils';
 import { ContactBlock } from './ContactBlock';
 import { useContacts, useDatasetVisibility } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
@@ -15,7 +15,9 @@ export interface CollaboratorsSectionProps {
   readonly pathBuilder: JsonPathBuilder;
 }
 
-export function CollaboratorsSection(props: CollaboratorsSectionProps): React.ReactElement {
+export function CollaboratorsSection(
+  props: CollaboratorsSectionProps
+): ReactElement {
   const pathBuilder = props.pathBuilder.append<PartialDatasetDetails>('contacts');
 
   const contacts = useContacts();
@@ -26,16 +28,13 @@ export function CollaboratorsSection(props: CollaboratorsSectionProps): React.Re
   const hasPrimary = safeContacts.some((it) => it.isPrimary);
 
   const setContacts = React.useCallback(
-    (contacts: ReadonlyArray<PartialDatasetContact>) => dispatch(updateContacts(contacts)),
+    (contacts: Array<PartialDatasetContact>) => dispatch(updateContacts(contacts)),
     [dispatch],
   );
 
   const onUpdateContact = React.useCallback(
     (contact: PartialDatasetContact, index: number) => {
-      if (
-        Array.isArray(contacts) &&
-        contacts.length > 0
-      ) {
+      if (isNonEmpty(contacts)) {
         const newContacts = scrubContactPrimaries(
           contacts,
           contact.isPrimary === true

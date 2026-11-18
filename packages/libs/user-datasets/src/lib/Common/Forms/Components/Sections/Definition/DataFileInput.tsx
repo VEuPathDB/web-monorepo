@@ -1,8 +1,13 @@
 import React from 'react';
-import * as util from '../../../../../Utils';
-
 import { DatasetTypeConfig, FileInputConfig } from '../../../../Configuration';
 import { VdiServiceFeatures } from '../../../../../Service';
+import {
+  Consumer,
+  Nullable,
+  Possible,
+  filterNullish,
+  testFileRequired,
+} from '../../../../../Utils';
 import { LabelInputPair } from '../../';
 import { UploadContent, UploadContentMap } from '../../../../../Service/Model';
 import { isEmpty } from 'lodash';
@@ -13,13 +18,13 @@ export interface DataFileInputListProps {
   readonly vdiFeatures: VdiServiceFeatures;
   readonly inputConfigs: ReadonlyArray<FileInputConfig>;
   readonly disabled?: boolean;
-  readonly setFiles: util.Consumer<UploadContentMap>;
-  readonly files: util.Possible<UploadContentMap>;
+  readonly setFiles: Consumer<UploadContentMap>;
+  readonly files: Possible<UploadContentMap>;
 }
 
 export function DataFileInputList(
   props: DataFileInputListProps
-): util.Nullable<React.ReactElement> {
+): Nullable<React.ReactElement> {
   const configs: Array<DataFileInputProps> = props.inputConfigs.map((it, i) => {
     const fieldName: string = `${props.fieldName}[${i}]`;
 
@@ -32,7 +37,7 @@ export function DataFileInputList(
       setFiles: (files) => {
         props.setFiles({
           ...(props.files ?? {}),
-          [fieldName]: util.filterNullish(files),
+          [fieldName]: filterNullish(files),
         });
       },
     };
@@ -68,8 +73,8 @@ export interface DataFileInputProps {
 
   readonly inputConfig: FileInputConfig;
 
-  readonly setFiles: util.Consumer<ReadonlyArray<UploadContent>>;
-  readonly files: util.Possible<ReadonlyArray<UploadContent>>;
+  readonly setFiles: Consumer<ReadonlyArray<UploadContent>>;
+  readonly files: Possible<ReadonlyArray<UploadContent>>;
 }
 
 export function DataFileInput(props: DataFileInputProps): React.ReactElement {
@@ -97,7 +102,7 @@ export function DataFileInput(props: DataFileInputProps): React.ReactElement {
       required={props.inputConfig.required}
       value={props.files}
       onChange={props.setFiles}
-      validator={inputConfig.required ? util.testFileRequired : undefined}
+      validator={inputConfig.required ? testFileRequired : undefined}
     />
   );
 }

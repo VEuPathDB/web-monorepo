@@ -1,4 +1,10 @@
-import React from 'react';
+import React, {
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { Refresh } from '@material-ui/icons';
 
@@ -42,16 +48,16 @@ function InfoBanner({ baseUrl }: { baseUrl: string }): React.ReactElement {
   return <Banner banner={bannerConfig} />;
 }
 
-export function UploadForm(props: DatasetFormProps): React.ReactElement {
+export function UploadForm(props: DatasetFormProps): ReactElement {
   const metaPath = JsonPathBuilder.Root.append('details');
 
-  const [formIsValid, setFormIsValid] = React.useState<boolean>(true);
+  const [formIsValid, setFormIsValid] = useState<boolean>(true);
 
   // Determine if the upload form should be submittable, and if not, why not.
   // !! This is intentionally not nested ternaries!  The automated code
   // !! formatting in use by some committers makes nested ternaries
   // !! nearly incomprehensible.
-  const uploadSubmittable = React.useMemo(
+  const uploadSubmittable = useMemo(
     () => {
       if (!formIsValid) return SubmittableState.Invalid;
 
@@ -74,9 +80,9 @@ export function UploadForm(props: DatasetFormProps): React.ReactElement {
 
   const datasetDetails = useDatasetMetadata();
 
-  const uploadSection = React.useRef<HTMLElement>(null);
+  const uploadSection = useRef<HTMLElement>(null);
 
-  React.useEffect(
+  useEffect(
     () => setFormIsValid(isDatasetFormValid(datasetDetails ?? {}, props.formConfig, uploadSection)),
     [setFormIsValid, datasetDetails, props],
   );

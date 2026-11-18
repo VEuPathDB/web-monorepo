@@ -1,9 +1,18 @@
-import React from 'react';
-import * as vdi from '../../Service';
-import * as util from '../../Utils';
-
+import React, {
+  JSXElementConstructor,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { DatasetFormConfig } from '../Configuration';
-
+import {
+  DatasetId,
+  DatasetMetadata,
+  PartialDatasetDetails,
+  useVdiService,
+  VdiServiceMetadata,
+} from '../../Service';
 import { useDispatch } from 'react-redux';
 import {
   clearBadUpload,
@@ -12,17 +21,18 @@ import {
 } from '../../Actions/UserDatasetUploadActions';
 import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
-import { DataNoun } from '../../Utils';
+import { DataNoun, ifDefined, Nullable } from '../../Utils';
 import { MetadataImportModalController } from './Components/Modals/MetaImportModal';
-
 import { useDatasetMetadata } from './Hooks/dataset-metadata-hooks';
 import { useBadUploadMessages, useUploadProgress } from './Hooks/async-action-hooks';
 
-export interface DatasetFormControllerProps<P extends DatasetFormProps = DatasetFormProps> {
+export interface DatasetFormControllerProps<
+  P extends DatasetFormProps = DatasetFormProps
+> {
   readonly baseUrl: string;
-  readonly form: React.JSXElementConstructor<P>;
+  readonly form: JSXElementConstructor<P>;
   readonly formConfig: DatasetFormConfig;
-  readonly vdiConfig: vdi.VdiServiceMetadata;
+  readonly vdiConfig: VdiServiceMetadata;
   readonly propFactory: (baseProps: DatasetFormProps) => P;
   readonly dataNoun: DataNoun;
   readonly enablePublicDatasets: boolean;
@@ -30,10 +40,10 @@ export interface DatasetFormControllerProps<P extends DatasetFormProps = Dataset
 
 export function DatasetFormController<
   P extends DatasetFormProps = DatasetFormProps
->(props: DatasetFormControllerProps<P>): React.ReactElement {
+>(props: DatasetFormControllerProps<P>): ReactElement {
   const { form: Form } = props;
 
-  const [submitting, setSubmitting] = React.useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -42,14 +52,14 @@ export function DatasetFormController<
   const badUploadState = useBadUploadMessages();
   const uploadProgress = useUploadProgress();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (badUploadState != null) {
       dispatch(trackUploadProgress(null));
       setSubmitting(false);
     }
   }, [badUploadState, dispatch]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       clearBadUpload();
     };
@@ -59,17 +69,17 @@ export function DatasetFormController<
 
   // region Dataset Selection Modal
 
-  const service = vdi.useVdiService();
+  const service = useVdiService();
 
   const metadata = useDatasetMetadata();
 
   const [
     isDatasetSelectionVisible,
     setDatasetSelectionVisible,
-  ] = React.useState<boolean>(false);
+  ] = useState<boolean>(false);
 
-  const fetchDatasetMetadata = React.useCallback(
-    async (id: vdi.DatasetId) => util.ifDefined(service, async (vdi) => {
+  const fetchDatasetMetadata = useCallback(
+    async (id: DatasetId) => ifDefined(service, async (vdi) => {
       const res = await vdi.getRawDatasetMetadata(id, false);
 
       if ('status' in res) {
@@ -128,22 +138,22 @@ function notImplemented() {
   throw new Error('form submission not implemented');
 }
 
-function setMetadata<K extends keyof vdi.PartialDatasetDetails>(
+function setMetadata<K extends keyof PartialDatasetDetails>(
   obj: any,
   key: K,
-  value: vdi.PartialDatasetDetails[K]
+  value: PartialDatasetDetails[K]
 ) {
   obj[key] = value;
 }
 
 function applyMetadata(
-  formMeta: util.Nullable<vdi.PartialDatasetDetails>,
-  rawMeta: vdi.DatasetMetadata
-): vdi.PartialDatasetDetails {
+  formMeta: Nullable<PartialDatasetDetails>,
+  rawMeta: DatasetMetadata
+): PartialDatasetDetails {
   const out: Record<string, any> & {
-    set?<K extends keyof vdi.PartialDatasetDetails>(
+    set?<K extends keyof PartialDatasetDetails>(
       key: K,
-      value: vdi.PartialDatasetDetails[K]
+      value: PartialDatasetDetails[K]
     ): void;
   } = { ...(formMeta ?? {}) };
 
@@ -161,7 +171,7 @@ function applyMetadata(
   setMetadata(out, 'funding', rawMeta.funding);
   setMetadata(out, 'dataDisclaimer', rawMeta.dataDisclaimer);
   setMetadata(out, 'datasetSources', rawMeta.datasetSources);
-  setMetadata(out, 'metadataContentFlags', util.ifDefined(
+  setMetadata(out, 'metadataContentFlags', ifDefined(
     rawMeta.metadataContentFlags,
     it => ({
       hasDatasetCharacteristics: it.hasDatasetCharacteristics ?? undefined,
@@ -172,5 +182,5 @@ function applyMetadata(
     }),
   ));
 
-  return out as vdi.PartialDatasetDetails;
+  return out as PartialDatasetDetails;
 }

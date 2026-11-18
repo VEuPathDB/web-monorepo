@@ -1,6 +1,17 @@
-import React from 'react';
-import * as util from '../../../Utils';
-
+import React, {
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Consumer,
+  Possible,
+  JsonPathBuilder,
+  replaceElement,
+  textChange,
+} from '../../../Utils';
 import { AddRowButton } from './AddRowButton';
 import { FieldHelpText } from './FieldHelpText';
 
@@ -8,15 +19,15 @@ export interface GrowableStringListProps {
   readonly labelPlural: string;
   readonly labelSingular: string;
 
-  readonly values: util.Possible<ReadonlyArray<string>>;
-  readonly setValues: util.Consumer<ReadonlyArray<string>>;
+  readonly values: Possible<ReadonlyArray<string>>;
+  readonly setValues: Consumer<ReadonlyArray<string>>;
 
-  readonly jsonPath: util.JsonPathBuilder;
+  readonly jsonPath: JsonPathBuilder;
 
   readonly required: boolean;
 
   readonly disabled?: boolean;
-  readonly helpText?: React.ReactNode;
+  readonly helpText?: ReactNode;
 }
 
 export function GrowableStringList({
@@ -25,13 +36,13 @@ export function GrowableStringList({
   jsonPath,
   disabled,
   ...props
-}: GrowableStringListProps): React.ReactElement {
-  const safeValues = React.useMemo(
+}: GrowableStringListProps): ReactElement {
+  const safeValues = useMemo(
     () => (Array.isArray(values) && values.length > 0 ? values : ['']),
     [values]
   );
 
-  const [addedValue, setAddedValue] = React.useState(false);
+  const [addedValue, setAddedValue] = useState(false);
 
   const addValue = disabled
     ? () => {}
@@ -40,7 +51,7 @@ export function GrowableStringList({
         setAddedValue(true);
       };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (addedValue) {
       document
         .getElementById(jsonPath.appendToString(safeValues.length - 1))
@@ -77,13 +88,13 @@ export function GrowableStringList({
 
 interface InputListProps {
   readonly values: ReadonlyArray<string>;
-  readonly setValues: util.Consumer<ReadonlyArray<string>>;
-  readonly jsonPath: util.JsonPathBuilder;
+  readonly setValues: Consumer<ReadonlyArray<string>>;
+  readonly jsonPath: JsonPathBuilder;
   readonly disabled: boolean;
   readonly required: boolean;
 }
 
-function InputList(props: InputListProps): React.ReactElement {
+function InputList(props: InputListProps): ReactElement {
   return (
     <>
       {props.values.map((value, index) => {
@@ -95,9 +106,9 @@ function InputList(props: InputListProps): React.ReactElement {
               type="text"
               name={fieldName}
               id={fieldName}
-              onChange={util.textChange((v) => {
+              onChange={textChange((v) => {
                 if (!props.disabled)
-                  props.setValues(util.replaceElement(props.values, index, v ?? ''));
+                  props.setValues(replaceElement(props.values, index, v ?? ''));
               })}
               value={value}
               disabled={props.disabled}
