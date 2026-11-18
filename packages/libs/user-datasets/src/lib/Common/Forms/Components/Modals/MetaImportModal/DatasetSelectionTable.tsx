@@ -3,11 +3,11 @@ import { orderBy, partialRight } from 'lodash';
 
 import * as mesa from '@veupathdb/coreui/lib/components/Mesa/types';
 import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
-
 import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalController';
+
 import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import {
