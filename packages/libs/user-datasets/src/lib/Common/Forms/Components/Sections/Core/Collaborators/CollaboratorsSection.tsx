@@ -1,34 +1,37 @@
 import React from 'react';
-import * as util from '../../../../../../Utils';
-import * as vdi from '../../../../../../Service';
 
 import { AddRowButton, InputBlock } from '../../../index';
+import {
+  PartialDatasetContact,
+  PartialDatasetDetails,
+} from '../../../../../../Service';
+import { JsonPathBuilder, isNonEmpty } from '../../../../../../Utils';
 import { ContactBlock } from './ContactBlock';
 import { useContacts, useDatasetVisibility } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
 import { updateContacts } from '../../../../../../Actions/DatasetMetadataFormActions';
 
 export interface CollaboratorsSectionProps {
-  readonly pathBuilder: util.JsonPathBuilder;
+  readonly pathBuilder: JsonPathBuilder;
 }
 
 export function CollaboratorsSection(props: CollaboratorsSectionProps): React.ReactElement {
-  const pathBuilder = props.pathBuilder.append<vdi.PartialDatasetDetails>('contacts');
+  const pathBuilder = props.pathBuilder.append<PartialDatasetDetails>('contacts');
 
   const contacts = useContacts();
   const dispatch = useDispatch();
 
-  const safeContacts = util.isNonEmpty(contacts) ? contacts : [{}];
+  const safeContacts = isNonEmpty(contacts) ? contacts : [{}];
 
   const hasPrimary = safeContacts.some((it) => it.isPrimary);
 
   const setContacts = React.useCallback(
-    (contacts: ReadonlyArray<vdi.PartialDatasetContact>) => dispatch(updateContacts(contacts)),
+    (contacts: ReadonlyArray<PartialDatasetContact>) => dispatch(updateContacts(contacts)),
     [dispatch],
   );
 
   const onUpdateContact = React.useCallback(
-    (contact: vdi.PartialDatasetContact, index: number) => {
+    (contact: PartialDatasetContact, index: number) => {
       if (
         Array.isArray(contacts) &&
         contacts.length > 0
@@ -84,15 +87,15 @@ export function CollaboratorsSection(props: CollaboratorsSectionProps): React.Re
 }
 
 function scrubContactPrimaries(
-  contacts: ReadonlyArray<vdi.PartialDatasetContact>,
+  contacts: ReadonlyArray<PartialDatasetContact>,
   unsetAll: boolean = false
-): Array<vdi.PartialDatasetContact> {
+): Array<PartialDatasetContact> {
   return unsetAll
     ? contacts.map(({ isPrimary: _, ...contact }) => contact)
     : contacts.map(scrubContactPrimary);
 }
 
-function scrubContactPrimary(contact: vdi.PartialDatasetContact): vdi.PartialDatasetContact {
+function scrubContactPrimary(contact: PartialDatasetContact): PartialDatasetContact {
   if (contact.isPrimary === true) return contact;
 
   const { isPrimary: _, ...prunedContact } = contact;
