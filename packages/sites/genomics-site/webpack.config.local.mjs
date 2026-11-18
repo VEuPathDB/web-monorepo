@@ -28,8 +28,8 @@ export default configure({
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,
       [process.env.CGI_BIN_ENDPOINT]: process.env.CGI_BIN_URL,
       [process.env.DATAPLOTTER_ENDPOINT]: process.env.DATAPLOTTER_URL,
-      ...(process.env.PATHFINDER_ENDPOINT && {
-        [process.env.PATHFINDER_ENDPOINT]: process.env.PATHFINDER_URL,
+      ...(process.env.STRATEGIST_ENDPOINT && {
+        [process.env.STRATEGIST_ENDPOINT]: process.env.STRATEGIST_URL,
       }),
     },
     legacyWebAppEndpoint: process.env.LEGACY_WEB_APP_ENDPOINT,
@@ -73,7 +73,7 @@ export default configure({
 	aiExpressionQualtricsId: process.env.AI_EXPRESSION_QUALTRICS_ID,
 	showSubscriptionProds: process.env.SHOW_SUBSCRIPTION_PRODS === 'true',
 	allowAiAssistedCommentCreation: process.env.ALLOW_AI_ASSISTED_COMMENT_CREATION !== 'false',
-        pathfinderUrl: process.env.PATHFINDER_ENDPOINT,
+        strategistUrl: process.env.STRATEGIST_ENDPOINT,
 })
     }),
     new HtmlWebpackPlugin({
