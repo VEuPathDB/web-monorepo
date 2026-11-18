@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { orderBy, partialRight } from 'lodash';
 
 import * as mesa from '@veupathdb/coreui/lib/components/Mesa/types';
@@ -11,12 +11,12 @@ import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalCon
 import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import {
-  Consumer,
-  DataNoun,
-  Possible,
   datasetUserFullName,
   ifDefined,
   isNonEmpty,
+  Consumer,
+  DataNoun,
+  Possible,
 } from '../../../../../Utils';
 
 // FIXME: help text values are to be shared with all tables having these columns
@@ -90,23 +90,23 @@ interface TableRowProps {
   readonly index: number;
 }
 
-export function DatasetSelectionTable(props: MetadataImportTableProps): React.ReactElement {
+export function DatasetSelectionTable(props: MetadataImportTableProps): ReactElement {
   const {
     datasets,
     selection,
     setSelection
   } = props;
 
-  const [filterString, setFilterString] = React.useState<string>();
-  const [filteredDatasets, setFilteredDatasets] = React.useState(datasets);
-  const [onlyMyDatasets, setOnlyMyDatasets] = React.useState(false);
-  const [onlyThisSite, setOnlyThisSite] = React.useState(false);
-  const [sortBy, setSortBy] = React.useState<MesaSortObject<keyof Dataset>>({
+  const [filterString, setFilterString] = useState<string>();
+  const [filteredDatasets, setFilteredDatasets] = useState(datasets);
+  const [onlyMyDatasets, setOnlyMyDatasets] = useState(false);
+  const [onlyThisSite, setOnlyThisSite] = useState(false);
+  const [sortBy, setSortBy] = useState<MesaSortObject<keyof Dataset>>({
     columnKey: 'created',
     direction: 'desc',
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     let filtered = filterDatasets(datasets, {
       query: filterString,
       excludePublic: onlyMyDatasets,
@@ -200,7 +200,7 @@ function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
 function column<K extends keyof Dataset>(
   [key, name, helpText]: readonly [K, string, string],
   sortable: boolean,
-  renderCell: (props: TableCellProps) => React.ReactNode = defaultColumn(key),
+  renderCell: (props: TableCellProps) => ReactNode = defaultColumn(key),
   getValue?: (props: TableRowProps) => Dataset[K]
 ): mesa.MesaColumn<Dataset, K, Dataset[K]> {
   return {
@@ -227,7 +227,7 @@ function renderProjects({ row }: TableCellProps): string {
 function renderUploader(
   { row }: TableCellProps,
   { userId }: MetadataImportTableProps
-): React.ReactNode {
+): ReactNode {
   return row.owner.userId === userId ? (
     <span className="faded">Me</span>
   ) : (
@@ -238,7 +238,7 @@ function renderUploader(
 function renderShares(
   { row }: TableCellProps,
   props: MetadataImportTableProps
-): React.ReactNode {
+): ReactNode {
   if (row.owner.userId !== props.userId && !row.isCommunity) {
     return 'Me';
   }
@@ -373,7 +373,7 @@ function rowCounts(total: number, current: number): React.ReactElement {
 function onlyMyDatasetsToggle(
   value: boolean,
   setValue: Consumer<boolean>
-): React.ReactElement {
+): ReactElement {
   return (
     <>
       <input
@@ -393,7 +393,7 @@ function onlyThisSiteToggle(
   value: boolean,
   setValue: Consumer<boolean>,
   siteName: string
-): React.ReactElement {
+): ReactElement {
   return (
     <>
       <input
