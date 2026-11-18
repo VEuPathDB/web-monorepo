@@ -163,7 +163,7 @@ function getPostUploadStatus(
         content: (
           <>
             This {dataNoun} was rejected as invalid during the import phase:
-            {renderErrorMessages(status.import!.messages || [])}
+            {renderImportMessages(status.import!.messages || [])}
           </>
         ),
         icon: 'exclamation-circle',
@@ -211,7 +211,13 @@ function getPostUploadStatus(
         };
       case 'complete':
         return {
-          content: `This ${dataNoun} is installed and ready to use in ${projectDisplayName}.`,
+          content: (
+            <>
+              This {dataNoun} is installed and ready to use in{' '}
+              {projectDisplayName}.`,
+              {renderInstallMessages([...dataMessages])}
+            </>
+          ),
           icon: 'check-circle',
         };
       case 'failed-validation':
@@ -219,7 +225,7 @@ function getPostUploadStatus(
           content: (
             <>
               This {dataNoun} was rejected as invalid during the install phase:
-              {renderErrorMessages([...metaMessages, ...dataMessages])}
+              {renderInstallMessages([...metaMessages, ...dataMessages])}
             </>
           ),
           icon: 'exclamation-circle',
@@ -253,7 +259,7 @@ function getPostUploadStatus(
           content: (
             <>
               This {dataNoun} is incompatible:
-              {renderErrorMessages([...metaMessages, ...dataMessages])}
+              {renderInstallMessages([...metaMessages, ...dataMessages])}
             </>
           ),
           icon: 'exclamation-circle',
@@ -268,10 +274,9 @@ function getPostUploadStatus(
 }
 
 /**
- * Helper function to render error messages as a bulleted list.
- * Replaces newlines with <br> tags in each message.
+ * import outputs a list of messages. Render each in a bullet list
  */
-function renderErrorMessages(messages: ReadonlyArray<string>): React.ReactNode {
+function renderImportMessages(messages: ReadonlyArray<string>): React.ReactNode {
   if (!messages || messages.length === 0) return null;
 
   // Always render as bulleted list with newlines as <br>
@@ -286,6 +291,27 @@ function renderErrorMessages(messages: ReadonlyArray<string>): React.ReactNode {
             </React.Fragment>
           ))}
         </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * install-data and install-meta return at most 1 message, as that is all appDb supports
+ */
+function renderInstallMessages(messages: string[]): React.ReactNode {
+  if (!messages || messages.length === 0) return null;
+
+  if (messages.length > 1) return renderImportMessages(messages); // as a fail safe
+
+  // split on newline and render as bulleted list
+  const lines = messages[0].split('\n').filter((line) => line.trim() !== '');
+  if (lines.length === 0) return null;
+
+  return (
+    <ul className="status-messages">
+      {lines.map((line, index) => (
+        <li key={index}>{line}</li>
       ))}
     </ul>
   );
