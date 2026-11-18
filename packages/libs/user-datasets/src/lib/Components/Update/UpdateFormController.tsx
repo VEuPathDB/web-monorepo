@@ -57,9 +57,17 @@ export function UpdateFormController(
 
   const onClose = () => {
     props.closeModal();
-    dispatch(updateFormState(DefaultDatasetFormState));
-    dispatch(clearBadUpload());
   };
+
+  // Reset the form when the modal actually goes away, not when close is
+  // clicked: history.goBack() is asynchronous, so resetting in onClose emptied
+  // the still-mounted form and flashed its required fields red.
+  React.useEffect(() => {
+    return function resetFormOnUnmount() {
+      dispatch(updateFormState(DefaultDatasetFormState));
+      dispatch(clearBadUpload());
+    };
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (vdi && props.datasetId)
