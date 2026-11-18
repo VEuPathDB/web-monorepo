@@ -31,10 +31,4 @@ export const useDependencies = () => useSelector(it => it.dependencies);
 
 export const useExperimentalOrgs = () => useSelector(it => it.experimentalOrganisms);
 
-export const useExternalBioProjects = () => useSelector(it => it.externalIdentifiers?.bioprojectIds);
-
-export const useExternalDOIs = () => useSelector(it => it.externalIdentifiers?.dois);
-
-export const useExternalHyperlinks = () => useSelector(it => it.externalIdentifiers?.hyperlinks);
-
 export const usePublications = () => useSelector(it => it.publications);

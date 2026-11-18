@@ -1,5 +1,5 @@
 import * as redux from 'react-redux';
-import * as lodash from 'lodash';
+import lodash from 'lodash';
 import { StateSlice } from '../../../StoreModules/types';
 
 export const useBadUploadMessages = () => redux.useSelector(

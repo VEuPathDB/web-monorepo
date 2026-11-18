@@ -10,8 +10,6 @@ export type Nullable<T> = T | null;
 export type Possible<T> = T | undefined;
 export type Optional<T> = T | null | undefined;
 
-export type Tuple<A, B> = [ A, B ];
-
 export type Mutable<T extends object> = {
   -readonly [K in keyof T]: T[K];
 };
