@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { ifDefined } from '../../../../../Utils';
 import {
   DatasetListEntry,
@@ -20,14 +20,14 @@ export function DatasetSelectionModalController({
   hideModal,
   onDatasetSelect,
   ...props
-}: MetadataImportModalProps): React.ReactElement {
-  const [ datasets, setDatasets ] = React.useState<ReadonlyArray<DatasetSelectionListEntry>>();
-  const [ selection, setSelection ] = React.useState<DatasetId>();
+}: MetadataImportModalProps): ReactElement {
+  const [ datasets, setDatasets ] = useState<ReadonlyArray<DatasetSelectionListEntry>>();
+  const [ selection, setSelection ] = useState<DatasetId>();
 
   const vdi = useVdiService();
   const userId = useWdkService((wdk) => wdk.getCurrentUser())?.id;
 
-  React.useEffect(
+  useEffect(
     () => {
       if (vdi) {
         // index of dataset ids for datasets that are explicitly visible to the
@@ -61,7 +61,7 @@ export function DatasetSelectionModalController({
     [vdi != null]
   );
 
-  const copyAction = React.useCallback(
+  const copyAction = useCallback(
     () => {
       ifDefined(selection, onDatasetSelect);
       hideModal();

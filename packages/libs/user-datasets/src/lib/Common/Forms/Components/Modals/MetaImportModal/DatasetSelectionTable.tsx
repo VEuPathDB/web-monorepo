@@ -1,16 +1,16 @@
 import React from 'react';
-import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
+import { orderBy, partialRight } from 'lodash';
 
 import * as mesa from '@veupathdb/coreui/lib/components/Mesa/types';
-import * as util from '../../../../../Utils';
-import * as vdi from '../../../../../Service';
+import Mesa from '@veupathdb/coreui/lib/components/Mesa/Ui/Mesa';
 
-import { orderBy, partialRight } from 'lodash';
 import { MesaSortObject } from '@veupathdb/coreui/lib/components/Mesa/types';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalController';
+import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
+import * as util from '../../../../../Utils';
 
 // FIXME: help text values are to be shared with all tables having these columns
 const DatasetColumns = {
@@ -63,14 +63,14 @@ const DatasetColumns = {
 export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
   readonly baseUrl: string;
-  readonly vdiConfig: vdi.VdiServiceConfig;
+  readonly vdiConfig: VdiServiceConfig;
   readonly dataNoun: util.DataNoun;
   readonly userId: number;
   readonly datasets: ReadonlyArray<Dataset>;
   readonly publicDatasetsEnabled: boolean;
 
-  readonly selection: util.Possible<vdi.DatasetId>;
-  readonly setSelection: util.Consumer<util.Possible<vdi.DatasetId>>
+  readonly selection: util.Possible<DatasetId>;
+  readonly setSelection: util.Consumer<util.Possible<DatasetId>>
 }
 
 type TableColumn<K extends keyof Dataset> =
@@ -346,7 +346,7 @@ function matchesQuery(dataset: Dataset, query: string): boolean {
   );
 }
 
-function userMatchesQuery(user: vdi.DatasetListShareUser, query: string): boolean {
+function userMatchesQuery(user: DatasetListShareUser, query: string): boolean {
   return user.firstName.toLowerCase().indexOf(query) > -1 ||
     user.lastName.toLowerCase().indexOf(query) > -1;
 }
