@@ -11,7 +11,19 @@ interface UseDatasetPollingOptions {
   projectId: string;
   /** Refreshes the dataset. Rejections are swallowed; the loop retries. */
   onPoll: () => Promise<unknown>;
+  /**
+   * Bump this to request one extra poll shortly after something that may have
+   * changed the dataset's status (e.g. an edit that triggers a reinstall).
+   * Needed because the main loop does not run at all while the status is
+   * terminal, and the backend may not have flipped the status yet when the
+   * edit's own refetch lands. If the extra poll finds a non-terminal status,
+   * the main loop takes over as usual.
+   */
+  refreshKey?: number;
 }
+
+/** Gives the backend a moment to move the status after an edit. */
+const REFRESH_DELAY_MS = 2000;
 
 /**
  * Polls for dataset status until it reaches a terminal state.
@@ -24,6 +36,7 @@ export function useDatasetPolling({
   status,
   projectId,
   onPoll,
+  refreshKey = 0,
 }: UseDatasetPollingOptions): { isPolling: boolean; isChecking: boolean } {
   const [isChecking, setIsChecking] = useState(false);
 
@@ -34,6 +47,28 @@ export function useDatasetPolling({
   // not tear down and restart the loop.
   const onPollRef = useRef(onPoll);
   onPollRef.current = onPoll;
+
+  // True from a refreshKey bump until the extra poll settles, so the caller can
+  // show activity during the REFRESH_DELAY_MS wait too.
+  const [isRefreshPending, setIsRefreshPending] = useState(false);
+
+  useEffect(() => {
+    if (refreshKey === 0) return;
+    let cancelled = false;
+    setIsRefreshPending(true);
+    const timeoutId = setTimeout(async () => {
+      try {
+        await onPollRef.current();
+      } catch {
+        // Best effort; the main loop (if running) retries on its own.
+      }
+      if (!cancelled) setIsRefreshPending(false);
+    }, REFRESH_DELAY_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
+  }, [refreshKey]);
 
   useEffect(() => {
     if (!isPolling) return;
@@ -104,5 +139,8 @@ export function useDatasetPolling({
     };
   }, [isPolling, disposition]);
 
-  return { isPolling, isChecking: isPolling && isChecking };
+  return {
+    isPolling: isPolling || isRefreshPending,
+    isChecking: isPolling && isChecking,
+  };
 }
