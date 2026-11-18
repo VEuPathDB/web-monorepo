@@ -68,7 +68,7 @@ export type {
 } from './upload-content';
 export {
   newUploadContent,
-  newExistingFilePlaceholder,
+  newUploadPlaceholder,
   isPlaceholder,
 } from './upload-content';
 
