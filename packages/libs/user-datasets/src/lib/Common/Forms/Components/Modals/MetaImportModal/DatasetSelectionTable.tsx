@@ -10,7 +10,14 @@ import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectC
 import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalController';
 import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
-import * as util from '../../../../../Utils';
+import {
+  Consumer,
+  DataNoun,
+  Possible,
+  datasetUserFullName,
+  ifDefined,
+  isNonEmpty,
+} from '../../../../../Utils';
 
 // FIXME: help text values are to be shared with all tables having these columns
 const DatasetColumns = {
@@ -64,13 +71,13 @@ export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
   readonly baseUrl: string;
   readonly vdiConfig: VdiServiceConfig;
-  readonly dataNoun: util.DataNoun;
+  readonly dataNoun: DataNoun;
   readonly userId: number;
   readonly datasets: ReadonlyArray<Dataset>;
   readonly publicDatasetsEnabled: boolean;
 
-  readonly selection: util.Possible<DatasetId>;
-  readonly setSelection: util.Consumer<util.Possible<DatasetId>>
+  readonly selection: Possible<DatasetId>;
+  readonly setSelection: Consumer<Possible<DatasetId>>
 }
 
 type TableColumn<K extends keyof Dataset> =
@@ -193,8 +200,8 @@ function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
 function column<K extends keyof Dataset>(
   [key, name, helpText]: readonly [K, string, string],
   sortable: boolean,
-  renderCell: util.Function<TableCellProps, React.ReactNode> = defaultColumn(key),
-  getValue?: util.Function<TableRowProps, Dataset[K]>
+  renderCell: (props: TableCellProps) => React.ReactNode = defaultColumn(key),
+  getValue?: (props: TableRowProps) => Dataset[K]
 ): mesa.MesaColumn<Dataset, K, Dataset[K]> {
   return {
     key,
@@ -209,7 +216,7 @@ function column<K extends keyof Dataset>(
 
 function defaultColumn(
   key: keyof Dataset
-): util.Function<TableCellProps, string> {
+): (props: TableCellProps) => string {
   return ({ row }) => String(row[key]);
 }
 
@@ -224,7 +231,7 @@ function renderUploader(
   return row.owner.userId === userId ? (
     <span className="faded">Me</span>
   ) : (
-    <span>{util.datasetUserFullName(row.owner)}</span>
+    <span>{datasetUserFullName(row.owner)}</span>
   );
 }
 
@@ -236,8 +243,8 @@ function renderShares(
     return 'Me';
   }
 
-  return util.isNonEmpty(row.shares) ? (
-    row.shares.map(util.datasetUserFullName).join(', ')
+  return isNonEmpty(row.shares) ? (
+    row.shares.map(datasetUserFullName).join(', ')
   ) : (
     <span className="faded">N/A</span>
   );
@@ -267,7 +274,7 @@ function sortDatasets(
   rows: readonly Dataset[],
   by: MesaSortObject<keyof Dataset>
 ): Dataset[] {
-  const valueFn: util.Function<Dataset, any> = (row) => {
+  const valueFn = (row: Dataset) => {
     switch (by.columnKey) {
       case 'type':
         return row.type.category;
@@ -365,7 +372,7 @@ function rowCounts(total: number, current: number): React.ReactElement {
 
 function onlyMyDatasetsToggle(
   value: boolean,
-  setValue: util.Consumer<boolean>
+  setValue: Consumer<boolean>
 ): React.ReactElement {
   return (
     <>
@@ -373,7 +380,7 @@ function onlyMyDatasetsToggle(
         id="meta-import-modal-omdt"
         type="checkbox"
         checked={value}
-        onChange={(e) => util.ifDefined(e.target?.checked, setValue)}
+        onChange={(e) => ifDefined(e.target?.checked, setValue)}
       />{' '}
       <label htmlFor="meta-import-modal-omdt">
         Only show datasets owned by or shared with me
@@ -384,7 +391,7 @@ function onlyMyDatasetsToggle(
 
 function onlyThisSiteToggle(
   value: boolean,
-  setValue: util.Consumer<boolean>,
+  setValue: Consumer<boolean>,
   siteName: string
 ): React.ReactElement {
   return (
@@ -393,7 +400,7 @@ function onlyThisSiteToggle(
         id="meta-import-modal-otst"
         type="checkbox"
         checked={value}
-        onChange={(e) => util.ifDefined(e.target?.checked, setValue)}
+        onChange={(e) => ifDefined(e.target?.checked, setValue)}
       />{' '}
       <label htmlFor="meta-import-modal-otst">
         Only show datasets uploaded to <strong>{siteName}</strong>
