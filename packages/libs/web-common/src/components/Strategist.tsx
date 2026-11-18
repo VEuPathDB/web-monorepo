@@ -17,7 +17,7 @@ export default function Strategist(props: Props) {
       if (
         event.origin !== window.location.origin ||
         event.source !== iframeRef.current?.contentWindow ||
-        type !== 'pathfinder:location' ||
+        type !== 'strategist:location' ||
         typeof path !== 'string' ||
         !path.startsWith('/')
       )

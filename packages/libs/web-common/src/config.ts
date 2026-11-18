@@ -41,7 +41,7 @@ export const {
   aiExpressionQualtricsId = '',
   showSubscriptionProds = false,
   allowAiAssistedCommentCreation = true,
-  pathfinderUrl = '',
+  strategistUrl = '',
 } = window.__SITE_CONFIG__;
 
 export const edaExampleAnalysesAuthors = !window.__SITE_CONFIG__
