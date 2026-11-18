@@ -1,26 +1,26 @@
 import React, { ReactElement } from 'react';
 import { DatasetSelectionModalController } from './DatasetSelectionModalController';
 import { MetadataImportModalProps } from './MetadataImportModalProps';
-import { Nullable, useSimpleState } from '../../../../../Utils';
+import { Nullable } from '../../../../../Utils';
 import { OverwriteWarningModal } from './OverwriteWarningModal';
 
 export function MetadataImportModalController(props: MetadataImportModalProps): Nullable<ReactElement> {
-  const showedWarning = useSimpleState(false);
+  const [showedWarning, setShowedWarning] = React.useState<boolean>(false);
 
-  if (!props.visibleState.get()) {
+  if (!props.isVisible) {
     return null;
   }
 
-  return showedWarning.get()
+  return showedWarning
     ? <DatasetSelectionModalController
       {...props}
       onDatasetSelect={id => {
         props.onDatasetSelect(id);
-        showedWarning.set(false);
+        setShowedWarning(false);
       }}
     />
     : <OverwriteWarningModal
-      onAccept={() => showedWarning.set(true)}
-      onReject={() => props.visibleState.set(false)}
-    />;
+        onAccept={() => setShowedWarning(true)}
+        onReject={() => props.hideModal()}
+      />;
 }

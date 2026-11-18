@@ -23,7 +23,7 @@ export interface DatasetFormControllerProps<P extends DatasetFormProps = Dataset
   readonly form: React.JSXElementConstructor<P>;
   readonly formConfig: DatasetFormConfig;
   readonly vdiConfig: vdi.VdiServiceMetadata;
-  readonly propFactory: util.Function<DatasetFormProps, P>;
+  readonly propFactory: (baseProps: DatasetFormProps) => P;
   readonly dataNoun: DataNoun;
   readonly enablePublicDatasets: boolean;
 }
@@ -63,7 +63,10 @@ export function DatasetFormController<
 
   const metadata = useDatasetMetadata();
 
-  const isDatasetSelectionVisible = util.useSimpleState(false);
+  const [
+    isDatasetSelectionVisible,
+    setDatasetSelectionVisible,
+  ] = React.useState<boolean>(false);
 
   const fetchDatasetMetadata = React.useCallback(
     async (id: vdi.DatasetId) => util.ifDefined(service, async (vdi) => {
@@ -95,7 +98,7 @@ export function DatasetFormController<
       submit: notImplemented,
       clearUploadError: clearBadUpload,
       setSubmitting,
-      openMetaImportModal: () => isDatasetSelectionVisible.set(true),
+      openMetaImportModal: () => setDatasetSelectionVisible(true),
     },
   });
 
@@ -107,7 +110,8 @@ export function DatasetFormController<
         baseUrl={props.baseUrl}
         vdiConfig={props.vdiConfig.configuration}
         dataNoun={props.dataNoun}
-        visibleState={isDatasetSelectionVisible}
+        isVisible={isDatasetSelectionVisible}
+        hideModal={() => setDatasetSelectionVisible(false)}
         onDatasetSelect={fetchDatasetMetadata}
         publicDatasetsEnabled={props.enablePublicDatasets}
       />

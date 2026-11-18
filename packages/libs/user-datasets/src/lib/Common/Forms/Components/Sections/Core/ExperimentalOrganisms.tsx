@@ -166,8 +166,8 @@ function OrganismDetailsRow({
   setOrganism,
   jsonPath,
 }: DatasetOrganismRow): React.ReactElement {
-  const hasContent = util.isNonBlankString(organism.species)
-    || util.isNonBlankString(organism.strain);
+  const hasContent = util.isNonBlank(organism.species)
+    || util.isNonBlank(organism.strain);
 
   return (
     <li className="non-bold-labels organism-row">

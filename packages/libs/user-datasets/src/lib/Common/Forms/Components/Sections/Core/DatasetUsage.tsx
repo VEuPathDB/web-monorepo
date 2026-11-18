@@ -43,7 +43,7 @@ export function DatasetUsage({ jsonPath }: DatasetUsageProps): React.ReactElemen
     [dispatch]
   );
 
-  if (typeof hasDisclaimer === 'undefined' && util.isNonBlankString(disclaimer)) {
+  if (typeof hasDisclaimer === 'undefined' && util.isNonBlank(disclaimer)) {
     setEnabled(true);
   }
 

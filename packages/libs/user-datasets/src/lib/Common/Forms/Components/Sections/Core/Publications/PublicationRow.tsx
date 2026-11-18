@@ -123,7 +123,7 @@ export function PublicationRow(props: PublicationRowProps): React.ReactElement {
 
       setPublication(newPub, props.index);
 
-      if (!util.isNonBlankString(id)) {
+      if (!util.isNonBlank(id)) {
         setCitationStatus([null, null]);
         debounce(() => {});
       }
@@ -202,7 +202,7 @@ const TEST_PMID = newPubInputTest('pmid');
 const TEST_DOI = newPubInputTest('doi');
 
 function PublicationInput(props: PublicationInputProps): React.ReactElement {
-  const hasType = util.isNonBlankString(props.publication.type);
+  const hasType = util.isNonBlank(props.publication.type);
   const pubTypeIsFieldType = props.publication.type === props.fieldType;
   const validator = props.fieldType === 'pmid' ? TEST_PMID : TEST_DOI;
 
@@ -219,7 +219,7 @@ function PublicationInput(props: PublicationInputProps): React.ReactElement {
       validator={pubTypeIsFieldType || !hasType ? validator : undefined}
       disabled={
         props.isDisabled ||
-        (util.isNonBlankString(props.publication.identifier) && !pubTypeIsFieldType)
+        (util.isNonBlank(props.publication.identifier) && !pubTypeIsFieldType)
       }
     />
   );
@@ -229,7 +229,7 @@ function applyCitation(
   publication: Publication,
   citation: string | undefined
 ): Publication {
-  return util.isNonBlankString(publication.identifier)
+  return util.isNonBlank(publication.identifier)
     ? { ...publication, citation }
     : { isPrimary: publication.isPrimary };
 }

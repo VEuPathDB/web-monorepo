@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   JsonPathBuilder,
-  useTextLengthTest
+  newTextLengthTest
 } from '../../../../../../Utils';
 import { LabelInputPair } from '../../../LabelInputPair';
 import { PartialDatasetContact } from '../../../../../../Service';
@@ -60,6 +60,8 @@ enum Strictness {
   Primary,
 }
 
+const TEST_CONTACT_NAME = newTextLengthTest(2, 300);
+
 export function ContactBlock(props: ContactBlockProps): React.ReactElement {
   const { index, contact, updateContact } = props;
 
@@ -76,8 +78,6 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
 
   const validationThreshold = determineStrictness(props);
 
-  const reqNameLengthTest = useTextLengthTest(2, 300);
-
   return (
     <li className="field-grid non-bold-labels">
       <span className="multi-input-label">Contact {index + 1}</span>
@@ -90,7 +90,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.firstName}
           onChange={(it) => onChangePart('firstName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          validator={reqNameLengthTest}
+          validator={TEST_CONTACT_NAME}
         />
 
         <LabelInputPair
@@ -111,7 +111,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.lastName}
           onChange={(it) => onChangePart('lastName', it)}
           required={validationThreshold >= Strictness.Minimum}
-          validator={reqNameLengthTest}
+          validator={TEST_CONTACT_NAME}
         />
 
         <LabelInputPair

@@ -1,8 +1,9 @@
-import { Consumer, DataNoun, SimpleState } from '../../../../../Utils';
+import { DataNoun } from '../../../../../Utils';
 import { DatasetId, VdiServiceConfig } from '../../../../../Service';
 
 export interface MetadataImportModalProps {
-  readonly visibleState: SimpleState<boolean>;
+  readonly isVisible: boolean;
+  readonly hideModal: () => void;
 
   readonly baseUrl: string;
   readonly publicDatasetsEnabled: boolean;
@@ -10,5 +11,5 @@ export interface MetadataImportModalProps {
 
   readonly vdiConfig: VdiServiceConfig;
 
-  readonly onDatasetSelect: Consumer<DatasetId>;
+  readonly onDatasetSelect: (id: DatasetId) => void;
 }

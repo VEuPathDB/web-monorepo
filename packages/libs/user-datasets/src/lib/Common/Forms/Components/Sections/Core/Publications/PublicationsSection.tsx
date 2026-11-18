@@ -77,7 +77,7 @@ export function PublicationsSection(props: PublicationsSectionProps): React.Reac
           {safePubs.map((pub, index) => {
             let isDuplicate = false;
 
-            if (util.isNonBlankString(pub.identifier)) {
+            if (util.isNonBlank(pub.identifier)) {
               if (seenIdentifiers.has(pub.identifier)) {
                 isDuplicate = true;
               } else {

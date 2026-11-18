@@ -5,11 +5,10 @@ import {
   PartialDatasetPublication as Publication,
 } from '../Model';
 import {
-  isNonBlankString,
   isNonEmpty,
   ifDefined,
   requireValue,
-  Possible,
+  Possible, isNonBlank
 } from '../../Utils';
 import { extractPublicationId } from '../Publications';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
@@ -150,9 +149,9 @@ function cleanPublication({
   isPrimary,
   citation,
 }: Publication): Possible<Publication> {
-  return isNonBlankString(identifier) &&
-    isNonBlankString(citation) &&
-    isNonBlankString(type)
+  return isNonBlank(identifier) &&
+    isNonBlank(citation) &&
+    isNonBlank(type)
     ? {
         type,
         isPrimary,

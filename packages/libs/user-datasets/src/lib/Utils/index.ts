@@ -17,8 +17,6 @@ export {
   testFileRequired,
   testNonBlank,
   newTextLengthTest,
-
-  useTextLengthTest,
 } from './input-tests';
 
 export type {
@@ -38,10 +36,9 @@ export type {
 
 export {
   filterNullish,
-  isNonBlankString,
+  isNonBlank,
   isNonEmpty,
   isNonEmptyString,
 } from './value-tests';
 
 export { JsonPathBuilder } from './JsonPathBuilder';
-export { SimpleState, useSimpleState } from './SimpleState';
