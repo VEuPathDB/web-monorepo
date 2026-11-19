@@ -1,27 +1,22 @@
-import React, { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 
-import {
-  RouteComponentProps,
-  Switch,
-  useHistory,
-  useRouteMatch,
-} from 'react-router-dom';
+import { Switch, useRouteMatch } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
-import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
-
 import { DataNoun } from '../Utils';
 
-import DatasetManagementController from '../Components/Management/DatasetManagementController';
-import {
-  DatasetTypeConfig,
-  DatasetWorkspaceConfig,
-  filterAvailableDataTypes,
-  promoteTypeConfig,
-} from '../Common/Configuration';
+import { DatasetWorkspaceConfig } from '../Common/Configuration';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useVdiMetadata } from '../Service/utils/use-vdi';
+import {
+  ManageOrEditDatasetRoute,
+  UserDatasetsWorkspaceRoute,
+} from './UserDatasetRouteComponents';
+import {
+  UserDatasetRouterContextValue,
+  UserDatasetRouterProvider,
+} from './UserDatasetRouterContext';
 
 interface Props {
   detailsPageTitle: string;
@@ -53,146 +48,72 @@ export function UserDatasetRouter({
 
   const vdiMetadata = useVdiMetadata();
 
-  if (!vdiMetadata) return <Loading />;
+  const contextValue = useMemo(
+    (): UserDatasetRouterContextValue | undefined =>
+      vdiMetadata
+        ? {
+            baseUrl: url,
+            detailsPageTitle,
+            helpRoute,
+            workspaceTitle,
+            helpTabContents,
+            dataNoun,
+            enablePublicUserDatasets,
+            workspaceConfig,
+            vdiMetadata,
+          }
+        : undefined,
+    [
+      url,
+      detailsPageTitle,
+      helpRoute,
+      workspaceTitle,
+      helpTabContents,
+      dataNoun,
+      enablePublicUserDatasets,
+      workspaceConfig,
+      vdiMetadata,
+    ]
+  );
 
+  if (!contextValue) return <Loading />;
+
+  // The route components are defined at module scope and read what they need
+  // from context. They must NOT be defined inline here: `WdkRoute` renders
+  // `component` as an element type, and this router re-renders on every
+  // navigation (via `useRouteMatch`), so an inline function would be a new type
+  // each time and remount the page (e.g. when opening the edit modal).
   return (
-    <Switch>
-      <WdkRoute
-        path={path}
-        exact={true}
-        requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps
-        ) {
-          const urlParams = useMemo(() => {
-            const searchParamEntries = new URLSearchParams(
-              props.location.search
-            ).entries();
-
-            return Object.fromEntries(searchParamEntries);
-          }, [props.location.search]);
-
-          return (
-            <UserDatasetsWorkspace
-              baseUrl={url}
-              helpRoute={helpRoute}
-              workspaceConfig={workspaceConfig}
-              urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
-              helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
-              enablePublicUserDatasets={enablePublicUserDatasets}
-              vdiMetadata={vdiMetadata}
-            />
-          );
-        }}
-      />
-      <WdkRoute
-        path={path + UserDatasetRoutes.NewDataset}
-        exact={true}
-        requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps
-        ) {
-          const urlParams = useMemo(() => {
-            const searchParamEntries = new URLSearchParams(
-              props.location.search
-            ).entries();
-
-            return Object.fromEntries(searchParamEntries);
-          }, [props.location.search]);
-
-          return (
-            <UserDatasetsWorkspace
-              baseUrl={url}
-              helpRoute={helpRoute}
-              workspaceConfig={workspaceConfig}
-              urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
-              helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
-              enablePublicUserDatasets={enablePublicUserDatasets}
-              vdiMetadata={vdiMetadata}
-            />
-          );
-        }}
-      />
-      <WdkRoute
-        path={path + '/help'}
-        exact={true}
-        requiresLogin={false} // uses custom guest views
-        component={function UserDatasetsWorkspaceRoute(
-          props: RouteComponentProps
-        ) {
-          const urlParams = useMemo(() => {
-            const searchParamEntries = new URLSearchParams(
-              props.location.search
-            ).entries();
-
-            return Object.fromEntries(searchParamEntries);
-          }, [props.location.search]);
-
-          return (
-            <UserDatasetsWorkspace
-              baseUrl={url}
-              helpRoute={helpRoute}
-              workspaceConfig={workspaceConfig}
-              urlParams={urlParams}
-              workspaceTitle={workspaceTitle}
-              helpTabContents={helpTabContents}
-              dataNoun={dataNoun}
-              enablePublicUserDatasets={enablePublicUserDatasets}
-              vdiMetadata={vdiMetadata}
-            />
-          );
-        }}
-      />
-      <WdkRoute
-        path={[
-          path + UserDatasetRoutes.ManageDataset,
-          path + UserDatasetRoutes.EditDataset,
-        ]}
-        exact={true}
-        requiresLogin={true}
-        component={function Component(
-          props: RouteComponentProps<{ id: string }>
-        ) {
-          const history = useHistory();
-
-          const datasetTypes = filterAvailableDataTypes(
-            workspaceConfig.baseDatasetTypeConfigs,
-            vdiMetadata.plugins
-          )
-            .map((cdt) => promoteTypeConfig(cdt, vdiMetadata.plugins))
-            .filter((v) => v !== undefined) as readonly DatasetTypeConfig[];
-
-          const editModalProps = props.location.pathname.endsWith('/edit')
-            ? {
-                showModal: true,
-                updateToPublic:
-                  props.location.search.indexOf('updateToPublic') > -1,
-              }
-            : undefined;
-
-          return (
-            <DatasetManagementController
-              baseUrl={url}
-              detailsPageTitle={detailsPageTitle}
-              workspaceTitle={workspaceTitle}
-              dataNoun={dataNoun}
-              enablePublicUserDatasets={enablePublicUserDatasets}
-              datasetTypes={datasetTypes}
-              formConfigs={workspaceConfig.uploadFormConfigurators}
-              fetchEdaStudyLinks={workspaceConfig.fetchEdaStudyMetadata}
-              includeAllLink
-              includeNameHeader
-              editModal={editModalProps}
-              history={history}
-              {...props.match.params}
-            />
-          );
-        }}
-      />
-    </Switch>
+    <UserDatasetRouterProvider value={contextValue}>
+      <Switch>
+        <WdkRoute
+          path={path}
+          exact={true}
+          requiresLogin={false} // uses custom guest views
+          component={UserDatasetsWorkspaceRoute}
+        />
+        <WdkRoute
+          path={path + UserDatasetRoutes.NewDataset}
+          exact={true}
+          requiresLogin={false} // uses custom guest views
+          component={UserDatasetsWorkspaceRoute}
+        />
+        <WdkRoute
+          path={path + '/help'}
+          exact={true}
+          requiresLogin={false} // uses custom guest views
+          component={UserDatasetsWorkspaceRoute}
+        />
+        <WdkRoute
+          path={[
+            path + UserDatasetRoutes.ManageDataset,
+            path + UserDatasetRoutes.EditDataset,
+          ]}
+          exact={true}
+          requiresLogin={true}
+          component={ManageOrEditDatasetRoute}
+        />
+      </Switch>
+    </UserDatasetRouterProvider>
   );
 }

@@ -168,15 +168,7 @@ export interface DatasetAttribute {
   value: React.ReactNode;
 }
 
-enum DatasetUpdateAction {
-  None,
-  OpeningDefault,
-  OpeningForPromotion,
-  Closing,
-}
-
 export interface DatasetManagementState {
-  readonly datasetUpdateAction: DatasetUpdateAction;
   readonly isCommunityModalOpen: boolean;
 }
 
@@ -269,7 +261,6 @@ class DatasetManagement<
 
     this.state = {
       ...this.state,
-      datasetUpdateAction: DatasetUpdateAction.None,
       isCommunityModalOpen: false,
     };
 
@@ -309,6 +300,11 @@ class DatasetManagement<
     }
 
     return CommunityPromotability.CanPromote;
+  }
+
+  private getEditPath(): string {
+    const { baseUrl, userDataset } = this.props;
+    return `${baseUrl}/${userDataset.datasetId}/edit`;
   }
 
   openSharingModal() {
@@ -715,10 +711,7 @@ class DatasetManagement<
           <ThemedUpdateButton
             buttonText="Edit my dataset"
             onPress={() =>
-              this.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.OpeningDefault,
-              }))
+              this.props.history.push({ pathname: this.getEditPath() })
             }
           />
         )}
@@ -836,13 +829,13 @@ class DatasetManagement<
             onClose={() =>
               self.setState((s) => ({ ...s, isCommunityModalOpen: false }))
             }
-            onFixErrors={() =>
-              self.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.OpeningForPromotion,
-                isCommunityModalOpen: false,
-              }))
-            }
+            onFixErrors={() => {
+              self.setState((s) => ({ ...s, isCommunityModalOpen: false }));
+              self.props.history.push({
+                pathname: self.getEditPath(),
+                search: '?updateToPublic',
+              });
+            }}
             dataNoun={dataNoun}
             updateDatasetCommunityVisibility={(
               datasetIds,
@@ -862,35 +855,11 @@ class DatasetManagement<
         );
       }
 
-      const updatePath = `${self.props.baseUrl}/${userDataset.datasetId}/edit`;
-
-      switch (self.state.datasetUpdateAction) {
-        case DatasetUpdateAction.OpeningForPromotion:
-          self.props.history.push({
-            pathname: updatePath,
-            search: '?updateToPublic',
-          });
-          break;
-
-        case DatasetUpdateAction.OpeningDefault:
-          self.props.history.push({ pathname: updatePath });
-          break;
-
-        case DatasetUpdateAction.Closing:
-          self.props.history.goBack();
-          break;
-      }
-
       if (self.props.editModal?.showModal) {
         return (
           <UpdateFormController
             datasetId={userDataset.datasetId}
-            closeModal={() =>
-              self.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.Closing,
-              }))
-            }
+            closeModal={() => self.props.history.goBack()}
             baseUrl={self.props.baseUrl}
             vdiConfig={self.props.vdiConfig}
             isPromotingToPublic={self.props.editModal.updateToPublic}

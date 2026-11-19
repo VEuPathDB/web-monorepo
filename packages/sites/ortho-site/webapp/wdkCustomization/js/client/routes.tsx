@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router';
 
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-import { pathfinderUrl } from '@veupathdb/web-common/lib/config';
+import { strategistUrl } from '@veupathdb/web-common/lib/config';
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
 import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
@@ -42,7 +42,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     ...blastRoutes,
     ...computeJobRoutes,
     ...proteinMappingRoutes,
-    ...strategistRoutes(pathfinderUrl),
+    ...strategistRoutes(strategistUrl),
     ...ebrcRoutes,
   ];
 }

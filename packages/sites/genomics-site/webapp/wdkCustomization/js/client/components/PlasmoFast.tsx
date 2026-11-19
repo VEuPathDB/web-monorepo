@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { analyze, callStrain } from '@veupathdb/plasmofast';
+import { analyze, callStrain, VERSION } from '@veupathdb/plasmofast';
 import {
   AnalysisResult,
   ProgressEvent,
@@ -262,8 +262,9 @@ export function PlasmoFast() {
       </p>
 
       <p>
-        plasmoFAST was originally developed by Katie Ko (David Serre Lab,
-        University of Maryland). Source code available at{' '}
+        This page is using plasmoFAST version {VERSION}. plasmoFAST was
+        originally developed by Katie Ko (David Serre Lab, University of
+        Maryland). Source code available at{' '}
         <a href="https://github.com/VEuPathDB/plasmoFAST">GitHub</a>.
       </p>
     </div>
