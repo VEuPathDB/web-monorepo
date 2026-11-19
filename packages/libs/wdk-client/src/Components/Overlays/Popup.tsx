@@ -186,8 +186,9 @@ class Popup extends React.Component<Props> {
 
   render() {
     const children = React.cloneElement(this.props.children, {
-      ref: (c: React.ReactInstance | null) =>
-        (this.popupNode = c && (ReactDOM.findDOMNode(c) as HTMLElement)),
+      ref: (node: HTMLElement | null) => {
+        this.popupNode = node;
+      },
     });
     const content = (
       <TabbableContainer autoFocus className={this.props.className || ''}>
