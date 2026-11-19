@@ -90,6 +90,7 @@ export interface FilterParamNew extends ParameterBase {
     // units: string;
     precision: number;
     isRange: boolean;
+    defaultSort?: { columnKey: 'value' | 'count'; direction: 'asc' | 'desc' };
   }>;
   values: Record<string, string[]>;
 }
