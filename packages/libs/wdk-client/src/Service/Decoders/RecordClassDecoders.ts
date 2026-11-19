@@ -31,15 +31,18 @@ export const reporterDecoder: Decode.Decoder<Reporter> = Decode.combine(
 export const attributeFieldDecoder: Decode.Decoder<AttributeField> =
   Decode.combine(
     namedModelEntityDecoder,
-    Decode.field('help', Decode.optional(Decode.string)),
-    Decode.field('htmlHelp', Decode.optional(Decode.string)),
-    Decode.field('align', Decode.optional(Decode.string)),
-    Decode.field('isSortable', Decode.boolean),
-    Decode.field('isRemovable', Decode.boolean),
-    Decode.field('isDisplayable', Decode.boolean),
-    Decode.field('type', Decode.optional(Decode.string)),
-    Decode.field('truncateTo', Decode.number),
-    Decode.field('formats', Decode.arrayOf(reporterDecoder))
+    Decode.combine(
+      Decode.field('help', Decode.optional(Decode.string)),
+      Decode.field('htmlHelp', Decode.optional(Decode.string)),
+      Decode.field('align', Decode.optional(Decode.string)),
+      Decode.field('isSortable', Decode.boolean),
+      Decode.field('isRemovable', Decode.boolean),
+      Decode.field('isDisplayable', Decode.boolean),
+      Decode.field('type', Decode.optional(Decode.string)),
+      Decode.field('columnDataType', Decode.optional(Decode.string)),
+      Decode.field('truncateTo', Decode.number),
+      Decode.field('formats', Decode.arrayOf(reporterDecoder))
+    )
   );
 
 export const tableFieldDecoder: Decode.Decoder<TableField> = Decode.combine(
