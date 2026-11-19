@@ -312,6 +312,22 @@ export function assertValidInputVariables(
 }
 
 /**
+ * Determines whether every input marked `isRequired` in the data element
+ * constraints has a variable selected in the given viz config.
+ * Returns false when there are no constraints; callers that treat "no
+ * constraints" as valid should check for that case themselves.
+ */
+export function requiredInputsAreSelected<ConfigType>(
+  dataElementConstraints: DataElementConstraintRecord[] | undefined,
+  vizConfig: ConfigType
+): boolean {
+  if (!dataElementConstraints) return false;
+  return Object.entries(dataElementConstraints[0])
+    .filter(([, constraint]) => constraint?.isRequired)
+    .every(([inputName]) => !!vizConfig[inputName as keyof ConfigType]);
+}
+
+/**
  * convert viewport bounding box into two EDA filters
  *
  * @param bounds : Bounds
