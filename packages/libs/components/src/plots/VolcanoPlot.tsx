@@ -46,6 +46,7 @@ import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import { truncateWithEllipsis } from '../utils/axis-tick-label-ellipsis';
+import { formatSignificantFigures } from '../utils/significant-figures';
 import { ExportPlotToImageButton } from './ExportPlotToImageButton';
 import { FindNearestDatumXYProvider } from './FindNearestDatumXYProvider';
 import './VolcanoPlot.css';
@@ -772,6 +773,11 @@ interface TooltipBodyProps {
   showHint?: boolean;
 }
 
+// Tooltip values come as full-precision strings; show them to 3 significant figures.
+function displayValue(value: string | undefined) {
+  return formatSignificantFigures(value) ?? value;
+}
+
 function TooltipBody({
   datum,
   effectSizeLabel,
@@ -847,14 +853,14 @@ function TooltipBody({
       ></div>
       <ul>
         <li>
-          <span>{effectSizeLabel}:</span> {datum.effectSize}
+          <span>{effectSizeLabel}:</span> {displayValue(datum.effectSize)}
         </li>
         <li>
           <span>P Value:</span>{' '}
           {datum.pValue
             ? Number(datum.pValue) <= statisticsFloors.pValueFloor
               ? '<= ' + statisticsFloors.pValueFloor
-              : datum.pValue
+              : displayValue(datum.pValue)
             : 'n/a'}
         </li>
         <li>
@@ -865,7 +871,7 @@ function TooltipBody({
                 statisticsFloors.adjustedPValueFloor &&
               Number(datum.pValue) <= statisticsFloors.pValueFloor
               ? '<= ' + statisticsFloors.adjustedPValueFloor
-              : datum.adjustedPValue
+              : displayValue(datum.adjustedPValue)
             : 'n/a'}
         </li>
       </ul>
