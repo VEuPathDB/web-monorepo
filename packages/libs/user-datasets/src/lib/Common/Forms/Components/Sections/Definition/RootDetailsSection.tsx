@@ -134,11 +134,7 @@ export function RootDetailsSection(
   );
 
   const referenceGenome = formConfig.dependencies ? (
-    <DatasetDependencies
-      config={formConfig.dependencies}
-      datasetDetails={datasetDetails}
-      setDatasetDetails={setMetadata}
-    />
+    <DatasetDependencies config={formConfig.dependencies} />
   ) : null;
 
   return (
@@ -183,11 +179,7 @@ export function RootDetailsSection(
         {referenceGenome}
 
         {props.showVisibilities && (
-          <VisibilityOptions
-            datasetMeta={datasetDetails}
-            setDatasetMeta={setMetadata}
-            jsonPath={jsonPath}
-          />
+          <VisibilityOptions jsonPath={jsonPath} />
         )}
 
         {props.showDataInputs && (

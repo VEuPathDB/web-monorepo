@@ -10,9 +10,9 @@ import { SAMPLE_INFO_FIELD_NAME } from '../utils/rnaseq-rc-data-files';
 
 export interface DatasetUploads {
   readonly url?: string;
-  readonly dataFiles?: readonly UploadContent[];
-  readonly documentFiles?: readonly UploadContent[];
-  readonly dataPropertiesFiles?: readonly UploadContent[];
+  readonly dataFiles?: ReadonlyArray<UploadContent>;
+  readonly documentFiles?: ReadonlyArray<UploadContent>;
+  readonly dataPropertiesFiles?: ReadonlyArray<UploadContent>;
 }
 
 export function newDatasetUploads(state: DatasetFormState): DatasetUploads {
@@ -47,12 +47,14 @@ export function newUpdateUploads(state: DatasetFormState): DatasetUploads {
 }
 
 export function hasUploads(obj: DatasetUploads): boolean {
-  return (
-    (typeof obj.url === 'string' && obj.url.length > 0) ||
-    (obj.dataFiles != null && obj.dataFiles.length > 0) ||
-    (obj.documentFiles != null && obj.documentFiles.length > 0) ||
-    (obj.dataPropertiesFiles != null && obj.dataPropertiesFiles.length > 0)
-  );
+  return (typeof obj.url === 'string' && obj.url.length > 0)
+    || hasNewContent(obj.dataFiles)
+    || hasNewContent(obj.documentFiles)
+    || hasNewContent(obj.dataPropertiesFiles);
+}
+
+function hasNewContent(uploads: Possible<ReadonlyArray<UploadContent>>): boolean {
+  return uploads != null && uploads.some(it => it.type !== 'placeholder');
 }
 
 export type DatasetZipType = 'upload' | 'install';

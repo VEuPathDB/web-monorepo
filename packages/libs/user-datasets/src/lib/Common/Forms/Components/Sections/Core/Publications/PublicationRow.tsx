@@ -9,14 +9,9 @@ import {
   PartialDatasetPublication as Publication,
   DatasetPublicationType as PublicationType,
 } from '../../../../../../Service/Model';
-import {
-  BiConsumer,
-  Consumer,
-  Predicate,
-  JsonPathBuilder,
-  ifDefined,
-  isNonBlankString,
-} from '../../../../../../Utils';
+
+import * as util from '../../../../../../Utils';
+
 import {
   CitationLookupResult,
   lookupCitation,
@@ -35,14 +30,14 @@ export interface PublicationRowProps {
   readonly index: number;
 
   readonly publication: Publication;
-  readonly setPublication: Consumer<Publication>;
+  readonly setPublication: util.BiConsumer<Publication, number>;
 
   readonly isRequired: boolean;
   readonly isDisabled: boolean;
   readonly isSingular: boolean;
   readonly isDuplicate: boolean;
 
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function PublicationRow(props: PublicationRowProps): ReactElement {
@@ -56,7 +51,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
   useEffect(
     () =>
       setCitationStatus([
-        ifDefined(props.publication.citation, (citation) => ({
+        util.ifDefined(props.publication.citation, (citation) => ({
           status: 'success',
           citation,
         })) ?? null,
@@ -77,10 +72,11 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
             default:
               return applyCitation(pub, undefined);
           }
-        })()
+        })(),
+        props.index,
       );
     },
-    [publication, setPublication]
+    [publication, setPublication, props.index]
   );
 
   const runLookup = useCallback(
@@ -130,9 +126,9 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
         citation: undefined,
       };
 
-      setPublication(newPub);
+      setPublication(newPub, props.index);
 
-      if (!isNonBlankString(id)) {
+      if (!util.isNonBlank(id)) {
         setCitationStatus([null, null]);
         debounce(() => {});
       }
@@ -144,7 +140,7 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
       setCitationStatus((it) => [it[0], { status: 'loading' }]);
       debounce(runLookup, newPub);
     },
-    [publication, setPublication, runLookup]
+    [publication, setPublication, runLookup, props.index]
   );
 
   return (
@@ -174,7 +170,10 @@ export function PublicationRow(props: PublicationRowProps): ReactElement {
             disabled={props.isDisabled || props.isSingular}
             checked={props.publication.isPrimary}
             onChange={(v) =>
-              props.setPublication({ ...props.publication, isPrimary: v })
+              props.setPublication(
+                { ...props.publication, isPrimary: v },
+                props.index,
+              )
             }
           />
         </div>
@@ -192,10 +191,10 @@ interface PublicationInputProps {
   readonly isRequired: boolean;
   readonly isDisabled: boolean;
   readonly isInvalid: boolean;
-  readonly onInput: BiConsumer<string, PublicationType>;
+  readonly onInput: util.BiConsumer<string, PublicationType>;
 }
 
-function newPubInputTest(type: PublicationType): Predicate<TextInputProps> {
+function newPubInputTest(type: PublicationType): util.Predicate<TextInputProps> {
   return ({ value, required, disabled }: TextInputProps): boolean =>
     disabled === true
       || (!required && isEmpty(value))
@@ -208,7 +207,7 @@ const TEST_PMID = newPubInputTest('pmid');
 const TEST_DOI = newPubInputTest('doi');
 
 function PublicationInput(props: PublicationInputProps): ReactElement {
-  const hasType = isNonBlankString(props.publication.type);
+  const hasType = util.isNonBlank(props.publication.type);
   const pubTypeIsFieldType = props.publication.type === props.fieldType;
   const validator = props.fieldType === 'pmid' ? TEST_PMID : TEST_DOI;
 
@@ -225,7 +224,7 @@ function PublicationInput(props: PublicationInputProps): ReactElement {
       validator={pubTypeIsFieldType || !hasType ? validator : undefined}
       disabled={
         props.isDisabled ||
-        (isNonBlankString(props.publication.identifier) && !pubTypeIsFieldType)
+        (util.isNonBlank(props.publication.identifier) && !pubTypeIsFieldType)
       }
     />
   );
@@ -235,7 +234,7 @@ function applyCitation(
   publication: Publication,
   citation: string | undefined
 ): Publication {
-  return isNonBlankString(publication.identifier)
+  return util.isNonBlank(publication.identifier)
     ? { ...publication, citation }
     : { isPrimary: publication.isPrimary };
 }

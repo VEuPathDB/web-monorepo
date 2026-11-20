@@ -1,5 +1,5 @@
-import React, { ReactElement, useEffect } from 'react';
-import { ifDefined, useSimpleState } from '../../../../../Utils';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { ifDefined } from '../../../../../Utils';
 import {
   DatasetListEntry,
   useVdiService,
@@ -19,8 +19,8 @@ export interface DatasetSelectionListEntry extends DatasetListEntry {
 export function DatasetSelectionModalController(
   props: MetadataImportModalProps
 ): ReactElement {
-  const datasets = useSimpleState<DatasetSelectionListEntry[]>();
-  const selection = useSimpleState<DatasetId>();
+  const [datasets, setDatasets] = useState<DatasetSelectionListEntry[]>();
+  const [selection, setSelection] = useState<DatasetId>();
 
   const vdi = useVdiService();
   const userId = useWdkService((wdk) => wdk.getCurrentUser())?.id;
@@ -51,7 +51,7 @@ export function DatasetSelectionModalController(
               allDatasets.push({ ...dataset, isCommunity: true });
           }
 
-          datasets.set(allDatasets);
+          setDatasets(allDatasets);
         })();
       }
     },
@@ -59,19 +59,20 @@ export function DatasetSelectionModalController(
     [vdi != null]
   );
 
-  if (datasets.isUndefined || userId === undefined) return <Loading />;
+  if (datasets === undefined || userId === undefined) return <Loading />;
 
   return (
     <DatasetSelectionModal
       {...props}
       userId={userId}
       selection={selection}
+      setSelection={setSelection}
       siteDisplayName={projectIdToDisplayName(projectId)!}
-      datasets={datasets.get()!}
-      closeAction={() => props.visibleState.set(false)}
+      datasets={datasets}
+      closeAction={props.hideModal}
       copyAction={() => {
-        ifDefined(selection.get(), props.onDatasetSelect);
-        props.visibleState.set(false);
+        ifDefined(selection, props.onDatasetSelect);
+        props.hideModal();
       }}
     />
   );

@@ -1,58 +1,79 @@
 import React, { ReactElement } from 'react';
+
+import * as util from '../../../../../../Utils';
+
 import { InputBlock } from '../../../InputBlock';
 import { PartialDatasetDetails, PartialDatasetPublication as Publication } from '../../../../../../Service/Model';
-import {
-  Consumer, isNonBlankString,
-  JsonPathBuilder,
-  replaceElement
-} from '../../../../../../Utils';
-import { isEmpty } from 'lodash';
 import { AddRowButton } from '../../../AddRowButton';
 import { OptionalSection } from '../../../OptionalSection';
 import { fixPrimaries, PublicationList } from './utils';
 import { PublicationRow } from './PublicationRow';
 
+import { useMetadataSelector } from '../../../../Hooks/dataset-metadata-hooks';
+import { useDispatch } from 'react-redux';
+import {
+  overwriteMetaField,
+  patchContentFlags,
+} from '../../../../../../Actions/DatasetMetadataFormActions';
+
 import './PublicationsSection.scss';
 
 export interface PublicationsSectionProps {
-  readonly datasetMeta: PartialDatasetDetails,
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>,
-
-  readonly publications: PublicationList;
-  readonly setPublications: Consumer<PublicationList>;
-
-  readonly isRequired: boolean;
-
-  readonly jsonPath: JsonPathBuilder;
+  readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function PublicationsSection(
   props: PublicationsSectionProps
 ): ReactElement {
-  const havePubs = !isEmpty(props.publications);
+  const jsonPath = props.jsonPath.append<PartialDatasetDetails>('publications');
 
-  let isEnabled = props.datasetMeta.metadataContentFlags?.hasPublications;
+  const dispatch = useDispatch();
 
-  const setEnabled = (v: boolean) =>
-    props.setDatasetMeta({
-      ...props.datasetMeta,
-      metadataContentFlags: {
-        ...(props.datasetMeta.metadataContentFlags ?? {}),
-        hasPublications: v
+  const {
+    publications,
+    hasPublications: isEnabled,
+    isPublic = false,
+  } = useMetadataSelector(publicationSelector) ?? {};
+
+  const setPublications = React.useCallback(
+    (publications: ReadonlyArray<Publication>) =>
+      dispatch(overwriteMetaField('publications', publications)),
+    [dispatch]
+  )
+  const setPublication = React.useCallback(
+    (publication: Publication, index: number) =>
+      setPublications(fixPrimaries(
+        util.replaceElement(publications, index, publication),
+        index,
+      )),
+    [setPublications, publications],
+  );
+
+  const havePubs = util.isNonEmpty(publications);
+
+  const setEnabled = React.useCallback(
+    (enabled: boolean) =>
+      dispatch(patchContentFlags({ hasPublications: enabled })),
+    [dispatch],
+  );
+
+  React.useEffect(
+    () => {
+      if (isEnabled === undefined && havePubs) {
+        setEnabled(true);
       }
-    });
+    },
+    [isEnabled, havePubs, setEnabled],
+  );
 
-  if (isEnabled === undefined && havePubs) {
-    setEnabled(true)
-  }
 
-  const publications: PublicationList = havePubs
-    ? props.publications
+  const safePubs: PublicationList = havePubs
+    ? publications
     : [{ isPrimary: true }];
 
   const calcRequired = (pub: Publication, i: number) =>
     (isEnabled ?? false) &&
-    (pub.isPrimary || (i === 0 && publications.length === 1));
+    (pub.isPrimary || (i === 0 && safePubs.length === 1));
 
   const seenIdentifiers = new Set<string>();
 
@@ -64,7 +85,7 @@ export function PublicationsSection(
           enabled: isEnabled ?? null,
           setEnabled: setEnabled,
           fieldName: 'enable-publications',
-          required: props.isRequired,
+          required: isPublic,
           helpText: 'Whether the data underlying this dataset have been'
             + ' described in a published manuscript, journal article, or'
             + ' preprint.',
@@ -72,10 +93,10 @@ export function PublicationsSection(
         className="field-grid"
       >
         <ol className="span-2 multi-input">
-          {publications.map((pub, index) => {
+          {safePubs.map((pub, index) => {
             let isDuplicate = false;
 
-            if (isNonBlankString(pub.identifier)) {
+            if (util.isNonBlank(pub.identifier)) {
               if (seenIdentifiers.has(pub.identifier)) {
                 isDuplicate = true;
               } else {
@@ -88,15 +109,11 @@ export function PublicationsSection(
                 key={`pub-${index}`}
                 index={index}
                 publication={pub}
-                setPublication={makePublicationSetter(
-                  index,
-                  publications,
-                  props.setPublications
-                )}
+                setPublication={setPublication}
                 isRequired={calcRequired(pub, index)}
-                isSingular={publications.length === 1}
+                isSingular={safePubs.length === 1}
                 isDisabled={!isEnabled}
-                jsonPath={props.jsonPath.append(index)}
+                jsonPath={jsonPath.append(index)}
                 isDuplicate={isDuplicate}
               />
             );
@@ -105,7 +122,7 @@ export function PublicationsSection(
 
         <AddRowButton
           disabled={!isEnabled}
-          onClick={() => props.setPublications([...publications, {}])}
+          onClick={() => setPublications([...safePubs, {}])}
           className="column-2 publication-appender"
         >
           + Additional publication
@@ -115,12 +132,18 @@ export function PublicationsSection(
   );
 }
 
-function makePublicationSetter(
-  index: number,
-  pubList: PublicationList,
-  setter: Consumer<PublicationList>
-): Consumer<Publication> {
-  return (pub: Publication) => {
-    setter(fixPrimaries(replaceElement(pubList, index, pub), index));
-  }
-}
+type PublicationState = {
+  readonly isPublic: boolean;
+  readonly publications?: ReadonlyArray<Publication>,
+  readonly hasPublications?: boolean;
+};
+
+const publicationSelector = ({
+  publications,
+  metadataContentFlags,
+  visibility,
+}: PartialDatasetDetails): PublicationState => ({
+  publications,
+  hasPublications: metadataContentFlags?.hasPublications,
+  isPublic: visibility === 'public',
+});

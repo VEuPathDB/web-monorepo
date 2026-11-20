@@ -52,13 +52,12 @@ const orderedStatuses = [
  *  install ready-for-reinstall   grey: "error on install (a bug); pls let us know"
  *  install missing-dependency    yellow: "incompatible, why"
  **/
-
 function getStatus(
   status: DatasetStatusInfo,
   projectId: string,
   dataNoun: string,
   projectDisplayName: string,
-  projects: string[],
+  projects: ReadonlyArray<string>,
   vdiConfig: VdiReconcilerConfig
 ): { content: React.ReactNode; icon: string } {
   const isTargetingCurrentSite = projects.includes(projectId);
@@ -277,7 +276,7 @@ function getPostUploadStatus(
 /**
  * import outputs a list of messages. Render each in a bullet list
  */
-function renderImportMessages(messages: string[]): React.ReactNode {
+function renderImportMessages(messages: ReadonlyArray<string>): React.ReactNode {
   if (!messages || messages.length === 0) return null;
 
   // Always render as bulleted list with newlines as <br>

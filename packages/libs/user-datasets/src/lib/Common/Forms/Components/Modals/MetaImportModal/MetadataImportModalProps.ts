@@ -1,8 +1,9 @@
-import { Consumer, DataNoun, SimpleState } from '../../../../../Utils';
+import { Consumer, DataNoun, Runnable } from '../../../../../Utils';
 import { DatasetId, VdiServiceConfig } from '../../../../../Service';
 
 export interface MetadataImportModalProps {
-  readonly visibleState: SimpleState<boolean>;
+  readonly isVisible: boolean;
+  readonly hideModal: Runnable;
 
   readonly baseUrl: string;
   readonly publicDatasetsEnabled: boolean;

@@ -1,28 +1,17 @@
-import {
-  Action,
-  trackUploadProgress,
-  receiveBadUpload,
-  receiveBadUploadHistoryAction,
-  clearBadUpload,
-  updateFormState,
-  updateFormMetadata,
-} from '../Actions/UserDatasetUploadActions';
+import * as upload from '../Actions/UserDatasetUploadActions';
+import * as form from '../Actions/DatasetMetadataFormActions';
+import * as util from '../Utils';
+import * as vdi from '../Service/Model';
 
-import { UserDatasetUpload } from '../Utils/types';
-import {
-  PartialDatasetDetails,
-  ValidationErrors,
-} from '../Service';
 import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import { StateSlice } from './types';
 import { defaultDatasetDetails } from '../Service/Model/constructors';
-import { UploadContent } from '../Service/Model';
 
 export const key = 'userDatasetUpload';
 
 export interface DatasetFormState {
-  readonly datasetDetails: PartialDatasetDetails;
+  readonly datasetDetails: vdi.PartialDatasetDetails;
 
   readonly dataFileUrl?: string;
 
@@ -30,19 +19,19 @@ export interface DatasetFormState {
    * Index of data files that the user has selected keyed on the field name that
    * represents the file selection input.
    */
-  readonly dataFileSelections: Readonly<Record<string, ReadonlyArray<UploadContent>>>;
+  readonly dataFileSelections: Readonly<Record<string, ReadonlyArray<vdi.UploadContent>>>;
 
   /**
    * Index of documentation files that the user has selected keyed on the field
    * name that represents the file selection input.
    */
-  readonly documentFileSelections: Readonly<Record<string, ReadonlyArray<UploadContent>>>;
+  readonly documentFileSelections: Readonly<Record<string, ReadonlyArray<vdi.UploadContent>>>;
 
   /**
    * Index of data properties files that the user has selected keyed on the
    * field name that represents the file selection input.
    */
-  readonly dataPropertiesFileSelections: Readonly<Record<string, ReadonlyArray<UploadContent>>>;
+  readonly dataPropertiesFileSelections: Readonly<Record<string, ReadonlyArray<vdi.UploadContent>>>;
 }
 
 export const DefaultDatasetFormState: DatasetFormState = {
@@ -63,28 +52,51 @@ export function useDatasetFormState(): DatasetFormState {
 
 export interface State {
   readonly formState?: DatasetFormState;
-  readonly uploads?: Array<UserDatasetUpload>;
-  readonly badUploadMessages?: BadUpload[];
+  readonly badUploadMessages?: ReadonlyArray<BadUpload>;
   readonly badAllUploadsActionMessage?: { message: string; timestamp: number };
   readonly uploadProgress?: { progress: number | null };
 }
 
 export type BadUpload =
   | { type: 400; message: string }
-  | { type: 422; errors: ValidationErrors }
+  | { type: 422; errors: vdi.ValidationErrors }
   | { type: 500; message: string };
 
-export function reduce(state: State = {}, action: Action): State {
+export function reduce(state: State = {}, action: upload.Action | form.Action): State {
   switch (action.type) {
-    case receiveBadUpload.type:
+
+    case form.overwriteMetaField.type:
+      return updateMetadata(state, () => action.payload)
+
+    case form.patchContentFlags.type:
+      return updateMetadata(state, ({ metadataContentFlags }) => ({
+        metadataContentFlags: {
+          ...metadataContentFlags,
+          ...action.payload,
+        },
+      }));
+
+    case form.patchExternalIdentifiers.type:
+      return updateMetadata(state, ({ externalIdentifiers }) => ({
+        externalIdentifiers: {
+          ...externalIdentifiers,
+          ...action.payload,
+        },
+      }));
+
+    case upload.receiveBadUpload.type:
       return { ...state, badUploadMessages: action.payload };
-    case clearBadUpload.type:
+
+    case upload.clearBadUpload.type:
       return { ...state, badUploadMessages: undefined };
-    case trackUploadProgress.type:
+
+    case upload.trackUploadProgress.type:
       return { ...state, uploadProgress: action.payload };
-    case receiveBadUploadHistoryAction.type:
+
+    case upload.receiveBadUploadHistoryAction.type:
       return { ...state, badAllUploadsActionMessage: action.payload };
-    case updateFormMetadata.type:
+
+    case upload.updateFormMetadata.type:
       return {
         ...state,
         formState: {
@@ -92,9 +104,24 @@ export function reduce(state: State = {}, action: Action): State {
           datasetDetails: action.payload,
         },
       };
-    case updateFormState.type:
+
+    case upload.updateFormState.type:
       return { ...state, formState: action.payload };
+
     default:
       return state;
   }
+}
+
+function updateMetadata(oldState: State, updater: util.UnaryFunction<vdi.PartialDatasetDetails>): State {
+  return {
+    ...oldState,
+    formState: {
+      ...oldState.formState!,
+      datasetDetails: {
+        ...oldState.formState?.datasetDetails ?? {},
+        ...updater(oldState.formState?.datasetDetails ?? {}),
+      },
+    }
+  };
 }

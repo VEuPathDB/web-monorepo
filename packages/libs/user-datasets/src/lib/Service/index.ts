@@ -1,6 +1,8 @@
 export { VdiService } from './VdiService';
 export { useVdiService } from './utils/use-vdi';
+
 export type { VdiCompatibleWdkService } from './utils/compatibility';
+
 export {
   isVdiCompatibleWdkService,
   wrapWdkService,
@@ -16,6 +18,7 @@ export type {
   DatasetListEntry,
   DatasetListShareUser,
   PartialDatasetDetails,
+  DatasetMetadata,
   DatasetPostResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,
@@ -26,7 +29,8 @@ export type {
   DatasetZipType,
   PluginDataType,
   PartialCharacteristics,
-  PostDatasetSource,
+  PartialDatasetContact,
+  PartialDatasetSource,
   SampleYearRange,
   ValidationErrors,
   VdiPluginConfig,
@@ -35,3 +39,9 @@ export type {
   VdiServiceFeatures,
   VdiServiceMetadata,
 } from './Model';
+
+export {
+  newUpdateUploads,
+  newUploadPlaceholder,
+} from './Model';
+

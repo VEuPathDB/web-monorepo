@@ -1,16 +1,18 @@
 import React from 'react';
 import {
+  isBlank,
+  isNonBlank,
   JsonPathBuilder,
-  newTextLengthTest,
+  newTextLengthTest
 } from '../../../../../../Utils';
-import { DatasetContact } from '../../../../../../Service';
-import { LabelInputPair } from '../../../LabelInputPair';
+import { PartialDatasetContact } from '../../../../../../Service';
+import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {
   readonly index: number;
   readonly path: JsonPathBuilder;
-  readonly contact: DatasetContact;
-  readonly updateContact: (contact: DatasetContact, index: number) => void;
+  readonly contact: PartialDatasetContact;
+  readonly updateContact: (contact: PartialDatasetContact, index: number) => void;
 
   /**
    * Whether the dataset visibility has been set to public.
@@ -27,6 +29,8 @@ export interface ContactBlockProps {
    */
   readonly primaryExists: boolean;
 }
+
+type ContactProp = keyof PartialDatasetContact;
 
 /**
  * Validation threshold definitions for the different tiers of validation rules
@@ -59,17 +63,27 @@ enum Strictness {
 }
 
 const TEST_CONTACT_NAME = newTextLengthTest(2, 300);
+const testEmail = ({ disabled, value, required }: TextInputProps): boolean =>
+  disabled === true
+    || (!required && isBlank(value))
+    || (
+      isNonBlank(value)
+      && value.length <= 1024
+      && /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+    );
+const testAffiliation = newTextLengthTest(3, 4000);
+const testCountry = newTextLengthTest(3, 200);
 
 export function ContactBlock(props: ContactBlockProps): React.ReactElement {
   const { index, contact, updateContact } = props;
 
-  const makePath = (key: keyof DatasetContact) =>
+  const makePath = (key: ContactProp) =>
     props.path.appendToString(key);
 
   // Disable linting for dep array: Dependencies are known.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onChangePart = React.useCallback(
-    (k: keyof DatasetContact, v: DatasetContact[typeof k]) =>
+    (k: ContactProp, v: PartialDatasetContact[typeof k]) =>
       updateContact({ ...contact, [k]: v }, index),
     [contact, updateContact, index]
   );
@@ -119,8 +133,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.email}
           onChange={(it) => onChangePart('email', it)}
           required={validationThreshold >= Strictness.Primary}
-          minLength={5}
-          maxLength={1024}
+          validator={testEmail}
         />
 
         <LabelInputPair
@@ -130,8 +143,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.affiliation}
           onChange={(it) => onChangePart('affiliation', it)}
           required={validationThreshold >= Strictness.Secondary}
-          minLength={3}
-          maxLength={4000}
+          validator={testAffiliation}
         />
 
         <LabelInputPair
@@ -141,8 +153,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.country}
           onChange={(it) => onChangePart('country', it)}
           required={validationThreshold >= Strictness.Secondary}
-          minLength={3}
-          maxLength={200}
+          validator={testCountry}
         />
 
         <LabelInputPair
@@ -171,8 +182,8 @@ function determineStrictness(props: ContactBlockProps): Strictness {
     : Strictness.Secondary;
 }
 
-function isContactEmpty(contact: DatasetContact): boolean {
-  for (const key of Object.keys(contact) as Array<keyof DatasetContact>) {
+function isContactEmpty(contact: PartialDatasetContact): boolean {
+  for (const key of Object.keys(contact) as ReadonlyArray<ContactProp>) {
     if (key !== 'isPrimary' && contact[key]) return false;
   }
 

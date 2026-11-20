@@ -3,6 +3,8 @@ import {
   DatasetGetResponseBody,
   VdiServiceMetadata,
   useVdiService,
+  newUpdateUploads,
+  newUploadPlaceholder,
 } from '../../Service';
 import { DatasetFormController } from '../../Common/Forms/DatasetFormController';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -28,10 +30,6 @@ import { ifDefined, Runnable } from '../../Utils';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { submitUpdate } from '../../Service/Datasets';
 import { convertDetailsToMeta } from '../../Service/utils/conversions';
-import {
-  newExistingFilePlaceholder,
-  newUpdateUploads,
-} from '../../Service/Model';
 import { FIELD_NAME_DATA_PROP_FILE } from '../../Common/Forms/form-constants';
 import {
   detailUpdateSuccess,
@@ -92,11 +90,13 @@ export function UpdateFormController(
               ? { ...datasetMeta, visibility: 'public' }
               : datasetMeta,
             dataPropertiesFileSelections:
-              ifDefined(dataset?.files?.datasetProperties, (files) => ({
-                [FIELD_NAME_DATA_PROP_FILE.toString()]: files.map((it) =>
-                  newExistingFilePlaceholder(it.fileName)
-                ),
-              })) ?? {},
+              ifDefined(
+                dataset?.files?.datasetProperties,
+                (files) => ({
+                  [FIELD_NAME_DATA_PROP_FILE.toString()]:
+                    files.map((it) => newUploadPlaceholder(it.fileName)),
+                }),
+              ) ?? {},
           })
         );
       }
@@ -132,8 +132,7 @@ export function UpdateFormController(
     [dataset, vdi]
   );
 
-  const submitForm =
-    ({ actions: { setSubmitting } }: DatasetFormProps) =>
+  const submitForm = ({ actions: { setSubmitting } }: DatasetFormProps) =>
     () => {
       setSubmitting(true);
       dispatch(detailUpdating());
