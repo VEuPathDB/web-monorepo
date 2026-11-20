@@ -9,8 +9,7 @@ import {
   testFileRequired,
 } from '../../../../../Utils';
 import { LabelInputPair } from '../../';
-import { UploadContent } from '../../../../../Service/Model';
-import { UploadContentMap } from '../../../../../Service/Model/utility-types';
+import { UploadContent, UploadContentMap } from '../../../../../Service/Model';
 import { isEmpty } from 'lodash';
 
 export interface DataFileInputListProps {

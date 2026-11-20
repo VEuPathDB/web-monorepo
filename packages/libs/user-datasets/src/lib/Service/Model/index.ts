@@ -8,23 +8,28 @@ export type {
   GetDatasetsQueryParamEnum,
   OptionalValuePatch,
   PartialCharacteristics,
+  PartialDatasetContact,
   PartialDatasetDetails,
   PartialDatasetPublication,
-  PostDatasetSource,
+  PartialDatasetSource,
+  PartialOrganism,
   ShareReceiptAction,
 } from './request-types';
 
 export type {
+  BioProjectId,
   DatasetContact,
   DatasetDependency,
   DatasetFileDetails,
   DatasetFileListing,
   DatasetGetResponseBody,
+  DatasetHyperlink,
   DatasetId,
   DatasetImportStatusInfo,
   DatasetInstallStatusInfo,
   DatasetListEntry,
   DatasetListShareUser,
+  DatasetMetadataContentFlags,
   DatasetPatchResponse,
   DatasetPostResponse,
   DatasetPostResponseBody,
@@ -38,6 +43,7 @@ export type {
   DatasetUploadStatusInfo,
   DatasetUser,
   DatasetVisibility,
+  DOIReference,
   ExternalIdentifiers,
   PluginDataType,
   RawDatasetMetadataResponse,
@@ -64,7 +70,7 @@ export type {
 } from './upload-content';
 export {
   newUploadContent,
-  newExistingFilePlaceholder,
+  newUploadPlaceholder,
   isPlaceholder,
 } from './upload-content';
 

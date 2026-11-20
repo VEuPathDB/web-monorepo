@@ -4,14 +4,11 @@ export type Function<T, R> = (value: T) => R;
 export type Predicate<T> = (value: T) => boolean;
 export type Producer<R> = () => R;
 export type Runnable = () => void;
+export type UnaryFunction<T> = Function<T, T>;
 
 export type Nullable<T> = T | null;
 export type Possible<T> = T | undefined;
 export type Optional<T> = T | null | undefined;
-
-export type ArrayElement<A extends any[]> = A extends (infer V)[] ? V : never;
-
-export type Tuple<A, B> = [ A, B ];
 
 export type Mutable<T extends object> = {
   -readonly [K in keyof T]: T[K];
@@ -22,23 +19,3 @@ export type DatasetFileType =
   | 'install'
   | 'documents'
   | 'datasetProperties';
-
-////////////////////////////////////////////////////////////////////////////////
-
-export interface UserDatasetUpload {
-  id: string;
-  datasetId?: number;
-  datasetName: string;
-  summary?: string;
-  description?: string;
-  projects: string[];
-  status: string;
-  errors: string[];
-  stepPercent?: number;
-  started: string;
-  finished?: string;
-  isOngoing: boolean;
-  isCancellable: boolean;
-  isSuccessful: boolean;
-  isUserError: boolean;
-}

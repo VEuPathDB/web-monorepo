@@ -1,18 +1,16 @@
 import React, {
   ReactElement,
   RefObject,
-  useEffect,
+  useCallback,
   useMemo,
   useRef,
 } from 'react';
-import { partialRight } from 'lodash';
 
 import {
   BiConsumer,
   Consumer,
   JsonPathBuilder,
   Possible,
-  changeHandler,
 } from '../../../../../Utils';
 import {
   PartialDatasetDetails,
@@ -30,68 +28,74 @@ import {
   DatasetCharacteristicsFormSectionConfig,
   StudyDesignOption,
 } from '../../../../Configuration/DatasetFormConfig';
-
-export const FieldStudyToggleID = 'field-study-toggle';
+import { useDispatch } from 'react-redux';
+import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
+import {
+  overwriteMetaField,
+  patchContentFlags
+} from '../../../../../Actions/DatasetMetadataFormActions';
 
 export interface CharacteristicsSectionProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly pathBuilder: JsonPathBuilder;
   readonly formProps: DatasetCharacteristicsFormSectionConfig;
 }
 
 export function CharacteristicsSection({
-  datasetMeta,
-  setDatasetMeta,
-  pathBuilder: jsonPath,
+  pathBuilder,
   formProps,
 }: CharacteristicsSectionProps): ReactElement {
-  const enabled = datasetMeta.metadataContentFlags?.hasDatasetCharacteristics;
+  const jsonPath = pathBuilder.append<PartialDatasetDetails>('datasetCharacteristics')
 
-  const setEnabled = (enabled: boolean) =>
-    setDatasetMeta({
-      ...datasetMeta,
-      metadataContentFlags: {
-        ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDatasetCharacteristics: enabled,
-      },
-    });
+  const dispatch = useDispatch();
 
-  useEffect(
-    () => {
-      if (
-        enabled === undefined &&
-        datasetMeta.datasetCharacteristics !== undefined
-      )
-        setEnabled(true);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [enabled, datasetMeta.datasetCharacteristics]
+  const {
+    isPublic = false,
+    characteristics,
+    hasCharacteristics: enabled,
+  } = useMetadataSelector(stateSelector) ?? {};
+
+  const setEnabled = React.useCallback(
+    (enabled: boolean) => dispatch(patchContentFlags({
+      hasDatasetCharacteristics: enabled,
+    })),
+    [dispatch],
   );
 
-  const safeCharacteristics = datasetMeta.datasetCharacteristics ?? {};
+  const setCharacteristics = useCallback(
+    (characteristics: PartialCharacteristics) =>
+      dispatch(overwriteMetaField('datasetCharacteristics', characteristics)),
+    [dispatch],
+  );
+  const setCharacteristic = useCallback(
+    (key: keyof PartialCharacteristics, value: PartialCharacteristics[typeof key]) =>
+      setCharacteristics({ ...characteristics, [key]: value }),
+    [characteristics, setCharacteristics],
+  );
+
+  React.useEffect(
+    () => {
+      if (enabled === undefined && characteristics !== undefined) {
+        setEnabled(true);
+      }
+    },
+    [enabled, characteristics, setEnabled],
+  );
+
+  const safeCharacteristics = characteristics ?? {};
 
   const requireAll = useMemo(
-    () => enabled === true && datasetMeta.visibility === 'public',
-    [enabled, datasetMeta.visibility]
-  );
-
-  const setRootField = partialRight(
-    changeHandler<PartialCharacteristics>,
-    safeCharacteristics,
-    (v) => setDatasetMeta({ ...datasetMeta, datasetCharacteristics: v })
+    () => enabled === true && isPublic,
+    [enabled, isPublic]
   );
 
   const disabledClass = enabled ? '' : ' disabled-fields';
-
-  const isPublic = datasetMeta.visibility === 'public';
 
   return (
     <InputBlock header="Field Study or Clinical Trial Characteristics">
       <div className={'field-grid' + disabledClass}>
         <label
           className={'not-disabled' + (isPublic ? ' required' : '')}
-          id={FieldStudyToggleID}
+          id="field-study-toggle"
         >
           Field Study or Clinical Trial?
         </label>
@@ -113,17 +117,10 @@ export function CharacteristicsSection({
           vocab={formProps.studyDesignVocab}
           enabled={enabled === true}
           required={requireAll}
-          selection={datasetMeta.datasetCharacteristics?.studyDesign}
-          onChange={(d, t) => {
-            setDatasetMeta({
-              ...datasetMeta,
-              datasetCharacteristics: {
-                ...safeCharacteristics,
-                studyDesign: d,
-                studyType: t,
-              },
-            });
-          }}
+          selection={characteristics?.studyDesign}
+          onChange={(studyDesign, studyType) =>
+            setCharacteristics({ ...characteristics, studyDesign, studyType })
+          }
         />
 
         <GrowableStringList
@@ -131,7 +128,7 @@ export function CharacteristicsSection({
           labelSingular="Country"
           values={safeCharacteristics.countries}
           required={requireAll}
-          setValues={setRootField('countries')}
+          setValues={it => setCharacteristic('countries', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('countries')}
           disabled={enabled !== true}
           helpText={
@@ -141,7 +138,7 @@ export function CharacteristicsSection({
 
         <YearsInputs
           years={safeCharacteristics.years}
-          setYears={setRootField('years')}
+          setYears={it => setCharacteristic('years', it)}
           required={requireAll}
           jsonPath={jsonPath.append<PartialCharacteristics>('years')}
           disabled={enabled !== true}
@@ -152,7 +149,7 @@ export function CharacteristicsSection({
           labelSingular="Study Population Species"
           required={requireAll}
           values={safeCharacteristics.studySpecies}
-          setValues={setRootField('studySpecies')}
+          setValues={it => setCharacteristic('studySpecies', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('studySpecies')}
           disabled={enabled !== true}
           helpText={
@@ -167,7 +164,7 @@ export function CharacteristicsSection({
           labelSingular="Outcome"
           required={requireAll}
           values={safeCharacteristics.outcomes}
-          setValues={setRootField('outcomes')}
+          setValues={it => setCharacteristic('outcomes', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('outcomes')}
           disabled={enabled !== true}
           helpText={
@@ -181,7 +178,7 @@ export function CharacteristicsSection({
           labelSingular="Associated Factor"
           required={requireAll}
           values={safeCharacteristics.associatedFactors}
-          setValues={setRootField('associatedFactors')}
+          setValues={it => setCharacteristic('associatedFactors', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>(
             'associatedFactors'
           )}
@@ -193,7 +190,7 @@ export function CharacteristicsSection({
           }
         />
 
-        <LabelInputPair<PartialCharacteristics>
+        <LabelInputPair
           type="text"
           fieldName="participantAges"
           label="Participant Ages"
@@ -201,7 +198,7 @@ export function CharacteristicsSection({
           required={requireAll}
           helpText="Age range(s) of participants when data were collected (e.g., '0-5 years; 18+ years'). Specify units. Enter ‘N/A’ if not applicable."
           value={safeCharacteristics.participantAges}
-          onChange={setRootField('participantAges')}
+          onChange={it => setCharacteristic('participantAges', it)}
         />
 
         <GrowableStringList
@@ -209,7 +206,7 @@ export function CharacteristicsSection({
           labelSingular="Sample Type"
           required={requireAll}
           values={safeCharacteristics.sampleTypes}
-          setValues={setRootField('sampleTypes')}
+          setValues={it => setCharacteristic('sampleTypes', it)}
           jsonPath={jsonPath.append<PartialCharacteristics>('sampleTypes')}
           disabled={enabled !== true}
           helpText={
@@ -225,11 +222,11 @@ export function CharacteristicsSection({
 // region Study Design
 
 interface StudyDesignProps {
-  readonly vocab: readonly StudyDesignOption[];
+  readonly vocab: ReadonlyArray<StudyDesignOption>;
   readonly onChange: BiConsumer<string, string>;
   readonly enabled: boolean;
   readonly required: boolean;
-  readonly selection?: String;
+  readonly selection?: string;
 }
 
 function StudyDesign({
@@ -295,7 +292,7 @@ function StudyDesign({
 // region Years
 
 interface YearsInputsProps {
-  readonly years: Partial<SampleYearRange> | undefined;
+  readonly years: Possible<Partial<SampleYearRange>>;
   readonly setYears: Consumer<Partial<SampleYearRange>>;
   readonly jsonPath: JsonPathBuilder;
   readonly disabled: boolean;
@@ -376,3 +373,23 @@ function YearsInputs({
 }
 
 // endregion Years
+
+// region helpers
+
+type StateSlice = {
+  readonly isPublic: boolean;
+  readonly characteristics?: PartialCharacteristics;
+  readonly hasCharacteristics?: boolean;
+};
+
+const stateSelector = ({
+  datasetCharacteristics,
+  metadataContentFlags,
+  visibility,
+}: PartialDatasetDetails): StateSlice => ({
+  isPublic: visibility === 'public',
+  characteristics: datasetCharacteristics,
+  hasCharacteristics: metadataContentFlags?.hasDatasetCharacteristics,
+});
+
+// endregion helpers

@@ -25,7 +25,7 @@ import { Mutable } from '../../Utils/types';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../config';
 import { cleanDatasetDetails, pruneSimpleRecords } from './payload-cleanup';
-import { ifDefined } from '../../Utils';
+import { ifDefined, Possible } from '../../Utils';
 
 export interface UpdateSubmission {
   readonly vdi: VdiService;
@@ -33,7 +33,7 @@ export interface UpdateSubmission {
   readonly original: PartialDatasetDetails;
   readonly updated: PartialDatasetDetails;
   readonly newFiles: DatasetUploads;
-  readonly oldFiles: DatasetFileDetails[] | undefined;
+  readonly oldFiles: Possible<ReadonlyArray<DatasetFileDetails>>;
   readonly dispatch: Dispatch<any, EpicDependencies>;
 }
 

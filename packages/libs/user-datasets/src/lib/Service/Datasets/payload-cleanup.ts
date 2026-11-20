@@ -5,7 +5,7 @@ import {
   PartialDatasetPublication as Publication,
 } from '../Model';
 import {
-  isNonBlankString,
+  isNonBlank,
   isNonEmpty,
   ifDefined,
   requireValue,
@@ -150,9 +150,9 @@ function cleanPublication({
   isPrimary,
   citation,
 }: Publication): Possible<Publication> {
-  return isNonBlankString(identifier) &&
-    isNonBlankString(citation) &&
-    isNonBlankString(type)
+  return isNonBlank(identifier) &&
+    isNonBlank(citation) &&
+    isNonBlank(type)
     ? {
         type,
         isPrimary,

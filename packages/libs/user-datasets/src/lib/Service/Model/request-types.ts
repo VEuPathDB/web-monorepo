@@ -45,7 +45,7 @@ export type PartialDatasetDetails = Readonly<
   readonly type?: DatasetTypeSelection;
   readonly visibility?: DatasetVisibility;
   readonly datasetCharacteristics?: PartialCharacteristics;
-  readonly datasetSources?: readonly PostDatasetSource[];
+  readonly datasetSources?: readonly PartialDatasetSource[];
   readonly experimentalOrganisms?: readonly PartialOrganism[];
   readonly hostOrganism?: PartialOrganism;
   readonly publications?: readonly PartialDatasetPublication[];
@@ -65,7 +65,7 @@ export type PartialCharacteristics = Readonly<
 
 export type PostSampleYearRange = Readonly<Partial<SampleYearRange>>;
 
-export type PostDatasetSource = Readonly<Partial<ApiSource>>;
+export type PartialDatasetSource = Readonly<Partial<ApiSource>>;
 
 export type PartialDatasetPublication = Readonly<Partial<DatasetPublication>>;
 

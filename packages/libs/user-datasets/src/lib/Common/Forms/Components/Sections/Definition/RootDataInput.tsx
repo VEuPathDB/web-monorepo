@@ -5,7 +5,7 @@ import { RadioList } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { DataFileInputList } from './DataFileInput';
 import { VdiServiceMetadata } from '../../../../../Service';
-import { UploadContentMap } from '../../../../../Service/Model/utility-types';
+import { UploadContentMap } from '../../../../../Service/Model';
 
 // region Root Dataset Data Input Component
 

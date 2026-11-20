@@ -41,14 +41,14 @@ export function fixPrimaries(
     return [{ ...pubs[0], isPrimary: true }];
   }
 
-  let primaryIndex = index;
+  let primaryIndex = Math.max(index, pubs.length);
 
   // If the current target is being set as _not_ primary, ensure there is
   // another entry that _is_ primary.
   //
   // If no other entries are marked as primary, set entry 0 to primary, even if
   // that is the one the user just unchecked.
-  if (!pubs[index].isPrimary) {
+  if (!pubs[primaryIndex].isPrimary) {
     primaryIndex = Math.max(
       0,
       pubs.findIndex((it) => it.isPrimary)

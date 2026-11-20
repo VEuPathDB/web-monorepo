@@ -16,25 +16,29 @@ export type SampleYearRange = io.TypeOf<typeof sampleYearRange>;
 export const datasetCharacteristics = io.partial({
   studyDesign: io.string,
   studyType: io.string,
-  countries: io.array(io.string),
+  countries: io.readonlyArray(io.string),
   years: sampleYearRange,
-  studySpecies: io.array(io.string),
-  outcomes: io.array(io.string),
-  associatedFactors: io.array(io.string),
+  studySpecies: io.readonlyArray(io.string),
+  outcomes: io.readonlyArray(io.string),
+  associatedFactors: io.readonlyArray(io.string),
   participantAges: io.string,
-  sampleTypes: io.array(io.string),
+  sampleTypes: io.readonlyArray(io.string),
 });
 export type DatasetCharacteristics = io.TypeOf<typeof datasetCharacteristics>;
 
-export const datasetContact = io.partial({
-  firstName: io.string,
-  middleName: io.string,
-  lastName: io.string,
-  isPrimary: io.boolean,
-  email: io.string,
-  affiliation: io.string,
-  country: io.string,
-});
+export const datasetContact = io.intersection([
+  io.type({
+    firstName: io.string,
+    lastName: io.string,
+  }),
+  io.partial({
+    middleName: io.string,
+    isPrimary: io.boolean,
+    email: io.string,
+    affiliation: io.string,
+    country: io.string,
+  })
+]);
 export type DatasetContact = io.TypeOf<typeof datasetContact>;
 
 export const datasetImportStatus = io.union([
@@ -233,9 +237,9 @@ export const doiReference = io.intersection([
 export type DOIReference = io.TypeOf<typeof doiReference>;
 
 const externalIdentifiers = io.partial({
-  dois: io.array(doiReference),
-  hyperlinks: io.array(datasetHyperlink),
-  bioprojectIds: io.array(bioprojectId),
+  dois: io.readonlyArray(doiReference),
+  hyperlinks: io.readonlyArray(datasetHyperlink),
+  bioprojectIds: io.readonlyArray(bioprojectId),
 });
 export type ExternalIdentifiers = io.TypeOf<typeof externalIdentifiers>;
 
@@ -281,28 +285,28 @@ export type DatasetMetadataContentFlags = io.TypeOf<typeof datasetMetadataConten
 
 export const datasetMetaBase = io.intersection([
   io.type({
-    installTargets: io.array(io.string),
+    installTargets: io.readonlyArray(io.string),
     name: io.string,
     summary: io.string,
     origin: io.string,
-    dependencies: io.array(datasetDependency),
+    dependencies: io.readonlyArray(datasetDependency),
   }),
   io.partial({
     description: io.string,
-    publications: io.array(datasetPublication),
-    contacts: io.array(datasetContact),
+    publications: io.readonlyArray(datasetPublication),
+    contacts: io.readonlyArray(datasetContact),
     projectName: io.string,
     programName: io.string,
-    linkedDatasets: io.array(linkedDataset),
-    experimentalOrganisms: io.array(datasetOrganism),
+    linkedDatasets: io.readonlyArray(linkedDataset),
+    experimentalOrganisms: io.readonlyArray(datasetOrganism),
     hostOrganism: datasetOrganism,
     datasetCharacteristics: datasetCharacteristics,
     externalIdentifiers: externalIdentifiers,
-    funding: io.array(datasetFundingAward),
+    funding: io.readonlyArray(datasetFundingAward),
     shortAttribution: io.string,
     daysForApproval: io.number,
     dataDisclaimer: io.string,
-    datasetSources: io.array(datasetSource),
+    datasetSources: io.readonlyArray(datasetSource),
   }),
 ]);
 export type DatasetMetaBase = io.TypeOf<typeof datasetMetaBase>;

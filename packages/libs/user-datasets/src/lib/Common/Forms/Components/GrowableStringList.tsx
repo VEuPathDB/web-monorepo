@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import {
   Consumer,
+  Possible,
   JsonPathBuilder,
   replaceElement,
   textChange,
@@ -18,8 +19,8 @@ export interface GrowableStringListProps {
   readonly labelPlural: string;
   readonly labelSingular: string;
 
-  readonly values: string[] | undefined;
-  readonly setValues: Consumer<string[]>;
+  readonly values: Possible<ReadonlyArray<string>>;
+  readonly setValues: Consumer<ReadonlyArray<string>>;
 
   readonly jsonPath: JsonPathBuilder;
 
@@ -86,8 +87,8 @@ export function GrowableStringList({
 }
 
 interface InputListProps {
-  readonly values: string[];
-  readonly setValues: Consumer<string[]>;
+  readonly values: ReadonlyArray<string>;
+  readonly setValues: Consumer<ReadonlyArray<string>>;
   readonly jsonPath: JsonPathBuilder;
   readonly disabled: boolean;
   readonly required: boolean;

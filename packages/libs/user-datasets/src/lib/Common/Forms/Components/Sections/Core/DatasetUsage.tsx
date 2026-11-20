@@ -1,18 +1,18 @@
 import React, { ReactElement } from 'react';
+
 import { PartialDatasetDetails } from '../../../../../Service';
 import {
-  Consumer,
   JsonPathBuilder,
+  isNonBlank,
   newTextLengthTest,
-  useChangeHandler,
 } from '../../../../../Utils';
 import { InputBlock, LabelInputPair, OptionalSection } from '../../index';
-
-export interface DatasetUsageProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
-  readonly jsonPath: JsonPathBuilder;
-}
+import { useDispatch } from 'react-redux';
+import {
+  overwriteMetaField,
+  patchContentFlags,
+} from '../../../../../Actions/DatasetMetadataFormActions';
+import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
 
 const SECTION_HELP_TEXT =
   'Whether this dataset includes important notes, caveats, or limitations that users should' +
@@ -25,36 +25,40 @@ const INPUT_HELP_TEXT =
 
 const TEST_INPUT_LENGTH = newTextLengthTest(3, 1000);
 
-export function DatasetUsage({
-  datasetMeta,
-  setDatasetMeta,
-  jsonPath,
-}: DatasetUsageProps): ReactElement {
-  const fieldName =
-    jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
+export interface DatasetUsageProps {
+  readonly jsonPath: JsonPathBuilder;
+}
 
-  const hasDisclaimer = datasetMeta.metadataContentFlags?.hasDataDisclaimer;
+export function DatasetUsage({ jsonPath }: DatasetUsageProps): ReactElement {
+  const fieldName = jsonPath.appendToString<PartialDatasetDetails>('dataDisclaimer');
 
-  const setEnabled = (enabled: boolean) =>
-    setDatasetMeta({
-      ...datasetMeta,
-      metadataContentFlags: {
-        ...(datasetMeta.metadataContentFlags ?? {}),
-        hasDataDisclaimer: enabled,
-      },
-    });
+  const dispatch = useDispatch();
 
-  if (typeof hasDisclaimer === 'undefined' && datasetMeta.dataDisclaimer) {
+  const {
+    isPublic = false,
+    disclaimer,
+    hasDisclaimer,
+  } = useMetadataSelector(it => ({
+    isPublic: it.visibility === 'public',
+    disclaimer: it.dataDisclaimer,
+    hasDisclaimer: it.metadataContentFlags?.hasDataDisclaimer,
+  })) ?? {};
+
+  const setEnabled = React.useCallback(
+    (enabled: boolean) => dispatch(patchContentFlags({
+      hasDataDisclaimer: enabled,
+    })),
+    [dispatch],
+  );
+
+  const setDisclaimer = React.useCallback(
+    (disclaimer: string) => dispatch(overwriteMetaField('dataDisclaimer', disclaimer)),
+    [dispatch]
+  );
+
+  if (typeof hasDisclaimer === 'undefined' && isNonBlank(disclaimer)) {
     setEnabled(true);
   }
-
-  const isPublic = datasetMeta.visibility === 'public';
-
-  const onChange = useChangeHandler(
-    'dataDisclaimer',
-    datasetMeta,
-    setDatasetMeta
-  );
 
   return (
     <InputBlock header="Dataset Usage">
@@ -75,8 +79,8 @@ export function DatasetUsage({
           fieldName={fieldName}
           required={hasDisclaimer}
           disabled={!hasDisclaimer}
-          value={datasetMeta.dataDisclaimer}
-          onChange={onChange}
+          value={disclaimer}
+          onChange={setDisclaimer}
           helpText={INPUT_HELP_TEXT}
           validator={TEST_INPUT_LENGTH}
         />

@@ -5,7 +5,7 @@ import {
 } from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
 import { BadUpload } from '../../StoreModules';
-import { Consumer, Function, isNonBlankString } from '../../Utils';
+import { Consumer, Function, isNonBlank } from '../../Utils';
 import { sanitizeFileName } from '../utils/sanitization';
 import { cleanDatasetDetails } from './payload-cleanup';
 
@@ -28,7 +28,7 @@ export async function submitNewDataset({
 }: NewDatasetSubmission) {
   const combinedUploads: DatasetUpload[] = [];
 
-  if (isNonBlankString(uploads.url)) {
+  if (isNonBlank(uploads.url)) {
     combinedUploads.push(convertUrl(uploads.url));
   } else {
     appendFiles(uploads.dataFiles, convertDataFile, combinedUploads);

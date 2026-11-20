@@ -50,7 +50,7 @@ export function DatasetSelectionModal({
 
         <SecondaryButton
           onClick={copyAction}
-          disabled={tableProps.selection.isUndefined}
+          disabled={tableProps.selection === undefined}
         >
           Copy from Selected Dataset
         </SecondaryButton>
