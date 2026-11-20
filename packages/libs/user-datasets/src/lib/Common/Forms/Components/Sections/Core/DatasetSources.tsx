@@ -6,7 +6,7 @@ import * as actions from '../../../../../Actions/DatasetMetadataFormActions'
 import { isEmpty } from 'lodash';
 import { AddRowButton, InputBlock, LabelInputPair, YesNoToggle } from '../../';
 import { TextInputProps } from '../../LabelInputPair';
-import { useContentFlags, useDatasetSources, useDatasetVisibility } from '../../../Hooks/dataset-metadata-hooks';
+import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
 
 export interface DatasetSourcesProps {
@@ -18,26 +18,31 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
 
   const dispatch = useDispatch();
 
-  const sources = useDatasetSources();
-  const updateSources = React.useCallback(
+  const {
+    isPublic = false,
+    sources,
+    enabled,
+  } = useMetadataSelector(it => ({
+    isPublic: it.visibility === 'public',
+    sources: it.datasetSources,
+    enabled: it.metadataContentFlags?.hasDatasetSources,
+  })) ?? {};
+
+  const setSources = React.useCallback(
     (sources: ReadonlyArray<vdi.PartialDatasetSource>) =>
-      dispatch(actions.updateSources(sources)),
+      dispatch(actions.overwriteMetaField('datasetSources' ,sources)),
     [dispatch]
   );
   const setSource = React.useCallback(
     (source: vdi.PartialDatasetSource, index: number) =>
-      updateSources(util.replaceElement(sources, index, source)),
-    [sources, updateSources],
+      setSources(util.replaceElement(sources, index, source)),
+    [sources, setSources],
   )
 
-  const contentFlags = useContentFlags();
-  const enabled = contentFlags?.hasDatasetSources;
   const setEnabled = React.useCallback(
-    (v: boolean) => dispatch(actions.updateContentFlags({
-      ...contentFlags,
-      hasDatasetSources: v,
-    })),
-    [dispatch, contentFlags],
+    (enabled: boolean) =>
+      dispatch(actions.patchContentFlags({ hasDatasetSources: enabled })),
+    [dispatch],
   );
 
   if (typeof enabled === 'undefined' && !isEmpty(sources)) {
@@ -63,8 +68,6 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
       />
     );
   });
-
-  const isPublic = useDatasetVisibility() === 'public';
 
   return (
     <InputBlock header="Dataset Source">
@@ -95,7 +98,7 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
 
         <AddRowButton
           className="column-2"
-          onClick={() => setSource({}, Infinity)}
+          onClick={() => setSources([...safeSources, {}])}
           disabled={!enabled}
         >
           + Additional External Source

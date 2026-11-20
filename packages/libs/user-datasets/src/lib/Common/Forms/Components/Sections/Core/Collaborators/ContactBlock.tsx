@@ -1,10 +1,12 @@
 import React from 'react';
 import {
+  isBlank,
+  isNonBlank,
   JsonPathBuilder,
-  newTextLengthTest,
+  newTextLengthTest
 } from '../../../../../../Utils';
 import { PartialDatasetContact } from '../../../../../../Service';
-import { LabelInputPair } from '../../../LabelInputPair';
+import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {
   readonly index: number;
@@ -61,6 +63,16 @@ enum Strictness {
 }
 
 const TEST_CONTACT_NAME = newTextLengthTest(2, 300);
+const testEmail = ({ disabled, value, required }: TextInputProps): boolean =>
+  disabled === true
+    || (!required && isBlank(value))
+    || (
+      isNonBlank(value)
+      && value.length <= 1024
+      && /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+    );
+const testAffiliation = newTextLengthTest(3, 4000);
+const testCountry = newTextLengthTest(3, 200);
 
 export function ContactBlock(props: ContactBlockProps): React.ReactElement {
   const { index, contact, updateContact } = props;
@@ -121,8 +133,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.email}
           onChange={(it) => onChangePart('email', it)}
           required={validationThreshold >= Strictness.Primary}
-          minLength={5}
-          maxLength={1024}
+          validator={testEmail}
         />
 
         <LabelInputPair
@@ -132,8 +143,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.affiliation}
           onChange={(it) => onChangePart('affiliation', it)}
           required={validationThreshold >= Strictness.Secondary}
-          minLength={3}
-          maxLength={4000}
+          validator={testAffiliation}
         />
 
         <LabelInputPair
@@ -143,8 +153,7 @@ export function ContactBlock(props: ContactBlockProps): React.ReactElement {
           value={contact.country}
           onChange={(it) => onChangePart('country', it)}
           required={validationThreshold >= Strictness.Secondary}
-          minLength={3}
-          maxLength={200}
+          validator={testCountry}
         />
 
         <LabelInputPair

@@ -68,51 +68,20 @@ export function reduce(state: State = {}, action: upload.Action | form.Action): 
     case form.overwriteMetaField.type:
       return updateMetadata(state, () => action.payload)
 
-    case form.updateCharacteristics.type:
-      return updateMetadata(state, () => ({
-        datasetCharacteristics: action.payload,
-      }));
-
-    case form.updateContacts.type:
-      return updateMetadata(state, () => ({ contacts: action.payload }));
-
-    case form.updateExternalBioprojectIds.type:
-      return updateMetadata(state, it => ({
-        externalIdentifiers: {
-          ...it.externalIdentifiers,
-          bioprojectIds: action.payload,
+    case form.patchContentFlags.type:
+      return updateMetadata(state, ({ metadataContentFlags }) => ({
+        metadataContentFlags: {
+          ...metadataContentFlags,
+          ...action.payload,
         },
       }));
 
-    case form.updateExternalDOIs.type:
-      return updateMetadata(state, it => ({
+    case form.patchExternalIdentifiers.type:
+      return updateMetadata(state, ({ externalIdentifiers }) => ({
         externalIdentifiers: {
-          ...it.externalIdentifiers,
-          dois: action.payload,
+          ...externalIdentifiers,
+          ...action.payload,
         },
-      }));
-
-    case form.updateExternalHyperlinks.type:
-      return updateMetadata(state, it => ({
-        externalIdentifiers: {
-          ...it.externalIdentifiers,
-          hyperlinks: action.payload,
-        },
-      }));
-
-    case form.updatePublications.type:
-      return updateMetadata(state, () => ({
-        publications: action.payload,
-      }));
-
-    case form.updateSources.type:
-      return updateMetadata(state, () => ({
-        datasetSources: action.payload,
-      }));
-
-    case form.updateContentFlags.type:
-      return updateMetadata(state, () => ({
-        metadataContentFlags: action.payload,
       }));
 
     case upload.receiveBadUpload.type:

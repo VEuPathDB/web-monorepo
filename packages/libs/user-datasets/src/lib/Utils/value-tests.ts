@@ -14,6 +14,9 @@ export function isNonEmptyString(value: Optional<any>): value is string {
 export const isNonBlank = (value: Optional<string>): value is string =>
   typeof value === 'string' && /\S/.test(value);
 
+export const isBlank = (value: Optional<string>) =>
+  value == null || !/\S/.test(value);
+
 export function filterNullish<T>(values: Readonly<Array<Optional<T>>>): Array<T> {
   const out: Array<T> = [];
 

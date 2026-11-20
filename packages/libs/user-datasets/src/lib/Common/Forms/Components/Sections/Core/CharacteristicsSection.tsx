@@ -29,8 +29,11 @@ import {
   StudyDesignOption,
 } from '../../../../Configuration/DatasetFormConfig';
 import { useDispatch } from 'react-redux';
-import { useCharacteristics, useContentFlags, useDatasetVisibility } from '../../../Hooks/dataset-metadata-hooks';
-import { updateCharacteristics, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
+import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
+import {
+  overwriteMetaField,
+  patchContentFlags
+} from '../../../../../Actions/DatasetMetadataFormActions';
 
 export interface CharacteristicsSectionProps {
   readonly pathBuilder: JsonPathBuilder;
@@ -45,19 +48,22 @@ export function CharacteristicsSection({
 
   const dispatch = useDispatch();
 
-  const contentFlags = useContentFlags();
-  const enabled = contentFlags?.hasDatasetCharacteristics;
+  const {
+    isPublic = false,
+    characteristics,
+    hasCharacteristics: enabled,
+  } = useMetadataSelector(stateSelector) ?? {};
+
   const setEnabled = React.useCallback(
-    (enabled: boolean) => dispatch(updateContentFlags({
-      ...contentFlags,
+    (enabled: boolean) => dispatch(patchContentFlags({
       hasDatasetCharacteristics: enabled,
     })),
-    [dispatch, contentFlags],
+    [dispatch],
   );
 
-  const characteristics = useCharacteristics();
   const setCharacteristics = useCallback(
-    (characteristics: PartialCharacteristics) => dispatch(updateCharacteristics(characteristics)),
+    (characteristics: PartialCharacteristics) =>
+      dispatch(overwriteMetaField('datasetCharacteristics', characteristics)),
     [dispatch],
   );
   const setCharacteristic = useCallback(
@@ -66,13 +72,16 @@ export function CharacteristicsSection({
     [characteristics, setCharacteristics],
   );
 
-  if (enabled === undefined && characteristics !== undefined) {
-    setEnabled(true);
-  }
+  React.useEffect(
+    () => {
+      if (enabled === undefined && characteristics !== undefined) {
+        setEnabled(true);
+      }
+    },
+    [enabled, characteristics, setEnabled],
+  );
 
   const safeCharacteristics = characteristics ?? {};
-
-  const isPublic = useDatasetVisibility() === 'public';
 
   const requireAll = useMemo(
     () => enabled === true && isPublic,
@@ -364,3 +373,23 @@ function YearsInputs({
 }
 
 // endregion Years
+
+// region helpers
+
+type StateSlice = {
+  readonly isPublic: boolean;
+  readonly characteristics?: PartialCharacteristics;
+  readonly hasCharacteristics?: boolean;
+};
+
+const stateSelector = ({
+  datasetCharacteristics,
+  metadataContentFlags,
+  visibility,
+}: PartialDatasetDetails): StateSlice => ({
+  isPublic: visibility === 'public',
+  characteristics: datasetCharacteristics,
+  hasCharacteristics: metadataContentFlags?.hasDatasetCharacteristics,
+});
+
+// endregion helpers

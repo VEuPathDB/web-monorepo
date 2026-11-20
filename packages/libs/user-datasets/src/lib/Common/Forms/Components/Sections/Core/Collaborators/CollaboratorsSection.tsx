@@ -7,9 +7,9 @@ import {
   PartialDatasetDetails,
 } from '../../../../../../Service';
 import { ContactBlock } from './ContactBlock';
-import { useContacts, useDatasetVisibility } from '../../../../Hooks/dataset-metadata-hooks';
+import { useMetadataSelector } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
-import { updateContacts } from '../../../../../../Actions/DatasetMetadataFormActions';
+import { overwriteMetaField } from '../../../../../../Actions/DatasetMetadataFormActions';
 
 export interface CollaboratorsSectionProps {
   readonly pathBuilder: JsonPathBuilder;
@@ -20,15 +20,22 @@ export function CollaboratorsSection(
 ): ReactElement {
   const pathBuilder = props.pathBuilder.append<PartialDatasetDetails>('contacts');
 
-  const contacts = useContacts();
   const dispatch = useDispatch();
+  const {
+    isPublic = false,
+    contacts,
+  } = useMetadataSelector(it => ({
+    isPublic: it.visibility === 'public',
+    contacts: it.contacts,
+  })) ?? {};
 
   const safeContacts = isNonEmpty(contacts) ? contacts : [{}];
 
   const hasPrimary = safeContacts.some((it) => it.isPrimary);
 
   const setContacts = React.useCallback(
-    (contacts: Array<PartialDatasetContact>) => dispatch(updateContacts(contacts)),
+    (contacts: Array<PartialDatasetContact>) =>
+      dispatch(overwriteMetaField('contacts', contacts)),
     [dispatch],
   );
 
@@ -47,8 +54,6 @@ export function CollaboratorsSection(
     },
     [contacts, setContacts],
   );
-
-  const isPublic = useDatasetVisibility() === 'public';
 
   const contactBlocks = safeContacts.map((contact, index) => {
     const path = pathBuilder.append(index);

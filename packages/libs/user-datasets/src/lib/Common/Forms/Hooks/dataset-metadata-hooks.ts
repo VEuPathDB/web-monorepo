@@ -5,30 +5,17 @@ import * as util from '../../../Utils';
 import { StateSlice } from '../../../StoreModules/types';
 import { identity, isEqual } from 'lodash';
 
-function useSelector<T>(fn: util.Function<vdi.PartialDatasetDetails, util.Possible<T>>): util.Possible<T> {
-  return redux.useSelector<StateSlice, util.Possible<T>>(
+export type MetadataSelector<T> = util.Function<vdi.PartialDatasetDetails, T>;
+
+export const useMetadataSelector = <T>(fn: MetadataSelector<T>): util.Possible<T> =>
+  redux.useSelector<StateSlice, util.Possible<T>>(
     state => util.ifDefined(state.userDatasetUpload.formState?.datasetDetails, fn),
     isEqual
   );
-}
 
 export const useDatasetMetadata = () =>
-  useSelector<vdi.PartialDatasetDetails>(identity);
+  useMetadataSelector<vdi.PartialDatasetDetails>(identity);
 
-export const useCharacteristics = () => useSelector(it => it.datasetCharacteristics);
+export const useDatasetVisibility = () => useMetadataSelector(it => it.visibility);
 
-export const useContacts = () => useSelector(it => it.contacts);
-
-export const useContentFlags = () => useSelector(it => it.metadataContentFlags);
-
-export const useDataDisclaimer = () => useSelector(it => it.dataDisclaimer);
-
-export const useDatasetSources = () => useSelector(it => it.datasetSources);
-
-export const useDatasetVisibility = () => useSelector(it => it.visibility);
-
-export const useDependencies = () => useSelector(it => it.dependencies);
-
-export const useExperimentalOrgs = () => useSelector(it => it.experimentalOrganisms);
-
-export const usePublications = () => useSelector(it => it.publications);
+export const useDependencies = () => useMetadataSelector(it => it.dependencies);

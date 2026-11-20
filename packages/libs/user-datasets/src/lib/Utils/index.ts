@@ -36,6 +36,7 @@ export type {
 
 export {
   filterNullish,
+  isBlank,
   isNonBlank,
   isNonEmpty,
   isNonEmptyString,

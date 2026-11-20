@@ -1,5 +1,4 @@
-import React, { ReactElement, useCallback } from 'react';
-import * as meta from '../../../Hooks/dataset-metadata-hooks';
+import React from 'react';
 
 import { AddRowButton, InputBlock, LabelInputPair } from '../../index';
 import { OptionalSection } from '../../OptionalSection';
@@ -15,7 +14,11 @@ import { PartialDatasetDetails, PartialOrganism } from '../../../../../Service/M
 import { projectId } from '../../../../../config';
 import { isGenomicsProjectId } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { useDispatch } from 'react-redux';
-import { overwriteMetaField, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
+import {
+  overwriteMetaField,
+  patchContentFlags,
+} from '../../../../../Actions/DatasetMetadataFormActions';
+import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
 
 export interface OrganismDetailsProps {
   readonly jsonPath: JsonPathBuilder;
@@ -23,37 +26,41 @@ export interface OrganismDetailsProps {
 
 export function ExperimentalOrganisms(
   props: OrganismDetailsProps
-): ReactElement {
+): React.ReactElement {
   const jsonPath = props.jsonPath.append<PartialDatasetDetails>('experimentalOrganisms');
 
   const dispatch = useDispatch();
 
-  const organismList = meta.useExperimentalOrgs();
-  const contentFlags = meta.useContentFlags();
-
-  const hasOrganismData = contentFlags?.hasOrganismData;
+  const {
+    isPublic = false,
+    organismList,
+    hasOrganismData,
+  } = useMetadataSelector(it => ({
+    isPublic: it.visibility === 'public',
+    organismList: it.experimentalOrganisms,
+    hasOrganismData: it.metadataContentFlags?.hasOrganismData,
+  })) ?? {};
 
   const safeOrgList = isNonEmpty(organismList) ? organismList : [{}];
 
-  const setEnabled = useCallback(
+  const setEnabled = React.useCallback(
     (enabled: boolean) =>
-      dispatch(updateContentFlags({
-        ...contentFlags,
-        hasOrganismData: enabled,
-      })),
-    [dispatch, contentFlags]
+      dispatch(patchContentFlags({ hasOrganismData: enabled })),
+    [dispatch]
   );
 
+  const setOrganisms = React.useCallback(
+    (organisms: ReadonlyArray<PartialOrganism>) =>
+      dispatch(overwriteMetaField('experimentalOrganisms', organisms)),
+    [dispatch],
+  );
   const setOrganism = React.useCallback(
-    (org: PartialOrganism, index: number) => {
-      dispatch(overwriteMetaField('experimentalOrganisms', replaceElement(organismList, index, org)))
-    },
-    [dispatch, organismList]
+    (org: PartialOrganism, index: number) =>
+      setOrganisms(replaceElement(organismList, index, org)),
+    [setOrganisms, organismList]
   )
 
   const isGenomics = isGenomicsProjectId(projectId);
-
-  const isPublic = meta.useDatasetVisibility() === 'public';
 
   const requireInput = !isGenomics ? hasOrganismData === true : isPublic;
 
@@ -119,7 +126,7 @@ export function ExperimentalOrganisms(
             className="column-2"
             onClick={() => {
               if (!disabled)
-                setOrganism({}, Infinity);
+                setOrganisms([...safeOrgList, {}]);
             }}
           >
             + Additional organism
@@ -138,7 +145,7 @@ interface OrganismDetailListProps {
   readonly required: boolean;
 }
 
-function OrganismDetailsContent(props: OrganismDetailListProps): ReactElement {
+function OrganismDetailsContent(props: OrganismDetailListProps): React.ReactElement {
   return (
     <ol className="multi-input span-2">
       {props.organisms.map((org, index) => (
@@ -174,7 +181,7 @@ function OrganismDetailsRow({
   organism,
   setOrganism,
   jsonPath,
-}: DatasetOrganismRow): ReactElement {
+}: DatasetOrganismRow): React.ReactElement {
   const hasContent = isNonBlank(organism.species)
     || isNonBlank(organism.strain);
 

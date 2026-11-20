@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+
 import * as util from '../../../../../../Utils';
 
 import { InputBlock } from '../../../InputBlock';
@@ -8,9 +9,12 @@ import { OptionalSection } from '../../../OptionalSection';
 import { fixPrimaries, PublicationList } from './utils';
 import { PublicationRow } from './PublicationRow';
 
-import { useContentFlags, useDatasetVisibility, usePublications } from '../../../../Hooks/dataset-metadata-hooks';
+import { useMetadataSelector } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
-import { updateContentFlags, updatePublications } from '../../../../../../Actions/DatasetMetadataFormActions';
+import {
+  overwriteMetaField,
+  patchContentFlags,
+} from '../../../../../../Actions/DatasetMetadataFormActions';
 
 import './PublicationsSection.scss';
 
@@ -25,23 +29,32 @@ export function PublicationsSection(
 
   const dispatch = useDispatch();
 
-  const publications = usePublications();
+  const {
+    publications,
+    hasPublications: isEnabled,
+    isPublic = false,
+  } = useMetadataSelector(publicationSelector) ?? {};
+
+  const setPublications = React.useCallback(
+    (publications: ReadonlyArray<Publication>) =>
+      dispatch(overwriteMetaField('publications', publications)),
+    [dispatch]
+  )
   const setPublication = React.useCallback(
     (publication: Publication, index: number) =>
-      dispatch(updatePublications(fixPrimaries(util.replaceElement(publications, index, publication), index))),
-    [dispatch, publications],
+      setPublications(fixPrimaries(
+        util.replaceElement(publications, index, publication),
+        index,
+      )),
+    [setPublications, publications],
   );
 
   const havePubs = util.isNonEmpty(publications);
 
-  const contentFlags = useContentFlags();
-  const isEnabled = contentFlags?.hasPublications;
   const setEnabled = React.useCallback(
-    (enabled: boolean) => dispatch(updateContentFlags({
-      ...contentFlags,
-      hasPublications: enabled,
-    })),
-    [dispatch, contentFlags],
+    (enabled: boolean) =>
+      dispatch(patchContentFlags({ hasPublications: enabled })),
+    [dispatch],
   );
 
   React.useEffect(
@@ -61,8 +74,6 @@ export function PublicationsSection(
   const calcRequired = (pub: Publication, i: number) =>
     (isEnabled ?? false) &&
     (pub.isPrimary || (i === 0 && safePubs.length === 1));
-
-  const isPublic = useDatasetVisibility() === 'public';
 
   const seenIdentifiers = new Set<string>();
 
@@ -111,7 +122,7 @@ export function PublicationsSection(
 
         <AddRowButton
           disabled={!isEnabled}
-          onClick={() => setPublication({}, Infinity)}
+          onClick={() => setPublications([...safePubs, {}])}
           className="column-2 publication-appender"
         >
           + Additional publication
@@ -120,3 +131,19 @@ export function PublicationsSection(
     </InputBlock>
   );
 }
+
+type PublicationState = {
+  readonly isPublic: boolean;
+  readonly publications?: ReadonlyArray<Publication>,
+  readonly hasPublications?: boolean;
+};
+
+const publicationSelector = ({
+  publications,
+  metadataContentFlags,
+  visibility,
+}: PartialDatasetDetails): PublicationState => ({
+  publications,
+  hasPublications: metadataContentFlags?.hasPublications,
+  isPublic: visibility === 'public',
+});

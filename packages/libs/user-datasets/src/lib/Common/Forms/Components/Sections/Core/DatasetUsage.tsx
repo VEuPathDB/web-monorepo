@@ -1,5 +1,4 @@
 import React, { ReactElement } from 'react';
-import * as meta from '../../../Hooks/dataset-metadata-hooks';
 
 import { PartialDatasetDetails } from '../../../../../Service';
 import {
@@ -9,7 +8,11 @@ import {
 } from '../../../../../Utils';
 import { InputBlock, LabelInputPair, OptionalSection } from '../../index';
 import { useDispatch } from 'react-redux';
-import { overwriteMetaField, updateContentFlags } from '../../../../../Actions/DatasetMetadataFormActions';
+import {
+  overwriteMetaField,
+  patchContentFlags,
+} from '../../../../../Actions/DatasetMetadataFormActions';
+import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
 
 const SECTION_HELP_TEXT =
   'Whether this dataset includes important notes, caveats, or limitations that users should' +
@@ -31,17 +34,23 @@ export function DatasetUsage({ jsonPath }: DatasetUsageProps): ReactElement {
 
   const dispatch = useDispatch();
 
-  const contentFlags = meta.useContentFlags();
-  const hasDisclaimer = contentFlags?.hasDataDisclaimer;
+  const {
+    isPublic = false,
+    disclaimer,
+    hasDisclaimer,
+  } = useMetadataSelector(it => ({
+    isPublic: it.visibility === 'public',
+    disclaimer: it.dataDisclaimer,
+    hasDisclaimer: it.metadataContentFlags?.hasDataDisclaimer,
+  })) ?? {};
+
   const setEnabled = React.useCallback(
-    (enabled: boolean) => dispatch(updateContentFlags({
-      ...contentFlags,
+    (enabled: boolean) => dispatch(patchContentFlags({
       hasDataDisclaimer: enabled,
     })),
-    [dispatch, contentFlags],
+    [dispatch],
   );
 
-  const disclaimer = meta.useDataDisclaimer();
   const setDisclaimer = React.useCallback(
     (disclaimer: string) => dispatch(overwriteMetaField('dataDisclaimer', disclaimer)),
     [dispatch]
@@ -50,8 +59,6 @@ export function DatasetUsage({ jsonPath }: DatasetUsageProps): ReactElement {
   if (typeof hasDisclaimer === 'undefined' && isNonBlank(disclaimer)) {
     setEnabled(true);
   }
-
-  const isPublic = meta.useDatasetVisibility() === 'public';
 
   return (
     <InputBlock header="Dataset Usage">

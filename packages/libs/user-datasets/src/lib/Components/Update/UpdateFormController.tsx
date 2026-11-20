@@ -132,8 +132,7 @@ export function UpdateFormController(
     [dataset, vdi]
   );
 
-  const submitForm =
-    ({ actions: { setSubmitting } }: DatasetFormProps) =>
+  const submitForm = ({ actions: { setSubmitting } }: DatasetFormProps) =>
     () => {
       setSubmitting(true);
       dispatch(detailUpdating());
