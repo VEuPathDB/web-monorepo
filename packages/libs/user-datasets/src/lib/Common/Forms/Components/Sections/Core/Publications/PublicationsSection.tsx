@@ -44,9 +44,15 @@ export function PublicationsSection(
     [dispatch, contentFlags],
   );
 
-  if (isEnabled === undefined && havePubs) {
-    setEnabled(true);
-  }
+  React.useEffect(
+    () => {
+      if (isEnabled === undefined && havePubs) {
+        setEnabled(true);
+      }
+    },
+    [isEnabled, havePubs, setEnabled],
+  );
+
 
   const safePubs: PublicationList = havePubs
     ? publications
