@@ -267,15 +267,15 @@ class DatasetManagement<
     this.handleDelete = this.handleDelete.bind(this);
 
     this.getAttributes = this.getAttributes.bind(this);
-    this.renderAttributeList = this.renderAttributeList.bind(this);
-    this.renderHeaderSection = this.renderHeaderSection.bind(this);
-    this.renderDatasetActions = this.renderDatasetActions.bind(this);
+    // this.renderAttributeList = this.renderAttributeList.bind(this);
+    // this.renderHeaderSection = this.renderHeaderSection.bind(this);
+    // this.renderDatasetActions = this.renderDatasetActions.bind(this);
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.renderFileSection = this.renderFileSection.bind(this);
     this.closeSharingModal = this.closeSharingModal.bind(this);
     this.renderDetailsSection = this.renderDetailsSection.bind(this);
-    this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
+    // this.renderAllDatasetsLink = this.renderAllDatasetsLink.bind(this);
   }
 
   private hasDatasetPropertiesFile(): boolean {
@@ -350,40 +350,40 @@ class DatasetManagement<
     }
   }
 
-  renderAllDatasetsLink() {
-    if (!this.props.includeAllLink) return null;
-    return (
-      <Link className="AllDatasetsLink" to={this.props.baseUrl}>
-        <Icon fa="chevron-left" />
-        &nbsp; Manage {this.props.workspaceTitle}
-      </Link>
-    );
-  }
-
-  isInstalled(): boolean {
-    const {
-      config: { projectId },
-    } = this.props;
-    const { status } = this.props.userDataset;
-
-    if (!status || !status.import || !status.install) return false;
-
-    return (
-      status.import.status === 'complete' &&
-      status.install.some(
-        (it) =>
-          it.installTarget === projectId &&
-          it.data?.status === 'complete' &&
-          (it.meta == null || it.meta.status === 'complete')
-      )
-    );
-  }
-
-  getGrantedShares(): DatasetShareOffer[] {
-    return (
-      this.props.userDataset.shares?.filter((it) => it.status === 'grant') ?? []
-    );
-  }
+  // renderAllDatasetsLink() {
+  //   if (!this.props.includeAllLink) return null;
+  //   return (
+  //     <Link className="AllDatasetsLink" to={this.props.baseUrl}>
+  //       <Icon fa="chevron-left" />
+  //       &nbsp; Manage {this.props.workspaceTitle}
+  //     </Link>
+  //   );
+  // }
+  //
+  // isInstalled(): boolean {
+  //   const {
+  //     config: { projectId },
+  //   } = this.props;
+  //   const { status } = this.props.userDataset;
+  //
+  //   if (!status || !status.import || !status.install) return false;
+  //
+  //   return (
+  //     status.import.status === 'complete' &&
+  //     status.install.some(
+  //       (it) =>
+  //         it.installTarget === projectId &&
+  //         it.data?.status === 'complete' &&
+  //         (it.meta == null || it.meta.status === 'complete')
+  //     )
+  //   );
+  // }
+  //
+  // getGrantedShares(): DatasetShareOffer[] {
+  //   return (
+  //     this.props.userDataset.shares?.filter((it) => it.status === 'grant') ?? []
+  //   );
+  // }
 
   private getStatusRow(isInstalled: boolean): React.ReactElement {
     const { userDataset, dataNoun, config } = this.props;
@@ -608,119 +608,119 @@ class DatasetManagement<
     ).filter((attr): attr is DatasetAttribute => !!attr);
   }
 
-  renderHeaderSection() {
-    const AllLink = this.renderAllDatasetsLink;
-    const AttributeList = this.renderAttributeList;
-    const DatasetActions = this.renderDatasetActions;
+  // renderHeaderSection() {
+  //   const AllLink = this.renderAllDatasetsLink;
+  //   const AttributeList = this.renderAttributeList;
+  //   const DatasetActions = this.renderDatasetActions;
+  //
+  //   return (
+  //     <section id="dataset-header">
+  //       <AllLink />
+  //       <div className={classify('Header')}>
+  //         <div className={classify('Header-Attributes')}>
+  //           <AttributeList />
+  //         </div>
+  //         <div className={classify('Header-Actions')}>
+  //           <DatasetActions />
+  //         </div>
+  //       </div>
+  //     </section>
+  //   );
+  // }
 
-    return (
-      <section id="dataset-header">
-        <AllLink />
-        <div className={classify('Header')}>
-          <div className={classify('Header-Attributes')}>
-            <AttributeList />
-          </div>
-          <div className={classify('Header-Actions')}>
-            <DatasetActions />
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // renderAttributeList() {
+  //   const attributes = this.getAttributes();
+  //   return (
+  //     <div className={classify('AttributeList')}>
+  //       {attributes.map(({ attribute, value, className }) => (
+  //         <div
+  //           className={
+  //             classify('AttributeRow') +
+  //             ' ' +
+  //             (className ?? classify(attribute))
+  //           }
+  //           key={attribute}
+  //         >
+  //           <div className={classify('AttributeName')}>
+  //             <strong>{attribute}:</strong>
+  //           </div>
+  //           <div className={classify('AttributeValue')}>{value}</div>
+  //         </div>
+  //       ))}
+  //     </div>
+  //   );
+  // }
 
-  renderAttributeList() {
-    const attributes = this.getAttributes();
-    return (
-      <div className={classify('AttributeList')}>
-        {attributes.map(({ attribute, value, className }) => (
-          <div
-            className={
-              classify('AttributeRow') +
-              ' ' +
-              (className ?? classify(attribute))
-            }
-            key={attribute}
-          >
-            <div className={classify('AttributeName')}>
-              <strong>{attribute}:</strong>
-            </div>
-            <div className={classify('AttributeValue')}>{value}</div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  renderDatasetActions() {
-    const { isOwner } = this.props;
-
-    const unpromotableMessage = (() => {
-      switch (this.testCommunityPromotability()) {
-        case CommunityPromotability.CanPromote:
-        // allow the promote link to be enabled.  the user will be forced to add
-        // the missing dataset properties file as a next step.
-        // eslint-disable-next-line no-fallthrough
-        case CommunityPromotability.MissingDatasetProperties:
-          return undefined;
-        case CommunityPromotability.NotInstalled:
-          return 'Datasets that have not been installed cannot be made public.';
-        default:
-          return 'Dataset cannot be made public at this time due to a site error.';
-      }
-    })();
-
-    const editable =
-      isOwner &&
-      !isEmpty(this.props.datasetTypes) &&
-      !isEmpty(
-        findDatasetTypeConfig(
-          this.props.userDataset.type,
-          this.props.datasetTypes!
-        )
-      );
-
-    return (
-      <div className={classify('Actions')}>
-        {!isOwner ? null : (
-          <ThemedGrantAccessButton
-            buttonText={`Grant Access to ${this.props.dataNoun.plural}`}
-            onPress={(grantType) => {
-              switch (grantType) {
-                case 'community':
-                  this.props.updateDatasetCommunityVisibilitySuccessReset(
-                    false
-                  );
-                  this.props.updateDatasetCommunityVisibilityErrorReset(
-                    undefined
-                  );
-                  this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
-                  break;
-                case 'individual':
-                  this.openSharingModal();
-                  break;
-                default:
-                  // noop
-                  break;
-              }
-            }}
-            disableCommunityReason={unpromotableMessage}
-            communityDatasetsEnabled={this.props.enablePublicUserDatasets}
-          />
-        )}
-        {editable && (
-          <ThemedUpdateButton
-            buttonText="Edit my dataset"
-            onPress={() =>
-              this.props.history.push({ pathname: this.getEditPath() })
-            }
-          />
-        )}
-        {isOwner ? (
-          <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
-        ) : null}
-      </div>
-    );
-  }
+  // renderDatasetActions() {
+  //   const { isOwner } = this.props;
+  //
+  //   const unpromotableMessage = (() => {
+  //     switch (this.testCommunityPromotability()) {
+  //       case CommunityPromotability.CanPromote:
+  //       // allow the promote link to be enabled.  the user will be forced to add
+  //       // the missing dataset properties file as a next step.
+  //       // eslint-disable-next-line no-fallthrough
+  //       case CommunityPromotability.MissingDatasetProperties:
+  //         return undefined;
+  //       case CommunityPromotability.NotInstalled:
+  //         return 'Datasets that have not been installed cannot be made public.';
+  //       default:
+  //         return 'Dataset cannot be made public at this time due to a site error.';
+  //     }
+  //   })();
+  //
+  //   const editable =
+  //     isOwner &&
+  //     !isEmpty(this.props.datasetTypes) &&
+  //     !isEmpty(
+  //       findDatasetTypeConfig(
+  //         this.props.userDataset.type,
+  //         this.props.datasetTypes!
+  //       )
+  //     );
+  //
+  //   return (
+  //     <div className={classify('Actions')}>
+  //       {!isOwner ? null : (
+  //         <ThemedGrantAccessButton
+  //           buttonText={`Grant Access to ${this.props.dataNoun.plural}`}
+  //           onPress={(grantType) => {
+  //             switch (grantType) {
+  //               case 'community':
+  //                 this.props.updateDatasetCommunityVisibilitySuccessReset(
+  //                   false
+  //                 );
+  //                 this.props.updateDatasetCommunityVisibilityErrorReset(
+  //                   undefined
+  //                 );
+  //                 this.setState((s) => ({ ...s, isCommunityModalOpen: true }));
+  //                 break;
+  //               case 'individual':
+  //                 this.openSharingModal();
+  //                 break;
+  //               default:
+  //                 // noop
+  //                 break;
+  //             }
+  //           }}
+  //           disableCommunityReason={unpromotableMessage}
+  //           communityDatasetsEnabled={this.props.enablePublicUserDatasets}
+  //         />
+  //       )}
+  //       {editable && (
+  //         <ThemedUpdateButton
+  //           buttonText="Edit my dataset"
+  //           onPress={() =>
+  //             this.props.history.push({ pathname: this.getEditPath() })
+  //           }
+  //         />
+  //       )}
+  //       {isOwner ? (
+  //         <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
+  //       ) : null}
+  //     </div>
+  //   );
+  // }
 
   renderDetailsSection() {
     const { userDataset } = this.props;

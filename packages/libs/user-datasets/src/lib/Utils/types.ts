@@ -42,12 +42,3 @@ export interface UserDatasetUpload {
   isSuccessful: boolean;
   isUserError: boolean;
 }
-
-/**
- * In EDA, data is referred to as "Study" or "Studies"
- * In genomics, data is referred to as "Dataset" or "Datasets"
- */
-export type DataNoun = {
-  singular: string;
-  plural: string;
-};

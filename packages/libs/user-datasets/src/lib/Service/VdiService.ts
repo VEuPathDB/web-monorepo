@@ -51,7 +51,7 @@ import {
 
 import {
   ccValidationErrorBody,
-  datasetFileListing,
+  datasetFileListing, datasetGetResponse, DatasetGetResponse,
   datasetGetResponseBody,
   datasetListEntry,
   datasetPatchResponse,
@@ -60,7 +60,7 @@ import {
   rawMetadataResponse,
   serviceMetadata,
   shareOfferListEntry,
-  userMetadata,
+  userMetadata
 } from './Model/response-decoders';
 
 import { RootDatasetFile } from './Model/utility-types';
@@ -141,14 +141,22 @@ export class VdiService extends FetchClientWithCredentials {
    * Fetches available details about a dataset's metadata and processing
    * statuses.
    */
-  async getDatasetDetails(id: DatasetId): Promise<DatasetGetResponseBody> {
-    return this.fetch(
-      createJsonRequest({
-        path: VdiRoutes.datasetUri(id),
-        method: 'GET',
-        transformResponse: ioTransformer(datasetGetResponseBody),
-      })
-    );
+  async getDatasetDetails(id: DatasetId): Promise<DatasetGetResponse> {
+    const response = await window.fetch(new Request(
+      this.baseUrl + VdiRoutes.datasetUri(id),
+      {
+        ...this.init,
+        headers: {
+          ...(await this.findAuthorizationHeaders()),
+        },
+      }
+    ));
+
+    if (response.headers.get('Content-Type') === 'application/json') {
+      return await ioTransformer(datasetGetResponse)(await fetchResponseBody(response));
+    }
+
+    throw new Error("unexpected non-JSON response from VDI API");
   }
 
   /**

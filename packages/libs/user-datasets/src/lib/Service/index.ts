@@ -19,6 +19,8 @@ export type {
   DatasetPostResponseBody,
   DatasetShareOffer,
   DatasetStatusInfo,
+  DatasetImportStatusInfo,
+  DatasetInstallStatusInfo,
   DatasetTypeOutput,
   DatasetUploads,
   DatasetUploadStatusInfo,

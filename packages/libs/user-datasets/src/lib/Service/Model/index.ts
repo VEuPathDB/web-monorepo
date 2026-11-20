@@ -21,6 +21,8 @@ export type {
   DatasetFileListing,
   DatasetGetResponseBody,
   DatasetId,
+  DatasetImportStatusInfo,
+  DatasetInstallStatusInfo,
   DatasetListEntry,
   DatasetListShareUser,
   DatasetPatchResponse,

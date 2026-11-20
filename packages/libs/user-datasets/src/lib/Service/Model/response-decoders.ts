@@ -121,7 +121,7 @@ const datasetStatusInfo = io.intersection([
   io.type({ upload: datasetUploadStatusInfo }),
   io.partial({
     import: datasetImportStatusDetails,
-    install: io.array(datasetInstallStatusMap),
+    install: io.readonlyArray(datasetInstallStatusMap),
   }),
 ]);
 export type DatasetStatusInfo = io.TypeOf<typeof datasetStatusInfo>;
@@ -540,6 +540,13 @@ export type DatasetPutResponseBody = DatasetPostResponseBody;
 // endregion Success Responses
 
 // region Service Responses
+
+export const datasetGetResponse = io.union([
+  simpleContainerCoreErrorBody,
+  ccServerErrorBody,
+  datasetGetResponseBody,
+]);
+export type DatasetGetResponse = io.TypeOf<typeof datasetGetResponse>;
 
 export const datasetPostResponse = io.union([
   datasetPostResponseBody,

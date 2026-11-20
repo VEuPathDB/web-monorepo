@@ -29,3 +29,5 @@ export {
   type UploadFormPropConstructor,
   configureFormProps,
 } from './form-configs';
+
+export { type DataNoun } from './DataNoun';

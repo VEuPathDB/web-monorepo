@@ -11,6 +11,8 @@ import {
   VdiReconcilerConfig,
   VdiServiceConfig,
 } from '../Service';
+import { projectId } from '../config';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 
 export interface Props {
   baseUrl: string;
@@ -52,7 +54,6 @@ const orderedStatuses = [
  *  install ready-for-reinstall   grey: "error on install (a bug); pls let us know"
  *  install missing-dependency    yellow: "incompatible, why"
  **/
-
 function getStatus(
   status: DatasetStatusInfo,
   projectId: string,
@@ -81,6 +82,19 @@ function getStatus(
       vdiConfig
     );
 }
+
+export const computeDatasetStatus = (
+  status: DatasetStatusInfo,
+  dataNoun: string,
+  vdiConfig: VdiReconcilerConfig,
+) => getStatus(
+  status,
+  projectId,
+  dataNoun,
+  projectIdToDisplayName(projectId) ?? projectId,
+  [projectId],
+  vdiConfig,
+);
 
 const queuedStatus = (dataNoun: string) => ({
   content: `This ${dataNoun} is queued.`,
