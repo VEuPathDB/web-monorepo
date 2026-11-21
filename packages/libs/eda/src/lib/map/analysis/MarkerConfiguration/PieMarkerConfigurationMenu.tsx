@@ -14,6 +14,7 @@ import {
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
+import { SummaryMarkerHeading } from './SummaryMarkerHeading';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -199,9 +200,12 @@ export function PieMarkerConfigurationMenu({
         />
       </div>
       <div style={{ margin: '5px 0 0 0' }}>
-        <div style={{ fontWeight: 'bold', marginBottom: '0.5em' }}>
-          Summary marker (all filtered data)
-        </div>
+        <SummaryMarkerHeading
+          studyEntities={entities}
+          selectedVariable={configuration.selectedVariable}
+          geoConfig={geoConfig}
+          overlayType={overlayConfiguration?.overlayType}
+        />
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <CategoricalMarkerPreview
             overlayConfiguration={overlayConfiguration}
