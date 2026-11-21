@@ -15,7 +15,6 @@ import {
   LayersControl,
   ScaleControl,
   useMap,
-  useMapEvents,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './styles/map-styles.css';
@@ -24,7 +23,7 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { Map, DomEvent, LatLngBounds } from 'leaflet';
+import L, { Map, DomEvent, LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
@@ -330,57 +329,65 @@ interface MapVEuMapEventsProps {
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
+/**
+ * Reports map events to the props' callbacks.
+ *
+ * The handlers are registered once per map and read the latest props
+ * through a ref. react-leaflet's useMapEvents instead re-subscribes on
+ * every render (its handlers object is new each time), and between its
+ * unsubscribe and resubscribe effects there is a gap. A programmatic move
+ * made from another effect in the same commit, e.g. fitBounds, fires its
+ * events synchronously in that gap whenever Leaflet doesn't animate it
+ * (a zoom change of more than 4 levels, or a long pan). Those zoomend /
+ * moveend events were lost, so the caller kept stale bounds and zoom.
+ */
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
-  const {
-    onViewportChanged,
-    onBaseLayerChanged,
-    onBoundsChanged,
-    onMapClick,
-    onMapDrag,
-    onMapZoom,
-  } = props;
-  const mapEvents = useMapEvents({
-    zoomend: () => {
-      onViewportChanged({
-        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
-        zoom: mapEvents.getZoom(),
-      });
+  const map = useMap();
+  const propsRef = useRef(props);
+  propsRef.current = props;
 
+  useEffect(() => {
+    const reportView = () => {
+      const { onViewportChanged, onBoundsChanged } = propsRef.current;
+      onViewportChanged({
+        center: [map.getCenter().lat, map.getCenter().lng],
+        zoom: map.getZoom(),
+      });
       const boundsViewport: BoundsViewport = {
-        bounds: constrainLongitudeToMainWorld(
-          boundsToGeoBBox(mapEvents.getBounds())
-        ),
-        zoomLevel: mapEvents.getZoom(),
+        bounds: constrainLongitudeToMainWorld(boundsToGeoBBox(map.getBounds())),
+        zoomLevel: map.getZoom(),
       };
       onBoundsChanged(boundsViewport);
-
-      if (onMapZoom != null) onMapZoom();
-    },
-    moveend: () => {
-      onViewportChanged({
-        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
-        zoom: mapEvents.getZoom(),
-      });
-
-      const boundsViewport: BoundsViewport = {
-        bounds: constrainLongitudeToMainWorld(
-          boundsToGeoBBox(mapEvents.getBounds())
-        ),
-        zoomLevel: mapEvents.getZoom(),
-      };
-      onBoundsChanged(boundsViewport);
-
-      if (onMapDrag != null) onMapDrag();
-    },
-    baselayerchange: (e: { name: string }) => {
-      onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
-    },
-    // map click event: remove selected markers and close side panel
-    click: (e) => {
-      if (onMapClick != null && !mouseEventHasModifierKey(e.originalEvent))
-        onMapClick();
-    },
-  });
+    };
+    const handlers: L.LeafletEventHandlerFnMap = {
+      zoomend: () => {
+        reportView();
+        propsRef.current.onMapZoom?.();
+      },
+      moveend: () => {
+        reportView();
+        propsRef.current.onMapDrag?.();
+      },
+      baselayerchange: (e) => {
+        propsRef.current.onBaseLayerChanged?.(
+          (e as L.LayersControlEvent).name as BaseLayerChoice
+        );
+      },
+      // map click event: remove selected markers and close side panel
+      click: (e) => {
+        const { onMapClick } = propsRef.current;
+        if (
+          onMapClick != null &&
+          !mouseEventHasModifierKey((e as L.LeafletMouseEvent).originalEvent)
+        )
+          onMapClick();
+      },
+    };
+    map.on(handlers);
+    return () => {
+      map.off(handlers);
+    };
+  }, [map]);
 
   return null;
 }

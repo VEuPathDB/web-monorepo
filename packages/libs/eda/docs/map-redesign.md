@@ -300,6 +300,17 @@ Plan: a **Plots** tab in the Selection panel, not floating panels.
 - **Components library:** additive, opt-in props on `SemanticMarkers` and
   the markers, plus `LassoSelect` and `pointInPolygon` (§3). Behaviour for
   existing callers (e.g. `GeoCoordFilter`, `MapVisualization`) is unchanged.
+- **Map event fix (`MapVEuMap`):** map events used react-leaflet v3's
+  `useMapEvents`, which re-subscribes on every render. A programmatic move
+  made from another effect in the same commit (eda's `MapFitBounds` for
+  "zoom to marker") fires its `zoomend`/`moveend` synchronously in the
+  unsubscribe/resubscribe gap whenever Leaflet doesn't animate it (zoom
+  change > 4 levels, or a long pan). The bounds and zoom were never
+  reported, so markers stayed at the old aggregation level and view, while
+  the grid (which reads Leaflet directly) was correct. The handlers are
+  now registered once and read the latest props from a ref. Reproduced
+  with the real `MapVEuMap`/`SemanticMarkers` in headless Chromium: 15/30
+  randomised zoom-to trials inconsistent before, 0/30 after.
 - **Geohash grid fix (`CustomGridLayer`):** the grid recomputed its lines
   only on `resize dragend zoomend`, so it went stale after programmatic
   pans. That includes the pan that keeps markers still when a panel opens:
