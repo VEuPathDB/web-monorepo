@@ -39,7 +39,7 @@ import {
   MapTypePlugin,
   MapTypeTimeSliderProps,
 } from '../types';
-import { DonutMarkersIcon } from '../../MarkerConfiguration/icons';
+import { DonutMarkerIcon } from '../../MarkerConfiguration/icons';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
@@ -49,7 +49,7 @@ const displayName = 'Donuts';
 export const plugin: MapTypePlugin = {
   type: 'pie',
   displayName,
-  Icon: DonutMarkersIcon,
+  Icon: DonutMarkerIcon,
   ConfigPanelComponent,
   MapLayerComponent,
   LegendComponent,

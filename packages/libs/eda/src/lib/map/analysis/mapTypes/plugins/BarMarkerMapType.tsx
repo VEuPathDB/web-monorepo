@@ -43,7 +43,7 @@ import {
 import { useSubsettingClient } from '../../../../core/hooks/workspace';
 import { MapLegend } from '../../MapLegend';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import { BarPlotMarkersIcon } from '../../MarkerConfiguration/icons';
+import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
@@ -53,7 +53,7 @@ const displayName = 'Bar plots';
 export const plugin: MapTypePlugin = {
   type: 'barplot',
   displayName,
-  Icon: BarPlotMarkersIcon,
+  Icon: BarPlotMarkerIcon,
   ConfigPanelComponent,
   MapLayerComponent,
   LegendComponent,
