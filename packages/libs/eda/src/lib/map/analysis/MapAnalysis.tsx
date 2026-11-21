@@ -32,7 +32,10 @@ import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import { FilledButton, FloatingButton, Modal, Plus } from '@veupathdb/coreui';
-import { useEntityCounts } from '../../core/hooks/entityCounts';
+import {
+  useEntityCounts,
+  useSpecificEntityCounts,
+} from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import {
   AppState,
@@ -80,6 +83,7 @@ import {
   getActiveGeoConfig,
   isApproxSameViewport,
   selectionFilterFuncs,
+  timeSliderLittleFilter,
 } from './mapTypes/shared';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
@@ -89,7 +93,8 @@ import DatasetManagementController from '@veupathdb/user-datasets/lib/Components
 import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
 import { GeoCoordUIState } from '../../core/components/filter/geoCoordUIState';
 import { makeEntityDisplayName } from '../../core/utils/study-metadata';
-import { useLittleFilters } from './littleFilters';
+import { LittleFilterFunc, useLittleFilters } from './littleFilters';
+import { mapCountTooltip } from './layout/mapCountTooltip';
 import { MapTopBar } from './layout/MapTopBar';
 import { MapFilterBar } from './layout/MapFilterBar';
 import { ToolRail, ToolRailItem } from './layout/ToolRail';
@@ -120,6 +125,8 @@ import {
   shareMarkerSettings,
   withVariable,
 } from './utils/markerConfigurations';
+
+const NO_LITTLE_FILTERS: LittleFilterFunc[] = [];
 
 const mapTypePlugins: MapTypePlugin[] = [
   donutMarkerPlugin,
@@ -438,6 +445,48 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(filters);
+
+  // The filter bar's count, as in the pre-redesign map header: the subset,
+  // narrowed by the timeline window and the marker configuration (has a
+  // value for the marker variable). Neither applies while markers can't be
+  // drawn. The timeline's own bars use the marker configuration only.
+  const canDrawMarkers = activePlugin != null && activeVariableIsOnLineage;
+  const timelineFilterFuncs = useMemo(
+    () =>
+      canDrawMarkers && activePlugin != null
+        ? activePlugin.markerConfigFilterFuncs
+        : NO_LITTLE_FILTERS,
+    [canDrawMarkers, activePlugin]
+  );
+  const countFilterFuncs = useMemo(
+    () =>
+      canDrawMarkers
+        ? [...timelineFilterFuncs, timeSliderLittleFilter]
+        : NO_LITTLE_FILTERS,
+    [canDrawMarkers, timelineFilterFuncs]
+  );
+  const littleFilterProps = useMemo(
+    () => ({ filters, appState, geoConfigs }),
+    [filters, appState, geoConfigs]
+  );
+  const { filters: timelineFilters } = useLittleFilters(
+    littleFilterProps,
+    timelineFilterFuncs
+  );
+  const { filters: mapCountFilters } = useLittleFilters(
+    littleFilterProps,
+    countFilterFuncs
+  );
+  const geoEntityList = useMemo(() => [geoConfig.entity], [geoConfig.entity]);
+  const mapCounts = useSpecificEntityCounts(mapCountFilters, geoEntityList);
+  const timeSliderConfig = appState.timeSliderConfig;
+  const timeWindow =
+    canDrawMarkers &&
+    timeSliderConfig?.variable != null &&
+    timeSliderConfig.active &&
+    timeSliderConfig.selectedRange != null
+      ? timeSliderConfig.selectedRange
+      : undefined;
 
   const isSettingsPanelOpen = appState.isSidePanelExpanded ?? true;
 
@@ -791,6 +840,22 @@ function MapAnalysisImpl(props: ImplProps) {
   const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
+  const countTooltip = mapCountTooltip({
+    entityName: makeEntityDisplayName(geoConfig.entity, true),
+    timeWindow:
+      timeWindow && timeSliderConfig?.variable
+        ? {
+            ...timeWindow,
+            variableName:
+              findEntityAndVariable(timeSliderConfig.variable)?.variable
+                .displayName ?? 'date',
+          }
+        : undefined,
+    markerVariableName: canDrawMarkers
+      ? overlayVariable?.displayName
+      : undefined,
+  });
+
   const activeRailIds: RailId[] = [
     ...(isSettingsPanelOpen ? (['settings'] as const) : []),
     ...(activeSheet ? [activeSheet] : []),
@@ -819,8 +884,6 @@ function MapAnalysisImpl(props: ImplProps) {
           configuration: activeMarkerConfiguration,
           updateConfiguration: updateMarkerConfiguration,
         };
-        const canDrawMarkers =
-          activePlugin != null && activeVariableIsOnLineage;
 
         return (
           <ShowHideVariableContextProvider>
@@ -874,7 +937,9 @@ function MapAnalysisImpl(props: ImplProps) {
                     studyEntities={studyEntities}
                     geoEntity={geoConfig.entity}
                     totalCounts={totalCounts.value}
-                    filteredCounts={filteredCounts.value}
+                    filteredCounts={mapCounts.value}
+                    countPending={mapCounts.pending}
+                    countTooltip={countTooltip}
                     onRemoveFilter={(filter: Filter) =>
                       analysisState.analysis &&
                       analysisState.setFilters(

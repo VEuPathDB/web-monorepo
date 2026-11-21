@@ -45,10 +45,14 @@ import { MapLegend } from '../../MapLegend';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { useLittleFilters } from '../../littleFilters';
+import { LittleFilterFunc, useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Bar plots';
+
+const markerConfigFilterFuncs: LittleFilterFunc[] = [
+  pieOrBarMarkerConfigLittleFilter,
+];
 
 export const plugin: MapTypePlugin = {
   type: 'barplot',
@@ -58,6 +62,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent,
   LegendComponent,
   TimeSliderComponent,
+  markerConfigFilterFuncs,
 };
 
 interface ChartMarkerDataWithCounts extends BaseMarkerData {
@@ -277,8 +282,6 @@ function LegendComponent(props: MapTypeLegendProps) {
   );
 }
 
-const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
-
 export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
   const {
     studyId,
@@ -300,7 +303,7 @@ export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
       appState,
       geoConfigs,
     },
-    timeSliderFilterFuncs
+    markerConfigFilterFuncs
   );
 
   return timeSliderConfig ? (

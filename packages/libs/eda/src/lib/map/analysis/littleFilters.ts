@@ -25,6 +25,9 @@ export interface UseLittleFiltersFuncProps extends UseLittleFiltersProps {
     | undefined;
 }
 
+/** produces "little filters" (temporary, map-only filters) from app state */
+export type LittleFilterFunc = (props: UseLittleFiltersFuncProps) => Filter[];
+
 //
 // returns stable lists of Filters
 //   filters: main filters plus requested little filters
@@ -36,7 +39,7 @@ export interface UseLittleFiltersFuncProps extends UseLittleFiltersProps {
 //
 export function useLittleFilters(
   props: UseLittleFiltersProps,
-  funcs: ((props: UseLittleFiltersFuncProps) => Filter[])[]
+  funcs: LittleFilterFunc[]
 ) {
   const findEntityAndVariable = useFindEntityAndVariable(props.filters);
   const littleFilters = useDeepValue(

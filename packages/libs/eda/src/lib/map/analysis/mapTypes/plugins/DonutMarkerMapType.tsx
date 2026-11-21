@@ -41,10 +41,14 @@ import {
 } from '../types';
 import { DonutMarkerIcon } from '../../MarkerConfiguration/icons';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import { useLittleFilters } from '../../littleFilters';
+import { LittleFilterFunc, useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Donuts';
+
+const markerConfigFilterFuncs: LittleFilterFunc[] = [
+  pieOrBarMarkerConfigLittleFilter,
+];
 
 export const plugin: MapTypePlugin = {
   type: 'pie',
@@ -54,6 +58,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent,
   LegendComponent,
   TimeSliderComponent,
+  markerConfigFilterFuncs,
 };
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
@@ -261,8 +266,6 @@ function LegendComponent(props: MapTypeLegendProps) {
   );
 }
 
-const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
-
 export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
   const {
     studyId,
@@ -284,7 +287,7 @@ export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
       appState,
       geoConfigs,
     },
-    timeSliderFilterFuncs
+    markerConfigFilterFuncs
   );
 
   return timeSliderConfig ? (

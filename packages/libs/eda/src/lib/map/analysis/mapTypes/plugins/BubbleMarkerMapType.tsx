@@ -43,12 +43,15 @@ import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import {
+  LittleFilterFunc,
   useLittleFilters,
   UseLittleFiltersFuncProps,
 } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Bubbles';
+
+const markerConfigFilterFuncs: LittleFilterFunc[] = [markerConfigLittleFilter];
 
 export const plugin: MapTypePlugin = {
   type: 'bubble',
@@ -58,6 +61,7 @@ export const plugin: MapTypePlugin = {
   MapLayerComponent: BubbleMapLayer,
   LegendComponent: BubbleLegends,
   TimeSliderComponent,
+  markerConfigFilterFuncs,
 };
 
 type BubbleLegendData = {
@@ -250,8 +254,6 @@ function BubbleLegends(props: MapTypeLegendProps) {
   );
 }
 
-const timeSliderFilterFuncs = [markerConfigLittleFilter];
-
 export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
   const {
     studyId,
@@ -273,7 +275,7 @@ export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
       appState,
       geoConfigs,
     },
-    timeSliderFilterFuncs
+    markerConfigFilterFuncs
   );
 
   return timeSliderConfig ? (

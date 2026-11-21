@@ -15,6 +15,10 @@ interface Props {
   geoEntity: StudyEntity;
   totalCounts?: EntityCounts;
   filteredCounts?: EntityCounts;
+  /** the filtered count is being (re)fetched */
+  countPending: boolean;
+  /** what the filtered count includes (see mapCountTooltip) */
+  countTooltip: string;
   onRemoveFilter: (filter: Filter) => void;
   /** open the filter sheet, optionally on a particular variable */
   onOpenFilters: (variable?: { entityId: string; variableId: string }) => void;
@@ -32,6 +36,8 @@ export function MapFilterBar({
   geoEntity,
   totalCounts,
   filteredCounts,
+  countPending,
+  countTooltip,
   onRemoveFilter,
   onOpenFilters,
   selectedVariable,
@@ -89,9 +95,9 @@ export function MapFilterBar({
       </div>
       <div
         css={{ fontSize: 13, color: mapUi.muted, whiteSpace: 'nowrap' }}
-        title={`${entityName} in the subset, out of all ${entityName} in the study`}
+        title={countTooltip}
       >
-        {filtered != null && total != null ? (
+        {!countPending && filtered != null && total != null ? (
           <>
             <strong css={{ color: '#222' }}>{format(filtered)}</strong> of{' '}
             {format(total)} {entityName}

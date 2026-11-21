@@ -5,6 +5,7 @@ import { VariableDescriptor } from '../../../core/types/variable';
 import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState, MarkerType } from '../appState';
 import { SiteInformationProps } from '../Types';
+import { LittleFilterFunc } from '../littleFilters';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { MarkerSelectionGesture } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 
@@ -99,4 +100,11 @@ export interface MapTypePlugin {
   LegendComponent: ComponentType<MapTypeLegendProps>;
   /** the time slider quick filter */
   TimeSliderComponent: ComponentType<MapTypeTimeSliderProps>;
+  /**
+   * The marker configuration's little filters: by default "has a value for
+   * the marker variable", narrowed to the chosen values when the markers are
+   * custom-configured. Used for the timeline's bars and the map count. Must
+   * be a stable (module-level) array.
+   */
+  markerConfigFilterFuncs: LittleFilterFunc[];
 }
