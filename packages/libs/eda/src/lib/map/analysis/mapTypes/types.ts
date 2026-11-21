@@ -58,8 +58,19 @@ export interface MapTypeConfigPanelProps extends MapTypeSharedProps {
   disabledVariables: VariableDescriptor[];
 }
 
+/**
+ * Fit the map to the markers once, when an analysis is opened at the
+ * default (never moved) view. `onStarted` must switch `pending` off: the
+ * fit is a one-shot, never repeated on later re-renders or data changes.
+ */
+export interface InitialFitProps {
+  pending: boolean;
+  onStarted: () => void;
+}
+
 export interface MapTypeMapLayerProps extends MapTypeSharedProps {
   selection: MapSelectionProps;
+  initialFit: InitialFitProps;
 }
 
 export type MapTypeLegendProps = MapTypeSharedProps;

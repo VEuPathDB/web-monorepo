@@ -69,7 +69,11 @@ import {
   donutMarkerPlugin,
 } from './mapTypes';
 import { MapTypePlugin, MarkerSummary } from './mapTypes/types';
-import { getActiveGeoConfig, selectionFilterFuncs } from './mapTypes/shared';
+import {
+  getActiveGeoConfig,
+  isApproxSameViewport,
+  selectionFilterFuncs,
+} from './mapTypes/shared';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
@@ -441,6 +445,19 @@ function MapAnalysisImpl(props: ImplProps) {
 
   ///// selection /////
 
+  // fit the map to the markers once, if the analysis opens at the default
+  // (never moved) view; see InitialFitProps
+  const [isInitialFitPending, setIsInitialFitPending] = useState(() =>
+    isApproxSameViewport(appState.viewport, defaultViewport)
+  );
+  const initialFit = useMemo(
+    () => ({
+      pending: isInitialFitPending,
+      onStarted: () => setIsInitialFitPending(false),
+    }),
+    [isInitialFitPending]
+  );
+
   const [contextTarget, setContextTarget] = useState<ContextPopupTarget>();
   const [fitBoundsRequest, setFitBoundsRequest] = useState<{
     bounds: Bounds;
@@ -762,6 +779,9 @@ function MapAnalysisImpl(props: ImplProps) {
                   display: 'flex',
                   flexDirection: 'column',
                   fontSize: 14,
+                  // nothing in the map UI may scroll the page: a page
+                  // scrollbar appearing would resize (and shift) the map
+                  overflow: 'hidden',
                 }}
               >
                 <MapTopBar
@@ -844,7 +864,16 @@ function MapAnalysisImpl(props: ImplProps) {
                         )}
                       </MapSettingsPanel>
                     )}
-                    <div css={{ flex: 1, minWidth: 0, position: 'relative' }}>
+                    <div
+                      css={{
+                        flex: 1,
+                        minWidth: 0,
+                        position: 'relative',
+                        // clip on-map overlays (time slider, hint, legend)
+                        // so they can never resize the layout around them
+                        overflow: 'hidden',
+                      }}
+                    >
                       <MapVEuMap
                         height="100%"
                         width="100%"
@@ -869,6 +898,7 @@ function MapAnalysisImpl(props: ImplProps) {
                           <activePlugin.MapLayerComponent
                             {...sharedPluginProps}
                             selection={selection.selectionProps}
+                            initialFit={initialFit}
                           />
                         )}
                         <MapResizeObserver />
@@ -937,6 +967,10 @@ function MapAnalysisImpl(props: ImplProps) {
                             left: '50%',
                             transform: 'translateX(-50%)',
                             zIndex: 2,
+                            // the slider has a fixed width; on a narrow map
+                            // scroll it rather than overflow the map
+                            maxWidth: 'calc(100% - 20px)',
+                            overflowX: 'auto',
                           }}
                         >
                           <activePlugin.TimeSliderComponent

@@ -44,13 +44,12 @@ import { ReactElement, useCallback, useEffect, useMemo } from 'react';
 import { AppState } from '../appState';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
-import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 import { classifyMarkers } from '../utils/geohashSelection';
 import {
   finestGeohashVariableId,
   resolveGeoConfig,
 } from '../utils/geoEntities';
-import { MapSelectionProps, MarkerSummary } from './types';
+import { InitialFitProps, MapSelectionProps, MarkerSummary } from './types';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -655,13 +654,12 @@ export function SelectableMarkers({
   markers,
   selection,
   isFetching,
-  viewport,
+  initialFit,
 }: {
   markers: ReactElement<BoundsDriftMarkerProps>[];
   selection: MapSelectionProps;
   isFetching: boolean;
-  /** the saved viewport; markers are flown to while it is the default */
-  viewport: AppState['viewport'];
+  initialFit: InitialFitProps;
 }) {
   const summaries: MarkerSummary[] = useMemo(
     () =>
@@ -695,14 +693,22 @@ export function SelectableMarkers({
     [summaries, onMarkerContextMenu]
   );
 
+  // SemanticMarkers fits the map whenever it renders with flyToMarkers on
+  // and new markers - and plugins build a new markers array on every
+  // render. So turn it on for exactly one render: this effect runs after
+  // SemanticMarkers' own (child effects run first), and switches it off.
+  const fitNow = initialFit.pending && !isFetching && markers.length > 0;
+  const { onStarted: onFitStarted } = initialFit;
+  useEffect(() => {
+    if (fitNow) onFitStarted();
+  }, [fitNow, onFitStarted]);
+
   return (
     <SemanticMarkers
       markers={markers}
       animation={defaultAnimation}
-      flyToMarkers={
-        !isFetching && isApproxSameViewport(viewport, defaultViewport)
-      }
-      flyToMarkersDelay={2000}
+      flyToMarkers={fitNow}
+      flyToMarkersDelay={500}
       selectedMarkers={selected}
       partiallySelectedMarkers={partiallySelected}
       onSelectionGesture={selection.onSelectionGesture}

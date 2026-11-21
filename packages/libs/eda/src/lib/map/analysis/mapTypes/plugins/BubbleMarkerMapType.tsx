@@ -180,7 +180,7 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
           markers={markers}
           selection={selection}
           isFetching={markersData.isFetching || markersData.isPreviousData}
-          viewport={appState.viewport}
+          initialFit={props.initialFit}
         />
       )}
     </>

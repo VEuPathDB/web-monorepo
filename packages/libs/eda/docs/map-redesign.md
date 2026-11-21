@@ -64,8 +64,24 @@ Code lives in `src/lib/map/analysis/` unless stated otherwise.
 | Time slider       | unchanged `TimeSliderQuickFilter`   | Now floats bottom-centre on the map instead of hanging from the header.                                                                                                                                                                   |
 | Context popup     | `selection/MapContextPopup.tsx`     | Right-click a marker or any point. See §4.                                                                                                                                                                                                |
 
-`MapAnalysis.tsx` composes these pieces. A `ResizeObserver` (`MapResizeObserver`)
-calls `invalidateSize()` when the docked panels open or close.
+`MapAnalysis.tsx` composes these pieces.
+
+**The map must not move unless the user moves it:**
+
+- `MapResizeObserver` handles container resizes: a panel opening or
+  closing, or a bar changing height. Leaflet's default `invalidateSize()`
+  keeps the map _centre_ fixed, which made every marker jump sideways when
+  a panel opened. The observer resizes without panning, then pans by
+  however far the container's top-left corner moved. On-screen positions
+  stay unchanged (checked in headless Chromium).
+- The root and the map area are `overflow: hidden`. The 750px time slider,
+  the hint text or the legend can't overflow and toggle a page scrollbar,
+  which would resize the map. The time slider scrolls inside its own box
+  when the map is narrow.
+- Fit-to-markers is a one-shot on first load at the default view
+  (`InitialFitProps`). Previously it re-ran after any re-render while the
+  saved view was still the default, such as a selection click or
+  marker-type switch.
 
 ### Map type plugins
 
@@ -279,7 +295,8 @@ Plan: a **Plots** tab in the Selection panel, not floating panels.
   per-entity counts for the viewport.
 - The marker configuration menus were designed for a wider drawer. Check
   them in the 400px panel.
-- Legend and time slider can overlap at narrow widths.
+- Legend and time slider can overlap at narrow widths. The time slider
+  scrolls rather than overflowing.
 - No visual check has been done yet: VEuPathDB services and tile servers
   were unreachable from the development environment.
 - Tests: `utils/*.test.ts`, `appState.test.ts`, `selection/*.test.ts`

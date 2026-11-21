@@ -230,7 +230,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
           markers={markers}
           selection={selection}
           isFetching={markerData.isFetching}
-          viewport={appState.viewport}
+          initialFit={props.initialFit}
         />
       )}
     </>

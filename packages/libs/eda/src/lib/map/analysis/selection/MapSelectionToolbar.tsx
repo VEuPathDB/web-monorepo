@@ -42,9 +42,11 @@ export function MapSelectionToolbar({
         position: 'absolute',
         top: 10,
         left: 10,
+        // leave room for the zoom and layer controls on the right
+        right: 60,
         zIndex: 2,
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: 8,
         pointerEvents: 'none',
       }}
@@ -54,6 +56,7 @@ export function MapSelectionToolbar({
         aria-label="Selection tools"
         css={{
           display: 'flex',
+          flexShrink: 0,
           gap: 2,
           padding: 3,
           background: 'white',
@@ -108,7 +111,9 @@ export function MapSelectionToolbar({
           background: 'rgba(255, 255, 255, 0.85)',
           borderRadius: mapUi.radius,
           padding: '3px 8px',
+          marginTop: 6,
           maxWidth: 420,
+          minWidth: 0,
         }}
       >
         {hint}

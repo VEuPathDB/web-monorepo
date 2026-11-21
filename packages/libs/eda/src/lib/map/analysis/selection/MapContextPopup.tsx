@@ -149,14 +149,27 @@ export function MapFitBounds({ request }: { request?: { bounds: Bounds } }) {
 
 /**
  * Leaflet only notices window resizes; tell it when its container changes
- * size because a side panel opened or closed.
+ * size because a side panel opened or closed, or a bar changed height.
+ *
+ * Leaflet's default is to keep the map's *centre* fixed, which makes every
+ * marker jump sideways when a panel opens. Instead keep what is on screen
+ * exactly where it is: resize without panning (which pins the map to the
+ * container's top-left corner), then pan by however far that corner moved.
  */
 export function MapResizeObserver() {
   const map = useMap();
   useEffect(() => {
     const container = map.getContainer();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => map.invalidateSize());
+    let previous = container.getBoundingClientRect();
+    const observer = new ResizeObserver(() => {
+      const current = container.getBoundingClientRect();
+      const dx = current.left - previous.left;
+      const dy = current.top - previous.top;
+      previous = current;
+      map.invalidateSize({ pan: false });
+      if (dx !== 0 || dy !== 0) map.panBy([dx, dy], { animate: false });
+    });
     observer.observe(container);
     return () => observer.disconnect();
   }, [map]);
