@@ -152,6 +152,12 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
+  /**
+   * Called when the "Zoom to data" button has returned the map to
+   * `defaultViewport`; the caller can then fit the map to its data once
+   * the data for the whole world has loaded.
+   */
+  onZoomToData?: () => void;
   children?: React.ReactNode;
   onMapClick?: () => void;
   onMapDrag?: () => void;
@@ -178,6 +184,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
+    onZoomToData,
     onMapClick,
     onMapDrag,
     onMapZoom,
@@ -304,6 +311,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {/* use custom zoom control */}
       <CustomZoomControl
         defaultViewport={defaultViewport}
+        onZoomToData={onZoomToData}
         zoomDelta={zoomSnap}
       />
     </MapContainer>
@@ -396,6 +404,7 @@ function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
 // custom zoom control
 interface CustomZoomControlProps {
   defaultViewport?: Viewport;
+  onZoomToData?: () => void;
   zoomDelta?: number;
 }
 
@@ -424,8 +433,10 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   // zoom to data: using flyTo function implicitly
   const zoomToData = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (props.defaultViewport)
+    if (props.defaultViewport) {
       map.setView(props.defaultViewport.center, props.defaultViewport.zoom);
+      props.onZoomToData?.();
+    }
   };
 
   return (

@@ -82,6 +82,16 @@ Code lives in `src/lib/map/analysis/` unless stated otherwise.
   (`InitialFitProps`). Previously it re-ran after any re-render while the
   saved view was still the default, such as a selection click or
   marker-type switch.
+- **Zoom to data** (zoom control button) goes back to the default world
+  view, which fetches markers for all data, then re-arms the one-shot fit
+  (`MapVEuMap` `onZoomToData`). The fit is armed only once the world view's
+  bounds have arrived, so it fits the new markers, not the old zoomed-in
+  ones.
+- **Lasso disables map dragging.** `SemanticMarkers` unmounts the
+  ctrl-drag `AreaSelect` while the lasso is armed. `AreaSelect`'s teardown
+  and re-enable (on most re-renders) and its key-up/blur handlers
+  unconditionally re-enabled dragging, so the lasso gesture panned the map
+  (reproduced and fix verified in headless Chromium).
 
 ### Map type plugins
 

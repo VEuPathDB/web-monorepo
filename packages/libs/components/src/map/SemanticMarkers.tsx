@@ -358,10 +358,12 @@ export default function SemanticMarkers({
       {/* ctrl/cmd + drag rectangle selection is only enabled when markers
           can be selected; maps without it (e.g. the lasso-based geo filter)
           must not get it, as it would compete with their own selection
-          handlers */}
-      {(setSelectedMarkers != null || onSelectionGesture != null) && (
-        <AreaSelect onAreaSelected={onAreaSelected} />
-      )}
+          handlers. It is also unmounted while the lasso is armed: its
+          teardown/re-enable (on every change of onAreaSelected) and its
+          key-up/blur handlers all turn map dragging back on, so the lasso
+          gesture would pan the map instead of drawing. */}
+      {(setSelectedMarkers != null || onSelectionGesture != null) &&
+        !lassoActive && <AreaSelect onAreaSelected={onAreaSelected} />}
       {refinedMarkers}
     </>
   );

@@ -1,4 +1,11 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 
@@ -458,6 +465,28 @@ function MapAnalysisImpl(props: ImplProps) {
     [isInitialFitPending]
   );
 
+  // "Zoom to data" (zoom control): the map first returns to the default
+  // world view, which fetches markers for all the data, then the one-shot
+  // fit is re-armed. Arm it only once the world view's bounds have arrived:
+  // that render also starts the new marker request, so the fit waits for
+  // the new markers instead of fitting the old, zoomed-in ones.
+  const zoomToDataRequestedRef = useRef(false);
+  const handleZoomToData = useCallback(() => {
+    if (appState.boundsZoomLevel?.zoomLevel === defaultViewport.zoom)
+      // already at the world view: its markers are (being) loaded
+      setIsInitialFitPending(true);
+    else zoomToDataRequestedRef.current = true;
+  }, [appState.boundsZoomLevel]);
+  useEffect(() => {
+    if (
+      zoomToDataRequestedRef.current &&
+      appState.boundsZoomLevel?.zoomLevel === defaultViewport.zoom
+    ) {
+      zoomToDataRequestedRef.current = false;
+      setIsInitialFitPending(true);
+    }
+  }, [appState.boundsZoomLevel]);
+
   const [contextTarget, setContextTarget] = useState<ContextPopupTarget>();
   const [fitBoundsRequest, setFitBoundsRequest] = useState<{
     bounds: Bounds;
@@ -892,6 +921,7 @@ function MapAnalysisImpl(props: ImplProps) {
                           geoConfig.zoomLevelToAggregationLevel
                         }
                         defaultViewport={defaultViewport}
+                        onZoomToData={handleZoomToData}
                         onMapClick={handleMapClick}
                       >
                         {canDrawMarkers && (
