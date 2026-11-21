@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { Variable } from '../../../../core/types/study';
 import { findEntityAndVariable } from '../../../../core/utils/study-metadata';
 import {
@@ -7,8 +6,10 @@ import {
 } from '../../MarkerConfiguration/BarPlotMarkerConfigurationMenu';
 import {
   MapTypeConfigPanelProps,
+  MapTypeLegendProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
+  MapTypeTimeSliderProps,
 } from '../types';
 import {
   OverlayConfig,
@@ -21,71 +22,41 @@ import ChartMarker, {
   BaseMarkerData,
   ChartMarkerProps,
 } from '@veupathdb/components/lib/map/ChartMarker';
-import {
-  defaultAnimationDuration,
-  defaultViewport,
-} from '@veupathdb/components/lib/map/config/map';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import {
-  STUDIES_ENTITY_ID,
-  STUDY_ID_VARIABLE_ID,
-  UNSELECTED_DISPLAY_TEXT,
-  UNSELECTED_TOKEN,
-} from '../../../constants';
-import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
   DistributionMarkerDataProps,
-  defaultAnimation,
-  floaterFilterFuncs,
-  isApproxSameViewport,
+  SelectableMarkers,
   markerDataFilterFuncs,
   pieOrBarMarkerConfigLittleFilter,
-  timeSliderLittleFilter,
   useCategoricalValues,
-  useCommonData,
   useDistributionMarkerData,
   useDistributionOverlayConfig,
-  viewportLittleFilters,
-  useSelectedMarkerSnackbars,
   visibleOptionFilterFuncs,
   getErrorOverlayComponent,
   getLegendErrorMessage,
-  selectedMarkersLittleFilter,
-  useFloatingPanelHandlers,
 } from '../shared';
-import {
-  useFindEntityAndVariable,
-  useSubsettingClient,
-} from '../../../../core/hooks/workspace';
-import { DraggableLegendPanel } from '../../DraggableLegendPanel';
+import { useSubsettingClient } from '../../../../core/hooks/workspace';
 import { MapLegend } from '../../MapLegend';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import DraggableVisualization from '../../DraggableVisualization';
-import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
-import {
-  MapTypeConfigurationMenu,
-  MarkerConfigurationOption,
-} from '../../MarkerConfiguration/MapTypeConfigurationMenu';
-import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
-import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
-import MapVizManagement from '../../MapVizManagement';
+import { BarPlotMarkersIcon } from '../../MarkerConfiguration/icons';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useLittleFilters } from '../../littleFilters';
 import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
-import { SubStudies } from '../../SubStudies';
 
 const displayName = 'Bar plots';
 
 export const plugin: MapTypePlugin = {
+  type: 'barplot',
   displayName,
+  Icon: BarPlotMarkersIcon,
   ConfigPanelComponent,
   MapLayerComponent,
-  MapOverlayComponent,
-  MapTypeHeaderDetails,
+  LegendComponent,
   TimeSliderComponent,
 };
 
@@ -103,21 +74,17 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     analysisState,
     appState,
     geoConfigs,
+    geoConfig,
     updateConfiguration,
     studyId,
     studyEntities,
     filters,
-    setIsSidePanelExpanded,
+    disabledVariables,
   } = props;
 
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as BarPlotMarkerConfiguration;
-  const {
-    selectedVariable,
-    selectedValues,
-    binningMethod,
-    visualizationPanelConfig,
-  } = configuration;
+  const { selectedVariable, selectedValues, binningMethod } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -172,10 +139,10 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       (viz) => viz.name === 'map-markers'
     )?.dataElementConstraints;
 
-  const configurationMenu = (
+  return (
     <BarPlotMarkerConfigurationMenu
       onChange={updateConfiguration}
-      configuration={configuration as BarPlotMarkerConfiguration}
+      configuration={configuration}
       constraints={markerVariableConstraints}
       overlayConfiguration={overlayConfiguration.data}
       overlayVariable={overlayVariable}
@@ -190,77 +157,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         analysisState.analysis?.descriptor.starredVariables ?? []
       }
       toggleStarredVariable={toggleStarredVariable}
-      geoConfigs={geoConfigs}
+      geoConfig={geoConfig}
+      disabledVariables={disabledVariables}
     />
-  );
-
-  const markerConfigurationOption: MarkerConfigurationOption = {
-    type: 'bubble',
-    displayName,
-    icon: (
-      <BarPlotMarkerIcon style={{ height: '1.5em', marginLeft: '0.25em' }} />
-    ),
-    configurationMenu,
-  };
-
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string, isNew?: boolean) => {
-      if (configuration == null) return;
-      updateConfiguration({
-        ...configuration,
-        activeVisualizationId,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          isVisible: !!activeVisualizationId,
-          ...(isNew ? { hideVizControl: false } : {}),
-        },
-      });
-    },
-    [configuration, updateConfiguration, visualizationPanelConfig]
-  );
-
-  const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: overlayConfiguration.data,
-  });
-
-  const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
-    'markers' | 'plots'
-  >['tabs'] = [
-    {
-      key: 'markers',
-      displayName: 'Markers',
-      content: configurationMenu,
-    },
-    {
-      key: 'plots',
-      displayName: 'Supporting Plots',
-      content: (
-        <MapVizManagement
-          analysisState={analysisState}
-          setActiveVisualizationId={setActiveVisualizationId}
-          apps={apps}
-          activeVisualizationId={configuration.activeVisualizationId}
-          plugins={plugins}
-          geoConfigs={geoConfigs}
-          mapType="barplot"
-          setIsSidePanelExpanded={setIsSidePanelExpanded}
-        />
-      ),
-    },
-  ];
-
-  return (
-    <div
-      style={{
-        padding: '1em',
-        maxWidth: '1500px',
-      }}
-    >
-      <MapTypeConfigurationMenu
-        markerConfiguration={markerConfigurationOption}
-        mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
-      />
-    </div>
   );
 }
 
@@ -270,13 +169,10 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     studyId,
     filters,
     geoConfigs,
+    geoConfig,
     appState,
-    appState: {
-      boundsZoomLevel,
-      markerConfigurations,
-      activeMarkerConfigurationType,
-    },
-    updateConfiguration,
+    appState: { boundsZoomLevel },
+    selection,
   } = props;
 
   const {
@@ -285,7 +181,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     dependentAxisLogScale,
     selectedPlotMode,
-    activeVisualizationId,
   } = props.configuration as BarPlotMarkerConfiguration;
 
   const { filters: filtersForMarkerData } = useLittleFilters(
@@ -309,7 +204,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     studyEntities,
     studyId,
     filters: filtersForMarkerData,
-    geoConfigs,
+    geoConfig,
     boundsZoomLevel,
     selectedVariable,
     selectedValues,
@@ -319,22 +214,6 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     overlayConfigQueryResult,
   });
 
-  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
-    appState.studyDetailsPanelConfig != null,
-    activeVisualizationId
-  );
-
-  const setSelectedMarkers = useCallback(
-    (selectedMarkers?: string[]) => {
-      handleSelectedMarkerSnackbars(selectedMarkers);
-      updateConfiguration({
-        ...(props.configuration as BarPlotMarkerConfiguration),
-        selectedMarkers,
-      });
-    },
-    [props.configuration, updateConfiguration, handleSelectedMarkerSnackbars]
-  );
-
   if (markerData.error && !markerData.isFetching)
     return getErrorOverlayComponent(markerData.error);
 
@@ -343,51 +222,25 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     <ChartMarker {...markerProps} />
   ));
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   return (
     <>
       {markerData.isFetching && <Spinner />}
       {markers && (
-        <SemanticMarkers
+        <SelectableMarkers
           markers={markers}
-          animation={defaultAnimation}
-          flyToMarkers={
-            !markerData.isFetching &&
-            isApproxSameViewport(appState.viewport, defaultViewport)
-          }
-          selectedMarkers={selectedMarkers}
-          setSelectedMarkers={setSelectedMarkers}
-          flyToMarkersDelay={2000}
+          selection={selection}
+          isFetching={markerData.isFetching}
+          viewport={appState.viewport}
         />
       )}
     </>
   );
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps) {
-  const {
-    studyEntities,
-    studyId,
-    filters,
-    geoConfigs,
-    appState,
-    updateConfiguration,
-    headerButtons,
-    setStudyDetailsPanelConfig,
-  } = props;
+function LegendComponent(props: MapTypeLegendProps) {
+  const { studyEntities, studyId, filters, geoConfig } = props;
 
   const configuration = props.configuration as BarPlotMarkerConfiguration;
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const { variable: overlayVariable } =
-    findEntityAndVariable(configuration.selectedVariable) ?? {};
-
-  const { selectedMarkers, legendPanelConfig, visualizationPanelConfig } =
-    configuration;
-
   const { binningMethod, selectedVariable, selectedValues } = configuration;
   const overlayConfigQueryResult = useDistributionOverlayConfig({
     studyId,
@@ -401,160 +254,32 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     studyEntities,
     studyId,
     filters,
-    geoConfigs,
-    selectedVariable: configuration.selectedVariable,
-    binningMethod: configuration.binningMethod,
+    geoConfig,
+    selectedVariable,
+    binningMethod,
     dependentAxisLogScale: configuration.dependentAxisLogScale,
-    selectedValues: configuration.selectedValues,
+    selectedValues,
     valueSpec: configuration.selectedPlotMode,
     overlayConfigQueryResult,
   });
 
-  const legendItems = markerData.legendItems;
-  const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: markerData.overlayConfig,
-    selectedMarkers,
-  });
-  const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-  const noDataError = getLegendErrorMessage(markerData.error);
-
-  const { filters: filtersForFloaters } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    floaterFilterFuncs
-  );
-
-  const { filters: filtersForSubStudies } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    substudyFilterFuncs
-  );
-
-  const {
-    updateLegendPosition,
-    updateVisualizationPosition,
-    updateVisualizationDimensions,
-    onPanelDismiss,
-    setHideVizControl,
-  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
-
   return (
-    <>
-      {appState.studyDetailsPanelConfig?.isVisible && (
-        <SubStudies
-          studyId={studyId}
-          entityId={STUDIES_ENTITY_ID}
-          variableId={STUDY_ID_VARIABLE_ID}
-          filters={filtersForSubStudies}
-          panelConfig={appState.studyDetailsPanelConfig}
-          updatePanelConfig={setStudyDetailsPanelConfig}
-          hasSelectedMarkers={!!selectedMarkers?.length}
-        />
-      )}
-      <DraggableLegendPanel
-        panelTitle={overlayVariable?.displayName}
-        zIndex={3}
-        headerButtons={headerButtons}
-        defaultPosition={legendPanelConfig}
-        onDragComplete={updateLegendPosition}
-      >
-        <div style={{ padding: '5px 10px' }}>
-          {noDataError ?? (
-            <MapLegend
-              isLoading={markerData.isFetching}
-              plotLegendProps={{ type: 'list', legendItems: legendItems ?? [] }}
-              showCheckbox={false}
-            />
-          )}
-        </div>
-      </DraggableLegendPanel>
-      {visualizationPanelConfig?.isVisible && (
-        <DraggableVisualization
-          analysisState={props.analysisState}
-          visualizationId={configuration.activeVisualizationId}
-          apps={props.apps}
-          plugins={plugins}
-          geoConfigs={geoConfigs}
-          totalCounts={props.totalCounts}
-          filteredCounts={props.filteredCounts}
-          toggleStarredVariable={toggleStarredVariable}
-          filters={filtersForFloaters}
-          // onTouch={moveVizToTop}
-          zIndexForStackingContext={2}
-          hideInputsAndControls={
-            visualizationPanelConfig.hideVizControl ?? false
-          }
-          setHideInputsAndControls={setHideVizControl}
-          onDragComplete={updateVisualizationPosition}
-          defaultPosition={visualizationPanelConfig.position}
-          onPanelResize={updateVisualizationDimensions}
-          dimensions={visualizationPanelConfig.dimensions}
-          onPanelDismiss={onPanelDismiss}
-        />
-      )}
-    </>
+    getLegendErrorMessage(markerData.error) ?? (
+      <MapLegend
+        isLoading={markerData.isFetching}
+        plotLegendProps={{
+          type: 'list',
+          legendItems: markerData.legendItems ?? [],
+        }}
+        showCheckbox={false}
+      />
+    )
   );
-}
-
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
-  const {
-    studyEntities,
-    geoConfigs,
-    appState,
-    appState: { timeSliderConfig, studyDetailsPanelConfig },
-    filters,
-  } = props;
-
-  const { selectedVariable, selectedMarkers } =
-    props.configuration as BarPlotMarkerConfiguration;
-
-  const { filters: filtersForSubStudies } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    substudyFilterFuncs
-  );
-
-  const {
-    outputEntity: { id: outputEntityId },
-  } = useCommonData(selectedVariable, geoConfigs, studyEntities);
-
-  return outputEntityId != null ? (
-    <MapTypeHeaderStudyDetails
-      hasMarkerSelection={!!selectedMarkers?.length}
-      filtersForVisibleData={filtersForSubStudies}
-      includesTimeSliderFilter={timeSliderConfig != null}
-      outputEntityId={outputEntityId}
-      onShowStudies={
-        studyDetailsPanelConfig &&
-        ((isVisible) =>
-          props.setStudyDetailsPanelConfig({
-            ...studyDetailsPanelConfig,
-            isVisible,
-          }))
-      }
-    />
-  ) : null;
 }
 
 const timeSliderFilterFuncs = [pieOrBarMarkerConfigLittleFilter];
 
-const substudyFilterFuncs = [
-  viewportLittleFilters,
-  timeSliderLittleFilter,
-  pieOrBarMarkerConfigLittleFilter,
-  selectedMarkersLittleFilter,
-];
-
-export function TimeSliderComponent(props: MapTypeMapLayerProps) {
+export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
   const {
     studyId,
     studyEntities,
@@ -578,7 +303,7 @@ export function TimeSliderComponent(props: MapTypeMapLayerProps) {
     timeSliderFilterFuncs
   );
 
-  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
+  return timeSliderConfig ? (
     <TimeSliderQuickFilter
       studyId={studyId}
       entities={studyEntities}

@@ -176,6 +176,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
       // pass selectedMarkers state and setState
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
+      partiallySelectedMarkers={props.partiallySelectedMarkers}
+      onSelectionGesture={props.onSelectionGesture}
+      onMarkerContextMenu={props.onMarkerContextMenu}
     />
   );
 }

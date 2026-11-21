@@ -14,7 +14,31 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   selectedMarkers?: string[];
   // selectedMarkers setState
   setSelectedMarkers?: (selectedMarkers: string[] | undefined) => void;
+  /** ids of markers that are only partly selected (e.g. a coarse marker
+   * containing a finer selection); drawn with a fainter highlight */
+  partiallySelectedMarkers?: string[];
+  /**
+   * Alternative to setSelectedMarkers that reports the user's intent
+   * rather than the resulting list. When provided, it is called instead of
+   * setSelectedMarkers on click.
+   */
+  onSelectionGesture?: (
+    markerIds: string[],
+    gesture: MarkerSelectionGesture
+  ) => void;
+  /** right-click (or long-press) on the marker */
+  onMarkerContextMenu?: (
+    markerId: string,
+    event: { latlng: { lat: number; lng: number } }
+  ) => void;
 }
+
+/**
+ * - add: add the markers to the selection (ctrl/cmd-click, area select)
+ * - remove: remove the markers from the selection (click a selected marker)
+ * - replace: make the markers the whole selection (plain click)
+ */
+export type MarkerSelectionGesture = 'add' | 'remove' | 'replace';
 
 /**
  * These adjustments account for discrepancies between actual rendered positions vs what getBoundingClient returns
@@ -47,6 +71,9 @@ export default function BoundsDriftMarker({
   zIndexOffset,
   selectedMarkers,
   setSelectedMarkers,
+  partiallySelectedMarkers,
+  onSelectionGesture,
+  onMarkerContextMenu,
   ...props
 }: BoundsDriftMarkerProps) {
   const map = useMap();
@@ -345,10 +372,16 @@ export default function BoundsDriftMarker({
     (e: LeafletMouseEvent) => {
       // check the number of mouse click and enable function for single click only
       if (e.originalEvent.detail === 1) {
-        if (setSelectedMarkers) {
-          if (selectedMarkers?.find((id) => id === props.id)) {
+        const isSelected = selectedMarkers?.some((id) => id === props.id);
+        if (onSelectionGesture) {
+          if (isSelected) onSelectionGesture([props.id], 'remove');
+          else if (e.originalEvent.ctrlKey || e.originalEvent.metaKey)
+            onSelectionGesture([props.id], 'add');
+          else onSelectionGesture([props.id], 'replace');
+        } else if (setSelectedMarkers) {
+          if (isSelected) {
             setSelectedMarkers(
-              selectedMarkers.filter((id: string) => id !== props.id)
+              (selectedMarkers ?? []).filter((id: string) => id !== props.id)
             );
           } else if (e.originalEvent.ctrlKey || e.originalEvent.metaKey) {
             // add to selection if CTRL or CMD key pressed
@@ -366,8 +399,14 @@ export default function BoundsDriftMarker({
         e.target.closePopup();
       }
     },
-    [setSelectedMarkers, selectedMarkers, props.id]
+    [setSelectedMarkers, selectedMarkers, onSelectionGesture, props.id]
   );
+
+  const handleContextMenu = (e: LeafletMouseEvent) => {
+    if (onMarkerContextMenu == null) return;
+    e.originalEvent.preventDefault();
+    onMarkerContextMenu(props.id, { latlng: e.latlng });
+  };
 
   const handleDoubleClick = (e: LeafletMouseEvent) => {
     // If any mofigier key is pressed, ignore double-click event
@@ -384,6 +423,8 @@ export default function BoundsDriftMarker({
   // set this marker as highlighted
   if (icon && selectedMarkers?.find((id) => id === props.id))
     icon.options.className += ' highlight-marker';
+  else if (icon && partiallySelectedMarkers?.includes(props.id))
+    icon.options.className += ' partial-highlight-marker';
 
   // set this marker's popup as highlighted
   if (popupContent && popupRef.current && popupRef.current._container) {
@@ -411,6 +452,7 @@ export default function BoundsDriftMarker({
         mouseover: handleMouseOver,
         mouseout: handleMouseOut,
         dblclick: handleDoubleClick,
+        ...(onMarkerContextMenu ? { contextmenu: handleContextMenu } : {}),
       }}
       zIndexOffset={zIndexOffset}
       {...optionalIconProp}

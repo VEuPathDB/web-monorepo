@@ -22,7 +22,7 @@ type Props = {
   studyId: string;
   filters: Filter[] | undefined;
   studyEntities: StudyEntity[];
-  geoConfigs: GeoConfig[];
+  geoConfig: GeoConfig;
 };
 
 export function ContinuousMarkerPreview({
@@ -31,7 +31,7 @@ export function ContinuousMarkerPreview({
   studyId,
   filters,
   studyEntities,
-  geoConfigs,
+  geoConfig,
 }: Props) {
   const { selectedVariable, selectedValues, binningMethod } = configuration;
 
@@ -59,7 +59,7 @@ export function ContinuousMarkerPreview({
     studyId,
     filters, // no extra little filters; should reflect whole map and all time
     studyEntities,
-    geoConfigs,
+    geoConfig,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
     selectedValues: configuration.selectedValues,

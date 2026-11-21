@@ -1,9 +1,12 @@
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { getOrElseW } from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
 
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
+  Filter,
   PromiseResult,
   useAnalysisClient,
   useDataClient,
@@ -17,33 +20,31 @@ import {
   useSubsettingClient,
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import {
-  CheckIcon,
-  Download,
-  Plus,
-  FilledButton,
-  Filter as FilterIcon,
-  FloatingButton,
-  H5,
-  Table,
-  Modal,
-} from '@veupathdb/coreui';
+import { FilledButton, FloatingButton, Modal, Plus } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import {
   AppState,
-  MarkerConfiguration,
-  useAppState,
   LegacyRedirectState,
+  MapSelection,
+  MarkerConfiguration,
+  MarkerType,
 } from './appState';
+import { useAppState } from './useAppState';
 import Subsetting from '../../workspace/Subsetting';
-import { MapHeader } from './MapHeader';
-import FilterChipList from '../../core/components/FilterChipList';
-import { VariableLinkConfig } from '../../core/components/VariableLink';
-import { MapSidePanel } from './MapSidePanel';
-import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
+import {
+  FilterList,
+  FolderOpen,
+  GetApp,
+  InfoOutlined,
+  Notes,
+  Share,
+  Tune,
+} from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import Login from '../../workspace/sharing/Login';
@@ -52,59 +53,105 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-
 import { uniq } from 'lodash';
 import Path from 'path';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import {
-  BarPlotMarkerIcon,
-  DonutMarkerIcon,
-  BubbleMarkerIcon,
-} from './MarkerConfiguration/icons';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
 import { GeoConfig } from '../../core/types/geoConfig';
-import {
-  SidePanelItem,
-  SidePanelMenuEntry,
-  SiteInformationProps,
-} from './Types';
-import { SideNavigationItems } from './MapSideNavigation';
+import { VariableDescriptor } from '../../core/types/variable';
+import { SiteInformationProps } from './Types';
 import {
   barMarkerPlugin,
   bubbleMarkerPlugin,
   donutMarkerPlugin,
 } from './mapTypes';
-
-import { MapTypeMapLayerProps } from './mapTypes/types';
-import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
+import { MapTypePlugin, MarkerSummary } from './mapTypes/types';
+import { getActiveGeoConfig, selectionFilterFuncs } from './mapTypes/shared';
 import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 import { Page } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisError } from '../../core/components/AnalysisError';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
-import SettingsButton from '@veupathdb/coreui/lib/components/containers/DraggablePanel/SettingsButton';
-import { getGeoConfig } from '../../core/utils/geoVariables';
 import DatasetManagementController from '@veupathdb/user-datasets/lib/Components/Management/DatasetManagementController';
 import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/user-datasets/lib/Utils/diyDatasets';
+import { GeoCoordUIState } from '../../core/components/filter/geoCoordUIState';
+import { makeEntityDisplayName } from '../../core/utils/study-metadata';
+import { useLittleFilters } from './littleFilters';
+import { MapTopBar } from './layout/MapTopBar';
+import { MapFilterBar } from './layout/MapFilterBar';
+import { ToolRail, ToolRailItem } from './layout/ToolRail';
+import { Sheet } from './layout/Sheet';
+import { MapSettingsPanel } from './layout/MapSettingsPanel';
+import { LegendCard } from './layout/LegendCard';
+import { TextButton } from './layout/ui';
+import { MapSelectionToolbar } from './selection/MapSelectionToolbar';
+import { SelectionPanel } from './selection/SelectionPanel';
+import {
+  ContextPopupTarget,
+  MapContextMenuEvents,
+  MapContextPopup,
+  MapFitBounds,
+  MapResizeObserver,
+} from './selection/MapContextPopup';
+import { useMapSelection } from './selection/useMapSelection';
+import {
+  filtersWithSelection,
+  geoCoordUIStateForSelection,
+  geoCoordUIStateKey,
+} from './selection/filterToSelection';
+import { isCovered } from './utils/geohashSelection';
+import { lineageEntities, variablesOutsideLineage } from './utils/geoEntities';
 
-enum MapSideNavItemLabels {
-  Download = 'Download',
-  Filter = 'Filter',
-  Notes = 'Notes',
-  Plot = 'Plot',
-  Share = 'Share',
-  StudyDetails = 'View Study Details',
-  MyAnalyses = 'My Analyses',
-  ConfigureMap = 'Configure Map',
-  SingleVariableMaps = 'Single Variable Maps',
-  GroupedVariableMaps = 'Grouped Variable Maps',
-}
+const mapTypePlugins: MapTypePlugin[] = [
+  donutMarkerPlugin,
+  barMarkerPlugin,
+  bubbleMarkerPlugin,
+];
 
-const mapStyle: React.CSSProperties = {
-  zIndex: 1,
-  pointerEvents: 'auto',
+type SheetId = 'filter' | 'download' | 'notes' | 'analyses' | 'study' | 'share';
+type RailId = SheetId | 'settings';
+
+const railItems: ToolRailItem<RailId>[] = [
+  {
+    id: 'settings',
+    label: 'Map',
+    title: 'Map settings: marker style and variable',
+    icon: <Tune />,
+  },
+  {
+    id: 'filter',
+    label: 'Filter',
+    title: 'Filter the data (subset)',
+    icon: <FilterList />,
+  },
+  { id: 'download', label: 'Download', icon: <GetApp /> },
+  { id: 'notes', label: 'Notes', icon: <Notes /> },
+];
+
+const railBottomItems: ToolRailItem<RailId>[] = [
+  {
+    id: 'analyses',
+    label: 'Analyses',
+    title: 'My analyses',
+    icon: <FolderOpen />,
+  },
+  {
+    id: 'study',
+    label: 'Study',
+    title: 'Study details',
+    icon: <InfoOutlined />,
+  },
+];
+
+const sheetTitles: Record<SheetId, string> = {
+  filter: 'Filter data',
+  download: 'Download data',
+  notes: 'Notes',
+  analyses: 'My analyses',
+  study: 'Study details',
+  share: 'Share analysis',
 };
 
 interface Props {
@@ -151,7 +198,8 @@ export function MapAnalysis(props: Props) {
     );
   }
 
-  if (appStateAndSetters.appState == null) return null;
+  const { appState, analysisState } = appStateAndSetters;
+  if (appState == null) return null;
 
   return (
     <>
@@ -160,21 +208,10 @@ export function MapAnalysis(props: Props) {
         toggleVisible={() => setShowRedirectModal(false)}
         styleOverrides={{
           content: {
-            size: {
-              height: '100%',
-              width: '100%',
-            },
-            padding: {
-              top: 25,
-              right: 25,
-              bottom: 25,
-              left: 25,
-            },
+            size: { height: '100%', width: '100%' },
+            padding: { top: 25, right: 25, bottom: 25, left: 25 },
           },
-          size: {
-            width: 400,
-            height: 200,
-          },
+          size: { width: 400, height: 200 },
         }}
       >
         <div className="LegacyMapRedirectModalContainer">
@@ -184,7 +221,7 @@ export function MapAnalysis(props: Props) {
               locationState?.projectId &&
               ` to the same study (${locationState.projectId}) in our new map`}
             . Settings encoded in your URL are not applied but are kept in the{' '}
-            <strong>Notes</strong> section (see left side panel).
+            <strong>Notes</strong> section (see the tools on the left).
           </p>
           <FilledButton
             text="Dismiss"
@@ -194,27 +231,28 @@ export function MapAnalysis(props: Props) {
       </Modal>
       <MapAnalysisImpl
         {...props}
-        {...(appStateAndSetters as CompleteAppState)}
+        {...appStateAndSetters}
+        appState={appState}
+        analysisState={analysisState}
         geoConfigs={geoConfigs}
       />
     </>
   );
 }
 
-type CompleteAppState = ReturnType<typeof useAppState> & {
-  appState: AppState;
-  analysisState: AnalysisState;
-};
-
-interface ImplProps extends Props, CompleteAppState {
-  geoConfigs: GeoConfig[];
-}
+type ImplProps = Props &
+  ReturnType<typeof useAppState> & {
+    appState: AppState;
+    analysisState: AnalysisState;
+    geoConfigs: GeoConfig[];
+  };
 
 function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
     analysisId,
+    updateAppState,
     setViewport,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
@@ -222,7 +260,9 @@ function MapAnalysisImpl(props: ImplProps) {
     setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
-    setStudyDetailsPanelConfig,
+    setSelection,
+    setRecordsEntityId,
+    setBaseLayer,
     geoConfigs,
     setTimeSliderConfig,
     showLinkToEda = false,
@@ -234,12 +274,16 @@ function MapAnalysisImpl(props: ImplProps) {
   const studyMetadata = useStudyMetadata();
   const studyId = studyMetadata.id;
   const studyEntities = useStudyEntities(filters);
+  const allStudyEntities = useStudyEntities();
   const analysisClient = useAnalysisClient();
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
   const history = useHistory();
   const { url } = useRouteMatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const sharingUrl = new URL(
     sharingUrlPrefix
@@ -248,33 +292,238 @@ function MapAnalysisImpl(props: ImplProps) {
     window.location.href
   ).href;
 
-  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
+  ///// location entity (multi-geo-entity support) /////
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const geoConfig = getActiveGeoConfig(appState, geoConfigs);
+  const lineage = useMemo(
+    () => lineageEntities(studyMetadata.rootEntity, geoConfig.entity.id),
+    [studyMetadata.rootEntity, geoConfig.entity.id]
+  );
+  const lineageIds = useMemo(
+    () => new Set(lineage.map(({ id }) => id)),
+    [lineage]
+  );
+  const disabledVariables = useMemo(
+    () => variablesOutsideLineage(allStudyEntities, lineageIds),
+    [allStudyEntities, lineageIds]
+  );
+
+  /** marker configurations, with variables off the lineage replaced */
+  const markerConfigurationsForLineage = useCallback(
+    (lineageIdSet: ReadonlySet<string>, entityId: string) => {
+      const replacement: VariableDescriptor =
+        getDefaultVariableDescriptor(entityId);
+      return markerConfigurations.map(
+        (configuration): MarkerConfiguration =>
+          lineageIdSet.has(configuration.selectedVariable.entityId)
+            ? { ...configuration, geoEntityId: undefined }
+            : configuration.type === 'bubble'
+            ? {
+                ...configuration,
+                geoEntityId: undefined,
+                selectedVariable: replacement,
+                numeratorValues: undefined,
+                denominatorValues: undefined,
+              }
+            : {
+                ...configuration,
+                geoEntityId: undefined,
+                selectedVariable: replacement,
+                selectedValues: undefined,
+              }
+      );
+    },
+    [markerConfigurations, getDefaultVariableDescriptor]
+  );
+
+  const handleGeoEntityChange = useCallback(
+    (entityId: string) => {
+      const nextLineageIds = new Set(
+        lineageEntities(studyMetadata.rootEntity, entityId).map(({ id }) => id)
+      );
+      updateAppState(
+        {
+          geoEntityId: entityId,
+          markerConfigurations: markerConfigurationsForLineage(
+            nextLineageIds,
+            entityId
+          ),
+          selection: undefined,
+          recordsEntityId: undefined,
+        },
+        true
+      );
+    },
+    [studyMetadata.rootEntity, updateAppState, markerConfigurationsForLineage]
+  );
 
   const activeMarkerConfiguration = markerConfigurations.find(
-    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    (configuration) => configuration.type === activeMarkerConfigurationType
   );
+  const activeVariableIsOnLineage =
+    activeMarkerConfiguration != null &&
+    lineageIds.has(activeMarkerConfiguration.selectedVariable.entityId);
 
-  const geoConfig = getGeoConfig(
-    geoConfigs,
-    activeMarkerConfiguration?.geoEntityId
-  );
-
-  const updateMarkerConfigurations = useCallback(
-    (updatedConfiguration: MarkerConfiguration) => {
-      const nextMarkerConfigurations = markerConfigurations.map(
-        (configuration) => {
-          if (configuration.type === updatedConfiguration.type) {
-            return updatedConfiguration;
-          }
-          return configuration;
-        }
+  // A marker variable can end up off the location entity's lineage (e.g.
+  // the study default variable, or an analysis edited elsewhere); repair it
+  // rather than failing to draw the map.
+  useEffect(() => {
+    if (activeMarkerConfiguration != null && !activeVariableIsOnLineage)
+      setMarkerConfigurations(
+        markerConfigurationsForLineage(lineageIds, geoConfig.entity.id)
       );
-      setMarkerConfigurations(nextMarkerConfigurations);
+  }, [
+    activeMarkerConfiguration,
+    activeVariableIsOnLineage,
+    setMarkerConfigurations,
+    markerConfigurationsForLineage,
+    lineageIds,
+    geoConfig.entity.id,
+  ]);
+
+  const updateMarkerConfiguration = useCallback(
+    (updatedConfiguration: unknown) => {
+      if (!MarkerConfiguration.is(updatedConfiguration)) {
+        console.error(
+          'Ignoring an invalid marker configuration',
+          updatedConfiguration
+        );
+        return;
+      }
+      setMarkerConfigurations(
+        markerConfigurations.map((configuration) =>
+          configuration.type === updatedConfiguration.type
+            ? updatedConfiguration
+            : configuration
+        )
+      );
     },
     [markerConfigurations, setMarkerConfigurations]
   );
+
+  const activePlugin = mapTypePlugins.find(
+    ({ type }) => type === activeMarkerConfigurationType
+  );
+
+  ///// counts, panels and sheets /////
+
+  const totalCounts = useEntityCounts();
+  const filteredCounts = useEntityCounts(filters);
+
+  const isSettingsPanelOpen = appState.isSidePanelExpanded ?? true;
+  const [activeSheet, setActiveSheet] = useState<SheetId>();
+  const [isSelectionPanelOpen, setIsSelectionPanelOpen] = useState(
+    appState.selection != null
+  );
+  const closeSheet = useCallback(() => setActiveSheet(undefined), []);
+
+  const handleRailSelect = (id: RailId) => {
+    if (id === 'settings') {
+      setActiveSheet(undefined);
+      setIsSidePanelExpanded(!isSettingsPanelOpen);
+    } else {
+      setActiveSheet(activeSheet === id ? undefined : id);
+    }
+  };
+
+  const subsetVariableAndEntity = useMemo(
+    () => appState.subsetVariableAndEntity ?? getDefaultVariableDescriptor(),
+    [appState.subsetVariableAndEntity, getDefaultVariableDescriptor]
+  );
+
+  const openFilters = useCallback(
+    (variable?: { entityId: string; variableId: string }) => {
+      if (variable) setSubsetVariableAndEntity(variable);
+      setActiveSheet('filter');
+    },
+    [setSubsetVariableAndEntity]
+  );
+
+  ///// selection /////
+
+  const [contextTarget, setContextTarget] = useState<ContextPopupTarget>();
+  const [fitBoundsRequest, setFitBoundsRequest] = useState<{
+    bounds: Bounds;
+  }>();
+  const zoomTo = useCallback(
+    (bounds: Bounds) => setFitBoundsRequest({ bounds }),
+    []
+  );
+
+  const openSelectionPanel = useCallback(
+    () => setIsSelectionPanelOpen(true),
+    []
+  );
+  const showMarkerContextPopup = useCallback(
+    (marker: MarkerSummary) =>
+      setContextTarget({ kind: 'marker', marker, isSelected: false }),
+    []
+  );
+  const setSelectionOrClear = useCallback(
+    (selection: MapSelection | undefined) => setSelection(selection),
+    [setSelection]
+  );
+
+  const selection = useMapSelection({
+    appState,
+    geoConfig,
+    setSelection: setSelectionOrClear,
+    onSelected: openSelectionPanel,
+    onMarkerContextMenu: showMarkerContextPopup,
+  });
+
+  const { filters: recordFilters } = useLittleFilters(
+    { filters, appState, geoConfigs },
+    selectionFilterFuncs
+  );
+
+  const handleFilterToSelection = useCallback(() => {
+    const result = filtersWithSelection(
+      filters ?? [],
+      geoConfig,
+      selection.prefixes
+    );
+    if (result == null) {
+      enqueueSnackbar(
+        'The selection is outside the current geographic filter.',
+        { variant: 'warning' }
+      );
+      return;
+    }
+    analysisState.setFilters(result.filters);
+    const uiStateKey = geoCoordUIStateKey(geoConfig);
+    analysisState.setVariableUISettings((previous) => ({
+      ...previous,
+      [uiStateKey]: geoCoordUIStateForSelection(
+        pipe(
+          GeoCoordUIState.decode(previous[uiStateKey]),
+          getOrElseW(() => undefined)
+        ),
+        result.prefixSet,
+        appState.viewport
+      ),
+    }));
+    selection.clearSelection();
+    enqueueSnackbar(
+      'Filtered to the selected locations. Edit or remove the filter in the filter bar.',
+      { variant: 'success' }
+    );
+  }, [
+    filters,
+    geoConfig,
+    selection,
+    analysisState,
+    appState.viewport,
+    enqueueSnackbar,
+  ]);
+
+  const handleMapClick = useCallback(() => {
+    setContextTarget(undefined);
+    if (selection.hasSelection && !selection.lassoActive)
+      selection.clearSelection();
+  }, [selection]);
+
+  ///// analysis-level things (share, login, new analysis) /////
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
@@ -287,222 +536,38 @@ function MapAnalysisImpl(props: ImplProps) {
     history.push(loginUrl);
   }
 
-  function toggleVisible() {
-    setActiveSideMenuId(undefined);
-  }
-
-  const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
+  const loginCallbacks = useLoginCallbacks({
+    showLoginForm,
+    toggleVisible: closeSheet,
+  });
 
   const appsPromiseState = usePromise(
     useCallback(async () => {
       const { apps } = await dataClient.getApps();
-      return apps; // return all apps; new viz picker will only show those with client plugins defined
+      return apps;
     }, [dataClient])
   );
 
-  const totalCounts = useEntityCounts();
-  const filteredCounts = useEntityCounts(
-    analysisState.analysis?.descriptor.subset.descriptor
-  );
-
-  const subsetVariableAndEntity = useMemo(() => {
-    return appState.subsetVariableAndEntity ?? getDefaultVariableDescriptor();
-  }, [appState.subsetVariableAndEntity, getDefaultVariableDescriptor]);
-
-  function openSubsetPanelFromControlOutsideOfNavigation() {
-    setActiveSideMenuId('filter');
-    setIsSidePanelExpanded(true);
-  }
-
-  const FilterChipListForHeader = () => {
-    if (!studyEntities || !filters) return <></>;
-
-    const filterChipConfig: VariableLinkConfig = {
-      type: 'button',
-      onClick(value) {
-        setSubsetVariableAndEntity(value);
-        openSubsetPanelFromControlOutsideOfNavigation();
-      },
-    };
-
-    return (
-      <div
-        style={{
-          // These styles format the "Show X Filters" and filter chips
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: 30,
-        }}
-        className="FilterChips"
-      >
-        <FilledButton
-          disabled={
-            // You don't need this button if whenever the filter
-            // section is active and expanded.
-            appState.isSidePanelExpanded && activeSideMenuId === 'filter'
-          }
-          themeRole="primary"
-          text="Add filters"
-          onPress={openSubsetPanelFromControlOutsideOfNavigation}
-          size="small"
-          textTransform="unset"
-          styleOverrides={{
-            container: {
-              width: 'max-content',
-              marginBottom: '5px',
-            },
-          }}
-        />
-        <div style={{ margin: '0 10px' }}>
-          <FilterChipList
-            filters={filters}
-            removeFilter={(filter) =>
-              analysisState.analysis &&
-              analysisState.setFilters(
-                analysisState.analysis.descriptor.subset.descriptor.filter(
-                  (f) => f !== filter
-                )
-              )
-            }
-            variableLinkConfig={filterChipConfig}
-            entities={studyEntities}
-            selectedEntityId={subsetVariableAndEntity.entityId}
-            selectedVariableId={subsetVariableAndEntity.variableId}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const filteredEntities = uniq(filters?.map((f) => f.entityId));
-
   const [isAnalysisNameDialogOpen, setIsAnalysisNameDialogOpen] =
     useState(false);
-  const { url: urlRouteMatch } = useRouteMatch();
   const redirectURL = studyId
-    ? urlRouteMatch.endsWith(studyId)
-      ? `/workspace/${urlRouteMatch}/new`
-      : Path.resolve(urlRouteMatch, '../new')
+    ? url.endsWith(studyId)
+      ? `/workspace/${url}/new`
+      : Path.resolve(url, '../new')
     : null;
   const redirectToNewAnalysis = useCallback(() => {
     if (redirectURL) history.push(redirectURL);
   }, [history, redirectURL]);
 
-  const sidePanelMenuEntries: SidePanelMenuEntry[] = [
-    {
-      type: 'heading',
-      labelText: MapSideNavItemLabels.ConfigureMap,
-      leftIcon: <EditLocation />,
-      children: [
-        {
-          type: 'subheading',
-          labelText: MapSideNavItemLabels.SingleVariableMaps,
-          children: [
-            {
-              type: 'item',
-              id: 'single-variable-pie',
-              labelText: donutMarkerPlugin.displayName,
-              rightIcon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
-              leftIcon:
-                activeMarkerConfigurationType === 'pie' ? <CheckIcon /> : null,
-              onActive: () => {
-                setActiveMarkerConfigurationType('pie');
-              },
-              renderSidePanelDrawer(apps) {
-                return (
-                  <donutMarkerPlugin.ConfigPanelComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filters}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    setIsSidePanelExpanded={setIsSidePanelExpanded}
-                  />
-                );
-              },
-            },
-            {
-              type: 'item',
-              id: 'single-variable-bar',
-              labelText: barMarkerPlugin.displayName,
-              leftIcon:
-                activeMarkerConfigurationType === 'barplot' ? (
-                  <CheckIcon />
-                ) : null,
-              rightIcon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
-              onActive: () => {
-                setActiveMarkerConfigurationType('barplot');
-              },
-              renderSidePanelDrawer(apps) {
-                return (
-                  <barMarkerPlugin.ConfigPanelComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filters}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    setIsSidePanelExpanded={setIsSidePanelExpanded}
-                  />
-                );
-              },
-            },
-            {
-              type: 'item',
-              id: 'single-variable-bubble',
-              labelText: bubbleMarkerPlugin.displayName,
-              rightIcon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
-              leftIcon:
-                activeMarkerConfigurationType === 'bubble' ? (
-                  <CheckIcon />
-                ) : null,
-              onActive: () => setActiveMarkerConfigurationType('bubble'),
-              renderSidePanelDrawer(apps) {
-                return (
-                  <bubbleMarkerPlugin.ConfigPanelComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filters}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    setIsSidePanelExpanded={setIsSidePanelExpanded}
-                  />
-                );
-              },
-            },
-          ],
-        },
-      ],
-    },
-    {
-      type: 'item',
-      id: 'filter',
-      labelText: MapSideNavItemLabels.Filter,
-      leftIcon: <FilterIcon />,
-      renderSidePanelDrawer: () => {
+  const filteredEntities = uniq(filters?.map((f) => f.entityId));
+
+  function renderSheetContents(sheet: SheetId): ReactNode {
+    switch (sheet) {
+      case 'filter':
         return (
-          <div
-            style={{
-              width: '70vw',
-              maxWidth: 1500,
-              maxHeight: 650,
-              padding: '0 25px',
-            }}
-          >
+          <>
             <div
-              style={{
+              css={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -543,96 +608,36 @@ function MapAnalysisImpl(props: ImplProps) {
               // gets passed to variable tree in order to disable scrollIntoView
               scope="map"
             />
-          </div>
+          </>
         );
-      },
-    },
-    {
-      type: 'item',
-      id: 'download',
-      labelText: MapSideNavItemLabels.Download,
-      leftIcon: <Download />,
-      renderSidePanelDrawer: () => {
+      case 'download':
         return (
-          <div
-            style={{
-              padding: '1em',
-              width: '70vw',
-              maxWidth: '1500px',
-            }}
-          >
-            <DownloadTab
-              downloadClient={downloadClient}
-              analysisState={analysisState}
-              totalCounts={totalCounts.value}
-              filteredCounts={filteredCounts.value}
-            />
-          </div>
+          <DownloadTab
+            downloadClient={downloadClient}
+            analysisState={analysisState}
+            totalCounts={totalCounts.value}
+            filteredCounts={filteredCounts.value}
+          />
         );
-      },
-    },
-    {
-      type: 'item',
-      id: 'share',
-      labelText: MapSideNavItemLabels.Share,
-      leftIcon: <Share />,
-      renderSidePanelDrawer: () => {
+      case 'notes':
+        return <NotesTab analysisState={analysisState} />;
+      case 'share':
         if (!analysisState.analysis) return null;
-
-        function getShareMenuContent() {
-          if (!userLoggedIn) {
-            return <Login {...loginCallbacks} showCloseButton={false} />;
-          }
-          if (analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME) {
-            return (
+        return (
+          <div css={{ display: 'flex', justifyContent: 'center' }}>
+            {!userLoggedIn ? (
+              <Login {...loginCallbacks} showCloseButton={false} />
+            ) : analysisState.analysis.displayName === DEFAULT_ANALYSIS_NAME ? (
               <NameAnalysis
                 currentName={analysisState.analysis.displayName}
                 updateName={analysisState.setName}
               />
-            );
-          }
-          return <ConfirmShareAnalysis sharingUrl={sharingUrl} />;
-        }
-
-        return (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '0 15px',
-            }}
-          >
-            {getShareMenuContent()}
+            ) : (
+              <ConfirmShareAnalysis sharingUrl={sharingUrl} />
+            )}
           </div>
         );
-      },
-    },
-    {
-      type: 'item',
-      id: 'notes',
-      labelText: MapSideNavItemLabels.Notes,
-      leftIcon: <Notes />,
-      renderSidePanelDrawer: () => {
-        return (
-          <div
-            style={{
-              padding: '1em',
-              width: '70vw',
-              maxWidth: '1500px',
-            }}
-          >
-            <NotesTab analysisState={analysisState} />
-          </div>
-        );
-      },
-    },
-    {
-      type: 'item',
-      id: 'my-analyses',
-      labelText: MapSideNavItemLabels.MyAnalyses,
-      leftIcon: <Table />,
-      renderSidePanelDrawer: () => {
+      case 'analyses':
         return (
           <div
             css={{
@@ -641,18 +646,11 @@ function MapAnalysisImpl(props: ImplProps) {
                 margin: '25px 0 0 0',
                 padding: '0 0 1em 0',
               },
-              '.MesaComponent .DataTable': {
-                fontSize: 'inherit',
-              },
-            }}
-            style={{
-              padding: '1em',
-              width: '70vw',
-              maxWidth: '1500px',
+              '.MesaComponent .DataTable': { fontSize: 'inherit' },
             }}
           >
-            {analysisId && redirectToNewAnalysis ? (
-              <div style={{ float: 'right' }}>
+            {analysisId && redirectToNewAnalysis && (
+              <div css={{ float: 'right' }}>
                 <FloatingButton
                   text="Create new analysis"
                   icon={Plus}
@@ -665,8 +663,6 @@ function MapAnalysisImpl(props: ImplProps) {
                   textTransform="none"
                 />
               </div>
-            ) : (
-              <></>
             )}
             {analysisState.analysis && (
               <AnalysisNameDialog
@@ -690,28 +686,10 @@ function MapAnalysisImpl(props: ImplProps) {
             />
           </div>
         );
-      },
-    },
-    {
-      type: 'item',
-      id: 'study-details',
-      labelText: MapSideNavItemLabels.StudyDetails,
-      leftIcon: <InfoOutlined />,
-      renderSidePanelDrawer: () => {
+      case 'study':
         return (
-          <div
-            style={{
-              padding: '1em',
-              width: '70vw',
-              maxWidth: '1500px',
-              fontSize: '.95em',
-            }}
-          >
-            <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
+          <div css={{ fontSize: '.95em' }}>
             {studyMetadata.isUserStudy ? (
-              // TODO Make both cases below configurable via the root component.
-              // This will need to be done if we want EDA to stand on its own.
-
               // Note that we are not including the custom detail page.
               // As of this writing, details pages only add a link to
               // EDA. Since we are in EDA, we don't want to add it here.
@@ -722,10 +700,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 id={wdkRecordIdToDiyUserDatasetId(
                   studyRecord.attributes.dataset_id as string
                 )}
-                dataNoun={{
-                  singular: 'Study',
-                  plural: 'Studies',
-                }}
+                dataNoun={{ singular: 'Study', plural: 'Studies' }}
                 enablePublicUserDatasets={enablePublicUserDatasets}
                 includeAllLink={false}
                 includeNameHeader={false}
@@ -740,108 +715,29 @@ function MapAnalysisImpl(props: ImplProps) {
             )}
           </div>
         );
-      },
-    },
-  ];
-
-  function findActiveSidePanelItem(
-    entries: SidePanelMenuEntry[] = sidePanelMenuEntries
-  ): SidePanelItem | undefined {
-    for (const entry of entries) {
-      switch (entry.type) {
-        case 'heading':
-        case 'subheading':
-          const activeChild = findActiveSidePanelItem(entry.children);
-          if (activeChild) return activeChild;
-          break;
-        case 'item':
-          if (entry.id === activeSideMenuId) {
-            return entry;
-          }
-          break;
-      }
     }
   }
 
-  // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
-  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
-    'single-variable-' + appState.activeMarkerConfigurationType
-  );
-
-  // snackbar
-  const { enqueueSnackbar } = useSnackbar();
-
-  // behaviors of the Legend's setup/gear icon
-  const openPanel = useCallback(() => {
-    const nextSideMenuId =
-      'single-variable-' +
-      (appState.activeMarkerConfigurationType === 'barplot'
-        ? 'bar'
-        : appState.activeMarkerConfigurationType);
-
-    if (appState.isSidePanelExpanded && activeSideMenuId === nextSideMenuId)
-      enqueueSnackbar('Marker configuration panel is already open', {
-        variant: 'info',
-        anchorOrigin: { vertical: 'top', horizontal: 'center' },
-      });
-
-    if (!appState.isSidePanelExpanded) setIsSidePanelExpanded(true);
-
-    if (activeSideMenuId !== nextSideMenuId)
-      setActiveSideMenuId(nextSideMenuId);
-  }, [
-    appState.isSidePanelExpanded,
-    enqueueSnackbar,
-    activeSideMenuId,
-    setActiveSideMenuId,
-    setIsSidePanelExpanded,
-    appState.activeMarkerConfigurationType,
-  ]);
-
-  const { variable: overlayVariable } =
+  const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
-  // component for a gear icon at Legend
-  const HeaderButtons: React.FC = () => (
-    <div style={{ marginLeft: 'auto' }}>
-      <SettingsButton
-        buttonText={`Settings ${overlayVariable?.displayName}`}
-        tooltipText={'Open marker configuration panel'}
-        size={20}
-        onClick={openPanel}
-      />
-    </div>
-  );
+  const activeRailIds: RailId[] = [
+    ...(isSettingsPanelOpen ? (['settings'] as const) : []),
+    ...(activeSheet ? [activeSheet] : []),
+  ];
 
-  const deselectMarkersAndClosePanel = useCallback(() => {
-    updateMarkerConfigurations({
-      ...(activeMarkerConfiguration as MarkerConfiguration),
-      selectedMarkers: undefined,
-    });
-    setIsSidePanelExpanded(false);
-  }, [
-    updateMarkerConfigurations,
-    activeMarkerConfiguration,
-    setIsSidePanelExpanded,
-  ]);
-
-  const activeMapTypePlugin =
-    activeMarkerConfiguration?.type === 'barplot'
-      ? barMarkerPlugin
-      : activeMarkerConfiguration?.type === 'bubble'
-      ? bubbleMarkerPlugin
-      : activeMarkerConfiguration?.type === 'pie'
-      ? donutMarkerPlugin
-      : undefined;
+  const contextTargetWithSelection: ContextPopupTarget | undefined =
+    contextTarget?.kind === 'marker'
+      ? {
+          ...contextTarget,
+          isSelected: isCovered(contextTarget.marker.id, selection.prefixes),
+        }
+      : contextTarget;
 
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
-        const activePanelItem = findActiveSidePanelItem();
-        const activeSideNavigationItemMenu =
-          activePanelItem?.renderSidePanelDrawer(apps) ?? null;
-
-        const mapTypeMapLayerProps: MapTypeMapLayerProps = {
+        const sharedPluginProps = {
           apps,
           analysisState,
           appState,
@@ -849,111 +745,235 @@ function MapAnalysisImpl(props: ImplProps) {
           filters,
           studyEntities,
           geoConfigs,
+          geoConfig,
           configuration: activeMarkerConfiguration,
-          updateConfiguration: updateMarkerConfigurations as any,
-          totalCounts,
-          filteredCounts,
-          setStudyDetailsPanelConfig,
-          headerButtons: HeaderButtons,
+          updateConfiguration: updateMarkerConfiguration,
         };
+        const canDrawMarkers =
+          activePlugin != null && activeVariableIsOnLineage;
 
         return (
           <ShowHideVariableContextProvider>
             <DocumentationContainer>
               <div
-                style={{
+                css={{
                   height: '100%',
                   width: '100%',
-                  position: 'relative',
                   display: 'flex',
                   flexDirection: 'column',
+                  fontSize: 14,
                 }}
               >
-                <MapHeader
-                  analysisName={analysisState.analysis?.displayName}
-                  filterList={<FilterChipListForHeader />}
+                <MapTopBar
                   siteInformation={props.siteInformationProps}
-                  onAnalysisNameEdit={analysisState.setName}
                   studyName={studyRecord.displayName}
-                  mapTypeDetails={
-                    activeMapTypePlugin?.MapTypeHeaderDetails && (
-                      <activeMapTypePlugin.MapTypeHeaderDetails
-                        {...mapTypeMapLayerProps}
-                      />
+                  analysisName={analysisState.analysis?.displayName}
+                  onAnalysisNameEdit={analysisState.setName}
+                  showLinkToEda={showLinkToEda}
+                  actions={
+                    <TextButton
+                      onClick={() => setActiveSheet('share')}
+                      title="Share a link to this analysis"
+                    >
+                      <span
+                        css={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        <Share style={{ fontSize: 16 }} /> Share
+                      </span>
+                    </TextButton>
+                  }
+                />
+                <MapFilterBar
+                  filters={filters ?? []}
+                  studyEntities={studyEntities}
+                  geoEntity={geoConfig.entity}
+                  totalCounts={totalCounts.value}
+                  filteredCounts={filteredCounts.value}
+                  onRemoveFilter={(filter: Filter) =>
+                    analysisState.analysis &&
+                    analysisState.setFilters(
+                      analysisState.analysis.descriptor.subset.descriptor.filter(
+                        (f) => f !== filter
+                      )
                     )
                   }
-                  showLinkToEda={showLinkToEda}
-                >
-                  {/* child elements will be distributed across, 'hanging' below the header */}
-                  {/* Time slider component won't render if there's no suitable variable to use */}
-                  {activeMapTypePlugin?.TimeSliderComponent && (
-                    <activeMapTypePlugin.TimeSliderComponent
-                      {...mapTypeMapLayerProps}
-                      setTimeSliderConfig={setTimeSliderConfig}
-                      siteInformationProps={props.siteInformationProps}
-                    />
-                  )}
-                </MapHeader>
-                <div
-                  style={{
-                    // Make a div that completely fills its parent.
-                    height: '100%',
-                    width: '100%',
-                    // Attach this div container to its parent.
-                    position: 'relative',
-                    // Remember that just about everything in the DOM is box.
-                    // This div is sitting on top of the map. By disabling
-                    // pointer events we are saying: hey, div, become porous.
-                    // If a user clicks you, don't capture it, but let it go
-                    // to the map you're covering.
-                    pointerEvents: 'none',
-                  }}
-                >
-                  <MapSidePanel
-                    isExpanded={appState.isSidePanelExpanded}
-                    isUserLoggedIn={userLoggedIn}
-                    onToggleIsExpanded={() =>
-                      setIsSidePanelExpanded(!appState.isSidePanelExpanded)
-                    }
-                    siteInformationProps={props.siteInformationProps}
-                    sidePanelDrawerContents={activeSideNavigationItemMenu}
+                  onOpenFilters={openFilters}
+                  selectedVariable={
+                    activeSheet === 'filter'
+                      ? subsetVariableAndEntity
+                      : undefined
+                  }
+                />
+                <div css={{ flex: 1, minHeight: 0, display: 'flex' }}>
+                  <ToolRail
+                    items={railItems}
+                    bottomItems={railBottomItems}
+                    activeIds={activeRailIds}
+                    onSelect={handleRailSelect}
+                  />
+                  <div
+                    css={{
+                      flex: 1,
+                      minWidth: 0,
+                      display: 'flex',
+                      position: 'relative',
+                    }}
                   >
-                    <SideNavigationItems
-                      activeSideMenuId={activeSideMenuId}
-                      menuEntries={sidePanelMenuEntries}
-                      setActiveSideMenuId={setActiveSideMenuId}
-                    />
-                  </MapSidePanel>
-                  <MapVEuMap
-                    height="100%"
-                    width="100%"
-                    style={mapStyle}
-                    showLayerSelector={true}
-                    showSpinner={false}
-                    viewport={appState.viewport}
-                    onBoundsChanged={setBoundsZoomLevel}
-                    onViewportChanged={setViewport}
-                    showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
-                    zoomLevelToGeohashLevel={
-                      geoConfig?.zoomLevelToAggregationLevel
-                    }
-                    // pass defaultViewport & isStandAloneMap props for custom zoom control
-                    defaultViewport={defaultViewport}
-                    onMapClick={deselectMarkersAndClosePanel}
-                  >
-                    {activeMapTypePlugin?.MapLayerComponent && (
-                      <activeMapTypePlugin.MapLayerComponent
-                        {...mapTypeMapLayerProps}
+                    {isSettingsPanelOpen && activePlugin && (
+                      <MapSettingsPanel
+                        plugins={mapTypePlugins}
+                        activeType={activePlugin.type}
+                        onTypeChange={(type: MarkerType) =>
+                          setActiveMarkerConfigurationType(type)
+                        }
+                        geoConfigs={geoConfigs}
+                        geoConfig={geoConfig}
+                        onGeoEntityChange={handleGeoEntityChange}
+                        lineageEntities={lineage}
+                        onClose={() => setIsSidePanelExpanded(false)}
+                      >
+                        {canDrawMarkers && (
+                          <activePlugin.ConfigPanelComponent
+                            {...sharedPluginProps}
+                            disabledVariables={disabledVariables}
+                          />
+                        )}
+                      </MapSettingsPanel>
+                    )}
+                    <div css={{ flex: 1, minWidth: 0, position: 'relative' }}>
+                      <MapVEuMap
+                        height="100%"
+                        width="100%"
+                        style={{ zIndex: 1 }}
+                        showLayerSelector={true}
+                        showSpinner={false}
+                        viewport={appState.viewport}
+                        onBoundsChanged={setBoundsZoomLevel}
+                        onViewportChanged={setViewport}
+                        baseLayer={appState.baseLayer}
+                        onBaseLayerChanged={setBaseLayer}
+                        showGrid={
+                          geoConfig.zoomLevelToAggregationLevel !== null
+                        }
+                        zoomLevelToGeohashLevel={
+                          geoConfig.zoomLevelToAggregationLevel
+                        }
+                        defaultViewport={defaultViewport}
+                        onMapClick={handleMapClick}
+                      >
+                        {canDrawMarkers && (
+                          <activePlugin.MapLayerComponent
+                            {...sharedPluginProps}
+                            selection={selection.selectionProps}
+                          />
+                        )}
+                        <MapResizeObserver />
+                        <MapFitBounds request={fitBoundsRequest} />
+                        <MapContextMenuEvents
+                          onContextMenu={(position) =>
+                            setContextTarget({ kind: 'point', position })
+                          }
+                        />
+                        {contextTargetWithSelection && (
+                          <MapContextPopup
+                            target={contextTargetWithSelection}
+                            onClose={() => setContextTarget(undefined)}
+                            onSelectMarker={(marker, additive) =>
+                              selection.onSelectionGesture(
+                                [marker.id],
+                                additive ? 'add' : 'replace'
+                              )
+                            }
+                            onZoomTo={zoomTo}
+                          />
+                        )}
+                      </MapVEuMap>
+                      <MapSelectionToolbar
+                        lassoActive={selection.lassoActive}
+                        onToggleLasso={() =>
+                          selection.setLassoActive(!selection.lassoActive)
+                        }
+                        hasSelection={selection.hasSelection}
+                        selectedMarkerCount={selection.selectedMarkers.length}
+                        onClearSelection={selection.clearSelection}
+                        isSelectionPanelOpen={isSelectionPanelOpen}
+                        onToggleSelectionPanel={() =>
+                          setIsSelectionPanelOpen(!isSelectionPanelOpen)
+                        }
+                      />
+                      {canDrawMarkers && (
+                        <LegendCard
+                          title={overlayVariable?.displayName ?? 'Legend'}
+                          subtitle={
+                            overlayEntity &&
+                            `${makeEntityDisplayName(
+                              overlayEntity,
+                              false
+                            )} variable · markers at ${makeEntityDisplayName(
+                              geoConfig.entity,
+                              false
+                            ).toLowerCase()} locations`
+                          }
+                          onEdit={
+                            isSettingsPanelOpen
+                              ? undefined
+                              : () => setIsSidePanelExpanded(true)
+                          }
+                        >
+                          <activePlugin.LegendComponent
+                            {...sharedPluginProps}
+                          />
+                        </LegendCard>
+                      )}
+                      {canDrawMarkers && (
+                        <div
+                          css={{
+                            position: 'absolute',
+                            bottom: 24,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 2,
+                          }}
+                        >
+                          <activePlugin.TimeSliderComponent
+                            {...sharedPluginProps}
+                            setTimeSliderConfig={setTimeSliderConfig}
+                            siteInformationProps={props.siteInformationProps}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    {isSelectionPanelOpen && (
+                      <SelectionPanel
+                        studyId={studyId}
+                        studyEntities={studyEntities}
+                        geoConfig={geoConfig}
+                        lineageEntities={lineage}
+                        hasSelection={selection.hasSelection}
+                        selectedMarkers={selection.selectedMarkers}
+                        recordFilters={recordFilters}
+                        recordsEntityId={appState.recordsEntityId}
+                        onRecordsEntityChange={setRecordsEntityId}
+                        onClearSelection={selection.clearSelection}
+                        onFilterToSelection={handleFilterToSelection}
+                        onZoomTo={zoomTo}
+                        onClose={() => setIsSelectionPanelOpen(false)}
                       />
                     )}
-                  </MapVEuMap>
+                    {activeSheet && (
+                      <Sheet
+                        title={sheetTitles[activeSheet]}
+                        onClose={closeSheet}
+                      >
+                        {renderSheetContents(activeSheet)}
+                      </Sheet>
+                    )}
+                  </div>
                 </div>
-
-                {activeMapTypePlugin?.MapOverlayComponent && (
-                  <activeMapTypePlugin.MapOverlayComponent
-                    {...mapTypeMapLayerProps}
-                  />
-                )}
               </div>
             </DocumentationContainer>
           </ShowHideVariableContextProvider>

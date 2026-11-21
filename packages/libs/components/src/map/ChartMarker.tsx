@@ -125,6 +125,9 @@ export default function ChartMarker(props: ChartMarkerProps) {
       // pass // selectedMarkers state and setState
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
+      partiallySelectedMarkers={props.partiallySelectedMarkers}
+      onSelectionGesture={props.onSelectionGesture}
+      onMarkerContextMenu={props.onMarkerContextMenu}
     />
   );
 }

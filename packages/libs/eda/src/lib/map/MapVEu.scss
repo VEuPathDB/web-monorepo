@@ -48,6 +48,25 @@
   }
 }
 
+// marker partly inside the selection (e.g. a coarse marker containing a
+// finer selection made at a higher zoom level)
+.partial-highlight-marker {
+  &.chart-marker {
+    border-radius: 10px;
+    box-shadow: 0 0 0 3px rgba(255, 213, 0, 0.9);
+    outline: 2px dashed rgba(120, 100, 0, 0.6);
+    outline-offset: 3px;
+  }
+
+  &.donut-marker,
+  &.bubble-marker {
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(255, 213, 0, 0.9);
+    outline: 2px dashed rgba(120, 100, 0, 0.6);
+    outline-offset: 3px;
+  }
+}
+
 // marker popup highlight
 .marker-popup-highlight .leaflet-popup-content-wrapper {
   border-radius: 10px;

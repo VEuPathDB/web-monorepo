@@ -7,12 +7,17 @@ import {
   useCallback,
 } from 'react';
 import { AnimationFunction, Bounds } from './Types';
-import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import {
+  BoundsDriftMarkerProps,
+  MarkerSelectionGesture,
+} from './BoundsDriftMarker';
 import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce, isEqual } from 'lodash';
 import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 import AreaSelect from './AreaSelect';
+import LassoSelect from './LassoSelect';
+import { LatLngPoint, pointInPolygon } from './utils/pointInPolygon';
 
 export interface SemanticMarkersProps {
   markers: Array<ReactElement<BoundsDriftMarkerProps>>;
@@ -30,6 +35,31 @@ export interface SemanticMarkersProps {
   selectedMarkers?: string[];
   /* selectedMarkers setState **/
   setSelectedMarkers?: (selectedMarkers: string[] | undefined) => void;
+  /** ids of markers to draw with a fainter "partly selected" highlight */
+  partiallySelectedMarkers?: string[];
+  /**
+   * Intent-based alternative to setSelectedMarkers, for callers that keep
+   * their selection somewhere other than in a list of marker ids (e.g. as
+   * geohash prefixes that survive zooming). When provided:
+   * - clicks and ctrl/cmd-drag rectangles report 'add' / 'remove' /
+   *   'replace' gestures with the affected marker ids;
+   * - selected ids that are not currently displayed are NOT pruned (the
+   *   caller decides what selectedMarkers means at each zoom level).
+   */
+  onSelectionGesture?: (
+    markerIds: string[],
+    gesture: MarkerSelectionGesture
+  ) => void;
+  /** right-click on a marker */
+  onMarkerContextMenu?: BoundsDriftMarkerProps['onMarkerContextMenu'];
+  /**
+   * While true, the next drag on the map draws a lasso; markers whose
+   * centre is inside it are reported through onSelectionGesture ('replace',
+   * or 'add' with ctrl/cmd/shift held). Requires onSelectionGesture.
+   */
+  lassoActive?: boolean;
+  /** the lasso tool switched itself off (finished or Escape) */
+  onLassoDeactivated?: () => void;
 }
 
 /**
@@ -46,6 +76,11 @@ export default function SemanticMarkers({
   flyToMarkersDelay,
   selectedMarkers,
   setSelectedMarkers,
+  partiallySelectedMarkers,
+  onSelectionGesture,
+  onMarkerContextMenu,
+  lassoActive = false,
+  onLassoDeactivated,
 }: SemanticMarkersProps) {
   // react-leaflet v3
   const map = useMap();
@@ -189,7 +224,7 @@ export default function SemanticMarkers({
 
   // remove any selectedMarkers that no longer exist in the current markers
   useEffect(() => {
-    if (setSelectedMarkers && selectedMarkers) {
+    if (onSelectionGesture == null && setSelectedMarkers && selectedMarkers) {
       const prunedSelectedMarkers = selectedMarkers.filter((id) =>
         consolidatedMarkers.find(({ props }) => id === props.id)
       );
@@ -222,6 +257,7 @@ export default function SemanticMarkers({
     consolidatedMarkers,
     selectedMarkers,
     setSelectedMarkers,
+    onSelectionGesture,
     enqueueSnackbar,
   ]);
 
@@ -234,9 +270,19 @@ export default function SemanticMarkers({
           showPopup: true,
           selectedMarkers,
           setSelectedMarkers,
+          partiallySelectedMarkers,
+          onSelectionGesture,
+          onMarkerContextMenu,
         })
       ),
-    [consolidatedMarkers, selectedMarkers, setSelectedMarkers]
+    [
+      consolidatedMarkers,
+      selectedMarkers,
+      setSelectedMarkers,
+      partiallySelectedMarkers,
+      onSelectionGesture,
+      onMarkerContextMenu,
+    ]
   );
 
   // this should use the unadulterated markers (which are always in the "main world")
@@ -245,7 +291,10 @@ export default function SemanticMarkers({
   // rectangle marker selection
   const onAreaSelected = useCallback(
     (boxCoord: Bounds | undefined) => {
-      if (boxCoord != null && setSelectedMarkers != null) {
+      if (
+        boxCoord != null &&
+        (setSelectedMarkers != null || onSelectionGesture != null)
+      ) {
         // find markers within area selection
         const boxCoordMarkers = consolidatedMarkers
           ?.filter((marker) => {
@@ -259,6 +308,13 @@ export default function SemanticMarkers({
           })
           .map(({ props: { id } }) => id);
 
+        if (onSelectionGesture != null) {
+          if (boxCoordMarkers.length > 0)
+            onSelectionGesture(boxCoordMarkers, 'add');
+          return;
+        }
+        if (setSelectedMarkers == null) return;
+
         // combine, de-duplicate, and update selected marker IDs
         const combinedMarkers = [
           ...(selectedMarkers ?? []),
@@ -267,16 +323,43 @@ export default function SemanticMarkers({
         setSelectedMarkers(Array.from(new Set(combinedMarkers)));
       }
     },
-    [consolidatedMarkers, selectedMarkers, setSelectedMarkers]
+    [
+      consolidatedMarkers,
+      selectedMarkers,
+      setSelectedMarkers,
+      onSelectionGesture,
+    ]
+  );
+
+  const onLassoFinished = useCallback(
+    (polygon: LatLngPoint[], additive: boolean) => {
+      if (onSelectionGesture == null) return;
+      const insideIds = consolidatedMarkers
+        .filter((marker) => pointInPolygon(marker.props.position, polygon))
+        .map(({ props: { id } }) => id);
+      if (additive) {
+        if (insideIds.length > 0) onSelectionGesture(insideIds, 'add');
+      } else {
+        onSelectionGesture(insideIds, 'replace');
+      }
+    },
+    [consolidatedMarkers, onSelectionGesture]
   );
 
   return (
     <>
+      {onSelectionGesture != null && (
+        <LassoSelect
+          active={lassoActive}
+          onLassoFinished={onLassoFinished}
+          onDeactivated={onLassoDeactivated ?? noop}
+        />
+      )}
       {/* ctrl/cmd + drag rectangle selection is only enabled when markers
           can be selected; maps without it (e.g. the lasso-based geo filter)
           must not get it, as it would compete with their own selection
           handlers */}
-      {setSelectedMarkers != null && (
+      {(setSelectedMarkers != null || onSelectionGesture != null) && (
         <AreaSelect onAreaSelected={onAreaSelected} />
       )}
       {refinedMarkers}
@@ -400,4 +483,8 @@ function computeMarkersBounds(markers: ReactElement<BoundsDriftMarkerProps>[]) {
   } else {
     return null;
   }
+}
+
+function noop() {
+  // nothing to do
 }

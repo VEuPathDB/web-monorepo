@@ -20,14 +20,12 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
-  PanelConfig,
-  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { GeoConfig } from '../../../core/types/geoConfig';
-import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
+import { VariableDescriptor } from '../../../core/types/variable';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -39,8 +37,6 @@ export interface PieMarkerConfiguration
   binningMethod: BinningMethod;
   selectedValues: SelectedValues;
   selectedCountsOption: SelectedCountsOption;
-  legendPanelConfig: PanelPositionConfig;
-  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
@@ -63,7 +59,10 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
-  geoConfigs: GeoConfig[];
+  /** the location entity's geo configuration */
+  geoConfig: GeoConfig;
+  /** variables not on the location entity's lineage */
+  disabledVariables: VariableDescriptor[];
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -82,7 +81,8 @@ export function PieMarkerConfigurationMenu({
   filters,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
-  geoConfigs,
+  geoConfig,
+  disabledVariables,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -152,20 +152,10 @@ export function PieMarkerConfigurationMenu({
       return;
     }
 
-    // With each variable change we set the geo entity for the user to the least ancestral
-    // entity on the path from root to the chosen variable.
-    // However, we could make this choosable via the UI in the future.
-    // (That's one reason why we're storing it in appState.)
-    const geoConfig = findLeastAncestralGeoConfig(
-      geoConfigs,
-      selection.overlayVariable.entityId
-    );
-
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
-      geoEntityId: geoConfig.entity.id,
     });
   }
 
@@ -205,6 +195,7 @@ export function PieMarkerConfigurationMenu({
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           constraints={constraints}
+          additionalDisabledVariables={{ overlayVariable: disabledVariables }}
         />
       </div>
       <div style={{ margin: '5px 0 0 0' }}>
@@ -225,7 +216,7 @@ export function PieMarkerConfigurationMenu({
             studyId={studyId}
             filters={filters}
             studyEntities={entities}
-            geoConfigs={geoConfigs}
+            geoConfig={geoConfig}
           />
         )}
       </div>
@@ -271,31 +262,32 @@ export function PieMarkerConfigurationMenu({
           selectedCountsOption={configuration.selectedCountsOption}
         />
       )}
-      {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
-        <div style={{ margin: '5px 0 0 0' }}>
-          <span style={{ fontWeight: 'bold' }}>
-            Raw distribution of overall filtered data
-          </span>
-          <Barplot
-            data={{ series: [barplotData.value] }}
-            barLayout="overlay"
-            showValues={false}
-            showIndependentAxisTickLabel={false}
-            spacingOptions={{
-              padding: 0,
-              marginLeft: 0,
-              marginRight: 0,
-              marginTop: 0,
-              marginBottom: 0,
-            }}
-            containerStyles={{
-              // set barplot maxWidth
-              height: '300px',
-              maxWidth: '360px',
-            }}
-          />
-        </div>
-      )}
+      {overlayConfiguration?.overlayType === 'continuous' &&
+        barplotData.value && (
+          <div style={{ margin: '5px 0 0 0' }}>
+            <span style={{ fontWeight: 'bold' }}>
+              Raw distribution of overall filtered data
+            </span>
+            <Barplot
+              data={{ series: [barplotData.value] }}
+              barLayout="overlay"
+              showValues={false}
+              showIndependentAxisTickLabel={false}
+              spacingOptions={{
+                padding: 0,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0,
+              }}
+              containerStyles={{
+                // set barplot maxWidth
+                height: '300px',
+                maxWidth: '360px',
+              }}
+            />
+          </div>
+        )}
     </div>
   );
 }
