@@ -801,241 +801,251 @@ function MapAnalysisImpl(props: ImplProps) {
         return (
           <ShowHideVariableContextProvider>
             <DocumentationContainer>
+              {/* The layout fills its slot but must never size it: the site
+                  page column (.wdk-PageContent, a flex item with the default
+                  min-height: auto) would otherwise grow to fit the docked
+                  panels' content, pushing the map's bottom edge - and the
+                  legend pinned to it - below the screen on small windows.
+                  An absolutely positioned layout contributes no height. */}
               <div
-                css={{
-                  height: '100%',
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  fontSize: 14,
-                  // nothing in the map UI may scroll the page: a page
-                  // scrollbar appearing would resize (and shift) the map
-                  overflow: 'hidden',
-                }}
+                css={{ position: 'relative', height: '100%', width: '100%' }}
               >
-                <MapTopBar
-                  siteInformation={props.siteInformationProps}
-                  studyName={studyRecord.displayName}
-                  analysisName={analysisState.analysis?.displayName}
-                  onAnalysisNameEdit={analysisState.setName}
-                  showLinkToEda={showLinkToEda}
-                  actions={
-                    <TextButton
-                      onClick={() => setActiveSheet('share')}
-                      title="Share a link to this analysis"
-                    >
-                      <span
-                        css={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
+                <div
+                  css={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    fontSize: 14,
+                    // nothing in the map UI may scroll the page: a page
+                    // scrollbar appearing would resize (and shift) the map
+                    overflow: 'hidden',
+                  }}
+                >
+                  <MapTopBar
+                    siteInformation={props.siteInformationProps}
+                    studyName={studyRecord.displayName}
+                    analysisName={analysisState.analysis?.displayName}
+                    onAnalysisNameEdit={analysisState.setName}
+                    showLinkToEda={showLinkToEda}
+                    actions={
+                      <TextButton
+                        onClick={() => setActiveSheet('share')}
+                        title="Share a link to this analysis"
                       >
-                        <Share style={{ fontSize: 16 }} /> Share
-                      </span>
-                    </TextButton>
-                  }
-                />
-                <MapFilterBar
-                  filters={filters ?? []}
-                  studyEntities={studyEntities}
-                  geoEntity={geoConfig.entity}
-                  totalCounts={totalCounts.value}
-                  filteredCounts={filteredCounts.value}
-                  onRemoveFilter={(filter: Filter) =>
-                    analysisState.analysis &&
-                    analysisState.setFilters(
-                      analysisState.analysis.descriptor.subset.descriptor.filter(
-                        (f) => f !== filter
-                      )
-                    )
-                  }
-                  onOpenFilters={openFilters}
-                  selectedVariable={
-                    activeSheet === 'filter'
-                      ? subsetVariableAndEntity
-                      : undefined
-                  }
-                />
-                <div css={{ flex: 1, minHeight: 0, display: 'flex' }}>
-                  <ToolRail
-                    items={railItems}
-                    bottomItems={railBottomItems}
-                    activeIds={activeRailIds}
-                    onSelect={handleRailSelect}
+                        <span
+                          css={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                          }}
+                        >
+                          <Share style={{ fontSize: 16 }} /> Share
+                        </span>
+                      </TextButton>
+                    }
                   />
-                  <div
-                    css={{
-                      flex: 1,
-                      minWidth: 0,
-                      display: 'flex',
-                      position: 'relative',
-                    }}
-                  >
-                    {isSettingsPanelOpen && activePlugin && (
-                      <MapSettingsPanel
-                        plugins={mapTypePlugins}
-                        activeType={activePlugin.type}
-                        onTypeChange={(type: MarkerType) =>
-                          setActiveMarkerConfigurationType(type)
-                        }
-                        geoConfigs={geoConfigs}
-                        geoConfig={geoConfig}
-                        onGeoEntityChange={handleGeoEntityChange}
-                        lineageEntities={lineage}
-                        onClose={() => setIsSidePanelExpanded(false)}
-                      >
-                        {canDrawMarkers && (
-                          <activePlugin.ConfigPanelComponent
-                            {...sharedPluginProps}
-                            disabledVariables={disabledVariables}
-                          />
-                        )}
-                      </MapSettingsPanel>
-                    )}
+                  <MapFilterBar
+                    filters={filters ?? []}
+                    studyEntities={studyEntities}
+                    geoEntity={geoConfig.entity}
+                    totalCounts={totalCounts.value}
+                    filteredCounts={filteredCounts.value}
+                    onRemoveFilter={(filter: Filter) =>
+                      analysisState.analysis &&
+                      analysisState.setFilters(
+                        analysisState.analysis.descriptor.subset.descriptor.filter(
+                          (f) => f !== filter
+                        )
+                      )
+                    }
+                    onOpenFilters={openFilters}
+                    selectedVariable={
+                      activeSheet === 'filter'
+                        ? subsetVariableAndEntity
+                        : undefined
+                    }
+                  />
+                  <div css={{ flex: 1, minHeight: 0, display: 'flex' }}>
+                    <ToolRail
+                      items={railItems}
+                      bottomItems={railBottomItems}
+                      activeIds={activeRailIds}
+                      onSelect={handleRailSelect}
+                    />
                     <div
                       css={{
                         flex: 1,
                         minWidth: 0,
+                        display: 'flex',
                         position: 'relative',
-                        // clip on-map overlays (time slider, hint, legend)
-                        // so they can never resize the layout around them
-                        overflow: 'hidden',
                       }}
                     >
-                      <MapVEuMap
-                        height="100%"
-                        width="100%"
-                        style={{ zIndex: 1 }}
-                        showLayerSelector={true}
-                        showSpinner={false}
-                        viewport={appState.viewport}
-                        onBoundsChanged={setBoundsZoomLevel}
-                        onViewportChanged={setViewport}
-                        baseLayer={appState.baseLayer}
-                        onBaseLayerChanged={setBaseLayer}
-                        showGrid={
-                          geoConfig.zoomLevelToAggregationLevel !== null
-                        }
-                        zoomLevelToGeohashLevel={
-                          geoConfig.zoomLevelToAggregationLevel
-                        }
-                        defaultViewport={defaultViewport}
-                        onZoomToData={handleZoomToData}
-                        onMapClick={handleMapClick}
+                      {isSettingsPanelOpen && activePlugin && (
+                        <MapSettingsPanel
+                          plugins={mapTypePlugins}
+                          activeType={activePlugin.type}
+                          onTypeChange={(type: MarkerType) =>
+                            setActiveMarkerConfigurationType(type)
+                          }
+                          geoConfigs={geoConfigs}
+                          geoConfig={geoConfig}
+                          onGeoEntityChange={handleGeoEntityChange}
+                          lineageEntities={lineage}
+                          onClose={() => setIsSidePanelExpanded(false)}
+                        >
+                          {canDrawMarkers && (
+                            <activePlugin.ConfigPanelComponent
+                              {...sharedPluginProps}
+                              disabledVariables={disabledVariables}
+                            />
+                          )}
+                        </MapSettingsPanel>
+                      )}
+                      <div
+                        css={{
+                          flex: 1,
+                          minWidth: 0,
+                          position: 'relative',
+                          // clip on-map overlays (time slider, hint, legend)
+                          // so they can never resize the layout around them
+                          overflow: 'hidden',
+                        }}
                       >
-                        {canDrawMarkers && (
-                          <activePlugin.MapLayerComponent
-                            {...sharedPluginProps}
-                            selection={selection.selectionProps}
-                            initialFit={initialFit}
+                        <MapVEuMap
+                          height="100%"
+                          width="100%"
+                          style={{ zIndex: 1 }}
+                          showLayerSelector={true}
+                          showSpinner={false}
+                          viewport={appState.viewport}
+                          onBoundsChanged={setBoundsZoomLevel}
+                          onViewportChanged={setViewport}
+                          baseLayer={appState.baseLayer}
+                          onBaseLayerChanged={setBaseLayer}
+                          showGrid={
+                            geoConfig.zoomLevelToAggregationLevel !== null
+                          }
+                          zoomLevelToGeohashLevel={
+                            geoConfig.zoomLevelToAggregationLevel
+                          }
+                          defaultViewport={defaultViewport}
+                          onZoomToData={handleZoomToData}
+                          onMapClick={handleMapClick}
+                        >
+                          {canDrawMarkers && (
+                            <activePlugin.MapLayerComponent
+                              {...sharedPluginProps}
+                              selection={selection.selectionProps}
+                              initialFit={initialFit}
+                            />
+                          )}
+                          <MapResizeObserver />
+                          <MapFitBounds request={fitBoundsRequest} />
+                          <MapContextMenuEvents
+                            onContextMenu={(position) =>
+                              setContextTarget({ kind: 'point', position })
+                            }
                           />
-                        )}
-                        <MapResizeObserver />
-                        <MapFitBounds request={fitBoundsRequest} />
-                        <MapContextMenuEvents
-                          onContextMenu={(position) =>
-                            setContextTarget({ kind: 'point', position })
+                          {contextTargetWithSelection && (
+                            <MapContextPopup
+                              target={contextTargetWithSelection}
+                              onClose={() => setContextTarget(undefined)}
+                              onSelectMarker={(marker, additive) =>
+                                selection.onSelectionGesture(
+                                  [marker.id],
+                                  additive ? 'add' : 'replace'
+                                )
+                              }
+                              onZoomTo={zoomTo}
+                            />
+                          )}
+                        </MapVEuMap>
+                        <MapSelectionToolbar
+                          lassoActive={selection.lassoActive}
+                          onToggleLasso={() =>
+                            selection.setLassoActive(!selection.lassoActive)
+                          }
+                          hasSelection={selection.hasSelection}
+                          selectedMarkerCount={selection.selectedMarkers.length}
+                          onClearSelection={selection.clearSelection}
+                          isSelectionPanelOpen={isSelectionPanelOpen}
+                          onToggleSelectionPanel={() =>
+                            setIsSelectionPanelOpen(!isSelectionPanelOpen)
                           }
                         />
-                        {contextTargetWithSelection && (
-                          <MapContextPopup
-                            target={contextTargetWithSelection}
-                            onClose={() => setContextTarget(undefined)}
-                            onSelectMarker={(marker, additive) =>
-                              selection.onSelectionGesture(
-                                [marker.id],
-                                additive ? 'add' : 'replace'
-                              )
+                        {canDrawMarkers && (
+                          <LegendCard
+                            title={overlayVariable?.displayName ?? 'Legend'}
+                            subtitle={
+                              overlayEntity &&
+                              `${makeEntityDisplayName(
+                                overlayEntity,
+                                false
+                              )} variable · markers at ${makeEntityDisplayName(
+                                geoConfig.entity,
+                                false
+                              ).toLowerCase()} locations`
                             }
-                            onZoomTo={zoomTo}
-                          />
+                            onEdit={
+                              isSettingsPanelOpen
+                                ? undefined
+                                : () => setIsSidePanelExpanded(true)
+                            }
+                          >
+                            <activePlugin.LegendComponent
+                              {...sharedPluginProps}
+                            />
+                          </LegendCard>
                         )}
-                      </MapVEuMap>
-                      <MapSelectionToolbar
-                        lassoActive={selection.lassoActive}
-                        onToggleLasso={() =>
-                          selection.setLassoActive(!selection.lassoActive)
-                        }
-                        hasSelection={selection.hasSelection}
-                        selectedMarkerCount={selection.selectedMarkers.length}
-                        onClearSelection={selection.clearSelection}
-                        isSelectionPanelOpen={isSelectionPanelOpen}
-                        onToggleSelectionPanel={() =>
-                          setIsSelectionPanelOpen(!isSelectionPanelOpen)
-                        }
-                      />
-                      {canDrawMarkers && (
-                        <LegendCard
-                          title={overlayVariable?.displayName ?? 'Legend'}
-                          subtitle={
-                            overlayEntity &&
-                            `${makeEntityDisplayName(
-                              overlayEntity,
-                              false
-                            )} variable · markers at ${makeEntityDisplayName(
-                              geoConfig.entity,
-                              false
-                            ).toLowerCase()} locations`
-                          }
-                          onEdit={
-                            isSettingsPanelOpen
-                              ? undefined
-                              : () => setIsSidePanelExpanded(true)
-                          }
-                        >
-                          <activePlugin.LegendComponent
-                            {...sharedPluginProps}
-                          />
-                        </LegendCard>
+                        {canDrawMarkers && (
+                          <div
+                            css={{
+                              position: 'absolute',
+                              bottom: 24,
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              zIndex: 2,
+                              // the slider has a fixed width; on a narrow map
+                              // scroll it rather than overflow the map
+                              maxWidth: 'calc(100% - 20px)',
+                              overflowX: 'auto',
+                            }}
+                          >
+                            <activePlugin.TimeSliderComponent
+                              {...sharedPluginProps}
+                              setTimeSliderConfig={setTimeSliderConfig}
+                              siteInformationProps={props.siteInformationProps}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      {isSelectionPanelOpen && (
+                        <SelectionPanel
+                          studyId={studyId}
+                          studyEntities={studyEntities}
+                          geoConfig={geoConfig}
+                          lineageEntities={lineage}
+                          hasSelection={selection.hasSelection}
+                          selectedMarkers={selection.selectedMarkers}
+                          recordFilters={recordFilters}
+                          recordsEntityId={appState.recordsEntityId}
+                          onRecordsEntityChange={setRecordsEntityId}
+                          onClearSelection={selection.clearSelection}
+                          onFilterToSelection={handleFilterToSelection}
+                          onZoomTo={zoomTo}
+                          onClose={() => setIsSelectionPanelOpen(false)}
+                        />
                       )}
-                      {canDrawMarkers && (
-                        <div
-                          css={{
-                            position: 'absolute',
-                            bottom: 24,
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 2,
-                            // the slider has a fixed width; on a narrow map
-                            // scroll it rather than overflow the map
-                            maxWidth: 'calc(100% - 20px)',
-                            overflowX: 'auto',
-                          }}
+                      {activeSheet && (
+                        <Sheet
+                          title={sheetTitles[activeSheet]}
+                          onClose={closeSheet}
                         >
-                          <activePlugin.TimeSliderComponent
-                            {...sharedPluginProps}
-                            setTimeSliderConfig={setTimeSliderConfig}
-                            siteInformationProps={props.siteInformationProps}
-                          />
-                        </div>
+                          {renderSheetContents(activeSheet)}
+                        </Sheet>
                       )}
                     </div>
-                    {isSelectionPanelOpen && (
-                      <SelectionPanel
-                        studyId={studyId}
-                        studyEntities={studyEntities}
-                        geoConfig={geoConfig}
-                        lineageEntities={lineage}
-                        hasSelection={selection.hasSelection}
-                        selectedMarkers={selection.selectedMarkers}
-                        recordFilters={recordFilters}
-                        recordsEntityId={appState.recordsEntityId}
-                        onRecordsEntityChange={setRecordsEntityId}
-                        onClearSelection={selection.clearSelection}
-                        onFilterToSelection={handleFilterToSelection}
-                        onZoomTo={zoomTo}
-                        onClose={() => setIsSelectionPanelOpen(false)}
-                      />
-                    )}
-                    {activeSheet && (
-                      <Sheet
-                        title={sheetTitles[activeSheet]}
-                        onClose={closeSheet}
-                      >
-                        {renderSheetContents(activeSheet)}
-                      </Sheet>
-                    )}
                   </div>
                 </div>
               </div>

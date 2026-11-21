@@ -24,7 +24,9 @@ export function LegendCard({ title, subtitle, children, onEdit }: Props) {
         bottom: 28,
         zIndex: 2,
         maxWidth: 320,
-        maxHeight: 'calc(100% - 140px)',
+        // stay clear of the selection toolbar at the top of the map, but
+        // never shrink below the header row (so it can always be expanded)
+        maxHeight: 'max(40px, calc(100% - 90px))',
         display: 'flex',
         flexDirection: 'column',
         background: 'rgba(255, 255, 255, 0.96)',
@@ -36,6 +38,7 @@ export function LegendCard({ title, subtitle, children, onEdit }: Props) {
       <div
         css={{
           display: 'flex',
+          flexShrink: 0,
           alignItems: 'center',
           gap: 4,
           padding: '4px 4px 4px 10px',

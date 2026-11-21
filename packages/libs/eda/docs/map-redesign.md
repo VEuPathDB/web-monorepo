@@ -87,6 +87,13 @@ Code lives in `src/lib/map/analysis/` unless stated otherwise.
   (`MapVEuMap` `onZoomToData`). The fit is armed only once the world view's
   bounds have arrived, so it fits the new markers, not the old zoomed-in
   ones.
+- **The map always fits the window.** The layout is absolutely positioned
+  inside its slot, so it never sets the page's height. Otherwise
+  `.wdk-PageContent` (a flex item with the default `min-height: auto`)
+  grew to fit long docked-panel content. On laptops the page then
+  scrolled, and the map's bottom edge, with the legend pinned to it, was
+  below the screen. The legend card's height limit also keeps its header
+  visible on short maps.
 - **Lasso disables map dragging.** `SemanticMarkers` unmounts the
   ctrl-drag `AreaSelect` while the lasso is armed. `AreaSelect`'s teardown
   and re-enable (on most re-renders) and its key-up/blur handlers
