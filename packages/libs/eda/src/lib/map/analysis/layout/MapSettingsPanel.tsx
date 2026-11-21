@@ -86,7 +86,7 @@ export function MapSettingsPanel({
             >
               {geoConfigs.map(({ entity }) => (
                 <option key={entity.id} value={entity.id}>
-                  {makeEntityDisplayName(entity, true)} locations
+                  {makeEntityDisplayName(entity, false)} locations
                 </option>
               ))}
             </select>
