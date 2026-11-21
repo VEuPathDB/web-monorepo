@@ -114,6 +114,38 @@ identical selection behaviour. Geohash semantic zooming is unchanged:
 `SemanticMarkers` + `geohashAnimation`, and aggregation level from zoom via
 `GeoConfig.zoomLevelToAggregationLevel`.
 
+### One marker variable for all styles
+
+The marker style buttons change **only the style**. Previously each style
+kept its own variable, so switching style could silently change what the
+map showed.
+
+- **Shared by all styles:** the marker variable. Every style accepts the
+  same variables (all use the `standalone-map` app's `map-markers`
+  constraints), so a variable never has to change on a style switch.
+- **Shared by donuts and bar plots:** the chosen values (`selectedValues`),
+  which mean the same thing in both.
+- **Per style:** settings that don't depend on the variable (binning,
+  counts option, bar count/proportion and log scale, bubble mean/median),
+  and the bubbles' numerator/denominator values. Changing the variable
+  clears the variable-specific values (chosen values, numerator and
+  denominator) in every style.
+- **Storage is unchanged:** `markerConfigurations` still holds one
+  configuration per style. `utils/markerConfigurations.ts` (unit tested)
+  keeps them in agreement on every update. On a style switch, older
+  analyses with a different variable per style adopt the current one.
+  Hoisting the variable to a top-level `appState` field would be cleaner.
+  It's worth doing if the phase 2 Plots tab needs it.
+- **Why:** plots (§8) will offer "colour by the marker variable". With a
+  variable per style, that would depend on the current style. That
+  coupling is what made the old map's style-owned plots confusing.
+- **Future: a more "dashboardy" map.** Per-style variables were a weak way
+  of keeping several views at once. If the map moves towards a dashboard,
+  where people flip between prepared views, that needs explicit saved
+  views or bookmarks of the map/analysis state. Saved analyses (the
+  Analyses list) already do this, but switching views would need to be
+  much more immediate: one click on the map, without leaving it.
+
 ## 3. Selection model and records
 
 ### Selections are geohash prefix sets

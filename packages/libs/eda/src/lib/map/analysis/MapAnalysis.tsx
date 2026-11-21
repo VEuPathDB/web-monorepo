@@ -115,6 +115,11 @@ import {
 } from './selection/filterToSelection';
 import { isCovered } from './utils/geohashSelection';
 import { lineageEntities, variablesOutsideLineage } from './utils/geoEntities';
+import {
+  configurationsForStyle,
+  shareMarkerSettings,
+  withVariable,
+} from './utils/markerConfigurations';
 
 const mapTypePlugins: MapTypePlugin[] = [
   donutMarkerPlugin,
@@ -326,23 +331,12 @@ function MapAnalysisImpl(props: ImplProps) {
       const replacement: VariableDescriptor =
         getDefaultVariableDescriptor(entityId);
       return markerConfigurations.map(
-        (configuration): MarkerConfiguration =>
-          lineageIdSet.has(configuration.selectedVariable.entityId)
-            ? { ...configuration, geoEntityId: undefined }
-            : configuration.type === 'bubble'
-            ? {
-                ...configuration,
-                geoEntityId: undefined,
-                selectedVariable: replacement,
-                numeratorValues: undefined,
-                denominatorValues: undefined,
-              }
-            : {
-                ...configuration,
-                geoEntityId: undefined,
-                selectedVariable: replacement,
-                selectedValues: undefined,
-              }
+        (configuration): MarkerConfiguration => ({
+          ...(lineageIdSet.has(configuration.selectedVariable.entityId)
+            ? configuration
+            : withVariable(configuration, replacement)),
+          geoEntityId: undefined,
+        })
       );
     },
     [markerConfigurations, getDefaultVariableDescriptor]
@@ -402,15 +396,38 @@ function MapAnalysisImpl(props: ImplProps) {
         );
         return;
       }
+      // one marker variable for all styles (see utils/markerConfigurations)
       setMarkerConfigurations(
-        markerConfigurations.map((configuration) =>
-          configuration.type === updatedConfiguration.type
-            ? updatedConfiguration
-            : configuration
-        )
+        shareMarkerSettings(markerConfigurations, updatedConfiguration)
       );
     },
     [markerConfigurations, setMarkerConfigurations]
+  );
+
+  const handleMarkerStyleChange = useCallback(
+    (type: MarkerType) => {
+      const nextConfigurations = configurationsForStyle(
+        markerConfigurations,
+        activeMarkerConfigurationType,
+        type
+      );
+      if (nextConfigurations === markerConfigurations)
+        setActiveMarkerConfigurationType(type);
+      else
+        updateAppState(
+          {
+            activeMarkerConfigurationType: type,
+            markerConfigurations: nextConfigurations,
+          },
+          true
+        );
+    },
+    [
+      markerConfigurations,
+      activeMarkerConfigurationType,
+      setActiveMarkerConfigurationType,
+      updateAppState,
+    ]
   );
 
   const activePlugin = mapTypePlugins.find(
@@ -892,9 +909,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         <MapSettingsPanel
                           plugins={mapTypePlugins}
                           activeType={activePlugin.type}
-                          onTypeChange={(type: MarkerType) =>
-                            setActiveMarkerConfigurationType(type)
-                          }
+                          onTypeChange={handleMarkerStyleChange}
                           geoConfigs={geoConfigs}
                           geoConfig={geoConfig}
                           onGeoEntityChange={handleGeoEntityChange}
