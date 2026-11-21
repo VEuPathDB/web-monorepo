@@ -27,6 +27,8 @@ export default function CustomGridLayer({ zoomLevelToGeohashLevel }: Props) {
 
   useEffect(() => {
     if (map == null) return;
+    // shape2geohash is asynchronous: only apply the latest request's result
+    let latestRequest = 0;
 
     function updateMap() {
       if (map != null) {
@@ -143,19 +145,24 @@ export default function CustomGridLayer({ zoomLevelToGeohashLevel }: Props) {
                 ],
               ];
 
+        const request = ++latestRequest;
         Promise.resolve(
           shape2geohash(shapes, { precision: geohashLevel })
         ).then(function (value) {
-          setGeohashes(value);
+          if (request === latestRequest) setGeohashes(value);
         });
       }
     }
 
     updateMap();
-    map.on('resize dragend zoomend', updateMap);
+    // 'moveend' (not just 'dragend'): the view also moves programmatically,
+    // e.g. fitBounds, or panBy after a container resize, and the grid must
+    // follow. It fires after zooms too.
+    map.on('resize moveend', updateMap);
 
     return () => {
-      map.off('resize dragend zoomend', updateMap);
+      latestRequest = Number.NaN; // ignore results after unmount
+      map.off('resize moveend', updateMap);
     };
   }, [map]);
 

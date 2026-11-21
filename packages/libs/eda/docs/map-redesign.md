@@ -283,6 +283,15 @@ Plan: a **Plots** tab in the Selection panel, not floating panels.
 - **Components library:** additive, opt-in props on `SemanticMarkers` and
   the markers, plus `LassoSelect` and `pointInPolygon` (§3). Behaviour for
   existing callers (e.g. `GeoCoordFilter`, `MapVisualization`) is unchanged.
+- **Geohash grid fix (`CustomGridLayer`):** the grid recomputed its lines
+  only on `resize dragend zoomend`, so it went stale after programmatic
+  pans. That includes the pan that keeps markers still when a panel opens:
+  the grid then looked shifted left with the settings panel open and right
+  with it closed. It now updates on `moveend` (covers drags, zooms and
+  programmatic moves) and ignores out-of-date async results. This also
+  fixes the grid after "Zoom to" without a zoom change. It is a bug fix
+  for every user of the grid, including the regular EDA map visualisation
+  and the lasso filter.
 
 ## 10. Known gaps / to verify against a live back end
 
