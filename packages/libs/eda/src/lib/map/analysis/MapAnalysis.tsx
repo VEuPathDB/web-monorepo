@@ -940,6 +940,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     filteredCounts={mapCounts.value}
                     countPending={mapCounts.pending}
                     countTooltip={countTooltip}
+                    timeWindow={timeWindow}
                     onRemoveFilter={(filter: Filter) =>
                       analysisState.analysis &&
                       analysisState.setFilters(

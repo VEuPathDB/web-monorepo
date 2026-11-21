@@ -1,12 +1,35 @@
+import {
+  forwardRef,
+  ReactNode,
+  RefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Popover } from '@material-ui/core';
 import { FilterList } from '@material-ui/icons';
 import { Filter, StudyEntity } from '../../../core';
 import FilterChipList from '../../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../../core/components/VariableLink';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
 import { makeEntityDisplayName } from '../../../core/utils/study-metadata';
+import { formatTimeWindowLabel } from '../utils/timeWindowLabel';
+import { timelineLayout, visibleChipCount } from './filterBarLayout';
 import { mapUi, TextButton } from './ui';
 
 const { format } = new Intl.NumberFormat();
+
+/** space between chips (FilterChipList's own margin) */
+const CHIP_GAP = 8;
+const BAR_HEIGHT = 40;
+
+/** what the filter bar hands to the timeline it hosts */
+export interface TimelineSlotProps {
+  width: number;
+  settingsOpen: boolean;
+  onSettingsOpenChange: (open: boolean) => void;
+}
 
 interface Props {
   filters: Filter[];
@@ -23,12 +46,44 @@ interface Props {
   /** open the filter sheet, optionally on a particular variable */
   onOpenFilters: (variable?: { entityId: string; variableId: string }) => void;
   selectedVariable?: { entityId?: string; variableId?: string };
+  /** the timeline window narrowing the count; shows the pink tag */
+  timeWindow?: { start: string; end: string };
+  /** the timeline; no space is kept for it when omitted */
+  renderTimeline?: (props: TimelineSlotProps) => ReactNode;
 }
 
+/** the dashed "+N more" button (also rendered off-screen to measure it) */
+const MoreButton = forwardRef<
+  HTMLButtonElement,
+  { onClick: () => void; children: ReactNode; 'data-more-measure'?: boolean }
+>(function MoreButton({ onClick, children, ...rest }, ref) {
+  return (
+    <button
+      ref={ref}
+      type="button"
+      onClick={onClick}
+      {...rest}
+      css={{
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        border: '1px dashed #9bb3c9',
+        borderRadius: 12,
+        padding: '2px 10px',
+        background: 'white',
+        color: '#1b5e8c',
+        fontSize: 13,
+        cursor: 'pointer',
+      }}
+    >
+      {children}
+    </button>
+  );
+});
+
 /**
- * The subset, always visible: how much data is on the map, the filters
- * that produced it (click a chip to edit it, ✕ to remove it) and a button
- * to add more.
+ * The subset, always visible, in one fixed-height row (so adding a filter
+ * never resizes the map): a button to add filters, how much data is on the
+ * map, the filter chips (extra ones fold into "+N more"), and the timeline.
  */
 export function MapFilterBar({
   filters,
@@ -41,14 +96,64 @@ export function MapFilterBar({
   onRemoveFilter,
   onOpenFilters,
   selectedVariable,
+  timeWindow,
+  renderTimeline,
 }: Props) {
   const total = totalCounts?.[geoEntity.id];
   const filtered = filteredCounts?.[geoEntity.id];
   const entityName = makeEntityDisplayName(geoEntity, (total ?? 0) !== 1);
 
+  const barRef = useRef<HTMLDivElement>(null);
+  const barWidth = useElementWidth(barRef);
+  const layout = timelineLayout(barWidth);
+  const showTimeline = renderTimeline != null && barWidth > 0;
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  // a pop-over anchored in one row must not float on after a re-layout
+  useEffect(() => setSettingsOpen(false), [layout.placement]);
+
+  // chip folding: measure every chip off-screen, show as many as fit
+  const chipsRef = useRef<HTMLDivElement>(null);
+  const chipsWidth = useElementWidth(chipsRef);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const measureWidth = useElementWidth(measureRef);
+  const [chipWidths, setChipWidths] = useState<number[]>([]);
+  const [moreWidth, setMoreWidth] = useState(0);
+  useLayoutEffect(() => {
+    const measure = measureRef.current;
+    if (measure == null) return;
+    const spans = Array.from(
+      measure.querySelectorAll<HTMLElement>('[data-chip-measure]')
+    );
+    const widths = spans.map((span) => span.getBoundingClientRect().width);
+    setChipWidths((previous) =>
+      previous.length === widths.length &&
+      previous.every((width, i) => width === widths[i])
+        ? previous
+        : widths
+    );
+    const more = measure.querySelector<HTMLElement>('[data-more-measure]');
+    setMoreWidth(more?.getBoundingClientRect().width ?? 0);
+  }, [filters, studyEntities, selectedVariable, measureWidth]);
+
+  const visibleCount =
+    chipWidths.length === filters.length
+      ? visibleChipCount(chipWidths, chipsWidth, moreWidth, CHIP_GAP)
+      : filters.length;
+  const hiddenCount = chipWidths
+    .slice(visibleCount)
+    .filter((width) => width > 0).length;
+
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+  const [moreOpen, setMoreOpen] = useState(false);
+  useEffect(() => {
+    if (hiddenCount === 0) setMoreOpen(false);
+  }, [hiddenCount]);
+
   const variableLinkConfig: VariableLinkConfig = {
     type: 'button',
     onClick(value) {
+      setMoreOpen(false);
       if (value?.entityId && value.variableId)
         onOpenFilters({
           entityId: value.entityId,
@@ -57,55 +162,193 @@ export function MapFilterBar({
       else onOpenFilters();
     },
   };
+  const chipListProps = {
+    removeFilter: onRemoveFilter,
+    variableLinkConfig,
+    entities: studyEntities,
+    selectedEntityId: selectedVariable?.entityId,
+    selectedVariableId: selectedVariable?.variableId,
+  };
+
+  const timelineSlotProps: TimelineSlotProps = {
+    width: layout.width,
+    settingsOpen,
+    onSettingsOpenChange: setSettingsOpen,
+  };
 
   return (
     <div
+      ref={barRef}
       css={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        padding: '4px 16px',
-        minHeight: 40,
+        position: 'relative',
+        padding: '0 16px',
         background: '#fafafa',
         borderBottom: mapUi.border,
         flexShrink: 0,
       }}
     >
-      <TextButton onClick={() => onOpenFilters()} title="Add or edit filters">
-        <span css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-          <FilterList style={{ fontSize: 16 }} /> Filters
-          {filters.length > 0 ? ` (${filters.length})` : ''}
-        </span>
-      </TextButton>
-      <div css={{ flex: 1, minWidth: 0, overflowX: 'auto' }}>
-        {filters.length > 0 ? (
-          <FilterChipList
-            filters={filters}
-            removeFilter={onRemoveFilter}
-            variableLinkConfig={variableLinkConfig}
-            entities={studyEntities}
-            selectedEntityId={selectedVariable?.entityId}
-            selectedVariableId={selectedVariable?.variableId}
-          />
-        ) : (
-          <span css={{ color: mapUi.muted, fontSize: 13 }}>
-            No filters: showing all data
-          </span>
-        )}
-      </div>
       <div
-        css={{ fontSize: 13, color: mapUi.muted, whiteSpace: 'nowrap' }}
-        title={countTooltip}
+        css={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          height: BAR_HEIGHT,
+        }}
       >
-        {!countPending && filtered != null && total != null ? (
-          <>
-            <strong css={{ color: '#222' }}>{format(filtered)}</strong> of{' '}
-            {format(total)} {entityName}
-          </>
-        ) : (
-          '…'
+        <TextButton onClick={() => onOpenFilters()} title="Add or edit filters">
+          <span css={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <FilterList style={{ fontSize: 16 }} /> Filters
+            {filters.length > 0 ? ` (${filters.length})` : ''}
+          </span>
+        </TextButton>
+        <div
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            flexShrink: 0,
+            fontSize: 13,
+            color: mapUi.muted,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <span title={countTooltip}>
+            {!countPending && filtered != null && total != null ? (
+              <>
+                <strong css={{ color: '#222' }}>{format(filtered)}</strong> of{' '}
+                {format(total)} {entityName}
+              </>
+            ) : (
+              '…'
+            )}
+          </span>
+          {timeWindow && (
+            <button
+              type="button"
+              title={`Timeline window: ${timeWindow.start} to ${timeWindow.end}`}
+              onClick={() => setSettingsOpen(true)}
+              css={{
+                border: 'none',
+                borderRadius: 9,
+                padding: '1px 7px',
+                background: '#fde2e8',
+                color: '#8a2846',
+                fontSize: 11,
+                lineHeight: '16px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {formatTimeWindowLabel(timeWindow)}
+            </button>
+          )}
+        </div>
+        <div
+          ref={chipsRef}
+          css={{
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: CHIP_GAP,
+            overflow: 'hidden',
+          }}
+        >
+          {filters.length > 0 ? (
+            <>
+              {visibleCount > 0 && (
+                <div css={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+                  <FilterChipList
+                    filters={filters.slice(0, visibleCount)}
+                    {...chipListProps}
+                  />
+                </div>
+              )}
+              {hiddenCount > 0 && (
+                <MoreButton
+                  ref={moreButtonRef}
+                  onClick={() => setMoreOpen(true)}
+                >
+                  +{hiddenCount} more ▾
+                </MoreButton>
+              )}
+            </>
+          ) : (
+            <span css={{ color: mapUi.muted, fontSize: 13 }}>
+              No filters: showing all data
+            </span>
+          )}
+        </div>
+        {showTimeline && layout.placement === 'inline' && (
+          <div
+            css={{
+              flexShrink: 0,
+              width: layout.width,
+              paddingLeft: 10,
+              borderLeft: '1px solid #e3e3e3',
+            }}
+          >
+            {renderTimeline(timelineSlotProps)}
+          </div>
         )}
       </div>
+      {showTimeline && layout.placement === 'below' && (
+        <div css={{ paddingBottom: 6 }}>
+          {renderTimeline(timelineSlotProps)}
+        </div>
+      )}
+
+      {/* off-screen copy of every chip, for measuring */}
+      <div
+        ref={measureRef}
+        aria-hidden
+        css={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          visibility: 'hidden',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          display: 'flex',
+        }}
+      >
+        {filters.map((filter, i) => (
+          <span key={i} data-chip-measure css={{ display: 'inline-block' }}>
+            <FilterChipList filters={[filter]} {...chipListProps} />
+          </span>
+        ))}
+        <MoreButton data-more-measure onClick={() => {}}>
+          +{filters.length} more ▾
+        </MoreButton>
+      </div>
+
+      <Popover
+        open={moreOpen && hiddenCount > 0}
+        anchorEl={moreButtonRef.current}
+        onClose={() => setMoreOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
+        <div css={{ padding: 12, maxWidth: 420, '& > div': { rowGap: 8 } }}>
+          <FilterChipList filters={filters} {...chipListProps} />
+        </div>
+      </Popover>
     </div>
   );
+}
+
+/** an element's (border-box) width, kept up to date with a ResizeObserver */
+function useElementWidth(ref: RefObject<HTMLElement>): number {
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (element == null) return;
+    setWidth(element.getBoundingClientRect().width);
+    const observer = new ResizeObserver(() =>
+      setWidth(element.getBoundingClientRect().width)
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return width;
 }
