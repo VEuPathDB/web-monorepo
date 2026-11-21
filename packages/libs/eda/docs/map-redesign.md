@@ -337,6 +337,13 @@ Plan: a **Plots** tab in the Selection panel, not floating panels.
   `maxZoom`, and the map's maximum is the smallest of them
   (`MAX_ZOOM_FOR_ALL_BASE_LAYERS`, 17). Reproduced and verified in headless
   Chromium with the real `MapVEuMap` and stubbed tile servers.
+- **No redundant OSM tiles (`MapVEuMap`):** an OSM `TileLayer` was
+  rendered unconditionally underneath the layer selector's base layer:
+  never seen, but downloaded for every view, doubling tile traffic. It is
+  now rendered only when the selector is hidden (it's then the only
+  layer). An unknown saved `baseLayer` now falls back to the first layer
+  instead of leaving none checked. Measured in headless Chromium:
+  Satellite went from 102 to 51 tile requests for the same views.
 - **Geohash grid fix (`CustomGridLayer`):** the grid recomputed its lines
   only on `resize dragend zoomend`, so it went stale after programmatic
   pans. That includes the pan that keeps markers still when a panel opens:

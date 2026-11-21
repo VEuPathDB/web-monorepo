@@ -278,11 +278,16 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       attributionControl={showAttribution}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        maxZoom={baseLayers.OSM.maxZoom}
-      />
+      {/* Without the layer selector this is the map's only tile layer. With
+          it, it would sit unseen underneath the selected base layer while
+          still downloading its tiles, doubling tile traffic. */}
+      {!showLayerSelector && (
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom={baseLayers.OSM.maxZoom}
+        />
+      )}
 
       {props.children}
 
@@ -296,7 +301,14 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
             <LayersControl.BaseLayer
               name={name}
               key={name}
-              checked={baseLayer ? name === baseLayer : i === 0}
+              // exactly one base layer is always checked: an unknown
+              // `baseLayer` (e.g. a since-removed layer saved in an
+              // analysis) falls back to the first, not to a blank map
+              checked={
+                baseLayer != null && baseLayer in baseLayers
+                  ? name === baseLayer
+                  : i === 0
+              }
             >
               <TileLayer {...layerProps} />
             </LayersControl.BaseLayer>
