@@ -202,6 +202,23 @@ compatible; existing callers are unaffected):
      workspace**.
   3. Clears the selection.
 
+### Peek under the markers
+
+Hold **H**, or press and hold the eye button in the legend header, to hide
+the markers and see the map underneath. They come back on release.
+
+- **Documentation:** the shortcut is in the eye button's tooltip ("Hide
+  markers while held (or hold H)"). It's discoverable without taking new
+  screen space, and usable without a keyboard. While hidden, the icon
+  switches to "eye crossed out" and shows as pressed.
+- **Can't get stuck:** markers return on key-up, on window blur and when
+  the tab is hidden. H is ignored in form fields and with Ctrl/⌘/Alt.
+  Nothing is saved (`layout/useHoldKey.ts`, unit tested).
+- **Implementation:** a CSS class hides the Leaflet marker and popup panes,
+  so markers aren't unmounted, re-fetched or re-animated.
+- A keyboard-shortcuts help sheet ("?") can come later, when there are
+  more shortcuts.
+
 ## 4. Coordinates
 
 `utils/coordinates.ts` (tested) formats `lat, lng` in decimal degrees with

@@ -96,6 +96,7 @@ import { ToolRail, ToolRailItem } from './layout/ToolRail';
 import { Sheet } from './layout/Sheet';
 import { MapSettingsPanel } from './layout/MapSettingsPanel';
 import { LegendCard } from './layout/LegendCard';
+import { useHoldKey } from './layout/useHoldKey';
 import { TextButton } from './layout/ui';
 import { MapSelectionToolbar } from './selection/MapSelectionToolbar';
 import { SelectionPanel } from './selection/SelectionPanel';
@@ -422,6 +423,12 @@ function MapAnalysisImpl(props: ImplProps) {
   const filteredCounts = useEntityCounts(filters);
 
   const isSettingsPanelOpen = appState.isSidePanelExpanded ?? true;
+
+  // "peek": hide the markers only while H (or the legend's eye button) is
+  // held, to see the map underneath; never persisted
+  const isHideMarkersKeyHeld = useHoldKey('h');
+  const [isHideMarkersButtonHeld, setIsHideMarkersButtonHeld] = useState(false);
+  const markersHidden = isHideMarkersKeyHeld || isHideMarkersButtonHeld;
   const [activeSheet, setActiveSheet] = useState<SheetId>();
   const [isSelectionPanelOpen, setIsSelectionPanelOpen] = useState(
     appState.selection != null
@@ -910,6 +917,16 @@ function MapAnalysisImpl(props: ImplProps) {
                           // clip on-map overlays (time slider, hint, legend)
                           // so they can never resize the layout around them
                           overflow: 'hidden',
+                          // peek: hide markers (and their hover popups and
+                          // extent boxes) without unmounting them, so they
+                          // reappear instantly with no refetch or animation
+                          ...(markersHidden
+                            ? {
+                                '.leaflet-marker-pane, .leaflet-popup-pane': {
+                                  visibility: 'hidden',
+                                },
+                              }
+                            : {}),
                         }}
                       >
                         <MapVEuMap
@@ -976,6 +993,8 @@ function MapAnalysisImpl(props: ImplProps) {
                         />
                         {canDrawMarkers && (
                           <LegendCard
+                            markersHidden={markersHidden}
+                            onHoldToHideMarkers={setIsHideMarkersButtonHeld}
                             title={overlayVariable?.displayName ?? 'Legend'}
                             subtitle={
                               overlayEntity &&
