@@ -328,6 +328,15 @@ Plan: a **Plots** tab in the Selection panel, not floating panels.
   now registered once and read the latest props from a ref. Reproduced
   with the real `MapVEuMap`/`SemanticMarkers` in headless Chromium: 15/30
   randomised zoom-to trials inconsistent before, 0/30 after.
+- **Tile layer max zoom (`MapVEuMap`):** the map had no `maxZoom`, so
+  Leaflet allowed the largest of its layers' limits: 18, from OSM's default.
+  Street, Terrain and Satellite stop at 17. Beyond a layer's own limit
+  Leaflet draws nothing for it and disables it in the layer selector, so at
+  zoom 18 the always-present OSM layer underneath showed instead (e.g.
+  Satellite "turned into" OSM). Every base layer now declares its
+  `maxZoom`, and the map's maximum is the smallest of them
+  (`MAX_ZOOM_FOR_ALL_BASE_LAYERS`, 17). Reproduced and verified in headless
+  Chromium with the real `MapVEuMap` and stubbed tile servers.
 - **Geohash grid fix (`CustomGridLayer`):** the grid recomputed its lines
   only on `resize dragend zoomend`, so it went stale after programmatic
   pans. That includes the pan that keeps markers still when a panel opens:

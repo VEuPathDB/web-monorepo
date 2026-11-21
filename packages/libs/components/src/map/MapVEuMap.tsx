@@ -83,12 +83,23 @@ export const baseLayers = {
     attribution:
       '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     // minZoom='2'
-    // maxZoom='18'
     // noWrap='0
+    maxZoom: 19,
   },
 };
 
 export type BaseLayerChoice = keyof typeof baseLayers;
+
+/**
+ * The map's maximum zoom: the deepest zoom that *every* base layer has
+ * tiles for. Without it Leaflet allows the largest of the layers' limits,
+ * and beyond a layer's own limit it draws nothing for that layer and
+ * disables it in the layer selector, so e.g. Satellite (17) "turned into"
+ * the OSM layer underneath (18) at the highest zoom levels.
+ */
+export const MAX_ZOOM_FOR_ALL_BASE_LAYERS = Math.min(
+  ...Object.values(baseLayers).map(({ maxZoom }) => maxZoom)
+);
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -256,6 +267,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       center={viewport.center}
       zoom={viewport.zoom}
       minZoom={1}
+      maxZoom={MAX_ZOOM_FOR_ALL_BASE_LAYERS}
       zoomSnap={zoomSnap}
       wheelPxPerZoomLevel={100}
       // We add our own custom zoom control below
@@ -269,6 +281,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        maxZoom={baseLayers.OSM.maxZoom}
       />
 
       {props.children}
