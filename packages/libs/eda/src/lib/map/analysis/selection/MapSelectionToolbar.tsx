@@ -112,9 +112,13 @@ export function MapSelectionToolbar({
           borderRadius: mapUi.radius,
           padding: '3px 8px',
           marginTop: 6,
-          maxWidth: 420,
           minWidth: 0,
+          // one line; truncate (full text in the tooltip) on narrow maps
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         }}
+        title={hint}
       >
         {hint}
       </div>
