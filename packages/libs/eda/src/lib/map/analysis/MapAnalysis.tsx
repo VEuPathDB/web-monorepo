@@ -95,6 +95,8 @@ import { GeoCoordUIState } from '../../core/components/filter/geoCoordUIState';
 import { makeEntityDisplayName } from '../../core/utils/study-metadata';
 import { LittleFilterFunc, useLittleFilters } from './littleFilters';
 import { mapCountTooltip } from './layout/mapCountTooltip';
+import { timelineState } from './utils/timelineState';
+import { DateVariable } from '../../core/types/study';
 import { MapTopBar } from './layout/MapTopBar';
 import { MapFilterBar, TimelineSlotProps } from './layout/MapFilterBar';
 import TimeSliderQuickFilter from './TimeSliderQuickFilter';
@@ -453,6 +455,14 @@ function MapAnalysisImpl(props: ImplProps) {
   // value for the marker variable). Neither applies while markers can't be
   // drawn. The timeline's own bars use the marker configuration only.
   const canDrawMarkers = activePlugin != null && activeVariableIsOnLineage;
+  const timeSliderConfig = appState.timeSliderConfig;
+  const { showTimeline, windowApplies, timeWindow } = timelineState({
+    canDrawMarkers,
+    config: timeSliderConfig,
+    variableIsDate: DateVariable.is(
+      findEntityAndVariable(timeSliderConfig?.variable)?.variable
+    ),
+  });
   const timelineFilterFuncs = useMemo(
     () =>
       canDrawMarkers && activePlugin != null
@@ -462,10 +472,10 @@ function MapAnalysisImpl(props: ImplProps) {
   );
   const countFilterFuncs = useMemo(
     () =>
-      canDrawMarkers
+      windowApplies
         ? [...timelineFilterFuncs, timeSliderLittleFilter]
-        : NO_LITTLE_FILTERS,
-    [canDrawMarkers, timelineFilterFuncs]
+        : timelineFilterFuncs,
+    [windowApplies, timelineFilterFuncs]
   );
   const littleFilterProps = useMemo(
     () => ({ filters, appState, geoConfigs }),
@@ -481,15 +491,7 @@ function MapAnalysisImpl(props: ImplProps) {
   );
   const geoEntityList = useMemo(() => [geoConfig.entity], [geoConfig.entity]);
   const mapCounts = useSpecificEntityCounts(mapCountFilters, geoEntityList);
-  const timeSliderConfig = appState.timeSliderConfig;
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-  const timeWindow =
-    canDrawMarkers &&
-    timeSliderConfig?.variable != null &&
-    timeSliderConfig.active &&
-    timeSliderConfig.selectedRange != null
-      ? timeSliderConfig.selectedRange
-      : undefined;
 
   const isSettingsPanelOpen = appState.isSidePanelExpanded ?? true;
 
@@ -945,7 +947,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     countTooltip={countTooltip}
                     timeWindow={timeWindow}
                     renderTimeline={
-                      canDrawMarkers && timeSliderConfig?.variable != null
+                      showTimeline && timeSliderConfig != null
                         ? (slot: TimelineSlotProps) => (
                             <TimeSliderQuickFilter
                               studyId={studyId}

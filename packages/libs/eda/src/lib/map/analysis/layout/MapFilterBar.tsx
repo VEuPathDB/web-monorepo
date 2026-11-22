@@ -17,6 +17,7 @@ import { makeEntityDisplayName } from '../../../core/utils/study-metadata';
 import { formatTimeWindowLabel } from '../utils/timeWindowLabel';
 import { timelineLayout, visibleChipCount } from './filterBarLayout';
 import { mapUi, TextButton } from './ui';
+import { useLatestDefined } from './useLatestDefined';
 
 const { format } = new Intl.NumberFormat();
 
@@ -102,7 +103,9 @@ export function MapFilterBar({
   renderTimeline,
 }: Props) {
   const total = totalCounts?.[geoEntity.id];
-  const filtered = filteredCounts?.[geoEntity.id];
+  // while the count is refetched, keep showing the last one (faded) so the
+  // count keeps its width and the chips beside it don't refold
+  const filtered = useLatestDefined(filteredCounts?.[geoEntity.id]);
   const entityName = makeEntityDisplayName(geoEntity, (total ?? 0) !== 1);
 
   const barRef = useRef<HTMLDivElement>(null);
@@ -214,8 +217,8 @@ export function MapFilterBar({
             whiteSpace: 'nowrap',
           }}
         >
-          <span title={countTooltip}>
-            {!countPending && filtered != null && total != null ? (
+          <span title={countTooltip} css={{ opacity: countPending ? 0.5 : 1 }}>
+            {filtered != null && total != null ? (
               <>
                 <strong css={{ color: '#222' }}>{format(filtered)}</strong> of{' '}
                 {format(total)} {entityName}
