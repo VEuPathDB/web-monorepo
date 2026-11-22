@@ -37,7 +37,7 @@ describe('countHelpText', () => {
         markerVariableName: 'Area covered',
       })
     ).toBe(
-      'Regions on the map: those matching your filters, inside the timeline window, with data for the marker variable (Area covered). Hover it for the details.'
+      "Regions matching your filters, inside the timeline window, with data for the marker variable (Area covered), out of all Regions in the dataset. It counts the whole dataset, not just what's in view. Hover it for the details."
     );
     expect(
       countHelpText({
@@ -46,10 +46,10 @@ describe('countHelpText', () => {
         markerVariableName: 'Area covered',
       })
     ).toBe(
-      'Regions on the map: those matching your filters, with data for the marker variable (Area covered). Hover it for the details.'
+      "Regions matching your filters, with data for the marker variable (Area covered), out of all Regions in the dataset. It counts the whole dataset, not just what's in view. Hover it for the details."
     );
     expect(countHelpText({ entityName: 'Regions', windowApplies: false })).toBe(
-      'Regions on the map: those matching your filters. Hover it for the details.'
+      "Regions matching your filters, out of all Regions in the dataset. It counts the whole dataset, not just what's in view. Hover it for the details."
     );
   });
 });

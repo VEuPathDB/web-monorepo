@@ -34,14 +34,17 @@ export function countHelpText({
   windowApplies,
   markerVariableName,
 }: CountHelpArgs): string {
+  // (the count is not limited to the view, nor to records with coordinates,
+  // so it isn't "on the map")
   const clauses = [
-    'those matching your filters',
+    `${entityName} matching your filters`,
     ...(windowApplies ? ['inside the timeline window'] : []),
     ...(markerVariableName != null
       ? [`with data for the marker variable (${markerVariableName})`]
       : []),
+    `out of all ${entityName} in the dataset`,
   ];
-  return `${entityName} on the map: ${clauses.join(
+  return `${clauses.join(
     ', '
-  )}. Hover it for the details.`;
+  )}. It counts the whole dataset, not just what's in view. Hover it for the details.`;
 }

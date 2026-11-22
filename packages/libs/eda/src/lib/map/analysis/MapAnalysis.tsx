@@ -491,6 +491,35 @@ function MapAnalysisImpl(props: ImplProps) {
   );
   const geoEntityList = useMemo(() => [geoConfig.entity], [geoConfig.entity]);
   const mapCounts = useSpecificEntityCounts(mapCountFilters, geoEntityList);
+  // the same, limited to records with coordinates: the difference can't be
+  // on the map (the count's tooltip says so when there are any)
+  const mappableCountFilters = useMemo(
+    () =>
+      mapCountFilters && [
+        ...mapCountFilters,
+        {
+          type: 'numberRange' as const,
+          entityId: geoConfig.entity.id,
+          variableId: geoConfig.latitudeVariableId,
+          min: -90,
+          max: 90,
+        },
+      ],
+    [mapCountFilters, geoConfig]
+  );
+  const mappableCounts = useSpecificEntityCounts(
+    mappableCountFilters,
+    geoEntityList
+  );
+  const mapCount = mapCounts.value?.[geoConfig.entity.id];
+  const mappableCount = mappableCounts.value?.[geoConfig.entity.id];
+  const unmappedCount =
+    !mapCounts.pending &&
+    !mappableCounts.pending &&
+    mapCount != null &&
+    mappableCount != null
+      ? mapCount - mappableCount
+      : undefined;
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const isSettingsPanelOpen = appState.isSidePanelExpanded ?? true;
@@ -859,6 +888,7 @@ function MapAnalysisImpl(props: ImplProps) {
     markerVariableName: canDrawMarkers
       ? overlayVariable?.displayName
       : undefined,
+    unmappedCount,
   });
 
   const activeRailIds: RailId[] = [
