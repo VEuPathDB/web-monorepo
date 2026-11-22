@@ -5,6 +5,7 @@ import {
   edaServiceUrl,
   edaSingleAppMode,
   projectId,
+  rootUrl,
   webAppUrl,
   communityDatasetsEnabled,
 } from '../config';
@@ -20,7 +21,9 @@ export function EdaMapController() {
         edaServiceUrl={edaServiceUrl}
         siteInformationProps={{
           loginUrl: '/user/login',
-          siteHomeUrl: webAppUrl,
+          // the client app's home page (e.g. /plasmo/app), not the legacy
+          // webapp root (webAppUrl), which the dev server proxies elsewhere
+          siteHomeUrl: rootUrl,
           siteLogoSrc: `${webAppUrl}/images/VEuPathDB/icons-footer/${projectId.toLowerCase()}.png`,
           siteName: projectConfig?.displayName ?? '',
         }}
