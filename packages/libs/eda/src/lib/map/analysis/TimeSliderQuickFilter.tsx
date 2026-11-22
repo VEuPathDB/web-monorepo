@@ -1,7 +1,6 @@
 import { useMemo, useRef } from 'react';
 import { Popover } from '@material-ui/core';
-import { Tune } from '@material-ui/icons';
-import { H6 } from '@veupathdb/coreui';
+import { ChevronLeft, ChevronRight, Tune } from '@material-ui/icons';
 import TimeSlider, {
   TimeSliderDataProp,
 } from '@veupathdb/components/lib/components/plotControls/TimeSlider';
@@ -12,15 +11,18 @@ import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
 import { AppState } from './appState';
-import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { useQuery } from '@tanstack/react-query';
 import { IconButton } from './layout/ui';
 import { TimelineSettings } from './TimelineSettings';
+import { stepButtons } from './utils/timelineStep';
 
 /** the strip's height: a ~15px brush area plus 9px tick labels */
 const TIMELINE_HEIGHT = 36;
-/** room for the settings (36px) and help (14px) buttons and gaps */
-const BUTTONS_WIDTH = 60;
+/** the step back / forward and settings buttons */
+const BUTTON_SIZE = { width: 30, height: 26, padding: 0 };
+const GAP = 4;
+/** room for the three buttons and the gaps before them */
+const BUTTONS_WIDTH = 3 * (BUTTON_SIZE.width + GAP);
 
 interface Props {
   studyId: string;
@@ -35,6 +37,8 @@ interface Props {
   width: number;
   settingsOpen: boolean;
   onSettingsOpenChange: (open: boolean) => void;
+  /** open the filter bar's help panel */
+  onShowHelp: () => void;
 }
 
 /**
@@ -53,6 +57,7 @@ export default function TimeSliderQuickFilter({
   width,
   settingsOpen,
   onSettingsOpenChange,
+  onShowHelp,
 }: Props) {
   const subsettingClient = useSubsettingClient();
 
@@ -174,57 +179,15 @@ export default function TimeSliderQuickFilter({
 
   const sliderWidth = Math.max(width - BUTTONS_WIDTH, 0);
 
-  const helpText = (
-    <div style={{ paddingTop: 10 }}>
-      <H6>Timeline help</H6>
-      <p>
-        Black bars indicate when <i>in time</i> there is data that...
-        <ul>
-          <li>is located anywhere on Earth*, not just currently in view</li>
-          <li>
-            has a value for <b>{variableMetadata?.variable.displayName}</b>
-          </li>
-          <li>satisfies any filters you have applied</li>
-          <li>
-            has values for the variable currently displayed on markers,
-            including custom-configurations
-          </li>
-        </ul>
-        (* data that has no geolocation will also be shown on the timeline)
-      </p>
-      <p>
-        How to use
-        <ul>
-          <li>
-            Apply a temporary time-based filter by dragging a window across the
-            graphic
-          </li>
-          <li>
-            Click once on the graphic outside the window to cancel the temporary
-            filter
-          </li>
-        </ul>
-      </p>
-      <p>
-        Open the timeline settings with the sliders button to change the date
-        variable (currently <b>{variableMetadata?.variable.displayName}</b>),
-        set start and end dates precisely, step the window forwards and
-        backwards, or turn the timeline filter on and off.
-      </p>
-      {!active && (
-        <p>
-          <b>
-            The timeline temporary filter is currently disabled. To enable it,
-            open the timeline settings and switch it on.
-          </b>
-        </p>
-      )}
-    </div>
-  );
+  const { back, forward } = stepButtons({
+    selectedRange,
+    dataRange: extendedDisplayRange,
+    active,
+  });
 
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
-    <div css={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+    <div css={{ display: 'flex', alignItems: 'center', gap: GAP }}>
       <div
         css={{
           width: sliderWidth,
@@ -262,14 +225,35 @@ export default function TimeSliderQuickFilter({
         )}
       </div>
       <IconButton
+        title={back.tooltip}
+        disabled={!back.enabled}
+        style={BUTTON_SIZE}
+        onClick={() =>
+          back.range && updateConfig({ ...config, selectedRange: back.range })
+        }
+      >
+        <ChevronLeft />
+      </IconButton>
+      <IconButton
+        title={forward.tooltip}
+        disabled={!forward.enabled}
+        style={BUTTON_SIZE}
+        onClick={() =>
+          forward.range &&
+          updateConfig({ ...config, selectedRange: forward.range })
+        }
+      >
+        <ChevronRight />
+      </IconButton>
+      <IconButton
         ref={settingsButtonRef}
         title="Timeline settings"
         active={settingsOpen}
+        style={BUTTON_SIZE}
         onClick={() => onSettingsOpenChange(!settingsOpen)}
       >
         <Tune />
       </IconButton>
-      <HelpIcon children={helpText} />
       <Popover
         open={settingsOpen}
         anchorEl={settingsButtonRef.current}
@@ -283,8 +267,8 @@ export default function TimeSliderQuickFilter({
           toggleStarredVariable={toggleStarredVariable}
           config={config}
           updateConfig={updateConfig}
-          extendedDisplayRange={extendedDisplayRange}
           onClose={() => onSettingsOpenChange(false)}
+          onShowHelp={onShowHelp}
         />
       </Popover>
     </div>

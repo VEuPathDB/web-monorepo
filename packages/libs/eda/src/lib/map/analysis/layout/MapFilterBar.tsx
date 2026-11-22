@@ -32,6 +32,8 @@ export interface TimelineSlotProps {
   width: number;
   settingsOpen: boolean;
   onSettingsOpenChange: (open: boolean) => void;
+  /** open the bar's help panel */
+  onShowHelp: () => void;
 }
 
 interface Props {
@@ -179,6 +181,7 @@ export function MapFilterBar({
     width: layout.width,
     settingsOpen,
     onSettingsOpenChange: setSettingsOpen,
+    onShowHelp: () => {},
   };
 
   return (
