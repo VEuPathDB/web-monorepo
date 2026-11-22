@@ -37,32 +37,32 @@ Code lives in `src/lib/map/analysis/` unless stated otherwise.
 │ logo │ Map · Study name / Analysis name (editable) │ Open in Dataset │
 │      │                                             │ Explorer │Share │  MapTopBar
 ├──────────────────────────────────────────────────────────────────────┤
-│ [Filters (2)] chip chip ✕ …                   1,234 of 5,678 Houses │  MapFilterBar
+│ [Filters (2)] 1,234 of 5,678 Houses ‹2016–2018› chip +2  ▮▮[▒▒]▮ ⫶ ? │  MapFilterBar
 ├────┬───────────────┬─────────────────────────────────┬───────────────┤
 │Map │ Map settings  │ [Lasso][Clear][Records] hint    │ Selection     │
 │Filt│ Place markers │                                 │ counts        │
 │Down│ by: [Houses▾] │            M A P                │ locations     │
 │Note│ Marker style  │                                 │ ⧉ copy ↗ map  │
 │    │ (◔)(▥)(●)     │                                 │ [Filter to    │
-│    │ Colour by …   │ ┌Legend──┐      [time slider]   │  selection]   │
+│    │ Colour by …   │ ┌Legend──┐                      │  selection]   │
 │Anal│ …             │ └────────┘                      │ Records table │
 │Stdy│               │                                 │               │
 └────┴───────────────┴─────────────────────────────────┴───────────────┘
  ToolRail MapSettingsPanel (docked)                      SelectionPanel (docked)
 ```
 
-| Piece             | File                                | Notes                                                                                                                                                                                                                                     |
-| ----------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Top bar           | `layout/MapTopBar.tsx`              | Replaces `MapHeader`. Site logo, study, editable analysis name, link to the Dataset Explorer (same analysis id), Share.                                                                                                                   |
-| Filter bar        | `layout/MapFilterBar.tsx`           | Always visible. Chips are clickable (open the filter sheet on that variable) and removable. Shows filtered/total counts for the **location entity**.                                                                                      |
-| Tool rail         | `layout/ToolRail.tsx`               | Labelled icon buttons: Map, Filter, Download, Notes, Analyses, Study.                                                                                                                                                                     |
-| Map settings      | `layout/MapSettingsPanel.tsx`       | **Docked beside the map, not over it** (400px). Order follows the decisions: location entity, marker style, then the style's own settings (the existing `*MarkerConfigurationMenu`s). Open/closed state is saved (`isSidePanelExpanded`). |
-| Sheets            | `layout/Sheet.tsx`                  | Page-like content (Filter/Subsetting, Download, Notes, My analyses, Study details, Share) slides over the map. It closes with ✕, Escape or a click on the dimmed map. Not saved in the analysis.                                          |
-| Legend            | `layout/LegendCard.tsx`             | Fixed bottom-left, collapsible, never draggable. Its tune button opens the settings panel.                                                                                                                                                |
-| Selection toolbar | `selection/MapSelectionToolbar.tsx` | Lasso / Clear / Records buttons and a one-line hint of the gestures (replaces the snackbars).                                                                                                                                             |
-| Selection panel   | `selection/SelectionPanel.tsx`      | Docked right (460px). See §3.                                                                                                                                                                                                             |
-| Time slider       | unchanged `TimeSliderQuickFilter`   | Now floats bottom-centre on the map instead of hanging from the header.                                                                                                                                                                   |
-| Context popup     | `selection/MapContextPopup.tsx`     | Right-click a marker or any point. See §4.                                                                                                                                                                                                |
+| Piece             | File                                         | Notes                                                                                                                                                                                                                                                                                                                  |
+| ----------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Top bar           | `layout/MapTopBar.tsx`                       | Replaces `MapHeader`. Site logo, study, editable analysis name, link to the Dataset Explorer (same analysis id), Share.                                                                                                                                                                                                |
+| Filter bar        | `layout/MapFilterBar.tsx`                    | Always visible, one 40px row whatever the number of filters (a second row only for the timeline below 700px). The count (location entity: subset + timeline window + marker-config filter) and a pink time-window tag come first; chips that don't fit fold into a "+N more" pop-over; the timeline sits at the right. |
+| Tool rail         | `layout/ToolRail.tsx`                        | Labelled icon buttons: Map, Filter, Download, Notes, Analyses, Study.                                                                                                                                                                                                                                                  |
+| Map settings      | `layout/MapSettingsPanel.tsx`                | **Docked beside the map, not over it** (400px). Order follows the decisions: location entity, marker style, then the style's own settings (the existing `*MarkerConfigurationMenu`s). Open/closed state is saved (`isSidePanelExpanded`).                                                                              |
+| Sheets            | `layout/Sheet.tsx`                           | Page-like content (Filter/Subsetting, Download, Notes, My analyses, Study details, Share) slides over the map. It closes with ✕, Escape or a click on the dimmed map. Not saved in the analysis.                                                                                                                       |
+| Legend            | `layout/LegendCard.tsx`                      | Fixed bottom-left, collapsible, never draggable. Its tune button opens the settings panel.                                                                                                                                                                                                                             |
+| Selection toolbar | `selection/MapSelectionToolbar.tsx`          | Lasso / Clear / Records buttons and a one-line hint of the gestures (replaces the snackbars).                                                                                                                                                                                                                          |
+| Selection panel   | `selection/SelectionPanel.tsx`               | Docked right (460px). See §3.                                                                                                                                                                                                                                                                                          |
+| Time slider       | `TimeSliderQuickFilter` + `TimelineSettings` | A compact strip in the filter bar (width from the bar's width only, 200–380px). The sliders button (or the pink tag) opens a pop-over with the date variable, exact dates, step arrows and on/off switch.                                                                                                              |
+| Context popup     | `selection/MapContextPopup.tsx`              | Right-click a marker or any point. See §4.                                                                                                                                                                                                                                                                             |
 
 `MapAnalysis.tsx` composes these pieces.
 
@@ -74,10 +74,10 @@ Code lives in `src/lib/map/analysis/` unless stated otherwise.
   a panel opened. The observer resizes without panning, then pans by
   however far the container's top-left corner moved. On-screen positions
   stay unchanged (checked in headless Chromium).
-- The root and the map area are `overflow: hidden`. The 750px time slider,
-  the hint text or the legend can't overflow and toggle a page scrollbar,
-  which would resize the map. The time slider scrolls inside its own box
-  when the map is narrow.
+- The root and the map area are `overflow: hidden`. The hint text or the
+  legend can't overflow and toggle a page scrollbar, which would resize
+  the map. The filter bar never changes height when filters are added or
+  removed: extra chips fold into a pop-over.
 - Fit-to-markers is a one-shot on first load at the default view
   (`InitialFitProps`). Previously it re-ran after any re-render while the
   saved view was still the default, such as a selection click or
@@ -104,7 +104,10 @@ Code lives in `src/lib/map/analysis/` unless stated otherwise.
 
 `mapTypes/types.ts` has a smaller `MapTypePlugin` interface:
 `type`, `displayName`, `Icon`, `ConfigPanelComponent`, `MapLayerComponent`,
-`LegendComponent`, `TimeSliderComponent`. These were removed:
+`LegendComponent`, `markerConfigFilterFuncs` (the marker configuration's
+little filters, used by the map count and the shared timeline in the
+filter bar). These were removed: `TimeSliderComponent` (one shared
+timeline replaces the three near-identical ones),
 `MapOverlayComponent` (floating legend + plots + studies) and
 `MapTypeHeaderDetails` (mega-study counts). Each plugin receives the
 resolved `geoConfig` explicitly and, for its layer, a `selection` prop
@@ -397,8 +400,6 @@ Plan: a **Plots** tab in the Selection panel, not floating panels.
   per-entity counts for the viewport.
 - The marker configuration menus were designed for a wider drawer. Check
   them in the 400px panel.
-- Legend and time slider can overlap at narrow widths. The time slider
-  scrolls rather than overflowing.
 - No visual check has been done yet: VEuPathDB services and tile servers
   were unreachable from the development environment.
 - Tests: `utils/*.test.ts`, `appState.test.ts`, `selection/*.test.ts`
