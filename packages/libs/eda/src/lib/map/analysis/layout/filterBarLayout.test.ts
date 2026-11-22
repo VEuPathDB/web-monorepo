@@ -3,12 +3,18 @@ import { timelineLayout, visibleChipCount } from './filterBarLayout';
 describe('timelineLayout', () => {
   it('scales with the bar between 200 and 520px', () => {
     expect(timelineLayout(1440)).toEqual({ placement: 'inline', width: 520 });
-    expect(timelineLayout(1000)).toEqual({ placement: 'inline', width: 400 });
-    expect(timelineLayout(700)).toEqual({ placement: 'inline', width: 280 });
+    expect(timelineLayout(1300)).toEqual({ placement: 'inline', width: 520 });
   });
 
-  it('moves below the chips on phone widths', () => {
-    expect(timelineLayout(699)).toEqual({ placement: 'below', width: 667 });
+  it('leaves room for the rest of the row on narrower bars', () => {
+    // Filters, some chips, the tag, the count, (?), dividers and gaps
+    expect(timelineLayout(1000)).toEqual({ placement: 'inline', width: 368 });
+    expect(timelineLayout(832)).toEqual({ placement: 'inline', width: 200 });
+  });
+
+  it('moves below the chips once that leaves it under 200px', () => {
+    expect(timelineLayout(831)).toEqual({ placement: 'below', width: 799 });
+    expect(timelineLayout(768)).toEqual({ placement: 'below', width: 736 });
     expect(timelineLayout(360)).toEqual({ placement: 'below', width: 328 });
   });
 });

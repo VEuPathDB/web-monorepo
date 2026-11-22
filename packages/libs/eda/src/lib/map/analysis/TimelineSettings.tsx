@@ -19,7 +19,7 @@ interface Props {
   config: TimeSliderConfig;
   updateConfig: (config: TimeSliderConfig) => void;
   onClose: () => void;
-  /** open the filter bar's help panel (after this pop-over closes) */
+  /** open the filter bar's help panel (called just after `onClose`) */
   onShowHelp: () => void;
 }
 

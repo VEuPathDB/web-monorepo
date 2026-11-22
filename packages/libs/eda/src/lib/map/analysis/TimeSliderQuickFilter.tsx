@@ -15,6 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { IconButton } from './layout/ui';
 import { TimelineSettings } from './TimelineSettings';
 import { stepButtons } from './utils/timelineStep';
+import { useRunAfterExit } from './layout/useRunAfterExit';
 
 /** the strip's height: a ~15px brush area plus 9px tick labels */
 const TIMELINE_HEIGHT = 36;
@@ -63,6 +64,9 @@ export default function TimeSliderQuickFilter({
 
   const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const settingsButtonRef = useRef<HTMLButtonElement>(null);
+  // the help panel opens once settings has finished closing: never two
+  // pop-overs at once, and focus goes back to the sliders button between
+  const afterSettingsExit = useRunAfterExit();
 
   const { variable, active, selectedRange } = config;
   const variableMetadata = findEntityAndVariable(variable);
@@ -260,6 +264,7 @@ export default function TimeSliderQuickFilter({
         onClose={() => onSettingsOpenChange(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        TransitionProps={{ onExited: afterSettingsExit.onExited }}
       >
         <TimelineSettings
           entities={entities}
@@ -268,7 +273,7 @@ export default function TimeSliderQuickFilter({
           config={config}
           updateConfig={updateConfig}
           onClose={() => onSettingsOpenChange(false)}
-          onShowHelp={onShowHelp}
+          onShowHelp={() => afterSettingsExit.schedule(onShowHelp)}
         />
       </Popover>
     </div>

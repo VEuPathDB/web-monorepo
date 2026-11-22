@@ -263,13 +263,22 @@ export function MapFilterBar({
       title={countTooltip}
       css={{
         position: 'relative',
-        flexShrink: 0,
+        // gives way (with an ellipsis) only once the chips have none left,
+        // so the (?) is never pushed out of the bar
+        minWidth: 0,
+        display: 'flex',
         fontSize: 14,
         color: mapUi.muted,
-        whiteSpace: 'nowrap',
       }}
     >
-      <span css={{ opacity: countPending ? 0.5 : 1 }}>
+      <span
+        css={{
+          opacity: countPending ? 0.5 : 1,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
         {filtered != null && total != null ? (
           <>
             <strong css={{ color: '#222' }}>{format(filtered)}</strong> of{' '}

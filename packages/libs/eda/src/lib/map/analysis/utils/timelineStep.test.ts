@@ -23,6 +23,12 @@ describe('stepButtons', () => {
       tooltip: 'The timeline is switched off',
     });
   });
+  it('says the timeline is off, not to draw a window, when it is off and empty', () => {
+    expect(stepButtons({ dataRange, active: false }).forward).toEqual({
+      enabled: false,
+      tooltip: 'The timeline is switched off',
+    });
+  });
   it('names where each step lands', () => {
     const selectedRange = { start: '2018-01-01', end: '2019-01-01' };
     const { back, forward } = stepButtons({

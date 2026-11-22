@@ -24,15 +24,16 @@ export function stepButtons({
   dataRange?: DateRange;
   active: boolean;
 }): { back: StepButtonState; forward: StepButtonState } {
+  // (a switched-off timeline can't be drawn on, so say that first)
+  if (!active) {
+    const state = { enabled: false, tooltip: 'The timeline is switched off' };
+    return { back: state, forward: state };
+  }
   if (selectedRange == null) {
     const state = {
       enabled: false,
       tooltip: 'Draw a window on the timeline first',
     };
-    return { back: state, forward: state };
-  }
-  if (!active) {
-    const state = { enabled: false, tooltip: 'The timeline is switched off' };
     return { back: state, forward: state };
   }
 
