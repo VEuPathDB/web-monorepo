@@ -1,5 +1,5 @@
 export const TIMELINE_MIN_WIDTH = 200;
-export const TIMELINE_MAX_WIDTH = 380;
+export const TIMELINE_MAX_WIDTH = 520;
 /** below this bar width the timeline gets a row of its own */
 export const TIMELINE_BELOW_BREAKPOINT = 700;
 /** the bar's horizontal padding, both sides together */
@@ -22,7 +22,7 @@ export function timelineLayout(barWidth: number): TimelineLayout {
     placement: 'inline',
     width: Math.min(
       TIMELINE_MAX_WIDTH,
-      Math.max(TIMELINE_MIN_WIDTH, Math.round(0.32 * barWidth))
+      Math.max(TIMELINE_MIN_WIDTH, Math.round(0.4 * barWidth))
     ),
   };
 }

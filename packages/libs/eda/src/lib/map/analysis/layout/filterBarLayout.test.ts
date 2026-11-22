@@ -1,10 +1,10 @@
 import { timelineLayout, visibleChipCount } from './filterBarLayout';
 
 describe('timelineLayout', () => {
-  it('scales with the bar between 200 and 380px', () => {
-    expect(timelineLayout(1440)).toEqual({ placement: 'inline', width: 380 });
-    expect(timelineLayout(1000)).toEqual({ placement: 'inline', width: 320 });
-    expect(timelineLayout(700)).toEqual({ placement: 'inline', width: 224 });
+  it('scales with the bar between 200 and 520px', () => {
+    expect(timelineLayout(1440)).toEqual({ placement: 'inline', width: 520 });
+    expect(timelineLayout(1000)).toEqual({ placement: 'inline', width: 400 });
+    expect(timelineLayout(700)).toEqual({ placement: 'inline', width: 280 });
   });
 
   it('moves below the chips on phone widths', () => {
