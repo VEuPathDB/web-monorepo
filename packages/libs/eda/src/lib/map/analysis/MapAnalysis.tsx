@@ -946,6 +946,9 @@ function MapAnalysisImpl(props: ImplProps) {
                     countPending={mapCounts.pending}
                     countTooltip={countTooltip}
                     timeWindow={timeWindow}
+                    markerVariableName={
+                      canDrawMarkers ? overlayVariable?.displayName : undefined
+                    }
                     renderTimeline={
                       showTimeline && timeSliderConfig != null
                         ? (slot: TimelineSlotProps) => (
