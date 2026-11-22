@@ -23,6 +23,8 @@ const { format } = new Intl.NumberFormat();
 /** space between chips (FilterChipList's own margin) */
 const CHIP_GAP = 8;
 const BAR_HEIGHT = 40;
+/** the inline timeline slot's divider and left padding */
+const SLOT_INSET = 11;
 
 /** what the filter bar hands to the timeline it hosts */
 export interface TimelineSlotProps {
@@ -275,7 +277,8 @@ export function MapFilterBar({
             </>
           ) : (
             <span css={{ color: mapUi.muted, fontSize: 13 }}>
-              No filters: showing all data
+              {/* the timeline window is not "all data"; its tag says so */}
+              {timeWindow ? 'No filters' : 'No filters: showing all data'}
             </span>
           )}
         </div>
@@ -283,12 +286,16 @@ export function MapFilterBar({
           <div
             css={{
               flexShrink: 0,
+              boxSizing: 'border-box',
               width: layout.width,
-              paddingLeft: 10,
+              paddingLeft: SLOT_INSET - 1,
               borderLeft: '1px solid #e3e3e3',
             }}
           >
-            {renderTimeline(timelineSlotProps)}
+            {renderTimeline({
+              ...timelineSlotProps,
+              width: layout.width - SLOT_INSET,
+            })}
           </div>
         )}
       </div>

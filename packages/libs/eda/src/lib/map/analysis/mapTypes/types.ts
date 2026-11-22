@@ -4,7 +4,6 @@ import { GeoConfig } from '../../../core/types/geoConfig';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState, MarkerType } from '../appState';
-import { SiteInformationProps } from '../Types';
 import { LittleFilterFunc } from '../littleFilters';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { MarkerSelectionGesture } from '@veupathdb/components/lib/map/BoundsDriftMarker';
@@ -76,13 +75,6 @@ export interface MapTypeMapLayerProps extends MapTypeSharedProps {
 
 export type MapTypeLegendProps = MapTypeSharedProps;
 
-export interface MapTypeTimeSliderProps extends MapTypeSharedProps {
-  setTimeSliderConfig: (
-    newConfig: NonNullable<AppState['timeSliderConfig']>
-  ) => void;
-  siteInformationProps: SiteInformationProps;
-}
-
 /**
  * A plugin containing the pieces needed to render and configure a map type.
  */
@@ -98,8 +90,6 @@ export interface MapTypePlugin {
   MapLayerComponent: ComponentType<MapTypeMapLayerProps>;
   /** the body of the on-map legend */
   LegendComponent: ComponentType<MapTypeLegendProps>;
-  /** the time slider quick filter */
-  TimeSliderComponent: ComponentType<MapTypeTimeSliderProps>;
   /**
    * The marker configuration's little filters: by default "has a value for
    * the marker variable", narrowed to the chosen values when the markers are

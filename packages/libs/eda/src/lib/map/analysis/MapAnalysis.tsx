@@ -96,7 +96,9 @@ import { makeEntityDisplayName } from '../../core/utils/study-metadata';
 import { LittleFilterFunc, useLittleFilters } from './littleFilters';
 import { mapCountTooltip } from './layout/mapCountTooltip';
 import { MapTopBar } from './layout/MapTopBar';
-import { MapFilterBar } from './layout/MapFilterBar';
+import { MapFilterBar, TimelineSlotProps } from './layout/MapFilterBar';
+import TimeSliderQuickFilter from './TimeSliderQuickFilter';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { ToolRail, ToolRailItem } from './layout/ToolRail';
 import { Sheet } from './layout/Sheet';
 import { MapSettingsPanel } from './layout/MapSettingsPanel';
@@ -480,6 +482,7 @@ function MapAnalysisImpl(props: ImplProps) {
   const geoEntityList = useMemo(() => [geoConfig.entity], [geoConfig.entity]);
   const mapCounts = useSpecificEntityCounts(mapCountFilters, geoEntityList);
   const timeSliderConfig = appState.timeSliderConfig;
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
   const timeWindow =
     canDrawMarkers &&
     timeSliderConfig?.variable != null &&
@@ -941,6 +944,25 @@ function MapAnalysisImpl(props: ImplProps) {
                     countPending={mapCounts.pending}
                     countTooltip={countTooltip}
                     timeWindow={timeWindow}
+                    renderTimeline={
+                      canDrawMarkers && timeSliderConfig?.variable != null
+                        ? (slot: TimelineSlotProps) => (
+                            <TimeSliderQuickFilter
+                              studyId={studyId}
+                              entities={studyEntities}
+                              filters={timelineFilters}
+                              starredVariables={
+                                analysisState.analysis?.descriptor
+                                  .starredVariables ?? []
+                              }
+                              toggleStarredVariable={toggleStarredVariable}
+                              config={timeSliderConfig}
+                              updateConfig={setTimeSliderConfig}
+                              {...slot}
+                            />
+                          )
+                        : undefined
+                    }
                     onRemoveFilter={(filter: Filter) =>
                       analysisState.analysis &&
                       analysisState.setFilters(
@@ -1097,27 +1119,6 @@ function MapAnalysisImpl(props: ImplProps) {
                               {...sharedPluginProps}
                             />
                           </LegendCard>
-                        )}
-                        {canDrawMarkers && (
-                          <div
-                            css={{
-                              position: 'absolute',
-                              bottom: 24,
-                              left: '50%',
-                              transform: 'translateX(-50%)',
-                              zIndex: 2,
-                              // the slider has a fixed width; on a narrow map
-                              // scroll it rather than overflow the map
-                              maxWidth: 'calc(100% - 20px)',
-                              overflowX: 'auto',
-                            }}
-                          >
-                            <activePlugin.TimeSliderComponent
-                              {...sharedPluginProps}
-                              setTimeSliderConfig={setTimeSliderConfig}
-                              siteInformationProps={props.siteInformationProps}
-                            />
-                          </div>
                         )}
                       </div>
                       {isSelectionPanelOpen && (

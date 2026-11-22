@@ -9,7 +9,6 @@ import {
   MapTypeLegendProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
-  MapTypeTimeSliderProps,
 } from '../types';
 import {
   OverlayConfig,
@@ -46,7 +45,6 @@ import { useToggleStarredVariable } from '../../../../core/hooks/starredVariable
 import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { LittleFilterFunc, useLittleFilters } from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Bar plots';
 
@@ -61,7 +59,6 @@ export const plugin: MapTypePlugin = {
   ConfigPanelComponent,
   MapLayerComponent,
   LegendComponent,
-  TimeSliderComponent,
   markerConfigFilterFuncs,
 };
 
@@ -280,46 +277,6 @@ function LegendComponent(props: MapTypeLegendProps) {
       />
     )
   );
-}
-
-export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
-  const {
-    studyId,
-    studyEntities,
-    filters,
-    appState,
-    appState: { timeSliderConfig },
-    analysisState,
-    geoConfigs,
-    setTimeSliderConfig,
-    siteInformationProps,
-  } = props;
-
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const { filters: filtersForTimeSlider } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    markerConfigFilterFuncs
-  );
-
-  return timeSliderConfig ? (
-    <TimeSliderQuickFilter
-      studyId={studyId}
-      entities={studyEntities}
-      filters={filtersForTimeSlider}
-      starredVariables={
-        analysisState.analysis?.descriptor.starredVariables ?? []
-      }
-      toggleStarredVariable={toggleStarredVariable}
-      config={timeSliderConfig}
-      updateConfig={setTimeSliderConfig}
-      siteInformation={siteInformationProps}
-    />
-  ) : null;
 }
 
 ///// helpers and hooks /////

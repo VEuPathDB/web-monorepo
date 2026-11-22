@@ -35,7 +35,6 @@ import {
   MapTypeLegendProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
-  MapTypeTimeSliderProps,
 } from '../types';
 import { VariableDescriptor } from '../../../../core/types/variable';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
@@ -47,7 +46,6 @@ import {
   useLittleFilters,
   UseLittleFiltersFuncProps,
 } from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
 
 const displayName = 'Bubbles';
 
@@ -60,7 +58,6 @@ export const plugin: MapTypePlugin = {
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
   LegendComponent: BubbleLegends,
-  TimeSliderComponent,
   markerConfigFilterFuncs,
 };
 
@@ -252,46 +249,6 @@ function BubbleLegends(props: MapTypeLegendProps) {
       </div>
     </div>
   );
-}
-
-export function TimeSliderComponent(props: MapTypeTimeSliderProps) {
-  const {
-    studyId,
-    studyEntities,
-    filters,
-    appState,
-    appState: { timeSliderConfig },
-    analysisState,
-    geoConfigs,
-    setTimeSliderConfig,
-    siteInformationProps,
-  } = props;
-
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const { filters: filtersForTimeSlider } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    markerConfigFilterFuncs
-  );
-
-  return timeSliderConfig ? (
-    <TimeSliderQuickFilter
-      studyId={studyId}
-      entities={studyEntities}
-      filters={filtersForTimeSlider}
-      starredVariables={
-        analysisState.analysis?.descriptor.starredVariables ?? []
-      }
-      toggleStarredVariable={toggleStarredVariable}
-      config={timeSliderConfig}
-      updateConfig={setTimeSliderConfig}
-      siteInformation={siteInformationProps}
-    />
-  ) : null;
 }
 
 ///// helpers and hooks //////
