@@ -1,6 +1,6 @@
 # Full-screen map redesign
 
-Status: phase 1 implemented on branch `ccr-27b00449-g2d3sx` (not yet tested
+Status: phase 1 implemented on branch `map-redesign-and-derived-vars` (not yet tested
 against a live back end). This document records what changed, why, how it
 fits with the regular EDA workspace, and the plan for phase 2.
 
