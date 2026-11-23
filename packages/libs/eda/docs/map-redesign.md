@@ -138,7 +138,7 @@ map showed.
   keeps them in agreement on every update. On a style switch, older
   analyses with a different variable per style adopt the current one.
   Hoisting the variable to a top-level `appState` field would be cleaner.
-  It's worth doing if the phase 2 Plots tab needs it.
+  It's worth doing if phase 2 plots need it (§8).
 - **Why:** plots (§8) will offer "colour by the marker variable". With a
   variable per style, that would depend on the current style. That
   coupling is what made the old map's style-owned plots confusing.
@@ -313,36 +313,209 @@ saved state); `useAppState.ts` holds the hook. The key is unchanged
 - Visualisations created by the old map stay in the analysis descriptor,
   untouched. The phase 1 map simply doesn't show them.
 
-## 8. Phase 2: plots
+## 8. Phase 2: plots and derived variables (brief for the next session)
 
-Plan: a **Plots** tab in the Selection panel, not floating panels.
+Status: a brief for the next design session, not a plan. It replaces the
+earlier plan (a Plots tab in the Selection panel, plots stored as
+visualisations tagged with an `applicationContext`). That plan is still a
+reasonable starting point for _where plots go_, but the work now starts
+with derived variables.
 
-- **Same filters as the records** (subset + time slider + selection or
-  viewport), so "plot what I selected" needs no extra concept. Docked plots
-  can't get lost and don't cover markers.
-- **Storage:** keep plots as ordinary visualisations in
-  `analysis.descriptor.computations`, as the old map did. Old map plots are
-  tagged `descriptor.applicationContext = <marker type>`, created through
-  `StartPage`'s `applicationContext` prop.
-- **Portability with the regular EDA workspace:**
-  - _EDA → map:_ list every visualisation whose plugin is in the
-    standalone-map set (barplot, boxplot, histogram, lineplot, scatterplot,
-    mosaic), whether or not it has an `applicationContext`. Render it with
-    the map's filters added as non-persisted "little filters", and label it
-    "for selection" or "for visible area".
-  - _Map → EDA:_ plots made in the map get `applicationContext: 'map'`
-    (instead of a marker type). In the workspace they render with only the
-    subset filters, plus a note that location and time restrictions apply
-    only on the map.
-  - The old map plots took their overlay from the active marker variable
-    (`getOverlayVariable` in the deleted `standaloneVizPlugins.ts`). In
-    phase 2, make that an explicit "colour by the marker variable" option,
-    so a plot means the same in both workspaces.
-- **Code to reuse:** `git show 562a5a1:packages/libs/eda/src/lib/map/analysis/hooks/standaloneVizPlugins.ts`
+### The killer app
+
+Insecticide resistance: percent mortality is shown on the markers. The
+user sees an east–west difference with a mountain range as the dividing
+line, and wants to know whether it holds through time. They draw **two (or
+more) regions**. The regions become a categorical variable ("East", "West").
+That variable is the overlay on a time-series plot, so both regions' trends
+show at once.
+
+Percent mortality needs no zero-filling (below), so the killer app doesn't
+depend on the zero-filling machinery or the bug found in it. The same
+region variable should work as the overlay for any plot type.
+
+### Decisions so far
+
+- **Derived variables become first-class, in both the regular EDA
+  workspace and the map.** A new main workspace tab to the right of
+  "Browse and Subset", provisionally **"Create variables"**, manages them.
+  The map gets the same thing as a tool-rail item. Derived variables are
+  saved with the analysis (but see storage, below).
+- **Recoding first.** Other derived-variable types come later. Multiple
+  geo-regions are treated as a recoding (see "Regions as a variable" for
+  how that maps onto the back end).
+- **Map selections:** a single selection stays as it is, with "Filter to
+  selection". New: **several selections**, plus a "Create variable" button
+  with a short explanation that the variable can colour/overlay plots.
+- **Overlaps: leaning towards forbidding** overlapping geo-regions,
+  overlapping categories in a recoding, and overlapping continuous ranges,
+  in both the UI and the server. To be discussed.
+- **One colour scheme is no longer a rule.** The old map forced every plot
+  to use the marker colours (one legend on the page). Docked plots can have
+  their own legends; consistency is preferred, not enforced. An explicit
+  "colour by the marker variable" option remains a good idea.
+
+### What exists today
+
+**Derived variables in the back end** (`service-eda`), unused by the front
+end:
+
+- Plugins under `merge/plugins/`. Transforms: `CategoricalRecoding`,
+  `Concatenation`, `ContinuousNumericToOrdinal`, `EcmaScriptExpressionEval`,
+  `UnitConversion`, `BodyMassIndex`, `AdvancedSubset` (union/intersect/minus
+  of 1/0 variables), `RelativeObservation*`. Reductions: `SubsetMembership`
+  (1/0: is the record in the subset defined by `subsetFilters`), `Sum`,
+  `Mean`, `SingleNumericVarReduction`. Config types are in
+  `schema/library.raml`.
+- **Storage:** one row per variable in the user database's
+  `derived_variables` table (`user/model/UserDataFactory.java`,
+  `DerivedVariableRow`). Each row holds a UUID `variable_id`, `user_id`,
+  `dataset_id`, `entity_id`, `display_name`, `description`, `function_name`,
+  `config` (plugin-specific JSON, e.g. `CategoricalRecodingConfig`) and
+  `provenance` (`copiedFrom`, `copyDate`). The analysis stores only the ids,
+  in `descriptor.derivedVariables: string[]`. So "saved with the analysis"
+  really means "owned by the user, referenced by the analysis": one variable
+  can be shared by several of the same user's analyses.
+- **API** (`/derived-variables/{project-id}`): list the user's variables
+  (GET), create one (POST), and fetch one by id (GET `/{id}`). PATCH changes
+  only the display name and description. **There is no delete, and the
+  definition (`function_name`, `config`) can't be edited.** Editing would
+  mean creating a new variable and swapping the id in the analysis, and old
+  ones are left behind unused.
+- **Use in requests:** the data service doesn't look up variables by id.
+  Each plot request carries the full definitions inline
+  (`derivedVariables: DerivedVariableSpec[]`: entity id, the stored id as
+  `variableId`, `functionName`, `displayName`, `config`). Variable pickers
+  get type, shape and values from POST `/derived-variables/metadata/variables`
+  (study id plus the same specs). So the client would fetch the analysis's
+  definitions by id on load and send them with every request.
+- **Copying analyses:** when an analysis is copied to another user,
+  `ImportAnalysisService.copyDerivedVariables` copies the definitions to the
+  new owner, recording `provenance`. It reuses a copy the new owner already
+  has, matching the original's id or its `copiedFrom`. A copy for the same
+  user keeps pointing at the same rows.
+- The alternative, keeping definitions inside the analysis descriptor with
+  no separate store, would be simpler but give up reuse across analyses.
+  That's a question for the next session.
+- Values are computed in the merge layer. So they should be usable in plots,
+  map markers and downloads, but **probably not in subsetting** (filters,
+  counts, Browse and Subset distributions). To verify.
+- Front end: `DataClient/types.ts` has `// TO DO` for the field,
+  `ScatterplotVisualization` sends `derivedVariables: []`, and
+  `useAnalysis` has a `setDerivedVariables` setter that nothing calls.
+
+**Regions as a variable.** `CategoricalRecoding` maps **exact values** of
+one input variable (`rules: [{ inputValues, outputValue }]`,
+`unmappedValue`). Map selections are geohash **prefixes at mixed levels**
+(§3). Options:
+
+1. Expand each prefix to the study's finest geohash variable and recode
+   that. No back-end change, but the value lists can be long: 462 values in
+   the Maryland test study, possibly tens of thousands in a megastudy.
+2. Add prefix matching to recoding rules (back-end change).
+3. One `SubsetMembership` per region (its filter is the region's
+   `stringPrefixSet`), combined into one variable.
+
+A more general framing: **a variable whose levels are each defined by
+filters**. Value recoding is the case where each level is a set of values
+of one variable; regions, time windows or "high-mortality sites" fit the
+same model.
+
+**The old map's plot endpoints** (`standalone-map-*` apps, the
+`Floating*Plugin`s in `data/plugin/standalonemap/`):
+
+- They exist for three reasons:
+  1. Megastudy zero-filling and weighting. Variables flagged
+     `hasStudyDependentVocabulary` name a count variable in
+     `variableSpecToImputeZeroesFor` (e.g. species → "unbiased specimen
+     count"). The plugins weight by that count and fill in zero counts for
+     values a study looked for but didn't find, using the per-study
+     vocabulary from `getVocabByRootEntity`. The count variable is hidden
+     everywhere on purpose. In R, veupathUtils `getDTWithImputedZeroes`
+     finds the count through each variable's `weightingVariableSpec` (from
+     `variableSpecToImputeZeroesFor`) and **does not read `imputeZero`**.
+  2. Plot colours match the markers: they take the marker's `overlayConfig`
+     (chosen values plus "All other values", or the marker's bins).
+  3. `Collection*` variants for grouped variables.
+- The `pass` plugins have neither the zero-filling nor the weighting. A
+  `pass` barplot of species counts _Sample rows_, not mosquitoes. **Map plots
+  must keep the weighted, zero-filled behaviour wherever a study declares
+  it.** That isn't needed for the killer app.
+- They are registered for VectorBase only, but that isn't enforced. The
+  server never checks a plugin's projects, and the client filters apps by
+  project only in the workspace's `ComputationRoute`. The new map already
+  calls `standalone-map` marker endpoints on dataexplorer.
+- Old map plots are visualisations under `standalone-map-*` computations
+  (tagged with the marker type as `applicationContext`). The regular
+  workspace, which uses `pass`, has no plugin to render them.
+
+**Known back-end bug (reported to the team).** For **uploaded (VDI)
+studies**, a Floating plugin whose output entity has study-dependent
+vocabulary variables runs the app-db connection pool dry and returns 500.
+The request holds about 4 connections for its data streams
+(`AbstractPlugin.java:193`). Then, inside `writeResults`, it looks up each
+variable's per-study vocabulary in a `parallelStream()`
+(`AbstractPlugin.java:398`). Each lookup calls `StudyResolver.getStudyById`,
+which isn't cached for user-submitted studies, so it needs another
+connection. The 1 s wait to borrow one times out. Reproduced on QA with the
+Maryland mosquito surveillance upload (`EDAUD_x888VQkZts0d1`,
+`STUDY_32d63fbfa5`): a timeline of Collections returns 200, and a timeline
+of Samples returns 500, with or without an overlay. Curated studies come
+from the metadata cache and are unaffected.
+
+**`imputeZero` is unrelated and can be ignored in phase 2.** It's a
+different per-variable flag meaning "a missing value means zero" (e.g.
+taxon abundance in microbiome data). Where it's used:
+
+- plot.data (`class-plotdata.R`) replaces NA with 0 in any plotted column
+  whose variable has it set;
+- veupathUtils collections (e.g. abundance) replace NA with 0 when getting
+  collection data;
+- the microbiome and differential-expression compute plugins set it to
+  `TRUE` themselves for count data;
+- the `ContinuousNumericToOrdinal` derived variable treats a missing input
+  as 0 if the input variable has it set.
+
+It plays no part in megastudy zero-filling, so `imputeZero: false` on every
+variable of the Maryland export is correct. For percent mortality it must
+stay `false`: a missing assay is not 0 % mortality.
+
+### Open questions for the next session
+
+- **Regions → variable:** options 1–3 above; value recoding vs "levels
+  defined by filters".
+- **Overlap policy** (leaning towards forbidding), and how the UI prevents
+  overlaps while drawing.
+- **Several selections in the map:** naming, colours (shown on the markers,
+  matching the plot), how many, how they relate to the single selection and
+  "Filter to selection", and what happens to them on zoom or when filters
+  change.
+- **"Create variables" tab:** list/create/edit/delete; how derived variables
+  appear in the variable pickers (merging their metadata into the study);
+  editing or deleting a variable that plots use; sharing and copying
+  analyses that reference user-owned derived variables.
+- **Plots in the map:** where they live (Selection panel tab, a wider
+  panel, a sheet), how many and how big; what they are filtered by
+  (selection, else viewport, plus the time window) and how that is made
+  obvious; which existing plots show (old `standalone-map-*` ones, `pass`
+  ones from the workspace) and how they're labelled; which endpoint
+  (Floating or `pass`) a plot uses for a given study; the "colour by the
+  marker variable" option.
+- **Derived variables as marker variables:** probably possible, since
+  markers come from data plugins.
+- **Subsetting on derived variables:** likely back-end work; in or out of
+  scope?
+- How this fits a more "dashboardy" map later (§2).
+
+### Code to reuse
+
+- `git show 562a5a1:packages/libs/eda/src/lib/map/analysis/hooks/standaloneVizPlugins.ts`
   and `.../MapVizManagement.tsx`. Visualisation container, StartPage and
   `FloatingLayout` are unchanged in core.
-- `MapTypeMapLayerProps.selection` / `selectionFilterFuncs` are already the
-  integration points the Plots tab would use.
+- `MapTypeMapLayerProps.selection` / `selectionFilterFuncs` are the
+  integration points for selection- and viewport-filtered plots.
+- `utils/geohashSelection.ts` (prefix-set operations) and
+  `selection/filterToSelection.ts` (selection → filter).
 
 ## 9. Changes outside the map
 
