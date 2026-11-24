@@ -376,6 +376,47 @@ key made from the derived variable's id and the group's position.
    configuration disappears from the metadata (delete).
 5. That no saved analysis has a non-empty `derivedVariables` (§5.1 B).
 
+### Spike results (2026-11-24, local stack)
+
+Run against the Maryland upload (`STUDY_2d1a36a0e2`, "Maryland mossies"; the
+id first given, `STUDY_32d63fbfa5`, returns 403 and isn't in the study
+list). It has no percent-mortality variable, so the plot used mean
+`unbiased specimen count` (Sample) by year of collection date (Collection),
+overlay on the Collection site entity (2980 sites, 9602 collections, 66082
+samples). Groups: East = GEOHASH 4 prefixes `dqcq dqcr dqct dqcu dqcw dqcx
+dr0b`; West = `dqch dqck dqcj dqcn dqcq`; overlap = `dqcq`; `unmappedValue`
+"Other".
+
+- **Metadata (item 3): pass.** 200, exactly one entry: `string`,
+  `categorical`, `derivationType: transform`, vocabulary
+  `["East","West","Other"]` (`["East","West"]` with no `unmappedValue`). No
+  `_group` helpers.
+- **Line plot, `stringPrefixSet` groups (item 1): 200 but wrong values.**
+  One series, "East", N = 66082 (every sample). A bar plot of the variable
+  on the site entity gives `East: 2980`, i.e. every record. Expected per the
+  subsetting `/count`: 20949 East, 28440 West, 20756 in the overlap (so
+  7684 West-only), the rest Other.
+- **Other-entity filters (item 2): same failure.** Ancestor filters (the
+  same geohash filters, variable on Collection): all 9602 collections are
+  "East" (expected 2502 / 3688). Descendant filters (Collection `device`
+  stringSet, variable on the site entity): all 2980 sites are "East"
+  (expected 452 / 462).
+- **Cause: not the new plugin.** A plain `subsetMembership` derived
+  variable (stringPrefixSet or stringSet, same entity) also returns `1` for
+  every record. `MergedTabularRequestResources.getSubsettingTabularStream`
+  hands `spec.filtersOverride` to `EdaSubsettingClient.getTabularDataIterator`,
+  which filters only by its `variableFilters` argument (the global
+  subset), so the override is ignored and each membership stream is
+  the whole entity. First-group-wins then labels everything with the
+  first group. Needs a fix in service-eda before overlap behaviour can
+  be checked; the diagnosis is from reading the code, not yet confirmed by
+  a patched build.
+- **No `unmappedValue` / `showMissingness` (step 5): not run**, since no
+  record is ever unmatched until the above is fixed. The metadata
+  vocabulary correctly omits a blank level.
+- Timing: the 66082-sample line plot took about 3 minutes; the 2980-site
+  bar plots 40 s.
+
 ## 8. Left to the builder
 
 - Component structure, file layout, state management, tests (including
