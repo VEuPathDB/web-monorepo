@@ -55,8 +55,11 @@ field, which nothing uses yet.
 - Visualisations built on a computation (differential abundance or
   expression, beta diversity, correlation, etc.). Their data requests
   must carry exactly the derived variables of the computation's request
-  (`AbstractPlugin.java:142`, `:181`), so using a derived variable there
-  would re-run the computation.
+  (`AbstractPlugin.java:505–511`; the job id hashes the whole request,
+  `JobIDs.kt:37–57`), so using a derived variable there would re-run the
+  computation. This is solvable later: before hashing, `JobIDs.of` could
+  drop the derived variables that the computation's config doesn't use
+  (found by walking the config for `{ entityId, variableId }` references).
 - Other kinds of derived variable (formulas, unit conversion, reductions
   over child entities).
 - The full-screen map (phase 2 of the map redesign).
