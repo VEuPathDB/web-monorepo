@@ -120,8 +120,8 @@ Browse and Subset │ Create variables │ Visualize │ …
   yet. The user can still switch to any other variable.
 - **Earlier groups are shown while a later one is edited,** so overlaps
   can be avoided rather than only reported:
-  - **Geo lasso:** earlier groups' shapes are drawn faintly in their
-    group colours.
+  - **Geo lasso:** earlier groups' shapes (as drawn, or geohash-represented; builder's choice; probably the latter because selections can be rectangle and marker-based too)
+    are drawn faintly in their group colours.
   - **Categorical values:** values used by an earlier group are marked
     (e.g. "in East"). They can still be picked, and the overlap warning
     then applies.
