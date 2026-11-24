@@ -7,17 +7,12 @@ import {
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
-import {
-  DatasetZipType,
-  DatasetGetResponseBody,
-  DatasetFileDetails,
-  useVdiService,
-} from '../Service';
-import { DatasetFileType } from '../Utils/types';
-
 import './UserDatasetFiles.scss';
-import { formatFileSize } from '../Utils';
 import { isEmpty } from 'lodash';
+import { useUserDatasetRouterContext } from '../Controllers/UserDatasetRouterContext';
+import { DatasetFileDetails, DatasetGetResponseBody, DatasetZipType } from '../Service/Model';
+import { DatasetFileType } from '../Service/Model/request-types';
+import { formatFileSize } from '../Utils/formatting';
 
 interface ZipFileRow extends DatasetFileDetails {
   download?: React.ReactNode;
@@ -33,15 +28,14 @@ export interface UserDatasetFilesProps {
 export function UserDatasetFiles(props: UserDatasetFilesProps) {
   const { datasetId, showHeader = true } = props;
 
+  const { vdiService: vdi } = useUserDatasetRouterContext();
+
   const [datasetFiles, setDatasetFiles] = useState(props.dataset?.files);
   const [error, setError] = useState<string>();
 
-  const vdi = useVdiService();
-
   useEffect(() => {
-    if (vdi != null && datasetFiles == null)
-      vdi
-        .getDatasetFileList(datasetId)
+    if (datasetFiles == null)
+      vdi.getDatasetFileList(datasetId)
         .then(setDatasetFiles)
         .catch((_) =>
           setError('Failed to load dataset files. Please try again later.')

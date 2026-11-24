@@ -22,7 +22,7 @@ import {
   SEARCHES_RECEIVED,
 } from '../Actions/UserDatasetsActions';
 
-import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service';
+import { DatasetGetResponseBody, VdiServiceMetadata } from '../Service/Model';
 import { CommunityPromotionError } from '../Components/Sharing/CommunityPromotionError';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 

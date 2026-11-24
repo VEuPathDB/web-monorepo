@@ -3,7 +3,7 @@ import {
   isPlaceholder,
   TextUploadContent,
   UploadContent,
-} from './upload-content';
+} from '../../vdi/requests/upload-content';
 import { DatasetFormState } from '../../StoreModules';
 import { ifDefined, Possible, ifNotEmpty, takeIf } from '../../Utils';
 import { SAMPLE_INFO_FIELD_NAME } from '../utils/rnaseq-rc-data-files';

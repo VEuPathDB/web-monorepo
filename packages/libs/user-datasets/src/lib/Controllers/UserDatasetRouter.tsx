@@ -16,7 +16,7 @@ import {
   UserDatasetRouterProvider,
 } from './UserDatasetRouterContext';
 
-import * as Mgmt from '../management/ManagementViewRoute';
+import * as Mgmt from '../workspace/management/ManagementViewRoute';
 
 interface Props {
   detailsPageTitle: string;

@@ -1,18 +1,16 @@
 import React from 'react';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { Tooltip } from '@veupathdb/coreui';
-
-import { DataNoun } from '../Utils';
+import { projectId } from '../config';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import {
   DatasetGetResponseBody,
   DatasetListEntry,
-  DatasetStatusInfo,
-  DatasetUploadStatusInfo,
+  DatasetStatusInfo, DatasetUploadStatusInfo,
   VdiReconcilerConfig,
-  VdiServiceConfig,
-} from '../Service';
-import { projectId } from '../config';
-import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+  VdiServiceConfig
+} from '../Service/Model';
+import { DataNoun } from '../Common/Configuration';
 
 export interface Props {
   baseUrl: string;

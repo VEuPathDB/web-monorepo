@@ -5,7 +5,7 @@ import {
   JsonPathBuilder,
   newTextLengthTest
 } from '../../../../../../Utils';
-import { PartialDatasetContact } from '../../../../../../Service';
+import { PartialDatasetContact } from '../../../../../../Service/Model';
 import { LabelInputPair, TextInputProps } from '../../../LabelInputPair';
 
 export interface ContactBlockProps {

@@ -1,16 +1,13 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ifDefined } from '../../../../../Utils';
-import {
-  DatasetListEntry,
-  useVdiService,
-  DatasetId,
-} from '../../../../../Service';
+import { useVdiService } from '../../../../../Service';
 import { DatasetSelectionModal } from './DatasetSelectionModal';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
 import { projectId } from '../../../../../config';
 import { MetadataImportModalProps } from './MetadataImportModalProps';
 import { Loading } from '@veupathdb/coreui';
+import { DatasetId, DatasetListEntry } from '../../../../../Service/Model';
 
 export interface DatasetSelectionListEntry extends DatasetListEntry {
   readonly isCommunity: boolean;

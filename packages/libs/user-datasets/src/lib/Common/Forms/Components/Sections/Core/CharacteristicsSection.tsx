@@ -16,7 +16,7 @@ import {
   PartialDatasetDetails,
   PartialCharacteristics,
   SampleYearRange,
-} from '../../../../../Service';
+} from '../../../../../Service/Model';
 import {
   FieldHelpText,
   GrowableStringList,

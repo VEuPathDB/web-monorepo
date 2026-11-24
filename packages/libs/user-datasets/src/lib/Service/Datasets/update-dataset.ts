@@ -1,17 +1,12 @@
 import {
-  DatasetFileDetails,
-  DatasetId,
-  DatasetUploads,
-  PartialDatasetDetails,
-  ValidationErrors,
   VdiService,
 } from '../index';
 import {
-  DatasetCharacteristicsPatch,
+  DatasetCharacteristicsPatch, DatasetFileDetails, DatasetId,
   DatasetPatchRequest,
-  DatasetPatchResponse,
+  DatasetPatchResponse, DatasetUploads,
   ExternalIdentifiersPatch,
-  OptionalValuePatch, UploadContent
+  OptionalValuePatch, PartialDatasetDetails, UploadContent, ValidationErrors
 } from '../Model';
 import { isEmpty, isEqual } from 'lodash';
 import { Dispatch } from 'redux';

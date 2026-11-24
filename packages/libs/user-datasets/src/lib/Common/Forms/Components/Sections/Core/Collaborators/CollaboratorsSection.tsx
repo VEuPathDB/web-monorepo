@@ -5,7 +5,7 @@ import { JsonPathBuilder, isNonEmpty } from '../../../../../../Utils';
 import {
   PartialDatasetContact,
   PartialDatasetDetails,
-} from '../../../../../../Service';
+} from '../../../../../../Service/Model';
 import { ContactBlock } from './ContactBlock';
 import { useMetadataSelector } from '../../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';

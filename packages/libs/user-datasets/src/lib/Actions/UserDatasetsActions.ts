@@ -16,10 +16,10 @@ import {
 
 import { Action as CreatedAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 
-import { validateVdiCompatibleThunk, VdiServiceMetadata } from '../Service';
+import { validateVdiCompatibleThunk } from '../Service';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import { DatasetGetResponseBody, DatasetListEntry } from '../Service';
+import { DatasetGetResponseBody, DatasetListEntry, VdiServiceMetadata } from '../Service/Model';
 import { FetchClientError } from '@veupathdb/http-utils';
 import {
   InferAction,
@@ -33,7 +33,7 @@ import {
   CommunityPromotionValidationError,
 } from '../Components/Sharing/CommunityPromotionError';
 import { Consumer } from '../Utils';
-import { VdiCompatibleEpicDependencies } from '../Service/utils/compatibility';
+import { VdiCompatibleEpicDependencies } from '../vdi/utils/wdk-wrapping';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { getUserDatasetSearches } from '../Service/Datasets/getUserDatasetSearches';
 

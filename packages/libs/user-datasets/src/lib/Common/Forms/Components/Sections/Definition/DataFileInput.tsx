@@ -1,6 +1,6 @@
 import React from 'react';
 import { DatasetTypeConfig, FileInputConfig } from '../../../../Configuration';
-import { VdiServiceFeatures } from '../../../../../Service';
+import { VdiServiceFeatures } from '../../../../../Service/Model';
 import {
   Consumer,
   Nullable,

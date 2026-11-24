@@ -17,7 +17,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { projectId } from './lib/config';
 
-import UserDatasetHelp from './lib/Components/UserDatasetHelp';
+import UserDatasetHelp from './lib/workspace/help/UserDatasetHelp';
 import { UserDatasetRouter } from './lib/Controllers/UserDatasetRouter';
 import { useVdiService, wrapWdkService } from './lib/Service';
 import { wrapStoreModules } from './lib/StoreModules';

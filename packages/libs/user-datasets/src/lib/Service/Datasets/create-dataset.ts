@@ -3,7 +3,7 @@ import {
   DatasetPostResponseBody,
   DatasetUploads, UploadContent
 } from '../Model';
-import { DatasetUpload, VdiService } from '../VdiService';
+import { DatasetUpload, VdiService } from '../../vdi/VdiService';
 import { BadUpload } from '../../StoreModules';
 import { Consumer, Func, isNonBlank } from '../../Utils';
 import { sanitizeFileName } from '../utils/sanitization';

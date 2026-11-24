@@ -1,7 +1,5 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import {
-  DatasetGetResponseBody,
-  VdiServiceMetadata,
   useVdiService,
   newUpdateUploads,
   newUploadPlaceholder,
@@ -35,7 +33,7 @@ import {
   detailUpdateSuccess,
   detailUpdating,
 } from '../../Actions/UserDatasetsActions';
-import { useRouteMatch } from 'react-router-dom';
+import { DatasetGetResponseBody, VdiServiceMetadata } from '../../Service/Model';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
@@ -49,7 +47,6 @@ export function UpdateFormController(
 ): ReactElement {
   const vdi = useVdiService();
   const [dataset, setDataset] = useState<DatasetGetResponseBody>();
-  const { url: baseUrl } = useRouteMatch();
 
   const dispatch = useDispatch();
   const formState = useDatasetFormState();

@@ -1,6 +1,6 @@
 import React, { ReactElement, ReactNode } from 'react';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { ValidationErrors } from '../../../Service';
+import { ValidationErrors } from '../../../Service/Model';
 import { BadUpload } from '../../../StoreModules';
 import { Possible } from '../../../Utils';
 

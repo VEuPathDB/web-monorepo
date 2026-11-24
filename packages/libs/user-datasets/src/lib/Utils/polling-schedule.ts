@@ -1,4 +1,4 @@
-import { DatasetStatusInfo } from '../Service';
+import { DatasetStatusInfo } from '../Service/Model';
 import type {
   DatasetUploadStatusCode,
   DatasetImportStatus,

@@ -14,23 +14,20 @@ import {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateDatasetCommunityVisibility,
-  updateDatasetCommunityVisibilitySuccess,
-  updateDatasetCommunityVisibilityError,
 } from '../Actions/UserDatasetsActions';
 import { requestUploadMessages } from '../Actions/UserDatasetUploadActions';
 
-import UserDatasetList, {
+import DatasetList, {
   DatasetListProps,
-} from '../Components/List/UserDatasetList';
+} from '../workspace/list/DatasetList';
 import NoDatasetsMessage from '../Components/NoDatasetsMessage';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { DataNoun } from '../Utils';
 
 import '../Components/UserDatasets.scss';
-import { VdiServiceConfig } from '../Service';
+import { VdiServiceConfig } from '../Service/Model';
+import { DataNoun } from '../Common/Configuration';
 
 const ActionCreators = {
   showLoginForm,
@@ -44,9 +41,6 @@ const ActionCreators = {
   updateSharingModalState,
   sharingError,
   sharingSuccess,
-  updateDatasetCommunityVisibility,
-  updateDatasetCommunityVisibilitySuccess,
-  updateDatasetCommunityVisibilityError,
 };
 
 type StateProps = Pick<
@@ -155,9 +149,6 @@ class UserDatasetListController extends PageController<Props> {
         sharingModalOpen,
         shareError,
         shareSuccessful,
-        updateDatasetCommunityVisibilityError,
-        updateDatasetCommunityVisibilityPending,
-        updateDatasetCommunityVisibilitySuccess,
       },
     } = this.props.stateProps;
 
@@ -175,9 +166,6 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateDatasetCommunityVisibility,
-      updateDatasetCommunityVisibilitySuccess: resetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilityError: resetCommunityVisibilityError,
     } = this.props.dispatchProps;
 
     const listProps: DatasetListProps = {
@@ -204,13 +192,6 @@ class UserDatasetListController extends PageController<Props> {
       updateSharingModalState,
       sharingSuccess,
       sharingError,
-      updateDatasetCommunityVisibility,
-      updateDatasetCommunityVisibilityError,
-      updateDatasetCommunityVisibilityPending,
-      updateDatasetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilitySuccessReset:
-        resetCommunityVisibilitySuccess,
-      updateDatasetCommunityVisibilityErrorReset: resetCommunityVisibilityError,
     };
 
     const noDatasetsForThisProject =
@@ -226,7 +207,7 @@ class UserDatasetListController extends PageController<Props> {
               helpRoute={helpRoute}
             />
           ) : (
-            <UserDatasetList {...listProps} />
+            <DatasetList {...listProps} />
           )}
         </div>
       </div>

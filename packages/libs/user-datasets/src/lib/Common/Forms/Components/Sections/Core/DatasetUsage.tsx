@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 
-import { PartialDatasetDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service/Model';
 import {
   JsonPathBuilder,
   isNonBlank,

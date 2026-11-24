@@ -1,0 +1,16 @@
+import React from 'react';
+
+import { Attribute } from './Attribute';
+import { datasetUserFullName } from '../../../../../Utils/formatting';
+import { DatasetUser } from '../../../../../Service/Model';
+
+export type DatasetUploaderProps = {
+  readonly user: DatasetUser;
+  readonly isOwner: boolean;
+};
+
+export const DatasetUploader = ({ user, isOwner }: DatasetUploaderProps) => (
+  <Attribute label="Uploaded by">
+    {isOwner ? 'Me' : datasetUserFullName(user)}
+  </Attribute>
+);

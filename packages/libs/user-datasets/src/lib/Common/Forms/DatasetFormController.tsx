@@ -5,14 +5,8 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { DatasetFormConfig } from '../Configuration';
-import {
-  DatasetId,
-  DatasetMetadata,
-  PartialDatasetDetails,
-  useVdiService,
-  VdiServiceMetadata,
-} from '../../Service';
+import { DataNoun, DatasetFormConfig } from '../Configuration';
+import { useVdiService } from '../../Service';
 import { useDispatch } from 'react-redux';
 import {
   clearBadUpload,
@@ -21,15 +15,15 @@ import {
 } from '../../Actions/UserDatasetUploadActions';
 import { DatasetFormProps } from './DatasetFormProps';
 import { SubmissionModal } from './Components';
-import { DataNoun, ifDefined, Nullable } from '../../Utils';
+import { ifDefined, Nullable } from '../../Utils';
 import { MetadataImportModalController } from './Components/Modals/MetaImportModal';
 import { useDatasetMetadata } from './Hooks/dataset-metadata-hooks';
 import { useBadUploadMessages, useUploadProgress } from './Hooks/async-action-hooks';
+import { DatasetId, DatasetMetadata, PartialDatasetDetails, VdiServiceMetadata } from '../../Service/Model';
 
 export interface DatasetFormControllerProps<
   P extends DatasetFormProps = DatasetFormProps
 > {
-  readonly baseUrl: string;
   readonly form: JSXElementConstructor<P>;
   readonly formConfig: DatasetFormConfig;
   readonly vdiConfig: VdiServiceMetadata;
@@ -98,7 +92,6 @@ export function DatasetFormController<
   // endregion Dataset Selection Modal
 
   const formProps = props.propFactory({
-    baseUrl: props.baseUrl,
     formConfig: props.formConfig,
     vdiConfig: props.vdiConfig,
     isSubmitting: submitting,
@@ -117,7 +110,6 @@ export function DatasetFormController<
       <Form {...formProps} />
 
       <MetadataImportModalController
-        baseUrl={props.baseUrl}
         vdiConfig={props.vdiConfig.configuration}
         dataNoun={props.dataNoun}
         isVisible={isDatasetSelectionVisible}

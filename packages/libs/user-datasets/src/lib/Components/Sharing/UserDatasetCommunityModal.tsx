@@ -3,7 +3,7 @@ import { FilledButton, Modal } from '@veupathdb/coreui';
 
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
-import { DatasetGetResponseBody } from '../../Service';
+import { DatasetGetResponseBody } from '../../Service/Model';
 import { updateDatasetCommunityVisibility } from '../../Actions/UserDatasetsActions';
 import React, { ReactElement } from 'react';
 import { UpdateErrors } from './UpdateErrors';

@@ -22,8 +22,11 @@ import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { useDatasetMetadata } from '../../Common/Forms/Hooks/dataset-metadata-hooks';
+import { useUserDatasetRouterContext } from '../../Controllers/UserDatasetRouterContext';
 
-function InfoBanner({ baseUrl }: { baseUrl: string }): React.ReactElement {
+function InfoBanner(): React.ReactElement {
+  const { baseUrl } = useUserDatasetRouterContext();
+
   const bannerConfig: BannerProps = React.useMemo(
     () => ({
       type: 'info',
@@ -127,7 +130,7 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
           </p>
         ) : null}
 
-        <InfoBanner baseUrl={props.baseUrl} />
+        <InfoBanner />
       </header>
 
       <form>

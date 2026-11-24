@@ -8,13 +8,14 @@ import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectC
 
 import { DatasetSelectionListEntry as Dataset } from './DatasetSelectionModalController';
 
-import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service';
 import { projectId } from '../../../../../config';
 import * as util from '../../../../../Utils';
 import {
   ifDefined,
   Possible,
 } from '../../../../../Utils';
+import { DatasetId, DatasetListShareUser, VdiServiceConfig } from '../../../../../Service/Model';
+import { datasetUserFullName } from '../../../../../Utils/formatting';
 
 // FIXME: help text values are to be shared with all tables having these columns
 const DatasetColumns = {
@@ -66,9 +67,7 @@ const DatasetColumns = {
 
 export interface MetadataImportTableProps {
   readonly siteDisplayName: string;
-  readonly baseUrl: string;
   readonly vdiConfig: VdiServiceConfig;
-  readonly dataNoun: util.DataNoun;
   readonly userId: number;
   readonly datasets: Dataset[];
   readonly publicDatasetsEnabled: boolean;
@@ -227,7 +226,7 @@ function renderUploader(
   return row.owner.userId === userId ? (
     <span className="faded">Me</span>
   ) : (
-    <span>{util.datasetUserFullName(row.owner)}</span>
+    <span>{datasetUserFullName(row.owner)}</span>
   );
 }
 
@@ -240,7 +239,7 @@ function renderShares(
   }
 
   return util.isNonEmpty(row.shares) ? (
-    row.shares.map(util.datasetUserFullName).join(', ')
+    row.shares.map(datasetUserFullName).join(', ')
   ) : (
     <span className="faded">N/A</span>
   );

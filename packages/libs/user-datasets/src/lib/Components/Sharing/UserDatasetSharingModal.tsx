@@ -13,11 +13,10 @@ import {
   DatasetListEntry,
   DatasetListShareUser,
   DatasetUser,
-  isVdiCompatibleWdkService,
-} from '../../Service';
+} from '../../Service/Model';
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
-import { datasetUserFullName, Consumer, DataNoun, Runnable } from '../../Utils';
+import { Consumer, Runnable } from '../../Utils';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   shareUserDatasets,
@@ -26,6 +25,9 @@ import {
   updateUserDatasetDetail,
 } from '../../Actions/UserDatasetsActions';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
+import { DataNoun } from '../../Common/Configuration';
+import { isVdiCompatibleWdkService } from '../../Service';
+import { datasetUserFullName } from '../../Utils/formatting';
 
 //
 

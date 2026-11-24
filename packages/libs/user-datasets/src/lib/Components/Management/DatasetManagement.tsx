@@ -38,7 +38,7 @@ import {
   DatasetGetResponseBody, DatasetShareOffer,
   DatasetStatusInfo,
   VdiServiceMetadata
-} from '../../Service';
+} from '../../Service/Model';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ServiceConfig } from '@veupathdb/wdk-client/lib/Service/ServiceBase';
 

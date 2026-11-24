@@ -1,6 +1,5 @@
 import React from 'react';
 import * as util from '../../../../../Utils';
-import * as vdi from '../../../../../Service';
 import * as actions from '../../../../../Actions/DatasetMetadataFormActions'
 
 import { isEmpty } from 'lodash';
@@ -8,13 +7,14 @@ import { AddRowButton, InputBlock, LabelInputPair, YesNoToggle } from '../../';
 import { TextInputProps } from '../../LabelInputPair';
 import { useMetadataSelector } from '../../../Hooks/dataset-metadata-hooks';
 import { useDispatch } from 'react-redux';
+import { PartialDatasetDetails, PartialDatasetSource } from '../../../../../Service/Model';
 
 export interface DatasetSourcesProps {
   readonly jsonPath: util.JsonPathBuilder;
 }
 
 export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
-  const jsonPath = props.jsonPath.append<vdi.PartialDatasetDetails>('datasetSources');
+  const jsonPath = props.jsonPath.append<PartialDatasetDetails>('datasetSources');
 
   const dispatch = useDispatch();
 
@@ -29,12 +29,12 @@ export function DatasetSources(props: DatasetSourcesProps): React.ReactElement {
   })) ?? {};
 
   const setSources = React.useCallback(
-    (sources: ReadonlyArray<vdi.PartialDatasetSource>) =>
+    (sources: ReadonlyArray<PartialDatasetSource>) =>
       dispatch(actions.overwriteMetaField('datasetSources' ,sources)),
     [dispatch]
   );
   const setSource = React.useCallback(
-    (source: vdi.PartialDatasetSource, index: number) =>
+    (source: PartialDatasetSource, index: number) =>
       setSources(util.replaceElement(sources, index, source)),
     [sources, setSources],
   )
@@ -114,8 +114,8 @@ interface DataSourceProps {
 
   readonly enabled: boolean;
 
-  readonly source: vdi.PartialDatasetSource;
-  readonly setSource: util.BiConsumer<vdi.PartialDatasetSource, number>;
+  readonly source: PartialDatasetSource;
+  readonly setSource: util.BiConsumer<PartialDatasetSource, number>;
 }
 
 function testUrl({ value, required, disabled }: TextInputProps): boolean {
@@ -142,7 +142,7 @@ function DataSource({
       <LabelInputPair
         label="Source URL"
         type="url"
-        fieldName={jsonPath.appendToString<vdi.PartialDatasetSource>('url')}
+        fieldName={jsonPath.appendToString<PartialDatasetSource>('url')}
         value={source.url}
         onChange={(v) => setSource({ ...source, url: v }, index)}
         disabled={!enabled}
@@ -158,7 +158,7 @@ function DataSource({
       <LabelInputPair
         type="text"
         label="Source Version"
-        fieldName={jsonPath.appendToString<vdi.PartialDatasetSource>('version')}
+        fieldName={jsonPath.appendToString<PartialDatasetSource>('version')}
         value={source.version}
         onChange={(v) => setSource({ ...source, version: v }, index)}
         disabled={!enabled}

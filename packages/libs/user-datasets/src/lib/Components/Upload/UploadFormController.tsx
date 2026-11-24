@@ -1,8 +1,8 @@
 import {
   DatasetPostResponseBody,
   VdiServiceMetadata,
-} from '../../Service';
-import { DatasetFormConfig } from '../../Common/Configuration';
+} from '../../Service/Model';
+import { DataNoun, DatasetFormConfig } from '../../Common/Configuration';
 import { UploadForm } from './UploadForm';
 import { DatasetFormController } from '../../Common/Forms/DatasetFormController';
 import { useDispatch } from 'react-redux';
@@ -14,7 +14,7 @@ import {
 } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { Dispatch } from 'redux';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
-import { Consumer, DataNoun } from '../../Utils';
+import { Consumer } from '../../Utils';
 import {
   clearBadUpload,
   receiveBadUpload,
@@ -23,7 +23,7 @@ import {
   updateFormState,
 } from '../../Actions/UserDatasetUploadActions';
 import { isEmpty } from 'lodash';
-import { assertIsVdiCompatibleWdkService } from '../../Service/utils/compatibility';
+import { assertIsVdiCompatibleWdkService } from '../../vdi/utils/wdk-wrapping';
 import { submitNewDataset } from '../../Service/Datasets';
 import { createValidationError } from '../../Service/Model/constructors';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -62,7 +62,7 @@ export function UploadFormController(props: UploadFormControllerProps) {
                 p.formConfig,
                 p.vdiConfig,
                 p.actions.setSubmitting,
-                p.baseUrl
+                props.baseUrl
               ),
           },
         };

@@ -1,11 +1,12 @@
 import React, { ReactElement, useState } from 'react';
 import { FileUploadConfig, UrlUploadConfig } from '../../../../Configuration/UploadFormConfig';
-import * as util from '../../../../../Utils';
 import { RadioList } from '@veupathdb/wdk-client/lib/Components';
 import { DatasetTypeConfig } from '../../../../Configuration';
 import { DataFileInputList } from './DataFileInput';
-import { VdiServiceMetadata } from '../../../../../Service';
+import { VdiServiceMetadata } from '../../../../../Service/Model';
 import { UploadContentMap } from '../../../../../Service/Model';
+import { formatFileSize } from '../../../../../Utils/formatting';
+import { Consumer, JsonPathBuilder, Possible } from '../../../../../Utils';
 
 // region Root Dataset Data Input Component
 
@@ -14,7 +15,7 @@ export interface RootDataInputProps {
   readonly dataType: DatasetTypeConfig;
   readonly fileUpload?: FileUploadProps;
   readonly urlUpload?: UrlUploadProps;
-  readonly pathBuilder: util.JsonPathBuilder;
+  readonly pathBuilder: JsonPathBuilder;
   readonly helpText?: () => ReactElement;
 }
 
@@ -104,7 +105,7 @@ function buildUploadInputs(
 // endregion Root Dataset Data Input Component
 
 interface UploadFieldProps {
-  readonly pathBuilder: util.JsonPathBuilder;
+  readonly pathBuilder: JsonPathBuilder;
 
   readonly dataType: DatasetTypeConfig;
 }
@@ -112,8 +113,8 @@ interface UploadFieldProps {
 // region File Input Sub-Component
 
 interface FileUploadState {
-  readonly files: util.Possible<UploadContentMap>;
-  readonly setFiles: util.Consumer<UploadContentMap>;
+  readonly files: Possible<UploadContentMap>;
+  readonly setFiles: Consumer<UploadContentMap>;
   readonly vdiConfig: VdiServiceMetadata;
 }
 
@@ -139,7 +140,7 @@ function FileInput(props: FileUploadProps): ReactElement {
         props.helpText !== undefined
           ? props.helpText
           : 'Uncompressed file cannot be greater than ' +
-          util.formatFileSize(props.dataType.vdiConfig.maxFileSize) + '.'
+          formatFileSize(props.dataType.vdiConfig.maxFileSize) + '.'
       }</i>
     </div>
   );
@@ -158,7 +159,7 @@ function FileInput(props: FileUploadProps): ReactElement {
 
 interface UrlUploadState {
   readonly url: string;
-  readonly setUrl: util.Consumer<string>;
+  readonly setUrl: Consumer<string>;
   readonly required: boolean;
 }
 

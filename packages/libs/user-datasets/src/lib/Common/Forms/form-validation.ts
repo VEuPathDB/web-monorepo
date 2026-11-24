@@ -1,4 +1,4 @@
-import { PartialDatasetDetails } from '../../Service';
+import { PartialDatasetDetails } from '../../Service/Model';
 import { isEmpty } from 'lodash';
 import { DatasetFormConfig } from '../Configuration';
 import { RefObject } from 'react';

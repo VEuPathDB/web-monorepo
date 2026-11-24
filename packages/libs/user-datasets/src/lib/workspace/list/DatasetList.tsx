@@ -1,0 +1,754 @@
+import React from 'react';
+
+import { add } from 'lodash';
+
+import {
+  Checkbox,
+  IconAlt as Icon,
+  Link,
+  RealTimeSearchBox as SearchBox,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
+import {
+  Mesa,
+  MesaState,
+  Utils as MesaUtils,
+} from '@veupathdb/coreui/lib/components/Mesa';
+import {
+  MesaColumn,
+  MesaSortObject,
+} from '@veupathdb/coreui/lib/components/Mesa/types';
+
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+
+import UserDatasetEmptyState from '../../Components/EmptyState';
+import SharingModal from '../../Components/Sharing/UserDatasetSharingModal';
+import UserDatasetStatus from '../../Components/UserDatasetStatus';
+import { normalizePercentage, textCell } from '../../Components/UserDatasetUtils';
+
+import '../../Components/UserDatasets.scss';
+import './DatasetList.scss';
+import { DateTime } from '../../Components/DateTime';
+
+import { ThemedGrantAccessButton } from '../../Components/ThemedGrantAccessButton';
+import { ThemedDeleteButton } from '../../Components/ThemedDeleteButton';
+import { Public } from '@material-ui/icons';
+import { Tooltip } from '@veupathdb/coreui';
+import {
+  removeUserDataset,
+  updateDatasetListItem,
+} from '../../Actions/UserDatasetsActions';
+import { datasetUserFullName, formatFileSize } from '../../Utils/formatting';
+import { projectIdToDisplayName } from '@veupathdb/wdk-client/lib/Utils/ProjectConstants';
+import { DataNoun } from '../../Common/Configuration';
+import { DatasetListEntry, DatasetListShareUser, DatasetType, VdiServiceConfig } from '../../vdi/responses';
+
+export interface DatasetListProps {
+  baseUrl: string;
+  readonly vdiConfig: VdiServiceConfig;
+  user: User;
+  location: any;
+  projectId: string;
+  projectName: string;
+  userDatasets: DatasetListEntry[];
+  filterByProject: boolean;
+  shareUserDatasets: (
+    userDatasetIds: string[],
+    recipientUserIds: number[],
+    context: 'datasetDetails' | 'datasetsList'
+  ) => any;
+  unshareUserDatasets: (
+    userDatasetId: string,
+    recipientUserId: number,
+    context: 'datasetDetails' | 'datasetsList'
+  ) => any;
+  sharingModalOpen: boolean;
+  sharingSuccess: (shareSuccessful: boolean | undefined) => any;
+  sharingError: (shareError: Error | undefined) => any;
+  updateSharingModalState: (isOpen: boolean) => any;
+  sharingDatasetPending: boolean;
+  shareSuccessful: boolean | undefined;
+  shareError: Error | undefined;
+  removeUserDataset: typeof removeUserDataset;
+  updateDatasetListItem: typeof updateDatasetListItem;
+  updateProjectFilter: (filterByProject: boolean) => any;
+  dataNoun: DataNoun;
+  enablePublicUserDatasets: boolean;
+}
+
+interface State {
+  selectedRows: Array<string>;
+  uiState: { sort: MesaSortObject };
+  searchTerm: string;
+  editingCache: any;
+
+  readonly isCommunityModalOpen: boolean;
+}
+
+export interface MesaDataCellProps {
+  row: DatasetListEntry;
+  column: MesaColumn<DatasetListEntry>;
+  rowIndex: number;
+  columnIndex: number;
+  inline?: boolean;
+}
+
+class DatasetList extends React.Component<DatasetListProps, State> {
+  constructor(props: DatasetListProps) {
+    super(props);
+    this.state = {
+      selectedRows: [],
+      uiState: {
+        sort: {
+          columnKey: 'created',
+          direction: 'desc',
+        },
+      },
+      editingCache: {},
+      searchTerm: '',
+      isCommunityModalOpen: false,
+    };
+
+    this.onRowSelect = this.onRowSelect.bind(this);
+    this.onRowDeselect = this.onRowDeselect.bind(this);
+    this.isRowSelected = this.isRowSelected.bind(this);
+    this.onMultipleRowSelect = this.onMultipleRowSelect.bind(this);
+    this.onMultipleRowDeselect = this.onMultipleRowDeselect.bind(this);
+
+    this.onSort = this.onSort.bind(this);
+    this.getColumns = this.getColumns.bind(this);
+    this.isMyDataset = this.isMyDataset.bind(this);
+    this.getEventHandlers = this.getEventHandlers.bind(this);
+    this.filterAndSortRows = this.filterAndSortRows.bind(this);
+    this.onSearchTermChange = this.onSearchTermChange.bind(this);
+    this.onMetaAttributeSaveFactory =
+      this.onMetaAttributeSaveFactory.bind(this);
+
+    this.renderOwnerCell = this.renderOwnerCell.bind(this);
+    this.renderStatusCell = this.renderStatusCell.bind(this);
+    this.renderSharedWithCell = this.renderSharedWithCell.bind(this);
+
+    this.openSharingModal = this.openSharingModal.bind(this);
+    this.closeSharingModal = this.closeSharingModal.bind(this);
+    this.toggleProjectScope = this.toggleProjectScope.bind(this);
+  }
+
+  isRowSelected(row: DatasetListEntry): boolean {
+    const id: string = row.datasetId;
+    const { selectedRows } = this.state;
+    return selectedRows.includes(id);
+  }
+
+  isMyDataset(dataset: DatasetListEntry): boolean {
+    const { user } = this.props;
+    return user.id === dataset.owner.userId;
+  }
+
+  onSearchTermChange(searchTerm: string) {
+    this.setState({ searchTerm });
+  }
+
+  onMetaAttributeSaveFactory<K extends keyof DatasetListEntry>(
+    dataset: DatasetListEntry,
+    attrKey: K
+  ) {
+    const { updateDatasetListItem } = this.props;
+    return (value: DatasetListEntry[K]) =>
+      updateDatasetListItem(
+        dataset,
+        { [attrKey]: value },
+        { [attrKey]: { value } }
+      );
+  }
+
+  sharedWithValue(dataset: DatasetListEntry): string {
+    if (!this.isMyDataset(dataset)) return 'Me';
+    return !dataset.shares || !dataset.shares.length
+      ? ''
+      : dataset.shares.map((share) => datasetUserFullName(share)).join(', ');
+  }
+
+  renderSharedWithCell(cellProps: MesaDataCellProps) {
+    return this.sharedWithValue(cellProps.row);
+  }
+
+  renderCommunityCell(cellProps: MesaDataCellProps) {
+    const dataset = cellProps.row;
+    const isPublic = dataset.visibility === 'public';
+    if (isPublic) {
+      return (
+        <Tooltip
+          title={`This ${this.props.dataNoun.singular} is visible to the community.`}
+        >
+          <Public className="Community-visible" />
+        </Tooltip>
+      );
+    }
+    return 'private';
+  }
+
+  renderStatusCell(cellProps: MesaDataCellProps) {
+    const { baseUrl, projectId, projectName, dataNoun, vdiConfig } = this.props;
+    return (
+      <UserDatasetStatus
+        baseUrl={baseUrl}
+        linkToDataset={true}
+        useTooltip={true}
+        userDataset={cellProps.row}
+        projectId={projectId}
+        displayName={projectName}
+        dataNoun={dataNoun}
+        vdiConfig={vdiConfig}
+      />
+    );
+  }
+
+  renderOwnerCell(cellProps: MesaDataCellProps) {
+    const row = cellProps.row;
+    const { owner } = row;
+    return this.isMyDataset(row) ? (
+      <span className="faded">Me</span>
+    ) : (
+      <span>{datasetUserFullName(owner)}</span>
+    );
+  }
+
+  getColumns(): any[] {
+    const { baseUrl, user, vdiConfig } = this.props;
+    function isOwner(ownerId: number): boolean {
+      return user.id === ownerId;
+    }
+    return [
+      {
+        key: 'name',
+        sortable: true,
+        name: 'Dataset name',
+        helpText:
+          'Click a dataset name to open the dataset record and editing interface.',
+        renderCell: (cellProps: MesaDataCellProps) => {
+          const dataset = cellProps.row;
+          const saveName = this.onMetaAttributeSaveFactory(dataset, 'name');
+          return (
+            <SaveableTextEditor
+              value={dataset.name}
+              multiLine={true}
+              rows={2}
+              onSave={saveName}
+              readOnly={!isOwner(dataset.owner.userId)}
+              displayValue={(value: string) => (
+                <React.Fragment>
+                  <Link to={`${baseUrl}/${dataset.datasetId}`}>{value}</Link>
+                  <br />
+                  <span className="faded">({dataset.datasetId})</span>
+                </React.Fragment>
+              )}
+            />
+          );
+        },
+      },
+      {
+        key: 'summary',
+        name: 'Summary',
+        style: { maxWidth: '300px' },
+        renderCell: (cellProps: MesaDataCellProps) => {
+          const dataset = cellProps.row;
+          const saveSummary = this.onMetaAttributeSaveFactory(
+            dataset,
+            'summary'
+          );
+          return (
+            <div style={{ display: 'block', maxWidth: '100%' }}>
+              <SaveableTextEditor
+                rows={Math.max(
+                  2,
+                  Math.floor((dataset.summary?.length ?? 0) / 22)
+                )}
+                multiLine={true}
+                onSave={saveSummary}
+                value={dataset.summary ?? ''}
+                readOnly={!isOwner(dataset.owner.userId)}
+              />
+            </div>
+          );
+        },
+      },
+      {
+        key: 'type',
+        name: 'Data type',
+        helpText:
+          'The data type classifies the dataset according to the biological characteristics and structure of the data it contains.',
+        sortable: true,
+        renderCell: textCell('type', (datasetType: DatasetType) => {
+          const { category, version } = datasetType;
+          return (
+            <span>
+              {category} <span className="faded">({version})</span>
+            </span>
+          );
+        }),
+      },
+      {
+        key: 'projects',
+        sortable: true,
+        name: 'VEuPathDB Resource(s)',
+        renderCell(cellProps: MesaDataCellProps) {
+          const newInstallTargets = cellProps.row.installTargets.map(
+            projectIdToDisplayName
+          );
+          return newInstallTargets.join(', ');
+        },
+      },
+      {
+        key: 'status',
+        className: 'StatusColumn',
+        name: 'Status',
+        helpText:
+          'Indicates the current status of dataset import and installation.',
+        style: { textAlign: 'center' },
+        renderCell: this.renderStatusCell,
+      },
+      {
+        key: 'owner',
+        name: 'Uploaded by',
+        sortable: true,
+        renderCell: this.renderOwnerCell,
+      },
+      {
+        key: 'sharedWith',
+        name: 'Shared with',
+        helpText:
+          'Names of collaborators the owner has explicitly invited to discover, explore, and download this dataset.',
+        sortable: true,
+        renderCell: this.renderSharedWithCell,
+      },
+      ...(this.props.enablePublicUserDatasets
+        ? [
+            {
+              key: 'visibility',
+              name: 'Visibility',
+              sortable: true,
+              helpText: `Indicates if the ${this.props.dataNoun.singular} is visible to the community.`,
+              style: { textAlign: 'center' },
+              renderCell: this.renderCommunityCell.bind(this),
+            },
+          ]
+        : []),
+      {
+        key: 'created',
+        name: 'Created',
+        helpText: 'Date the dataset was first uploaded to VEuPathDB.',
+        sortable: true,
+        renderCell: textCell('created', (created: string) => (
+          <DateTime datetime={created} />
+        )),
+      },
+      {
+        key: 'fileCount',
+        name: 'File count',
+        helpText: 'The number of data files uploaded as part of this dataset.',
+        renderCell: textCell('fileCount', (count: number) => count),
+      },
+      {
+        key: 'size',
+        name: 'Size',
+        helpText: `The dataset size. Users can store up to ${formatFileSize(
+          vdiConfig.api.userMaxStorageSize
+        )} of data in their “My Datasets” workspace.`,
+        sortable: true,
+        renderCell: textCell('fileSizeTotal', (size: number) =>
+          formatFileSize(size)
+        ),
+      },
+    ].filter((column) => column);
+  }
+
+  onRowSelect(row: DatasetListEntry): void {
+    const { selectedRows } = this.state;
+    if (selectedRows.includes(row.datasetId)) return;
+    const newSelection = [...selectedRows, row.datasetId];
+    this.setState({ selectedRows: newSelection });
+  }
+
+  onRowDeselect(row: DatasetListEntry): void {
+    const { selectedRows } = this.state;
+    if (!selectedRows.includes(row.datasetId)) return;
+    const newSelection = selectedRows.filter(
+      (selectedId) => selectedId !== row.datasetId
+    );
+    this.setState({ selectedRows: newSelection });
+  }
+
+  onMultipleRowSelect(rows: DatasetListEntry[]): void {
+    if (!rows.length) return;
+    const { selectedRows } = this.state;
+    const unselectedRows = rows
+      .filter(
+        (dataset: DatasetListEntry) => !selectedRows.includes(dataset.datasetId)
+      )
+      .map((dataset: DatasetListEntry) => dataset.datasetId);
+    if (!unselectedRows.length) return;
+    const newSelection = [...selectedRows, ...unselectedRows];
+    this.setState({ selectedRows: newSelection });
+  }
+
+  onMultipleRowDeselect(rows: DatasetListEntry[]): void {
+    if (!rows.length) return;
+    const { selectedRows } = this.state;
+    const deselectedIds = rows.map((row) => row.datasetId);
+    const newSelection = selectedRows.filter(
+      (id) => !deselectedIds.includes(id)
+    );
+    this.setState({ selectedRows: newSelection });
+  }
+
+  onSort(column: MesaColumn<DatasetListEntry>, direction: string): void {
+    const key = column.key;
+    const { state } = this;
+    const { setSortColumnKey, setSortDirection } = MesaState;
+    const updatedState = setSortDirection(
+      setSortColumnKey(state, key),
+      direction
+    );
+    this.setState(updatedState);
+  }
+
+  getEventHandlers() {
+    return {
+      onSort: this.onSort,
+      onRowSelect: this.onRowSelect,
+      onRowDeselect: this.onRowDeselect,
+      onMultipleRowSelect: this.onMultipleRowSelect,
+      onMultipleRowDeselect: this.onMultipleRowDeselect,
+    };
+  }
+
+  getTableActions() {
+    const { isMyDataset } = this;
+    const { removeUserDataset, dataNoun } = this.props;
+    return [
+      {
+        callback: (_: DatasetListEntry[]) => {},
+        element: (
+          <ThemedGrantAccessButton
+            buttonText={'Manage individual access'}
+            onPress={() => { this.openSharingModal(); }}
+            // FIXME: 2026-06-08 16:38 - Disabled for now due to complexity of
+            //   public dataset sharing requirements.
+            communityDatasetsEnabled={false}
+          />
+        ),
+        selectionRequired: true,
+      },
+      {
+        callback: (userDatasets: DatasetListEntry[]) => {
+          const [noun, pronoun] =
+            userDatasets.length === 1
+              ? [`this ${dataNoun.singular.toLowerCase()}`, 'it']
+              : [`these ${dataNoun.plural.toLowerCase()}`, 'them'];
+
+          const affectedUsers: DatasetListShareUser[] = userDatasets.reduce(
+            (
+              affectedUserList: DatasetListShareUser[],
+              userDataset: DatasetListEntry
+            ) => {
+              if (!isMyDataset(userDataset)) return affectedUserList;
+              if (!userDataset.shares || userDataset.shares.length)
+                return affectedUserList;
+              const newlyAffectedUsers = userDataset.shares.filter(
+                (sharedWithUser: DatasetListShareUser) => {
+                  return (
+                    affectedUserList.find(
+                      (affectedUser) =>
+                        affectedUser.userId === sharedWithUser.userId
+                    ) != null
+                  );
+                }
+              );
+              return [...affectedUserList, ...newlyAffectedUsers];
+            },
+            []
+          );
+
+          if (
+            !window.confirm(
+              `Are you sure you want to delete ${noun}? ` +
+                (affectedUsers.length
+                  ? `You have shared ${pronoun} with ${affectedUsers} users.`
+                  : '')
+            )
+          )
+            return;
+          userDatasets.forEach((userDataset) =>
+            removeUserDataset(userDataset.datasetId)
+          );
+        },
+        element: (
+          <ThemedDeleteButton buttonText="Delete" onPress={() => null} />
+        ),
+        selectionRequired: true,
+      },
+    ];
+  }
+
+  getTableOptions() {
+    const { isRowSelected, toggleProjectScope } = this;
+    const { userDatasets, projectName, filterByProject, dataNoun } = this.props;
+    const emptyMessage = !userDatasets.length ? (
+      <p style={{ textAlign: 'center' }}>
+        This page is empty because you do not have any{' '}
+        {dataNoun.plural.toLowerCase()}.
+      </p>
+    ) : filterByProject ? (
+      <React.Fragment>
+        <p>
+          You have no <b>{projectName}</b> datasets.
+        </p>
+        <br />
+        <button
+          className="btn btn-info"
+          onClick={() => toggleProjectScope(false)}
+        >
+          Show All User {dataNoun.plural}
+        </button>
+      </React.Fragment>
+    ) : (
+      <React.Fragment>
+        <p>Your search returned no results.</p>
+        <br />
+        <button
+          type="button"
+          className="btn"
+          onClick={() => this.setState({ searchTerm: '' })}
+        >
+          Clear Search Query
+        </button>
+      </React.Fragment>
+    );
+    return {
+      isRowSelected,
+      showToolbar: true,
+      renderEmptyState() {
+        return (
+          <React.Fragment>
+            <UserDatasetEmptyState message={emptyMessage} />
+          </React.Fragment>
+        );
+      },
+    };
+  }
+
+  filterAndSortRows(rows: DatasetListEntry[]): DatasetListEntry[] {
+    const { searchTerm, uiState } = this.state;
+    const { projectId, filterByProject } = this.props;
+    const sort: MesaSortObject = uiState.sort;
+
+    let result = rows;
+
+    // Apply project filter
+    if (filterByProject) {
+      result = result.filter((dataset) =>
+        dataset.installTargets.includes(projectId)
+      );
+    }
+
+    // Apply search filter
+    if (searchTerm && searchTerm.length) {
+      result = this.filterRowsBySearchTerm(result, searchTerm);
+    }
+
+    // Apply sort
+    if (sort.columnKey.length) {
+      result = this.sortRowsByColumnKey(result, sort);
+    }
+
+    return result;
+  }
+
+  filterRowsBySearchTerm(
+    rows: DatasetListEntry[],
+    searchTerm?: string
+  ): DatasetListEntry[] {
+    if (!searchTerm || !searchTerm.length) return rows;
+    return rows.filter((dataset) => {
+      const searchableRow: string = JSON.stringify(dataset).toLowerCase();
+      return searchableRow.indexOf(searchTerm.toLowerCase()) !== -1;
+    });
+  }
+
+// The cases exist because the column's raw data needs some specifics before comparison.
+// The default covers columns where data[columnKey] is already a plain, directly-comparable string.
+
+  getColumnSortValueMapper(columnKey: string | null) {
+    if (columnKey === null) return (data: any) => data;
+    switch (columnKey) {
+      case 'type':
+        return (data: DatasetListEntry, _: number): string =>
+          data.type.category.toLowerCase();
+      case 'projects':
+        return (data: DatasetListEntry, _: number): string =>
+          (projectIdToDisplayName(data.installTargets[0]) ?? data.installTargets[0]).toLowerCase();
+      case 'owner':
+        return (data: DatasetListEntry): string =>
+          datasetUserFullName(data.owner).toLowerCase();
+      case 'sharedWith':
+        return (data: DatasetListEntry): string => {
+          const value = this.sharedWithValue(data);
+          // Use highest Unicode character to sort empty values to the end
+          return value ? value.toLowerCase() : '\uFFFF';
+        };
+      case 'size':
+        return (data: DatasetListEntry): number => data.fileSizeTotal ?? 0;
+      default:
+        return (data: any, _: number) => {
+          const val =
+            typeof data[columnKey] !== 'undefined' ? data[columnKey] : null;
+          return typeof val === 'string' ? val.toLowerCase() : val;
+        };
+    }
+  }
+
+  sortRowsByColumnKey(
+    rows: DatasetListEntry[],
+    sort: MesaSortObject
+  ): DatasetListEntry[] {
+    const direction: string = sort.direction;
+    const columnKey: string = sort.columnKey;
+    const valueMapper = this.getColumnSortValueMapper(columnKey);
+    const sorted = [...rows].sort(MesaUtils.sortFactory(valueMapper));
+    return direction === 'asc' ? sorted.reverse() : sorted;
+  }
+
+  closeSharingModal() {
+    this.props.updateSharingModalState(false);
+  }
+
+  openSharingModal() {
+    this.props.sharingSuccess(undefined);
+    this.props.sharingError(undefined);
+    this.props.updateSharingModalState(true);
+  }
+
+  toggleProjectScope(newValue: boolean) {
+    this.props.updateProjectFilter(newValue);
+  }
+
+  render() {
+    const { isRowSelected, toggleProjectScope } = this;
+    const {
+      userDatasets,
+      user,
+      projectName,
+      projectId,
+      shareUserDatasets,
+      unshareUserDatasets,
+      filterByProject,
+      vdiConfig,
+      dataNoun,
+      sharingModalOpen,
+      sharingDatasetPending,
+      shareSuccessful,
+      shareError,
+      updateDatasetListItem,
+    } = this.props;
+    const { uiState, selectedRows, searchTerm } = this.state;
+
+    const rows = userDatasets;
+    const selectedDatasets = rows.filter(isRowSelected);
+    const columns = this.getColumns();
+    const actions = this.getTableActions();
+    const options = this.getTableOptions();
+    const eventHandlers = this.getEventHandlers();
+    const filteredRows = this.filterAndSortRows(rows);
+
+    const tableState = {
+      rows,
+      columns,
+      options,
+      actions,
+      filteredRows,
+      selectedRows,
+      eventHandlers,
+      uiState: {
+        ...uiState,
+        emptinessCulprit: userDatasets.length ? 'search' : null,
+      },
+    };
+
+    const totalSize = userDatasets
+      .filter((ud) => ud.owner.userId === user.id)
+      .map((ud) => ud.fileSizeTotal ?? 0)
+      .reduce(add, 0);
+
+    const quotaSize = vdiConfig.api.userMaxStorageSize;
+    const totalPercent = totalSize / quotaSize;
+
+    const offerProjectToggle = userDatasets.some(({ installTargets }) =>
+      installTargets.some((project) => project !== projectId)
+    );
+
+    return (
+      <div className="UserDatasetList">
+        <Mesa state={MesaState.create(tableState)}>
+          <div className="stack">
+            {userDatasets.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {sharingModalOpen && selectedDatasets.length ? (
+                  <SharingModal
+                    user={user}
+                    datasets={selectedDatasets}
+                    deselectDataset={this.onRowDeselect}
+                    shareUserDatasets={shareUserDatasets}
+                    context="datasetsList"
+                    unshareUserDataset={unshareUserDatasets}
+                    onClose={this.closeSharingModal}
+                    dataNoun={dataNoun}
+                    sharingDatasetPending={sharingDatasetPending}
+                    shareSuccessful={shareSuccessful}
+                    shareError={shareError}
+                    updateDatasetListItem={updateDatasetListItem}
+                  />
+                ) : null}
+                <SearchBox
+                  placeholderText={'Search ' + dataNoun.plural}
+                  searchTerm={searchTerm}
+                  onSearchTermChange={this.onSearchTermChange}
+                />
+                <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
+                  Showing {filteredRows.length} of {rows.length}{' '}
+                  {rows.length === 1
+                    ? dataNoun.singular.toLowerCase()
+                    : dataNoun.plural.toLowerCase()}
+                </div>
+                {offerProjectToggle && (
+                  <div
+                    className="UserDatasetList-ProjectToggle"
+                    style={{ flex: '0 0 auto', padding: '0 10px' }}
+                  >
+                    <Checkbox
+                      value={filterByProject}
+                      onChange={toggleProjectScope}
+                    />{' '}
+                    <div
+                      onClick={() => toggleProjectScope(!filterByProject)}
+                      style={{ display: 'inline-block' }}
+                    >
+                      Only show {dataNoun.plural.toLowerCase()} related to{' '}
+                      <b>{projectName}</b>
+                    </div>
+                  </div>
+                )}
+                <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
+                  <Icon fa="info-circle" /> {formatFileSize(totalSize)} (
+                  {normalizePercentage(totalPercent)}%) of{' '}
+                  {formatFileSize(quotaSize)} used
+                </div>
+              </div>
+            )}
+          </div>
+        </Mesa>
+      </div>
+    );
+  }
+}
+
+export default DatasetList;

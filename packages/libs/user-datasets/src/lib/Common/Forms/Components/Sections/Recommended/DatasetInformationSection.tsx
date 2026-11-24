@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { PartialDatasetDetails } from '../../../../../Service';
+import { PartialDatasetDetails } from '../../../../../Service/Model';
 import { JsonPathBuilder } from '../../../../../Utils';
 import { InputBlock, LabelInputPair } from '../../index';
 import { useDatasetMetadata } from '../../../Hooks/dataset-metadata-hooks';

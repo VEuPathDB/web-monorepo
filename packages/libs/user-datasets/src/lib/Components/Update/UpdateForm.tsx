@@ -17,7 +17,7 @@ import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreMo
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isEmpty, isEqual } from 'lodash';
-import { DatasetGetResponseBody, PartialDatasetDetails } from '../../Service';
+import { DatasetGetResponseBody, PartialDatasetDetails } from '../../Service/Model';
 import { hasUploads, newDatasetUploads } from '../../Service/Model/utility-types';
 import { useDatasetMetadata } from '../../Common/Forms/Hooks/dataset-metadata-hooks';
 

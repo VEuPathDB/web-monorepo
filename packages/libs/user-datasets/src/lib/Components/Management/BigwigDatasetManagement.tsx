@@ -15,7 +15,7 @@ import DatasetManagement, {
 import BigwigGBrowseUploader from './BigwigGBrowseUploader';
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { MesaColumn } from '@veupathdb/coreui/lib/components/Mesa/types';
-import { DatasetDependency } from '../../Service';
+import { DatasetDependency } from '../../Service/Model';
 
 const classify = makeClassifier('DatasetManagement', 'BigwigDatasetDetail');
 

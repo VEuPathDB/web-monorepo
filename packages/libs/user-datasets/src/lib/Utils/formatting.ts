@@ -1,4 +1,4 @@
-import { DatasetListShareUser, DatasetUser } from '../Service';
+import { DatasetListShareUser, DatasetUser } from '../Service/Model';
 
 export const datasetUserFullName = (
   user: DatasetUser | DatasetListShareUser

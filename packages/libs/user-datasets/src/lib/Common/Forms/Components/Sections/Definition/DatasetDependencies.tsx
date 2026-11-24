@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { DatasetDependency } from '../../../../../Service';
+import { DatasetDependency } from '../../../../../Service/Model';
 import { isNonEmpty } from '../../../../../Utils';
 import { DependenciesConfig } from '../../../../Configuration';
 import { useDispatch } from 'react-redux';

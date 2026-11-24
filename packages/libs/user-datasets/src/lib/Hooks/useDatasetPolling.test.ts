@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { DatasetStatusInfo } from '../Service';
+import { DatasetStatusInfo } from '../Service/Model';
 import { useDatasetPolling } from './useDatasetPolling';
 
 const PROJECT = 'PlasmoDB';

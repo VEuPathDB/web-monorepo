@@ -1,5 +1,5 @@
 import * as userDatasetDetail from './UserDatasetDetailStoreModule';
-import * as userDatasetList from './UserDatasetListStoreModule';
+import * as userDatasetList from '../workspace/list/DatasetListStoreModule';
 import * as userDatasetUpload from './UserDatasetUploadStoreModule';
 
 export type {

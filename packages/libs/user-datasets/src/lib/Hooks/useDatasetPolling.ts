@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { DatasetStatusInfo } from '../Service';
+import { DatasetStatusInfo } from '../Service/Model';
 import {
   getPollingDisposition,
   getPollingIntervalMs,

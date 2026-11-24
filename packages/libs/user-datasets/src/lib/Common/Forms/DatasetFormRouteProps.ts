@@ -1,19 +1,25 @@
-import { VdiPluginConfig, VdiServiceMetadata } from '../../Service';
-import { DatasetTypeConfig, DatasetFormConfigurators } from '../Configuration';
+import { VdiPluginConfig, VdiServiceMetadata } from '../../Service/Model';
+import { DatasetTypeConfig, DatasetFormConfigurators, DataNoun } from '../Configuration';
 import { ReactNode } from 'react';
-import { DataNoun } from '../../Utils';
 
 export interface DatasetFormRouteProps {
   readonly vdiConfig: VdiServiceMetadata;
+
   readonly baseUrl: string;
-  readonly urlParams: Record<string, string>;
-  readonly datasetTypes: readonly DatasetTypeConfig[];
-  readonly plugins: readonly VdiPluginConfig[];
+
+  readonly urlParams: Readonly<Record<string, string>>;
+
+  readonly datasetTypes: ReadonlyArray<DatasetTypeConfig>;
+
+  readonly plugins: ReadonlyArray<VdiPluginConfig>;
+
   readonly datasetTypeMenuHeader?: ReactNode;
+
   readonly dataNoun: DataNoun;
 
   readonly enablePublicDatasets: boolean;
 
   readonly formConfigs: DatasetFormConfigurators;
+
   readonly datasetId?: string;
 }
