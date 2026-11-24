@@ -181,9 +181,11 @@ export const DerivedVariableMetadata = intersection([
       continuous: null,
     }),
   }),
+  // the server sends explicit nulls for fields that do not apply
   partial({
-    vocabulary: array(string),
-    units: string,
+    vocabulary: union([array(string), nullType]),
+    units: union([string, nullType]),
+    dataRange: unknown,
   }),
 ]);
 
