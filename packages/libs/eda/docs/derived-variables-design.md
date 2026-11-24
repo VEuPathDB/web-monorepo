@@ -1,7 +1,10 @@
 # Derived variables: "Create variables" tab (design)
 
-Status: design agreed on 2026-11-23, not yet planned or built. It follows
-on from `map-redesign.md` §8, which has the background on the back end.
+Status: the tab and filter-based groups are built (branches
+`map-redesign-and-derived-vars` here and `filter-defined-groups` in
+`service-eda`). Saving simple groupings as recoders (§4) was agreed on
+2026-11-24 and is not built yet. Background on the back end is in
+`map-redesign.md` §8.
 
 ## 1. Why
 
@@ -10,11 +13,7 @@ in percent mortality, divides the sites into "East" and "West", and
 overlays that grouping on a time-series plot to see whether the split
 holds over time. More generally, users want to make their own
 categorical variables (regions, age bands, species groupings, time
-windows) and use them in plots.
-
-The back end can already compute derived variables (`service-eda`
-`merge/plugins/`), but nothing has ever used that code, and the front end
-uses none of it.
+windows, "sells banana loaf") and use them in plots.
 
 This work is for the **regular EDA workspace first**. The UX there has to
 be clean and self-explanatory, because nothing guides users into it. The
@@ -22,21 +21,18 @@ full-screen map comes later. It will reuse the same variables, storage
 and plumbing, and add its own guided route in: draw a lasso, get prompted
 to draw another, be told what the new variable can be used for.
 
-Back-end work is kept small (§5.1): one new derived-variable plugin,
-plus simplifications to the analysis descriptor's derived-variable
-field, which nothing uses yet.
-
 ## 2. Goals, non-goals, anti-goals
 
 **Goals**
 
-- A new workspace tab, **Create variables**, between "Browse and Subset"
+- A workspace tab, **Create variables**, between "Browse and Subset"
   and "Visualize", for listing, creating, editing, renaming and deleting
   grouping variables.
 - A grouping variable is an ordered list of **groups**. Each group has a
   name and a set of filters, built with the same filter widgets as Browse
   and Subset, including the geo lasso filter. Value groupings ("these
-  species"), numeric ranges ("age 0–5") and drawn regions are all just
+  species"), numeric ranges ("age 0–5"), drawn regions and filters on
+  other entities ("coffee shops whose menu has banana loaf") are all just
   filters.
 - The variables appear in the variable pickers of Visualize's
   **standard visualisations** (the `pass` app: those not built on a
@@ -44,6 +40,8 @@ field, which nothing uses yet.
   categorical variable is accepted.
 - Variables **belong to one analysis**. Copying or sharing the analysis
   takes them along.
+- Simple groupings cost the server no more than an ordinary variable
+  (§4).
 
 **Non-goals (v1)**
 
@@ -58,13 +56,11 @@ field, which nothing uses yet.
   (`AbstractPlugin.java:505–511`; the job id hashes the whole request,
   `JobIDs.kt:37–57`), so using a derived variable there would re-run the
   computation. This is solvable later: before hashing, `JobIDs.of` could
-  drop the derived variables that the computation's config doesn't use
-  (found by walking the config for `{ entityId, variableId }` references).
+  drop the derived variables that the computation's config doesn't use.
 - Other kinds of derived variable (formulas, unit conversion, reductions
   over child entities).
 - The full-screen map (phase 2 of the map redesign).
-- A personal library of variables shared across analyses. "Copy from
-  another analysis" may come later.
+- A personal library of variables shared across analyses.
 
 **Anti-goals (a failure even if it technically works)**
 
@@ -74,6 +70,7 @@ field, which nothing uses yet.
 - Editing a variable breaks or orphans plots that use it.
 - Creating or editing a derived variable re-runs expensive computations
   (e.g. DESeq2).
+- Users have to understand which back-end plugin their variable uses.
 
 ## 3. User-facing behaviour
 
@@ -100,28 +97,32 @@ Browse and Subset │ Create variables │ Visualize │ …
   standing note on where the variables can be used.
 - **Right:** the editor.
   - **Name**, and **what is being grouped**: the entity ("Group
-    Collections into…"). The entity is chosen first. The variable lives
-    on it and can be used in plots of that entity or of any entity below
-    it. Group filters may be on any entity, as in Browse and Subset.
+    Collections into…"). The entity is chosen first and is fixed once the
+    variable is saved. The variable lives on it and can be used in plots
+    of that entity or of any entity below it. Group filters may be on any
+    entity, as in Browse and Subset.
   - **Groups**, in order (drag to reorder), each with a name, a summary
-    of its filters, an edit button and a record count.
-  - **Everything else**: a level for records in no group. It's on by
-    default and can be renamed or switched off. When off, those records
-    have no value, and the plots' existing "include no data" option
-    decides whether they show.
+    of its filters, an edit button and a record count. **At most 7
+    groups**, so that with "Everything else" every level gets one of the
+    8 overlay colours. "Add group" is disabled at the limit, with a note
+    saying why.
+  - **Everything else**: a level for records in no group, including
+    records with no value for the grouping's variable. It can be renamed
+    or switched off. When off, those records have no value, and the
+    plots' existing "include no data" option decides whether they show.
+    Its default is in §3.2.
   - **Used by:** the plots that use the variable.
 - **Editing a group's filters (✎)** opens the Browse and Subset layout
   (variable tree plus the same filter widgets, including the geo lasso),
   working on that group's filters instead of the analysis subset.
-- **Groups may filter on different variables.** The plugin checks each
-  group's filters on their own, so group 1 can be a drawn region and
-  group 2 a species. To make the common case quick, **"Add group" opens
-  on the variable(s) the previous group used**, with nothing selected
-  yet. The user can still switch to any other variable.
+- **Groups may filter on different variables,** so group 1 can be a
+  drawn region and group 2 a species. To make the common case quick,
+  **"Add group" opens on the variable(s) the previous group used**, with
+  nothing selected yet. The user can still switch to any other variable.
 - **Earlier groups are shown while a later one is edited,** so overlaps
   can be avoided rather than only reported:
-  - **Geo lasso:** earlier groups' shapes (as drawn, or geohash-represented; builder's choice; probably the latter because selections can be rectangle and marker-based too)
-    are drawn faintly in their group colours.
+  - **Geo lasso:** earlier groups' geohash cells are drawn faintly in
+    their group colours.
   - **Categorical values:** values used by an earlier group are marked
     (e.g. "in East"). They can still be picked, and the overlap warning
     then applies.
@@ -134,72 +135,68 @@ Browse and Subset │ Create variables │ Visualize │ …
   Subset filters) never redefines a group. It only changes which records
   are plotted. The editor's counts are for the whole dataset.
 - **Overlaps: the first group wins.** A record that matches several groups
-  goes to the first of them. The editor counts overlaps as you edit and
-  shows a prominent warning naming the groups and the number of records.
-  It strongly recommends fixing the filters before saving, but saving is
-  not blocked.
+  goes to the first of them. Range ends are inclusive, as in Browse and
+  Subset, so adjacent ranges 0–10 and 10–20 share 10, which goes to the
+  first. The editor counts overlaps as you edit and shows a prominent
+  warning naming the groups and the number of records. It strongly
+  recommends fixing the filters before saving, but saving is not blocked.
+- **"Everything else" default.** On, labelled "Other", except when every
+  group is a set of values of one categorical variable and together they
+  cover that variable's whole vocabulary (e.g. a Likert scale collapsed
+  to Agree / Disagree). Then it is off, so the variable doesn't get an
+  "Other" level that can never have records. The default follows the
+  groups as they are edited until the user changes the switch; after
+  that, the user's choice stands.
 - **Editing** a variable updates every plot that uses it.
 - **Deleting** a variable that plots use asks for confirmation, naming
   those plots. If confirmed, those plots lose that variable and need a
   new one picked.
 - **Renaming** a variable or a group changes the labels everywhere.
 
-## 4. Approaches considered
+## 4. How groups become one variable
 
-### 4.1 Where definitions are kept
+When the variable is saved, the front end picks one of two server
+plugins. Users never see which; the editor, labels, counts and plots are
+the same either way.
 
-The server never looks a variable up by id. Plot requests carry the full
-definitions inline, so the front-end plumbing (§5.3) is the same
-whichever is chosen.
+- **Recoder form** (cheap: one value per row, no extra data streams).
+  Used when all of these hold:
 
-1. **Definitions in the analysis descriptor. (Chosen.)** The existing
-   `descriptor.derivedVariables` field changes from a list of ids to a
-   list of full definitions, each with a stable id created by the client.
-   Edits happen in place, and copy, share and delete come for free,
-   because they are copies or edits of the descriptor.
-2. **The existing user-owned store as it is.** This was chosen first, to
-   avoid back-end work, and dropped after review. It can't work without
-   several back-end fixes:
-   - An analysis's id list can only grow: saving merges the new list into
-     the old one and loses its order (`UserService.java:298–334`).
-   - Copying an analysis to another user gives each row a new id but
-     leaves the configs, and the plots, pointing at the original owner's
-     ids (`ImportAnalysisService.java:155–160`).
-   - Definitions can't be edited, so every edit saves new rows, and unused
-     rows pile up.
-3. **Extend the store with edit and delete endpoints**, plus the fixes
-   above. Ids stay stable, but it's the most back-end work. A same-user
-   copy of an analysis shares rows with the original, so an edit in one
-   would silently change the other, which goes against "belongs to one
-   analysis".
+  - every group has exactly one filter;
+  - all the filters are on the same variable;
+  - that variable is on the grouped entity or one of its ancestors (a
+    transform plugin can only read those);
+  - the variable is not binary, not multi-valued and doesn't impute
+    zero;
+  - every filter is of one kind from this table, which fixes the plugin:
 
-Option 1 matches "belongs to one analysis", and nothing grows without
-bound: the store is no longer written to.
+    | Filter kind                   | Plugin                    | Rule                                       |
+    | ----------------------------- | ------------------------- | ------------------------------------------ |
+    | `stringSet`                   | `categoricalRecoding`     | `inputValues` = the set                    |
+    | `stringPrefixSet` (geo lasso) | `categoricalRecoding`     | `inputPrefixes` = the prefixes             |
+    | `numberRange`                 | `continuousToOrdinal`     | `minInclusive`, `maxInclusive` = the range |
+    | `dateRange`                   | `continuousDateToOrdinal` | `minInclusive`, `maxInclusive` = the range |
 
-### 4.2 How groups become one variable
+- **Filter-based form** (`filterDefinedGroups`) for everything else:
+  several filters in a group, groups on different variables, filters on
+  descendant entities, multi-filters, binary, multi-valued and
+  zero-imputed variables, numeric and date value sets.
 
-1. **A new plugin, "groups defined by filters". (Chosen.)** One spec per
-   variable, holding exactly what the editor shows. Internally it creates
-   one `subsetMembership` per group (§5.1).
-2. **Chain existing plugins.** One `subsetMembership` spec per group, a
-   `concatenation` of them (`1,0,…`), and a `categoricalRecoding` listing
-   every combination that maps to each group under first-group-wins
-   (2^N − 1 strings). That's N + 2 specs per variable. The front end would
-   have to hide the helpers and rebuild the editor from them. It also
-   needs two back-end bug fixes (§6), and the "Everything else off" case
-   adds a blank level to the recoding's vocabulary. Dropped in favour of
-   option 1.
+Each rule includes exactly the records its filter includes, so the two
+forms give the same groups. The variable's id stays the same if an edit
+switches it from one form to the other, so plots that use it are
+unaffected.
+
+Why two forms: a filter-based variable fetches one data stream per group,
+plus one for the entity, and on the SQL path each stream holds a database
+connection while the plot is computed. A 7-group variable needs 8
+connections for one plot request. The recoder form adds none.
 
 ## 5. How it is built
 
-### 5.1 Back-end changes (`service-eda`)
+### 5.1 Back end (`service-eda`)
 
-**A. New transform plugin `filterDefinedGroups`**
-(`merge/plugins/transforms/`, registered in `merge/plugins/Transforms.java`).
-The function name is my call.
-
-Config (new RAML type in `schema/library.raml`, also listed in
-`DerivedVariableDocumentationRequest`):
+**A. `filterDefinedGroups` transform (built).** Config:
 
 ```yaml
 FilterDefinedGroupsConfig:
@@ -214,54 +211,96 @@ FilterDefinedGroup:
     filters: API_Filter[]
 ```
 
-Behaviour:
+- Creates one `subsetMembership` helper per group, on the variable's own
+  entity, with id `<variableId>_group<n>` and the group's filters as its
+  stream's filter override. The metadata endpoint returns only requested
+  variables, so the helpers never reach the client.
+- Value: the label of the first group whose membership is `1`, otherwise
+  `unmappedValue`, or no value if that is absent or empty.
+- Metadata: `STRING`, `CATEGORICAL`; vocabulary is the labels in order,
+  plus `unmappedValue` if it isn't empty.
+- Validation: at least one group; labels non-empty and unique; every
+  group has at least one filter; `unmappedValue` differs from every
+  label.
+- In-process subsetting streams honour a stream's filter override
+  (`EdaSubsettingClient.resolveFilters`, built). Without it every
+  membership is `1`.
 
-- **Helpers.** In `acceptConfig`, create one `subsetMembership` spec per
-  group, on the variable's own entity, with id `<variableId>_group<i>`
-  and the group's filters as `subsetFilters`. Return them from
-  `getDependedDerivedVarSpecs()` and `getRequiredInputVars()`.
-  `RelativeObservationCalculator.createAggregatorSpec` does the same
-  thing. The factory already orders internally declared helpers, and
-  the metadata endpoint returns only requested variables
-  (`ServiceExternal.java:119–120`), so the helpers never reach the
-  client.
-- **Value.** The label of the first group whose membership column is
-  `1`. Otherwise `unmappedValue`, or the empty value if that is absent
-  or empty.
-- **Metadata.** Type `STRING`, shape `CATEGORICAL`. The vocabulary is the
-  labels in order, plus `unmappedValue` if it isn't empty, so there's no
-  blank level.
-- **Validation.**
-  - At least one group.
-  - Every group has a non-empty label and at least one filter, since an
-    empty filter list would match every record.
-  - Labels are unique, and `unmappedValue` differs from every label.
-  - _My call on all of these._
+**B. The analysis descriptor holds definitions (built).**
+`derivedVariables` is `DerivedVariableSpec[]`. The analysis PATCH stores
+the list as sent (ids must be unique), and import copies it unchanged.
 
-**B. The analysis descriptor holds definitions**
+**C. Recoder fixes and additions (to build).** No client uses these
+plugins yet, so their behaviour can change. All of them:
 
-- In `schema/library.raml` (`AnalysisDescriptor`) and
-  `schema/url/user/user.raml`, change `derivedVariables: string[]` to
-  `derivedVariables: DerivedVariableSpec[]`.
-- In `UserService` (analysis PATCH, `:94–99`, `processPatchedDerivedVars`),
-  store the list as given, with no lookup, ownership check or union.
-- In `ImportAnalysisService` (`:96–102`), copy the list as it is, with no
-  `copyDerivedVariables`.
-- Before deploying, check that no saved analysis has a non-empty
-  `derivedVariables`. The front end has never set it. Any that do would
-  no longer decode and should be reset to `[]`.
+- treat an absent or empty `unmappedValue` as "no value", and list the
+  vocabulary as the distinct output values in rule order, plus
+  `unmappedValue` only if it isn't empty and not already listed;
+- give records with no input value the `unmappedValue`, like
+  `filterDefinedGroups` does.
 
-The `/users/{user-id}/derived-variables` endpoints and table are left
-alone and unused. They can be retired separately.
+Per plugin:
 
-### 5.2 How a grouping variable is defined
+- **`categoricalRecoding`.**
+  - `CategoricalRecodingRule` gets `inputPrefixes?: string[]`, and
+    `inputValues` becomes optional. A rule matches when the value is in
+    `inputValues` or starts with one of `inputPrefixes`. Each rule needs
+    at least one of the two, non-empty.
+  - Rejects multi-valued input variables. (Their rows hold a JSON array
+    string, which never matched any rule.)
+  - Accepts the shape of geohash variables (to check, §7).
+- **`continuousToOrdinal`.**
+  - `ContinuousNumericRule.maxExclusive` is renamed `maxInclusive` and
+    is inclusive.
+  - A missing bound is open-ended in that direction. (A missing lower
+    bound used to be `Double.MIN_VALUE`, the smallest positive number,
+    so it missed 0 and negatives.)
+- **`continuousDateToOrdinal` (new).** Like `continuousToOrdinal`, for
+  `DATE` variables:
 
-One spec per variable, in `descriptor.derivedVariables`:
+  ```yaml
+  ContinuousDateRule:
+    type: object
+    properties:
+      minInclusive?: string
+      maxInclusive?: string
+      outputValue: string
+  ContinuousDateRecodingConfig:
+    type: object
+    properties:
+      inputVariable: VariableSpec
+      rules: ContinuousDateRule[]
+      unmappedValue?: string
+  ```
+
+  Bounds are parsed exactly as the subsetting service parses a
+  `dateRange` filter's `min` and `max`
+  (`FormatUtil.parseDateTime(Utils.standardizeLocalDateTime(…))`,
+  `ApiConversionUtil.java:395`). Row values arrive as ISO local dates or
+  date-times (`DateVariable.java:88–90`).
+
+- **`concatenation`:** reports `CATEGORICAL`, not `CONTINUOUS`.
+
+New config types are listed in `DerivedVariableDocumentationRequest`
+alongside the existing ones.
+
+**D. Database connection leak fix (temporary).** The branch
+`fix-floating-plugin-connection-leaks` is squash-merged into
+`filter-defined-groups` as one commit marked `TEMP:`, so testing isn't
+disrupted by leaked connections. It is dropped once that branch reaches
+`master`.
+
+### 5.2 How a variable is stored
+
+One spec per variable in `descriptor.derivedVariables`. The
+`variableId` is a UUID created by the client and kept across edits.
+
+Filter-based form:
 
 ```json
 {
   "entityId": "<the grouped entity>",
-  "variableId": "<UUID created by the client, kept across edits>",
+  "variableId": "<uuid>",
   "functionName": "filterDefinedGroups",
   "displayName": "Region (East/West)",
   "config": {
@@ -274,150 +313,90 @@ One spec per variable, in `descriptor.derivedVariables`:
 }
 ```
 
-- The editor's state and the stored spec are the same thing. There's
-  nothing to hide or rebuild.
-- Groups are **capped at 10** in the UI. _My call: overlay colours get
-  hard to tell apart beyond that._
-- The front-end codec for the field (`core/types/analysis.ts:40`,
-  currently `t.unknown`) becomes a real `DerivedVariableSpec` codec, with
-  a typed config for `filterDefinedGroups`. A spec with any other
-  function name is shown read-only as "unsupported" rather than dropped.
+Recoder form, for the same groups drawn with the lasso:
 
-### 5.3 Front-end plumbing
+```json
+{
+  "entityId": "<the grouped entity>",
+  "variableId": "<uuid>",
+  "functionName": "categoricalRecoding",
+  "displayName": "Region (East/West)",
+  "config": {
+    "inputVariable": { "entityId": "…", "variableId": "<geohash variable>" },
+    "rules": [
+      { "inputPrefixes": ["dqcq", "dqcr"], "outputValue": "East" },
+      { "inputPrefixes": ["dqch", "dqck"], "outputValue": "West" }
+    ],
+    "unmappedValue": "Other"
+  }
+}
+```
 
-- **Metadata:** call `POST /merging/derived-variables/metadata/variables`
-  (study id plus the specs) for each variable's type, shape and
-  vocabulary. Merge the results into the variable tree **for the pickers
-  of standard visualisations only**. Browse and Subset, Download and
-  visualisations built on a computation must not see them. _My call on
-  placement: a "Created in this analysis" folder under their entity._
+- The editor works on groups of filters. A recoder spec is turned back
+  into groups when it is opened: each rule becomes one filter of the
+  matching kind on `inputVariable`. A recoder spec that can't be turned
+  back (a rule with both values and prefixes, an open-ended range,
+  several rules with the same output) is shown read-only as
+  "unsupported", like a spec with an unknown function name. The client
+  never writes such specs.
+- Per-group filter widget state is kept outside the spec (§5.4), so it
+  is the same for both forms.
+
+### 5.3 Front-end plumbing (built, unchanged by §4)
+
+- **Metadata:** `POST /merging/derived-variables/metadata/variables`
+  (study id plus the specs) gives each variable's type, shape and
+  vocabulary. They are added to the variable tree **for the pickers of
+  standard visualisations only**, in a "Created in this analysis"
+  folder under their entity. Browse and Subset, Download and
+  visualisations built on a computation don't see them.
 - **Data requests:** every data-plugin request of a standard
-  visualisation (`DataPluginRequestBase.derivedVariables`; today
-  `DataClient/types.ts` has `// TO DO` and Scatterplot sends `[]`)
-  carries **only the specs it references**, so unrelated edits don't
-  change requests or caches.
-- **Compute requests:** `ComputeJobStatusHook.ts:49` sends the whole of
-  `descriptor.derivedVariables` today. Change it to send what the
-  computation's configuration references, which in v1 is always nothing,
-  so `[]`. Otherwise every edit would re-run every compute job (an
-  anti-goal), and the data requests of visualisations built on a
-  computation would stop matching their computation.
-- **Save, edit, rename, delete:** replace the spec in
-  `descriptor.derivedVariables` (`setDerivedVariables` in
-  `hooks/analysis.ts` already exists, unused). The id doesn't change, so
-  plots that reference the variable need no rewriting. An unsaved new
-  analysis is saved first, as with other edits.
-- **Deleting:** plots that referenced the variable are left to their
-  existing handling of a variable that no longer exists (to verify, §7).
-- **Counts and overlaps in the editor (whole dataset, no subset filters):**
+  visualisation carries **only the specs it references**, and cached
+  requests are keyed on those specs, so unrelated edits don't change
+  requests or caches.
+- **Compute requests** send no derived variables (`[]`), so edits never
+  re-run compute jobs.
+- **Save, edit, rename, delete** replace the spec in
+  `descriptor.derivedVariables`. The id doesn't change, so plots that
+  reference the variable need no rewriting.
+- **Counts in the editor (whole dataset, no subset filters):**
   - **Raw count of each group:** the subsetting service's count for that
-    group's filters on the grouped entity. This is the same request
-    Browse and Subset makes.
+    group's filters on the grouped entity.
   - **Final counts under first-group-wins,** including "Everything
-    else": a data-plugin request with the unsaved spec inline, counting
-    each level. The builder chooses which plugin (e.g. a `pass` barplot).
-  - **Overlap** for group _i_: raw count − final count. That's the
-    number of its records that an earlier group claims. With one earlier
-    group the warning names it; with several it says "an earlier group",
-    unless the builder adds per-pair counts.
+    else": a `pass` barplot with the unsaved spec inline, counting each
+    level. This works for both forms.
+  - **Overlap** for group _i_: raw count − final count.
 
-### 5.4 Group filter editing
+### 5.4 Group filter editing (built)
 
-The Browse and Subset components (`Subsetting`, filter containers) read
-and write `analysisState.descriptor.subset`. Group editing needs them to
-work on a group's own filter list instead, with counts for the whole
-dataset. How to adapt them (an adapter analysis state, or lifting a
-filters/setFilters pair out) is left to the builder.
+The Browse and Subset components work on a group's filters through an
+adapter analysis state. Per-group widget state (e.g. the geo lasso's) is
+kept in `subset.uiSettings` under `derivedVariable/<variableId>/group<n>`.
 
-The geo lasso filter (`GeoCoordFilter`) keeps its UI state per variable
-in `subset.uiSettings`. Group edits need their own UI state. It can't go
-in the spec's config, which the server parses as
-`FilterDefinedGroupsConfig`, so keep it in `subset.uiSettings` under a
-key made from the derived variable's id and the group's position.
+## 6. Facts the design relies on
 
-## 6. Constraints and facts the design relies on
+- Transform plugins may read variables on their own entity or an
+  ancestor only (`Transform.validateDependedVariableLocations`).
+- Multi-valued variables arrive in rows as a JSON array string
+  (`TallRowConversionUtils.java:178`).
+- Browse and Subset range filters include both ends
+  (`NumberRangeFilter.java:32`, `DateRangeFilter.java:33`).
+- Plots draw every vocabulary value, in order, and leave out values not
+  in the vocabulary (e.g. barplot `reorderData`). A vocabulary value with
+  no records shows as an empty slot or a greyed legend entry.
+- `DerivedVariableFactory` orders derived variables only by helpers
+  declared internally, not by one requested variable using another as
+  input. Nothing here chains requested variables, so this doesn't matter
+  yet.
 
-- `SubsetMembership` is a reduction whose required input is the entity's
-  own ID column, with the group's filters as a filter override, so its
-  input stream is on the same entity. `Reduction.validateDependedVariableLocations`
-  allows that. **It has not been tried against a live service.**
-- **Back-end bugs found along the way.** This design no longer needs any
-  of these fixed:
-  - `Concatenation` reports its output as `CONTINUOUS` though it is
-    joined text (`Concatenation.java:56`). The fix to `CATEGORICAL` is
-    being merged anyway.
-  - `DerivedVariableFactory` orders derived variables only by helpers
-    declared internally, not by one variable in a request using another
-    as input (`:176–203`). The order is effectively random, so chains of
-    transforms can run in the wrong order. Worth fixing for anyone who
-    chains plugins.
-  - `CategoricalRecoding` lists an empty `unmappedValue` in its vocabulary
-    (`:59–63`).
-  - `ContinuousNumericToOrdinal` treats a missing lower bound as
-    `Double.MIN_VALUE`, the smallest positive number, so open-ended
-    "under N" ranges miss 0 and negative values (`:21`).
-- `EcmaScriptExpressionEval` is not used: it declares no vocabulary, so
-  plots couldn't order or colour its levels.
+## 7. To check while building
 
-## 7. To verify early (spike before building)
-
-1. With the plugin deployed to QA, send a `pass` line plot request of
-   percent mortality over time for the Maryland upload, with a two-group
-   variable inline as the overlay. Check:
-   - the values;
-   - first-group-wins on an overlap;
-   - "Everything else", and how plots show records with no value when
-     it's off.
-2. Membership with a geo (`stringPrefixSet`) filter on the same entity,
-   and with filters on another entity (ancestor and descendant).
-3. The metadata endpoint for the same spec: type, shape and vocabulary
-   order, and that the helpers aren't returned.
-4. How each standard visualisation behaves when a variable in its
-   configuration disappears from the metadata (delete).
-5. That no saved analysis has a non-empty `derivedVariables` (§5.1 B).
-
-### Spike results (2026-11-24, local stack)
-
-Run against the Maryland upload (`STUDY_2d1a36a0e2`, "Maryland mossies"; the
-id first given, `STUDY_32d63fbfa5`, returns 403 and isn't in the study
-list). It has no percent-mortality variable, so the plot used mean
-`unbiased specimen count` (Sample) by year of collection date (Collection),
-overlay on the Collection site entity (2980 sites, 9602 collections, 66082
-samples). Groups: East = GEOHASH 4 prefixes `dqcq dqcr dqct dqcu dqcw dqcx
-dr0b`; West = `dqch dqck dqcj dqcn dqcq`; overlap = `dqcq`; `unmappedValue`
-"Other".
-
-The first run found that `filtersOverride` was ignored when fetching
-tabular streams, so every `subsetMembership` returned 1; fixed in
-service-eda `ff333cfd`. Results below are after the fix.
-
-- **Metadata (item 3): pass.** One entry: `string`, `categorical`,
-  `derivationType: transform`, vocabulary `["East","West","Other"]`
-  (`["East","West"]` with no `unmappedValue`). No `_group` helpers.
-- **Line plot, geohash groups (item 1): pass.** Series East, Other, West
-  with N = 20949 / 37449 / 7684 samples, each with 22 yearly bins. East
-  equals the subsetting count for East's filters; West is 28440 minus the
-  20756 overlap records, so overlap records count only under East
-  (first group wins). Bar plot on the site entity: East 433, West 452,
-  Other 2095 (sums to 2980).
-- **Other-entity filters (item 2): pass.**
-  - Ancestor filters (geohash filters, variable on Collection): East
-    2502, West 1215, Other 5885 (West count 3688 minus 2473 overlap).
-  - Descendant filters (Collection `device`, variable on the site
-    entity; East = BG-Sentinel, West = BG-Sentinel or gravid): East 452,
-    West 10, Other 2518. Matches the subsetting counts (452, 462).
-- **No `unmappedValue`, `showMissingness: "TRUE"` (step 5):** unmatched
-  records show as a series named "No data" (N = 37449, the same records
-  that are "Other" above), plotted alongside East and West. With it
-  `FALSE` they would be dropped, as for any variable with no value.
-- Timing: the 66082-sample line plot took about 3 minutes; the 2980-site
-  bar plots 40 s.
+1. The data shape of geohash variables, and that `categoricalRecoding`
+   accepts them.
+2. For one set of groups of each filter kind, the recoder form and the
+   filter-based form give the same counts per level.
 
 ## 8. Left to the builder
 
-- Component structure, file layout, state management, tests (including
-  `DerivedVarConfigTest`-style tests for the new plugin).
-- How Browse and Subset's filter UI is reused for group editing (§5.4).
-- Which data plugin supplies the editor's final counts (§5.3).
-- Loading and error states, and how an invalid spec is shown.
+- Component structure, file layout, state management and tests.
 - Exact wording of the notes and warnings, within §3.
