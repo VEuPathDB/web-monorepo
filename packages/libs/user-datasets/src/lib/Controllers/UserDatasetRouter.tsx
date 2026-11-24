@@ -1,14 +1,12 @@
-import { ReactNode, useMemo } from 'react';
+import { ReactElement, ReactNode, useMemo } from 'react';
 
 import { Switch, useRouteMatch } from 'react-router-dom';
 
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
-import { DataNoun } from '../Utils';
-
-import { DatasetWorkspaceConfig } from '../Common/Configuration';
+import { DataNoun, DatasetWorkspaceConfig } from '../Common/Configuration';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { useVdiMetadata } from '../Service/utils/use-vdi';
+import { useVdiMetadata, useVdiService } from '../Service/utils/use-vdi';
 import {
   ManageOrEditDatasetRoute,
   UserDatasetsWorkspaceRoute,
@@ -17,6 +15,8 @@ import {
   UserDatasetRouterContextValue,
   UserDatasetRouterProvider,
 } from './UserDatasetRouterContext';
+
+import * as Mgmt from '../management/ManagementViewRoute';
 
 interface Props {
   detailsPageTitle: string;
@@ -35,7 +35,7 @@ export const UserDatasetRoutes = {
   EditDataset: '/:id/edit',
 } as const;
 
-export function UserDatasetRouter({
+export const UserDatasetRouter = ({
   workspaceConfig,
   detailsPageTitle,
   helpRoute,
@@ -43,14 +43,16 @@ export function UserDatasetRouter({
   helpTabContents,
   dataNoun,
   enablePublicUserDatasets = false,
-}: Props) {
+}: Props): ReactElement => {
   const { path, url } = useRouteMatch();
+
+  const vdiService = useVdiService();
 
   const vdiMetadata = useVdiMetadata();
 
   const contextValue = useMemo(
     (): UserDatasetRouterContextValue | undefined =>
-      vdiMetadata
+      vdiMetadata && vdiService
         ? {
             baseUrl: url,
             detailsPageTitle,
@@ -61,6 +63,7 @@ export function UserDatasetRouter({
             enablePublicUserDatasets,
             workspaceConfig,
             vdiMetadata,
+            vdiService,
           }
         : undefined,
     [
@@ -73,10 +76,13 @@ export function UserDatasetRouter({
       enablePublicUserDatasets,
       workspaceConfig,
       vdiMetadata,
+      vdiService,
     ]
   );
 
-  if (!contextValue) return <Loading />;
+  if (!contextValue) {
+    return <Loading />;
+  }
 
   // The route components are defined at module scope and read what they need
   // from context. They must NOT be defined inline here: `WdkRoute` renders
@@ -105,13 +111,10 @@ export function UserDatasetRouter({
           component={UserDatasetsWorkspaceRoute}
         />
         <WdkRoute
-          path={[
-            path + UserDatasetRoutes.ManageDataset,
-            path + UserDatasetRoutes.EditDataset,
-          ]}
+          path={Mgmt.ROUTES}
           exact={true}
           requiresLogin={true}
-          component={ManageOrEditDatasetRoute}
+          component={Mgmt.ManageOrEditDatasetRoute}
         />
       </Switch>
     </UserDatasetRouterProvider>

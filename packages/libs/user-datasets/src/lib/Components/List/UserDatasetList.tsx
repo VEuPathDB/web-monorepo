@@ -21,7 +21,7 @@ import {
 
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { datasetUserFullName, formatFileSize, DataNoun } from '../../Utils';
+import { datasetUserFullName, formatFileSize } from '../../Utils';
 import {
   DatasetListEntry,
   DatasetListShareUser,
@@ -31,7 +31,6 @@ import {
 
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
-import CommunityModal from '../Sharing/UserDatasetCommunityModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
@@ -683,11 +682,6 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
       shareSuccessful,
       shareError,
       updateDatasetListItem,
-      enablePublicUserDatasets,
-      updateDatasetCommunityVisibility,
-      updateDatasetCommunityVisibilityError,
-      updateDatasetCommunityVisibilityPending,
-      updateDatasetCommunityVisibilitySuccess,
     } = this.props;
     const { uiState, selectedRows, searchTerm } = this.state;
 
@@ -745,29 +739,6 @@ class UserDatasetList extends React.Component<DatasetListProps, State> {
                     shareSuccessful={shareSuccessful}
                     shareError={shareError}
                     updateDatasetListItem={updateDatasetListItem}
-                  />
-                ) : null}
-                {this.state.isCommunityModalOpen && enablePublicUserDatasets ? (
-                  <CommunityModal
-                    user={user}
-                    datasets={selectedDatasets}
-                    context="datasetsList"
-                    onClose={() =>
-                      this.setState((s) => ({
-                        ...s,
-                        isCommunityModalOpen: false,
-                      }))
-                    }
-                    dataNoun={dataNoun}
-                    updateDatasetCommunityVisibility={
-                      updateDatasetCommunityVisibility
-                    }
-                    onFixErrors={() => {
-                      /* n/a */
-                    }}
-                    updatePending={updateDatasetCommunityVisibilityPending}
-                    updateSuccessful={updateDatasetCommunityVisibilitySuccess}
-                    updateError={updateDatasetCommunityVisibilityError}
                   />
                 ) : null}
                 <SearchBox

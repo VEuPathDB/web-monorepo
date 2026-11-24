@@ -25,6 +25,12 @@ export const VDI_MULTIPART_DATA_PROP_FILE = 'dataPropertiesFile';
 export const VDI_MULTIPART_URL = 'url';
 
 
+export type DatasetFileType =
+  | 'upload'
+  | 'install'
+  | 'documents'
+  | 'datasetProperties';
+
 // region Create Dataset
 
 export type PartialDatasetDetails = Readonly<

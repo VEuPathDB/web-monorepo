@@ -3,45 +3,45 @@ import { FilledButton, Modal } from '@veupathdb/coreui';
 
 import '../UserDatasets.scss';
 import './UserDatasetSharingModal.scss';
-import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
-import { DatasetGetResponseBody, DatasetListEntry } from '../../Service';
+import { DatasetGetResponseBody } from '../../Service';
 import { updateDatasetCommunityVisibility } from '../../Actions/UserDatasetsActions';
-import { DataNoun } from '../../Utils';
-import { CommunityPromotionError } from './CommunityPromotionError';
 import React, { ReactElement } from 'react';
 import { UpdateErrors } from './UpdateErrors';
+import { DataNoun } from '../../Common/Configuration';
+import { useSelector } from 'react-redux';
+import { StateSlice } from '../../StoreModules/types';
+import { isEqual } from 'lodash';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-export interface CommunityModalProps {
-  readonly context: 'datasetDetails' | 'datasetsList';
-  readonly datasets: Array<DatasetListEntry | DatasetGetResponseBody>;
+export type CommunityModalProps = {
+  readonly currentUser: User;
+  readonly dataset: DatasetGetResponseBody;
   readonly dataNoun: DataNoun;
   readonly onClose: () => void;
   readonly onFixErrors: () => void;
-  readonly updateDatasetCommunityVisibility: typeof updateDatasetCommunityVisibility;
-  readonly updatePending: boolean;
-  readonly updateSuccessful: boolean;
-  readonly updateError: CommunityPromotionError | undefined;
-  readonly user: User;
-}
+};
 
-export default function UserDatasetCommunityModal(
+export const UserDatasetCommunityModal = (
   props: CommunityModalProps
-): React.ReactElement {
+): React.ReactElement => {
   const {
-    datasets,
+    dataset,
     onClose,
     dataNoun,
-    updateDatasetCommunityVisibility,
-    updateSuccessful,
-    updateError,
-    context,
-    updatePending,
-    user,
+    currentUser
   } = props;
 
-  const dataset = datasets[0];
+  const { updateError, updatePending, updateSuccessful } = useSelector(
+    ({ userDatasetDetail }: StateSlice) => ({
+      updatePending: userDatasetDetail?.updateDatasetCommunityVisibilityPending === true,
+      updateSuccessful: userDatasetDetail?.updateDatasetCommunityVisibilitySuccess === true,
+      updateError: userDatasetDetail?.updateDatasetCommunityVisibilityError,
+    }),
+    isEqual,
+  );
+
   const isPublic = dataset.visibility === 'public';
-  const isOwned = dataset.owner.userId === user.id;
+  const isOwned = dataset.owner.userId === currentUser.id;
   const targetNounLower = dataNoun.singular.toLowerCase();
   const datasetNoun = 'this ' + targetNounLower;
 
@@ -61,7 +61,6 @@ export default function UserDatasetCommunityModal(
         targetNounLower={targetNounLower}
         CloseButton={CloseButton}
         onFixErrors={props.onFixErrors}
-        context={context}
       />
     );
   else if (updateSuccessful)
@@ -94,11 +93,7 @@ export default function UserDatasetCommunityModal(
                 }}
                 text="Revoke public access"
                 onPress={() =>
-                  updateDatasetCommunityVisibility(
-                    [dataset.datasetId],
-                    false,
-                    context
-                  )
+                  updateDatasetCommunityVisibility(dataset.datasetId, false)
                 }
               />
             ) : (
@@ -112,11 +107,7 @@ export default function UserDatasetCommunityModal(
                 }}
                 text="Grant public access"
                 onPress={() =>
-                  updateDatasetCommunityVisibility(
-                    [dataset.datasetId],
-                    true,
-                    context
-                  )
+                  updateDatasetCommunityVisibility(dataset.datasetId, true)
                 }
               />
             )}

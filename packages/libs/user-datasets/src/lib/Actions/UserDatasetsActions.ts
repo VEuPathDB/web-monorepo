@@ -567,9 +567,8 @@ type CommunityAction =
   | InferAction<typeof updateDatasetCommunityVisibilityError>;
 
 export function updateDatasetCommunityVisibility(
-  datasetIds: string[],
+  datasetId: string,
   isVisibleToCommunity: boolean,
-  context: 'datasetDetails' | 'datasetsList',
   onError?: Consumer<ValidationErrorBody>
 ): (
   | CreatedAction<
@@ -589,45 +588,36 @@ export function updateDatasetCommunityVisibility(
           const validationErrors: CommunityPromotionValidationError[] = [];
           const serviceErrors: string[] = [];
 
-          await Promise.all(
-            datasetIds.map((datasetId) =>
-              wdkService.vdi.patchDatasetDetails(
-                datasetId,
-                {
-                  visibility: {
-                    value: isVisibleToCommunity ? 'public' : 'private',
-                  },
-                },
-                // on success
-                undefined,
-                // on validation error
-                (response) => {
-                  if (onError) onError(response);
-                  else
-                    validationErrors.push({
-                      datasetId,
-                      general: response.errors.general,
-                      byField: response.errors.byKey,
-                    });
-                },
-                // on misc error
-                ({ message }) => {
-                  if (message) serviceErrors.push(message);
-                }
-              )
-            )
+          await wdkService.vdi.patchDatasetDetails(
+            datasetId,
+            {
+              visibility: {
+                value: isVisibleToCommunity ? 'public' : 'private',
+              },
+            },
+            // on success
+            undefined,
+            // on validation error
+            (response) => {
+              if (onError) onError(response);
+              else
+                validationErrors.push({
+                  datasetId,
+                  general: response.errors.general,
+                  byField: response.errors.byKey,
+                });
+            },
+            // on misc error
+            ({ message }) => {
+              if (message) serviceErrors.push(message);
+            }
           );
 
           if (validationErrors.length === 0 && serviceErrors.length === 0) {
-            return context === 'datasetDetails'
-              ? [
-                  loadUserDatasetDetailWithoutLoadingIndicator(datasetIds[0]),
-                  updateDatasetCommunityVisibilitySuccess(),
-                ]
-              : [
-                  loadUserDatasetListWithoutLoadingIndicator(),
-                  updateDatasetCommunityVisibilitySuccess(),
-                ];
+            return [
+              loadUserDatasetDetailWithoutLoadingIndicator(datasetId),
+              updateDatasetCommunityVisibilitySuccess(),
+            ];
           }
 
           return updateDatasetCommunityVisibilityError({

@@ -1,9 +1,10 @@
-import React from 'react';
-
-import * as Utils from '../../../../Utils';
-import * as VDI from '../../../../Service/Model';
+import React, { ReactElement } from 'react';
 
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
+import { Possible } from '../../../../Utils';
+import { DatasetGetResponseBody, VdiServiceMetadata } from '../../../../Service';
+
 import { AvailableSearches } from './AvailableSearches';
 import { ViewLink } from './ViewLink';
 import { Visibility } from './Visibility';
@@ -19,8 +20,9 @@ import { DatasetUploader } from './DatasetUploader';
 import { DatasetName } from './DatasetName';
 import { UnifiedStatus } from './MergedStatus';
 
+
 export type AttributeListProps = {
-  readonly dataset: VDI.DatasetGetResponseBody;
+  readonly dataset: DatasetGetResponseBody;
 
   readonly detailsPageTitle: string;
   readonly dataNoun: string;
@@ -29,8 +31,11 @@ export type AttributeListProps = {
   readonly isInstalled: boolean;
   readonly userIsOwner: boolean;
 
-  readonly questions: ReadonlyArray<Question>;
+  readonly questions: Possible<ReadonlyArray<Question>>;
+
+  readonly vdiMetadata: VdiServiceMetadata;
 };
+
 
 export const AttributeList = ({
   dataNoun,
@@ -40,36 +45,22 @@ export const AttributeList = ({
   isInstalled,
   questions,
   userIsOwner,
-}: AttributeListProps): React.ReactElement => {
-  const showViewLink = isInstalled
-    && dataset.type.name !== 'isasimple'
-    && dataset.type.name !== 'stf';
-
+  vdiMetadata,
+}: AttributeListProps): ReactElement => {
   return (
     <dl className="attribute-list">
       {includeDatasetName && (
         <DatasetName datasetName={dataset.name} attributeLabel={detailsPageTitle} />
       )}
 
-      <UnifiedStatus dataNoun={dataNoun} />
-
-      {Utils.isNonEmpty(questions) && (
-        <AvailableSearches dataset={dataset} questions={questions} />
-      )}
-
-      {showViewLink && (
-        <ViewLink datasetId={dataset.datasetId} />
-      )}
-
+      <UnifiedStatus dataset={dataset} dataNoun={dataNoun} vdiMetadata={vdiMetadata} />
+      <AvailableSearches dataset={dataset} questions={questions} />
+      <ViewLink dataset={dataset} isInstalled={isInstalled} />
       <DatasetUploader user={dataset.owner} isOwner={userIsOwner} />
       <Visibility visibility={dataset.visibility} />
       <SiteSearchStatus visibility={dataset.visibility} />
-
-      {userIsOwner && Utils.isNonEmpty(dataset.shares) && (
-        <ShareList shares={dataset.shares} />
-      )}
-
-      <DatasetSummary summary={dataset.summary} />
+      <ShareList dataset={dataset} userIsOwner={userIsOwner} />
+      <DatasetSummary dataset={dataset} />
       <DatasetDescription description={dataset.description} />
       <CreationTimestamp created={dataset.created} />
       <DatasetSize files={dataset.files} />

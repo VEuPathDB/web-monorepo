@@ -8,7 +8,6 @@ interface UpdateErrorsProps {
   readonly errors: CommunityPromotionError;
   readonly targetNounLower: string;
   readonly CloseButton: () => ReactElement;
-  readonly context: 'datasetDetails' | 'datasetsList';
   readonly onFixErrors: Runnable;
 }
 
@@ -16,28 +15,24 @@ export function UpdateErrors({
   errors,
   targetNounLower,
   CloseButton,
-  context,
   onFixErrors,
 }: UpdateErrorsProps): ReactElement {
   let content: ReactNode;
 
-  const inList = context === 'datasetsList';
-
-  const updateButton =
-    inList || !errors.validationErrors ? null : (
+  const updateButton = errors.validationErrors
+    ? (
       <button type="button" className="btn edit" onClick={onFixErrors}>
         Add missing information
       </button>
-    );
+    )
+    : null;
 
   if (errors.validationErrors) {
     content = (
-      <>
-        <p>
-          {inList ? 'One or more datasets do' : 'Your dataset does'} not contain
-          enough information to be discoverable through <CommunityAccess />.
-        </p>
-      </>
+      <p>
+        Your dataset does not contain enough information to be discoverable
+        through <CommunityAccess />.
+      </p>
     );
   } else {
     content = (

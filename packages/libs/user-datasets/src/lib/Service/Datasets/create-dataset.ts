@@ -5,7 +5,7 @@ import {
 } from '../Model';
 import { DatasetUpload, VdiService } from '../VdiService';
 import { BadUpload } from '../../StoreModules';
-import { Consumer, Function, isNonBlank } from '../../Utils';
+import { Consumer, Func, isNonBlank } from '../../Utils';
 import { sanitizeFileName } from '../utils/sanitization';
 import { cleanDatasetDetails } from './payload-cleanup';
 
@@ -54,7 +54,7 @@ export async function submitNewDataset({
 
 function appendFiles(
   fileList: Iterable<UploadContent> | undefined,
-  converter: Function<File, DatasetUpload>,
+  converter: Func<File, DatasetUpload>,
   combinedUploads: DatasetUpload[]
 ) {
   if (fileList == null) {

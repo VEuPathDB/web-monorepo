@@ -6,7 +6,7 @@ import { ThemedDeleteButton } from '../../../../Components/ThemedDeleteButton';
 
 export type DatasetActionsProps =
   {
-    readonly isOwner: boolean;
+    readonly userIsOwner: boolean;
     readonly isEditable: boolean;
     readonly tryDeleteDataset: Utils.Runnable;
   }
@@ -15,18 +15,18 @@ export type DatasetActionsProps =
 
 export const DatasetActionBar = ({
   isEditable,
-  isOwner,
+  userIsOwner,
   tryDeleteDataset,
   ...props
 }: DatasetActionsProps) => (
   <div className="actions">
-    {isOwner && (
+    {userIsOwner && (
       <GrantAccessButton {...props} />
     )}
     {isEditable && (
       <EditDatasetButton />
     )}
-    {isOwner && (
+    {userIsOwner && (
       <ThemedDeleteButton buttonText="Delete" onPress={tryDeleteDataset} />
     )}
   </div>

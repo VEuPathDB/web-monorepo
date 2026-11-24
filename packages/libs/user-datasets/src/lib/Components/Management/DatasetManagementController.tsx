@@ -26,12 +26,12 @@ import {
 } from '../../Actions/UserDatasetsActions';
 
 import { StateSlice } from '../../StoreModules/types';
-import { DataNoun } from '../../Utils';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
+  DataNoun,
   DatasetFormConfigurators,
   DatasetTypeConfig,
-  EdaStudyLinks,
+  EdaStudyLinks
 } from '../../Common/Configuration';
 import { History } from 'history';
 import RnaSeqDatasetManagement from './RnaSeqDatasetManagement';

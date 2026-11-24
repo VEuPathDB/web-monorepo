@@ -1,22 +1,28 @@
 import { DatasetListShareUser, DatasetUser } from '../Service';
 
-export function datasetUserFullName(
+export const datasetUserFullName = (
   user: DatasetUser | DatasetListShareUser
-): string {
+): string => {
   if (user.firstName && user.lastName)
     return user.firstName + ' ' + user.lastName;
 
-  if (user.firstName) return user.firstName;
+  if (user.firstName) {
+    return user.firstName;
+  }
 
-  if (user.lastName) return user.lastName;
+  if (user.lastName) {
+    return user.lastName;
+  }
 
   return 'unknown user';
 }
 
-export function formatFileSize(
+export type FileSizeFormat = | 'metric' | 'binary';
+
+export const formatFileSize = (
   bytes: number,
-  form: 'metric' | 'binary' = 'metric'
-): string {
+  form: FileSizeFormat = 'metric'
+): string => {
   const div = form === 'metric' ? 1000 : 1024;
   let mag = 0;
   let quo = bytes;

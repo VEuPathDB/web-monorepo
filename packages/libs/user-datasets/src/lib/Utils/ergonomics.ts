@@ -1,36 +1,30 @@
-import * as util from './types';
 import { isEmpty } from 'lodash';
+import { Func, Possible, Predicate, Producer } from './types';
 
+export function ifDefined<T, R>(value: Possible<T>, fn: Func<T, R>): Possible<R>;
+export function ifDefined<T, R>(value: Possible<T>, fn: Func<T, R>, fallback: R): R;
 export function ifDefined<T, R>(
-  value: T | undefined,
-  fn: util.Function<T, R>
+  value: Possible<T>,
+  fn: Func<T, R>,
+  fallback?: R,
 ): R | undefined {
-  return value === undefined ? undefined : fn(value);
+  return value === undefined ? fallback : fn(value);
 }
 
-export function ifNotEmpty<T, R>(
-  arr: Array<T>,
-  fn: util.Function<T[], R>
-): util.Possible<R>;
-export function ifNotEmpty<T extends object, R>(
-  obj: T,
-  fn: util.Function<T, R>
-): util.Possible<R>;
-export function ifNotEmpty<R>(
-  thing: any,
-  fn: util.Function<any, R>
-): util.Possible<R> {
+export function ifNotEmpty<T, R>(arr: ReadonlyArray<T>, fn: Func<T[], R>): Possible<R>;
+export function ifNotEmpty<T extends object, R>(obj: T, fn: Func<T, R>): Possible<R>;
+export function ifNotEmpty<R>(thing: any, fn: Func<any, R>): Possible<R> {
   return isEmpty(thing) ? undefined : fn(thing);
 }
 
-export function takeIf<T>(value: T, fn: util.Predicate<T>): util.Possible<T> {
+export function takeIf<T>(value: T, fn: Predicate<T>): Possible<T> {
   return fn(value) ? value : undefined;
 }
 
-export function requireValue<T>(
-  value: util.Possible<T>,
-  error: util.Producer<Error> = defaultRequireError
-): NonNullable<T> {
+export const requireValue = <T>(
+  value: Possible<T>,
+  error: Producer<Error> = defaultRequireError
+): NonNullable<T> => {
   if (value == null) {
     throw error();
   }
@@ -38,10 +32,7 @@ export function requireValue<T>(
   return value;
 }
 
-function defaultRequireError(): Error {
-  return new Error('illegal state: required value was null or undefined');
-}
+const defaultRequireError = (): Error =>
+  new Error('illegal state: required value was null or undefined');
 
-export function using<T, R>(value: T, fn: util.Function<T, R>): R {
-  return fn(value);
-}
+export const using = <T, R>(value: T, fn: Func<T, R>): R => fn(value);

@@ -1,8 +1,8 @@
 import React, { ReactNode, useContext } from 'react';
 
-import { DatasetWorkspaceConfig } from '../Common/Configuration';
-import { DataNoun } from '../Utils';
+import { DataNoun, DatasetWorkspaceConfig } from '../Common/Configuration';
 import { VdiMetadata } from '../Service/utils/use-vdi';
+import { VdiService } from '../Service';
 
 /**
  * Values supplied by `UserDatasetRouter` to its route components.
@@ -24,6 +24,7 @@ export interface UserDatasetRouterContextValue {
   readonly enablePublicUserDatasets: boolean;
   readonly workspaceConfig: DatasetWorkspaceConfig;
   readonly vdiMetadata: VdiMetadata;
+  readonly vdiService: VdiService;
 }
 
 const UserDatasetRouterContext = React.createContext<

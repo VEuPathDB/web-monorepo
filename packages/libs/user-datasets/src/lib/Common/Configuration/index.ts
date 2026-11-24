@@ -6,6 +6,7 @@ export type {
 export {
   filterAvailableDataTypes,
   promoteTypeConfig,
+  promotedTypeConfigs,
 } from './DatasetTypeConfig';
 
 export type {

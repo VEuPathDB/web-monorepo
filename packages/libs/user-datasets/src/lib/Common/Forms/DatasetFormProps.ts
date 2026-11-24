@@ -4,7 +4,6 @@ import { Consumer, Runnable } from '../../Utils';
 import { BadUpload } from '../../StoreModules';
 
 export interface DatasetFormProps {
-  readonly baseUrl: string;
   readonly formConfig: DatasetFormConfig;
   readonly vdiConfig: VdiServiceMetadata;
 

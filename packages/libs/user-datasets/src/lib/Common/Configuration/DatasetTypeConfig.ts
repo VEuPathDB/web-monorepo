@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { PluginDataType, VdiPluginConfig } from '../../Service';
 import { stringifyDataType } from './data-types';
+import { Tuple } from '../../Utils/types';
 
 export interface ClientDatasetTypeConfig {
   /**
@@ -65,6 +66,48 @@ export function promoteTypeConfig(
 
   // no matching data type found!
   return undefined;
+}
+
+export function* availableDataTypes(
+  clientTypes: ReadonlyArray<ClientDatasetTypeConfig>,
+  plugins: ReadonlyArray<VdiPluginConfig>
+): Generator<ClientDatasetTypeConfig> {
+  const serviceTypes = new Set<string>();
+
+  for (const plugin of plugins) {
+    for (const dt of plugin.dataTypes) {
+      serviceTypes.add(stringifyDataType(dt));
+    }
+  }
+
+  for (const type of clientTypes) {
+    if (serviceTypes.has(stringifyDataType(type))) {
+      yield type;
+    }
+  }
+}
+
+export function* promotedTypeConfigs(
+  clientTypes: Iterable<ClientDatasetTypeConfig>,
+  plugins: ReadonlyArray<VdiPluginConfig>,
+): Generator<DatasetTypeConfig> {
+  const pluginIndex = new Map<string, Tuple<PluginDataType, VdiPluginConfig>>();
+
+  for (const plugin of plugins) {
+    for (const dt of plugin.dataTypes) {
+      pluginIndex.set(stringifyDataType(dt), [dt, plugin]);
+    }
+  }
+
+  for (const type of clientTypes) {
+    const match = pluginIndex.get(stringifyDataType(type));
+
+    if (match != null) {
+      const [vdiConfig, vdiPlugin] = match;
+
+      yield { ...type, vdiConfig, vdiPlugin };
+    }
+  }
 }
 
 export function filterAvailableDataTypes(

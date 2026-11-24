@@ -8,12 +8,12 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import { DatasetUploadRoute } from './Upload';
 import UserDatasetListController from '../Controllers/UserDatasetListController';
-import { DataNoun } from '../Utils';
 import {
+  DataNoun,
   DatasetTypeConfig,
   DatasetWorkspaceConfig,
   filterAvailableDataTypes,
-  promoteTypeConfig,
+  promoteTypeConfig
 } from '../Common/Configuration';
 import { VdiMetadata } from '../Service/utils/use-vdi';
 

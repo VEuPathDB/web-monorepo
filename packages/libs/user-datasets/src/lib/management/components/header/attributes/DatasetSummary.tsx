@@ -1,12 +1,13 @@
 import React from 'react';
 
 import Attribute from './Attribute';
+import { DatasetGetResponseBody } from '../../../../Service';
 
 export type DatasetSummaryProps = {
-  readonly summary: string;
+  readonly dataset: DatasetGetResponseBody;
 };
 
-export const DatasetSummary = ({ summary }: DatasetSummaryProps) => (
+export const DatasetSummary = ({ dataset: { summary } }: DatasetSummaryProps) => (
   <Attribute label="Summary">
     {summary.split('\n').map((line, i, arr) => (
       <React.Fragment key={i}>

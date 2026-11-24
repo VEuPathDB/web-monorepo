@@ -430,10 +430,10 @@ export type PluginDataType = io.TypeOf<typeof pluginDataType>;
 export const pluginListItem = io.intersection([
   io.type({
     pluginName: io.string,
-    dataTypes: io.array(pluginDataType),
+    dataTypes: io.readonlyArray(pluginDataType),
   }),
   io.partial({
-    installTargets: io.array(io.string),
+    installTargets: io.readonlyArray(io.string),
   }),
 ]);
 export type VdiPluginConfig = io.TypeOf<typeof pluginListItem>;

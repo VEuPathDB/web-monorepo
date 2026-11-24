@@ -6,7 +6,7 @@ export {
   using,
 } from './ergonomics';
 
-export { datasetUserFullName, formatFileSize } from './formatting';
+export { useToggle } from './hooks';
 
 export {
   textChange,
@@ -20,11 +20,11 @@ export {
 } from './input-tests';
 
 export type {
-  DataNoun,
-
+  AsyncProducer,
+  AsyncRunnable,
   BiConsumer,
   Consumer,
-  Function,
+  Func,
   Nullable,
   Optional,
   Possible,

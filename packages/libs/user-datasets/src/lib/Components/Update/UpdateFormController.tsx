@@ -35,10 +35,10 @@ import {
   detailUpdateSuccess,
   detailUpdating,
 } from '../../Actions/UserDatasetsActions';
+import { useRouteMatch } from 'react-router-dom';
 
 export interface UpdateFormControllerProps extends DatasetFormControllerConfig {
   readonly datasetId: string;
-  readonly baseUrl: string;
   readonly vdiConfig: VdiServiceMetadata;
   readonly isPromotingToPublic: boolean;
   readonly closeModal: Runnable;
@@ -49,6 +49,7 @@ export function UpdateFormController(
 ): ReactElement {
   const vdi = useVdiService();
   const [dataset, setDataset] = useState<DatasetGetResponseBody>();
+  const { url: baseUrl } = useRouteMatch();
 
   const dispatch = useDispatch();
   const formState = useDatasetFormState();

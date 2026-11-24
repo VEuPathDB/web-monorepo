@@ -196,8 +196,8 @@ function makeTableColumns(props: MetadataImportTableProps): TableColumn<any>[] {
 function column<K extends keyof Dataset>(
   [key, name, helpText]: readonly [K, string, string],
   sortable: boolean,
-  renderCell: util.Function<TableCellProps, ReactNode> = defaultColumn(key),
-  getValue?: util.Function<TableRowProps, Dataset[K]>
+  renderCell: util.Func<TableCellProps, ReactNode> = defaultColumn(key),
+  getValue?: util.Func<TableRowProps, Dataset[K]>
 ): mesa.MesaColumn<Dataset, K, Dataset[K]> {
   return {
     key,
@@ -212,7 +212,7 @@ function column<K extends keyof Dataset>(
 
 function defaultColumn(
   key: keyof Dataset
-): util.Function<TableCellProps, string> {
+): util.Func<TableCellProps, string> {
   return ({ row }) => String(row[key]);
 }
 
@@ -270,7 +270,7 @@ function sortDatasets(
   rows: readonly Dataset[],
   by: MesaSortObject<keyof Dataset>
 ): Dataset[] {
-  const valueFn: util.Function<Dataset, any> = (row) => {
+  const valueFn: util.Func<Dataset, any> = (row) => {
     switch (by.columnKey) {
       case 'type':
         return row.type.category;
