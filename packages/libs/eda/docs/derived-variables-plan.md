@@ -21,6 +21,15 @@ group's.
 - Back end (`service-eda`): Java 21, RAML, JUnit 5.
 - Front end (`web-monorepo`, `@veupathdb/eda`): React 17, TypeScript, io-ts, Jest and React Testing Library (via `veupathdb-react-scripts`).
 
+**User Testing:**
+
+- Applies to Claude-in-Chrome in Chromium too
+- User has local webpack dev server running from web-monorepo's @veupathdb/clinepi-site - http://localhost:8080/a/app/
+- This points at local port 8081 for the /eda proxy
+- Built and served from `~/work/EDA/service-eda` and this:
+  - `podman build --build-arg GITHUB_USERNAME=$GITHUB_USERNAME --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t localhost/veupathdb/service-eda:local-dev . && systemctl --user daemon-reload && systemctl --user restart eda-service@local.service`
+  - local service is extremely slow due to transatlantic database proxy, use smaller datasets such as "Coffee Shops Geo-Edition": http://localhost:8080/a/app/workspace/analyses/EDAUD_Ah88IRopd809s/new
+
 **Spec:** `packages/libs/eda/docs/derived-variables-design.md`. Section
 numbers below (§) refer to it.
 
