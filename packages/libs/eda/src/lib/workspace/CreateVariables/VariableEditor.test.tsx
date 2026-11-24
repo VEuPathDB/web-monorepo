@@ -277,6 +277,21 @@ describe('VariableEditor', () => {
     expect(addGroup).toBeDisabled();
   });
 
+  test('the entity picker is disabled for a saved variable with no groups in the draft', () => {
+    const saved = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([saved]);
+    renderEditor(saved, analysisState);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 1' }));
+    expect(screen.queryAllByLabelText(/^Group \d+ label$/)).toHaveLength(0);
+    expect(screen.getByRole('button', { name: /Collections/ })).toBeDisabled();
+  });
+
+  test('the entity picker is enabled for a new variable with no groups', () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec([]), analysisState);
+    expect(screen.getByRole('button', { name: /Collections/ })).toBeEnabled();
+  });
+
   test('unchecking "Everything else" saves an empty unmappedValue', () => {
     const { analysisState, setDerivedVariables } = makeAnalysisState();
     renderEditor(makeSpec([group('East')]), analysisState);

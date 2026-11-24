@@ -79,6 +79,9 @@ export function VariableEditor({
   const isSaved = (analysis?.descriptor.derivedVariables ?? []).some(
     (s) => s.variableId === spec.variableId
   );
+  // Plots reference the variable by entityId + variableId, so a saved
+  // variable must keep its entity or those plots would be orphaned.
+  const entityLocked = isSaved || groups.length > 0;
   const usedBy = useMemo(
     () =>
       findVisualizationsUsing(analysis?.descriptor.computations ?? [], spec),
@@ -153,6 +156,9 @@ export function VariableEditor({
   }
 
   function save() {
+    // This also creates an unsaved analysis first: the setter is built with
+    // skipServerCreate = false (hooks/analysis.ts). The `true` argument is
+    // ignored by useSetter; it is passed to state the intent.
     analysisState.setDerivedVariables(
       (previous) => upsertSpec(previous, draft),
       true
@@ -184,7 +190,9 @@ export function VariableEditor({
         <span
           className={cx('-EntityPicker')}
           title={
-            groups.length > 0
+            isSaved
+              ? 'A saved variable keeps its entity, so the plots that use it keep working'
+              : groups.length > 0
               ? 'Remove all groups to change what is being grouped'
               : undefined
           }
@@ -198,7 +206,7 @@ export function VariableEditor({
             value={entityId}
             onSelect={setEntityId}
             buttonDisplayContent={entityPlural || 'Select an entity'}
-            isDisabled={groups.length > 0}
+            isDisabled={entityLocked}
           />{' '}
           into:
         </span>
@@ -282,8 +290,8 @@ export function VariableEditor({
 
       {messages.length > 0 && (
         <ul className={cx('-Messages')}>
-          {messages.map((message) => (
-            <li key={message}>{message}</li>
+          {messages.map((message, index) => (
+            <li key={`${index}/${message}`}>{message}</li>
           ))}
         </ul>
       )}
