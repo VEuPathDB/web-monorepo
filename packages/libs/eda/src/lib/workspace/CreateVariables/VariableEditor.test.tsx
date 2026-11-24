@@ -16,6 +16,7 @@ import {
   GroupCounts,
   useGroupCounts,
 } from '../../core/derivedVariables/useGroupCounts';
+import { toStoredSpec } from '../../core/derivedVariables/recoding';
 import { GroupFilterEditor } from './GroupFilterEditor';
 import { VariableEditor } from './VariableEditor';
 import { SubsetUISettings } from './groupUISettings';
@@ -216,7 +217,7 @@ describe('VariableEditor', () => {
     expect(setDerivedVariables.mock.calls[0][1]).toBe(true);
     expect(applyUpdate(setDerivedVariables, [existing])).toEqual([
       existing,
-      spec,
+      toStoredSpec(spec, [rootEntity, collections]),
     ]);
     expect(onSave).toHaveBeenCalledWith(spec);
   });
@@ -235,7 +236,7 @@ describe('VariableEditor', () => {
     });
     fireEvent.click(saveButton());
     expect(applyUpdate(setDerivedVariables, [before, other])).toEqual([
-      after,
+      toStoredSpec(after, [rootEntity, collections]),
       other,
     ]);
   });
@@ -319,16 +320,21 @@ describe('VariableEditor', () => {
     expect(onDelete).toHaveBeenCalled();
   });
 
-  test('Add group is disabled at 10 groups', () => {
+  test('disables Add group at 7 groups with the note "At most 7 groups, so each group and Everything else gets its own colour"', () => {
     const { analysisState } = makeAnalysisState();
-    const labels = Array.from({ length: 9 }, (_, i) => `G${i + 1}`);
+    const labels = Array.from({ length: 6 }, (_, i) => `G${i + 1}`);
     renderEditor(makeSpec(labels.map(group)), analysisState);
     expect(screen.getByRole('button', { name: 'Add group' })).toBeEnabled();
     fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
     // Add group opens the new group's filter editor; Done returns to the list
     fireEvent.click(screen.getByRole('button', { name: 'Done' }));
-    expect(screen.getAllByLabelText(/^Group \d+ label$/)).toHaveLength(10);
+    expect(screen.getAllByLabelText(/^Group \d+ label$/)).toHaveLength(7);
     expect(screen.getByRole('button', { name: 'Add group' })).toBeDisabled();
+    expect(
+      screen.getByText(
+        'At most 7 groups, so each group and Everything else gets its own colour'
+      )
+    ).toBeInTheDocument();
   });
 
   test('the entity picker is disabled for a saved variable with no groups in the draft', () => {
@@ -353,9 +359,98 @@ describe('VariableEditor', () => {
     fireEvent.click(saveButton());
     const [saved] = applyUpdate(setDerivedVariables, []);
     expect(saved.config).toEqual({
-      groups: [group('East')],
-      unmappedValue: '',
+      inputVariable: { entityId: 'col', variableId: 'species' },
+      rules: [{ inputValues: ['a'], outputValue: 'East' }],
     });
+  });
+});
+
+describe('VariableEditor saving as a recoder', () => {
+  const entities = [rootEntity, collections];
+  const otherFilter = { ...filter, stringSet: ['b'] } as Filter;
+  const eligible = (): FilterDefinedGroup[] => [
+    group('East'),
+    { label: 'West', filters: [otherFilter] },
+  ];
+
+  test('saves eligible groups as a recoder spec with the same variableId', () => {
+    const { analysisState, setDerivedVariables } = makeAnalysisState();
+    renderEditor(makeSpec(eligible()), analysisState);
+    fireEvent.click(saveButton());
+    const [saved] = applyUpdate(setDerivedVariables, []);
+    expect(saved.functionName).toBe('categoricalRecoding');
+    expect(saved.variableId).toBe('dv1');
+    expect(saved.entityId).toBe('col');
+  });
+
+  test('saves ineligible groups as filterDefinedGroups', () => {
+    const { analysisState, setDerivedVariables } = makeAnalysisState();
+    const two = { ...filter, variableId: 'other' } as Filter;
+    renderEditor(
+      makeSpec([group('East'), { label: 'West', filters: [filter, two] }]),
+      analysisState
+    );
+    fireEvent.click(saveButton());
+    const [saved] = applyUpdate(setDerivedVariables, []);
+    expect(saved.functionName).toBe('filterDefinedGroups');
+    expect(saved.variableId).toBe('dv1');
+  });
+
+  test('re-saving after an edit that changes form keeps the variableId', () => {
+    const two = { ...filter, variableId: 'other' } as Filter;
+    const before = makeSpec([
+      { label: 'East', filters: [filter, two] },
+      { label: 'West', filters: [otherFilter] },
+    ]);
+    expect(toStoredSpec(before, entities)).toBe(before);
+    const { analysisState, setDerivedVariables } = makeAnalysisState([before]);
+    renderEditor(before, analysisState);
+    // Removing the two-filter group leaves a single-variable grouping
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 1' }));
+    fireEvent.click(saveButton());
+    const [saved] = applyUpdate(setDerivedVariables, [before]);
+    expect(saved.functionName).toBe('categoricalRecoding');
+    expect(saved.variableId).toBe('dv1');
+  });
+
+  function everythingElse() {
+    return screen.getByLabelText('Everything else') as HTMLInputElement;
+  }
+
+  test('new variable: Everything else turns off when groups cover the vocabulary, back on when they stop', () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec(eligible()), analysisState);
+    expect(everythingElse().checked).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 2' }));
+    expect(everythingElse().checked).toBe(true);
+  });
+
+  test('once the user toggles Everything else, coverage changes no longer move it', () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec(eligible()), analysisState);
+    expect(everythingElse().checked).toBe(false);
+    fireEvent.click(everythingElse());
+    expect(everythingElse().checked).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 2' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 1' }));
+    expect(everythingElse().checked).toBe(true);
+    fireEvent.click(everythingElse());
+    fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    expect(everythingElse().checked).toBe(false);
+  });
+
+  test('opening a saved variable keeps its stored Everything else setting', () => {
+    const spec = makeSpec(eligible(), {
+      config: { groups: eligible(), unmappedValue: 'Rest' },
+    });
+    const { analysisState } = makeAnalysisState([toStoredSpec(spec, entities)]);
+    renderEditor(spec, analysisState);
+    // groups cover the vocabulary, but the saved setting stands
+    expect(everythingElse().checked).toBe(true);
+    expect(screen.getByLabelText("'Everything else' label")).toHaveValue(
+      'Rest'
+    );
   });
 });
 

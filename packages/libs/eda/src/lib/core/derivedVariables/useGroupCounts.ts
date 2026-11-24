@@ -3,10 +3,12 @@ import { useDebounce } from '../hooks/debouncing';
 import { usePromise } from '../hooks/promise';
 import {
   useDataClient,
+  useStudyEntities,
   useStudyMetadata,
   useSubsettingClient,
 } from '../hooks/workspace';
 import { validateFilterDefinedGroups } from './groups';
+import { toStoredSpec } from './recoding';
 import { FilterDefinedGroupsSpec } from './types';
 
 const DEBOUNCE_MS = 500;
@@ -28,6 +30,7 @@ export function useGroupCounts(spec: FilterDefinedGroupsSpec): GroupCounts {
   const subsettingClient = useSubsettingClient();
   const dataClient = useDataClient();
   const { id: studyId } = useStudyMetadata();
+  const entities = useStudyEntities();
   const debouncedSpec = useDebounce(spec, DEBOUNCE_MS);
 
   const task = useCallback(async () => {
@@ -49,10 +52,12 @@ export function useGroupCounts(spec: FilterDefinedGroupsSpec): GroupCounts {
     // The server would reject an invalid spec, so skip the barplot.
     if (validateFilterDefinedGroups(debouncedSpec.config).length > 0)
       return { raw, final: undefined };
+    // Count with the form that will be saved, so the numbers match the plots.
+    const stored = toStoredSpec(debouncedSpec, entities);
     const response = await dataClient.getBarplot('pass', {
       studyId,
       filters: [],
-      derivedVariables: [debouncedSpec],
+      derivedVariables: [stored],
       config: {
         outputEntityId: debouncedSpec.entityId,
         valueSpec: 'count',
@@ -78,7 +83,7 @@ export function useGroupCounts(spec: FilterDefinedGroupsSpec): GroupCounts {
     const unmatched = Math.max(0, total - matched);
     if (unmatched > 0) final[''] = unmatched;
     return { raw, final };
-  }, [debouncedSpec, subsettingClient, dataClient, studyId]);
+  }, [debouncedSpec, entities, subsettingClient, dataClient, studyId]);
 
   const { value, pending } = usePromise(task, { keepPreviousValue: false });
 

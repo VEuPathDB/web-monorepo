@@ -16,12 +16,14 @@ import {
   FilterDefinedGroupsSpec,
 } from '../../core/derivedVariables/types';
 import {
+  coversVocabulary,
   DEFAULT_UNMAPPED_VALUE,
   MAX_GROUPS,
   nextGroupStartVariable,
   overlapForGroup,
   validateFilterDefinedGroups,
 } from '../../core/derivedVariables/groups';
+import { toStoredSpec } from '../../core/derivedVariables/recoding';
 import { findVisualizationsUsing } from '../../core/derivedVariables/references';
 import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
 import { GroupFilterState } from '../../core/derivedVariables/useGroupFilterAnalysisState';
@@ -85,9 +87,18 @@ export function VariableEditor({
     id: string;
     startVariable?: VariableDescriptor;
   }>();
-  const [everythingElseOn, setEverythingElseOn] = useState(
+  const isSaved = (analysis?.descriptor.derivedVariables ?? []).some(
+    (s) => s.variableId === spec.variableId
+  );
+  // A new variable's switch follows the groups until the user touches it;
+  // a saved variable keeps its stored setting.
+  const [everythingElseTouched, setEverythingElseTouched] = useState(isSaved);
+  const [everythingElseChoice, setEverythingElseChoice] = useState(
     Boolean(spec.config.unmappedValue)
   );
+  const everythingElseOn = everythingElseTouched
+    ? everythingElseChoice
+    : !coversVocabulary(groups, entities);
   const [everythingElseLabel, setEverythingElseLabel] = useState(
     spec.config.unmappedValue || DEFAULT_UNMAPPED_VALUE
   );
@@ -111,9 +122,6 @@ export function VariableEditor({
   const entity = entities.find((e) => e.id === entityId);
   const entityPlural = entity?.displayNamePlural ?? entity?.displayName ?? '';
 
-  const isSaved = (analysis?.descriptor.derivedVariables ?? []).some(
-    (s) => s.variableId === spec.variableId
-  );
   // Plots reference the variable by entityId + variableId, so a saved
   // variable must keep its entity or those plots would be orphaned.
   const entityLocked = isSaved || groups.length > 0;
@@ -235,7 +243,7 @@ export function VariableEditor({
     // skipServerCreate = false (hooks/analysis.ts). The `true` argument is
     // ignored by useSetter; it is passed to state the intent.
     analysisState.setDerivedVariables(
-      (previous) => upsertSpec(previous, draft),
+      (previous) => upsertSpec(previous, toStoredSpec(draft, entities)),
       true
     );
     onSave(draft);
@@ -334,13 +342,14 @@ export function VariableEditor({
           size="small"
           themeRole="primary"
           disabled={groups.length >= MAX_GROUPS}
-          tooltip={
-            groups.length >= MAX_GROUPS
-              ? `A variable can have at most ${MAX_GROUPS} groups`
-              : undefined
-          }
           onPress={addGroup}
         />
+        {groups.length >= MAX_GROUPS && (
+          <span className={cx('-Note')}>
+            At most {MAX_GROUPS} groups, so each group and Everything else gets
+            its own colour
+          </span>
+        )}
       </div>
 
       <div className={cx('-EverythingElse')}>
@@ -348,7 +357,10 @@ export function VariableEditor({
           <input
             type="checkbox"
             checked={everythingElseOn}
-            onChange={(e) => setEverythingElseOn(e.target.checked)}
+            onChange={(e) => {
+              setEverythingElseTouched(true);
+              setEverythingElseChoice(e.target.checked);
+            }}
           />{' '}
           Everything else
         </label>
@@ -464,7 +476,7 @@ export function VariableEditor({
 
 function upsertSpec(
   previous: DerivedVariableSpec[],
-  spec: FilterDefinedGroupsSpec
+  spec: DerivedVariableSpec
 ): DerivedVariableSpec[] {
   return previous.some((s) => s.variableId === spec.variableId)
     ? previous.map((s) => (s.variableId === spec.variableId ? spec : s))

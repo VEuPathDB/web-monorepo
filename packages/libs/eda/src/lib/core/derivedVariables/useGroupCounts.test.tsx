@@ -5,6 +5,8 @@ import {
   WorkspaceContextValue,
 } from '../context/WorkspaceContext';
 import { Filter } from '../types/filter';
+import { StudyEntity } from '../types/study';
+import { toStoredSpec } from './recoding';
 import { useGroupCounts } from './useGroupCounts';
 import { FilterDefinedGroupsSpec } from './types';
 
@@ -27,6 +29,25 @@ function makeSpec(
   };
 }
 
+const rootEntity = {
+  id: 'e',
+  idColumnName: 'e_id',
+  displayName: 'E',
+  description: '',
+  isManyToOneWithParent: false,
+  variables: [
+    {
+      id: 'v',
+      providerLabel: 'v',
+      displayName: 'V',
+      type: 'string',
+      dataShape: 'categorical',
+      isMultiValued: false,
+      vocabulary: ['a', 'b'],
+    },
+  ],
+} as unknown as StudyEntity;
+
 function setup() {
   const getEntityCount = jest
     .fn()
@@ -40,7 +61,7 @@ function setup() {
     },
   });
   const value = {
-    studyMetadata: { id: 'study' },
+    studyMetadata: { id: 'study', rootEntity },
     subsettingClient: { getEntityCount },
     dataClient: { getBarplot },
   } as unknown as WorkspaceContextValue;
@@ -71,7 +92,7 @@ describe('useGroupCounts', () => {
     const [app, params] = getBarplot.mock.calls[0];
     expect(app).toBe('pass');
     expect(params.filters).toEqual([]);
-    expect(params.derivedVariables).toEqual([spec]);
+    expect(params.derivedVariables).toEqual([toStoredSpec(spec, [rootEntity])]);
     expect(params.config).toMatchObject({
       valueSpec: 'count',
       showMissingness: 'TRUE',
@@ -114,5 +135,20 @@ describe('useGroupCounts', () => {
     });
     await waitFor(() => result.current.pending === false, { timeout: 3000 });
     expect(result.current.final).toEqual({ A: 6, B: 4 });
+  });
+
+  test('sends the recoder form in the barplot request when eligible', async () => {
+    const { getBarplot, wrapper } = setup();
+    const spec = makeSpec([
+      { label: 'A', filters: [filter] },
+      { label: 'B', filters: [{ ...filter, stringSet: ['b'] } as Filter] },
+    ]);
+    const { result, waitFor } = renderHook(() => useGroupCounts(spec), {
+      wrapper,
+    });
+    await waitFor(() => result.current.pending === false, { timeout: 3000 });
+    const stored = toStoredSpec(spec, [rootEntity]);
+    expect(stored.functionName).toBe('categoricalRecoding');
+    expect(getBarplot.mock.calls[0][1].derivedVariables).toEqual([stored]);
   });
 });

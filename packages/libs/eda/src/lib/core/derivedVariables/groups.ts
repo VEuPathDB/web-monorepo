@@ -1,5 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { VariableDescriptor } from '../types/variable';
+import { StudyEntity } from '../types/study';
+import { findEntityAndVariable } from '../utils/study-metadata';
 import {
   FILTER_DEFINED_GROUPS,
   FilterDefinedGroup,
@@ -7,7 +9,7 @@ import {
   FilterDefinedGroupsSpec,
 } from './types';
 
-export const MAX_GROUPS = 10;
+export const MAX_GROUPS = 7;
 export const DEFAULT_UNMAPPED_VALUE = 'Other';
 
 /**
@@ -67,4 +69,44 @@ export function nextGroupStartVariable(
   const filters = groups[groups.length - 1]?.filters;
   const last = filters?.[filters.length - 1];
   return last && { entityId: last.entityId, variableId: last.variableId };
+}
+
+/**
+ * True when every group is one stringSet filter on the same variable and
+ * together they list every value of that variable's vocabulary, so nothing
+ * is left for "Everything else".
+ */
+export function coversVocabulary(
+  groups: FilterDefinedGroup[],
+  entities: StudyEntity[]
+): boolean {
+  if (groups.length === 0) return false;
+  const filters = groups.map((g) =>
+    g.filters.length === 1 ? g.filters[0] : undefined
+  );
+  const first = filters[0];
+  if (first == null) return false;
+  const values = new Set<string>();
+  for (const f of filters) {
+    if (
+      f == null ||
+      f.type !== 'stringSet' ||
+      f.entityId !== first.entityId ||
+      f.variableId !== first.variableId
+    )
+      return false;
+    f.stringSet.forEach((v) => values.add(v));
+  }
+  const found = findEntityAndVariable(entities, {
+    entityId: first.entityId,
+    variableId: first.variableId,
+  });
+  const variable = found?.variable;
+  if (
+    variable == null ||
+    !('vocabulary' in variable) ||
+    variable.vocabulary == null
+  )
+    return false;
+  return variable.vocabulary.every((v) => values.has(v));
 }

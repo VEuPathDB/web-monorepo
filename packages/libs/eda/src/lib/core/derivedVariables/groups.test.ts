@@ -1,5 +1,7 @@
 import { Filter } from '../types/filter';
+import { StudyEntity } from '../types/study';
 import {
+  coversVocabulary,
   DEFAULT_UNMAPPED_VALUE,
   MAX_GROUPS,
   newFilterDefinedGroupsSpec,
@@ -63,7 +65,7 @@ test.each([
     {
       groups: Array.from({ length: MAX_GROUPS + 1 }, (_, i) => group(`G${i}`)),
     },
-    ['At most 10 groups'],
+    ['At most 7 groups'],
   ],
 ])('rejects %s', (_name, config, expected) => {
   expect(validateFilterDefinedGroups(config)).toEqual(expected);
@@ -98,4 +100,73 @@ test("nextGroupStartVariable uses the previous group's variable", () => {
 test('nextGroupStartVariable is undefined with no groups', () => {
   expect(nextGroupStartVariable([])).toBeUndefined();
   expect(nextGroupStartVariable([group('A', [])])).toBeUndefined();
+});
+
+describe('coversVocabulary', () => {
+  const entities = [
+    {
+      id: 'e',
+      variables: [
+        {
+          id: 'v',
+          type: 'string',
+          dataShape: 'categorical',
+          vocabulary: ['x', 'y', 'z'],
+        },
+        {
+          id: 'w',
+          type: 'string',
+          dataShape: 'categorical',
+          vocabulary: ['x'],
+        },
+      ],
+    },
+  ] as unknown as StudyEntity[];
+  const set = (values: string[], variableId = 'v'): Filter => ({
+    type: 'stringSet',
+    entityId: 'e',
+    variableId,
+    stringSet: values,
+  });
+
+  it('coversVocabulary: true when stringSet groups on one variable cover its vocabulary', () => {
+    expect(
+      coversVocabulary(
+        [group('A', [set(['x', 'y'])]), group('B', [set(['y', 'z'])])],
+        entities
+      )
+    ).toBe(true);
+  });
+
+  it('coversVocabulary: false when a value is missing, filters differ in variable, or a group is not stringSet', () => {
+    expect(
+      coversVocabulary(
+        [group('A', [set(['x'])]), group('B', [set(['y'])])],
+        entities
+      )
+    ).toBe(false);
+    expect(
+      coversVocabulary(
+        [group('A', [set(['x', 'y'])]), group('B', [set(['x', 'z'], 'w')])],
+        entities
+      )
+    ).toBe(false);
+    expect(
+      coversVocabulary(
+        [
+          group('A', [set(['x', 'y'])]),
+          group('B', [
+            {
+              type: 'stringPrefixSet',
+              entityId: 'e',
+              variableId: 'v',
+              prefixSet: ['z'],
+            },
+          ]),
+        ],
+        entities
+      )
+    ).toBe(false);
+    expect(coversVocabulary([], entities)).toBe(false);
+  });
 });
