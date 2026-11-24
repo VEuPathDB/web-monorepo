@@ -4,31 +4,31 @@ import { RouteComponentProps } from 'react-router';
 
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { pathfinderUrl, rootUrl } from '../config';
+import { strategistUrl, rootUrl } from '../config';
 
-import Pathfinder from '../components/Pathfinder';
+import Strategist from '../components/Strategist';
 
-type PathfinderControllerProps = RouteComponentProps<{}>;
+type StrategistControllerProps = RouteComponentProps<{}>;
 
-export const PathfinderController = (props: PathfinderControllerProps) => {
-  usePathfinderDocumentTitle();
+export const StrategistController = (props: StrategistControllerProps) => {
+  useStrategistDocumentTitle();
   const { location, match } = props;
   const subPath = location.pathname
     .slice(match.url.length)
     .replace(/^\/+/, '/');
-  const src = pathfinderUrl.replace(/\/+$/, '') + subPath + location.search;
-  return <Pathfinder src={src} appBase={rootUrl} />;
+  const src = strategistUrl.replace(/\/+$/, '') + subPath + location.search;
+  return <Strategist src={src} appBase={rootUrl} />;
 };
 
-const usePathfinderDocumentTitle = () => {
+const useStrategistDocumentTitle = () => {
   const projectDisplayName = useSelector(
     (state: RootState) =>
       state.globalData.config && state.globalData.config.displayName
   );
 
   const title = projectDisplayName
-    ? `${projectDisplayName} :: PathFinder`
-    : 'PathFinder';
+    ? `${projectDisplayName} :: VEuPathDB Strategist`
+    : 'VEuPathDB Strategist';
 
   useSetDocumentTitle(title);
 };

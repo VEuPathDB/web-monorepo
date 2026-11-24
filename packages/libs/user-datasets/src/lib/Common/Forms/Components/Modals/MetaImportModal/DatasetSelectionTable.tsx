@@ -13,9 +13,7 @@ import { projectId } from '../../../../../config';
 import * as util from '../../../../../Utils';
 import {
   ifDefined,
-  Nullable,
   Possible,
-  SimpleState,
 } from '../../../../../Utils';
 
 // FIXME: help text values are to be shared with all tables having these columns
@@ -75,7 +73,8 @@ export interface MetadataImportTableProps {
   readonly datasets: Dataset[];
   readonly publicDatasetsEnabled: boolean;
 
-  readonly selection: SimpleState<Possible<DatasetId>>;
+  readonly selection: Possible<DatasetId>;
+  readonly setSelection: util.Consumer<Possible<DatasetId>>;
 }
 
 type TableColumn<K extends keyof Dataset> = mesa.MesaColumn<
@@ -94,7 +93,7 @@ interface TableRowProps {
 export function DatasetSelectionTable(
   props: MetadataImportTableProps
 ): ReactElement {
-  const [filterString, setFilterString] = useState<Nullable<string>>(null);
+  const [filterString, setFilterString] = useState<string>();
   const [filteredDatasets, setFilteredDatasets] = useState(props.datasets);
   const [onlyMyDatasets, setOnlyMyDatasets] = useState(false);
   const [onlyThisSite, setOnlyThisSite] = useState(false);
@@ -138,11 +137,11 @@ export function DatasetSelectionTable(
           toolbar: true,
           hideSelectAll: true,
           getRowId: (row) => row.datasetId,
-          isRowSelected: (row) => row.datasetId === props.selection.get(),
+          isRowSelected: (row) => row.datasetId === props.selection,
         },
         eventHandlers: {
-          onRowSelect: (it) => props.selection.set(it.datasetId),
-          onRowDeselect: (_) => props.selection.set(undefined),
+          onRowSelect: (it) => props.setSelection(it.datasetId),
+          onRowDeselect: (_) => props.setSelection(undefined),
           onSearch: setFilterString,
           onSort: ({ key: columnKey }, direction) =>
             setSortBy({ columnKey, direction }),
@@ -292,7 +291,7 @@ function sortDatasets(
 // region Toolbar
 
 interface FilterOptions {
-  readonly query: Nullable<string>;
+  readonly query: Possible<string>;
   readonly excludePublic: boolean;
   readonly excludeOtherSites: boolean;
   readonly userId: number;

@@ -12,6 +12,7 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { DownloadsFilter } from './DownloadsFilter';
 import { DownloadsTable } from './DownloadsTable';
 import './Downloads.scss';
+import { projectId } from '../../config';
 
 const RECORD_NAME = 'dfile';
 const TABLE_QUESTION_NAME = 'GetAllFileRecords';
@@ -86,10 +87,17 @@ export function Downloads() {
             in the ‘File’ column, or multiple files using the checkboxes in the
             first column.
           </li>
-          {/* <li>
-            To access older files please see the{' '}
-            <a href="/common/downloads/">Download Archive</a>.
-          </li>*/}
+          {projectId === 'VectorBase' ? (
+            <li>
+              To access older files please see the{' '}
+              <a href="/common/downloads/LegacyVectorBase/">
+                Legacy VectorBase Files
+              </a>
+              .
+            </li>
+          ) : (
+            <span></span>
+          )}
         </ul>
       </p>
       <div className="Downloads-Filter-Container">

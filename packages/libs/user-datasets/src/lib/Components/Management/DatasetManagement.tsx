@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Public } from '@material-ui/icons';
 
@@ -168,15 +168,7 @@ export interface DatasetAttribute {
   value: React.ReactNode;
 }
 
-enum DatasetUpdateAction {
-  None,
-  OpeningDefault,
-  OpeningForPromotion,
-  Closing,
-}
-
 export interface DatasetManagementState {
-  readonly datasetUpdateAction: DatasetUpdateAction;
   readonly isCommunityModalOpen: boolean;
 }
 
@@ -197,6 +189,8 @@ interface StatusRowWithPollingProps {
     id: string
   ) => ReturnType<typeof loadUserDatasetDetailWithoutLoadingIndicator>;
   loadUserDatasetSearches: (type: string) => unknown;
+  /** True while a dataset update is in flight; a true -> false edge re-polls. */
+  userDatasetUpdating: boolean;
   /** Renders the status row, told whether polling is currently live. */
   children: (isPolling: boolean) => ReactNode;
 }
@@ -221,8 +215,19 @@ function StatusRowWithPolling({
   isInstalled,
   loadUserDatasetDetailWithoutLoadingIndicator,
   loadUserDatasetSearches,
+  userDatasetUpdating,
   children,
 }: StatusRowWithPollingProps) {
+  // Counts completed updates so the polling hook can re-poll after each one.
+  const [updateCount, setUpdateCount] = useState(0);
+  const wasUpdating = useRef(userDatasetUpdating);
+  useEffect(() => {
+    if (wasUpdating.current && !userDatasetUpdating) {
+      setUpdateCount((count) => count + 1);
+    }
+    wasUpdating.current = userDatasetUpdating;
+  }, [userDatasetUpdating]);
+
   // isChecking is deliberately not consumed. Driving the icon from individual
   // requests would expose the backoff — the gap stretches from 2s to 15s, and
   // 60s while awaiting reinstall — and an indicator that visibly slows down
@@ -231,8 +236,10 @@ function StatusRowWithPolling({
     status,
     projectId,
     onPoll: async () => {
-      loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
+      // Awaited so the hook knows when the store actually has the new status.
+      await loadUserDatasetDetailWithoutLoadingIndicator(datasetId);
     },
+    refreshKey: updateCount,
   });
 
   const wasInstalled = useRef(isInstalled);
@@ -254,7 +261,6 @@ class DatasetManagement<
 
     this.state = {
       ...this.state,
-      datasetUpdateAction: DatasetUpdateAction.None,
       isCommunityModalOpen: false,
     };
 
@@ -294,6 +300,11 @@ class DatasetManagement<
     }
 
     return CommunityPromotability.CanPromote;
+  }
+
+  private getEditPath(): string {
+    const { baseUrl, userDataset } = this.props;
+    return `${baseUrl}/${userDataset.datasetId}/edit`;
   }
 
   openSharingModal() {
@@ -407,6 +418,7 @@ class DatasetManagement<
             this.props.loadUserDatasetDetailWithoutLoadingIndicator
           }
           loadUserDatasetSearches={this.props.loadUserDatasetSearches}
+          userDatasetUpdating={this.props.userDatasetUpdating}
         >
           {(isPolling) => (
             <span>
@@ -699,10 +711,7 @@ class DatasetManagement<
           <ThemedUpdateButton
             buttonText="Edit my dataset"
             onPress={() =>
-              this.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.OpeningDefault,
-              }))
+              this.props.history.push({ pathname: this.getEditPath() })
             }
           />
         )}
@@ -820,13 +829,13 @@ class DatasetManagement<
             onClose={() =>
               self.setState((s) => ({ ...s, isCommunityModalOpen: false }))
             }
-            onFixErrors={() =>
-              self.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.OpeningForPromotion,
-                isCommunityModalOpen: false,
-              }))
-            }
+            onFixErrors={() => {
+              self.setState((s) => ({ ...s, isCommunityModalOpen: false }));
+              self.props.history.push({
+                pathname: self.getEditPath(),
+                search: '?updateToPublic',
+              });
+            }}
             dataNoun={dataNoun}
             updateDatasetCommunityVisibility={(
               datasetIds,
@@ -846,35 +855,11 @@ class DatasetManagement<
         );
       }
 
-      const updatePath = `${self.props.baseUrl}/${userDataset.datasetId}/edit`;
-
-      switch (self.state.datasetUpdateAction) {
-        case DatasetUpdateAction.OpeningForPromotion:
-          self.props.history.push({
-            pathname: updatePath,
-            search: '?updateToPublic',
-          });
-          break;
-
-        case DatasetUpdateAction.OpeningDefault:
-          self.props.history.push({ pathname: updatePath });
-          break;
-
-        case DatasetUpdateAction.Closing:
-          self.props.history.goBack();
-          break;
-      }
-
       if (self.props.editModal?.showModal) {
         return (
           <UpdateFormController
             datasetId={userDataset.datasetId}
-            closeModal={() =>
-              self.setState((s) => ({
-                ...s,
-                datasetUpdateAction: DatasetUpdateAction.Closing,
-              }))
-            }
+            closeModal={() => self.props.history.goBack()}
             baseUrl={self.props.baseUrl}
             vdiConfig={self.props.vdiConfig}
             isPromotingToPublic={self.props.editModal.updateToPublic}

@@ -1,18 +1,22 @@
 import React, { ReactElement } from 'react';
 import { PartialDatasetDetails } from '../../../../../Service';
-import { Consumer, JsonPathBuilder } from '../../../../../Utils';
+import { JsonPathBuilder } from '../../../../../Utils';
 import { DatasetVisibility } from '../../../../../Service/Model';
 import { LabelInputPair } from '../../LabelInputPair';
+import { useDatasetVisibility } from '../../../Hooks/dataset-metadata-hooks';
+import { useDispatch } from 'react-redux';
+import { overwriteMetaField } from '../../../../../Actions/DatasetMetadataFormActions';
 
 export interface VisibilityOptionProps {
-  readonly datasetMeta: PartialDatasetDetails;
-  readonly setDatasetMeta: Consumer<PartialDatasetDetails>;
   readonly jsonPath: JsonPathBuilder;
 }
 
 export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
+  const visibility = useDatasetVisibility();
+  const dispatch = useDispatch();
+
   const setVisibility = (v: DatasetVisibility) =>
-    props.setDatasetMeta({ ...props.datasetMeta, visibility: v });
+    dispatch(overwriteMetaField('visibility', v));
 
   const fieldName =
     props.jsonPath.appendToString<PartialDatasetDetails>('visibility');
@@ -27,7 +31,7 @@ export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
           labelClass="left"
           inputClass="right"
           fieldName={fieldName}
-          checked={isPublic(props.datasetMeta.visibility)}
+          checked={isPublic(visibility)}
           value="public"
           onChange={(e) => {
             if (isPublic(e.target.value)) setVisibility('public');
@@ -45,7 +49,7 @@ export function VisibilityOptions(props: VisibilityOptionProps): ReactElement {
           inputClass="right"
           idOverride={`${fieldName}.private`}
           fieldName={fieldName}
-          checked={!isPublic(props.datasetMeta.visibility)}
+          checked={!isPublic(visibility)}
           value="private"
           onChange={(e) => {
             if (!isPublic(e.target.value)) setVisibility('private');

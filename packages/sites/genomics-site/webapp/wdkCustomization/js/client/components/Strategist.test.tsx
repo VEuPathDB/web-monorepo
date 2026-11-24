@@ -4,13 +4,13 @@ import { Provider } from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { createStore } from 'redux';
 
-import { PathfinderController } from '@veupathdb/web-common/lib/controllers/PathfinderController';
+import { StrategistController } from '@veupathdb/web-common/lib/controllers/StrategistController';
 
-let mockPathfinderUrl = '/pathfinder';
+let mockStrategistUrl = '/strategist';
 
 jest.mock('@veupathdb/web-common/lib/config', () => ({
-  get pathfinderUrl() {
-    return mockPathfinderUrl;
+  get strategistUrl() {
+    return mockStrategistUrl;
   },
   rootUrl: '/plasmo/app',
 }));
@@ -20,11 +20,11 @@ function renderAt(location: string) {
   const view = render(
     <Provider store={store}>
       <MemoryRouter initialEntries={[location]}>
-        <Route path="/pathfinder" component={PathfinderController} />
+        <Route path="/strategist" component={StrategistController} />
       </MemoryRouter>
     </Provider>
   );
-  const iframe = screen.getByTitle('PathFinder') as HTMLIFrameElement;
+  const iframe = screen.getByTitle('VEuPathDB Strategist') as HTMLIFrameElement;
   return { ...view, iframe };
 }
 
@@ -37,21 +37,21 @@ function post(
 }
 
 afterEach(() => {
-  mockPathfinderUrl = '/pathfinder';
+  mockStrategistUrl = '/strategist';
   jest.restoreAllMocks();
   window.history.replaceState(null, '', '/');
 });
 
-describe('Pathfinder', () => {
-  it('frames the PathFinder path after /pathfinder, in any letter case', () => {
-    expect(renderAt('/PathFinder/plasmodb/x?a=1').iframe.src).toBe(
-      'http://localhost/pathfinder/plasmodb/x?a=1'
+describe('Strategist', () => {
+  it('frames the Strategist path after /strategist, in any letter case', () => {
+    expect(renderAt('/Strategist/plasmodb/x?a=1').iframe.src).toBe(
+      'http://localhost/strategist/plasmodb/x?a=1'
     );
   });
 
   it('never frames a protocol-relative src', () => {
-    mockPathfinderUrl = '/';
-    expect(renderAt('/pathfinder//evil.com/x').iframe.src).toBe(
+    mockStrategistUrl = '/';
+    expect(renderAt('/strategist//evil.com/x').iframe.src).toBe(
       'http://localhost/evil.com/x'
     );
   });
@@ -59,20 +59,20 @@ describe('Pathfinder', () => {
   it('writes a reported path into the address bar, keeping history state', () => {
     window.history.replaceState({ key: 'abc' }, '', '/');
     const replaceState = jest.spyOn(window.history, 'replaceState');
-    const { iframe } = renderAt('/pathfinder');
-    post(iframe, { type: 'pathfinder:location', path: '//evil.com/x' });
+    const { iframe } = renderAt('/strategist');
+    post(iframe, { type: 'strategist:location', path: '//evil.com/x' });
     expect(replaceState).toHaveBeenCalledWith(
       { key: 'abc' },
       '',
-      '/plasmo/app/pathfinder//evil.com/x'
+      '/plasmo/app/strategist//evil.com/x'
     );
     expect(window.location.origin).toBe('http://localhost');
   });
 
   it('ignores other origins, other windows and malformed messages', () => {
     const replaceState = jest.spyOn(window.history, 'replaceState');
-    const { iframe } = renderAt('/pathfinder');
-    const message = { type: 'pathfinder:location', path: '/plasmodb' };
+    const { iframe } = renderAt('/strategist');
+    const message = { type: 'strategist:location', path: '/plasmodb' };
     post(iframe, message, { origin: 'https://example.org' });
     post(iframe, message, { source: window });
     post(iframe, { ...message, type: 'other' });
@@ -85,7 +85,7 @@ describe('Pathfinder', () => {
   it('removes its listener on unmount', () => {
     const addEventListener = jest.spyOn(window, 'addEventListener');
     const removeEventListener = jest.spyOn(window, 'removeEventListener');
-    renderAt('/pathfinder').unmount();
+    renderAt('/strategist').unmount();
     const added = addEventListener.mock.calls.find(([t]) => t === 'message');
     expect(removeEventListener).toHaveBeenCalledWith('message', added?.[1]);
   });

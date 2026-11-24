@@ -51,7 +51,7 @@ import {
   communityDatasetsEnabled,
   useUserDatasetsWorkspace,
   edaServiceUrl,
-  pathfinderUrl,
+  strategistUrl,
   showUnreleasedData,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
@@ -131,7 +131,7 @@ const VEuPathDBHomePageViewStandard: FunctionComponent<Props> = (props) => {
   const location = useLocation();
   const shouldHideOrgPrefsSubheader =
     location.pathname.includes('workspace/analyses') ||
-    location.pathname.startsWith('/pathfinder') ||
+    location.pathname.startsWith('/strategist') ||
     user == null ||
     user.isGuest;
 
@@ -597,13 +597,13 @@ const useHeaderMenuItems = (
           url: 'https://www.ncbi.nlm.nih.gov/tools/primer-blast/',
         },
         {
-          key: 'pathfinder',
-          display: 'PathFinder',
+          key: 'strategist',
+          display: 'VEuPathDB Strategist',
           tooltip: 'Build and refine search strategies with an AI assistant',
           type: 'reactRoute',
-          url: '/pathfinder',
+          url: '/strategist',
           metadata: {
-            test: () => Boolean(pathfinderUrl),
+            test: () => Boolean(strategistUrl),
           },
         },
         {

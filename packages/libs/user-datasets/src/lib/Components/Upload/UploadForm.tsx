@@ -19,9 +19,9 @@ import { JsonPathBuilder } from '../../Utils';
 
 import '../../Common/Forms/DatasetForm.scss';
 import { SubmittableState } from '../../Common/Forms/Components/UploadButton';
-import { useDatasetFormState } from '../../StoreModules/UserDatasetUploadStoreModule';
 import { DatasetFormProps } from '../../Common/Forms/DatasetFormProps';
 import { isDatasetFormValid } from '../../Common/Forms/form-validation';
+import { useDatasetMetadata } from '../../Common/Forms/Hooks/dataset-metadata-hooks';
 
 function InfoBanner({ baseUrl }: { baseUrl: string }): React.ReactElement {
   const bannerConfig: BannerProps = React.useMemo(
@@ -57,26 +57,35 @@ export function UploadForm(props: DatasetFormProps): ReactElement {
   // !! This is intentionally not nested ternaries!  The automated code
   // !! formatting in use by some committers makes nested ternaries
   // !! nearly incomprehensible.
-  const uploadSubmittable = useMemo(() => {
-    if (!formIsValid) return SubmittableState.Invalid;
+  const uploadSubmittable = useMemo(
+    () => {
+      if (!formIsValid) return SubmittableState.Invalid;
 
-    if (props.isSubmitting) return SubmittableState.InProgress;
+      if (props.isSubmitting) return SubmittableState.InProgress;
 
-    return SubmittableState.Submittable;
-  }, [formIsValid, props.isSubmitting]);
+      return SubmittableState.Submittable;
+    },
+    [formIsValid, props.isSubmitting],
+  );
 
-  const onSubmit = () => {
-    props.actions.submit();
-    window.scrollTo(0, 0);
-  };
+  const rawSubmit = props.actions.submit;
 
-  const formState = useDatasetFormState();
+  const onSubmit = React.useCallback(
+    () => {
+      rawSubmit();
+      window.scrollTo(0, 0);
+    },
+    [rawSubmit]
+  );
+
+  const datasetDetails = useDatasetMetadata();
 
   const uploadSection = useRef<HTMLElement>(null);
 
-  useEffect(() => setFormIsValid(
-    isDatasetFormValid(formState.datasetDetails, props.formConfig, uploadSection)
-  ), [setFormIsValid, formState, props]);
+  useEffect(
+    () => setFormIsValid(isDatasetFormValid(datasetDetails ?? {}, props.formConfig, uploadSection)),
+    [setFormIsValid, datasetDetails, props],
+  );
 
   return (
     <section id="dataset-upload" ref={uploadSection}>
