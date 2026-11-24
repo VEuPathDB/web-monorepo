@@ -42,6 +42,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
 import DownloadTab from './DownloadTab';
+import CreateVariables from './CreateVariables';
 import { Alert } from '@material-ui/lab';
 import ShareFromAnalysis from './sharing/ShareFromAnalysis';
 import { useAnalysis } from '../core/hooks/analysis';
@@ -162,7 +163,9 @@ export function AnalysisPanel({
    * 1. check pathname to determine if Browse & Subset tab is selected
    * 2. split lastVarPath into an array structured as ['', entityId, variableId]
    */
-  const isSubsetTabSelected = location.pathname.includes('variables');
+  const isSubsetTabSelected = location.pathname
+    .replace(routeBase, '')
+    .startsWith('/variables');
   const lastVarPathList = lastVarPath.split('/');
   const selectedEntityId = isSubsetTabSelected ? lastVarPathList[1] : undefined;
   const selectedVariableId = isSubsetTabSelected
@@ -361,6 +364,10 @@ export function AnalysisPanel({
                   exact: false,
                 },
                 {
+                  display: 'Create variables',
+                  route: '/create-variables',
+                },
+                {
                   display: 'Visualize',
                   // check whether user is at viz
                   route: location.pathname
@@ -452,6 +459,14 @@ export function AnalysisPanel({
                   totalCounts={totalCounts.value}
                   filteredCounts={filteredCounts.value}
                 />
+              </AnalysisTabErrorBoundary>
+            )}
+          />
+          <Route
+            path={`${routeBase}/create-variables`}
+            render={() => (
+              <AnalysisTabErrorBoundary>
+                <CreateVariables analysisState={analysisState} />
               </AnalysisTabErrorBoundary>
             )}
           />

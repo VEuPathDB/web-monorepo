@@ -1,0 +1,187 @@
+.CreateVariables {
+  display: grid;
+  grid-template-columns: 16em minmax(0, 1fr);
+  gap: 2em;
+  margin-top: 1.5em;
+
+  &-List {
+    border-right: 1px solid lightgray;
+    padding-right: 1em;
+
+    ul {
+      list-style: none;
+      margin: 0.5em 0 1em;
+      padding: 0;
+    }
+  }
+
+  &-ListItem {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.4em 0.6em;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    font-size: 1em;
+    cursor: pointer;
+
+    &:hover {
+      background: #f2f2f2;
+    }
+
+    &__selected {
+      background: #e6eef7;
+      font-weight: 600;
+    }
+
+    &__unsupported {
+      color: gray;
+      font-style: italic;
+      cursor: default;
+    }
+  }
+
+  &-Note {
+    margin-top: 1.5em;
+    color: #555;
+    font-size: 0.95em;
+  }
+
+  &-Muted {
+    color: gray;
+  }
+
+  &-Editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  &-EditorHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2em;
+
+    input[type='text'] {
+      min-width: 18em;
+    }
+  }
+
+  &-EntityPicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  &-Groups {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &-GroupRow,
+  &-EverythingElse {
+    display: grid;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.4em 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  &-GroupRow {
+    grid-template-columns: 1.5em auto 12em minmax(0, 1fr) auto 5em auto;
+  }
+
+  &-EverythingElse {
+    grid-template-columns: auto 12em minmax(0, 1fr) 5em;
+
+    .CreateVariables-Count {
+      grid-column: 4;
+    }
+  }
+
+  &-GroupPosition {
+    color: gray;
+    text-align: right;
+  }
+
+  &-GroupMove {
+    display: inline-flex;
+    flex-direction: column;
+
+    button {
+      border: none;
+      background: none;
+      font-size: 0.7em;
+      line-height: 1;
+      padding: 1px 4px;
+      cursor: pointer;
+
+      &:disabled {
+        color: lightgray;
+        cursor: default;
+      }
+    }
+  }
+
+  &-GroupFilters {
+    color: #444;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-GroupEdit,
+  &-GroupRemove {
+    border: none;
+    background: none;
+    font-size: 1.1em;
+    cursor: pointer;
+
+    &:disabled {
+      color: lightgray;
+      cursor: default;
+    }
+  }
+
+  &-Count {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &-Warnings {
+    list-style: none;
+    margin: 0;
+    padding: 0.75em 1em;
+    border: 1px solid #e0a800;
+    border-radius: 4px;
+    background: #fff8e1;
+    color: #6b4f00;
+
+    li + li {
+      margin-top: 0.5em;
+    }
+  }
+
+  &-Messages {
+    margin: 0;
+    padding-left: 1.5em;
+    color: #b00020;
+  }
+
+  &-Actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+  }
+
+  &-ActionsSpacer {
+    flex: 1;
+  }
+
+  &-DeleteConfirm {
+    max-width: 32em;
+  }
+}
