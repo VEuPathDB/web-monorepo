@@ -3,6 +3,8 @@ import { WorkspaceContext } from '../context/WorkspaceContext';
 import { NewAnalysis } from '../types/analysis';
 import { DerivedVariableMetadata } from '../api/DataClient/types';
 import { useDeepValue } from '../hooks/immutability';
+import Loading from '@veupathdb/wdk-client/lib/Components/Loading/Loading';
+import { DerivedVariableSpecsContext } from './DerivedVariableSpecsContext';
 import { withDerivedVariableSpecs } from './dataClient';
 import { addDerivedVariablesToEntity, toVariableTreeNode } from './metadata';
 import { decodeDerivedVariables } from './types';
@@ -28,33 +30,35 @@ export function DerivedVariablesProvider(props: Props) {
     [entries]
   );
   const [fetched, setFetched] = useState<{
-    specs: typeof supported;
+    settled: boolean;
     metadata: DerivedVariableMetadata[];
-  }>();
+  }>({ settled: false, metadata: [] });
 
   useEffect(() => {
     if (supported.length === 0) {
-      setFetched(undefined);
+      setFetched({ settled: false, metadata: [] });
       return;
     }
     let cancelled = false;
     dataClient
       .getDerivedVariableMetadata(studyMetadata.id, supported)
       .then((metadata) => {
-        if (!cancelled) setFetched({ specs: supported, metadata });
+        if (!cancelled) setFetched({ settled: true, metadata });
       })
       .catch((error) => {
         console.error('Unable to fetch derived variable metadata', error);
-        if (!cancelled) setFetched(undefined);
+        // keep any previous metadata; the first failure leaves it empty
+        if (!cancelled) setFetched((prev) => ({ ...prev, settled: true }));
       });
     return () => {
       cancelled = true;
     };
   }, [dataClient, studyMetadata.id, supported]);
 
+  // Requests can always be injected, since that needs no metadata. The tree
+  // keeps the last fetched metadata, minus entries whose spec has gone.
   const augmented = useMemo(() => {
-    if (fetched == null || fetched.specs !== supported) return workspace;
-    const nodes = fetched.specs.flatMap((spec) => {
+    const nodes = supported.flatMap((spec) => {
       const meta = fetched.metadata.find(
         (m) => m.entityId === spec.entityId && m.variableId === spec.variableId
       );
@@ -71,13 +75,22 @@ export function DerivedVariablesProvider(props: Props) {
           nodes
         ),
       },
-      dataClient: withDerivedVariableSpecs(dataClient, fetched.specs),
+      dataClient: withDerivedVariableSpecs(dataClient, supported),
     };
   }, [fetched, supported, workspace, studyMetadata, dataClient]);
 
+  // No derived variables: nothing to wrap.
+  if (supported.length === 0) return <>{children}</>;
+
+  // Hold children until the first fetch settles, so that requests for saved
+  // plots using a derived variable aren't made (and cached) without metadata.
+  if (!fetched.settled) return <Loading />;
+
   return (
-    <WorkspaceContext.Provider value={augmented}>
-      {children}
-    </WorkspaceContext.Provider>
+    <DerivedVariableSpecsContext.Provider value={supported}>
+      <WorkspaceContext.Provider value={augmented}>
+        {children}
+      </WorkspaceContext.Provider>
+    </DerivedVariableSpecsContext.Provider>
   );
 }

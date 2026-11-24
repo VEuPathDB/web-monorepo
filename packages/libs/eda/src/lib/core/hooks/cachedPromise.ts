@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { PromiseHookState } from './promise';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { DerivedVariableSpecsContext } from '../derivedVariables/DerivedVariableSpecsContext';
+import { findReferencedSpecs } from '../derivedVariables/references';
 
 // This is a wrapper around `useQuery` to replace our `usePromise` hook.
 //
@@ -23,8 +25,17 @@ export function useCachedPromise<T>(
 ): PromiseHookState<T> {
   const enabled = queryKey.every((val) => val != null);
 
+  // Requests that reference a derived variable must be re-keyed when its
+  // spec is edited. Unreferenced requests keep exactly the same key.
+  const specs = useContext(DerivedVariableSpecsContext);
+  const referenced = enabled ? findReferencedSpecs(queryKey, specs) : [];
+
   const { data, error, isLoading, isFetching } = useQuery({
-    queryKey: ['useCachedPromise', ...(queryKey ?? [])],
+    queryKey: [
+      'useCachedPromise',
+      ...(queryKey ?? []),
+      ...(referenced.length > 0 ? [referenced] : []),
+    ],
     queryFn: task,
     enabled,
     keepPreviousData: enabled,
