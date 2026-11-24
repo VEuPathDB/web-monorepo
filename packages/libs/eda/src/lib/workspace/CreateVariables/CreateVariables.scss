@@ -184,4 +184,24 @@
   &-DeleteConfirm {
     max-width: 32em;
   }
+
+  &-GroupFilterEditor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &-GroupFilterEditorHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+
+    h3 {
+      margin: 0;
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import { ReactNode, useMemo, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import Modal from '@veupathdb/coreui/lib/components/containers/Modal';
 import {
@@ -9,6 +10,7 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { AnalysisState } from '../../core/hooks/analysis';
 import { useStudyEntities } from '../../core/hooks/workspace';
 import { DerivedVariableSpec } from '../../core/types/analysis';
+import { VariableDescriptor } from '../../core/types/variable';
 import {
   FilterDefinedGroup,
   FilterDefinedGroupsSpec,
@@ -16,14 +18,30 @@ import {
 import {
   DEFAULT_UNMAPPED_VALUE,
   MAX_GROUPS,
+  nextGroupStartVariable,
   overlapForGroup,
   validateFilterDefinedGroups,
 } from '../../core/derivedVariables/groups';
 import { findVisualizationsUsing } from '../../core/derivedVariables/references';
 import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
+import { GroupFilterState } from '../../core/derivedVariables/useGroupFilterAnalysisState';
 import { GroupRow } from './GroupRow';
+import { GroupFilterEditor } from './GroupFilterEditor';
+import {
+  GroupUISettings,
+  readGroupUISettings,
+  writeGroupUISettings,
+} from './groupUISettings';
 
 const cx = makeClassNameHelper('CreateVariables');
+
+/** A group in the draft, with its filter widgets' UI settings. */
+interface DraftGroup {
+  /** Client-side only: keeps a row and its UI settings together on reorder. */
+  id: string;
+  group: FilterDefinedGroup;
+  uiSettings: GroupUISettings;
+}
 
 interface Props {
   spec: FilterDefinedGroupsSpec;
@@ -49,7 +67,24 @@ export function VariableEditor({
 
   const [displayName, setDisplayName] = useState(spec.displayName);
   const [entityId, setEntityId] = useState(spec.entityId);
-  const [groups, setGroups] = useState(spec.config.groups);
+  const [drafts, setDrafts] = useState((): DraftGroup[] => {
+    const uiSettings = readGroupUISettings(
+      analysis?.descriptor.subset.uiSettings ?? {},
+      spec.variableId,
+      spec.config.groups.length
+    );
+    return spec.config.groups.map((group, index) => ({
+      id: uuid(),
+      group,
+      uiSettings: uiSettings[index],
+    }));
+  });
+  const groups = useMemo(() => drafts.map((d) => d.group), [drafts]);
+  // The group whose filters are being edited, if any.
+  const [editing, setEditing] = useState<{
+    id: string;
+    startVariable?: VariableDescriptor;
+  }>();
   const [everythingElseOn, setEverythingElseOn] = useState(
     Boolean(spec.config.unmappedValue)
   );
@@ -131,14 +166,31 @@ export function VariableEditor({
   }
 
   function updateGroup(index: number, update: Partial<FilterDefinedGroup>) {
-    setGroups((gs) =>
-      gs.map((g, i) => (i === index ? { ...g, ...update } : g))
+    setDrafts((ds) =>
+      ds.map((d, i) =>
+        i === index ? { ...d, group: { ...d.group, ...update } } : d
+      )
+    );
+  }
+
+  // Called by the group editor's adapter: must commit synchronously.
+  function updateGroupFilters(id: string, next: GroupFilterState) {
+    setDrafts((ds) =>
+      ds.map((d) =>
+        d.id === id
+          ? {
+              ...d,
+              group: { ...d.group, filters: next.filters },
+              uiSettings: next.uiSettings,
+            }
+          : d
+      )
     );
   }
 
   function moveGroup(from: number, to: number) {
-    setGroups((gs) => {
-      const next = [...gs];
+    setDrafts((ds) => {
+      const next = [...ds];
       const [moved] = next.splice(from, 1);
       next.splice(to, 0, moved);
       return next;
@@ -146,16 +198,39 @@ export function VariableEditor({
   }
 
   function addGroup() {
-    setGroups((gs) => {
-      if (gs.length >= MAX_GROUPS) return gs;
-      const labels = new Set(gs.map((g) => g.label));
-      let n = gs.length + 1;
-      while (labels.has(`Group ${n}`)) n++;
-      return [...gs, { label: `Group ${n}`, filters: [] }];
+    if (drafts.length >= MAX_GROUPS) return;
+    const labels = new Set(groups.map((g) => g.label));
+    let n = groups.length + 1;
+    while (labels.has(`Group ${n}`)) n++;
+    const id = uuid();
+    setDrafts((ds) => [
+      ...ds,
+      { id, group: { label: `Group ${n}`, filters: [] }, uiSettings: {} },
+    ]);
+    // Open on the variable the previous group used, with nothing selected.
+    setEditing({ id, startVariable: nextGroupStartVariable(groups) });
+  }
+
+  function editGroup(index: number) {
+    setEditing({
+      id: drafts[index].id,
+      startVariable:
+        nextGroupStartVariable([groups[index]]) ??
+        nextGroupStartVariable(groups.slice(0, index)),
     });
   }
 
   function save() {
+    // UI settings go first. Their setter is built with skipServerCreate =
+    // true, so if it ran second it would cancel the create of an unsaved
+    // analysis that setDerivedVariables schedules.
+    analysisState.setVariableUISettings((current) =>
+      writeGroupUISettings(
+        current,
+        spec.variableId,
+        drafts.map((d) => d.uiSettings)
+      )
+    );
     // This also creates an unsaved analysis first: the setter is built with
     // skipServerCreate = false (hooks/analysis.ts). The `true` argument is
     // ignored by useSetter; it is passed to state the intent.
@@ -168,11 +243,34 @@ export function VariableEditor({
 
   function confirmDelete() {
     setConfirmingDelete(false);
+    // UI settings first, as in save().
+    analysisState.setVariableUISettings((current) =>
+      writeGroupUISettings(current, spec.variableId, [])
+    );
     analysisState.setDerivedVariables(
       (previous) => previous.filter((s) => s.variableId !== spec.variableId),
       true
     );
     onDelete();
+  }
+
+  const editingIndex =
+    editing == null ? -1 : drafts.findIndex((d) => d.id === editing.id);
+  if (editing != null && editingIndex >= 0) {
+    const { id, group, uiSettings } = drafts[editingIndex];
+    return (
+      <div className={cx('-Editor')}>
+        <GroupFilterEditor
+          key={id}
+          analysisState={analysisState}
+          group={{ label: group.label, filters: group.filters, uiSettings }}
+          groupIndex={editingIndex}
+          startVariable={editing.startVariable}
+          onChange={(next) => updateGroupFilters(id, next)}
+          onClose={() => setEditing(undefined)}
+        />
+      </div>
+    );
   }
 
   return (
@@ -213,9 +311,9 @@ export function VariableEditor({
       </div>
 
       <ol className={cx('-Groups')}>
-        {groups.map((g, index) => (
+        {drafts.map(({ id, group: g }, index) => (
           <GroupRow
-            key={index}
+            key={id}
             group={g}
             index={index}
             groupCount={groups.length}
@@ -224,7 +322,8 @@ export function VariableEditor({
             onLabelChange={(label) => updateGroup(index, { label })}
             onMoveUp={() => moveGroup(index, index - 1)}
             onMoveDown={() => moveGroup(index, index + 1)}
-            onRemove={() => setGroups((gs) => gs.filter((_, i) => i !== index))}
+            onRemove={() => setDrafts((ds) => ds.filter((_, i) => i !== index))}
+            onEdit={() => editGroup(index)}
           />
         ))}
       </ol>

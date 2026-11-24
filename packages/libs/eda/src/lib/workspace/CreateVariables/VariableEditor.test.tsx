@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import {
   WorkspaceContext,
@@ -16,11 +16,46 @@ import {
   GroupCounts,
   useGroupCounts,
 } from '../../core/derivedVariables/useGroupCounts';
+import { GroupFilterEditor } from './GroupFilterEditor';
 import { VariableEditor } from './VariableEditor';
+import { SubsetUISettings } from './groupUISettings';
 
 jest.mock('../../core/derivedVariables/useGroupCounts', () => ({
   useGroupCounts: jest.fn(),
 }));
+// The group editor (Browse and Subset widgets) has its own tests; here a stub
+// shows the group's UI settings and can change them.
+jest.mock('./GroupFilterEditor', () => ({ GroupFilterEditor: jest.fn() }));
+
+const mockGroupFilterEditor = GroupFilterEditor as jest.MockedFunction<
+  typeof GroupFilterEditor
+>;
+
+function GroupFilterEditorStub(
+  props: ComponentProps<typeof GroupFilterEditor>
+) {
+  return (
+    <div>
+      <span data-testid="group-ui-settings">
+        {JSON.stringify(props.group.uiSettings)}
+      </span>
+      <button
+        type="button"
+        onClick={() =>
+          props.onChange({
+            filters: props.group.filters,
+            uiSettings: { 'col/species': { edited: props.group.label } },
+          })
+        }
+      >
+        Edit stub UI settings
+      </button>
+      <button type="button" onClick={props.onClose}>
+        Done
+      </button>
+    </div>
+  );
+}
 
 const mockUseGroupCounts = useGroupCounts as jest.MockedFunction<
   typeof useGroupCounts
@@ -86,16 +121,23 @@ function makeSpec(
 
 function makeAnalysisState(
   derivedVariables: DerivedVariableSpec[] = [],
-  computations: unknown[] = []
+  computations: unknown[] = [],
+  uiSettings: SubsetUISettings = {}
 ) {
   const setDerivedVariables = jest.fn();
+  const setVariableUISettings = jest.fn();
   const analysisState = {
     analysis: {
-      descriptor: { derivedVariables, computations },
+      descriptor: {
+        derivedVariables,
+        computations,
+        subset: { descriptor: [], uiSettings },
+      },
     },
     setDerivedVariables,
+    setVariableUISettings,
   } as unknown as AnalysisState;
-  return { analysisState, setDerivedVariables };
+  return { analysisState, setDerivedVariables, setVariableUISettings };
 }
 
 function renderEditor(
@@ -132,11 +174,22 @@ function applyUpdate(
   return typeof update === 'function' ? update(previous) : update;
 }
 
+/** Applies the functional update passed to setVariableUISettings. */
+function applyUISettingsUpdate(
+  setVariableUISettings: jest.Mock,
+  previous: SubsetUISettings
+): SubsetUISettings {
+  const update = setVariableUISettings.mock.calls[0][0];
+  return typeof update === 'function' ? update(previous) : update;
+}
+
 const settledCounts: GroupCounts = { pending: false };
 
 beforeEach(() => {
   mockUseGroupCounts.mockReset();
   mockUseGroupCounts.mockReturnValue(settledCounts);
+  mockGroupFilterEditor.mockReset();
+  mockGroupFilterEditor.mockImplementation(GroupFilterEditorStub);
 });
 
 describe('VariableEditor', () => {
@@ -270,11 +323,12 @@ describe('VariableEditor', () => {
     const { analysisState } = makeAnalysisState();
     const labels = Array.from({ length: 9 }, (_, i) => `G${i + 1}`);
     renderEditor(makeSpec(labels.map(group)), analysisState);
-    const addGroup = screen.getByRole('button', { name: 'Add group' });
-    expect(addGroup).toBeEnabled();
-    fireEvent.click(addGroup);
+    expect(screen.getByRole('button', { name: 'Add group' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
+    // Add group opens the new group's filter editor; Done returns to the list
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(screen.getAllByLabelText(/^Group \d+ label$/)).toHaveLength(10);
-    expect(addGroup).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add group' })).toBeDisabled();
   });
 
   test('the entity picker is disabled for a saved variable with no groups in the draft', () => {
@@ -302,5 +356,142 @@ describe('VariableEditor', () => {
       groups: [group('East')],
       unmappedValue: '',
     });
+  });
+});
+
+describe('VariableEditor group UI settings', () => {
+  const eastSettings = { 'col/lat/lon': { selectedShapes: ['east'] } };
+  const westSettings = { 'col/lat/lon': { selectedShapes: ['west'] } };
+  const stored: SubsetUISettings = {
+    'derivedVariable/dv1/group1': eastSettings,
+    'derivedVariable/dv1/group2': westSettings,
+    'derivedVariable/dv1/group3': { stale: {} },
+    'derivedVariable/other/group1': { kept: {} },
+    'col/species': { unrelated: true },
+  };
+  const unrelated = {
+    'derivedVariable/other/group1': { kept: {} },
+    'col/species': { unrelated: true },
+  };
+
+  function openGroupEditor(position: number) {
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: `Edit the filters of group ${position}`,
+      })
+    );
+  }
+
+  function shownUISettings() {
+    return JSON.parse(
+      screen.getByTestId('group-ui-settings').textContent ?? 'null'
+    );
+  }
+
+  test("a reorder moves a group's UI settings with it", () => {
+    const spec = makeSpec([group('East'), group('West')]);
+    const { analysisState } = makeAnalysisState([spec], [], stored);
+    renderEditor(spec, analysisState);
+    openGroupEditor(1);
+    expect(shownUISettings()).toEqual(eastSettings);
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Move group 2 up' }));
+    expect(screen.getByLabelText('Group 1 label')).toHaveValue('West');
+    openGroupEditor(1);
+    expect(shownUISettings()).toEqual(westSettings);
+  });
+
+  test('Save writes the UI settings keys by final position and drops stale ones', () => {
+    const spec = makeSpec([group('East'), group('West')]);
+    const { analysisState, setDerivedVariables, setVariableUISettings } =
+      makeAnalysisState([spec], [], stored);
+    renderEditor(spec, analysisState);
+    fireEvent.click(screen.getByRole('button', { name: 'Move group 2 up' }));
+    fireEvent.click(saveButton());
+
+    expect(applyUISettingsUpdate(setVariableUISettings, stored)).toEqual({
+      ...unrelated,
+      'derivedVariable/dv1/group1': westSettings,
+      'derivedVariable/dv1/group2': eastSettings,
+    });
+    // UI settings first: their setter does not create an unsaved analysis
+    // and would otherwise cancel the create scheduled by setDerivedVariables.
+    expect(setVariableUISettings.mock.invocationCallOrder[0]).toBeLessThan(
+      setDerivedVariables.mock.invocationCallOrder[0]
+    );
+  });
+
+  test("removing a group drops its UI settings and renumbers the rest's", () => {
+    const spec = makeSpec([group('East'), group('West')]);
+    const { analysisState, setVariableUISettings } = makeAnalysisState(
+      [spec],
+      [],
+      stored
+    );
+    renderEditor(spec, analysisState);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 1' }));
+    fireEvent.click(saveButton());
+    expect(applyUISettingsUpdate(setVariableUISettings, stored)).toEqual({
+      ...unrelated,
+      'derivedVariable/dv1/group1': westSettings,
+    });
+  });
+
+  test('UI settings edited in the group editor are saved with the group', () => {
+    const spec = makeSpec([group('East'), group('West')]);
+    const { analysisState, setVariableUISettings } = makeAnalysisState(
+      [spec],
+      [],
+      stored
+    );
+    renderEditor(spec, analysisState);
+    openGroupEditor(2);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Edit stub UI settings' })
+    );
+    expect(setVariableUISettings).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    fireEvent.click(saveButton());
+    expect(applyUISettingsUpdate(setVariableUISettings, stored)).toEqual({
+      ...unrelated,
+      'derivedVariable/dv1/group1': eastSettings,
+      'derivedVariable/dv1/group2': { 'col/species': { edited: 'West' } },
+    });
+  });
+
+  test('Cancel discards UI settings edits', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState, setVariableUISettings } = makeAnalysisState(
+      [spec],
+      [],
+      stored
+    );
+    const { onCancel } = renderEditor(spec, analysisState);
+    openGroupEditor(1);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Edit stub UI settings' })
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(onCancel).toHaveBeenCalled();
+    expect(setVariableUISettings).not.toHaveBeenCalled();
+  });
+
+  test("deleting a variable removes its groups' UI settings", () => {
+    const spec = makeSpec([group('East'), group('West')]);
+    const { analysisState, setVariableUISettings } = makeAnalysisState(
+      [spec],
+      [],
+      stored
+    );
+    renderEditor(spec, analysisState);
+    fireEvent.click(screen.getByRole('button', { name: 'Delete variable' }));
+    fireEvent.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' })
+    );
+    expect(applyUISettingsUpdate(setVariableUISettings, stored)).toEqual(
+      unrelated
+    );
   });
 });
