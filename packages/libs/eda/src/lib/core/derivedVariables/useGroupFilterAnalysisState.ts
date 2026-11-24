@@ -26,7 +26,8 @@ export function useGroupFilterAnalysisState(
   group: GroupFilterState,
   onChange: (next: GroupFilterState) => void
 ): AnalysisState {
-  // Keep the latest group/onChange available to stable-ish callbacks.
+  // Refreshed from props on every render, and advanced after each change so
+  // several updates in one tick compose instead of overwriting each other.
   const latest = useRef({ group, onChange });
   latest.current = { group, onChange };
 
@@ -48,14 +49,18 @@ export function useGroupFilterAnalysisState(
       analysis: adaptedAnalysis,
       setFilters: (update) => {
         const { group, onChange } = latest.current;
-        onChange({ ...group, filters: resolve(update, group.filters) });
+        const next = { ...group, filters: resolve(update, group.filters) };
+        latest.current = { group: next, onChange };
+        onChange(next);
       },
       setVariableUISettings: (update) => {
         const { group, onChange } = latest.current;
-        onChange({
+        const next = {
           ...group,
           uiSettings: resolve(update, group.uiSettings),
-        });
+        };
+        latest.current = { group: next, onChange };
+        onChange(next);
       },
     };
   }, [base, group.filters, group.uiSettings]);
