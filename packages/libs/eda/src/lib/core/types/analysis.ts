@@ -36,8 +36,20 @@ export const AnalysisProvenance = t.type({
   ]),
 });
 
-export type DerivedVariable = t.TypeOf<typeof DerivedVariable>;
-export const DerivedVariable = t.unknown;
+/**
+ * A derived variable as stored in the analysis descriptor. The outer shape is
+ * strict, but `config` is plugin-specific and left undecoded here (see
+ * core/derivedVariables) so an unknown plugin or newer config can never stop
+ * an analysis loading.
+ */
+export type DerivedVariableSpec = t.TypeOf<typeof DerivedVariableSpec>;
+export const DerivedVariableSpec = t.type({
+  entityId: t.string,
+  variableId: t.string,
+  functionName: t.string,
+  displayName: t.string,
+  config: t.unknown,
+});
 
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
@@ -105,7 +117,7 @@ export const AnalysisDescriptor = t.type({
   /** IDs of variables 'starred' by the user. */
   starredVariables: t.array(VariableDescriptor),
   dataTableConfig: DataTableConfig,
-  derivedVariables: t.array(DerivedVariable),
+  derivedVariables: t.array(DerivedVariableSpec),
 });
 
 export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
