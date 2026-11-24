@@ -113,6 +113,20 @@ Browse and Subset │ Create variables │ Visualize │ …
 - **Editing a group's filters (✎)** opens the Browse and Subset layout
   (variable tree plus the same filter widgets, including the geo lasso),
   working on that group's filters instead of the analysis subset.
+- **Groups may filter on different variables.** The plugin checks each
+  group's filters on their own, so group 1 can be a drawn region and
+  group 2 a species. To make the common case quick, **"Add group" opens
+  on the variable(s) the previous group used**, with nothing selected
+  yet. The user can still switch to any other variable.
+- **Earlier groups are shown while a later one is edited,** so overlaps
+  can be avoided rather than only reported:
+  - **Geo lasso:** earlier groups' shapes are drawn faintly in their
+    group colours.
+  - **Categorical values:** values used by an earlier group are marked
+    (e.g. "in East"). They can still be picked, and the overlap warning
+    then applies.
+  - **Numeric and date ranges:** earlier groups' ranges are shaded on
+    the histogram.
 
 ### 3.2 Rules
 
