@@ -387,33 +387,29 @@ samples). Groups: East = GEOHASH 4 prefixes `dqcq dqcr dqct dqcu dqcw dqcx
 dr0b`; West = `dqch dqck dqcj dqcn dqcq`; overlap = `dqcq`; `unmappedValue`
 "Other".
 
-- **Metadata (item 3): pass.** 200, exactly one entry: `string`,
-  `categorical`, `derivationType: transform`, vocabulary
-  `["East","West","Other"]` (`["East","West"]` with no `unmappedValue`). No
-  `_group` helpers.
-- **Line plot, `stringPrefixSet` groups (item 1): 200 but wrong values.**
-  One series, "East", N = 66082 (every sample). A bar plot of the variable
-  on the site entity gives `East: 2980`, i.e. every record. Expected per the
-  subsetting `/count`: 20949 East, 28440 West, 20756 in the overlap (so
-  7684 West-only), the rest Other.
-- **Other-entity filters (item 2): same failure.** Ancestor filters (the
-  same geohash filters, variable on Collection): all 9602 collections are
-  "East" (expected 2502 / 3688). Descendant filters (Collection `device`
-  stringSet, variable on the site entity): all 2980 sites are "East"
-  (expected 452 / 462).
-- **Cause: not the new plugin.** A plain `subsetMembership` derived
-  variable (stringPrefixSet or stringSet, same entity) also returns `1` for
-  every record. `MergedTabularRequestResources.getSubsettingTabularStream`
-  hands `spec.filtersOverride` to `EdaSubsettingClient.getTabularDataIterator`,
-  which filters only by its `variableFilters` argument (the global
-  subset), so the override is ignored and each membership stream is
-  the whole entity. First-group-wins then labels everything with the
-  first group. Needs a fix in service-eda before overlap behaviour can
-  be checked; the diagnosis is from reading the code, not yet confirmed by
-  a patched build.
-- **No `unmappedValue` / `showMissingness` (step 5): not run**, since no
-  record is ever unmatched until the above is fixed. The metadata
-  vocabulary correctly omits a blank level.
+The first run found that `filtersOverride` was ignored when fetching
+tabular streams, so every `subsetMembership` returned 1; fixed in
+service-eda `ff333cfd`. Results below are after the fix.
+
+- **Metadata (item 3): pass.** One entry: `string`, `categorical`,
+  `derivationType: transform`, vocabulary `["East","West","Other"]`
+  (`["East","West"]` with no `unmappedValue`). No `_group` helpers.
+- **Line plot, geohash groups (item 1): pass.** Series East, Other, West
+  with N = 20949 / 37449 / 7684 samples, each with 22 yearly bins. East
+  equals the subsetting count for East's filters; West is 28440 minus the
+  20756 overlap records, so overlap records count only under East
+  (first group wins). Bar plot on the site entity: East 433, West 452,
+  Other 2095 (sums to 2980).
+- **Other-entity filters (item 2): pass.**
+  - Ancestor filters (geohash filters, variable on Collection): East
+    2502, West 1215, Other 5885 (West count 3688 minus 2473 overlap).
+  - Descendant filters (Collection `device`, variable on the site
+    entity; East = BG-Sentinel, West = BG-Sentinel or gravid): East 452,
+    West 10, Other 2518. Matches the subsetting counts (452, 462).
+- **No `unmappedValue`, `showMissingness: "TRUE"` (step 5):** unmatched
+  records show as a series named "No data" (N = 37449, the same records
+  that are "Other" above), plotted alongside East and West. With it
+  `FALSE` they would be dropped, as for any variable with no value.
 - Timing: the 66082-sample line plot took about 3 minutes; the 2980-site
   bar plots 40 s.
 
