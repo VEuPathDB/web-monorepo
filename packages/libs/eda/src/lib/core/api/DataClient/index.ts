@@ -1,4 +1,4 @@
-import { TypeOf, Decoder } from 'io-ts';
+import { TypeOf, Decoder, array } from 'io-ts';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -34,8 +34,10 @@ import {
   ContinousVariableMetadataResponse,
   StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesLegendResponse,
+  DerivedVariableMetadata,
 } from './types';
 import { NoDataError } from './NoDataError';
+import { DerivedVariableSpec } from '../../types/analysis';
 
 export default class DataClient extends FetchClientWithCredentials {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -216,6 +218,21 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers/bubbles/legend',
       params,
       StandaloneMapBubblesLegendResponse
+    );
+  }
+
+  // metadata for derived variables (served by the merge service)
+  getDerivedVariableMetadata(
+    studyId: string,
+    derivedVariables: DerivedVariableSpec[]
+  ): Promise<DerivedVariableMetadata[]> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: '/merging/derived-variables/metadata/variables',
+        body: { studyId, derivedVariables },
+        transformResponse: ioTransformer(array(DerivedVariableMetadata)),
+      })
     );
   }
 

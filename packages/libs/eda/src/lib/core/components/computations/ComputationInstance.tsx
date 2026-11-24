@@ -10,6 +10,7 @@ import { AnalysisState } from '../../hooks/analysis';
 import { useComputeJobStatus } from './ComputeJobStatusHook';
 import { Filter } from '../../types/filter';
 import { useStudyMetadata } from '../../hooks/workspace';
+import { DerivedVariablesProvider } from '../../derivedVariables/DerivedVariablesProvider';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -89,24 +90,49 @@ export function ComputationInstance(props: Props) {
           />
         </div>
       )}
-      <VisualizationsContainer
-        analysisState={analysisState}
-        computationAppOverview={computationAppOverview}
-        geoConfigs={geoConfigs}
-        computation={computation}
-        computationPlugin={plugin}
-        visualizationsOverview={computationAppOverview.visualizations}
-        visualizationPlugins={visualizationPlugins}
-        filters={analysis.descriptor.subset.descriptor}
-        starredVariables={analysis?.descriptor.starredVariables}
-        toggleStarredVariable={toggleStarredVariable}
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
-        baseUrl={baseUrl}
-        isSingleAppMode={isSingleAppMode}
-        computeJobStatus={jobStatus}
-        createComputeJob={createJob}
-      />
+      {/* Computation-backed visualisations never get derived variables, so their
+          results lookup keeps matching their computation. */}
+      {computationAppOverview.computeName == null ? (
+        <DerivedVariablesProvider analysis={analysis}>
+          <VisualizationsContainer
+            analysisState={analysisState}
+            computationAppOverview={computationAppOverview}
+            geoConfigs={geoConfigs}
+            computation={computation}
+            computationPlugin={plugin}
+            visualizationsOverview={computationAppOverview.visualizations}
+            visualizationPlugins={visualizationPlugins}
+            filters={analysis.descriptor.subset.descriptor}
+            starredVariables={analysis?.descriptor.starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            totalCounts={totalCounts}
+            filteredCounts={filteredCounts}
+            baseUrl={baseUrl}
+            isSingleAppMode={isSingleAppMode}
+            computeJobStatus={jobStatus}
+            createComputeJob={createJob}
+          />
+        </DerivedVariablesProvider>
+      ) : (
+        <VisualizationsContainer
+          analysisState={analysisState}
+          computationAppOverview={computationAppOverview}
+          geoConfigs={geoConfigs}
+          computation={computation}
+          computationPlugin={plugin}
+          visualizationsOverview={computationAppOverview.visualizations}
+          visualizationPlugins={visualizationPlugins}
+          filters={analysis.descriptor.subset.descriptor}
+          starredVariables={analysis?.descriptor.starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          totalCounts={totalCounts}
+          filteredCounts={filteredCounts}
+          baseUrl={baseUrl}
+          isSingleAppMode={isSingleAppMode}
+          computeJobStatus={jobStatus}
+          createComputeJob={createJob}
+        />
+      )}
     </div>
   );
 }
