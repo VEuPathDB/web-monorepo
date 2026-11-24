@@ -265,6 +265,7 @@ export function VariableEditor({
           analysisState={analysisState}
           group={{ label: group.label, filters: group.filters, uiSettings }}
           groupIndex={editingIndex}
+          earlierGroups={groups.slice(0, editingIndex)}
           startVariable={editing.startVariable}
           onChange={(next) => updateGroupFilters(id, next)}
           onClose={() => setEditing(undefined)}

@@ -4,7 +4,7 @@ import { MultiFieldSortSpec } from '@veupathdb/wdk-client/lib/Views/Question/Par
 import { getOrElse, map } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { boolean, keyof, number, partial, string, type, TypeOf } from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
@@ -18,6 +18,11 @@ import { gray, red } from './colors';
 import { variableDisplayWithUnit } from '../../utils/variable-display';
 import { useDeepValue } from '../../hooks/immutability';
 import { useCachedPromise } from '../../hooks/cachedPromise';
+import {
+  GroupEditingContext,
+  earlierSetValueMarks,
+} from '../../derivedVariables/GroupEditingContext';
+import { EarlierGroupValueMarks } from './EarlierGroupMarks';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -325,6 +330,17 @@ export function TableFilter({
     [entity.id, analysisState, variable.id, variable.type, allValues]
   );
 
+  // In the group editor, mark the values earlier groups already select.
+  // Undefined everywhere else, so the table renders as before.
+  const groupEditing = useContext(GroupEditingContext);
+  const renderValueAnnotation = useMemo(() => {
+    const marks = earlierSetValueMarks(groupEditing, entity.id, variable.id);
+    if (marks == null) return undefined;
+    return (value: string | number) => (
+      <EarlierGroupValueMarks marks={marks.get(String(value))} />
+    );
+  }, [groupEditing, entity.id, variable.id]);
+
   return (
     <div style={{ position: 'relative' }} className="filter-param">
       {tableSummary.pending && (
@@ -353,6 +369,7 @@ export function TableFilter({
             filteredCountHeadingPrefix={'Subset of'}
             unfilteredCountHeadingPrefix={'All'}
             showInternalMesaCounts={true}
+            renderValueAnnotation={renderValueAnnotation}
           />
         )}
     </div>

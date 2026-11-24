@@ -1,5 +1,11 @@
 import { orderBy } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import MultiFieldFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/MultiFieldFilter';
@@ -33,6 +39,11 @@ import { debounce } from 'lodash';
 import { isTableVariable } from './guards';
 import { useDeepValue } from '../../hooks/immutability';
 import { useCachedPromise } from '../../hooks/cachedPromise';
+import {
+  GroupEditingContext,
+  earlierSetValueMarks,
+} from '../../derivedVariables/GroupEditingContext';
+import { EarlierGroupValueMarks } from './EarlierGroupMarks';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -157,8 +168,9 @@ export function MultiFilter(props: Props) {
   // Filter assocated with this variable. This is used to retreive counts.
   // We're using state so that we can defer updating counts until the user
   // clicks on an "update counts" button.
-  const [thisFilter, setThisFilter] =
-    useState<MultiFilterType | undefined>(_thisFilter);
+  const [thisFilter, setThisFilter] = useState<MultiFilterType | undefined>(
+    _thisFilter
+  );
 
   // debounce time needs to be linear with the number of sub-filters, see notes at the end of this file
   // but a minimum of 2 seconds seems reasonable too
@@ -339,6 +351,24 @@ export function MultiFilter(props: Props) {
     ]
   );
 
+  // In the group editor, mark the values earlier groups already select, per
+  // leaf variable. Undefined everywhere else, so the table renders as before.
+  const groupEditing = useContext(GroupEditingContext);
+  const renderValueAnnotation = useMemo(() => {
+    const marksByTerm = new Map(
+      leaves.flatMap((leaf) => {
+        const marks = earlierSetValueMarks(groupEditing, entity.id, leaf.term);
+        return marks == null ? [] : [[leaf.term, marks] as const];
+      })
+    );
+    if (marksByTerm.size === 0) return undefined;
+    return (value: string, term: string) => (
+      <EarlierGroupValueMarks
+        marks={marksByTerm.get(term)?.get(String(value))}
+      />
+    );
+  }, [groupEditing, entity.id, leaves]);
+
   // Convert EDA filters to WDK filters.
   const wdkFilters = useMemo(() => filters?.map(fromEdaFilter), [filters]);
 
@@ -380,6 +410,7 @@ export function MultiFilter(props: Props) {
         onMemberSearch={onMemberSearch}
         fillBarColor={gray}
         fillFilteredBarColor={red}
+        renderValueAnnotation={renderValueAnnotation}
       />
     </div>
   );

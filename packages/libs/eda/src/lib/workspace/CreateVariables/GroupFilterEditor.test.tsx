@@ -1,4 +1,4 @@
-import { ComponentProps, ReactNode } from 'react';
+import { ComponentProps, ReactNode, useContext } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
   WorkspaceContext,
@@ -13,6 +13,11 @@ import {
   FilterDefinedGroupsSpec,
 } from '../../core/derivedVariables/types';
 import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
+import {
+  GroupEditingContext,
+  GroupEditingContextValue,
+  groupColor,
+} from '../../core/derivedVariables/GroupEditingContext';
 import Subsetting from '../Subsetting';
 import { GroupFilterEditor } from './GroupFilterEditor';
 import { VariableEditor } from './VariableEditor';
@@ -155,7 +160,10 @@ function makeAnalysisState() {
   return { analysisState, setFilters, setVariableUISettings };
 }
 
+let seenGroupEditing: GroupEditingContextValue;
+
 function SubsettingStub(props: ComponentProps<typeof Subsetting>) {
+  seenGroupEditing = useContext(GroupEditingContext);
   return (
     <div>
       <span data-testid="selected-variable">
@@ -181,6 +189,7 @@ function selectedVariable() {
 }
 
 beforeEach(() => {
+  seenGroupEditing = undefined;
   mockSubsetting.mockReset();
   mockSubsetting.mockImplementation(SubsettingStub);
   mockUseEntityCounts.mockReset();
@@ -199,6 +208,7 @@ describe('GroupFilterEditor', () => {
         analysisState={analysisState}
         group={{ label: 'East', filters: [speciesFilter], uiSettings: {} }}
         groupIndex={0}
+        earlierGroups={[]}
         onChange={onChange}
         onClose={jest.fn()}
       />,
@@ -227,6 +237,7 @@ describe('GroupFilterEditor', () => {
         analysisState={analysisState}
         group={{ label: 'East', filters: [speciesFilter], uiSettings: {} }}
         groupIndex={0}
+        earlierGroups={[]}
         onChange={jest.fn()}
         onClose={jest.fn()}
       />,
@@ -246,6 +257,7 @@ describe('GroupFilterEditor', () => {
       analysisState,
       group: { label: 'East', filters: [], uiSettings: {} },
       groupIndex: 0,
+      earlierGroups: [],
       onChange: jest.fn(),
       onClose: jest.fn(),
     };
@@ -270,6 +282,7 @@ describe('GroupFilterEditor', () => {
         analysisState={analysisState}
         group={{ label: 'East', filters: [], uiSettings: {} }}
         groupIndex={0}
+        earlierGroups={[]}
         startVariable={{ entityId: 'col', variableId: geoFilter.variableId }}
         onChange={jest.fn()}
         onClose={jest.fn()}
@@ -287,6 +300,7 @@ describe('GroupFilterEditor', () => {
         analysisState={analysisState}
         group={{ label: 'East', filters: [], uiSettings: {} }}
         groupIndex={0}
+        earlierGroups={[]}
         onChange={jest.fn()}
         onClose={onClose}
       />,
@@ -335,6 +349,24 @@ describe('VariableEditor with the group editor', () => {
     // nothing is selected yet in the new group
     const passed = mockSubsetting.mock.calls[0][0].analysisState;
     expect(passed.analysis?.descriptor.subset.descriptor).toEqual([]);
+  });
+
+  test('the widgets are shown the groups before the one being edited', () => {
+    renderVariableEditor(
+      makeSpec([
+        { label: 'East', filters: [countryFilter] },
+        { label: 'West', filters: [speciesFilter] },
+        { label: 'North', filters: [subsetFilter] },
+      ])
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Edit the filters of group 2' })
+    );
+    expect(seenGroupEditing).toEqual({
+      earlierGroups: [
+        { label: 'East', color: groupColor(0), filters: [countryFilter] },
+      ],
+    });
   });
 
   test("the first group opens on the study's default variable", () => {

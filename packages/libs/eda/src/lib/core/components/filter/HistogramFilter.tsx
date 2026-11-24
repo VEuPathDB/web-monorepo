@@ -23,7 +23,13 @@ import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/U
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useCachedPromise } from '../../hooks/cachedPromise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
@@ -48,6 +54,11 @@ import { useDeepValue } from '../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../ResetButton';
 import { numberSignificantFigures } from '../../utils/number-significant-figures';
+import {
+  GroupEditingContext,
+  earlierFiltersFor,
+} from '../../derivedVariables/GroupEditingContext';
+import { EarlierGroupsLegend } from './EarlierGroupMarks';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -238,6 +249,20 @@ export function HistogramFilter(props: Props) {
       (f.type === 'dateRange' || f.type === 'numberRange')
   );
 
+  // In the group editor, the earlier groups' ranges on this variable, shaded
+  // on the histogram. Empty everywhere else, where nothing extra is drawn.
+  const groupEditing = useContext(GroupEditingContext);
+  const earlierRanges = useMemo(
+    () =>
+      earlierFiltersFor(groupEditing, entity.id, variable.id).flatMap(
+        ({ label, color, filter }) =>
+          filter.type === 'numberRange' || filter.type === 'dateRange'
+            ? [{ label, color, range: rangeForShading(filter, variable) }]
+            : []
+      ),
+    [groupEditing, entity.id, variable]
+  );
+
   const updateFilter = useCallback(
     (selectedRange?: NumberRange | DateRange) => {
       const otherFilters = filters?.filter((f) => f !== filter) ?? [];
@@ -362,9 +387,16 @@ export function HistogramFilter(props: Props) {
             />
           )}
         </div>
+        {earlierRanges.length > 0 && (
+          <EarlierGroupsLegend
+            text="Shaded ranges are used by earlier groups:"
+            groups={earlierRanges}
+          />
+        )}
         <HistogramPlotWithControls
           key={otherFilters?.length ?? 0}
           filter={filter}
+          shadedRanges={earlierRanges.length > 0 ? earlierRanges : undefined}
           data={
             data.value &&
             data.value.variableId === variable.id &&
@@ -796,6 +828,21 @@ function HistogramPlotWithControls({
       </div>
     </div>
   );
+}
+
+/**
+ * A range filter as a range to shade. As for the selected range, an integer
+ * range extends to (max + 1): see selectedRangeForHighlighting.
+ */
+function rangeForShading(
+  filter: NumberRangeFilter | DateRangeFilter,
+  variable: HistogramVariable
+): NumberOrDateRange {
+  if (filter.type === 'dateRange') return { min: filter.min, max: filter.max };
+  return {
+    min: filter.min,
+    max: variable.type === 'integer' ? filter.max + 1 : filter.max,
+  };
 }
 
 export function distributionResponseToDataSeries(

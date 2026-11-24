@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
@@ -35,6 +42,12 @@ import {
   defaultGeoCoordUIState,
 } from './geoCoordUIState';
 import { ResetButtonCoreUI } from '../ResetButton';
+import {
+  EarlierGroupMark,
+  GroupEditingContext,
+  earlierFiltersFor,
+} from '../../derivedVariables/GroupEditingContext';
+import { EarlierGroupsLegend } from './EarlierGroupMarks';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -110,6 +123,44 @@ function GeohashCellsOverlay({ prefixes }: GeohashCellsOverlayProps) {
   );
 }
 
+type EarlierGroupCells = EarlierGroupMark & { prefixes: string[] };
+
+/**
+ * In the Create variables group editor: the earlier groups' geohash cells,
+ * drawn faintly in each group's colour so a new area can avoid them. Drawn
+ * straight from the filters' prefixes (not from the stored shapes), so it
+ * shows exactly what each group matches. Below the current filter's cells.
+ */
+function EarlierGroupCellsOverlay({ groups }: { groups: EarlierGroupCells[] }) {
+  const offsets = useVisibleWorldOffsets();
+  return (
+    <Pane name="earlier-group-cells" style={{ zIndex: 340 }}>
+      {groups.flatMap(({ color, prefixes }, groupIndex) =>
+        prefixes.flatMap((prefix) => {
+          const bounds = geohashCellBounds(prefix);
+          return offsets.map((offset) => (
+            <Rectangle
+              key={`${groupIndex}|${prefix}|${offset}`}
+              bounds={[
+                [bounds.southWest[0], bounds.southWest[1] + offset],
+                [bounds.northEast[0], bounds.northEast[1] + offset],
+              ]}
+              pathOptions={{
+                color,
+                weight: 1,
+                opacity: 0.5,
+                fillColor: color,
+                fillOpacity: 0.25,
+                interactive: false,
+              }}
+            />
+          ));
+        })
+      )}
+    </Pane>
+  );
+}
+
 /**
  * A geographic filter for latitude/longitude variable pairs.
  *
@@ -152,6 +203,27 @@ export function GeoCoordFilter(props: Props) {
       f.type === 'stringPrefixSet',
     [entity.id, finestAggregationVariableId]
   );
+
+  // In the group editor, the earlier groups' areas: their prefix-set
+  // filters on any of this entity's geohash variables (this widget writes
+  // the finest one). Empty everywhere else.
+  const groupEditing = useContext(GroupEditingContext);
+  const earlierGroupCells = useMemo((): EarlierGroupCells[] => {
+    const byGroup = new Map<string, EarlierGroupCells>();
+    for (const variableId of geoConfig.aggregationVariableIds)
+      for (const { label, color, filter } of earlierFiltersFor(
+        groupEditing,
+        entity.id,
+        variableId
+      ))
+        if (filter.type === 'stringPrefixSet') {
+          const key = `${label}|${color}`;
+          const cells = byGroup.get(key) ?? { label, color, prefixes: [] };
+          cells.prefixes.push(...filter.prefixSet);
+          byGroup.set(key, cells);
+        }
+    return [...byGroup.values()];
+  }, [groupEditing, entity.id, geoConfig.aggregationVariableIds]);
 
   // the current geo filter, if any
   const geoFilter = filters?.find((f): f is StringPrefixSetFilter =>
@@ -462,6 +534,12 @@ export function GeoCoordFilter(props: Props) {
           />
         )}
       </div>
+      {earlierGroupCells.length > 0 && (
+        <EarlierGroupsLegend
+          text="Shaded areas are used by earlier groups:"
+          groups={earlierGroupCells}
+        />
+      )}
       {basicMarkerError != null && (
         <div style={{ color: 'red' }}>{String(basicMarkerError)}</div>
       )}
@@ -507,6 +585,9 @@ export function GeoCoordFilter(props: Props) {
           )}
           {showGeohashCells && geoFilter != null && boundsZoomLevel != null && (
             <GeohashCellsOverlay prefixes={geoFilter.prefixSet} />
+          )}
+          {earlierGroupCells.length > 0 && boundsZoomLevel != null && (
+            <EarlierGroupCellsOverlay groups={earlierGroupCells} />
           )}
         </MapVEuMap>
       </div>

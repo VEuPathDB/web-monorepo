@@ -12,6 +12,12 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import FilterChipList from '../../core/components/FilterChipList';
 import { isLatitudeVariable } from '../../core/components/filter/guards';
+import { useDeepValue } from '../../core/hooks/immutability';
+import { FilterDefinedGroup } from '../../core/derivedVariables/types';
+import {
+  GroupEditingContext,
+  earlierGroupsContext,
+} from '../../core/derivedVariables/GroupEditingContext';
 import {
   GroupFilterState,
   useGroupFilterAnalysisState,
@@ -24,6 +30,8 @@ interface Props {
   analysisState: AnalysisState;
   group: GroupFilterState & { label: string };
   groupIndex: number;
+  /** The groups before this one: the filter widgets show their selections. */
+  earlierGroups: FilterDefinedGroup[];
   /** The variable to open on; the study's default variable without one. */
   startVariable?: VariableDescriptor;
   /** Must commit synchronously (plain setState): see useGroupFilterAnalysisState. */
@@ -40,6 +48,7 @@ export function GroupFilterEditor({
   analysisState,
   group,
   groupIndex,
+  earlierGroups,
   startVariable,
   onChange,
   onClose,
@@ -77,6 +86,14 @@ export function GroupFilterEditor({
     onChange
   );
 
+  // Deep-compared so the widgets' overlays only change when an earlier
+  // group does, not on every edit of this group.
+  const stableEarlierGroups = useDeepValue(earlierGroups);
+  const groupEditing = useMemo(
+    () => earlierGroupsContext(stableEarlierGroups, groupIndex),
+    [stableEarlierGroups, groupIndex]
+  );
+
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(group.filters);
 
@@ -112,14 +129,16 @@ export function GroupFilterEditor({
       ) : (
         <span className={cx('-Muted')}>No filters yet</span>
       )}
-      <Subsetting
-        analysisState={groupAnalysisState}
-        entityId={selected.entityId}
-        variableId={selected.variableId}
-        totalCounts={totalCounts.value}
-        filteredCounts={filteredCounts.value}
-        variableLinkConfig={variableLinkConfig}
-      />
+      <GroupEditingContext.Provider value={groupEditing}>
+        <Subsetting
+          analysisState={groupAnalysisState}
+          entityId={selected.entityId}
+          variableId={selected.variableId}
+          totalCounts={totalCounts.value}
+          filteredCounts={filteredCounts.value}
+          variableLinkConfig={variableLinkConfig}
+        />
+      </GroupEditingContext.Provider>
     </div>
   );
 }
