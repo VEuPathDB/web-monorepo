@@ -36,21 +36,3 @@ export function isFilterDefinedGroupsSpec(
     isRight(FilterDefinedGroupsConfig.decode((x as DerivedVariableSpec).config))
   );
 }
-
-/**
- * Splits specs into those this client can work with and those it cannot
- * (unknown plugin, or a config it cannot decode). Unsupported specs must be
- * preserved untouched, never dropped or fatal.
- */
-export function decodeDerivedVariables(entries: DerivedVariableSpec[]): {
-  supported: FilterDefinedGroupsSpec[];
-  unsupported: DerivedVariableSpec[];
-} {
-  const supported: FilterDefinedGroupsSpec[] = [];
-  const unsupported: DerivedVariableSpec[] = [];
-  for (const entry of entries) {
-    if (isFilterDefinedGroupsSpec(entry)) supported.push(entry);
-    else unsupported.push(entry);
-  }
-  return { supported, unsupported };
-}

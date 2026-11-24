@@ -158,6 +158,7 @@ export const NumberVariable = t.intersection([
   // add scale
   t.partial({
     scale: t.string,
+    imputeZero: t.boolean,
   }),
 ]);
 

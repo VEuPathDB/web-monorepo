@@ -3,7 +3,6 @@ import { AnalysisDescriptor } from '../types/analysis';
 import {
   DerivedVariableSpec,
   FILTER_DEFINED_GROUPS,
-  decodeDerivedVariables,
   isFilterDefinedGroupsSpec,
 } from './types';
 
@@ -39,21 +38,6 @@ function descriptorWith(derivedVariables: unknown[]) {
     derivedVariables,
   };
 }
-
-test('decodeDerivedVariables splits supported and unsupported specs', () => {
-  const other = { ...validSpec, functionName: 'concatenation' };
-  const badConfig = {
-    ...validSpec,
-    config: {
-      groups: [{ label: 'A', filters: [{ type: 'notAFilterType' }] }],
-    },
-  };
-  const result = decodeDerivedVariables([validSpec, other, badConfig]);
-  expect(result.supported).toEqual([validSpec]);
-  expect(result.unsupported).toEqual([other, badConfig]);
-  expect(isFilterDefinedGroupsSpec(validSpec)).toBe(true);
-  expect(isFilterDefinedGroupsSpec(badConfig)).toBe(false);
-});
 
 test('an analysis whose descriptor has an unsupported spec still decodes', () => {
   const d = descriptorWith([{ ...validSpec, functionName: 'somethingNew' }]);

@@ -7,7 +7,7 @@ import Loading from '@veupathdb/wdk-client/lib/Components/Loading/Loading';
 import { DerivedVariableSpecsContext } from './DerivedVariableSpecsContext';
 import { withDerivedVariableSpecs } from './dataClient';
 import { addDerivedVariablesToEntity, toVariableTreeNode } from './metadata';
-import { decodeDerivedVariables } from './types';
+import { decodeDerivedVariables } from './recoding';
 
 interface Props {
   analysis: NewAnalysis;
@@ -26,7 +26,7 @@ export function DerivedVariablesProvider(props: Props) {
 
   const entries = useDeepValue(analysis.descriptor.derivedVariables);
   const supported = useMemo(
-    () => decodeDerivedVariables(entries).supported,
+    () => decodeDerivedVariables(entries).supported.map((d) => d.stored),
     [entries]
   );
   const [fetched, setFetched] = useState<{

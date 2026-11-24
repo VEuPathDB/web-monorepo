@@ -3,10 +3,8 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { OutlinedButton } from '@veupathdb/coreui/lib/components/buttons';
 import { AnalysisState } from '../../core/hooks/analysis';
 import { useStudyMetadata } from '../../core/hooks/workspace';
-import {
-  decodeDerivedVariables,
-  FilterDefinedGroupsSpec,
-} from '../../core/derivedVariables/types';
+import { FilterDefinedGroupsSpec } from '../../core/derivedVariables/types';
+import { decodeDerivedVariables } from '../../core/derivedVariables/recoding';
 import { newFilterDefinedGroupsSpec } from '../../core/derivedVariables/groups';
 import { VariableEditor } from './VariableEditor';
 
@@ -26,10 +24,13 @@ type Selection =
 export default function CreateVariables({ analysisState }: Props) {
   const { rootEntity } = useStudyMetadata();
   const derivedVariables = analysisState.analysis?.descriptor.derivedVariables;
-  const { supported, unsupported } = useMemo(
-    () => decodeDerivedVariables(derivedVariables ?? []),
-    [derivedVariables]
-  );
+  const { supported, unsupported } = useMemo(() => {
+    const decoded = decodeDerivedVariables(derivedVariables ?? []);
+    return {
+      supported: decoded.supported.map((d) => d.editable),
+      unsupported: decoded.unsupported,
+    };
+  }, [derivedVariables]);
 
   const [selection, setSelection] = useState<Selection | undefined>(() =>
     supported.length > 0
