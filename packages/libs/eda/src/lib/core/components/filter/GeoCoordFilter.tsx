@@ -1,4 +1,5 @@
 import {
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -9,6 +10,7 @@ import {
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
+import { PathOptions } from 'leaflet';
 import { Pane, Rectangle } from 'react-leaflet';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
@@ -125,41 +127,66 @@ function GeohashCellsOverlay({ prefixes }: GeohashCellsOverlayProps) {
 
 type EarlierGroupCells = EarlierGroupMark & { prefixes: string[] };
 
+const earlierGroupCellsPaneStyle = { zIndex: 340 };
+
 /**
  * In the Create variables group editor: the earlier groups' geohash cells,
  * drawn faintly in each group's colour so a new area can avoid them. Drawn
  * straight from the filters' prefixes (not from the stored shapes), so it
  * shows exactly what each group matches. Below the current filter's cells.
+ *
+ * There can be thousands of cells, so everything is memoised: a re-render
+ * of the filter, or a pan or zoom that shows no new world copy, re-renders
+ * no Rectangle (react-leaflet updates a layer when a prop's identity changes).
  */
-function EarlierGroupCellsOverlay({ groups }: { groups: EarlierGroupCells[] }) {
+const EarlierGroupCellsOverlay = memo(function EarlierGroupCellsOverlay({
+  groups,
+}: {
+  groups: EarlierGroupCells[];
+}) {
   const offsets = useVisibleWorldOffsets();
+  // decoded once per set of groups
+  const cells = useMemo(
+    () =>
+      groups.flatMap(({ color, prefixes }, groupIndex) => {
+        const pathOptions: PathOptions = {
+          color,
+          weight: 1,
+          opacity: 0.5,
+          fillColor: color,
+          fillOpacity: 0.25,
+          interactive: false,
+        };
+        return prefixes.map((prefix) => ({
+          key: `${groupIndex}|${prefix}`,
+          bounds: geohashCellBounds(prefix),
+          pathOptions,
+        }));
+      }),
+    [groups]
+  );
+  const rectangles = useMemo(
+    () =>
+      cells.flatMap(({ key, bounds, pathOptions }) =>
+        offsets.map((offset) => (
+          <Rectangle
+            key={`${key}|${offset}`}
+            bounds={[
+              [bounds.southWest[0], bounds.southWest[1] + offset],
+              [bounds.northEast[0], bounds.northEast[1] + offset],
+            ]}
+            pathOptions={pathOptions}
+          />
+        ))
+      ),
+    [cells, offsets]
+  );
   return (
-    <Pane name="earlier-group-cells" style={{ zIndex: 340 }}>
-      {groups.flatMap(({ color, prefixes }, groupIndex) =>
-        prefixes.flatMap((prefix) => {
-          const bounds = geohashCellBounds(prefix);
-          return offsets.map((offset) => (
-            <Rectangle
-              key={`${groupIndex}|${prefix}|${offset}`}
-              bounds={[
-                [bounds.southWest[0], bounds.southWest[1] + offset],
-                [bounds.northEast[0], bounds.northEast[1] + offset],
-              ]}
-              pathOptions={{
-                color,
-                weight: 1,
-                opacity: 0.5,
-                fillColor: color,
-                fillOpacity: 0.25,
-                interactive: false,
-              }}
-            />
-          ));
-        })
-      )}
+    <Pane name="earlier-group-cells" style={earlierGroupCellsPaneStyle}>
+      {rectangles}
     </Pane>
   );
-}
+});
 
 /**
  * A geographic filter for latitude/longitude variable pairs.

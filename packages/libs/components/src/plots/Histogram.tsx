@@ -40,6 +40,7 @@ import { Layout, Shape } from 'plotly.js';
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
+import { rangeToRectGeometry } from '../utils/range-rect-geometry';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -303,31 +304,15 @@ const Histogram = makePlotlyPlotComponent(
       const range = selectingRange ?? selectedRange;
 
       if (data.series.length && range) {
-        // for dates, draw the blue area to the end of the day
-        const rightCoordinate =
-          data.binWidthSlider?.valueType === 'number'
-            ? range.max
-            : DateMath.add(new Date(range.max), 0.9999, 'day').toISOString();
         return [
           {
             type: 'rect',
-            ...(orientation === 'vertical'
-              ? {
-                  xref: 'x',
-                  yref: 'paper',
-                  x0: range.min,
-                  x1: rightCoordinate,
-                  y0: 0,
-                  y1: 1,
-                }
-              : {
-                  xref: 'paper',
-                  yref: 'y',
-                  x0: 0,
-                  x1: 1,
-                  y0: range.min,
-                  y1: rightCoordinate,
-                }),
+            // for dates, draws the blue area to the end of the day
+            ...rangeToRectGeometry(
+              range,
+              orientation,
+              data.binWidthSlider?.valueType
+            ),
             line: {
               color: 'blue',
               width: 1,
@@ -343,37 +328,20 @@ const Histogram = makePlotlyPlotComponent(
 
     const shadedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
       if (!data.series.length || shadedRanges == null) return [];
-      return shadedRanges.map(({ range, color }): Partial<Shape> => {
-        // as for selectedRange: dates are shaded to the end of the day
-        const rightCoordinate =
-          data.binWidthSlider?.valueType === 'number'
-            ? range.max
-            : DateMath.add(new Date(range.max), 0.9999, 'day').toISOString();
-        return {
+      return shadedRanges.map(
+        ({ range, color }): Partial<Shape> => ({
           type: 'rect',
           layer: 'below',
-          ...(orientation === 'vertical'
-            ? {
-                xref: 'x',
-                yref: 'paper',
-                x0: range.min,
-                x1: rightCoordinate,
-                y0: 0,
-                y1: 1,
-              }
-            : {
-                xref: 'paper',
-                yref: 'y',
-                x0: 0,
-                x1: 1,
-                y0: range.min,
-                y1: rightCoordinate,
-              }),
+          ...rangeToRectGeometry(
+            range,
+            orientation,
+            data.binWidthSlider?.valueType
+          ),
           line: { width: 0 },
           fillcolor: color,
           opacity: 0.3,
-        };
-      });
+        })
+      );
     }, [
       shadedRanges,
       orientation,
