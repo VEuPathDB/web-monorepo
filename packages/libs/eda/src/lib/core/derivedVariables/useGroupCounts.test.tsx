@@ -28,11 +28,15 @@ function makeSpec(
 }
 
 function setup() {
-  const getEntityCount = jest.fn().mockResolvedValue({ count: 7 });
+  const getEntityCount = jest
+    .fn()
+    .mockImplementation((_s, _e, filters) =>
+      Promise.resolve({ count: filters.length === 0 ? 10 : 7 })
+    );
   const getBarplot = jest.fn().mockResolvedValue({
     barplot: {
       config: { variables: [] },
-      data: [{ label: ['A', 'B', 'No data'], value: [3, 2, 1] }],
+      data: [{ label: ['A', 'B'], value: [3, 2] }],
     },
   });
   const value = {
@@ -60,7 +64,8 @@ describe('useGroupCounts', () => {
     });
     expect(result.current.pending).toBe(true);
     await waitFor(() => result.current.pending === false, { timeout: 3000 });
-    expect(getEntityCount).toHaveBeenCalledTimes(2);
+    expect(getEntityCount).toHaveBeenCalledTimes(3);
+    expect(getEntityCount).toHaveBeenCalledWith('study', 'e', []);
     expect(getEntityCount).toHaveBeenCalledWith('study', 'e', [filter]);
     expect(getBarplot).toHaveBeenCalledTimes(1);
     const [app, params] = getBarplot.mock.calls[0];
@@ -73,7 +78,7 @@ describe('useGroupCounts', () => {
       xAxisVariable: { entityId: 'e', variableId: 'dv1' },
     });
     expect(result.current.raw).toEqual([7, 7]);
-    expect(result.current.final).toEqual({ A: 3, B: 2, '': 1 });
+    expect(result.current.final).toEqual({ A: 3, B: 2, '': 5 });
   });
 
   test('skips the barplot for an invalid spec and the count for an empty group', async () => {
@@ -86,9 +91,28 @@ describe('useGroupCounts', () => {
       wrapper,
     });
     await waitFor(() => result.current.pending === false, { timeout: 3000 });
-    expect(getEntityCount).toHaveBeenCalledTimes(1);
+    expect(getEntityCount).toHaveBeenCalledTimes(2);
     expect(getBarplot).not.toHaveBeenCalled();
     expect(result.current.raw).toEqual([7, 0]);
     expect(result.current.final).toBeUndefined();
+  });
+
+  test('omits the empty-key level when every record is matched', async () => {
+    const { getBarplot, wrapper } = setup();
+    getBarplot.mockResolvedValue({
+      barplot: {
+        config: { variables: [] },
+        data: [{ label: ['A', 'B'], value: [6, 4] }],
+      },
+    });
+    const spec = makeSpec([
+      { label: 'A', filters: [filter] },
+      { label: 'B', filters: [filter] },
+    ]);
+    const { result, waitFor } = renderHook(() => useGroupCounts(spec), {
+      wrapper,
+    });
+    await waitFor(() => result.current.pending === false, { timeout: 3000 });
+    expect(result.current.final).toEqual({ A: 6, B: 4 });
   });
 });
