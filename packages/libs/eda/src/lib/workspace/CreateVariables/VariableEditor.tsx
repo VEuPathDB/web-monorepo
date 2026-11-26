@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import Modal from '@veupathdb/coreui/lib/components/containers/Modal';
@@ -97,6 +97,12 @@ export function VariableEditor({
   );
   // A new variable's switch follows the groups until the user touches it;
   // a saved variable keeps its stored setting.
+  // Focus a new, unnamed variable's name only when the editor opens. The header
+  // remounts after a group's filter editor closes, so clear this once applied.
+  const focusNameOnOpen = useRef(!isSaved && spec.displayName === '');
+  useEffect(() => {
+    focusNameOnOpen.current = false;
+  }, []);
   const [everythingElseTouched, setEverythingElseTouched] = useState(isSaved);
   const [everythingElseChoice, setEverythingElseChoice] = useState(
     Boolean(spec.config.unmappedValue)
@@ -317,7 +323,7 @@ export function VariableEditor({
           inputLabel="Variable name"
           pencilLabel="Rename this variable"
           placeholder="Name this variable"
-          autoFocus={!isSaved && spec.displayName === ''}
+          autoFocus={focusNameOnOpen.current}
         />
         <span
           className={cx('-EntityPicker')}

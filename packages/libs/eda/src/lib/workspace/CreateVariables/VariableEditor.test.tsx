@@ -780,4 +780,13 @@ describe('VariableEditor inline names', () => {
       screen.getByTitle('To group a different entity, create a new variable')
     ).toBeInTheDocument();
   });
+
+  test("returning from a group's filter editor does not move focus to the name", () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec([], { displayName: '' }), analysisState);
+    expect(screen.getByLabelText('Variable name')).toHaveFocus();
+    fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    expect(screen.getByLabelText('Variable name')).not.toHaveFocus();
+  });
 });
