@@ -209,6 +209,7 @@ describe('GroupFilterEditor', () => {
         group={{ label: 'East', filters: [speciesFilter], uiSettings: {} }}
         groupIndex={0}
         earlierGroups={[]}
+        entityPlural="Collections"
         onChange={onChange}
         onLabelChange={jest.fn()}
         onCancel={jest.fn()}
@@ -240,6 +241,7 @@ describe('GroupFilterEditor', () => {
         group={{ label: 'East', filters: [speciesFilter], uiSettings: {} }}
         groupIndex={0}
         earlierGroups={[]}
+        entityPlural="Collections"
         onChange={jest.fn()}
         onLabelChange={jest.fn()}
         onCancel={jest.fn()}
@@ -262,6 +264,7 @@ describe('GroupFilterEditor', () => {
       group: { label: 'East', filters: [], uiSettings: {} },
       groupIndex: 0,
       earlierGroups: [],
+      entityPlural: 'Collections',
       onChange: jest.fn(),
       onLabelChange: jest.fn(),
       onCancel: jest.fn(),
@@ -289,6 +292,7 @@ describe('GroupFilterEditor', () => {
         group={{ label: 'East', filters: [], uiSettings: {} }}
         groupIndex={0}
         earlierGroups={[]}
+        entityPlural="Collections"
         startVariable={{ entityId: 'col', variableId: geoFilter.variableId }}
         onChange={jest.fn()}
         onLabelChange={jest.fn()}
@@ -309,6 +313,7 @@ describe('GroupFilterEditor', () => {
         group={{ label: 'East', filters: [], uiSettings: {} }}
         groupIndex={0}
         earlierGroups={[]}
+        entityPlural="Collections"
         onChange={jest.fn()}
         onLabelChange={jest.fn()}
         onCancel={jest.fn()}
@@ -330,6 +335,7 @@ describe('GroupFilterEditor', () => {
           group={{ label: 'East', filters: [], uiSettings: {} }}
           groupIndex={0}
           earlierGroups={[]}
+          entityPlural="Collections"
           onChange={jest.fn()}
           onLabelChange={jest.fn()}
           onCancel={jest.fn()}
@@ -352,6 +358,7 @@ describe('GroupFilterEditor', () => {
           group={{ label: 'East', filters: [], uiSettings: {} }}
           groupIndex={0}
           earlierGroups={[]}
+          entityPlural="Collections"
           onChange={jest.fn()}
           onLabelChange={onLabelChange}
           onCancel={jest.fn()}
@@ -379,6 +386,7 @@ describe('GroupFilterEditor', () => {
           group={{ label: '', filters: [], uiSettings: {} }}
           groupIndex={0}
           earlierGroups={[]}
+          entityPlural="Collections"
           onChange={jest.fn()}
           onLabelChange={jest.fn()}
           onCancel={jest.fn()}
@@ -400,6 +408,39 @@ describe('GroupFilterEditor', () => {
     });
   });
 
+  describe('empty state', () => {
+    function renderEmpty(entityPlural: string) {
+      render(
+        <GroupFilterEditor
+          analysisState={makeAnalysisState().analysisState}
+          group={{ label: 'East', filters: [], uiSettings: {} }}
+          groupIndex={0}
+          earlierGroups={[]}
+          entityPlural={entityPlural}
+          onChange={jest.fn()}
+          onLabelChange={jest.fn()}
+          onCancel={jest.fn()}
+          onClose={jest.fn()}
+        />,
+        { wrapper }
+      );
+    }
+
+    test('names the entity', () => {
+      renderEmpty('Collections');
+      expect(
+        screen.getByText(
+          'No filters yet. Add filters to choose which Collections are in this group.'
+        )
+      ).toBeInTheDocument();
+    });
+
+    test('falls back to a plain message without an entity name', () => {
+      renderEmpty('');
+      expect(screen.getByText('No filters yet.')).toBeInTheDocument();
+    });
+  });
+
   test('Cancel calls onCancel', () => {
     const { analysisState } = makeAnalysisState();
     const onCancel = jest.fn();
@@ -410,6 +451,7 @@ describe('GroupFilterEditor', () => {
         group={{ label: 'East', filters: [], uiSettings: {} }}
         groupIndex={0}
         earlierGroups={[]}
+        entityPlural="Collections"
         onChange={jest.fn()}
         onLabelChange={jest.fn()}
         onCancel={onCancel}

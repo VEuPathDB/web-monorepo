@@ -313,6 +313,7 @@ export function VariableEditor({
           group={{ label: group.label, filters: group.filters, uiSettings }}
           groupIndex={editingIndex}
           earlierGroups={groups.slice(0, editingIndex)}
+          entityPlural={entityPlural}
           startVariable={editing.startVariable}
           onChange={(next) => updateGroupFilters(id, next)}
           onLabelChange={(label) => updateGroup(editingIndex, { label })}

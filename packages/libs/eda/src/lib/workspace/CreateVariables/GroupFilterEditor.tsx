@@ -37,6 +37,8 @@ interface Props {
   groupIndex: number;
   /** The groups before this one: the filter widgets show their selections. */
   earlierGroups: FilterDefinedGroup[];
+  /** The grouping entity's plural display name, for the empty-state text. */
+  entityPlural: string;
   /** The variable to open on; the study's default variable without one. */
   startVariable?: VariableDescriptor;
   /** Must commit synchronously (plain setState): see useGroupFilterAnalysisState. */
@@ -58,6 +60,7 @@ export function GroupFilterEditor({
   group,
   groupIndex,
   earlierGroups,
+  entityPlural,
   startVariable,
   onChange,
   onLabelChange,
@@ -150,7 +153,11 @@ export function GroupFilterEditor({
           variableLinkConfig={variableLinkConfig}
         />
       ) : (
-        <span className={cx('-Muted')}>No filters yet</span>
+        <span className={cx('-Muted')}>
+          {entityPlural
+            ? `No filters yet. Add filters to choose which ${entityPlural} are in this group.`
+            : 'No filters yet.'}
+        </span>
       )}
       <GroupEditingContext.Provider value={groupEditing}>
         <Subsetting
