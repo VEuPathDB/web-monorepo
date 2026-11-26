@@ -96,6 +96,53 @@ describe('DerivedVariablesProvider', () => {
     err.mockRestore();
   });
 
+  test('when the batch fails, keeps the specs that succeed on their own', async () => {
+    const err = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spec2 = { ...spec, variableId: 'dv2' };
+    const two = {
+      descriptor: { derivedVariables: [spec, spec2] },
+    } as unknown as Analysis;
+    const getMeta = jest.fn(
+      (_studyId: string, specs: Array<{ variableId: string }>) =>
+        specs.length === 1 && specs[0].variableId === 'dv2'
+          ? Promise.resolve([
+              {
+                entityId: 'root',
+                variableId: 'dv2',
+                derivationType: 'transform',
+                variableType: 'string',
+                dataShape: 'categorical',
+                vocabulary: ['x'],
+              },
+            ])
+          : Promise.reject(new Error('bad spec'))
+    );
+    const value = {
+      studyMetadata: { id: 'study', rootEntity: root },
+      dataClient: { getDerivedVariableMetadata: getMeta },
+    } as unknown as WorkspaceContextValue;
+    function Ids() {
+      const entities = useStudyEntities();
+      const ids = entities.flatMap((e) => e.variables.map((v) => v.id));
+      return <div>ids:{ids.filter((id) => id.startsWith('dv')).join(',')}</div>;
+    }
+    render(
+      <WorkspaceContext.Provider value={value}>
+        <DerivedVariablesProvider analysis={two}>
+          <Ids />
+        </DerivedVariablesProvider>
+      </WorkspaceContext.Provider>
+    );
+    await waitFor(() => expect(screen.getByText('ids:dv2')).toBeTruthy());
+    // the batch, then one request per spec
+    expect(getMeta).toHaveBeenCalledTimes(3);
+    expect(err).toHaveBeenCalledWith(
+      expect.stringContaining('root/dv1'),
+      expect.any(Error)
+    );
+    err.mockRestore();
+  });
+
   test('keeps the previous tree (minus removed specs) and wraps the client with new specs after a spec change', async () => {
     const spec2 = { ...spec, variableId: 'dv2' };
     const metaFor = (id: string) => ({

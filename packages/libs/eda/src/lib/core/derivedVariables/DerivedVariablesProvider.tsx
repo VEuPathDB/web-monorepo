@@ -40,8 +40,41 @@ export function DerivedVariablesProvider(props: Props) {
       return;
     }
     let cancelled = false;
-    dataClient
-      .getDerivedVariableMetadata(studyMetadata.id, supported)
+    // One batched request normally. If it fails (e.g. one spec's input
+    // variable is gone), retry each spec alone so that one bad spec doesn't
+    // hide every derived variable.
+    const fetchAll = async (): Promise<DerivedVariableMetadata[]> => {
+      try {
+        return await dataClient.getDerivedVariableMetadata(
+          studyMetadata.id,
+          supported
+        );
+      } catch (error) {
+        if (supported.length === 1) throw error;
+        console.error(
+          'Unable to fetch derived variable metadata, retrying each variable',
+          error
+        );
+        const results = await Promise.all(
+          supported.map(async (spec) => {
+            try {
+              return await dataClient.getDerivedVariableMetadata(
+                studyMetadata.id,
+                [spec]
+              );
+            } catch (specError) {
+              console.error(
+                `Unable to fetch derived variable metadata for ${spec.entityId}/${spec.variableId}`,
+                specError
+              );
+              return [];
+            }
+          })
+        );
+        return results.flat();
+      }
+    };
+    fetchAll()
       .then((metadata) => {
         if (!cancelled) setFetched({ settled: true, metadata });
       })
