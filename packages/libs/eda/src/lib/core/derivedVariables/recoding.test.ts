@@ -29,7 +29,10 @@ const base = {
 
 function stringVar(
   id: string,
-  extra: { dataShape?: 'categorical' | 'binary'; isMultiValued?: boolean } = {}
+  extra: {
+    dataShape?: 'categorical' | 'binary' | 'ordinal';
+    isMultiValued?: boolean;
+  } = {}
 ): EntityVariable {
   return {
     ...base,
@@ -110,6 +113,7 @@ const shop = entity(
     dateVar('opened'),
     stringVar('chain', { dataShape: 'binary' }),
     stringVar('tags', { isMultiValued: true }),
+    stringVar('level', { dataShape: 'ordinal' }),
     numberVar('staff', true),
   ],
   [menu]
@@ -311,8 +315,24 @@ describe('toRecoderSpec', () => {
     },
   ]);
   const noGroups = groupsSpec([]);
+  const ordinal = groupsSpec([
+    { label: 'A', filters: [stringSet('level', ['x'])] },
+  ]);
+  const ordinalPrefix = groupsSpec([
+    { label: 'A', filters: [prefixSet('level', ['x'])] },
+  ]);
+  const rangeOnString = groupsSpec([
+    { label: 'A', filters: [numberRange('region', 0, 1)] },
+  ]);
+  const dateRangeOnNumber = groupsSpec([
+    { label: 'A', filters: [dateRange('size', '2020-01-01', '2020-02-01')] },
+  ]);
 
   it.each([
+    ['an ordinal string variable (server accepts categorical only)', ordinal],
+    ['an ordinal string variable with prefixes', ordinalPrefix],
+    ['a range filter on a non-continuous variable', rangeOnString],
+    ['a date range on a numeric variable', dateRangeOnNumber],
     ['a group with two filters', twoFilters],
     ['groups on different variables', differentVars],
     ['filters of different kinds', differentKinds],

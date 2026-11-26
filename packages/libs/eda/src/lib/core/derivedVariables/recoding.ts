@@ -18,6 +18,38 @@ export const CATEGORICAL_RECODING = 'categoricalRecoding';
 export const CONTINUOUS_TO_ORDINAL = 'continuousToOrdinal';
 export const CONTINUOUS_DATE_TO_ORDINAL = 'continuousDateToOrdinal';
 
+/**
+ * The input variables each server plugin accepts, mirroring its
+ * `checkVariable` call in service-eda (merge/plugins/transforms:
+ * CategoricalRecoding, ContinuousNumericToOrdinal, ContinuousDateToOrdinal).
+ * The server rejects every request that includes a spec whose input variable
+ * doesn't match, so toRecoderSpec falls back to the filter-based form instead.
+ * `types` undefined means any variable type.
+ */
+const ACCEPTED_INPUTS: Record<
+  string,
+  { types?: string[]; dataShapes: string[] }
+> = {
+  [CATEGORICAL_RECODING]: { dataShapes: ['categorical', 'binary'] },
+  [CONTINUOUS_TO_ORDINAL]: {
+    types: ['integer', 'number'],
+    dataShapes: ['continuous'],
+  },
+  [CONTINUOUS_DATE_TO_ORDINAL]: { types: ['date'], dataShapes: ['continuous'] },
+};
+
+function serverAcceptsInput(
+  functionName: string,
+  variable: { type: string; dataShape: string }
+): boolean {
+  const accepted = ACCEPTED_INPUTS[functionName];
+  return (
+    accepted != null &&
+    (accepted.types == null || accepted.types.includes(variable.type)) &&
+    accepted.dataShapes.includes(variable.dataShape)
+  );
+}
+
 const unmappedPartial = t.partial({ unmappedValue: t.string });
 
 export type CategoricalRecodingConfig = t.TypeOf<
@@ -129,10 +161,16 @@ export function toRecoderSpec(
   };
   const labels = groups.map((g) => g.label);
   const tail = withUnmapped(unmappedValue);
+  const accepts = (functionName: string) =>
+    serverAcceptsInput(functionName, {
+      type: variable.type,
+      dataShape: variable.dataShape ?? '',
+    });
 
   switch (first.type) {
     case 'stringSet':
     case 'stringPrefixSet': {
+      if (!accepts(CATEGORICAL_RECODING)) return undefined;
       const rules: CategoricalRecodingConfig['rules'] = [];
       for (let i = 0; i < filters.length; i++) {
         const f = filters[i];
@@ -149,6 +187,7 @@ export function toRecoderSpec(
       };
     }
     case 'numberRange': {
+      if (!accepts(CONTINUOUS_TO_ORDINAL)) return undefined;
       const rules: ContinuousNumericRecodingConfig['rules'] = [];
       for (let i = 0; i < filters.length; i++) {
         const f = filters[i];
@@ -166,6 +205,7 @@ export function toRecoderSpec(
       };
     }
     case 'dateRange': {
+      if (!accepts(CONTINUOUS_DATE_TO_ORDINAL)) return undefined;
       const rules: ContinuousDateRecodingConfig['rules'] = [];
       for (let i = 0; i < filters.length; i++) {
         const f = filters[i];
