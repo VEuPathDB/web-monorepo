@@ -95,14 +95,15 @@ export function VariableEditor({
   const isSaved = (analysis?.descriptor.derivedVariables ?? []).some(
     (s) => s.variableId === spec.variableId
   );
-  // A new variable's switch follows the groups until the user touches it;
-  // a saved variable keeps its stored setting.
   // Focus a new, unnamed variable's name only when the editor opens. The header
   // remounts after a group's filter editor closes, so clear this once applied.
   const focusNameOnOpen = useRef(!isSaved && spec.displayName === '');
   useEffect(() => {
     focusNameOnOpen.current = false;
   }, []);
+
+  // A new variable's switch follows the groups until the user touches it;
+  // a saved variable keeps its stored setting.
   const [everythingElseTouched, setEverythingElseTouched] = useState(isSaved);
   const [everythingElseChoice, setEverythingElseChoice] = useState(
     Boolean(spec.config.unmappedValue)
