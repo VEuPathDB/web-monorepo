@@ -29,6 +29,7 @@ import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
 import { GroupFilterState } from '../../core/derivedVariables/useGroupFilterAnalysisState';
 import { GroupRow } from './GroupRow';
 import { GroupFilterEditor } from './GroupFilterEditor';
+import { SubsetNote } from './SubsetNote';
 import {
   GroupUISettings,
   readGroupUISettings,
@@ -340,6 +341,8 @@ export function VariableEditor({
           into:
         </span>
       </div>
+
+      <SubsetNote analysisState={analysisState} />
 
       <ol className={cx('-Groups')}>
         {drafts.map(({ id, group: g }, index) => (

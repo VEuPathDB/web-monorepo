@@ -141,7 +141,8 @@ function makeSpec(
 function makeAnalysisState(
   derivedVariables: DerivedVariableSpec[] = [],
   computations: unknown[] = [],
-  uiSettings: SubsetUISettings = {}
+  uiSettings: SubsetUISettings = {},
+  subsetFilters: Filter[] = []
 ) {
   const setDerivedVariables = jest.fn();
   const setVariableUISettings = jest.fn();
@@ -150,7 +151,7 @@ function makeAnalysisState(
       descriptor: {
         derivedVariables,
         computations,
-        subset: { descriptor: [], uiSettings },
+        subset: { descriptor: subsetFilters, uiSettings },
       },
     },
     setDerivedVariables,
@@ -173,11 +174,11 @@ function renderEditor(
       {children}
     </WorkspaceContext.Provider>
   );
-  render(
+  const { unmount } = render(
     <VariableEditor spec={spec} analysisState={analysisState} {...callbacks} />,
     { wrapper }
   );
-  return callbacks;
+  return { ...callbacks, unmount };
 }
 
 function saveButton() {
@@ -212,6 +213,18 @@ beforeEach(() => {
 });
 
 describe('VariableEditor', () => {
+  test('shows the subset banner only when the analysis subset has filters', () => {
+    const noteText =
+      'Counts here are for the whole dataset. Your analysis subset is not applied.';
+    const spec = makeSpec([group('East')]);
+    const withSubset = makeAnalysisState([], [], {}, [filter]);
+    const { unmount } = renderEditor(spec, withSubset.analysisState);
+    expect(screen.getByText(noteText)).toBeInTheDocument();
+    unmount();
+    renderEditor(spec, makeAnalysisState().analysisState);
+    expect(screen.queryByText(noteText)).toBeNull();
+  });
+
   test('save is disabled and messages shown for a duplicate group label', () => {
     const { analysisState } = makeAnalysisState();
     renderEditor(makeSpec([group('East'), group('East')]), analysisState);

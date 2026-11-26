@@ -26,6 +26,7 @@ import {
   useGroupFilterAnalysisState,
 } from '../../core/derivedVariables/useGroupFilterAnalysisState';
 import Subsetting from '../Subsetting';
+import { SubsetNote } from './SubsetNote';
 
 const cx = makeClassNameHelper('CreateVariables');
 
@@ -113,9 +114,7 @@ export function GroupFilterEditor({
         <OutlinedButton text="Cancel" themeRole="primary" onPress={onCancel} />
         <FilledButton text="Done" themeRole="primary" onPress={onClose} />
       </div>
-      <p className={cx('-Muted')}>
-        Counts here are for the whole dataset, not the analysis subset.
-      </p>
+      <SubsetNote analysisState={analysisState} />
       {group.filters.length > 0 ? (
         <FilterChipList
           filters={group.filters}

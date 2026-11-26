@@ -140,14 +140,14 @@ function wrapper({ children }: { children?: ReactNode }) {
   );
 }
 
-function makeAnalysisState() {
+function makeAnalysisState(subsetFilters: Filter[] = [subsetFilter]) {
   const setFilters = jest.fn();
   const setVariableUISettings = jest.fn();
   const setDerivedVariables = jest.fn();
   const analysisState = {
     analysis: {
       descriptor: {
-        subset: { descriptor: [subsetFilter], uiSettings: {} },
+        subset: { descriptor: subsetFilters, uiSettings: {} },
         derivedVariables: [],
         computations: [],
         starredVariables: [],
@@ -313,6 +313,29 @@ describe('GroupFilterEditor', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  test('shows the subset banner only when the analysis subset has filters', () => {
+    const noteText =
+      'Counts here are for the whole dataset. Your analysis subset is not applied.';
+    const renderEditorWith = (subsetFilters: Filter[]) =>
+      render(
+        <GroupFilterEditor
+          analysisState={makeAnalysisState(subsetFilters).analysisState}
+          group={{ label: 'East', filters: [], uiSettings: {} }}
+          groupIndex={0}
+          earlierGroups={[]}
+          onChange={jest.fn()}
+          onCancel={jest.fn()}
+          onClose={jest.fn()}
+        />,
+        { wrapper }
+      );
+    const { unmount } = renderEditorWith([subsetFilter]);
+    expect(screen.getByText(noteText)).toBeInTheDocument();
+    unmount();
+    renderEditorWith([]);
+    expect(screen.queryByText(noteText)).toBeNull();
   });
 
   test('Cancel calls onCancel', () => {
