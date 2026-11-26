@@ -1,6 +1,10 @@
 import { useMemo, useState } from 'react';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { OutlinedButton } from '@veupathdb/coreui/lib/components/buttons';
+import Modal from '@veupathdb/coreui/lib/components/containers/Modal';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 import { AnalysisState } from '../../core/hooks/analysis';
 import { useStudyMetadata } from '../../core/hooks/workspace';
 import { FilterDefinedGroupsSpec } from '../../core/derivedVariables/types';
@@ -40,6 +44,22 @@ export default function CreateVariables({ analysisState }: Props) {
   // Bumped to discard the draft of an existing variable on Cancel.
   const [resetCount, setResetCount] = useState(0);
 
+  // Whether the open editor has unsaved changes, as it last reported.
+  const [dirty, setDirty] = useState(false);
+  // A selection asked for while the draft is dirty, awaiting the user's answer.
+  const [pendingSelection, setPendingSelection] = useState<Selection>();
+
+  function requestSelection(next: Selection) {
+    if (
+      next.kind === 'existing' &&
+      selection?.kind === 'existing' &&
+      next.variableId === selection.variableId
+    )
+      return;
+    if (dirty) setPendingSelection(next);
+    else setSelection(next);
+  }
+
   const selectedSpec =
     selection?.kind === 'new'
       ? selection.spec
@@ -63,7 +83,7 @@ export default function CreateVariables({ analysisState }: Props) {
                   )}
                   aria-current={spec.variableId === selectedSpec?.variableId}
                   onClick={() =>
-                    setSelection({
+                    requestSelection({
                       kind: 'existing',
                       variableId: spec.variableId,
                     })
@@ -91,7 +111,7 @@ export default function CreateVariables({ analysisState }: Props) {
           size="small"
           themeRole="primary"
           onPress={() =>
-            setSelection({
+            requestSelection({
               kind: 'new',
               spec: newFilterDefinedGroupsSpec(rootEntity.id, ''),
             })
@@ -116,6 +136,7 @@ export default function CreateVariables({ analysisState }: Props) {
                 : setResetCount((n) => n + 1)
             }
             onDelete={() => setSelection(undefined)}
+            onDirtyChange={setDirty}
           />
         ) : (
           <p className={cx('-Muted')}>
@@ -123,6 +144,40 @@ export default function CreateVariables({ analysisState }: Props) {
           </p>
         )}
       </div>
+      <Modal
+        title="Discard changes?"
+        visible={pendingSelection != null}
+        toggleVisible={() => setPendingSelection(undefined)}
+        includeCloseButton
+        themeRole="primary"
+        styleOverrides={{
+          content: { padding: { top: 0, right: 25, bottom: 25, left: 25 } },
+        }}
+      >
+        <div className={cx('-DeleteConfirm')}>
+          <p>You have unsaved changes to this variable. Discard them?</p>
+          <div className={cx('-Actions')}>
+            <span className={cx('-ActionsSpacer')} />
+            <OutlinedButton
+              text="Keep editing"
+              themeRole="primary"
+              onPress={() => setPendingSelection(undefined)}
+            />
+            <FilledButton
+              text="Discard changes"
+              themeRole="primary"
+              onPress={() => {
+                if (pendingSelection != null) {
+                  setSelection(pendingSelection);
+                  // The new editor reports its own state once it mounts.
+                  setDirty(false);
+                }
+                setPendingSelection(undefined);
+              }}
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

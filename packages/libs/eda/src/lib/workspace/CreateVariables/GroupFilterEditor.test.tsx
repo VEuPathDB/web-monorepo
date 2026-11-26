@@ -1,5 +1,6 @@
 import { ComponentProps, ReactNode, useContext } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import {
   WorkspaceContext,
   WorkspaceContextValue,
@@ -134,9 +135,11 @@ const workspace = {
 
 function wrapper({ children }: { children?: ReactNode }) {
   return (
-    <WorkspaceContext.Provider value={workspace}>
-      {children}
-    </WorkspaceContext.Provider>
+    <MemoryRouter>
+      <WorkspaceContext.Provider value={workspace}>
+        {children}
+      </WorkspaceContext.Provider>
+    </MemoryRouter>
   );
 }
 
@@ -485,6 +488,7 @@ describe('VariableEditor with the group editor', () => {
         onSave={jest.fn()}
         onCancel={jest.fn()}
         onDelete={jest.fn()}
+        onDirtyChange={jest.fn()}
       />,
       { wrapper }
     );

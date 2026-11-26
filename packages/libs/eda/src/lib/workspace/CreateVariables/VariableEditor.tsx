@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { Prompt } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import Modal from '@veupathdb/coreui/lib/components/containers/Modal';
@@ -28,6 +29,7 @@ import { findVisualizationsUsing } from '../../core/derivedVariables/references'
 import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
 import { GroupFilterState } from '../../core/derivedVariables/useGroupFilterAnalysisState';
 import { GroupRow } from './GroupRow';
+import { isDraftDirty } from './isDraftDirty';
 import { InlineName } from './InlineName';
 import { GroupFilterEditor } from './GroupFilterEditor';
 import { SubsetNote } from './SubsetNote';
@@ -53,7 +55,16 @@ interface Props {
   onSave: (spec: FilterDefinedGroupsSpec) => void;
   onCancel: () => void;
   onDelete: () => void;
+  /** Reports whether the draft has unsaved changes, whenever that changes. */
+  onDirtyChange: (dirty: boolean) => void;
 }
+
+const LEAVE_MESSAGE =
+  'Leave this page? Your unsaved changes to this variable will be lost.';
+
+// The URL changes from `new` to the analysis id when saving creates the
+// analysis. That stays on this tab, so it must not prompt.
+const STAYS_ON_TAB = /\/create-variables\/?$/;
 
 /**
  * Edits one grouping variable as a local draft. Save writes the draft into
@@ -65,6 +76,7 @@ export function VariableEditor({
   onSave,
   onCancel,
   onDelete,
+  onDirtyChange,
 }: Props) {
   const entities = useStudyEntities();
   const analysis = analysisState.analysis;
@@ -115,6 +127,9 @@ export function VariableEditor({
     spec.config.unmappedValue || DEFAULT_UNMAPPED_VALUE
   );
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  // What the draft is compared with: the spec the editor opened with, then
+  // whatever was last saved.
+  const [baseline, setBaseline] = useState(spec);
 
   const draft = useMemo(
     (): FilterDefinedGroupsSpec => ({
@@ -129,6 +144,22 @@ export function VariableEditor({
     }),
     [spec, entityId, displayName, groups, everythingElseOn, everythingElseLabel]
   );
+
+  const dirty = isDraftDirty(baseline, draft, everythingElseTouched);
+  const onDirtyChangeRef = useRef(onDirtyChange);
+  onDirtyChangeRef.current = onDirtyChange;
+  useEffect(() => onDirtyChangeRef.current(dirty), [dirty]);
+  // A removed editor leaves nothing dirty behind.
+  useEffect(() => () => onDirtyChangeRef.current(false), []);
+  useEffect(() => {
+    if (!dirty) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [dirty]);
 
   const counts = useGroupCounts(draft);
   const entity = entities.find((e) => e.id === entityId);
@@ -285,6 +316,8 @@ export function VariableEditor({
       (previous) => upsertSpec(previous, toStoredSpec(draft, entities)),
       true
     );
+    // Clean from this render on, before saving a new analysis changes the URL.
+    setBaseline(draft);
     onSave(draft);
   }
 
@@ -301,12 +334,22 @@ export function VariableEditor({
     onDelete();
   }
 
+  const leavePrompt = (
+    <Prompt
+      when={dirty}
+      message={(location) =>
+        STAYS_ON_TAB.test(location.pathname) ? true : LEAVE_MESSAGE
+      }
+    />
+  );
+
   const editingIndex =
     editing == null ? -1 : drafts.findIndex((d) => d.id === editing.id);
   if (editing != null && editingIndex >= 0) {
     const { id, group, uiSettings } = drafts[editingIndex];
     return (
       <div className={cx('-Editor')}>
+        {leavePrompt}
         <GroupFilterEditor
           key={id}
           analysisState={analysisState}
@@ -326,6 +369,7 @@ export function VariableEditor({
 
   return (
     <div className={cx('-Editor')}>
+      {leavePrompt}
       <div className={cx('-EditorHeader')}>
         <InlineName
           size="title"

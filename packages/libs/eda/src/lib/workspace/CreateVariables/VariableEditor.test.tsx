@@ -1,5 +1,7 @@
 import { ComponentProps, ReactNode } from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { MemoryRouter, useHistory } from 'react-router-dom';
+import { History } from 'history';
 import {
   WorkspaceContext,
   WorkspaceContextValue,
@@ -164,6 +166,12 @@ function makeAnalysisState(
   return { analysisState, setDerivedVariables, setVariableUISettings };
 }
 
+/** Exposes the router's history so a test can navigate. */
+function HistoryProbe({ onHistory }: { onHistory: (h: History) => void }) {
+  onHistory(useHistory());
+  return null;
+}
+
 function renderEditor(
   spec: FilterDefinedGroupsSpec,
   analysisState: AnalysisState
@@ -172,17 +180,31 @@ function renderEditor(
     onSave: jest.fn(),
     onCancel: jest.fn(),
     onDelete: jest.fn(),
+    onDirtyChange: jest.fn(),
   };
+  const getUserConfirmation = jest.fn(
+    (_message: string, callback: (ok: boolean) => void) => callback(false)
+  );
+  let history: History | undefined;
   const wrapper = ({ children }: { children?: ReactNode }) => (
-    <WorkspaceContext.Provider value={workspace}>
-      {children}
-    </WorkspaceContext.Provider>
+    <MemoryRouter
+      initialEntries={['/analyses/new/create-variables']}
+      getUserConfirmation={getUserConfirmation}
+    >
+      <HistoryProbe onHistory={(h) => (history = h)} />
+      <WorkspaceContext.Provider value={workspace}>
+        {children}
+      </WorkspaceContext.Provider>
+    </MemoryRouter>
   );
   const { unmount } = render(
     <VariableEditor spec={spec} analysisState={analysisState} {...callbacks} />,
     { wrapper }
   );
-  return { ...callbacks, unmount };
+  function navigate(path: string) {
+    act(() => history?.push(path));
+  }
+  return { ...callbacks, unmount, getUserConfirmation, navigate };
 }
 
 function saveButton() {
@@ -824,5 +846,119 @@ describe('VariableEditor inline names', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
     fireEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(screen.getByLabelText('Variable name')).not.toHaveFocus();
+  });
+});
+
+describe('VariableEditor unsaved changes', () => {
+  const leaveMessage =
+    'Leave this page? Your unsaved changes to this variable will be lost.';
+
+  function lastReported(onDirtyChange: jest.Mock) {
+    return onDirtyChange.mock.calls[onDirtyChange.mock.calls.length - 1][0];
+  }
+
+  test('reports dirty after an edit and clean after Save', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec]);
+    const { onDirtyChange } = renderEditor(spec, analysisState);
+    expect(lastReported(onDirtyChange)).toBe(false);
+    fireEvent.change(screen.getByLabelText('Variable name'), {
+      target: { value: 'Renamed' },
+    });
+    expect(lastReported(onDirtyChange)).toBe(true);
+    fireEvent.click(saveButton());
+    expect(lastReported(onDirtyChange)).toBe(false);
+  });
+
+  test('an untouched new variable is clean; its automatic Everything else is not an edit', () => {
+    const { analysisState } = makeAnalysisState();
+    const blank = makeSpec([], { displayName: '', variableId: 'new' });
+    const { onDirtyChange } = renderEditor(blank, analysisState);
+    expect(lastReported(onDirtyChange)).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    expect(lastReported(onDirtyChange)).toBe(true);
+  });
+
+  test('changing only the filter widgets display settings is not dirty', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec]);
+    const { onDirtyChange } = renderEditor(spec, analysisState);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Edit the filters of group 1' })
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Edit stub UI settings' })
+    );
+    expect(lastReported(onDirtyChange)).toBe(false);
+  });
+
+  test('reports clean when the editor is removed', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec]);
+    const { onDirtyChange, unmount } = renderEditor(spec, analysisState);
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 1' }));
+    expect(lastReported(onDirtyChange)).toBe(true);
+    unmount();
+    expect(lastReported(onDirtyChange)).toBe(false);
+  });
+
+  test('leaving the page asks for confirmation only while dirty', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec]);
+    const { getUserConfirmation, navigate } = renderEditor(spec, analysisState);
+    navigate('/analyses/new/visualize');
+    expect(getUserConfirmation).not.toHaveBeenCalled();
+
+    navigate('/analyses/new/create-variables');
+    fireEvent.click(screen.getByRole('button', { name: 'Remove group 1' }));
+    navigate('/analyses/new/visualize');
+    expect(getUserConfirmation).toHaveBeenCalledTimes(1);
+    expect(getUserConfirmation.mock.calls[0][0]).toBe(leaveMessage);
+  });
+
+  test('saving a new analysis, which changes the URL, does not ask', () => {
+    const { analysisState } = makeAnalysisState();
+    const { getUserConfirmation, navigate } = renderEditor(
+      makeSpec([group('East')], { displayName: '' }),
+      analysisState
+    );
+    fireEvent.change(screen.getByLabelText('Variable name'), {
+      target: { value: 'Region' },
+    });
+    // still dirty: another tab asks, the same tab does not
+    navigate('/analyses/abc123/create-variables');
+    expect(getUserConfirmation).not.toHaveBeenCalled();
+    fireEvent.click(saveButton());
+    navigate('/analyses/abc123/visualize');
+    expect(getUserConfirmation).not.toHaveBeenCalled();
+  });
+
+  test('the beforeunload handler is added only while dirty', () => {
+    const add = jest.spyOn(window, 'addEventListener');
+    const remove = jest.spyOn(window, 'removeEventListener');
+    const beforeUnloadCalls = (spy: jest.SpyInstance) =>
+      spy.mock.calls.filter(([type]) => type === 'beforeunload');
+    try {
+      const spec = makeSpec([group('East')]);
+      const { analysisState } = makeAnalysisState([spec]);
+      renderEditor(spec, analysisState);
+      expect(beforeUnloadCalls(add)).toHaveLength(0);
+
+      fireEvent.change(screen.getByLabelText('Variable name'), {
+        target: { value: 'Renamed' },
+      });
+      expect(beforeUnloadCalls(add)).toHaveLength(1);
+      const handler = beforeUnloadCalls(add)[0][1];
+      const event = new Event('beforeunload', { cancelable: true });
+      handler(event);
+      expect(event.defaultPrevented).toBe(true);
+
+      fireEvent.click(saveButton());
+      expect(beforeUnloadCalls(remove)).toHaveLength(1);
+    } finally {
+      add.mockRestore();
+      remove.mockRestore();
+    }
   });
 });
