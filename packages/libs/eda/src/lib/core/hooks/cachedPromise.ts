@@ -21,7 +21,7 @@ import { findReferencedSpecs } from '../derivedVariables/references';
 //
 export function useCachedPromise<T>(
   task: () => Promise<T>,
-  queryKey: [any, ...any[]],
+  queryKey: readonly [unknown, ...unknown[]],
   cacheTime?: number
 ): PromiseHookState<T> {
   const specs = useContext(DerivedVariableSpecsContext);
@@ -53,7 +53,10 @@ export function useCachedPromise<T>(
  * `value: undefined, pending: true` until its new data arrives.
  */
 export function useCachedPromises<T>(
-  entries: Array<{ task: () => Promise<T>; queryKey: [any, ...any[]] }>,
+  entries: Array<{
+    task: () => Promise<T>;
+    queryKey: readonly [unknown, ...unknown[]];
+  }>,
   cacheTime?: number
 ): PromiseHookState<T>[] {
   const specs = useContext(DerivedVariableSpecsContext);
@@ -73,20 +76,21 @@ export function useCachedPromises<T>(
 }
 
 // The task is only run when every part of the key is non-null.
-function isEnabled(queryKey: unknown[]): boolean {
+function isEnabled(queryKey: readonly unknown[]): boolean {
   return queryKey.every((val) => val != null);
 }
 
 function baseQueryOptions<T>(
   task: () => Promise<T>,
-  queryKey: [any, ...any[]],
+  queryKey: readonly [unknown, ...unknown[]],
   specs: DerivedVariableSpec[],
   cacheTime?: number
 ) {
   const enabled = isEnabled(queryKey);
   // Requests that reference a derived variable must be re-keyed when its
   // spec is edited. Unreferenced requests keep exactly the same key.
-  const referenced = enabled ? findReferencedSpecs(queryKey, specs) : [];
+  const referenced =
+    enabled && specs.length > 0 ? findReferencedSpecs(queryKey, specs) : [];
   return {
     queryKey: [
       'useCachedPromise',
