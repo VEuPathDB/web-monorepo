@@ -8,7 +8,8 @@ import { FilterDefinedGroupsSpec } from '../../core/derivedVariables/types';
  *
  * Filter-widget display settings are not compared. "Everything else" is
  * compared only once the user has touched it: until then it follows the groups
- * automatically, which is not a user edit.
+ * automatically, which is not a user edit. An empty and an absent
+ * unmappedValue both mean "Everything else" is off (a recoder spec omits it).
  */
 export function isDraftDirty(
   opening: FilterDefinedGroupsSpec,
@@ -23,6 +24,7 @@ export function isDraftDirty(
       draft.config.groups.map(({ label, filters }) => ({ label, filters }))
     ) ||
     (everythingElseTouched &&
-      opening.config.unmappedValue !== draft.config.unmappedValue)
+      (opening.config.unmappedValue ?? '') !==
+        (draft.config.unmappedValue ?? ''))
   );
 }

@@ -99,6 +99,14 @@ describe('isDraftDirty', () => {
     ).toBe(true);
   });
 
+  test('a saved variable with Everything else off, as stored, is clean', () => {
+    // A recoder spec omits unmappedValue when Everything else is off; the
+    // editor's draft writes '' for the same setting.
+    const stored = { ...saved, config: { groups: saved.config.groups } };
+    const draft = withGroups(saved, saved.config.groups, '');
+    expect(isDraftDirty(stored, draft, true)).toBe(false);
+  });
+
   test('a saved variable reverted to its original is clean', () => {
     const edited = withGroups(saved, [group('East')]);
     expect(isDraftDirty(saved, edited, true)).toBe(true);
