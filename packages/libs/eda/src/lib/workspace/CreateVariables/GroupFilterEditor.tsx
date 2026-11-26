@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { FilledButton } from '@veupathdb/coreui/lib/components/buttons';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 import { AnalysisState } from '../../core/hooks/analysis';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import {
@@ -36,6 +39,8 @@ interface Props {
   startVariable?: VariableDescriptor;
   /** Must commit synchronously (plain setState): see useGroupFilterAnalysisState. */
   onChange: (next: GroupFilterState) => void;
+  /** Discards what was done since the editor opened. */
+  onCancel: () => void;
   onClose: () => void;
 }
 
@@ -51,6 +56,7 @@ export function GroupFilterEditor({
   earlierGroups,
   startVariable,
   onChange,
+  onCancel,
   onClose,
 }: Props) {
   const entities = useStudyEntities();
@@ -104,6 +110,7 @@ export function GroupFilterEditor({
           Group {groupIndex + 1}: {group.label || 'Unnamed group'}
         </h3>
         <span className={cx('-ActionsSpacer')} />
+        <OutlinedButton text="Cancel" themeRole="primary" onPress={onCancel} />
         <FilledButton text="Done" themeRole="primary" onPress={onClose} />
       </div>
       <p className={cx('-Muted')}>

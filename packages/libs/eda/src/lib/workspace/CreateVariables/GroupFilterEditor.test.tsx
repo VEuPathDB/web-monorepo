@@ -210,6 +210,7 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={onChange}
+        onCancel={jest.fn()}
         onClose={jest.fn()}
       />,
       { wrapper }
@@ -239,6 +240,7 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={jest.fn()}
+        onCancel={jest.fn()}
         onClose={jest.fn()}
       />,
       { wrapper }
@@ -259,6 +261,7 @@ describe('GroupFilterEditor', () => {
       groupIndex: 0,
       earlierGroups: [],
       onChange: jest.fn(),
+      onCancel: jest.fn(),
       onClose: jest.fn(),
     };
     const { unmount } = render(
@@ -285,6 +288,7 @@ describe('GroupFilterEditor', () => {
         earlierGroups={[]}
         startVariable={{ entityId: 'col', variableId: geoFilter.variableId }}
         onChange={jest.fn()}
+        onCancel={jest.fn()}
         onClose={jest.fn()}
       />,
       { wrapper }
@@ -302,12 +306,34 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={jest.fn()}
+        onCancel={jest.fn()}
         onClose={onClose}
       />,
       { wrapper }
     );
     fireEvent.click(screen.getByRole('button', { name: 'Done' }));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  test('Cancel calls onCancel', () => {
+    const { analysisState } = makeAnalysisState();
+    const onCancel = jest.fn();
+    const onClose = jest.fn();
+    render(
+      <GroupFilterEditor
+        analysisState={analysisState}
+        group={{ label: 'East', filters: [], uiSettings: {} }}
+        groupIndex={0}
+        earlierGroups={[]}
+        onChange={jest.fn()}
+        onCancel={onCancel}
+        onClose={onClose}
+      />,
+      { wrapper }
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(onCancel).toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
 

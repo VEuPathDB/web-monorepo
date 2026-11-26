@@ -16,7 +16,10 @@ import {
   GroupCounts,
   useGroupCounts,
 } from '../../core/derivedVariables/useGroupCounts';
-import { toStoredSpec } from '../../core/derivedVariables/recoding';
+import {
+  fromRecoderSpec,
+  toStoredSpec,
+} from '../../core/derivedVariables/recoding';
 import { GroupFilterEditor } from './GroupFilterEditor';
 import { VariableEditor } from './VariableEditor';
 import { SubsetUISettings } from './groupUISettings';
@@ -51,16 +54,26 @@ function GroupFilterEditorStub(
       >
         Edit stub UI settings
       </button>
+      <button
+        type="button"
+        onClick={() =>
+          props.onChange({
+            filters: [otherFilter],
+            uiSettings: props.group.uiSettings,
+          })
+        }
+      >
+        Edit stub filters
+      </button>
       <button type="button" onClick={props.onClose}>
         Done
+      </button>
+      <button type="button" onClick={props.onCancel}>
+        Cancel
       </button>
     </div>
   );
 }
-
-const mockUseGroupCounts = useGroupCounts as jest.MockedFunction<
-  typeof useGroupCounts
->;
 
 const filter = {
   type: 'stringSet',
@@ -68,6 +81,11 @@ const filter = {
   variableId: 'species',
   stringSet: ['a'],
 } as Filter;
+const otherFilter = { ...filter, stringSet: ['b'] } as Filter;
+
+const mockUseGroupCounts = useGroupCounts as jest.MockedFunction<
+  typeof useGroupCounts
+>;
 
 const collections = {
   id: 'col',
@@ -380,7 +398,6 @@ describe('VariableEditor', () => {
 
 describe('VariableEditor saving as a recoder', () => {
   const entities = [rootEntity, collections];
-  const otherFilter = { ...filter, stringSet: ['b'] } as Filter;
   const eligible = (): FilterDefinedGroup[] => [
     group('East'),
     { label: 'West', filters: [otherFilter] },
@@ -584,6 +601,66 @@ describe('VariableEditor group UI settings', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(onCancel).toHaveBeenCalled();
     expect(setVariableUISettings).not.toHaveBeenCalled();
+  });
+
+  describe('Cancel and Done in the group filter editor', () => {
+    function savedGroupFilters(setDerivedVariables: jest.Mock) {
+      const [saved] = applyUpdate(setDerivedVariables, []);
+      // eligible groupings are stored as a recoder: read them back
+      const decoded =
+        saved.functionName === 'filterDefinedGroups'
+          ? (saved as FilterDefinedGroupsSpec)
+          : fromRecoderSpec(saved);
+      return decoded?.config.groups.map((g) => g.filters);
+    }
+
+    test('Cancel in the group filter editor removes a group just added', () => {
+      const spec = makeSpec([group('East')]);
+      const { analysisState } = makeAnalysisState([spec], [], stored);
+      renderEditor(spec, analysisState);
+      fireEvent.click(screen.getByRole('button', { name: 'Add group' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.getByLabelText('Group 1 label')).toHaveValue('East');
+      expect(screen.queryByLabelText('Group 2 label')).toBeNull();
+    });
+
+    test("Cancel in the group filter editor restores the group's filters", () => {
+      const spec = makeSpec([group('East')]);
+      const { analysisState, setDerivedVariables, setVariableUISettings } =
+        makeAnalysisState([spec], [], stored);
+      renderEditor(spec, analysisState);
+      openGroupEditor(1);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Edit stub filters' })
+      );
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Edit stub UI settings' })
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      fireEvent.click(saveButton());
+      expect(savedGroupFilters(setDerivedVariables)).toEqual([[filter]]);
+      expect(applyUISettingsUpdate(setVariableUISettings, stored)).toEqual({
+        ...unrelated,
+        'derivedVariable/dv1/group1': eastSettings,
+      });
+    });
+
+    test('Done in the group filter editor keeps the changes', () => {
+      const spec = makeSpec([group('East')]);
+      const { analysisState, setDerivedVariables } = makeAnalysisState(
+        [spec],
+        [],
+        stored
+      );
+      renderEditor(spec, analysisState);
+      openGroupEditor(1);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Edit stub filters' })
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+      fireEvent.click(saveButton());
+      expect(savedGroupFilters(setDerivedVariables)).toEqual([[otherFilter]]);
+    });
   });
 
   test("deleting a variable removes its groups' UI settings", () => {

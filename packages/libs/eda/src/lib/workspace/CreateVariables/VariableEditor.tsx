@@ -83,9 +83,12 @@ export function VariableEditor({
   });
   const groups = useMemo(() => drafts.map((d) => d.group), [drafts]);
   // The group whose filters are being edited, if any.
+  // `origin` is what Cancel goes back to: the draft entry as it was when the
+  // editor opened, or removal of an entry that "Add group" just created.
   const [editing, setEditing] = useState<{
     id: string;
     startVariable?: VariableDescriptor;
+    origin: { kind: 'new' } | { kind: 'existing'; snapshot: DraftGroup };
   }>();
   const isSaved = (analysis?.descriptor.derivedVariables ?? []).some(
     (s) => s.variableId === spec.variableId
@@ -218,7 +221,11 @@ export function VariableEditor({
       { id, group: { label: `Group ${n}`, filters: [] }, uiSettings: {} },
     ]);
     // Open on the variable the previous group used, with nothing selected.
-    setEditing({ id, startVariable: nextGroupStartVariable(groups) });
+    setEditing({
+      id,
+      startVariable: nextGroupStartVariable(groups),
+      origin: { kind: 'new' },
+    });
   }
 
   function editGroup(index: number) {
@@ -227,7 +234,19 @@ export function VariableEditor({
       startVariable:
         nextGroupStartVariable([groups[index]]) ??
         nextGroupStartVariable(groups.slice(0, index)),
+      origin: { kind: 'existing', snapshot: drafts[index] },
     });
+  }
+
+  function cancelGroupEdit() {
+    if (editing == null) return;
+    const { id, origin } = editing;
+    setDrafts((ds) =>
+      origin.kind === 'new'
+        ? ds.filter((d) => d.id !== id)
+        : ds.map((d) => (d.id === id ? origin.snapshot : d))
+    );
+    setEditing(undefined);
   }
 
   function save() {
@@ -278,6 +297,7 @@ export function VariableEditor({
           earlierGroups={groups.slice(0, editingIndex)}
           startVariable={editing.startVariable}
           onChange={(next) => updateGroupFilters(id, next)}
+          onCancel={cancelGroupEdit}
           onClose={() => setEditing(undefined)}
         />
       </div>
