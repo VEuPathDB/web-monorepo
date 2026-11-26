@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useRef } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { FilterDefinedGroup } from '../../core/derivedVariables/types';
@@ -6,6 +6,7 @@ import { Filter } from '../../core/types/filter';
 import { StudyEntity } from '../../core/types/study';
 import { findEntityAndVariable } from '../../core/utils/study-metadata';
 import { formatFilterValue } from '../../core/utils/filter-display';
+import { InlineName } from './InlineName';
 
 const cx = makeClassNameHelper('CreateVariables');
 
@@ -37,7 +38,6 @@ export function GroupRow({
   onEdit,
 }: Props) {
   const position = index + 1;
-  const labelInput = useRef<HTMLInputElement>(null);
   return (
     <li className={cx('-GroupRow')}>
       <span className={cx('-GroupPosition')}>{position}</span>
@@ -61,28 +61,13 @@ export function GroupRow({
           ▼
         </button>
       </span>
-      <span className={cx('-GroupLabelWrapper')}>
-        <input
-          ref={labelInput}
-          className={cx('-GroupLabel')}
-          type="text"
-          aria-label={`Group ${position} label`}
-          value={group.label}
-          onChange={(e) => onLabelChange(e.target.value)}
-        />
-        <button
-          type="button"
-          className={cx('-GroupRename')}
-          aria-label={`Rename group ${position}`}
-          title="Rename group"
-          onClick={() => {
-            labelInput.current?.focus();
-            labelInput.current?.select();
-          }}
-        >
-          <Icon fa="pencil" />
-        </button>
-      </span>
+      <InlineName
+        value={group.label}
+        onChange={onLabelChange}
+        inputLabel={`Group ${position} label`}
+        pencilLabel={`Rename group ${position}`}
+        pencilTitle="Rename group"
+      />
       <span className={cx('-GroupFilters')}>
         <button
           type="button"

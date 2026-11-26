@@ -266,7 +266,7 @@ describe('VariableEditor', () => {
       other,
     ]);
     renderEditor(before, analysisState);
-    fireEvent.change(screen.getByLabelText('Name'), {
+    fireEvent.change(screen.getByLabelText('Variable name'), {
       target: { value: 'Renamed' },
     });
     fireEvent.click(saveButton());
@@ -736,5 +736,48 @@ describe('VariableEditor group UI settings', () => {
     expect(applyUISettingsUpdate(setVariableUISettings, stored)).toEqual(
       unrelated
     );
+  });
+});
+
+describe('VariableEditor inline names', () => {
+  test('the variable name has a rename pencil that focuses it', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec]);
+    renderEditor(spec, analysisState);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Rename this variable' })
+    );
+    expect(screen.getByLabelText('Variable name')).toHaveFocus();
+  });
+
+  test("a new variable's name field is focused on open", () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec([group('East')], { displayName: '' }), analysisState);
+    expect(screen.getByLabelText('Variable name')).toHaveFocus();
+  });
+
+  test("the 'Everything else' pencil is disabled while 'Everything else' is off", () => {
+    const spec = makeSpec([group('East')], {
+      config: { groups: [group('East')], unmappedValue: '' },
+    });
+    const { analysisState } = makeAnalysisState([
+      toStoredSpec(spec, [rootEntity, collections]),
+    ]);
+    renderEditor(spec, analysisState);
+    const pencil = screen.getByRole('button', {
+      name: "Rename 'Everything else'",
+    });
+    expect(pencil).toBeDisabled();
+    fireEvent.click(screen.getByLabelText('Everything else'));
+    expect(pencil).toBeEnabled();
+  });
+
+  test("a saved variable's entity picker says to create a new variable to group a different entity", () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec]);
+    renderEditor(spec, analysisState);
+    expect(
+      screen.getByTitle('To group a different entity, create a new variable')
+    ).toBeInTheDocument();
   });
 });

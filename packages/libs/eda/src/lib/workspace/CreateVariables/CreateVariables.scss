@@ -67,10 +67,6 @@ $edit-color: #338899;
     flex-wrap: wrap;
     align-items: center;
     gap: 2em;
-
-    input[type='text'] {
-      min-width: 18em;
-    }
   }
 
   &-EntityPicker {
@@ -137,14 +133,18 @@ $edit-color: #338899;
     white-space: nowrap;
   }
 
-  &-GroupLabelWrapper {
+  &-InlineName {
     display: flex;
     align-items: center;
     gap: 0.25em;
     min-width: 0;
   }
 
-  &-GroupLabel {
+  // The site-wide input rule in web-common AllSites.scss
+  // (`input[type]:not(...)` x12, so about 13 classes of specificity) sets
+  // border, background and padding on every text input. `:not(#_)` adds an id
+  // to our selector so the inline look wins without !important.
+  &-InlineNameInput:not(#_) {
     flex: 1;
     min-width: 0;
     font: inherit;
@@ -152,7 +152,11 @@ $edit-color: #338899;
     background: transparent;
     padding: 0.15em 0.3em;
 
-    &:hover {
+    &::placeholder {
+      color: #888;
+    }
+
+    &:hover:not(:disabled) {
       border-color: lightgray;
     }
 
@@ -162,13 +166,29 @@ $edit-color: #338899;
     }
   }
 
-  &-GroupRename {
+  &-InlineName__title {
+    font-size: 1.4em;
+    font-weight: 600;
+
+    .CreateVariables-InlineNameInput:not(#_) {
+      flex: none;
+      min-width: 12em;
+    }
+  }
+
+  &-InlineNamePencil {
     border: none;
     background: none;
     padding: 0 0.2em;
     font-size: 0.85em;
+    font-weight: normal;
     cursor: pointer;
     color: $edit-color;
+
+    &:disabled {
+      color: lightgray;
+      cursor: default;
+    }
   }
 
   &-GroupFiltersLink {
@@ -195,8 +215,14 @@ $edit-color: #338899;
     }
   }
 
-  &-GroupEdit {
+  // EDAWorkspace.scss colours `.EDAWorkspace .fa.fa-filter` green on the <i>
+  // itself, so colour the icon here with higher specificity.
+  &-GroupEdit i.fa.fa-filter {
     color: $edit-color;
+  }
+
+  &-GroupEdit:disabled i.fa.fa-filter {
+    color: lightgray;
   }
 
   &-GroupEdit,

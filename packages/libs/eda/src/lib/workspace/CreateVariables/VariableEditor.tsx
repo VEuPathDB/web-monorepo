@@ -28,6 +28,7 @@ import { findVisualizationsUsing } from '../../core/derivedVariables/references'
 import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
 import { GroupFilterState } from '../../core/derivedVariables/useGroupFilterAnalysisState';
 import { GroupRow } from './GroupRow';
+import { InlineName } from './InlineName';
 import { GroupFilterEditor } from './GroupFilterEditor';
 import { SubsetNote } from './SubsetNote';
 import {
@@ -309,20 +310,20 @@ export function VariableEditor({
   return (
     <div className={cx('-Editor')}>
       <div className={cx('-EditorHeader')}>
-        <label>
-          Name{' '}
-          <input
-            type="text"
-            value={displayName}
-            placeholder="e.g. Region (East/West)"
-            onChange={(e) => setDisplayName(e.target.value)}
-          />
-        </label>
+        <InlineName
+          size="title"
+          value={displayName}
+          onChange={setDisplayName}
+          inputLabel="Variable name"
+          pencilLabel="Rename this variable"
+          placeholder="Name this variable"
+          autoFocus={!isSaved && spec.displayName === ''}
+        />
         <span
           className={cx('-EntityPicker')}
           title={
             isSaved
-              ? 'A saved variable keeps its entity, so the plots that use it keep working'
+              ? 'To group a different entity, create a new variable'
               : groups.length > 0
               ? 'Remove all groups to change what is being grouped'
               : undefined
@@ -390,12 +391,12 @@ export function VariableEditor({
           />{' '}
           Everything else
         </label>
-        <input
-          type="text"
-          aria-label="'Everything else' label"
+        <InlineName
           value={everythingElseLabel}
+          onChange={setEverythingElseLabel}
+          inputLabel="'Everything else' label"
+          pencilLabel="Rename 'Everything else'"
           disabled={!everythingElseOn}
-          onChange={(e) => setEverythingElseLabel(e.target.value)}
         />
         <span
           className={cx('-Count')}
