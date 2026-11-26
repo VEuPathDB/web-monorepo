@@ -286,7 +286,7 @@ describe('VariableEditor', () => {
     renderEditor(makeSpec([group('East'), group('West')]), analysisState);
     expect(
       screen.getByText(
-        '3 Collections in West also match East; they count as that group. Adjust filters before saving.'
+        '3 Collections in West also match East; they will count as East. Adjust filters before saving if this was not intended.'
       )
     ).toBeInTheDocument();
     // overlaps warn but do not block saving
@@ -319,9 +319,45 @@ describe('VariableEditor', () => {
     );
     expect(
       screen.getByText(
-        '2 Collections in North also match an earlier group; they count as that group. Adjust filters before saving.'
+        '2 Collections in North also match an earlier group; they will count as the first group they match. Adjust filters before saving if this was not intended.'
       )
     ).toBeInTheDocument();
+  });
+
+  test('the header reads "groups <entity> into:"', () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec([group('East')]), analysisState);
+    const picker = document.querySelector('[class*="-EntityPicker"]');
+    expect(picker?.textContent).toMatch(/^groups\s+Collections\s+into:$/);
+  });
+
+  test('the name advice gives an example using the selected entity', () => {
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec([group('East')], { displayName: '' }), analysisState);
+    expect(
+      screen.getByText(
+        "Give the variable a name, for example 'Collection grouping'"
+      )
+    ).toBeInTheDocument();
+  });
+
+  test('shows "Checking the groups for overlaps…" while counts are pending with two or more groups', () => {
+    const checking = 'Checking the groups for overlaps…';
+    const { analysisState } = makeAnalysisState();
+    mockUseGroupCounts.mockReturnValue({ pending: true });
+    const { unmount } = renderEditor(
+      makeSpec([group('East'), group('West')]),
+      analysisState
+    );
+    expect(screen.getByText(checking)).toBeInTheDocument();
+    expect(saveButton()).toBeEnabled();
+    unmount();
+    const one = renderEditor(makeSpec([group('East')]), analysisState);
+    expect(screen.queryByText(checking)).toBeNull();
+    one.unmount();
+    mockUseGroupCounts.mockReturnValue({ pending: false });
+    renderEditor(makeSpec([group('East'), group('West')]), analysisState);
+    expect(screen.queryByText(checking)).toBeNull();
   });
 
   test('delete confirmation lists the plots that use the variable', () => {

@@ -144,7 +144,13 @@ export function VariableEditor({
   );
 
   const messages = [
-    ...(displayName.trim() === '' ? ['Give the variable a name'] : []),
+    ...(displayName.trim() === ''
+      ? [
+          entity == null
+            ? 'Give the variable a name'
+            : `Give the variable a name, for example '${entity.displayName} grouping'`,
+        ]
+      : []),
     ...(everythingElseOn && everythingElseLabel.trim() === ''
       ? ["The 'Everything else' label must be non-empty"]
       : []),
@@ -167,11 +173,14 @@ export function VariableEditor({
       if (overlap <= 0) return [];
       // Per-pair counts are not built (§5.3): name the earlier group only
       // when there is exactly one.
-      const earlier = index === 1 ? groups[0].label : 'an earlier group';
+      const matchText =
+        index === 1
+          ? `${groups[0].label}; they will count as ${groups[0].label}`
+          : 'an earlier group; they will count as the first group they match';
       return [
         `${overlap.toLocaleString()} ${entityPlural} in ${
           g.label
-        } also match ${earlier}; they count as that group. Adjust filters before saving.`,
+        } also match ${matchText}. Adjust filters before saving if this was not intended.`,
       ];
     });
   }, [countsReady, counts.raw, counts.final, groups, entityPlural]);
@@ -336,7 +345,7 @@ export function VariableEditor({
               : undefined
           }
         >
-          Group{' '}
+          groups{' '}
           <SingleSelect
             items={entities.map((e) => ({
               display: e.displayNamePlural ?? e.displayName,
@@ -414,6 +423,10 @@ export function VariableEditor({
           {renderCount(everythingElseOn ? everythingElseLabel : '')}
         </span>
       </div>
+
+      {counts.pending && groups.length >= 2 && (
+        <div className={cx('-Muted')}>Checking the groups for overlaps…</div>
+      )}
 
       {(overlapWarnings.length > 0 || counts.error != null) && (
         <ul className={cx('-Warnings')}>
