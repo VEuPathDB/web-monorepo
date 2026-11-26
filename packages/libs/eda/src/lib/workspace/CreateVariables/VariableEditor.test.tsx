@@ -258,6 +258,19 @@ describe('VariableEditor', () => {
     expect(saveButton()).toBeEnabled();
   });
 
+  test('shows "Counts could not be loaded." when counts fail', () => {
+    mockUseGroupCounts.mockReturnValue({
+      pending: false,
+      error: new Error('boom'),
+    });
+    const { analysisState } = makeAnalysisState();
+    renderEditor(makeSpec([group('East'), group('West')]), analysisState);
+    expect(screen.getByText('Counts could not be loaded.')).toBeInTheDocument();
+    expect(
+      screen.getAllByTitle('Counts could not be loaded').length
+    ).toBeGreaterThan(0);
+  });
+
   test('overlap warning for a later group says "an earlier group"', () => {
     mockUseGroupCounts.mockReturnValue({
       pending: false,

@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
-import { useCachedPromise } from './cachedPromise';
+import { useCachedPromise, useCachedPromises } from './cachedPromise';
+import { PromiseHookState } from './promise';
+import { ReactNode } from 'react';
 import { DerivedVariableSpecsContext } from '../derivedVariables/DerivedVariableSpecsContext';
 import { DerivedVariableSpec } from '../types/analysis';
 
@@ -46,5 +48,63 @@ describe('useCachedPromise with derived variable specs', () => {
     expect(k1).toEqual(k2);
     expect(k1).toEqual(k0);
     expect(k0).toEqual(['useCachedPromise', { overlay: ref }]);
+  });
+});
+
+describe('useCachedPromises', () => {
+  const newClient = () =>
+    new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const wrapperFor =
+    (client: QueryClient) =>
+    ({ children }: { children?: ReactNode }) =>
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+
+  test('useCachedPromises returns one state per entry, in order', async () => {
+    let states: PromiseHookState<string>[] = [];
+    function Probe() {
+      states = useCachedPromises([
+        { task: () => Promise.resolve('x'), queryKey: ['k', 1] },
+        { task: () => Promise.resolve('y'), queryKey: ['k', 2] },
+      ]);
+      return null;
+    }
+    render(<Probe />, { wrapper: wrapperFor(newClient()) });
+    await waitFor(() => expect(states.map((s) => s.value)).toEqual(['x', 'y']));
+    expect(states.map((s) => s.pending)).toEqual([false, false]);
+  });
+
+  test('useCachedPromises disables only the entry with a null key part', async () => {
+    const skipped = jest.fn().mockResolvedValue('no');
+    let states: PromiseHookState<string>[] = [];
+    function Probe() {
+      states = useCachedPromises([
+        { task: skipped, queryKey: ['k', null] },
+        { task: () => Promise.resolve('y'), queryKey: ['k', 2] },
+      ]);
+      return null;
+    }
+    render(<Probe />, { wrapper: wrapperFor(newClient()) });
+    await waitFor(() => expect(states[1].value).toBe('y'));
+    expect(states[0]).toEqual({
+      value: undefined,
+      pending: false,
+      error: null,
+    });
+    expect(skipped).not.toHaveBeenCalled();
+  });
+
+  test('useCachedPromises shares cache with useCachedPromise for the same key', async () => {
+    const task = jest.fn().mockResolvedValue(5);
+    let plural: PromiseHookState<number>[] = [];
+    let singular: PromiseHookState<number> | undefined;
+    function Probe() {
+      plural = useCachedPromises([{ task, queryKey: ['shared'] }]);
+      singular = useCachedPromise(task, ['shared']);
+      return null;
+    }
+    render(<Probe />, { wrapper: wrapperFor(newClient()) });
+    await waitFor(() => expect(plural[0].value).toBe(5));
+    await waitFor(() => expect(singular?.value).toBe(5));
+    expect(task).toHaveBeenCalledTimes(1);
   });
 });

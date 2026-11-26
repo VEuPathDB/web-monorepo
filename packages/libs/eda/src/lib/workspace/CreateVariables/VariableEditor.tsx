@@ -166,6 +166,8 @@ export function VariableEditor({
 
   function renderCount(level: string): ReactNode {
     if (final != null) return (final[level] ?? 0).toLocaleString();
+    if (counts.error != null)
+      return <span title="Counts could not be loaded">—</span>;
     return counts.pending ? (
       '…'
     ) : (
@@ -381,8 +383,14 @@ export function VariableEditor({
         </span>
       </div>
 
-      {overlapWarnings.length > 0 && (
+      {(overlapWarnings.length > 0 || counts.error != null) && (
         <ul className={cx('-Warnings')}>
+          {counts.error != null && (
+            <li>
+              <span aria-hidden="true">⚠</span>{' '}
+              <span>Counts could not be loaded.</span>
+            </li>
+          )}
           {overlapWarnings.map((warning) => (
             <li key={warning}>
               <span aria-hidden="true">⚠</span> <span>{warning}</span>

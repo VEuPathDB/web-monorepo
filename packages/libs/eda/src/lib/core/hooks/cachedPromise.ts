@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { PromiseHookState } from './promise';
 import { useContext, useMemo } from 'react';
+import { DerivedVariableSpec } from '../types/analysis';
 import { DerivedVariableSpecsContext } from '../derivedVariables/DerivedVariableSpecsContext';
 import { findReferencedSpecs } from '../derivedVariables/references';
 
@@ -23,14 +24,70 @@ export function useCachedPromise<T>(
   queryKey: [any, ...any[]],
   cacheTime?: number
 ): PromiseHookState<T> {
-  const enabled = queryKey.every((val) => val != null);
-
-  // Requests that reference a derived variable must be re-keyed when its
-  // spec is edited. Unreferenced requests keep exactly the same key.
   const specs = useContext(DerivedVariableSpecsContext);
-  const referenced = enabled ? findReferencedSpecs(queryKey, specs) : [];
+  const enabled = isEnabled(queryKey);
 
   const { data, error, isLoading, isFetching } = useQuery({
+    ...baseQueryOptions(task, queryKey, specs, cacheTime),
+    keepPreviousData: enabled,
+  });
+
+  // Mapping the state from useQuery to PromiseHookState<T>
+  // and return something stable
+  const isPending = isLoading || isFetching;
+  const state: PromiseHookState<T> = useMemo(
+    () => toPromiseHookState(enabled, data, isPending, error),
+    [data, enabled, isPending, error]
+  );
+
+  return state;
+}
+
+/**
+ * Like `useCachedPromise`, for a variable number of tasks. Returns one state
+ * per entry, in entry order (`[]` for no entries). Keys share cache entries
+ * with `useCachedPromise`.
+ *
+ * Difference from `useCachedPromise`: react-query 4's `useQueries` does not
+ * support `keepPreviousData`, so an entry whose key changes shows
+ * `value: undefined, pending: true` until its new data arrives.
+ */
+export function useCachedPromises<T>(
+  entries: Array<{ task: () => Promise<T>; queryKey: [any, ...any[]] }>,
+  cacheTime?: number
+): PromiseHookState<T>[] {
+  const specs = useContext(DerivedVariableSpecsContext);
+  const results = useQueries({
+    queries: entries.map(({ task, queryKey }) =>
+      baseQueryOptions(task, queryKey, specs, cacheTime)
+    ),
+  });
+  return results.map((result, i) =>
+    toPromiseHookState(
+      isEnabled(entries[i].queryKey),
+      result.data,
+      result.isLoading || result.isFetching,
+      result.error
+    )
+  );
+}
+
+// The task is only run when every part of the key is non-null.
+function isEnabled(queryKey: unknown[]): boolean {
+  return queryKey.every((val) => val != null);
+}
+
+function baseQueryOptions<T>(
+  task: () => Promise<T>,
+  queryKey: [any, ...any[]],
+  specs: DerivedVariableSpec[],
+  cacheTime?: number
+) {
+  const enabled = isEnabled(queryKey);
+  // Requests that reference a derived variable must be re-keyed when its
+  // spec is edited. Unreferenced requests keep exactly the same key.
+  const referenced = enabled ? findReferencedSpecs(queryKey, specs) : [];
+  return {
     queryKey: [
       'useCachedPromise',
       ...(queryKey ?? []),
@@ -38,21 +95,19 @@ export function useCachedPromise<T>(
     ],
     queryFn: task,
     enabled,
-    keepPreviousData: enabled,
     ...(cacheTime != null ? { cacheTime } : {}),
-  });
+  };
+}
 
-  // Mapping the state from useQuery to PromiseHookState<T>
-  // and return something stable
-  const isPending = isLoading || isFetching;
-  const state: PromiseHookState<T> = useMemo(
-    () => ({
-      value: enabled ? data : undefined,
-      pending: enabled && isPending,
-      error: error,
-    }),
-    [data, enabled, isPending, error]
-  );
-
-  return state;
+function toPromiseHookState<T>(
+  enabled: boolean,
+  data: T | undefined,
+  isPending: boolean,
+  error: unknown
+): PromiseHookState<T> {
+  return {
+    value: enabled ? data : undefined,
+    pending: enabled && isPending,
+    error: error,
+  };
 }
