@@ -210,6 +210,7 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={onChange}
+        onLabelChange={jest.fn()}
         onCancel={jest.fn()}
         onClose={jest.fn()}
       />,
@@ -240,6 +241,7 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={jest.fn()}
+        onLabelChange={jest.fn()}
         onCancel={jest.fn()}
         onClose={jest.fn()}
       />,
@@ -261,6 +263,7 @@ describe('GroupFilterEditor', () => {
       groupIndex: 0,
       earlierGroups: [],
       onChange: jest.fn(),
+      onLabelChange: jest.fn(),
       onCancel: jest.fn(),
       onClose: jest.fn(),
     };
@@ -288,6 +291,7 @@ describe('GroupFilterEditor', () => {
         earlierGroups={[]}
         startVariable={{ entityId: 'col', variableId: geoFilter.variableId }}
         onChange={jest.fn()}
+        onLabelChange={jest.fn()}
         onCancel={jest.fn()}
         onClose={jest.fn()}
       />,
@@ -306,6 +310,7 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={jest.fn()}
+        onLabelChange={jest.fn()}
         onCancel={jest.fn()}
         onClose={onClose}
       />,
@@ -326,6 +331,7 @@ describe('GroupFilterEditor', () => {
           groupIndex={0}
           earlierGroups={[]}
           onChange={jest.fn()}
+          onLabelChange={jest.fn()}
           onCancel={jest.fn()}
           onClose={jest.fn()}
         />,
@@ -336,6 +342,45 @@ describe('GroupFilterEditor', () => {
     unmount();
     renderEditorWith([]);
     expect(screen.queryByText(noteText)).toBeNull();
+  });
+
+  describe('renaming in the header', () => {
+    function renderNamed(onLabelChange: jest.Mock) {
+      render(
+        <GroupFilterEditor
+          analysisState={makeAnalysisState().analysisState}
+          group={{ label: 'East', filters: [], uiSettings: {} }}
+          groupIndex={0}
+          earlierGroups={[]}
+          onChange={jest.fn()}
+          onLabelChange={onLabelChange}
+          onCancel={jest.fn()}
+          onClose={jest.fn()}
+        />,
+        { wrapper }
+      );
+      fireEvent.click(screen.getByTitle('Edit This Value'));
+    }
+
+    test('renaming the group in the header calls onLabelChange', () => {
+      const onLabelChange = jest.fn();
+      renderNamed(onLabelChange);
+      fireEvent.change(screen.getByDisplayValue('East'), {
+        target: { value: '  West  ' },
+      });
+      fireEvent.click(screen.getByTitle('Save Changes'));
+      expect(onLabelChange).toHaveBeenCalledWith('West');
+    });
+
+    test('an empty name in the header is ignored', () => {
+      const onLabelChange = jest.fn();
+      renderNamed(onLabelChange);
+      fireEvent.change(screen.getByDisplayValue('East'), {
+        target: { value: '   ' },
+      });
+      fireEvent.click(screen.getByTitle('Save Changes'));
+      expect(onLabelChange).not.toHaveBeenCalled();
+    });
   });
 
   test('Cancel calls onCancel', () => {
@@ -349,6 +394,7 @@ describe('GroupFilterEditor', () => {
         groupIndex={0}
         earlierGroups={[]}
         onChange={jest.fn()}
+        onLabelChange={jest.fn()}
         onCancel={onCancel}
         onClose={onClose}
       />,

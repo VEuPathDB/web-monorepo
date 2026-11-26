@@ -1,4 +1,5 @@
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useRef } from 'react';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { FilterDefinedGroup } from '../../core/derivedVariables/types';
 import { Filter } from '../../core/types/filter';
@@ -36,6 +37,7 @@ export function GroupRow({
   onEdit,
 }: Props) {
   const position = index + 1;
+  const labelInput = useRef<HTMLInputElement>(null);
   return (
     <li className={cx('-GroupRow')}>
       <span className={cx('-GroupPosition')}>{position}</span>
@@ -59,15 +61,38 @@ export function GroupRow({
           ▼
         </button>
       </span>
-      <input
-        className={cx('-GroupLabel')}
-        type="text"
-        aria-label={`Group ${position} label`}
-        value={group.label}
-        onChange={(e) => onLabelChange(e.target.value)}
-      />
+      <span className={cx('-GroupLabelWrapper')}>
+        <input
+          ref={labelInput}
+          className={cx('-GroupLabel')}
+          type="text"
+          aria-label={`Group ${position} label`}
+          value={group.label}
+          onChange={(e) => onLabelChange(e.target.value)}
+        />
+        <button
+          type="button"
+          className={cx('-GroupRename')}
+          aria-label={`Rename group ${position}`}
+          title="Rename group"
+          onClick={() => {
+            labelInput.current?.focus();
+            labelInput.current?.select();
+          }}
+        >
+          <Icon fa="pencil" />
+        </button>
+      </span>
       <span className={cx('-GroupFilters')}>
-        <FilterSummary filters={group.filters} entities={entities} />
+        <button
+          type="button"
+          className={cx('-GroupFiltersLink')}
+          title="Edit filters"
+          disabled={onEdit == null}
+          onClick={onEdit}
+        >
+          <FilterSummary filters={group.filters} entities={entities} />
+        </button>
       </span>
       <button
         type="button"
@@ -77,7 +102,7 @@ export function GroupRow({
         disabled={onEdit == null}
         onClick={onEdit}
       >
-        ✎
+        <Icon fa="filter" />
       </button>
       <span className={cx('-Count')}>{count}</span>
       <button

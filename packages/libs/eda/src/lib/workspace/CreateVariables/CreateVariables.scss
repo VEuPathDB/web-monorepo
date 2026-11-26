@@ -1,3 +1,7 @@
+// The blue of the pencil in the analysis name editor
+// (EDAWorkspace.scss: &-AnalysisNameEditBox i.wdk-Icon.edit).
+$edit-color: #338899;
+
 .CreateVariables {
   display: grid;
   grid-template-columns: 16em minmax(0, 1fr);
@@ -133,6 +137,68 @@
     white-space: nowrap;
   }
 
+  &-GroupLabelWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    min-width: 0;
+  }
+
+  &-GroupLabel {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0.15em 0.3em;
+
+    &:hover {
+      border-color: lightgray;
+    }
+
+    &:focus {
+      border-color: #767676;
+      background: white;
+    }
+  }
+
+  &-GroupRename {
+    border: none;
+    background: none;
+    padding: 0 0.2em;
+    font-size: 0.85em;
+    cursor: pointer;
+    color: $edit-color;
+  }
+
+  &-GroupFiltersLink {
+    display: block;
+    max-width: 100%;
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    text-align: left;
+    color: $edit-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      text-decoration: underline;
+    }
+
+    &:disabled {
+      color: lightgray;
+      cursor: default;
+    }
+  }
+
+  &-GroupEdit {
+    color: $edit-color;
+  }
+
   &-GroupEdit,
   &-GroupRemove {
     border: none;
@@ -199,9 +265,19 @@
     display: flex;
     align-items: center;
     gap: 0.75em;
+  }
 
-    h3 {
-      margin: 0;
+  &-GroupFilterEditorTitle {
+    font-size: 1.17em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+  }
+
+  &-GroupNameEditBox {
+    i.wdk-Icon.edit {
+      color: $edit-color !important;
     }
   }
 }

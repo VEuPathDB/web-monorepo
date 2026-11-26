@@ -65,6 +65,10 @@ function GroupFilterEditorStub(
       >
         Edit stub filters
       </button>
+      <span data-testid="stub-group-label">{props.group.label}</span>
+      <button type="button" onClick={() => props.onLabelChange('Renamed')}>
+        Rename stub group
+      </button>
       <button type="button" onClick={props.onClose}>
         Done
       </button>
@@ -658,6 +662,21 @@ describe('VariableEditor group UI settings', () => {
       });
     });
 
+    test('Cancel also restores a group name changed in its filter editor', () => {
+      const spec = makeSpec([group('East')]);
+      const { analysisState } = makeAnalysisState([spec], [], stored);
+      renderEditor(spec, analysisState);
+      openGroupEditor(1);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Rename stub group' })
+      );
+      expect(screen.getByTestId('stub-group-label')).toHaveTextContent(
+        'Renamed'
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.getByLabelText('Group 1 label')).toHaveValue('East');
+    });
+
     test('Done in the group filter editor keeps the changes', () => {
       const spec = makeSpec([group('East')]);
       const { analysisState, setDerivedVariables } = makeAnalysisState(
@@ -674,6 +693,32 @@ describe('VariableEditor group UI settings', () => {
       fireEvent.click(saveButton());
       expect(savedGroupFilters(setDerivedVariables)).toEqual([[otherFilter]]);
     });
+  });
+
+  test("clicking a group's filter summary opens its filter editor", () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec], [], stored);
+    renderEditor(spec, analysisState);
+    fireEvent.click(screen.getByText(/Species:/));
+    expect(screen.getByTestId('group-ui-settings')).toBeInTheDocument();
+  });
+
+  test("the rename pencil focuses the group's label input", () => {
+    const spec = makeSpec([group('East'), group('West')]);
+    const { analysisState } = makeAnalysisState([spec], [], stored);
+    renderEditor(spec, analysisState);
+    fireEvent.click(screen.getByRole('button', { name: 'Rename group 2' }));
+    expect(screen.getByLabelText('Group 2 label')).toHaveFocus();
+  });
+
+  test('renaming a group in its filter editor updates the group list', () => {
+    const spec = makeSpec([group('East')]);
+    const { analysisState } = makeAnalysisState([spec], [], stored);
+    renderEditor(spec, analysisState);
+    openGroupEditor(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Rename stub group' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    expect(screen.getByLabelText('Group 1 label')).toHaveValue('Renamed');
   });
 
   test("deleting a variable removes its groups' UI settings", () => {

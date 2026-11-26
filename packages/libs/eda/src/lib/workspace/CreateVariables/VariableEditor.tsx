@@ -298,6 +298,7 @@ export function VariableEditor({
           earlierGroups={groups.slice(0, editingIndex)}
           startVariable={editing.startVariable}
           onChange={(next) => updateGroupFilters(id, next)}
+          onLabelChange={(label) => updateGroup(editingIndex, { label })}
           onCancel={cancelGroupEdit}
           onClose={() => setEditing(undefined)}
         />

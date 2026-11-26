@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import SaveableTextEditor from '@veupathdb/wdk-client/lib/Components/InputControls/SaveableTextEditor';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import {
   FilledButton,
@@ -40,6 +41,8 @@ interface Props {
   startVariable?: VariableDescriptor;
   /** Must commit synchronously (plain setState): see useGroupFilterAnalysisState. */
   onChange: (next: GroupFilterState) => void;
+  /** Renames the group (only called with a non-empty name). */
+  onLabelChange: (label: string) => void;
   /** Discards what was done since the editor opened. */
   onCancel: () => void;
   onClose: () => void;
@@ -57,6 +60,7 @@ export function GroupFilterEditor({
   earlierGroups,
   startVariable,
   onChange,
+  onLabelChange,
   onCancel,
   onClose,
 }: Props) {
@@ -107,9 +111,21 @@ export function GroupFilterEditor({
   return (
     <div className={cx('-GroupFilterEditor')}>
       <div className={cx('-GroupFilterEditorHeader')}>
-        <h3>
-          Group {groupIndex + 1}: {group.label || 'Unnamed group'}
-        </h3>
+        <div
+          className={cx('-GroupFilterEditorTitle')}
+          role="heading"
+          aria-level={3}
+        >
+          <span>Group {groupIndex + 1}: </span>
+          <SaveableTextEditor
+            className={cx('-GroupNameEditBox')}
+            value={group.label}
+            onSave={(label) => {
+              const trimmed = label.trim();
+              if (trimmed) onLabelChange(trimmed);
+            }}
+          />
+        </div>
         <span className={cx('-ActionsSpacer')} />
         <OutlinedButton text="Cancel" themeRole="primary" onPress={onCancel} />
         <FilledButton text="Done" themeRole="primary" onPress={onClose} />
