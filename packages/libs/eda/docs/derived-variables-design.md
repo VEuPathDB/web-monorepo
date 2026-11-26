@@ -2,8 +2,8 @@
 
 Status: the tab and filter-based groups are built (branches
 `map-redesign-and-derived-vars` here and `filter-defined-groups` in
-`service-eda`). Saving simple groupings as recoders (§4) was agreed on
-2026-11-24 and is not built yet. Background on the back end is in
+`service-eda`). Saving simple groupings as recoders (§4), agreed on
+2026-11-24, is built too (recoders plan Tasks 1-6). Background on the back end is in
 `map-redesign.md` §8.
 
 ## 1. Why
@@ -230,7 +230,7 @@ FilterDefinedGroup:
 `derivedVariables` is `DerivedVariableSpec[]`. The analysis PATCH stores
 the list as sent (ids must be unique), and import copies it unchanged.
 
-**C. Recoder fixes and additions (to build).** No client uses these
+**C. Recoder fixes and additions (built).** No client uses these
 plugins yet, so their behaviour can change. All of them:
 
 - treat an absent or empty `unmappedValue` as "no value", and list the
@@ -238,6 +238,10 @@ plugins yet, so their behaviour can change. All of them:
   `unmappedValue` only if it isn't empty and not already listed;
 - give records with no input value the `unmappedValue`, like
   `filterDefinedGroups` does.
+
+The server's `categoricalRecoding` accepts only categorical and binary
+input variables, so a grouping of an ordinal variable is saved in the
+filter-based form.
 
 Per plugin:
 
