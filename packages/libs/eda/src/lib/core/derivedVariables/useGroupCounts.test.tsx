@@ -114,7 +114,13 @@ describe('useGroupCounts', () => {
       xAxisVariable: { entityId: 'e', variableId: 'dv1' },
     });
     expect(result.current.raw).toEqual([7, 7]);
-    expect(result.current.final).toEqual({ A: 3, B: 2, '': 5 });
+    expect(result.current.final).toEqual(
+      new Map([
+        ['A', 3],
+        ['B', 2],
+        ['', 5],
+      ])
+    );
   });
 
   test('skips the barplot for an invalid spec and the count for an empty group', async () => {
@@ -133,6 +139,26 @@ describe('useGroupCounts', () => {
     expect(result.current.final).toBeUndefined();
   });
 
+  test('counts a group labelled like an Object.prototype property', async () => {
+    const { getBarplot, wrapper } = setup();
+    getBarplot.mockResolvedValue({
+      barplot: {
+        config: { variables: [] },
+        data: [{ label: ['constructor', 'B'], value: [3, 2] }],
+      },
+    });
+    const spec = makeSpec([
+      { label: 'constructor', filters: [filter] },
+      { label: 'B', filters: [{ ...filter, stringSet: ['b'] } as Filter] },
+    ]);
+    const { result, waitFor } = renderHook(() => useGroupCounts(spec), {
+      wrapper,
+    });
+    await waitFor(() => result.current.pending === false, { timeout: 3000 });
+    expect(result.current.final?.get('constructor')).toBe(3);
+    expect(result.current.final?.get('toString')).toBeUndefined();
+  });
+
   test('omits the empty-key level when every record is matched', async () => {
     const { getBarplot, wrapper } = setup();
     getBarplot.mockResolvedValue({
@@ -149,7 +175,12 @@ describe('useGroupCounts', () => {
       wrapper,
     });
     await waitFor(() => result.current.pending === false, { timeout: 3000 });
-    expect(result.current.final).toEqual({ A: 6, B: 4 });
+    expect(result.current.final).toEqual(
+      new Map([
+        ['A', 6],
+        ['B', 4],
+      ])
+    );
   });
 
   test('sends the recoder form in the barplot request when eligible', async () => {
@@ -212,7 +243,13 @@ describe('useGroupCounts', () => {
     spec = { ...makeSpec(groups), displayName: 'Renamed' };
     rerender();
     await waitFor(() => result.current.pending === false, { timeout: 3000 });
-    expect(result.current.final).toEqual({ A: 3, B: 2, '': 5 });
+    expect(result.current.final).toEqual(
+      new Map([
+        ['A', 3],
+        ['B', 2],
+        ['', 5],
+      ])
+    );
     expect(getEntityCount).not.toHaveBeenCalled();
     expect(getBarplot).not.toHaveBeenCalled();
   });

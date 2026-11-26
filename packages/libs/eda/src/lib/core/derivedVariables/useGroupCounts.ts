@@ -19,7 +19,7 @@ export interface GroupCounts {
   /** Whole-dataset record count for each group's filters, by group index. */
   raw?: number[];
   /** Count per final level: group labels (first match wins) plus '' for no value. */
-  final?: Record<string, number>;
+  final?: ReadonlyMap<string, number>;
   /** The first error from any of the underlying requests. */
   error?: unknown;
 }
@@ -84,11 +84,12 @@ export function useGroupCounts(spec: FilterDefinedGroupsSpec): GroupCounts {
         showMissingness: 'TRUE',
       },
     });
-    const byLabel: Record<string, number> = {};
+    // A Map, so that labels like 'constructor' don't read inherited properties.
+    const byLabel = new Map<string, number>();
     let matched = 0;
     for (const series of response.barplot.data) {
       series.label.forEach((label, i) => {
-        byLabel[label] = (byLabel[label] ?? 0) + series.value[i];
+        byLabel.set(label, (byLabel.get(label) ?? 0) + series.value[i]);
         matched += series.value[i];
       });
     }
@@ -112,12 +113,12 @@ export function useGroupCounts(spec: FilterDefinedGroupsSpec): GroupCounts {
   const finalValue = finalState.value;
   const final = useMemo(() => {
     if (finalValue == null || total == null) return undefined;
-    const result = { ...finalValue.byLabel };
+    const result = new Map(finalValue.byLabel);
     // Records in no group are dropped from the barplot (pass barplots only
     // support showMissingness for strata, not the x axis), so count them as
     // the entity total less the matched records.
     const unmatched = Math.max(0, total - finalValue.matched);
-    if (unmatched > 0) result[''] = unmatched;
+    if (unmatched > 0) result.set('', unmatched);
     return result;
   }, [finalValue, total]);
 

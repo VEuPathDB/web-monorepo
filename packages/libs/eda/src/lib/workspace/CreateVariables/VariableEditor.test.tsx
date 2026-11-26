@@ -180,7 +180,7 @@ function renderEditor(
     onSave: jest.fn(),
     onCancel: jest.fn(),
     onDelete: jest.fn(),
-    onDirtyChange: jest.fn(),
+    onDirtyChange: jest.fn<void, [boolean]>(),
   };
   const getUserConfirmation = jest.fn(
     (_message: string, callback: (ok: boolean) => void) => callback(false)
@@ -302,7 +302,11 @@ describe('VariableEditor', () => {
     mockUseGroupCounts.mockReturnValue({
       pending: false,
       raw: [10, 8],
-      final: { East: 10, West: 5, Other: 3 },
+      final: new Map([
+        ['East', 10],
+        ['West', 5],
+        ['Other', 3],
+      ]),
     });
     const { analysisState } = makeAnalysisState();
     renderEditor(makeSpec([group('East'), group('West')]), analysisState);
@@ -332,7 +336,11 @@ describe('VariableEditor', () => {
     mockUseGroupCounts.mockReturnValue({
       pending: false,
       raw: [10, 8, 6],
-      final: { East: 10, West: 8, North: 4 },
+      final: new Map([
+        ['East', 10],
+        ['West', 8],
+        ['North', 4],
+      ]),
     });
     const { analysisState } = makeAnalysisState();
     renderEditor(
@@ -853,7 +861,7 @@ describe('VariableEditor unsaved changes', () => {
   const leaveMessage =
     'Leave this page? Your unsaved changes to this variable will be lost.';
 
-  function lastReported(onDirtyChange: jest.Mock) {
+  function lastReported(onDirtyChange: jest.Mock<void, [boolean]>) {
     return onDirtyChange.mock.calls[onDirtyChange.mock.calls.length - 1][0];
   }
 
@@ -870,7 +878,7 @@ describe('VariableEditor unsaved changes', () => {
     expect(lastReported(onDirtyChange)).toBe(false);
   });
 
-  test('an untouched new variable is clean; its automatic Everything else is not an edit', () => {
+  test('an untouched new variable is clean, and adding a group makes it dirty', () => {
     const { analysisState } = makeAnalysisState();
     const blank = makeSpec([], { displayName: '', variableId: 'new' });
     const { onDirtyChange } = renderEditor(blank, analysisState);
@@ -937,8 +945,13 @@ describe('VariableEditor unsaved changes', () => {
   test('the beforeunload handler is added only while dirty', () => {
     const add = jest.spyOn(window, 'addEventListener');
     const remove = jest.spyOn(window, 'removeEventListener');
-    const beforeUnloadCalls = (spy: jest.SpyInstance) =>
-      spy.mock.calls.filter(([type]) => type === 'beforeunload');
+    const beforeUnloadCalls = (spy: {
+      mock: {
+        calls: ReadonlyArray<
+          readonly [string, EventListenerOrEventListenerObject, ...unknown[]]
+        >;
+      };
+    }) => spy.mock.calls.filter(([type]) => type === 'beforeunload');
     try {
       const spec = makeSpec([group('East')]);
       const { analysisState } = makeAnalysisState([spec]);
@@ -949,9 +962,10 @@ describe('VariableEditor unsaved changes', () => {
         target: { value: 'Renamed' },
       });
       expect(beforeUnloadCalls(add)).toHaveLength(1);
-      const handler = beforeUnloadCalls(add)[0][1];
+      const listener = beforeUnloadCalls(add)[0][1];
       const event = new Event('beforeunload', { cancelable: true });
-      handler(event);
+      if (typeof listener === 'function') listener(event);
+      else listener.handleEvent(event);
       expect(event.defaultPrevented).toBe(true);
 
       fireEvent.click(saveButton());

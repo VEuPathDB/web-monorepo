@@ -148,7 +148,9 @@ export function VariableEditor({
   const dirty = isDraftDirty(baseline, draft, everythingElseTouched);
   const onDirtyChangeRef = useRef(onDirtyChange);
   onDirtyChangeRef.current = onDirtyChange;
-  useEffect(() => onDirtyChangeRef.current(dirty), [dirty]);
+  useEffect(() => {
+    onDirtyChangeRef.current(dirty);
+  }, [dirty]);
   // A removed editor leaves nothing dirty behind.
   useEffect(() => () => onDirtyChangeRef.current(false), []);
   useEffect(() => {
@@ -197,7 +199,7 @@ export function VariableEditor({
 
   const overlapWarnings = useMemo(() => {
     if (!countsReady || counts.raw == null || counts.final == null) return [];
-    const finalCounts = groups.map((g) => counts.final?.[g.label] ?? 0);
+    const finalCounts = groups.map((g) => counts.final?.get(g.label) ?? 0);
     const raw = counts.raw;
     return groups.flatMap((g, index) => {
       const overlap = overlapForGroup(index, raw, finalCounts);
@@ -217,7 +219,7 @@ export function VariableEditor({
   }, [countsReady, counts.raw, counts.final, groups, entityPlural]);
 
   function renderCount(level: string): ReactNode {
-    if (final != null) return (final[level] ?? 0).toLocaleString();
+    if (final != null) return (final.get(level) ?? 0).toLocaleString();
     if (counts.error != null)
       return <span title="Counts could not be loaded">—</span>;
     return counts.pending ? (
