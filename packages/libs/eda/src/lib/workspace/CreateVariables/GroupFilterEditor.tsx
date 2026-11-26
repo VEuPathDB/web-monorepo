@@ -120,6 +120,7 @@ export function GroupFilterEditor({
           <SaveableTextEditor
             className={cx('-GroupNameEditBox')}
             value={group.label}
+            emptyText="Unnamed group"
             onSave={(label) => {
               const trimmed = label.trim();
               if (trimmed) onLabelChange(trimmed);

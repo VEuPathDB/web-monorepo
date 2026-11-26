@@ -372,6 +372,23 @@ describe('GroupFilterEditor', () => {
       expect(onLabelChange).toHaveBeenCalledWith('West');
     });
 
+    test('shows "Unnamed group" in the header for an empty label', () => {
+      render(
+        <GroupFilterEditor
+          analysisState={makeAnalysisState().analysisState}
+          group={{ label: '', filters: [], uiSettings: {} }}
+          groupIndex={0}
+          earlierGroups={[]}
+          onChange={jest.fn()}
+          onLabelChange={jest.fn()}
+          onCancel={jest.fn()}
+          onClose={jest.fn()}
+        />,
+        { wrapper }
+      );
+      expect(screen.getByText('Unnamed group')).toBeInTheDocument();
+    });
+
     test('an empty name in the header is ignored', () => {
       const onLabelChange = jest.fn();
       renderNamed(onLabelChange);
