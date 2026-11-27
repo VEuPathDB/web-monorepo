@@ -15,7 +15,6 @@ import {
   LayersControl,
   ScaleControl,
   useMap,
-  useMapEvents,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './styles/map-styles.css';
@@ -24,7 +23,7 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { Map, DomEvent, LatLngBounds } from 'leaflet';
+import L, { Map, DomEvent, LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
@@ -84,12 +83,23 @@ export const baseLayers = {
     attribution:
       '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     // minZoom='2'
-    // maxZoom='18'
     // noWrap='0
+    maxZoom: 19,
   },
 };
 
 export type BaseLayerChoice = keyof typeof baseLayers;
+
+/**
+ * The map's maximum zoom: the deepest zoom that *every* base layer has
+ * tiles for. Without it Leaflet allows the largest of the layers' limits,
+ * and beyond a layer's own limit it draws nothing for that layer and
+ * disables it in the layer selector, so e.g. Satellite (17) "turned into"
+ * the OSM layer underneath (18) at the highest zoom levels.
+ */
+export const MAX_ZOOM_FOR_ALL_BASE_LAYERS = Math.min(
+  ...Object.values(baseLayers).map(({ maxZoom }) => maxZoom)
+);
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -152,6 +162,12 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
+  /**
+   * Called when the "Zoom to data" button has returned the map to
+   * `defaultViewport`; the caller can then fit the map to its data once
+   * the data for the whole world has loaded.
+   */
+  onZoomToData?: () => void;
   children?: React.ReactNode;
   onMapClick?: () => void;
   onMapDrag?: () => void;
@@ -178,6 +194,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
+    onZoomToData,
     onMapClick,
     onMapDrag,
     onMapZoom,
@@ -250,6 +267,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       center={viewport.center}
       zoom={viewport.zoom}
       minZoom={1}
+      maxZoom={MAX_ZOOM_FOR_ALL_BASE_LAYERS}
       zoomSnap={zoomSnap}
       wheelPxPerZoomLevel={100}
       // We add our own custom zoom control below
@@ -260,10 +278,16 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       attributionControl={showAttribution}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
+      {/* Without the layer selector this is the map's only tile layer. With
+          it, it would sit unseen underneath the selected base layer while
+          still downloading its tiles, doubling tile traffic. */}
+      {!showLayerSelector && (
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom={baseLayers.OSM.maxZoom}
+        />
+      )}
 
       {props.children}
 
@@ -277,7 +301,14 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
             <LayersControl.BaseLayer
               name={name}
               key={name}
-              checked={baseLayer ? name === baseLayer : i === 0}
+              // exactly one base layer is always checked: an unknown
+              // `baseLayer` (e.g. a since-removed layer saved in an
+              // analysis) falls back to the first, not to a blank map
+              checked={
+                baseLayer != null && baseLayer in baseLayers
+                  ? name === baseLayer
+                  : i === 0
+              }
             >
               <TileLayer {...layerProps} />
             </LayersControl.BaseLayer>
@@ -304,6 +335,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {/* use custom zoom control */}
       <CustomZoomControl
         defaultViewport={defaultViewport}
+        onZoomToData={onZoomToData}
         zoomDelta={zoomSnap}
       />
     </MapContainer>
@@ -322,57 +354,65 @@ interface MapVEuMapEventsProps {
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
+/**
+ * Reports map events to the props' callbacks.
+ *
+ * The handlers are registered once per map and read the latest props
+ * through a ref. react-leaflet's useMapEvents instead re-subscribes on
+ * every render (its handlers object is new each time), and between its
+ * unsubscribe and resubscribe effects there is a gap. A programmatic move
+ * made from another effect in the same commit, e.g. fitBounds, fires its
+ * events synchronously in that gap whenever Leaflet doesn't animate it
+ * (a zoom change of more than 4 levels, or a long pan). Those zoomend /
+ * moveend events were lost, so the caller kept stale bounds and zoom.
+ */
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
-  const {
-    onViewportChanged,
-    onBaseLayerChanged,
-    onBoundsChanged,
-    onMapClick,
-    onMapDrag,
-    onMapZoom,
-  } = props;
-  const mapEvents = useMapEvents({
-    zoomend: () => {
-      onViewportChanged({
-        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
-        zoom: mapEvents.getZoom(),
-      });
+  const map = useMap();
+  const propsRef = useRef(props);
+  propsRef.current = props;
 
+  useEffect(() => {
+    const reportView = () => {
+      const { onViewportChanged, onBoundsChanged } = propsRef.current;
+      onViewportChanged({
+        center: [map.getCenter().lat, map.getCenter().lng],
+        zoom: map.getZoom(),
+      });
       const boundsViewport: BoundsViewport = {
-        bounds: constrainLongitudeToMainWorld(
-          boundsToGeoBBox(mapEvents.getBounds())
-        ),
-        zoomLevel: mapEvents.getZoom(),
+        bounds: constrainLongitudeToMainWorld(boundsToGeoBBox(map.getBounds())),
+        zoomLevel: map.getZoom(),
       };
       onBoundsChanged(boundsViewport);
-
-      if (onMapZoom != null) onMapZoom();
-    },
-    moveend: () => {
-      onViewportChanged({
-        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
-        zoom: mapEvents.getZoom(),
-      });
-
-      const boundsViewport: BoundsViewport = {
-        bounds: constrainLongitudeToMainWorld(
-          boundsToGeoBBox(mapEvents.getBounds())
-        ),
-        zoomLevel: mapEvents.getZoom(),
-      };
-      onBoundsChanged(boundsViewport);
-
-      if (onMapDrag != null) onMapDrag();
-    },
-    baselayerchange: (e: { name: string }) => {
-      onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
-    },
-    // map click event: remove selected markers and close side panel
-    click: (e) => {
-      if (onMapClick != null && !mouseEventHasModifierKey(e.originalEvent))
-        onMapClick();
-    },
-  });
+    };
+    const handlers: L.LeafletEventHandlerFnMap = {
+      zoomend: () => {
+        reportView();
+        propsRef.current.onMapZoom?.();
+      },
+      moveend: () => {
+        reportView();
+        propsRef.current.onMapDrag?.();
+      },
+      baselayerchange: (e) => {
+        propsRef.current.onBaseLayerChanged?.(
+          (e as L.LayersControlEvent).name as BaseLayerChoice
+        );
+      },
+      // map click event: remove selected markers and close side panel
+      click: (e) => {
+        const { onMapClick } = propsRef.current;
+        if (
+          onMapClick != null &&
+          !mouseEventHasModifierKey((e as L.LeafletMouseEvent).originalEvent)
+        )
+          onMapClick();
+      },
+    };
+    map.on(handlers);
+    return () => {
+      map.off(handlers);
+    };
+  }, [map]);
 
   return null;
 }
@@ -396,6 +436,7 @@ function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
 // custom zoom control
 interface CustomZoomControlProps {
   defaultViewport?: Viewport;
+  onZoomToData?: () => void;
   zoomDelta?: number;
 }
 
@@ -424,8 +465,10 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   // zoom to data: using flyTo function implicitly
   const zoomToData = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (props.defaultViewport)
+    if (props.defaultViewport) {
       map.setView(props.defaultViewport.center, props.defaultViewport.zoom);
+      props.onZoomToData?.();
+    }
   };
 
   return (

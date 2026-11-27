@@ -44,6 +44,10 @@ export type TimeSliderProps = {
   debounceRateMs?: number;
   /** all user-interaction disabled */
   disabled?: boolean;
+  /** tick label font size in px - default is 10 */
+  tickLabelFontSize?: number;
+  /** number of axis ticks - default is 10, or 5 when narrower than 520px */
+  numTicks?: number;
 };
 
 // using forwardRef
@@ -63,6 +67,8 @@ function TimeSlider(props: TimeSliderProps) {
     debounceRateMs = 500,
     disabled = false,
     xAxisRange,
+    tickLabelFontSize = 10,
+    numTicks = width > 520 ? 10 : 5,
   } = props;
 
   const resizeTriggerAreas: ResizeTriggerAreas[] = disabled
@@ -83,7 +89,7 @@ function TimeSlider(props: TimeSliderProps) {
   const axisBottomTickLabelProps = {
     textAnchor: 'middle' as const,
     fontFamily: 'Arial',
-    fontSize: 10,
+    fontSize: tickLabelFontSize,
     fill: axisColor,
   };
 
@@ -225,7 +231,7 @@ function TimeSlider(props: TimeSliderProps) {
           <AxisBottom
             top={yBrushMax}
             scale={xBrushScale}
-            numTicks={width > 520 ? 10 : 5}
+            numTicks={numTicks}
             stroke={axisColor}
             tickStroke={axisColor}
             tickLabelProps={axisBottomTickLabelProps}

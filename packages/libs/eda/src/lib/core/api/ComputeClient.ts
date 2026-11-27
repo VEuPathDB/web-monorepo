@@ -4,7 +4,7 @@ import {
   FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
-import { DerivedVariable } from '../types/analysis';
+import { DerivedVariableSpec } from '../types/analysis';
 import { Filter } from '../types/filter';
 import { VariableMapping } from './DataClient/types';
 import { sortFilters } from '../utils/sort-filters';
@@ -12,7 +12,7 @@ import { sortFilters } from '../utils/sort-filters';
 interface ComputeSpec {
   studyId: string;
   filters?: Filter[];
-  derivedVariables: DerivedVariable[];
+  derivedVariables: DerivedVariableSpec[];
   config: unknown;
 }
 

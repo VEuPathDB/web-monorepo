@@ -40,17 +40,16 @@ import {
   NoDataError,
   noDataMessage,
 } from '../../../core/api/DataClient/NoDataError';
-import { useCallback, useState } from 'react';
-import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
+import { ReactElement, useCallback, useEffect, useMemo } from 'react';
+import { AppState } from '../appState';
+import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
+import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
+import { classifyMarkers } from '../utils/geohashSelection';
 import {
-  BubbleLegendPositionConfig,
-  PanelConfig,
-  PanelPositionConfig,
-} from '../appState';
-import {
-  findLeastAncestralGeoConfig,
-  getGeoConfig,
-} from '../../../core/utils/geoVariables';
+  finestGeohashVariableId,
+  resolveGeoConfig,
+} from '../utils/geoEntities';
+import { InitialFitProps, MapSelectionProps, MarkerSummary } from './types';
 
 export const defaultAnimation = {
   method: 'geohash',
@@ -59,10 +58,15 @@ export const defaultAnimation = {
 };
 
 export const markerDataFilterFuncs = [timeSliderLittleFilter];
-export const floaterFilterFuncs = [
+/**
+ * Filters for the records/counts of what is selected on the map (or, with
+ * no selection, what is in view). Like the former "supporting plots", this
+ * deliberately does not include the marker configuration's value filter:
+ * records reflect the subset, the time slider and the location.
+ */
+export const selectionFilterFuncs = [
   timeSliderLittleFilter,
-  viewportLittleFilters,
-  selectedMarkersLittleFilter,
+  selectionOrViewportLittleFilter,
 ];
 export const visibleOptionFilterFuncs = [
   timeSliderLittleFilter,
@@ -73,22 +77,37 @@ export const MAX_FILTERSET_VALUES = 1000;
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
-  activeVisualizationId?: string;
-  selectedMarkers?: string[];
+  /** legacy, see appState.ts */
   geoEntityId?: string;
+}
+
+/**
+ * The location entity of the map: the saved choice, else derived from the
+ * active marker configuration (see resolveGeoConfig).
+ */
+export function getActiveGeoConfig(
+  appState: Pick<
+    AppState,
+    'geoEntityId' | 'markerConfigurations' | 'activeMarkerConfigurationType'
+  >,
+  geoConfigs: GeoConfig[]
+): GeoConfig {
+  const activeMarkerConfiguration = appState.markerConfigurations.find(
+    (config) => config.type === appState.activeMarkerConfigurationType
+  );
+  return resolveGeoConfig(geoConfigs, {
+    geoEntityId: appState.geoEntityId,
+    legacyGeoEntityId: activeMarkerConfiguration?.geoEntityId,
+    markerVariable: activeMarkerConfiguration?.selectedVariable,
+  });
 }
 
 export function useCommonData(
   selectedVariable: VariableDescriptor,
-  geoConfigs: GeoConfig[],
+  geoConfig: GeoConfig,
   studyEntities: StudyEntity[],
   boundsZoomLevel?: BoundsViewport
 ) {
-  const geoConfig = findLeastAncestralGeoConfig(
-    geoConfigs,
-    selectedVariable.entityId
-  );
-
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
 
@@ -210,7 +229,7 @@ export interface DistributionMarkerDataProps {
   studyId: string;
   filters?: Filter[];
   studyEntities: StudyEntity[];
-  geoConfigs: GeoConfig[];
+  geoConfig: GeoConfig;
   boundsZoomLevel?: BoundsViewport;
   selectedVariable: VariableDescriptor;
   selectedValues: string[] | undefined;
@@ -223,7 +242,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   const {
     boundsZoomLevel,
     selectedVariable,
-    geoConfigs,
+    geoConfig,
     studyId,
     filters,
     studyEntities,
@@ -241,7 +260,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     viewport,
   } = useCommonData(
     selectedVariable,
-    geoConfigs,
+    geoConfig,
     studyEntities,
     boundsZoomLevel
   );
@@ -381,149 +400,6 @@ export function isApproxSameViewport(v1: Viewport, v2: Viewport) {
   );
 }
 
-// returns a function (selectedMarkers?) => voi
-export function useSelectedMarkerSnackbars(
-  isMegaStudy: boolean,
-  activeVisualizationId: string | undefined
-) {
-  const { enqueueSnackbar } = useSnackbar();
-  const [shownSelectedMarkersSnackbar, setShownSelectedMarkersSnackbar] =
-    useState(isMegaStudy);
-  const [shownShiftKeySnackbar, setShownShiftKeySnackbar] = useState(false);
-
-  return useCallback(
-    (selectedMarkers: string[] | undefined) => {
-      if (
-        !shownSelectedMarkersSnackbar &&
-        selectedMarkers != null &&
-        activeVisualizationId == null
-      ) {
-        enqueueSnackbar(
-          `Marker selections currently only apply to supporting plots`,
-          {
-            variant: 'info',
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }
-        );
-        setShownSelectedMarkersSnackbar(true);
-      }
-      if (
-        (shownSelectedMarkersSnackbar || activeVisualizationId != null) &&
-        !shownShiftKeySnackbar &&
-        selectedMarkers != null &&
-        selectedMarkers.length === 1
-      ) {
-        const modifierKey =
-          window.navigator.platform.indexOf('Mac') === 0 ? 'Cmd' : 'Ctrl';
-        enqueueSnackbar(
-          `Use ${modifierKey}-click or ${modifierKey}-drag-rectangle to select multiple markers`,
-          {
-            variant: 'info',
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          }
-        );
-        setShownShiftKeySnackbar(true);
-      }
-      // if the user has managed to select more than one marker, then they don't need help
-      if (selectedMarkers != null && selectedMarkers.length > 1)
-        setShownShiftKeySnackbar(true);
-    },
-    [
-      shownSelectedMarkersSnackbar,
-      shownShiftKeySnackbar,
-      enqueueSnackbar,
-      activeVisualizationId,
-    ]
-  );
-}
-
-/**
- * DRY up floating visualization handlers
- */
-
-interface MinimalPanelConfig {
-  visualizationPanelConfig: PanelConfig;
-  legendPanelConfig: PanelPositionConfig | BubbleLegendPositionConfig;
-}
-
-interface UseFloatingPanelHandlersProps<M extends MinimalPanelConfig> {
-  configuration: M;
-  updateConfiguration: (configuration: M) => void;
-}
-
-export function useFloatingPanelHandlers<M extends MinimalPanelConfig>({
-  updateConfiguration,
-  configuration,
-}: UseFloatingPanelHandlersProps<M>) {
-  const updateLegendPosition = useCallback(
-    (position: M['legendPanelConfig']) => {
-      updateConfiguration({
-        ...configuration,
-        legendPanelConfig: position,
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  const updateVisualizationPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...configuration.visualizationPanelConfig,
-          position,
-        },
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  const updateVisualizationDimensions = useCallback(
-    (dimensions: PanelConfig['dimensions']) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...configuration.visualizationPanelConfig,
-          dimensions,
-        },
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  const onPanelDismiss = useCallback(() => {
-    updateConfiguration({
-      ...configuration,
-      activeVisualizationId: undefined,
-      visualizationPanelConfig: {
-        ...configuration.visualizationPanelConfig,
-        isVisible: false,
-      },
-    });
-  }, [updateConfiguration, configuration]);
-
-  const setHideVizControl = useCallback(
-    (hideValue?: boolean) => {
-      updateConfiguration({
-        ...configuration,
-        visualizationPanelConfig: {
-          ...configuration.visualizationPanelConfig,
-          hideVizControl: hideValue,
-        },
-      });
-    },
-    [updateConfiguration, configuration]
-  );
-
-  return {
-    updateLegendPosition,
-    updateVisualizationPosition,
-    updateVisualizationDimensions,
-    onPanelDismiss,
-    setHideVizControl,
-  };
-}
-
 /**
  * little filter helpers
  */
@@ -548,20 +424,12 @@ export function timeSliderLittleFilter(props: UseLittleFiltersProps): Filter[] {
 
 export function viewportLittleFilters(props: UseLittleFiltersProps): Filter[] {
   const {
-    appState: {
-      boundsZoomLevel,
-      markerConfigurations,
-      activeMarkerConfigurationType,
-    },
+    appState: { boundsZoomLevel },
+    appState,
     geoConfigs,
   } = props;
 
-  const { geoEntityId } =
-    markerConfigurations.find(
-      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-    ) ?? {};
-
-  const geoConfig = getGeoConfig(geoConfigs, geoEntityId);
+  const geoConfig = getActiveGeoConfig(appState, geoConfigs);
   return boundsZoomLevel == null
     ? []
     : filtersFromBoundingBox(
@@ -686,47 +554,40 @@ export function pieOrBarMarkerConfigLittleFilter(
   return [];
 }
 
-//
-// figures out which geoaggregator variable corresponds
-// to the current zoom level and creates a little filter
-// on that variable using `selectedMarkers`
-//
-export function selectedMarkersLittleFilter(
+/**
+ * The map selection as a filter: a `stringPrefixSet` filter on the
+ * location entity's finest geohash variable (the same filter the EDA lasso
+ * filter produces). No filter if nothing is selected or the selection was
+ * made with a different location entity.
+ */
+export function selectionLittleFilter(props: UseLittleFiltersProps): Filter[] {
+  const { appState, geoConfigs } = props;
+  const { selection } = appState;
+  if (selection == null || selection.prefixes.length === 0) return [];
+  const geoConfig = getActiveGeoConfig(appState, geoConfigs);
+  if (selection.geoEntityId !== geoConfig.entity.id) return [];
+  return [
+    {
+      type: 'stringPrefixSet' as const,
+      entityId: geoConfig.entity.id,
+      variableId: finestGeohashVariableId(geoConfig),
+      prefixSet: selection.prefixes,
+    },
+  ];
+}
+
+export function hasActiveSelection(props: UseLittleFiltersProps) {
+  return selectionLittleFilter(props).length > 0;
+}
+
+/** the selection, or what is in view when nothing is selected */
+export function selectionOrViewportLittleFilter(
   props: UseLittleFiltersProps
 ): Filter[] {
-  const {
-    appState: {
-      markerConfigurations,
-      activeMarkerConfigurationType,
-      viewport: { zoom },
-    },
-    geoConfigs,
-  } = props;
-
-  const activeMarkerConfiguration = markerConfigurations.find(
-    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-  );
-
-  const selectedMarkers = activeMarkerConfiguration?.selectedMarkers;
-
-  // only return a filter if there are selectedMarkers
-  if (selectedMarkers && selectedMarkers.length > 0) {
-    const { entity, zoomLevelToAggregationLevel, aggregationVariableIds } =
-      getGeoConfig(geoConfigs, activeMarkerConfiguration.geoEntityId);
-    const geoAggregationVariableId =
-      aggregationVariableIds?.[zoomLevelToAggregationLevel(zoom) - 1];
-    if (entity && geoAggregationVariableId)
-      // sanity check due to array indexing
-      return [
-        {
-          type: 'stringSet' as const,
-          entityId: entity.id,
-          variableId: geoAggregationVariableId,
-          stringSet: selectedMarkers,
-        },
-      ];
-  }
-  return [];
+  const selectionFilters = selectionLittleFilter(props);
+  return selectionFilters.length > 0
+    ? selectionFilters
+    : viewportLittleFilters(props);
 }
 
 /**
@@ -785,9 +646,75 @@ export function getLegendErrorMessage(error: unknown) {
 }
 
 /**
- * Simple styling for the optional visualization subtitle as used in
- * standaloneVizPlugins.ts (Bob didn't want to convert it to tsx)
+ * SemanticMarkers wired up to the map selection: highlights the markers
+ * inside (or partly inside) the selected geohash prefixes, forwards click,
+ * box and lasso gestures, and reports the drawn markers.
  */
-export function EntitySubtitleForViz({ subtitle }: { subtitle: string }) {
-  return <div style={{ marginTop: 8, fontStyle: 'italic' }}>({subtitle})</div>;
+export function SelectableMarkers({
+  markers,
+  selection,
+  isFetching,
+  initialFit,
+}: {
+  markers: ReactElement<BoundsDriftMarkerProps>[];
+  selection: MapSelectionProps;
+  isFetching: boolean;
+  initialFit: InitialFitProps;
+}) {
+  const summaries: MarkerSummary[] = useMemo(
+    () =>
+      markers.map(({ props: { id, position, bounds } }) => ({
+        id,
+        position,
+        bounds,
+      })),
+    [markers]
+  );
+
+  const { onMarkersRendered, onMarkerContextMenu, prefixes } = selection;
+  useEffect(() => {
+    if (!isFetching) onMarkersRendered(summaries);
+  }, [summaries, isFetching, onMarkersRendered]);
+
+  const { selected, partiallySelected } = useMemo(
+    () =>
+      classifyMarkers(
+        summaries.map(({ id }) => id),
+        prefixes
+      ),
+    [summaries, prefixes]
+  );
+
+  const handleContextMenu = useCallback(
+    (markerId: string) => {
+      const summary = summaries.find(({ id }) => id === markerId);
+      if (summary) onMarkerContextMenu(summary);
+    },
+    [summaries, onMarkerContextMenu]
+  );
+
+  // SemanticMarkers fits the map whenever it renders with flyToMarkers on
+  // and new markers - and plugins build a new markers array on every
+  // render. So turn it on for exactly one render: this effect runs after
+  // SemanticMarkers' own (child effects run first), and switches it off.
+  const fitNow = initialFit.pending && !isFetching && markers.length > 0;
+  const { onStarted: onFitStarted } = initialFit;
+  useEffect(() => {
+    if (fitNow) onFitStarted();
+  }, [fitNow, onFitStarted]);
+
+  return (
+    <SemanticMarkers
+      markers={markers}
+      animation={defaultAnimation}
+      flyToMarkers={fitNow}
+      flyToMarkersDelay={500}
+      selectedMarkers={selected}
+      partiallySelectedMarkers={partiallySelected}
+      onSelectionGesture={selection.onSelectionGesture}
+      onMarkerContextMenu={handleContextMenu}
+      lassoActive={selection.lassoActive}
+      onLassoDeactivated={selection.onLassoDeactivated}
+    />
+  );
 }

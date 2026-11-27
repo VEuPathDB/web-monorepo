@@ -1,0 +1,596 @@
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { Prompt } from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import Modal from '@veupathdb/coreui/lib/components/containers/Modal';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
+import { AnalysisState } from '../../core/hooks/analysis';
+import { useStudyEntities } from '../../core/hooks/workspace';
+import { DerivedVariableSpec } from '../../core/types/analysis';
+import { VariableDescriptor } from '../../core/types/variable';
+import {
+  FilterDefinedGroup,
+  FilterDefinedGroupsSpec,
+} from '../../core/derivedVariables/types';
+import {
+  coversVocabulary,
+  DEFAULT_UNMAPPED_VALUE,
+  MAX_GROUPS,
+  nextGroupStartVariable,
+  overlapForGroup,
+  rangeGapWarnings,
+  rangeOrderWarnings,
+  validateFilterDefinedGroups,
+} from '../../core/derivedVariables/groups';
+import { toStoredSpec } from '../../core/derivedVariables/recoding';
+import { findVisualizationsUsing } from '../../core/derivedVariables/references';
+import { useGroupCounts } from '../../core/derivedVariables/useGroupCounts';
+import { GroupFilterState } from '../../core/derivedVariables/useGroupFilterAnalysisState';
+import { GroupRow } from './GroupRow';
+import { isDraftDirty } from './isDraftDirty';
+import { InlineName } from './InlineName';
+import { GroupFilterEditor } from './GroupFilterEditor';
+import { SubsetNote } from './SubsetNote';
+import {
+  GroupUISettings,
+  readGroupUISettings,
+  writeGroupUISettings,
+} from './groupUISettings';
+
+const cx = makeClassNameHelper('CreateVariables');
+
+/** A group in the draft, with its filter widgets' UI settings. */
+interface DraftGroup {
+  /** Client-side only: keeps a row and its UI settings together on reorder. */
+  id: string;
+  group: FilterDefinedGroup;
+  uiSettings: GroupUISettings;
+}
+
+interface Props {
+  spec: FilterDefinedGroupsSpec;
+  analysisState: AnalysisState;
+  onSave: (spec: FilterDefinedGroupsSpec) => void;
+  onCancel: () => void;
+  onDelete: () => void;
+  /** Reports whether the draft has unsaved changes, whenever that changes. */
+  onDirtyChange: (dirty: boolean) => void;
+}
+
+const LEAVE_MESSAGE =
+  'Leave this page? Your unsaved changes to this variable will be lost.';
+
+// The URL changes from `new` to the analysis id when saving creates the
+// analysis. That stays on this tab, so it must not prompt.
+const STAYS_ON_TAB = /\/create-variables\/?$/;
+
+/**
+ * Edits one grouping variable as a local draft. Save writes the draft into
+ * the analysis (saving an unsaved analysis first); Cancel discards it.
+ */
+export function VariableEditor({
+  spec,
+  analysisState,
+  onSave,
+  onCancel,
+  onDelete,
+  onDirtyChange,
+}: Props) {
+  const entities = useStudyEntities();
+  const analysis = analysisState.analysis;
+
+  const [displayName, setDisplayName] = useState(spec.displayName);
+  const [entityId, setEntityId] = useState(spec.entityId);
+  const [drafts, setDrafts] = useState((): DraftGroup[] => {
+    const uiSettings = readGroupUISettings(
+      analysis?.descriptor.subset.uiSettings ?? {},
+      spec.variableId,
+      spec.config.groups.length
+    );
+    return spec.config.groups.map((group, index) => ({
+      id: uuid(),
+      group,
+      uiSettings: uiSettings[index],
+    }));
+  });
+  const groups = useMemo(() => drafts.map((d) => d.group), [drafts]);
+  // The group whose filters are being edited, if any.
+  // `origin` is what Cancel goes back to: the draft entry as it was when the
+  // editor opened, or removal of an entry that "Add group" just created.
+  const [editing, setEditing] = useState<{
+    id: string;
+    startVariable?: VariableDescriptor;
+    origin: { kind: 'new' } | { kind: 'existing'; snapshot: DraftGroup };
+  }>();
+  const isSaved = (analysis?.descriptor.derivedVariables ?? []).some(
+    (s) => s.variableId === spec.variableId
+  );
+  // Focus a new, unnamed variable's name only when the editor opens. The header
+  // remounts after a group's filter editor closes, so clear this once applied.
+  const focusNameOnOpen = useRef(!isSaved && spec.displayName === '');
+  useEffect(() => {
+    focusNameOnOpen.current = false;
+  }, []);
+
+  // A new variable's switch follows the groups until the user touches it;
+  // a saved variable keeps its stored setting.
+  const [everythingElseTouched, setEverythingElseTouched] = useState(isSaved);
+  const [everythingElseChoice, setEverythingElseChoice] = useState(
+    Boolean(spec.config.unmappedValue)
+  );
+  const everythingElseOn = everythingElseTouched
+    ? everythingElseChoice
+    : !coversVocabulary(groups, entities);
+  const [everythingElseLabel, setEverythingElseLabel] = useState(
+    spec.config.unmappedValue || DEFAULT_UNMAPPED_VALUE
+  );
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  // What the draft is compared with: the spec the editor opened with, then
+  // whatever was last saved.
+  const [baseline, setBaseline] = useState(spec);
+
+  const draft = useMemo(
+    (): FilterDefinedGroupsSpec => ({
+      ...spec,
+      entityId,
+      displayName,
+      config: {
+        ...spec.config,
+        groups,
+        unmappedValue: everythingElseOn ? everythingElseLabel : '',
+      },
+    }),
+    [spec, entityId, displayName, groups, everythingElseOn, everythingElseLabel]
+  );
+
+  const dirty = isDraftDirty(baseline, draft, everythingElseTouched);
+  const onDirtyChangeRef = useRef(onDirtyChange);
+  onDirtyChangeRef.current = onDirtyChange;
+  useEffect(() => {
+    onDirtyChangeRef.current(dirty);
+  }, [dirty]);
+  // A removed editor leaves nothing dirty behind.
+  useEffect(() => () => onDirtyChangeRef.current(false), []);
+  useEffect(() => {
+    if (!dirty) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [dirty]);
+
+  const counts = useGroupCounts(draft);
+  const entity = entities.find((e) => e.id === entityId);
+  const entityPlural = entity?.displayNamePlural ?? entity?.displayName ?? '';
+
+  // Plots reference the variable by entityId + variableId, so a saved
+  // variable must keep its entity or those plots would be orphaned.
+  const entityLocked = isSaved || groups.length > 0;
+  const usedBy = useMemo(
+    () =>
+      findVisualizationsUsing(analysis?.descriptor.computations ?? [], spec),
+    [analysis?.descriptor.computations, spec]
+  );
+
+  const messages = [
+    ...(displayName.trim() === ''
+      ? [
+          entity == null
+            ? 'Give the variable a name'
+            : `Give the variable a name, for example '${entity.displayName} grouping'`,
+        ]
+      : []),
+    ...(everythingElseOn && everythingElseLabel.trim() === ''
+      ? ["The 'Everything else' label must be non-empty"]
+      : []),
+    ...validateFilterDefinedGroups(draft.config),
+  ];
+
+  const countsReady =
+    !counts.pending &&
+    counts.raw != null &&
+    counts.final != null &&
+    counts.raw.length === groups.length;
+  const final = countsReady ? counts.final : undefined;
+
+  const overlapWarnings = useMemo(() => {
+    if (!countsReady || counts.raw == null || counts.final == null) return [];
+    const finalCounts = groups.map((g) => counts.final?.get(g.label) ?? 0);
+    const raw = counts.raw;
+    return groups.flatMap((g, index) => {
+      const overlap = overlapForGroup(index, raw, finalCounts);
+      if (overlap <= 0) return [];
+      // Per-pair counts are not built (§5.3): name the earlier group only
+      // when there is exactly one.
+      const matchText =
+        index === 1
+          ? `${groups[0].label}; they will count as ${groups[0].label}`
+          : 'an earlier group; they will count as the first group they match';
+      return [
+        `${overlap.toLocaleString()} ${entityPlural} in ${
+          g.label
+        } also match ${matchText}. Adjust filters before saving if this was not intended.`,
+      ];
+    });
+  }, [countsReady, counts.raw, counts.final, groups, entityPlural]);
+
+  const rangeWarnings = useMemo(
+    () => [
+      ...rangeOrderWarnings(groups, entities),
+      ...rangeGapWarnings(groups, entities, everythingElseOn),
+    ],
+    [groups, entities, everythingElseOn]
+  );
+
+  function renderCount(level: string): ReactNode {
+    if (final != null) return (final.get(level) ?? 0).toLocaleString();
+    if (counts.error != null)
+      return <span title="Counts could not be loaded">—</span>;
+    return counts.pending ? (
+      '…'
+    ) : (
+      <span title="Counts appear once the groups are valid">—</span>
+    );
+  }
+
+  function updateGroup(index: number, update: Partial<FilterDefinedGroup>) {
+    setDrafts((ds) =>
+      ds.map((d, i) =>
+        i === index ? { ...d, group: { ...d.group, ...update } } : d
+      )
+    );
+  }
+
+  // Called by the group editor's adapter: must commit synchronously.
+  function updateGroupFilters(id: string, next: GroupFilterState) {
+    setDrafts((ds) =>
+      ds.map((d) =>
+        d.id === id
+          ? {
+              ...d,
+              group: { ...d.group, filters: next.filters },
+              uiSettings: next.uiSettings,
+            }
+          : d
+      )
+    );
+  }
+
+  function moveGroup(from: number, to: number) {
+    setDrafts((ds) => {
+      const next = [...ds];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+  }
+
+  function addGroup() {
+    if (drafts.length >= MAX_GROUPS) return;
+    const labels = new Set(groups.map((g) => g.label));
+    let n = groups.length + 1;
+    while (labels.has(`Group ${n}`)) n++;
+    const id = uuid();
+    setDrafts((ds) => [
+      ...ds,
+      { id, group: { label: `Group ${n}`, filters: [] }, uiSettings: {} },
+    ]);
+    // Open on the variable the previous group used, with nothing selected.
+    setEditing({
+      id,
+      startVariable: nextGroupStartVariable(groups),
+      origin: { kind: 'new' },
+    });
+  }
+
+  function editGroup(index: number) {
+    setEditing({
+      id: drafts[index].id,
+      startVariable:
+        nextGroupStartVariable([groups[index]]) ??
+        nextGroupStartVariable(groups.slice(0, index)),
+      origin: { kind: 'existing', snapshot: drafts[index] },
+    });
+  }
+
+  function cancelGroupEdit() {
+    if (editing == null) return;
+    const { id, origin } = editing;
+    setDrafts((ds) =>
+      origin.kind === 'new'
+        ? ds.filter((d) => d.id !== id)
+        : ds.map((d) => (d.id === id ? origin.snapshot : d))
+    );
+    setEditing(undefined);
+  }
+
+  function save() {
+    // UI settings go first. Their setter is built with skipServerCreate =
+    // true, so if it ran second it would cancel the create of an unsaved
+    // analysis that setDerivedVariables schedules.
+    analysisState.setVariableUISettings((current) =>
+      writeGroupUISettings(
+        current,
+        spec.variableId,
+        drafts.map((d) => d.uiSettings)
+      )
+    );
+    // This also creates an unsaved analysis first: the setter is built with
+    // skipServerCreate = false (hooks/analysis.ts). The `true` argument is
+    // ignored by useSetter; it is passed to state the intent.
+    analysisState.setDerivedVariables(
+      (previous) => upsertSpec(previous, toStoredSpec(draft, entities)),
+      true
+    );
+    // Clean from this render on, before saving a new analysis changes the URL.
+    setBaseline(draft);
+    onSave(draft);
+  }
+
+  function confirmDelete() {
+    setConfirmingDelete(false);
+    // UI settings first, as in save().
+    analysisState.setVariableUISettings((current) =>
+      writeGroupUISettings(current, spec.variableId, [])
+    );
+    analysisState.setDerivedVariables(
+      (previous) => previous.filter((s) => s.variableId !== spec.variableId),
+      true
+    );
+    onDelete();
+  }
+
+  const leavePrompt = (
+    <Prompt
+      when={dirty}
+      message={(location) =>
+        STAYS_ON_TAB.test(location.pathname) ? true : LEAVE_MESSAGE
+      }
+    />
+  );
+
+  const editingIndex =
+    editing == null ? -1 : drafts.findIndex((d) => d.id === editing.id);
+  if (editing != null && editingIndex >= 0) {
+    const { id, group, uiSettings } = drafts[editingIndex];
+    return (
+      <div className={cx('-Editor')}>
+        {leavePrompt}
+        <GroupFilterEditor
+          key={id}
+          analysisState={analysisState}
+          group={{ label: group.label, filters: group.filters, uiSettings }}
+          groupIndex={editingIndex}
+          earlierGroups={groups.slice(0, editingIndex)}
+          entityPlural={entityPlural}
+          startVariable={editing.startVariable}
+          onChange={(next) => updateGroupFilters(id, next)}
+          onLabelChange={(label) => updateGroup(editingIndex, { label })}
+          onCancel={cancelGroupEdit}
+          onClose={() => setEditing(undefined)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={cx('-Editor')}>
+      {leavePrompt}
+      <div className={cx('-EditorHeader')}>
+        <InlineName
+          size="title"
+          value={displayName}
+          onChange={setDisplayName}
+          inputLabel="Variable name"
+          pencilLabel="Rename this variable"
+          placeholder="Name this variable"
+          autoFocus={focusNameOnOpen.current}
+        />
+        <span
+          className={cx('-EntityPicker')}
+          title={
+            isSaved
+              ? 'To group a different entity, create a new variable'
+              : groups.length > 0
+              ? 'Remove all groups to change what is being grouped'
+              : undefined
+          }
+        >
+          groups{' '}
+          <SingleSelect
+            items={entities.map((e) => ({
+              display: e.displayNamePlural ?? e.displayName,
+              value: e.id,
+            }))}
+            value={entityId}
+            onSelect={setEntityId}
+            buttonDisplayContent={entityPlural || 'Select an entity'}
+            isDisabled={entityLocked}
+          />{' '}
+          into:
+        </span>
+      </div>
+
+      <SubsetNote analysisState={analysisState} />
+
+      <ol className={cx('-Groups')}>
+        {drafts.map(({ id, group: g }, index) => (
+          <GroupRow
+            key={id}
+            group={g}
+            index={index}
+            groupCount={groups.length}
+            entities={entities}
+            count={renderCount(g.label)}
+            onLabelChange={(label) => updateGroup(index, { label })}
+            onMoveUp={() => moveGroup(index, index - 1)}
+            onMoveDown={() => moveGroup(index, index + 1)}
+            onRemove={() => setDrafts((ds) => ds.filter((_, i) => i !== index))}
+            onEdit={() => editGroup(index)}
+          />
+        ))}
+      </ol>
+      <div className={cx('-AddGroup')}>
+        <OutlinedButton
+          text="Add group"
+          size="small"
+          themeRole="primary"
+          disabled={groups.length >= MAX_GROUPS}
+          onPress={addGroup}
+        />
+        {groups.length >= MAX_GROUPS && (
+          <span className={cx('-Note')}>
+            At most {MAX_GROUPS} groups, so each group and Everything else gets
+            its own colour
+          </span>
+        )}
+      </div>
+
+      <div className={cx('-EverythingElse')}>
+        <label>
+          <input
+            type="checkbox"
+            checked={everythingElseOn}
+            onChange={(e) => {
+              setEverythingElseTouched(true);
+              setEverythingElseChoice(e.target.checked);
+            }}
+          />{' '}
+          Everything else
+        </label>
+        <InlineName
+          value={everythingElseLabel}
+          onChange={setEverythingElseLabel}
+          inputLabel="'Everything else' label"
+          pencilLabel="Rename 'Everything else'"
+          disabled={!everythingElseOn}
+        />
+        <span
+          className={cx('-Count')}
+          title={
+            everythingElseOn ? undefined : 'Records in no group have no value'
+          }
+        >
+          {renderCount(everythingElseOn ? everythingElseLabel : '')}
+        </span>
+      </div>
+
+      {counts.pending && groups.length >= 2 && (
+        <div className={cx('-Muted')}>Checking the groups for overlaps…</div>
+      )}
+
+      {(overlapWarnings.length > 0 ||
+        rangeWarnings.length > 0 ||
+        counts.error != null) && (
+        <ul className={cx('-Warnings')}>
+          {counts.error != null && (
+            <li>
+              <span aria-hidden="true">⚠</span>{' '}
+              <span>Counts could not be loaded.</span>
+            </li>
+          )}
+          {[...overlapWarnings, ...rangeWarnings].map((warning) => (
+            <li key={warning}>
+              <span aria-hidden="true">⚠</span> <span>{warning}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {usedBy.length > 0 && (
+        <div className={cx('-UsedBy')}>
+          Used by:{' '}
+          {usedBy
+            .map((viz) => viz.displayName ?? 'Unnamed visualization')
+            .join(', ')}
+        </div>
+      )}
+
+      {messages.length > 0 && (
+        <ul className={cx('-Messages')}>
+          {messages.map((message, index) => (
+            <li key={`${index}/${message}`}>{message}</li>
+          ))}
+        </ul>
+      )}
+
+      <div className={cx('-Actions')}>
+        {isSaved && (
+          <OutlinedButton
+            text="Delete variable"
+            themeRole="error"
+            onPress={() => setConfirmingDelete(true)}
+          />
+        )}
+        <span className={cx('-ActionsSpacer')} />
+        <OutlinedButton text="Cancel" themeRole="primary" onPress={onCancel} />
+        <FilledButton
+          text="Save variable"
+          themeRole="primary"
+          disabled={messages.length > 0}
+          onPress={save}
+        />
+      </div>
+
+      <Modal
+        title="Delete variable?"
+        visible={confirmingDelete}
+        toggleVisible={setConfirmingDelete}
+        includeCloseButton
+        themeRole="primary"
+        styleOverrides={{
+          content: { padding: { top: 0, right: 25, bottom: 25, left: 25 } },
+        }}
+      >
+        <div className={cx('-DeleteConfirm')}>
+          <p>
+            Delete <strong>{spec.displayName}</strong>? This cannot be undone.
+          </p>
+          {usedBy.length > 0 && (
+            <>
+              <p>
+                These plots use it. They will lose this variable and need
+                another one picked:
+              </p>
+              <ul>
+                {usedBy.map((viz) => (
+                  <li key={viz.visualizationId}>
+                    {viz.displayName ?? 'Unnamed visualization'}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <div className={cx('-Actions')}>
+            <span className={cx('-ActionsSpacer')} />
+            <OutlinedButton
+              text="Cancel"
+              themeRole="primary"
+              onPress={() => setConfirmingDelete(false)}
+            />
+            <FilledButton
+              text="Delete"
+              themeRole="error"
+              onPress={confirmDelete}
+            />
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+function upsertSpec(
+  previous: DerivedVariableSpec[],
+  spec: DerivedVariableSpec
+): DerivedVariableSpec[] {
+  return previous.some((s) => s.variableId === spec.variableId)
+    ? previous.map((s) => (s.variableId === spec.variableId ? spec : s))
+    : [...previous, spec];
+}

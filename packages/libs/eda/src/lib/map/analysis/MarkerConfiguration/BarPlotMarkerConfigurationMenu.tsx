@@ -15,21 +15,20 @@ import {
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import { ContinuousMarkerPreview } from './ContinuousMarkerPreview';
+import { SummaryMarkerHeading } from './SummaryMarkerHeading';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import { Toggle } from '@veupathdb/coreui';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
-  PanelConfig,
-  PanelPositionConfig,
   SelectedCountsOption,
   SelectedValues,
 } from '../appState';
 import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { GeoConfig } from '../../../core/types/geoConfig';
-import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
+import { VariableDescriptor } from '../../../core/types/variable';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -43,8 +42,6 @@ export interface BarPlotMarkerConfiguration
   binningMethod: BinningMethod;
   selectedValues: SelectedValues;
   selectedCountsOption: SelectedCountsOption;
-  legendPanelConfig: PanelPositionConfig;
-  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
@@ -67,7 +64,10 @@ interface Props
    * Only defined and used in categorical table if selectedCountsOption is 'visible'
    */
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
-  geoConfigs: GeoConfig[];
+  /** the location entity's geo configuration */
+  geoConfig: GeoConfig;
+  /** variables not on the location entity's lineage */
+  disabledVariables: VariableDescriptor[];
 }
 
 // TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
@@ -86,7 +86,8 @@ export function BarPlotMarkerConfigurationMenu({
   filters,
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
-  geoConfigs,
+  geoConfig,
+  disabledVariables,
 }: Props) {
   /**
    * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
@@ -157,16 +158,10 @@ export function BarPlotMarkerConfigurationMenu({
       return;
     }
 
-    const geoConfig = findLeastAncestralGeoConfig(
-      geoConfigs,
-      selection.overlayVariable.entityId
-    );
-
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
-      geoEntityId: geoConfig.entity.id,
     });
   }
 
@@ -219,12 +214,16 @@ export function BarPlotMarkerConfigurationMenu({
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           constraints={constraints}
+          additionalDisabledVariables={{ overlayVariable: disabledVariables }}
         />
       </div>
       <div style={{ margin: '5px 0 0 0' }}>
-        <div style={{ fontWeight: 'bold', marginBottom: '0.5em' }}>
-          Summary marker (all filtered data)
-        </div>
+        <SummaryMarkerHeading
+          studyEntities={entities}
+          selectedVariable={configuration.selectedVariable}
+          geoConfig={geoConfig}
+          overlayType={overlayConfiguration?.overlayType}
+        />
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <>
             <CategoricalMarkerPreview
@@ -245,7 +244,7 @@ export function BarPlotMarkerConfigurationMenu({
               studyId={studyId}
               filters={filters}
               studyEntities={entities}
-              geoConfigs={geoConfigs}
+              geoConfig={geoConfig}
             />
           </>
         )}
@@ -339,30 +338,31 @@ export function BarPlotMarkerConfigurationMenu({
           />
         </div>
       )}
-      {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
-        <div style={{ margin: '5px 0 0 0' }}>
-          <span style={{ fontWeight: 'bold' }}>
-            Raw distribution of overall filtered data
-          </span>
-          <Barplot
-            data={{ series: [barplotData.value] }}
-            barLayout="overlay"
-            showValues={false}
-            showIndependentAxisTickLabel={false}
-            spacingOptions={{
-              padding: 0,
-              marginLeft: 0,
-              marginRight: 0,
-              marginTop: 0,
-              marginBottom: 0,
-            }}
-            containerStyles={{
-              height: '300px',
-              maxWidth: '360px',
-            }}
-          />
-        </div>
-      )}
+      {overlayConfiguration?.overlayType === 'continuous' &&
+        barplotData.value && (
+          <div style={{ margin: '5px 0 0 0' }}>
+            <span style={{ fontWeight: 'bold' }}>
+              Raw distribution of overall filtered data
+            </span>
+            <Barplot
+              data={{ series: [barplotData.value] }}
+              barLayout="overlay"
+              showValues={false}
+              showIndependentAxisTickLabel={false}
+              spacingOptions={{
+                padding: 0,
+                marginLeft: 0,
+                marginRight: 0,
+                marginTop: 0,
+                marginBottom: 0,
+              }}
+              containerStyles={{
+                height: '300px',
+                maxWidth: '360px',
+              }}
+            />
+          </div>
+        )}
     </div>
   );
 }

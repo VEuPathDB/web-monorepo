@@ -1,6 +1,37 @@
 import { Image } from '@material-ui/icons';
 import { colors, SingleSelect, Warning } from '@veupathdb/coreui';
+import { PartialButtonStyleSpec } from '@veupathdb/coreui/lib/components/buttons';
 import { CSSProperties, useState } from 'react';
+
+export type ExportButtonSize = 'small' | 'medium';
+
+/**
+ * Presets for the two supported button sizes. `medium` is the historical
+ * appearance (empty overrides + the MUI icon's default 1.5rem). `small`
+ * shrinks the button text/dropdown-icon (via `container`) and the leading
+ * image icon together so the whole button scales down — used for the
+ * per-facet buttons in faceted plots.
+ */
+const sizePresets: Record<
+  ExportButtonSize,
+  {
+    buttonStyle?: PartialButtonStyleSpec;
+    iconFontSize?: CSSProperties['fontSize'];
+  }
+> = {
+  medium: {},
+  small: {
+    buttonStyle: {
+      container: {
+        fontSize: '.7rem',
+        height: 27,
+        paddingLeft: 10,
+        paddingRight: 10,
+      },
+    },
+    iconFontSize: '1.1rem',
+  },
+};
 
 interface ToImageOpts {
   height: number;
@@ -20,6 +51,9 @@ interface Props {
   imageHeight?: number;
   /** Width of image in pixels */
   imageWidth?: number;
+  /** Visual size of the button. Defaults to 'medium' (the historical size);
+   * 'small' renders a compact button, e.g. for faceted plots. */
+  size?: ExportButtonSize;
 }
 
 export function ExportPlotToImageButton(props: Props) {
@@ -29,7 +63,9 @@ export function ExportPlotToImageButton(props: Props) {
     style,
     imageHeight = 450,
     imageWidth = 750,
+    size = 'medium',
   } = props;
+  const { buttonStyle, iconFontSize } = sizePresets[size];
   const [sawError, setSawError] = useState(false);
   return (
     <div
@@ -76,9 +112,11 @@ export function ExportPlotToImageButton(props: Props) {
         }}
         buttonDisplayContent={
           <>
-            <Image style={{ marginRight: '.5ex' }} /> Export plot
+            <Image style={{ marginRight: '.5ex', fontSize: iconFontSize }} />{' '}
+            Export plot
           </>
         }
+        styleOverrides={buttonStyle}
       />
       {sawError && (
         <div

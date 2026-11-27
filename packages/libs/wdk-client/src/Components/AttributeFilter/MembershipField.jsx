@@ -504,8 +504,17 @@ class MembershipTable extends React.PureComponent {
   }
 
   renderValueCell({ value }) {
+    // Optional: something to show beside the value, e.g. EDA's group
+    // editor marks values that earlier groups already select.
+    const annotation =
+      value != null && this.props.renderValueAnnotation
+        ? this.props.renderValueAnnotation(value)
+        : null;
     return (
-      <div>{value == null ? UNKNOWN_ELEMENT : safeHtml(String(value))}</div>
+      <div>
+        {value == null ? UNKNOWN_ELEMENT : safeHtml(String(value))}
+        {annotation}
+      </div>
     );
   }
 

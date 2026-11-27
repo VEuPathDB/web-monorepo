@@ -17,6 +17,7 @@ import {
   literal,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
+import { DerivedVariableSpec } from '../../types/analysis';
 import {
   BinSpec,
   BinWidthSlider,
@@ -160,10 +161,38 @@ const numericViewport = type({
   xMax: string,
 });
 
+export type DerivedVariableMetadata = TypeOf<typeof DerivedVariableMetadata>;
+export const DerivedVariableMetadata = intersection([
+  type({
+    entityId: string,
+    variableId: string,
+    derivationType: keyof({ transform: null, reduction: null }),
+    variableType: keyof({
+      string: null,
+      number: null,
+      integer: null,
+      date: null,
+      longitude: null,
+    }),
+    dataShape: keyof({
+      categorical: null,
+      ordinal: null,
+      binary: null,
+      continuous: null,
+    }),
+  }),
+  // the server sends explicit nulls for fields that do not apply
+  partial({
+    vocabulary: union([array(string), nullType]),
+    units: union([string, nullType]),
+    dataRange: unknown,
+  }),
+]);
+
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
-  //  derivedVariables:  // TO DO
+  derivedVariables?: DerivedVariableSpec[];
   config: {
     outputEntityId: string;
     valueSpec: 'count' | 'proportion';
@@ -235,7 +264,7 @@ export const HistogramResponse = intersection([
 export interface BarplotRequestParams {
   studyId: string;
   filters: Filter[];
-  //  derivedVariables:  // TO DO
+  derivedVariables?: DerivedVariableSpec[];
   config: {
     outputEntityId: string;
     // add proportion as it seems to be coming

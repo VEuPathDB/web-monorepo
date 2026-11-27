@@ -15,11 +15,9 @@ import {
 import { DataElementConstraint } from '../../../core/types/visualization'; // TO DO for dates: remove
 import { SharedMarkerConfigurations } from '../mapTypes/shared';
 import { invalidProportionText } from '../utils/defaultOverlayConfig';
-import { BubbleLegendPositionConfig, PanelConfig } from '../appState';
-import { GeoConfig } from '../../../core/types/geoConfig';
-import { findLeastAncestralGeoConfig } from '../../../core/utils/geoVariables';
+import { VariableDescriptor } from '../../../core/types/variable';
 
-type AggregatorOption = typeof aggregatorOptions[number];
+type AggregatorOption = (typeof aggregatorOptions)[number];
 const aggregatorOptions = ['mean', 'median'] as const;
 
 interface MarkerConfiguration<T extends string> {
@@ -32,8 +30,6 @@ export interface BubbleMarkerConfiguration
   aggregator?: AggregatorOption;
   numeratorValues?: string[];
   denominatorValues?: string[];
-  legendPanelConfig: BubbleLegendPositionConfig;
-  visualizationPanelConfig: PanelConfig;
 }
 
 interface Props
@@ -49,7 +45,8 @@ interface Props
   configuration: BubbleMarkerConfiguration;
   overlayConfiguration: BubbleOverlayConfig | undefined;
   isValidProportion: boolean | undefined; // undefined when not categorical mode
-  geoConfigs: GeoConfig[];
+  /** variables not on the location entity's lineage */
+  disabledVariables: VariableDescriptor[];
 }
 
 export function BubbleMarkerConfigurationMenu({
@@ -61,7 +58,7 @@ export function BubbleMarkerConfigurationMenu({
   toggleStarredVariable,
   constraints,
   isValidProportion,
-  geoConfigs,
+  disabledVariables,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -71,17 +68,11 @@ export function BubbleMarkerConfigurationMenu({
       return;
     }
 
-    const geoConfig = findLeastAncestralGeoConfig(
-      geoConfigs,
-      selection.overlayVariable.entityId
-    );
-
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       numeratorValues: undefined,
       denominatorValues: undefined,
-      geoEntityId: geoConfig.entity.id,
     });
   }
 
@@ -215,6 +206,7 @@ export function BubbleMarkerConfigurationMenu({
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
         constraints={constraints}
+        additionalDisabledVariables={{ overlayVariable: disabledVariables }}
         flexDirection="column"
       />
     </div>

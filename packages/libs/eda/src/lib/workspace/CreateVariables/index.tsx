@@ -1,0 +1,183 @@
+import { useMemo, useState } from 'react';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import Modal from '@veupathdb/coreui/lib/components/containers/Modal';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
+import { AnalysisState } from '../../core/hooks/analysis';
+import { useStudyMetadata } from '../../core/hooks/workspace';
+import { FilterDefinedGroupsSpec } from '../../core/derivedVariables/types';
+import { decodeDerivedVariables } from '../../core/derivedVariables/recoding';
+import { newFilterDefinedGroupsSpec } from '../../core/derivedVariables/groups';
+import { VariableEditor } from './VariableEditor';
+
+import './CreateVariables.scss';
+
+const cx = makeClassNameHelper('CreateVariables');
+
+interface Props {
+  analysisState: AnalysisState;
+}
+
+type Selection =
+  | { kind: 'existing'; variableId: string }
+  | { kind: 'new'; spec: FilterDefinedGroupsSpec };
+
+/** The "Create variables" tab: the analysis's grouping variables and an editor for one. */
+export default function CreateVariables({ analysisState }: Props) {
+  const { rootEntity } = useStudyMetadata();
+  const derivedVariables = analysisState.analysis?.descriptor.derivedVariables;
+  const { supported, unsupported } = useMemo(() => {
+    const decoded = decodeDerivedVariables(derivedVariables ?? []);
+    return {
+      supported: decoded.supported.map((d) => d.editable),
+      unsupported: decoded.unsupported,
+    };
+  }, [derivedVariables]);
+
+  const [selection, setSelection] = useState<Selection | undefined>(() =>
+    supported.length > 0
+      ? { kind: 'existing', variableId: supported[0].variableId }
+      : undefined
+  );
+  // Bumped to discard the draft of an existing variable on Cancel.
+  const [resetCount, setResetCount] = useState(0);
+
+  // Whether the open editor has unsaved changes, as it last reported.
+  const [dirty, setDirty] = useState(false);
+  // A selection asked for while the draft is dirty, awaiting the user's answer.
+  const [pendingSelection, setPendingSelection] = useState<Selection>();
+
+  function requestSelection(next: Selection) {
+    if (
+      next.kind === 'existing' &&
+      selection?.kind === 'existing' &&
+      next.variableId === selection.variableId
+    )
+      return;
+    if (dirty) setPendingSelection(next);
+    else setSelection(next);
+  }
+
+  const selectedSpec =
+    selection?.kind === 'new'
+      ? selection.spec
+      : supported.find((s) => s.variableId === selection?.variableId);
+
+  return (
+    <div className={cx()}>
+      <div className={cx('-List')}>
+        <h3>Your variables</h3>
+        {supported.length + unsupported.length > 0 ? (
+          <ul>
+            {supported.map((spec) => (
+              <li key={spec.variableId}>
+                <button
+                  type="button"
+                  className={cx(
+                    '-ListItem',
+                    spec.variableId === selectedSpec?.variableId
+                      ? 'selected'
+                      : ''
+                  )}
+                  aria-current={spec.variableId === selectedSpec?.variableId}
+                  onClick={() =>
+                    requestSelection({
+                      kind: 'existing',
+                      variableId: spec.variableId,
+                    })
+                  }
+                >
+                  {spec.displayName || 'Unnamed variable'}
+                </button>
+              </li>
+            ))}
+            {unsupported.map((entry) => (
+              <li
+                key={entry.variableId}
+                className={cx('-ListItem', 'unsupported')}
+                title={entry.displayName}
+              >
+                Unsupported variable
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={cx('-Muted')}>None yet.</p>
+        )}
+        <OutlinedButton
+          text="+ New variable"
+          size="small"
+          themeRole="primary"
+          onPress={() =>
+            requestSelection({
+              kind: 'new',
+              spec: newFilterDefinedGroupsSpec(rootEntity.id, ''),
+            })
+          }
+        />
+        <p className={cx('-Note')}>
+          Variables made here can be used in Visualize, not for subsetting.
+        </p>
+      </div>
+      <div className={cx('-EditorPane')}>
+        {selectedSpec ? (
+          <VariableEditor
+            key={`${selectedSpec.variableId}/${resetCount}`}
+            spec={selectedSpec}
+            analysisState={analysisState}
+            onSave={(spec) =>
+              setSelection({ kind: 'existing', variableId: spec.variableId })
+            }
+            onCancel={() =>
+              selection?.kind === 'new'
+                ? setSelection(undefined)
+                : setResetCount((n) => n + 1)
+            }
+            onDelete={() => setSelection(undefined)}
+            onDirtyChange={setDirty}
+          />
+        ) : (
+          <p className={cx('-Muted')}>
+            Pick a variable to edit, or make a new one.
+          </p>
+        )}
+      </div>
+      <Modal
+        title="Discard changes?"
+        visible={pendingSelection != null}
+        toggleVisible={() => setPendingSelection(undefined)}
+        includeCloseButton
+        themeRole="primary"
+        styleOverrides={{
+          content: { padding: { top: 0, right: 25, bottom: 25, left: 25 } },
+        }}
+      >
+        <div className={cx('-DeleteConfirm')}>
+          <p>You have unsaved changes to this variable. Discard them?</p>
+          <div className={cx('-Actions')}>
+            <span className={cx('-ActionsSpacer')} />
+            <OutlinedButton
+              text="Keep editing"
+              themeRole="primary"
+              onPress={() => setPendingSelection(undefined)}
+            />
+            <FilledButton
+              text="Discard changes"
+              themeRole="primary"
+              onPress={() => {
+                if (pendingSelection != null) {
+                  setSelection(pendingSelection);
+                  // The new editor reports its own state once it mounts.
+                  setDirty(false);
+                }
+                setPendingSelection(undefined);
+              }}
+            />
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}

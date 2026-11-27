@@ -100,6 +100,9 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       // pass selectedMarkers state and setState
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
+      partiallySelectedMarkers={props.partiallySelectedMarkers}
+      onSelectionGesture={props.onSelectionGesture}
+      onMarkerContextMenu={props.onMarkerContextMenu}
     />
   );
 }

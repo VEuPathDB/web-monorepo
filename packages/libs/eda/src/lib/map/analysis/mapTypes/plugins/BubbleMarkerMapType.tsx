@@ -1,15 +1,10 @@
 import BubbleMarker, {
   BubbleMarkerProps,
 } from '@veupathdb/components/lib/map/BubbleMarker';
-import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
-import {
-  defaultAnimationDuration,
-  defaultViewport,
-} from '@veupathdb/components/lib/map/config/map';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
-import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { capitalize, omit } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   useFindEntityAndVariable,
   Filter,
@@ -23,62 +18,47 @@ import {
   StandaloneMapBubblesResponse,
 } from '../../../../core/api/DataClient/types';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
-import MapVizManagement from '../../MapVizManagement';
 import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
 import { BubbleMarkerConfiguration } from '../../MarkerConfiguration/BubbleMarkerConfigurationMenu';
-import {
-  MapTypeConfigurationMenu,
-  MarkerConfigurationOption,
-} from '../../MarkerConfiguration/MapTypeConfigurationMenu';
 import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
-import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
   MAX_FILTERSET_VALUES,
-  defaultAnimation,
-  floaterFilterFuncs,
-  isApproxSameViewport,
+  SelectableMarkers,
   markerDataFilterFuncs,
   useCommonData,
-  timeSliderLittleFilter,
-  viewportLittleFilters,
   getErrorOverlayComponent,
-  useSelectedMarkerSnackbars,
-  selectedMarkersLittleFilter,
-  useFloatingPanelHandlers,
 } from '../shared';
 import {
   MapTypeConfigPanelProps,
+  MapTypeLegendProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import DraggableVisualization from '../../DraggableVisualization';
 import { VariableDescriptor } from '../../../../core/types/variable';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import {
+  LittleFilterFunc,
   useLittleFilters,
   UseLittleFiltersFuncProps,
 } from '../../littleFilters';
-import TimeSliderQuickFilter from '../../TimeSliderQuickFilter';
-import { SubStudies } from '../../SubStudies';
-import { MapTypeHeaderStudyDetails } from '../MapTypeHeaderStudyDetails';
-import { STUDIES_ENTITY_ID, STUDY_ID_VARIABLE_ID } from '../../../constants';
-import { PanelConfig } from '../../appState';
 
 const displayName = 'Bubbles';
 
+const markerConfigFilterFuncs: LittleFilterFunc[] = [markerConfigLittleFilter];
+
 export const plugin: MapTypePlugin = {
+  type: 'bubble',
   displayName,
+  Icon: BubbleMarkerIcon,
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
-  MapOverlayComponent: BubbleLegendsAndFloater,
-  MapTypeHeaderDetails,
-  TimeSliderComponent,
+  LegendComponent: BubbleLegends,
+  markerConfigFilterFuncs,
 };
 
 type BubbleLegendData = {
@@ -101,37 +81,18 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     updateConfiguration,
     studyId,
     filters,
-    geoConfigs,
-    setIsSidePanelExpanded,
+    disabledVariables,
   } = props;
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const markerConfiguration = props.configuration as BubbleMarkerConfiguration;
 
-  const { visualizationPanelConfig } = markerConfiguration;
-
   const markerVariableConstraints = apps
     .find((app) => app.name === 'standalone-map')
     ?.visualizations.find(
       (viz) => viz.name === 'map-markers'
     )?.dataElementConstraints;
-
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string, isNew?: boolean) => {
-      if (markerConfiguration == null) return;
-      updateConfiguration({
-        ...markerConfiguration,
-        activeVisualizationId,
-        visualizationPanelConfig: {
-          ...visualizationPanelConfig,
-          isVisible: !!activeVisualizationId,
-          ...(isNew ? { hideVizControl: false } : {}),
-        },
-      });
-    },
-    [markerConfiguration, updateConfiguration, visualizationPanelConfig]
-  );
 
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
@@ -141,15 +102,11 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
     ...markerConfiguration,
   });
 
-  const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: overlayConfig,
-  });
-
-  const configurationMenu = (
+  return (
     <BubbleMarkerConfigurationMenu
       entities={studyEntities}
       onChange={updateConfiguration}
-      configuration={markerConfiguration as BubbleMarkerConfiguration}
+      configuration={markerConfiguration}
       overlayConfiguration={overlayConfig}
       starredVariables={
         analysisState.analysis?.descriptor.starredVariables ?? []
@@ -157,57 +114,8 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
       toggleStarredVariable={toggleStarredVariable}
       constraints={markerVariableConstraints}
       isValidProportion={isValidProportion}
-      geoConfigs={geoConfigs}
+      disabledVariables={disabledVariables}
     />
-  );
-
-  const markerConfigurationOption: MarkerConfigurationOption = {
-    type: 'bubble',
-    displayName,
-    icon: (
-      <BubbleMarkerIcon style={{ height: '1.5em', marginLeft: '0.25em' }} />
-    ),
-    configurationMenu,
-  };
-
-  const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
-    'markers' | 'plots'
-  >['tabs'] = [
-    {
-      key: 'markers',
-      displayName: 'Markers',
-      content: configurationMenu,
-    },
-    {
-      key: 'plots',
-      displayName: 'Supporting Plots',
-      content: (
-        <MapVizManagement
-          analysisState={analysisState}
-          setActiveVisualizationId={setActiveVisualizationId}
-          apps={apps}
-          activeVisualizationId={markerConfiguration.activeVisualizationId}
-          plugins={plugins}
-          geoConfigs={geoConfigs}
-          mapType="bubble"
-          setIsSidePanelExpanded={setIsSidePanelExpanded}
-        />
-      ),
-    },
-  ];
-
-  return (
-    <div
-      style={{
-        padding: '1em',
-        maxWidth: '1500px',
-      }}
-    >
-      <MapTypeConfigurationMenu
-        markerConfiguration={markerConfigurationOption}
-        mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
-      />
-    </div>
   );
 }
 
@@ -219,13 +127,10 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     studyId,
     filters,
     appState,
-    appState: {
-      boundsZoomLevel,
-      markerConfigurations,
-      activeMarkerConfigurationType,
-    },
-    updateConfiguration,
+    appState: { boundsZoomLevel },
     geoConfigs,
+    geoConfig,
+    selection,
   } = props;
 
   const configuration = props.configuration as BubbleMarkerConfiguration;
@@ -248,34 +153,18 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   const legendData = useLegendData({
     studyId,
     filters,
-    geoConfigs,
+    geoConfig,
     configuration,
   });
 
   const markersData = useMarkerData({
     boundsZoomLevel,
     configuration,
-    geoConfigs,
+    geoConfig,
     studyId,
     filters: filtersForMarkerData,
     legendData,
   });
-
-  const handleSelectedMarkerSnackbars = useSelectedMarkerSnackbars(
-    appState.studyDetailsPanelConfig != null,
-    configuration.activeVisualizationId
-  );
-
-  const setSelectedMarkers = useCallback(
-    (selectedMarkers?: string[]) => {
-      handleSelectedMarkerSnackbars(selectedMarkers);
-      updateConfiguration({
-        ...(props.configuration as BubbleMarkerConfiguration),
-        selectedMarkers,
-      });
-    },
-    [handleSelectedMarkerSnackbars, props.configuration, updateConfiguration]
-  );
 
   if (markersData.error && !markersData.isFetching)
     return getErrorOverlayComponent(markersData.error);
@@ -284,307 +173,82 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
     <BubbleMarker {...markerProps} />
   ));
 
-  const selectedMarkers = markerConfigurations.find(
-    (markerConfiguration) =>
-      markerConfiguration.type === activeMarkerConfigurationType
-  )?.selectedMarkers;
-
   return (
     <>
       {markersData.isFetching && <Spinner />}
       {markers && (isValidProportion == null || isValidProportion) && (
-        <SemanticMarkers
+        <SelectableMarkers
           markers={markers}
-          animation={defaultAnimation}
-          flyToMarkers={
-            !(markersData.isFetching || markersData.isPreviousData) &&
-            isApproxSameViewport(appState.viewport, defaultViewport)
-          }
-          selectedMarkers={selectedMarkers}
-          setSelectedMarkers={setSelectedMarkers}
-          flyToMarkersDelay={2000}
+          selection={selection}
+          isFetching={markersData.isFetching || markersData.isPreviousData}
+          initialFit={props.initialFit}
         />
       )}
     </>
   );
 }
 
-function BubbleLegendsAndFloater(props: MapTypeMapLayerProps) {
-  const {
-    studyId,
-    filters,
-    geoConfigs,
-    appState,
-    updateConfiguration,
-    headerButtons,
-    setStudyDetailsPanelConfig,
-  } = props;
+/** size (count) and colour legends */
+function BubbleLegends(props: MapTypeLegendProps) {
+  const { studyId, filters, geoConfig } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
 
-  const { legendPanelConfig, visualizationPanelConfig, selectedMarkers } =
-    configuration;
-
-  const { isValidProportion } = useOverlayConfig({
+  const { isValidProportion, overlayConfig } = useOverlayConfig({
     studyId,
     filters,
     ...configuration,
   });
-
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const { variable: overlayVariable } =
-    findEntityAndVariable(configuration.selectedVariable) ?? {};
+  const { aggregationConfig } = overlayConfig;
 
   const legendData = useLegendData({
     studyId,
     filters,
-    geoConfigs,
+    geoConfig,
     configuration,
   });
 
-  const plugins = useStandaloneVizPlugins({
-    overlayHelp: 'Overlay variables are not available for this map type',
-    selectedMarkers,
-  });
-
-  const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-
-  const invalidProportionMessage =
-    isValidProportion === false ? (
+  if (isValidProportion === false)
+    return (
       <div css={{ textAlign: 'center', width: 200 }}>
         The bubble marker proportion configuration has become invalid. Please
         reconfigure.
       </div>
-    ) : undefined;
-
-  const { filters: filtersForFloaters } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    floaterFilterFuncs
-  );
-
-  const { filters: filtersForSubStudies } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    substudyFilterFuncs
-  );
-
-  // use all the handlers except updateLegendPosition
-  const {
-    updateVisualizationPosition,
-    updateVisualizationDimensions,
-    onPanelDismiss,
-    setHideVizControl,
-  } = useFloatingPanelHandlers({ configuration, updateConfiguration });
-
-  // and use the two specialized ones for the legends
-  const updateVariableLegendPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        legendPanelConfig: {
-          ...legendPanelConfig,
-          variable: position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, legendPanelConfig]
-  );
-
-  const updateCountLegendPosition = useCallback(
-    (position: PanelConfig['position']) => {
-      updateConfiguration({
-        ...configuration,
-        legendPanelConfig: {
-          ...legendPanelConfig,
-          count: position,
-        },
-      });
-    },
-    [updateConfiguration, configuration, legendPanelConfig]
-  );
+    );
 
   return (
-    <>
-      {appState.studyDetailsPanelConfig?.isVisible && (
-        <SubStudies
-          studyId={studyId}
-          entityId={STUDIES_ENTITY_ID}
-          variableId={STUDY_ID_VARIABLE_ID}
-          filters={filtersForSubStudies}
-          panelConfig={appState.studyDetailsPanelConfig}
-          updatePanelConfig={setStudyDetailsPanelConfig}
-          hasSelectedMarkers={!!selectedMarkers?.length}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75em' }}>
+      <div>
+        <div style={{ fontWeight: 500, marginBottom: 4 }}>Count</div>
+        <MapLegend
+          isLoading={legendData.isFetching}
+          plotLegendProps={{
+            type: 'bubble',
+            legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
+            valueToDiameterMapper: legendData.data?.bubbleValueToDiameterMapper,
+          }}
         />
-      )}
-      <DraggableLegendPanel
-        panelTitle="Count"
-        zIndex={2}
-        defaultPosition={legendPanelConfig.count}
-        onDragComplete={updateCountLegendPosition}
-      >
-        <div style={{ padding: '5px 10px' }}>
-          {invalidProportionMessage ?? (
-            <MapLegend
-              isLoading={legendData.isFetching}
-              plotLegendProps={{
-                type: 'bubble',
-                legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
-                valueToDiameterMapper:
-                  legendData.data?.bubbleValueToDiameterMapper,
-              }}
-            />
-          )}
+      </div>
+      <div>
+        <div style={{ fontWeight: 500, marginBottom: 4 }}>
+          {aggregationConfig.overlayType === 'continuous'
+            ? capitalize(aggregationConfig.aggregator)
+            : 'Proportion'}
         </div>
-      </DraggableLegendPanel>
-      <DraggableLegendPanel
-        panelTitle={overlayVariable?.displayName}
-        zIndex={3}
-        defaultPosition={legendPanelConfig.variable}
-        onDragComplete={updateVariableLegendPosition}
-        headerButtons={headerButtons}
-      >
-        <div style={{ padding: '5px 10px' }}>
-          {invalidProportionMessage ?? (
-            <MapLegend
-              isLoading={legendData.isFetching}
-              plotLegendProps={{
-                type: 'colorscale',
-                legendMin:
-                  legendData.data?.bubbleLegendData?.minColorValue ?? 0,
-                legendMax:
-                  legendData.data?.bubbleLegendData?.maxColorValue ?? 0,
-                valueToColorMapper:
-                  legendData.data?.bubbleValueToColorMapper ?? (() => 'white'),
-                valueToTickStringMapper:
-                  legendData.data?.bubbleValueToLegendTickMapper,
-              }}
-            />
-          )}
-        </div>
-      </DraggableLegendPanel>
-      {visualizationPanelConfig?.isVisible && (
-        <DraggableVisualization
-          analysisState={props.analysisState}
-          visualizationId={configuration.activeVisualizationId}
-          apps={props.apps}
-          plugins={plugins}
-          geoConfigs={geoConfigs}
-          totalCounts={props.totalCounts}
-          filteredCounts={props.filteredCounts}
-          toggleStarredVariable={toggleStarredVariable}
-          filters={filtersForFloaters}
-          // onTouch={moveVizToTop}
-          zIndexForStackingContext={2}
-          hideInputsAndControls={
-            visualizationPanelConfig.hideVizControl ?? false
-          }
-          setHideInputsAndControls={setHideVizControl}
-          onDragComplete={updateVisualizationPosition}
-          defaultPosition={visualizationPanelConfig.position}
-          onPanelResize={updateVisualizationDimensions}
-          dimensions={visualizationPanelConfig.dimensions}
-          onPanelDismiss={onPanelDismiss}
+        <MapLegend
+          isLoading={legendData.isFetching}
+          plotLegendProps={{
+            type: 'colorscale',
+            legendMin: legendData.data?.bubbleLegendData?.minColorValue ?? 0,
+            legendMax: legendData.data?.bubbleLegendData?.maxColorValue ?? 0,
+            valueToColorMapper:
+              legendData.data?.bubbleValueToColorMapper ?? (() => 'white'),
+            valueToTickStringMapper:
+              legendData.data?.bubbleValueToLegendTickMapper,
+          }}
         />
-      )}
-    </>
+      </div>
+    </div>
   );
-}
-
-function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
-  const {
-    studyEntities,
-    filters,
-    geoConfigs,
-    appState,
-    appState: { timeSliderConfig, studyDetailsPanelConfig },
-  } = props;
-
-  const configuration = props.configuration as BubbleMarkerConfiguration;
-
-  const { filters: filtersForSubStudies } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    substudyFilterFuncs
-  );
-
-  const {
-    outputEntity: { id: outputEntityId },
-  } = useCommonData(configuration.selectedVariable, geoConfigs, studyEntities);
-
-  return outputEntityId != null ? (
-    <MapTypeHeaderStudyDetails
-      hasMarkerSelection={!!configuration.selectedMarkers?.length}
-      filtersForVisibleData={filtersForSubStudies}
-      includesTimeSliderFilter={timeSliderConfig != null}
-      outputEntityId={outputEntityId}
-      onShowStudies={
-        studyDetailsPanelConfig &&
-        ((isVisible) =>
-          props.setStudyDetailsPanelConfig({
-            ...studyDetailsPanelConfig,
-            isVisible,
-          }))
-      }
-    />
-  ) : null;
-}
-
-const timeSliderFilterFuncs = [markerConfigLittleFilter];
-
-const substudyFilterFuncs = [
-  viewportLittleFilters,
-  timeSliderLittleFilter,
-  markerConfigLittleFilter,
-  selectedMarkersLittleFilter,
-];
-
-export function TimeSliderComponent(props: MapTypeMapLayerProps) {
-  const {
-    studyId,
-    studyEntities,
-    filters,
-    appState,
-    appState: { timeSliderConfig },
-    analysisState,
-    geoConfigs,
-    setTimeSliderConfig,
-    siteInformationProps,
-  } = props;
-
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const { filters: filtersForTimeSlider } = useLittleFilters(
-    {
-      filters,
-      appState,
-      geoConfigs,
-    },
-    timeSliderFilterFuncs
-  );
-
-  return timeSliderConfig && setTimeSliderConfig && siteInformationProps ? (
-    <TimeSliderQuickFilter
-      studyId={studyId}
-      entities={studyEntities}
-      filters={filtersForTimeSlider}
-      starredVariables={
-        analysisState.analysis?.descriptor.starredVariables ?? []
-      }
-      toggleStarredVariable={toggleStarredVariable}
-      config={timeSliderConfig}
-      updateConfig={setTimeSliderConfig}
-      siteInformation={siteInformationProps}
-    />
-  ) : null;
 }
 
 ///// helpers and hooks //////
@@ -715,14 +379,14 @@ function useOverlayConfig(props: OverlayConfigProps) {
 interface DataProps {
   boundsZoomLevel?: BoundsViewport;
   configuration: BubbleMarkerConfiguration;
-  geoConfigs: GeoConfig[];
+  geoConfig: GeoConfig;
   studyId: string;
   filters?: Filter[];
   legendData?: UseQueryResult<BubbleLegendData>;
 }
 
 function useLegendData(props: DataProps) {
-  const { configuration, geoConfigs, studyId, filters } = props;
+  const { configuration, geoConfig, studyId, filters } = props;
 
   const studyEntities = useStudyEntities();
   const dataClient = useDataClient();
@@ -732,7 +396,7 @@ function useLegendData(props: DataProps) {
 
   const { outputEntity, geoAggregateVariables } = useCommonData(
     selectedVariable,
-    geoConfigs,
+    geoConfig,
     studyEntities
   );
 
@@ -884,8 +548,7 @@ function useLegendData(props: DataProps) {
 }
 
 function useRawMarkerData(props: DataProps) {
-  const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
-    props;
+  const { boundsZoomLevel, configuration, geoConfig, studyId, filters } = props;
 
   const { numeratorValues, denominatorValues } = configuration;
 
@@ -900,7 +563,7 @@ function useRawMarkerData(props: DataProps) {
     viewport,
   } = useCommonData(
     configuration.selectedVariable,
-    geoConfigs,
+    geoConfig,
     studyEntities,
     boundsZoomLevel
   );

@@ -46,7 +46,7 @@ export function useComputeJobStatus(
   // Gather dependencies needed for requesting the job status
   const nextJobStatusDeps = {
     config: computation.descriptor.configuration,
-    derivedVariables: analysis.descriptor.derivedVariables,
+    derivedVariables: [],
     filters: analysis.descriptor.subset.descriptor,
     studyId: studyMetadata.id,
     computeName,

@@ -1,7 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { isEqual } from 'lodash';
+import { PathOptions } from 'leaflet';
 import { Pane, Rectangle } from 'react-leaflet';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
@@ -35,6 +44,12 @@ import {
   defaultGeoCoordUIState,
 } from './geoCoordUIState';
 import { ResetButtonCoreUI } from '../ResetButton';
+import {
+  EarlierGroupMark,
+  GroupEditingContext,
+  earlierFiltersFor,
+} from '../../derivedVariables/GroupEditingContext';
+import { EarlierGroupsLegend } from './EarlierGroupMarks';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -110,6 +125,69 @@ function GeohashCellsOverlay({ prefixes }: GeohashCellsOverlayProps) {
   );
 }
 
+type EarlierGroupCells = EarlierGroupMark & { prefixes: string[] };
+
+const earlierGroupCellsPaneStyle = { zIndex: 340 };
+
+/**
+ * In the Create variables group editor: the earlier groups' geohash cells,
+ * drawn faintly in each group's colour so a new area can avoid them. Drawn
+ * straight from the filters' prefixes (not from the stored shapes), so it
+ * shows exactly what each group matches. Below the current filter's cells.
+ *
+ * There can be thousands of cells, so everything is memoised: a re-render
+ * of the filter, or a pan or zoom that shows no new world copy, re-renders
+ * no Rectangle (react-leaflet updates a layer when a prop's identity changes).
+ */
+const EarlierGroupCellsOverlay = memo(function EarlierGroupCellsOverlay({
+  groups,
+}: {
+  groups: EarlierGroupCells[];
+}) {
+  const offsets = useVisibleWorldOffsets();
+  // decoded once per set of groups
+  const cells = useMemo(
+    () =>
+      groups.flatMap(({ color, prefixes }, groupIndex) => {
+        const pathOptions: PathOptions = {
+          color,
+          weight: 1,
+          opacity: 0.5,
+          fillColor: color,
+          fillOpacity: 0.25,
+          interactive: false,
+        };
+        return prefixes.map((prefix) => ({
+          key: `${groupIndex}|${prefix}`,
+          bounds: geohashCellBounds(prefix),
+          pathOptions,
+        }));
+      }),
+    [groups]
+  );
+  const rectangles = useMemo(
+    () =>
+      cells.flatMap(({ key, bounds, pathOptions }) =>
+        offsets.map((offset) => (
+          <Rectangle
+            key={`${key}|${offset}`}
+            bounds={[
+              [bounds.southWest[0], bounds.southWest[1] + offset],
+              [bounds.northEast[0], bounds.northEast[1] + offset],
+            ]}
+            pathOptions={pathOptions}
+          />
+        ))
+      ),
+    [cells, offsets]
+  );
+  return (
+    <Pane name="earlier-group-cells" style={earlierGroupCellsPaneStyle}>
+      {rectangles}
+    </Pane>
+  );
+});
+
 /**
  * A geographic filter for latitude/longitude variable pairs.
  *
@@ -152,6 +230,27 @@ export function GeoCoordFilter(props: Props) {
       f.type === 'stringPrefixSet',
     [entity.id, finestAggregationVariableId]
   );
+
+  // In the group editor, the earlier groups' areas: their prefix-set
+  // filters on any of this entity's geohash variables (this widget writes
+  // the finest one). Empty everywhere else.
+  const groupEditing = useContext(GroupEditingContext);
+  const earlierGroupCells = useMemo((): EarlierGroupCells[] => {
+    const byGroup = new Map<string, EarlierGroupCells>();
+    for (const variableId of geoConfig.aggregationVariableIds)
+      for (const { label, color, filter } of earlierFiltersFor(
+        groupEditing,
+        entity.id,
+        variableId
+      ))
+        if (filter.type === 'stringPrefixSet') {
+          const key = `${label}|${color}`;
+          const cells = byGroup.get(key) ?? { label, color, prefixes: [] };
+          cells.prefixes.push(...filter.prefixSet);
+          byGroup.set(key, cells);
+        }
+    return [...byGroup.values()];
+  }, [groupEditing, entity.id, geoConfig.aggregationVariableIds]);
 
   // the current geo filter, if any
   const geoFilter = filters?.find((f): f is StringPrefixSetFilter =>
@@ -462,6 +561,12 @@ export function GeoCoordFilter(props: Props) {
           />
         )}
       </div>
+      {earlierGroupCells.length > 0 && (
+        <EarlierGroupsLegend
+          text="Shaded areas are used by earlier groups:"
+          groups={earlierGroupCells}
+        />
+      )}
       {basicMarkerError != null && (
         <div style={{ color: 'red' }}>{String(basicMarkerError)}</div>
       )}
@@ -507,6 +612,9 @@ export function GeoCoordFilter(props: Props) {
           )}
           {showGeohashCells && geoFilter != null && boundsZoomLevel != null && (
             <GeohashCellsOverlay prefixes={geoFilter.prefixSet} />
+          )}
+          {earlierGroupCells.length > 0 && boundsZoomLevel != null && (
+            <EarlierGroupCellsOverlay groups={earlierGroupCells} />
           )}
         </MapVEuMap>
       </div>

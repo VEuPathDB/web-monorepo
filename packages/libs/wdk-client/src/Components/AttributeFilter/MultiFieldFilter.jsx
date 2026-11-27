@@ -277,11 +277,20 @@ export default class MultiFieldFilter extends React.Component {
         false,
         summary.valueCounts
       );
-    return (
+    const checkbox = (
       <label>
         <input type="checkbox" checked={isSelected} onChange={handleChange} />{' '}
         {value}
       </label>
+    );
+    // Optional: something to show beside the value, e.g. EDA's group
+    // editor marks values that earlier groups already select.
+    if (this.props.renderValueAnnotation == null) return checkbox;
+    return (
+      <React.Fragment>
+        {checkbox}
+        {this.props.renderValueAnnotation(value, summary.term)}
+      </React.Fragment>
     );
   }
 

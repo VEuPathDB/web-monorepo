@@ -40,6 +40,7 @@ import { Layout, Shape } from 'plotly.js';
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
+import { rangeToRectGeometry } from '../utils/range-rect-geometry';
 
 // bin middles needed for highlighting
 interface BinSummary {
@@ -69,6 +70,9 @@ export interface HistogramProps
   showValues?: boolean;
   /** A range to highlight by means of opacity */
   selectedRange?: NumberOrDateRange;
+  /** Further ranges to shade faintly behind the bars, each in its own
+   * colour, e.g. other selections shown for reference. Not interactive. */
+  shadedRanges?: { range: NumberOrDateRange; color: string }[];
   /** function to call upon selecting a range (in independent axis) */
   onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Min and max allowed values for the selected range.
@@ -105,6 +109,7 @@ const Histogram = makePlotlyPlotComponent(
     dependentAxisLogScale = DependentAxisLogScaleDefault,
     showValues,
     selectedRange,
+    shadedRanges,
     onSelectedRangeChange = () => {},
     selectedRangeBounds,
     isZoomed = false,
@@ -299,31 +304,15 @@ const Histogram = makePlotlyPlotComponent(
       const range = selectingRange ?? selectedRange;
 
       if (data.series.length && range) {
-        // for dates, draw the blue area to the end of the day
-        const rightCoordinate =
-          data.binWidthSlider?.valueType === 'number'
-            ? range.max
-            : DateMath.add(new Date(range.max), 0.9999, 'day').toISOString();
         return [
           {
             type: 'rect',
-            ...(orientation === 'vertical'
-              ? {
-                  xref: 'x',
-                  yref: 'paper',
-                  x0: range.min,
-                  x1: rightCoordinate,
-                  y0: 0,
-                  y1: 1,
-                }
-              : {
-                  xref: 'paper',
-                  yref: 'y',
-                  x0: 0,
-                  x1: 1,
-                  y0: range.min,
-                  y1: rightCoordinate,
-                }),
+            // for dates, draws the blue area to the end of the day
+            ...rangeToRectGeometry(
+              range,
+              orientation,
+              data.binWidthSlider?.valueType
+            ),
             line: {
               color: 'blue',
               width: 1,
@@ -336,6 +325,29 @@ const Histogram = makePlotlyPlotComponent(
         return [];
       }
     }, [selectingRange, selectedRange, orientation, data.series]);
+
+    const shadedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
+      if (!data.series.length || shadedRanges == null) return [];
+      return shadedRanges.map(
+        ({ range, color }): Partial<Shape> => ({
+          type: 'rect',
+          layer: 'below',
+          ...rangeToRectGeometry(
+            range,
+            orientation,
+            data.binWidthSlider?.valueType
+          ),
+          line: { width: 0 },
+          fillcolor: color,
+          opacity: 0.3,
+        })
+      );
+    }, [
+      shadedRanges,
+      orientation,
+      data.series.length,
+      data.binWidthSlider?.valueType,
+    ]);
 
     const standardIndependentAxisRange: NumberOrDateRange | undefined =
       useMemo(() => {
@@ -542,7 +554,11 @@ const Histogram = makePlotlyPlotComponent(
       useResizeHandler: true,
       layout: {
         // add truncatedAxisHighlighting for layout.shapes
-        shapes: [...selectedRangeHighlighting, ...truncatedAxisHighlighting],
+        shapes: [
+          ...shadedRangeHighlighting,
+          ...selectedRangeHighlighting,
+          ...truncatedAxisHighlighting,
+        ],
         // when we implement zooming, we will still use Plotly's select mode
         dragmode: 'select',
         // with a histogram, we can always use 1D selection

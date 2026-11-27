@@ -466,3 +466,28 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
     </DraggablePanel>
   );
 };
+
+/** the compact strip used in the map's filter bar */
+export const Compact: Story = () => {
+  const data: TimeSliderDataProp[] = LineplotData.series[0].x.map(
+    (value, index) => ({
+      x: value,
+      y: LineplotData.series[0].y[index] >= 9 ? 1 : 0,
+    })
+  );
+  const [selectedRange, setSelectedRange] = useState<
+    { start: string; end: string } | undefined
+  >(undefined);
+  return (
+    <TimeSlider
+      data={data}
+      selectedRange={selectedRange}
+      setSelectedRange={setSelectedRange}
+      width={380}
+      height={30}
+      tickLabelFontSize={9}
+      numTicks={5}
+      brushColor="lightpink"
+    />
+  );
+};
