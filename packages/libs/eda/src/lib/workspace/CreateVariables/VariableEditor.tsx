@@ -22,6 +22,8 @@ import {
   MAX_GROUPS,
   nextGroupStartVariable,
   overlapForGroup,
+  rangeGapWarnings,
+  rangeOrderWarnings,
   validateFilterDefinedGroups,
 } from '../../core/derivedVariables/groups';
 import { toStoredSpec } from '../../core/derivedVariables/recoding';
@@ -217,6 +219,14 @@ export function VariableEditor({
       ];
     });
   }, [countsReady, counts.raw, counts.final, groups, entityPlural]);
+
+  const rangeWarnings = useMemo(
+    () => [
+      ...rangeOrderWarnings(groups, entities),
+      ...rangeGapWarnings(groups, entities, everythingElseOn),
+    ],
+    [groups, entities, everythingElseOn]
+  );
 
   function renderCount(level: string): ReactNode {
     if (final != null) return (final.get(level) ?? 0).toLocaleString();
@@ -475,7 +485,9 @@ export function VariableEditor({
         <div className={cx('-Muted')}>Checking the groups for overlaps…</div>
       )}
 
-      {(overlapWarnings.length > 0 || counts.error != null) && (
+      {(overlapWarnings.length > 0 ||
+        rangeWarnings.length > 0 ||
+        counts.error != null) && (
         <ul className={cx('-Warnings')}>
           {counts.error != null && (
             <li>
@@ -483,7 +495,7 @@ export function VariableEditor({
               <span>Counts could not be loaded.</span>
             </li>
           )}
-          {overlapWarnings.map((warning) => (
+          {[...overlapWarnings, ...rangeWarnings].map((warning) => (
             <li key={warning}>
               <span aria-hidden="true">⚠</span> <span>{warning}</span>
             </li>

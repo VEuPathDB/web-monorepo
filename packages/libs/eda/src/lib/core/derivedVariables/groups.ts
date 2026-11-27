@@ -110,3 +110,143 @@ export function coversVocabulary(
     return false;
   return variable.vocabulary.every((v) => values.has(v));
 }
+
+interface RangeGroups {
+  isDate: boolean;
+  /** Adjacent values closer than this leave nothing in between. */
+  step: number;
+  ranges: Array<{ min: number; max: number }>;
+  /** Extent of the variable's data, when the study metadata gives it. */
+  dataExtent?: { min: number; max: number };
+}
+
+const MS_PER_DAY = 86_400_000;
+const toDay = (s: string) => Date.parse(s.slice(0, 10)) / MS_PER_DAY;
+
+/**
+ * Ranges of the groups when each is one numberRange (or each one dateRange)
+ * filter on the same variable, else undefined. Dates are day numbers, since
+ * nothing is finer than a day.
+ */
+function rangeGroups(
+  groups: FilterDefinedGroup[],
+  entities: StudyEntity[]
+): RangeGroups | undefined {
+  if (groups.length < 2 || groups.some((g) => g.filters.length !== 1))
+    return undefined;
+  const filters = groups.map((g) => g.filters[0]);
+  const first = filters[0];
+  if (first.type !== 'numberRange' && first.type !== 'dateRange')
+    return undefined;
+  if (
+    filters.some(
+      (f) =>
+        f.type !== first.type ||
+        f.entityId !== first.entityId ||
+        f.variableId !== first.variableId
+    )
+  )
+    return undefined;
+
+  const variable = findEntityAndVariable(entities, {
+    entityId: first.entityId,
+    variableId: first.variableId,
+  })?.variable;
+  const defaults =
+    variable != null && 'distributionDefaults' in variable
+      ? variable.distributionDefaults
+      : undefined;
+
+  if (first.type === 'dateRange') {
+    return {
+      isDate: true,
+      step: 1,
+      ranges: filters.flatMap((f) =>
+        f.type === 'dateRange' ? [{ min: toDay(f.min), max: toDay(f.max) }] : []
+      ),
+      dataExtent:
+        defaults != null && typeof defaults.rangeMin === 'string'
+          ? {
+              min: toDay(defaults.rangeMin),
+              max: toDay(String(defaults.rangeMax)),
+            }
+          : undefined,
+    };
+  }
+  return {
+    isDate: false,
+    step: variable != null && variable.type === 'integer' ? 1 : 0,
+    ranges: filters.flatMap((f) =>
+      f.type === 'numberRange' ? [{ min: f.min, max: f.max }] : []
+    ),
+    dataExtent:
+      defaults != null && typeof defaults.rangeMin === 'number'
+        ? { min: defaults.rangeMin, max: Number(defaults.rangeMax) }
+        : undefined,
+  };
+}
+
+function directionOf(
+  ranges: RangeGroups['ranges']
+): 'asc' | 'desc' | undefined {
+  const mins = ranges.map((r) => r.min);
+  const pairs = mins.slice(1).map((m, i) => m - mins[i]);
+  if (pairs.every((d) => d >= 0)) return 'asc';
+  if (pairs.every((d) => d <= 0)) return 'desc';
+  return undefined;
+}
+
+/**
+ * Warning when numeric or date range groups are not in ascending or
+ * descending order: the output is ordinal, so the group order is the level
+ * order.
+ */
+export function rangeOrderWarnings(
+  groups: FilterDefinedGroup[],
+  entities: StudyEntity[]
+): string[] {
+  const info = rangeGroups(groups, entities);
+  if (info == null || directionOf(info.ranges) != null) return [];
+  return [
+    'These ranges are not in ascending or descending order, so the categories will not be a meaningful ordinal. Check this is what you intended.',
+  ];
+}
+
+/**
+ * Warning when "Everything else" is on and the ranges leave gaps. It sorts
+ * after the last group, so it only stays ordinal when the single gap is the
+ * one past the last group: above the highest range when ascending, below the
+ * lowest when descending. Integer variables and dates treat consecutive
+ * values/days as adjacent. Tails count only when the variable's data extent
+ * is known. Not reported for out-of-order ranges (see rangeOrderWarnings).
+ */
+export function rangeGapWarnings(
+  groups: FilterDefinedGroup[],
+  entities: StudyEntity[],
+  everythingElseOn: boolean
+): string[] {
+  if (!everythingElseOn) return [];
+  const info = rangeGroups(groups, entities);
+  if (info == null) return [];
+  const direction = directionOf(info.ranges);
+  if (direction == null) return [];
+
+  // Walk low to high; the "last group" end is high for asc, low for desc.
+  const sorted = [...info.ranges].sort((a, b) => a.min - b.min);
+  const { step, dataExtent } = info;
+  const interior = sorted
+    .slice(1)
+    .filter((r, i) => r.min - sorted[i].max > step).length;
+  const lowTail =
+    dataExtent != null && sorted[0].min - dataExtent.min > step ? 1 : 0;
+  const highTail =
+    dataExtent != null && dataExtent.max - sorted[sorted.length - 1].max > step
+      ? 1
+      : 0;
+  const lastEndTail = direction === 'asc' ? highTail : lowTail;
+  const gaps = interior + lowTail + highTail;
+  if (gaps === 0 || (gaps === 1 && lastEndTail === 1)) return [];
+  return [
+    `These ranges leave gaps, and values in the gaps will be labelled as 'Everything else', which sorts last. The categories may not be a meaningful ordinal. Check this is what you intended.`,
+  ];
+}
